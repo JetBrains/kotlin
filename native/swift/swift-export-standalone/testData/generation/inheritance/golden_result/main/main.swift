@@ -7,7 +7,7 @@ open class Foo : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

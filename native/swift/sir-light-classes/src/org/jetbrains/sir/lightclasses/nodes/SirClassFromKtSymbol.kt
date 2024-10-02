@@ -89,6 +89,7 @@ internal class SirClassFromKtSymbol(
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInit {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
+        visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
         isFailable = false
         isOverride = true
         parameters.add(

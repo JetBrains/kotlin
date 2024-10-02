@@ -10,7 +10,7 @@ public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase 
             return ClassWithFactoryWithoutParameters_value_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -32,7 +32,7 @@ public final class ObjectWithFactory : KotlinRuntime.KotlinBase {
     private override init() {
         fatalError()
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -44,7 +44,7 @@ public final class UtcOffset : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -91,7 +91,7 @@ public extension ExportedKotlinPackages.test.factory {
             super.init(__externalRCRef: __kt)
             test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -104,7 +104,7 @@ public extension ExportedKotlinPackages.test.factory {
                 super.init(__externalRCRef: __kt)
                 test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -115,7 +115,7 @@ public extension ExportedKotlinPackages.test.factory {
             super.init(__externalRCRef: __kt)
             test_factory_Outer_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)

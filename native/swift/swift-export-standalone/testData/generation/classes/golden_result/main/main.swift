@@ -8,7 +8,7 @@ public final class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -23,7 +23,7 @@ public final class ClassWithNonPublicConstructor : KotlinRuntime.KotlinBase {
             return ClassWithNonPublicConstructor_a_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -52,7 +52,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -80,7 +80,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __kt)
             Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -102,7 +102,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
             return Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -133,7 +133,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
                 super.init(__externalRCRef: __kt)
                 OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -148,7 +148,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             private override init() {
                 fatalError()
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -162,7 +162,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
                 return OBJECT_NO_PACKAGE_Bar_i_get(self.__externalRCRef())
             }
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -184,7 +184,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __kt)
             OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -199,7 +199,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -226,7 +226,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     private override init() {
         fatalError()
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -258,7 +258,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -294,7 +294,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                     super.init(__externalRCRef: __kt)
                     namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
                 }
-                public override init(
+                package override init(
                     __externalRCRef: Swift.UInt
                 ) {
                     super.init(__externalRCRef: __externalRCRef)
@@ -321,7 +321,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __kt)
                 namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -348,7 +348,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRef: __kt)
             namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -363,7 +363,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRef: __kt)
             namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -380,7 +380,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 private override init() {
                     fatalError()
                 }
-                public override init(
+                package override init(
                     __externalRCRef: Swift.UInt
                 ) {
                     super.init(__externalRCRef: __externalRCRef)
@@ -391,7 +391,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                     return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(self.__externalRCRef())
                 }
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -413,7 +413,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __kt)
                 namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -428,7 +428,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             private override init() {
                 fatalError()
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -455,7 +455,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -473,7 +473,7 @@ public extension ExportedKotlinPackages.namespace {
                 super.init(__externalRCRef: __kt)
                 namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -497,7 +497,7 @@ public extension ExportedKotlinPackages.namespace {
             super.init(__externalRCRef: __kt)
             namespace_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -512,7 +512,7 @@ public extension ExportedKotlinPackages.namespace {
             super.init(__externalRCRef: __kt)
             namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -526,7 +526,7 @@ public extension ExportedKotlinPackages.why_we_need_module_names {
             super.init(__externalRCRef: __kt)
             why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)

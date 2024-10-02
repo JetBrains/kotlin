@@ -9,7 +9,7 @@ public extension ExportedKotlinPackages.test.factory.modules {
             super.init(__externalRCRef: __kt)
             test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)

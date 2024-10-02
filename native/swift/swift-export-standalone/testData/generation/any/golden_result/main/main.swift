@@ -10,7 +10,7 @@ public final class MyObject : KotlinRuntime.KotlinBase {
     private override init() {
         fatalError()
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

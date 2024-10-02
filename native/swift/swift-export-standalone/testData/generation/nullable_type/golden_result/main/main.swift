@@ -11,7 +11,7 @@ public final class Bar : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___Bar_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -36,7 +36,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
             return Foo_variable_set__TypesOfArguments__main_Bar_opt___(self.__externalRCRef(), newValue.map { it in it.__externalRCRef() } ?? 0)
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

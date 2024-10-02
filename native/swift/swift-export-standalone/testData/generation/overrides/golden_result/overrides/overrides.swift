@@ -32,7 +32,7 @@ open class Child : overrides.Parent {
             return Child_subtypeOptionalPrimitiveVar_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -107,7 +107,7 @@ open class Child : overrides.Parent {
     }
 }
 public final class GrandChild : overrides.Child {
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -165,7 +165,7 @@ open class Parent : KotlinRuntime.KotlinBase {
             return Parent_value_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

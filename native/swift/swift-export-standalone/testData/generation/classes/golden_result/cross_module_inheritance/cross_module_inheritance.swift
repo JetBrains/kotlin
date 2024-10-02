@@ -10,7 +10,7 @@ public final class CLASS_ACROSS_MODULES : inheritance.OPEN_CLASS {
             return CLASS_ACROSS_MODULES_value_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

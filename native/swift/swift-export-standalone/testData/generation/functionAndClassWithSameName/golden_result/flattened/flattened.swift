@@ -15,7 +15,7 @@ public extension ExportedKotlinPackages.flattenedPackage {
             super.init(__externalRCRef: __kt)
             flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)

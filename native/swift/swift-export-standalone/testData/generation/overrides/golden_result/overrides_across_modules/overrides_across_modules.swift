@@ -7,7 +7,7 @@ open class Cousin : overrides.Parent {
             return Cousin_primitiveTypeVar_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

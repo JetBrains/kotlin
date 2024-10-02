@@ -9,7 +9,7 @@ public final class Bar : KotlinRuntime.KotlinBase {
             return Bar_p_get(self.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)

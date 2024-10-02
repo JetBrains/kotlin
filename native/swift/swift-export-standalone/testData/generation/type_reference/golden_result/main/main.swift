@@ -9,7 +9,7 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __kt)
             Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -24,7 +24,7 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -35,7 +35,7 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -48,7 +48,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __kt)
             Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -63,7 +63,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -121,7 +121,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             return Demo_var4_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -167,7 +167,7 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __kt)
         __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -180,7 +180,7 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __kt)
             Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -195,7 +195,7 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -209,7 +209,7 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
     private override init() {
         fatalError()
     }
-    public override init(
+    package override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
@@ -363,7 +363,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __kt)
                 namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -378,7 +378,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             private override init() {
                 fatalError()
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -389,7 +389,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRef: __kt)
             namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -409,7 +409,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
@@ -428,7 +428,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __kt)
                 namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -443,7 +443,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             private override init() {
                 fatalError()
             }
-            public override init(
+            package override init(
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
@@ -457,7 +457,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         private override init() {
             fatalError()
         }
-        public override init(
+        package override init(
             __externalRCRef: Swift.UInt
         ) {
             super.init(__externalRCRef: __externalRCRef)
