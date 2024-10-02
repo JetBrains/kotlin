@@ -34,14 +34,16 @@ private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
 
 fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == LoweredDeclarationOrigins.INLINE_LAMBDA
 
-// This lowering transforms CR passed to inline function to lambda which would be inlined
-//
-//      inline fun foo(inlineParameter: (A) -> B): B {
-//          return inlineParameter()
-//      }
-//
-//      foo(::smth) -> foo { a -> smth(a) }
-//
+/**
+ * This lowering transforms inlined callable references to lambdas. Callable reference is inlined if it's passed to a non-noinline
+ * parameter of an inline function.
+ *
+ *     inline fun foo(inlineParameter: (A) -> B): B {
+ *         return inlineParameter()
+ *     }
+ *
+ * `foo(::smth)` is transformed to `foo { a -> smth(a) }`.
+ */
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
     protected val inlineFunctionResolver: InlineFunctionResolver,
