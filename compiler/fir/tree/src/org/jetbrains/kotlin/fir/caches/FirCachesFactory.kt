@@ -73,6 +73,12 @@ abstract class FirCachesFactory : FirSessionComponent {
      * a lazy value which strongly references its value.
      */
     abstract fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V>
+
+    @RequiresOptIn("This API is performance wise and should not be used in general code")
+    annotation class PerformanceWise
+
+    @PerformanceWise
+    abstract val isThreadSafe: Boolean
 }
 
 val FirSession.firCachesFactory: FirCachesFactory by FirSession.sessionComponentAccessor()
@@ -82,5 +88,3 @@ inline fun <K : Any, V> FirCachesFactory.createCache(
 ): FirCache<K, V, Nothing?> = createCache(
     createValue = { key, _ -> createValue(key) },
 )
-
-

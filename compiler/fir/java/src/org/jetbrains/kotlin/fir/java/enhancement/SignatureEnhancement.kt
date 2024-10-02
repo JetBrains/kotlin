@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.enhancement.enhance
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
@@ -1056,23 +1058,47 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
         val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, FunctionEnhancementContext> =
-            cachesFactory.createCacheWithPostCompute(
-                createValue = { original, context ->
-                    context.enhancement.enhance(original, context.name, context.precomputedOverridden) to context.enhancement
-                },
-                postCompute = { _, enhancedVersion, enhancement ->
-                    val enhancedVersionFir = enhancedVersion.fir
-                    (enhancedVersionFir.initialSignatureAttr)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name)
+            when {
+                // TODO: Leave only `else` branch if there are no exceptions (KT-71929)
+                // TODO: Also consider removing PerformanceWise as well
+                // `cachesFactory.isThreadSafe` is used just for sake of not calling the registry in the compiler
+                @OptIn(FirCachesFactory.PerformanceWise::class)
+                cachesFactory.isThreadSafe && isRegistryForPostComputeEnhancedJavaFunctionsCache ->
+                    cachesFactory.createCacheWithPostCompute(
+                        createValue = { original, context ->
+                            context.enhancement.enhance(original, context.name, context.precomputedOverridden) to context.enhancement
+                        },
+                        postCompute = { _, enhancedVersion, enhancement ->
+                            val enhancedVersionFir = enhancedVersion.fir
+                            (enhancedVersionFir.initialSignatureAttr)?.let {
+                                enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name)
+                            }
+                        }
+                    )
+                else ->
+                    cachesFactory.createCache { original, context ->
+                        context.enhancement.enhance(original, context.name, context.precomputedOverridden).also { enhancedVersion ->
+                            val enhancedVersionFir = enhancedVersion.fir
+                            enhancedVersionFir.initialSignatureAttr?.let {
+                                enhancedVersionFir.initialSignatureAttr =
+                                    context.enhancement.enhancedFunction(it, it.name)
+                            }
+                        }
                     }
-                }
-            )
+            }
+
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =
             cachesFactory.createCache { original, (enhancement, name) ->
                 enhancement.enhance(original, name)
             }
+
+        private companion object {
+            private val isRegistryForPostComputeEnhancedJavaFunctionsCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                Registry.`is`("kotlin.analysis.postComputeEnhancedJavaFunctionsCache", false)
+            }
+        }
     }
 }
 

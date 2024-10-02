@@ -37,4 +37,8 @@ internal class FirThreadSafeCachesFactory(private val project: Project) : FirCac
 
     override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
         LLFirSoftLazyValue(project, createValue)
+
+    @PerformanceWise
+    override val isThreadSafe: Boolean
+        get() = true
 }

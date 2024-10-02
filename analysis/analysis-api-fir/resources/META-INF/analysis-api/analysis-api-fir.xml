@@ -30,6 +30,13 @@
         key="kotlin.analysis.lowMemoryCacheCleanup"
         restartRequired="true"
     />
+
+    <registryKey
+        defaultValue="false"
+        description="Enables post-compute-based Java Functions Cache (should be used only when data race is detected with less strict version)"
+        key="kotlin.analysis.postComputeEnhancedJavaFunctionsCache"
+        restartRequired="true"
+    />
   </extensions>
 
   <projectListeners>
