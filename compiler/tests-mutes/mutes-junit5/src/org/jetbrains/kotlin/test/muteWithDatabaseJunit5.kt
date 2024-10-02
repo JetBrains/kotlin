@@ -55,7 +55,7 @@ class MuteInTestWatcher : TestWatcher {
             testMethod != null
         ) {
             DO_AUTO_MUTE?.muteTest(
-                testKey(testClass, testMethod.name)
+                testKey(testClass, context.displayName)
             )
         }
     }
@@ -83,7 +83,7 @@ class MuteInInvocationInterceptor : InvocationInterceptor {
         extensionContext: ExtensionContext
     ) {
         val testClass = extensionContext.testClassNullable
-        val testMethod = extensionContext.testMethodNullable
+        val testMethod: Method? = extensionContext.testMethodNullable
         if (testClass != null &&
             testMethod != null
         ) {
@@ -91,14 +91,18 @@ class MuteInInvocationInterceptor : InvocationInterceptor {
             if (mutedTest != null &&
                 isPresentedInDatabaseWithoutFailMarker(mutedTest)
             ) {
-                if (mutedTest.isFlaky) {
-                    invocation.proceed()
-                    return
-                } else {
+                if (!mutedTest.isFlaky) {
                     invertMutedTestResultWithLog(
                         f = { invocation.proceed() },
                         testKey = testKey(testMethod.declaringClass, mutedTest.methodKey)
                     )
+                    return
+                } else if (DO_AUTO_MUTE.isMuted(testKey(testClass, extensionContext.displayName))) {
+                    DO_AUTO_MUTE.mute(testKey(testClass, extensionContext.displayName))
+                    invocation.skip()
+                    return
+                } else {
+                    invocation.proceed()
                     return
                 }
             }

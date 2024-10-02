@@ -40,14 +40,14 @@ fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Uni
         }
     } else if (isPresentedInDatabaseWithoutFailMarker(mutedTest)) {
         if (mutedTest?.isFlaky == true) {
-            return f
+            return wrapWithAutoMute(f, testKey)
         } else {
             return {
                 invertMutedTestResultWithLog(f, testKey)
             }
         }
     } else {
-        return wrapWithAutoMute(f, testKey)
+        return f
     }
 }
 
