@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 
 class GenerationState private constructor(
     val project: Project,
@@ -328,10 +329,15 @@ class GenerationState private constructor(
 
     @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
     private fun loadClassBuilderInterceptors(): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> {
-        // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
-        val adapted = Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
-            .getDeclaredMethod("getExtensions", Project::class.java)
-            .invoke(null, project) as List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension>
+        val adapted = try {
+            // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
+            Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
+                .getDeclaredMethod("getExtensions", Project::class.java)
+                .invoke(null, project) as List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension>
+        } catch (e: InvocationTargetException) {
+            // Unwrap and rethrow any exception that happens. It's important e.g. in case of ProcessCanceledException.
+            throw e.targetException
+        }
 
         return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project) + adapted
     }
