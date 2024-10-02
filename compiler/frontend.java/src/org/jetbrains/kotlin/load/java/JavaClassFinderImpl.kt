@@ -58,6 +58,8 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
         return javaFacade.findClasses(request, javaSearchScope)
     }
 
+    // TODO (marco): Introduce new endpoint which only checks if a package exists, to avoid the validity check during smart pointer creation
+    //               in `createJavaPackage`.
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         return javaFacade.findPackage(fqName.asString(), javaSearchScope)
             ?.let { createJavaPackage(it, mayHaveAnnotations) }
