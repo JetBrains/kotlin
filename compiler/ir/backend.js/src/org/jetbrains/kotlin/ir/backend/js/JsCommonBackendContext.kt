@@ -55,21 +55,6 @@ interface JsCommonBackendContext : CommonBackendContext {
     val enumEntries: IrClassSymbol
     val createEnumEntries: IrSimpleFunctionSymbol
 
-    val testFunsPerFile: HashMap<IrFile, IrSimpleFunction>
-
-    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
-        val irFile = container.file
-        return testFunsPerFile.getOrPut(irFile) {
-            irFactory.addFunction(irFile) {
-                name = Name.identifier("test fun")
-                returnType = irBuiltIns.unitType
-                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-            }.apply {
-                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
-            }
-        }
-    }
-
     val externalPackageFragment: MutableMap<IrFileSymbol, IrFile>
     val additionalExportedDeclarations: Set<IrDeclaration>
     val bodilessBuiltInsPackageFragment: IrPackageFragment

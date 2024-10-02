@@ -131,7 +131,7 @@ fun compileIr(
     }
 
     // TODO should be done incrementally
-    generateJsTests(context, allModules.last(), groupByPackage = false)
+    generateJsTests(context, allModules.last())
     performanceManager?.notifyIRTranslationFinished()
 
     performanceManager?.notifyGenerationStarted()
