@@ -39,14 +39,43 @@ abstract class IrElementBase : IrElement {
         override var originalBeforeInline: IrAttributeContainer?
             get() = null
             set(value) = shouldNotBeCalled()
+
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
         override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement = this
         override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {}
         override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {}
     }
 
+    private var lastWrite_attributeOwnerId: List<StackTraceElement>? = null
+    private var lastWrite_originalBeforeInline: List<StackTraceElement>? = null
+
     final override var attributeOwnerId: IrAttributeContainer = (this as? IrAttributeContainer) ?: DummyAttributeOwnerId
+        get() {
+            if (field !== this) {
+                LocationTracker.recordReadStackTrace(LocationTracker.attributeOwnerId, lastWrite_attributeOwnerId, 1)
+            }
+            return field
+        }
+        set(value) {
+            if (value !== field) {
+                lastWrite_attributeOwnerId = LocationTracker.recordWriteStackTrace(1)
+                field = value
+            }
+        }
     final override var originalBeforeInline: IrAttributeContainer? = null
+        get() {
+            if (field != null) {
+                LocationTracker.recordReadStackTrace(LocationTracker.originalBeforeInline, lastWrite_originalBeforeInline, 1)
+            }
+            return field
+        }
+        set(value) {
+            if (value !== field) {
+                lastWrite_originalBeforeInline = LocationTracker.recordWriteStackTrace(1)
+                field = value
+            }
+        }
+
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)
