@@ -44,7 +44,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: KtParameter(A.A.abc)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
