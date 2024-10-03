@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Lazy
   origin: LIBRARY
+  psi: KtClass(kotlin.Lazy)
   superTypes: [
     KaUsualClassType:
       annotations: []

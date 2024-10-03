@@ -18,4 +18,3 @@ class SomeList : AbstractList<Int>() {
 
   override operator fun get(index: Int): Int
 }
-

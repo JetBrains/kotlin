@@ -41,7 +41,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {

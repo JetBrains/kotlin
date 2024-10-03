@@ -15,6 +15,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: field
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.field)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: [

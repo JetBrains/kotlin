@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/SomeKotlinClass.foo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -43,6 +44,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: ABSTRACT
     origin: SOURCE
+    psi: KtProperty(SomeKotlinClass.foo)
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -57,6 +59,7 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/SomeKotlinClass.foo)
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -99,6 +102,7 @@ KaKotlinPropertySymbol:
   modality: ABSTRACT
   name: foo
   origin: SOURCE
+  psi: KtProperty(SomeKotlinClass.foo)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -113,6 +117,7 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/SomeKotlinClass.foo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: bar
   origin: DELEGATED
+  psi: KtNamedFunction(I2.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

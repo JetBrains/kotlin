@@ -31,6 +31,7 @@ scopes:
         modality: FINAL
         name: ValueInt
         origin: SOURCE
+        psi: KtClass(pkg.ValueInt)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -53,4 +54,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

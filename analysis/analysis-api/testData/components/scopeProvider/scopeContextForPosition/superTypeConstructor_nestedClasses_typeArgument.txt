@@ -28,6 +28,7 @@ scopes:
         modality: ABSTRACT
         name: BaseInterface
         origin: SOURCE
+        psi: KtClass(test.BaseInterface)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -54,6 +55,7 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
+        psi: KtClass(test.Base)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -82,6 +84,7 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
+        psi: KtClass(test.Child)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -109,4 +112,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

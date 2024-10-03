@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -49,6 +50,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: c
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry(c)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

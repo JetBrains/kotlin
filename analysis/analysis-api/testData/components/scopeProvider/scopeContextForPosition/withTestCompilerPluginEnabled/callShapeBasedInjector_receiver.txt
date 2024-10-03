@@ -27,6 +27,7 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/column)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -52,6 +53,7 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: PLUGIN
+          psi: null
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
             callableId: null
@@ -66,6 +68,7 @@ scopes:
             name: <receiver>
             origin: PLUGIN
             owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -101,6 +104,7 @@ scopes:
         modality: FINAL
         name: column
         origin: PLUGIN
+        psi: null
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
@@ -115,6 +119,7 @@ scopes:
           name: <receiver>
           origin: PLUGIN
           owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -156,6 +161,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -182,6 +188,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -213,6 +220,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -244,6 +252,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -267,6 +276,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: PLUGIN
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -305,6 +315,7 @@ scopes:
         modality: FINAL
         name: df
         origin: SOURCE
+        psi: KtParameter(test_1.df)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -327,26 +338,32 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(META-INF)
       KaPackageSymbol:
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(java)
       KaPackageSymbol:
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(javax)
       KaPackageSymbol:
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(kotlin)
       KaPackageSymbol:
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(org)
       KaPackageSymbol:
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(sun)
     classifiers: 2
       KaNamedClassSymbol:
         annotations: []
@@ -366,6 +383,7 @@ scopes:
         modality: ABSTRACT
         name: DataFrame
         origin: SOURCE
+        psi: KtClass(DataFrame)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -394,6 +412,7 @@ scopes:
         modality: FINAL
         name: Refine
         origin: SOURCE
+        psi: KtClass(Refine)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -429,6 +448,7 @@ scopes:
         modality: FINAL
         name: add
         origin: SOURCE
+        psi: KtNamedFunction(add)
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
@@ -443,6 +463,7 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/add)
+          psi: KtTypeReference(DataFrame<T>)
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -486,6 +507,7 @@ scopes:
             modality: FINAL
             name: columnName
             origin: SOURCE
+            psi: KtParameter(add.columnName)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -511,6 +533,7 @@ scopes:
             modality: FINAL
             name: expression
             origin: SOURCE
+            psi: KtParameter(add.expression)
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -546,6 +569,7 @@ scopes:
         modality: FINAL
         name: test_1
         origin: SOURCE
+        psi: KtNamedFunction(test_1)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -572,6 +596,7 @@ scopes:
             modality: FINAL
             name: df
             origin: SOURCE
+            psi: KtParameter(test_1.df)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -595,4 +620,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

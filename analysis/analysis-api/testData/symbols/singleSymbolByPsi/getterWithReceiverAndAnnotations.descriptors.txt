@@ -19,6 +19,7 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: KtPropertyAccessor(@ExplicitGetAnnotation get() = 1)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: [
       ReceiverAnnotation()
@@ -36,6 +37,7 @@ KaPropertyGetterSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/x)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [

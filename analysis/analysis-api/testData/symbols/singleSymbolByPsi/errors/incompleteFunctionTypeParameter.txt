@@ -8,6 +8,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: TYPE
   origin: SOURCE
+  psi: KtTypeParameter(<no name>.TYPE)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL

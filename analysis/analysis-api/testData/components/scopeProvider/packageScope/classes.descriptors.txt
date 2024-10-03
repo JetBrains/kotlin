@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: A
   origin: SOURCE
+  psi: KtClass(test.A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -51,6 +52,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalA
   origin: SOURCE
+  psi: KtClass(test.InternalA)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -86,6 +88,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateA
   origin: SOURCE
+  psi: KtClass(test.PrivateA)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -121,6 +124,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtClass(test.B)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -152,6 +156,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalB
   origin: SOURCE
+  psi: KtClass(test.InternalB)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -183,6 +188,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateB
   origin: SOURCE
+  psi: KtClass(test.PrivateB)
   superTypes: [
     KaUsualClassType:
       annotations: []

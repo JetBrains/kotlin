@@ -9,10 +9,10 @@ KtNameReferenceExpression(28,31): 'Int'
 KtNameReferenceExpression(40,44): 'list'
   KtSimpleNameReference:
     list: kotlin.collections.MutableList<kotlin.Int>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -27,14 +27,14 @@ KtArrayAccessExpression(74,81): 'list[0]'
 KtNameReferenceExpression(74,78): 'list'
   KtSimpleNameReference:
     list: kotlin.collections.MutableList<kotlin.Int>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(106,110): 'list'
   KtSimpleNameReference:
     list: kotlin.collections.MutableList<kotlin.Int>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -45,14 +45,14 @@ KtCallExpression(111,129): 'get(implicitIndex)'
 KtNameReferenceExpression(111,114): 'get'
   KtSimpleNameReference:
     (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
   KtSimpleNameReference:
     (in <local>: usage) val implicitIndex: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -75,7 +75,7 @@ KtCallExpression(179,199): 'foo(--list[i], list)'
 KtNameReferenceExpression(179,182): 'foo'
   KtSimpleNameReference:
     (in ROOT) fun foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -91,20 +91,20 @@ KtArrayAccessExpression(185,192): 'list[i]'
 KtNameReferenceExpression(185,189): 'list'
   KtSimpleNameReference:
     list: kotlin.collections.MutableList<kotlin.Int>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(190,191): 'i'
   KtSimpleNameReference:
     i: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(194,198): 'list'
   KtSimpleNameReference:
     list: kotlin.collections.MutableList<kotlin.Int>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

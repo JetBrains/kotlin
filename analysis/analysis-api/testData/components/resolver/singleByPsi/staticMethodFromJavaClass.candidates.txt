@@ -16,7 +16,7 @@ KtCallExpression(80,85): 'foo()'
           callableId = /BaseClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

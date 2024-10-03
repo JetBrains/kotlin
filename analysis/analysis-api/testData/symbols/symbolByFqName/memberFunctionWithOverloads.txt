@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.List.listIterator)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -69,6 +70,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.List.listIterator)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -99,6 +101,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.List.listIterator.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

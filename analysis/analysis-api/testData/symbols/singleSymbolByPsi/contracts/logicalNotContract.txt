@@ -34,6 +34,7 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: value
                   origin: SOURCE
+                  psi: KtParameter(logicalNotContract.value)
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
@@ -62,6 +63,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: logicalNotContract
   origin: SOURCE
+  psi: KtNamedFunction(logicalNotContract)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -88,6 +90,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtParameter(logicalNotContract.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

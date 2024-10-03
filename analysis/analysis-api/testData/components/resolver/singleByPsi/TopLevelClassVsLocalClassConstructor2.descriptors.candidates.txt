@@ -14,7 +14,7 @@ KtNameReferenceExpression(75,83): 'Conflict'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

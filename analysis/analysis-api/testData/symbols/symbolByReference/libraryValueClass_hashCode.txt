@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(one.ValueClass.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

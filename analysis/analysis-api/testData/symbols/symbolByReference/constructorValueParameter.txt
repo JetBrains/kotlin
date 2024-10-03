@@ -17,6 +17,7 @@ KaValueParameterSymbol:
   modality: FINAL
   name: abc
   origin: SOURCE
+  psi: KtParameter(A.A.abc)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

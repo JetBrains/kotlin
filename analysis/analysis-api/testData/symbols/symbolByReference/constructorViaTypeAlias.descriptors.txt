@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.util.ArrayList.ArrayList)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -44,6 +45,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []

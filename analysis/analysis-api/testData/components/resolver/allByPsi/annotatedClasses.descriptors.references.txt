@@ -9,14 +9,14 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
 KtNameReferenceExpression(23,39): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(40,44): 'TYPE'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -35,7 +35,7 @@ KtValueArgument(154,176): '"parameter type $prop"'
 KtNameReferenceExpression(171,175): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -86,7 +86,7 @@ KtValueArgument(292,312): '"defaultValue $prop"'
 KtNameReferenceExpression(307,311): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -101,7 +101,7 @@ KtValueArgument(327,367): '"anonymousFunction parameter type $prop"'
 KtNameReferenceExpression(362,366): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -120,7 +120,7 @@ KtValueArgument(381,418): '"anonymousFunction return type $prop"'
 KtNameReferenceExpression(413,417): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -143,7 +143,7 @@ KtValueArgument(486,509): '"super type call $prop"'
 KtNameReferenceExpression(504,508): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -194,7 +194,7 @@ KtValueArgument(659,682): '"super type call $prop"'
 KtNameReferenceExpression(677,681): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -245,7 +245,7 @@ KtValueArgument(846,868): '"super type ref $prop"'
 KtNameReferenceExpression(863,867): 'prop'
   KtSimpleNameReference:
     (in ROOT) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

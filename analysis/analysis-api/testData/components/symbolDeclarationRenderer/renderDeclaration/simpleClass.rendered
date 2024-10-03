@@ -17,4 +17,3 @@ class SomeClass : SomeInterface {
 }
 
 inline class InlineClass
-

@@ -33,7 +33,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -69,7 +69,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T>' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -105,7 +105,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T>' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

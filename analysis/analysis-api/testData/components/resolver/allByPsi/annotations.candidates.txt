@@ -1851,7 +1851,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1934,7 +1934,7 @@ KtOperationReferenceExpression(815,816): '+'
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

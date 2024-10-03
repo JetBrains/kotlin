@@ -158,7 +158,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -192,7 +192,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -226,7 +226,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -259,7 +259,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -293,7 +293,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -365,7 +365,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -399,7 +399,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -433,7 +433,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -466,7 +466,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -500,7 +500,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -569,7 +569,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -603,7 +603,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -637,7 +637,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -670,7 +670,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -704,7 +704,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

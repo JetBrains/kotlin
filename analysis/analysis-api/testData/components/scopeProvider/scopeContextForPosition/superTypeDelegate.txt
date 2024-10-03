@@ -24,6 +24,7 @@ scopes:
         modality: FINAL
         name: base
         origin: SOURCE
+        psi: KtParameter(test.Child.Child.base)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -59,6 +60,7 @@ scopes:
         modality: ABSTRACT
         name: Base
         origin: SOURCE
+        psi: KtClass(test.Base)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -85,6 +87,7 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
+        psi: KtClass(test.Child)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -107,4 +110,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 6
-

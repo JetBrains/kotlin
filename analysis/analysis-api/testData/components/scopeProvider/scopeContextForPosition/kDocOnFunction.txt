@@ -34,6 +34,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -60,6 +61,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -91,6 +93,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -122,6 +125,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -145,6 +149,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass(test.Receiver)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -177,6 +182,7 @@ scopes:
         modality: FINAL
         name: param1
         origin: SOURCE
+        psi: KtParameter(test.function.param1)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -202,6 +208,7 @@ scopes:
         modality: FINAL
         name: param2
         origin: SOURCE
+        psi: KtParameter(test.function.param2)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -223,6 +230,7 @@ scopes:
         modality: FINAL
         name: TypeParam
         origin: SOURCE
+        psi: KtTypeParameter(test.function.TypeParam)
         upperBounds: []
         variance: INVARIANT
         visibility: LOCAL
@@ -256,6 +264,7 @@ scopes:
         modality: FINAL
         name: Receiver
         origin: SOURCE
+        psi: KtClass(test.Receiver)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -282,6 +291,7 @@ scopes:
         modality: FINAL
         name: Param1
         origin: SOURCE
+        psi: KtClass(test.Param1)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -308,6 +318,7 @@ scopes:
         modality: FINAL
         name: Param2
         origin: SOURCE
+        psi: KtClass(test.Param2)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -340,6 +351,7 @@ scopes:
         modality: FINAL
         name: function
         origin: SOURCE
+        psi: KtNamedFunction(test.function)
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
@@ -354,6 +366,7 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(test/function)
+          psi: KtTypeReference(Receiver)
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -386,6 +399,7 @@ scopes:
             modality: FINAL
             name: param1
             origin: SOURCE
+            psi: KtParameter(test.function.param1)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -411,6 +425,7 @@ scopes:
             modality: FINAL
             name: param2
             origin: SOURCE
+            psi: KtParameter(test.function.param2)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -432,4 +447,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: foo
                       origin: SOURCE
+                      psi: KtParameter(twoContracts.foo)
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
@@ -74,6 +75,7 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: bar
                       origin: SOURCE
+                      psi: KtParameter(twoContracts.bar)
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
@@ -109,6 +111,7 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              psi: KtParameter(twoContracts.block)
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -143,6 +146,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: twoContracts
   origin: SOURCE
+  psi: KtNamedFunction(twoContracts)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -169,6 +173,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      psi: KtParameter(twoContracts.foo)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -198,6 +203,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bar
       origin: SOURCE
+      psi: KtParameter(twoContracts.bar)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -227,6 +233,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: block
       origin: SOURCE
+      psi: KtParameter(twoContracts.block)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

@@ -28,7 +28,7 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {

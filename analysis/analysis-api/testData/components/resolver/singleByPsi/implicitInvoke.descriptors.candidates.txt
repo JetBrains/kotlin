@@ -32,7 +32,7 @@ KtCallExpression(110,117): 'x(true)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Int>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -63,7 +63,7 @@ KtCallExpression(110,117): 'x(true)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Char>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

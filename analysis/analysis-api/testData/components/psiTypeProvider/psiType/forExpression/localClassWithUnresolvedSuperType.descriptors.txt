@@ -94,4 +94,3 @@ asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
-

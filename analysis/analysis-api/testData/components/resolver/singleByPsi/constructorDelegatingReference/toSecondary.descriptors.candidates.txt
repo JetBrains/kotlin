@@ -15,7 +15,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -46,7 +46,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {

@@ -24,6 +24,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtNamedFunction(test.Foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -50,6 +51,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: text
       origin: SOURCE
+      psi: KtParameter(test.Foo.text)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [

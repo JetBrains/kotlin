@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.listOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -53,6 +54,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.listOf.element)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -92,6 +94,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.listOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -124,6 +127,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.listOf.elements)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -166,6 +170,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.listOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

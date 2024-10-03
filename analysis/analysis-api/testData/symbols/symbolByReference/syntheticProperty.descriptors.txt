@@ -20,6 +20,7 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -34,6 +35,7 @@ KaSyntheticJavaPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -76,6 +78,7 @@ KaSyntheticJavaPropertySymbol:
   modality: FINAL
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
+  psi: null
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -90,6 +93,7 @@ KaSyntheticJavaPropertySymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -141,6 +145,7 @@ KaSyntheticJavaPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -153,6 +158,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
       deprecationStatus: null
+    psi: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -167,6 +173,7 @@ KaSyntheticJavaPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -203,6 +210,7 @@ KaSyntheticJavaPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

@@ -11,6 +11,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter(A.T)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -28,6 +29,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: R
   origin: SOURCE
+  psi: KtTypeParameter(A.R)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -53,6 +55,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []

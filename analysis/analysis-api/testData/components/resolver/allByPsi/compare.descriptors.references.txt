@@ -9,7 +9,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 KtNameReferenceExpression(30,39): 'compareTo'
   KtSimpleNameReference:
     (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -28,14 +28,14 @@ KtCallExpression(99,108): 'MyClass()'
 KtNameReferenceExpression(99,106): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(113,120): 'myClass'
   KtSimpleNameReference:
     (in <local>: usage) val myClass: MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -46,14 +46,14 @@ KtOperationReferenceExpression(121,123): '>='
 KtNameReferenceExpression(124,130): 'number'
   KtSimpleNameReference:
     (in <local>: usage) val number: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(135,142): 'myClass'
   KtSimpleNameReference:
     (in <local>: usage) val myClass: MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -64,14 +64,14 @@ KtCallExpression(143,160): 'compareTo(number)'
 KtNameReferenceExpression(143,152): 'compareTo'
   KtSimpleNameReference:
     (in MyClass) operator fun compareTo(i: kotlin.Int): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(153,159): 'number'
   KtSimpleNameReference:
     (in <local>: usage) val number: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -86,6 +86,6 @@ KtNameReferenceExpression(216,219): 'Int'
 KtNameReferenceExpression(222,223): 'i'
   KtSimpleNameReference:
     i: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

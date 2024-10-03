@@ -18,7 +18,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
         A -> (kotlin.String)
       }
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

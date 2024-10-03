@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/foo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -43,6 +44,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -72,6 +74,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtProperty(test.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -105,6 +108,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/internalFoo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -134,6 +138,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -163,6 +168,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: internalFoo
   origin: SOURCE
+  psi: KtProperty(test.internalFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -196,6 +202,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/privateFoo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -225,6 +232,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -254,6 +262,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: privateFoo
   origin: SOURCE
+  psi: KtProperty(test.privateFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -287,6 +296,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/bar)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -316,6 +326,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -345,6 +356,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtProperty(test.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -378,6 +390,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/internalBar)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -407,6 +420,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -436,6 +450,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: internalBar
   origin: SOURCE
+  psi: KtProperty(test.internalBar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -469,6 +484,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/privateBar)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -498,6 +514,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -527,6 +544,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: privateBar
   origin: SOURCE
+  psi: KtProperty(test.privateBar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -567,6 +585,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: doFoo
   origin: SOURCE
+  psi: KtNamedFunction(test.doFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -603,6 +622,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalDoFoo
   origin: SOURCE
+  psi: KtNamedFunction(test.internalDoFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -639,6 +659,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateDoFoo
   origin: SOURCE
+  psi: KtNamedFunction(test.privateDoFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -675,6 +696,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: doBar
   origin: SOURCE
+  psi: KtNamedFunction(test.doBar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -711,6 +733,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalDoBar
   origin: SOURCE
+  psi: KtNamedFunction(test.internalDoBar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -747,6 +770,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateDoBar
   origin: SOURCE
+  psi: KtNamedFunction(test.privateDoBar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

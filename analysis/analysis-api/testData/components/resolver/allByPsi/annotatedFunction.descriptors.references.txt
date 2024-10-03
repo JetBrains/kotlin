@@ -9,56 +9,56 @@ KtNameReferenceExpression(34,40): 'Target'
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE_PARAMETER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(100,108): 'FUNCTION'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) FUNCTION
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) VALUE_PARAMETER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(169,173): 'TYPE'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -77,7 +77,7 @@ KtValueArgument(265,281): '"function $prop"'
 KtNameReferenceExpression(276,280): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -92,7 +92,7 @@ KtValueArgument(294,316): '"type parameter $prop"'
 KtNameReferenceExpression(311,315): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -107,7 +107,7 @@ KtValueArgument(328,346): '"bound type $prop"'
 KtNameReferenceExpression(341,345): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -142,7 +142,7 @@ KtValueArgument(410,426): '"receiver $prop"'
 KtNameReferenceExpression(421,425): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -157,7 +157,7 @@ KtValueArgument(434,455): '"receiver type $prop"'
 KtNameReferenceExpression(450,454): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -208,7 +208,7 @@ KtValueArgument(567,584): '"parameter $prop"'
 KtNameReferenceExpression(579,583): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -223,7 +223,7 @@ KtValueArgument(599,621): '"parameter type $prop"'
 KtNameReferenceExpression(616,620): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -274,7 +274,7 @@ KtValueArgument(741,760): '"return type $prop"'
 KtNameReferenceExpression(755,759): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -317,7 +317,7 @@ KtNameReferenceExpression(847,850): 'Int'
 KtNameReferenceExpression(867,868): 'T'
   KtSimpleNameReference:
     (in <local>: function) T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -332,7 +332,7 @@ KtValueArgument(877,900): '"constraint type $prop"'
 KtNameReferenceExpression(895,899): 'prop'
   KtSimpleNameReference:
     (in lowlevel) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

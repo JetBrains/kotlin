@@ -22,6 +22,7 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
+        psi: KtClass(pkg.A)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -39,30 +40,37 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(META-INF)
       KaPackageSymbol:
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(java)
       KaPackageSymbol:
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(javax)
       KaPackageSymbol:
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(kotlin)
       KaPackageSymbol:
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(org)
       KaPackageSymbol:
         fqName: pkg
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(pkg)
       KaPackageSymbol:
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(sun)
     classifiers: 1
       KaNamedClassSymbol:
         annotations: []
@@ -82,6 +90,7 @@ scopes:
         modality: FINAL
         name: B
         origin: SOURCE
+        psi: KtClass(B)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -104,4 +113,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

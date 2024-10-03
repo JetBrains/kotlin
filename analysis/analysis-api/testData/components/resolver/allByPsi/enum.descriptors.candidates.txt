@@ -461,7 +461,7 @@ KtNameReferenceExpression(307,311): 'with'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'receiver'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

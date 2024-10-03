@@ -96,6 +96,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component1
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.component1)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -126,6 +127,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component2
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.component2)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -156,6 +158,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: copy
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.copy)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -189,6 +192,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: first
       origin: LIBRARY
+      psi: KtParameter(kotlin.Pair.copy.first)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -213,6 +217,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: second
       origin: LIBRARY
+      psi: KtParameter(kotlin.Pair.copy.second)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -243,6 +248,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -269,6 +275,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Pair.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -300,6 +307,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -331,6 +339,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Pair.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -355,6 +364,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.first)
+    psi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -379,6 +389,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -403,6 +414,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: first
   origin: LIBRARY
+  psi: KtProperty(kotlin.Pair.first)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -426,6 +438,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.second)
+    psi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -450,6 +463,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -474,6 +488,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: second
   origin: LIBRARY
+  psi: KtProperty(kotlin.Pair.second)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -481,4 +496,3 @@ KaKotlinPropertySymbol:
   setter: null
   typeParameters: []
   visibility: PUBLIC
-

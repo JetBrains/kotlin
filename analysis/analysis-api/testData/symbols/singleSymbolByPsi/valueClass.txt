@@ -19,6 +19,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: ValueClass
   origin: SOURCE
+  psi: KtClass(ValueClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/x)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -54,6 +55,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: KtPropertyAccessor(@ExplicitGetAnnotation)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -83,6 +85,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
+  psi: KtProperty(x)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -133,6 +136,7 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtParameter(null.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -143,6 +147,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+    psi: KtPropertyAccessor(@ExplicitSetAnnotation)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -173,6 +178,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: KtParameter(null.value)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

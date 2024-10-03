@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: foo
                       origin: SOURCE
+                      psi: KtParameter(boolenExprContract.foo)
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
@@ -74,6 +75,7 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: bar
                       origin: SOURCE
+                      psi: KtParameter(boolenExprContract.bar)
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
@@ -104,6 +106,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: boolenExprContract
   origin: SOURCE
+  psi: KtNamedFunction(boolenExprContract)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -130,6 +133,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      psi: KtParameter(boolenExprContract.foo)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -159,6 +163,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bar
       origin: SOURCE
+      psi: KtParameter(boolenExprContract.bar)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

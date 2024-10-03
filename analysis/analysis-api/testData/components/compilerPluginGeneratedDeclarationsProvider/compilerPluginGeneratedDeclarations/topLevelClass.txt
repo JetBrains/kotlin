@@ -18,6 +18,7 @@ classifiers: 1
     modality: FINAL
     name: AllOpenGenerated
     origin: PLUGIN
+    psi: null
     superTypes: [
       KaUsualClassType:
         annotations: []

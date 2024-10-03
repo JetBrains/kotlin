@@ -28,7 +28,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {

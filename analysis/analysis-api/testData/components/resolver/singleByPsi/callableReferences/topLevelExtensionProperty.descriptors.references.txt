@@ -1,7 +1,7 @@
 KtNameReferenceExpression(76,79): 'Foo'
   KtSimpleNameReference:
     (in ROOT) interface Foo
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
+  psi: KtClass(kotlin.collections.Iterator)
   superTypes: [
     KaUsualClassType:
       annotations: []

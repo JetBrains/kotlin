@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component1
   origin: LIBRARY
+  psi: KtNamedFunction(one.DataClass.component1)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

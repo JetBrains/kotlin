@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(MyKotlinEnum)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtClass(MyKotlinEnum)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

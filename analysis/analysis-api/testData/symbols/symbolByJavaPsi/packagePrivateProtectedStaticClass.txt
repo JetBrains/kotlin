@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: NestedClass
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass.NestedClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

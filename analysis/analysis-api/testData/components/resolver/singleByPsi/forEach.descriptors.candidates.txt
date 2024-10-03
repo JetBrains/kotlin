@@ -34,7 +34,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -68,7 +68,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -102,7 +102,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -136,7 +136,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -170,7 +170,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -204,7 +204,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -238,7 +238,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -272,7 +272,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -306,7 +306,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -340,7 +340,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -374,7 +374,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -408,7 +408,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -442,7 +442,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -476,7 +476,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -511,7 +511,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -547,7 +547,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -580,7 +580,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = /forEach
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -617,7 +617,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -654,7 +654,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

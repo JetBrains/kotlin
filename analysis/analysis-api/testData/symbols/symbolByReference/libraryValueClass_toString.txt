@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(one.ValueClass.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -40,6 +40,7 @@ scopes:
         modality: FINAL
         name: fromReceiver
         origin: SOURCE
+        psi: KtNamedFunction(test.Receiver.fromReceiver)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -71,6 +72,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -97,6 +99,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -128,6 +131,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -159,6 +163,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -182,6 +187,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass(test.Receiver)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -230,6 +236,7 @@ scopes:
         modality: FINAL
         name: Receiver
         origin: SOURCE
+        psi: KtClass(test.Receiver)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -256,6 +263,7 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
+        psi: KtClass(test.Base)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -282,6 +290,7 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
+        psi: KtClass(test.Child)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -304,4 +313,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
-

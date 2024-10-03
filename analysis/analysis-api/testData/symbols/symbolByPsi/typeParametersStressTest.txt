@@ -8,6 +8,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtTypeParameter(topLevelFunction.A)
   upperBounds: [
     KaUsualClassType:
       annotations: []
@@ -43,6 +44,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: topLevelFunction
   origin: SOURCE
+  psi: KtNamedFunction(topLevelFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -68,6 +70,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtTypeParameter(topLevelProperty.B)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -91,6 +94,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/topLevelProperty)
+    psi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -119,6 +123,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: KtPropertyAccessor(get() = this)
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -133,6 +138,7 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/topLevelProperty)
+      psi: KtTypeReference(B)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -169,6 +175,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: topLevelProperty
   origin: SOURCE
+  psi: KtProperty(topLevelProperty)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -183,6 +190,7 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/topLevelProperty)
+    psi: KtTypeReference(B)
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -219,6 +227,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.C)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -236,6 +245,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: D
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.D)
   upperBounds: [
     KaTypeParameterType:
       annotations: []
@@ -261,6 +271,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(TopLevelClass.TopLevelClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -297,6 +308,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: arg
       origin: SOURCE
+      psi: KtParameter(TopLevelClass.TopLevelClass.arg)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -323,6 +335,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: E
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.NestedClass.E)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -340,6 +353,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.NestedClass.nestedFunction.F)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -357,6 +371,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: G
   origin: SOURCE
+  psi: KtTypeParameter(localFunction.G)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -374,6 +389,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: H
   origin: SOURCE
+  psi: KtTypeParameter(LocalClass.H)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -391,6 +407,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: I
   origin: SOURCE
+  psi: KtTypeParameter(localMemberFunction.I)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -421,6 +438,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: localMemberFunction
   origin: SOURCE
+  psi: KtNamedFunction(localMemberFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -454,6 +472,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: J
   origin: SOURCE
+  psi: KtTypeParameter(LocalInnerClass.J)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -479,6 +498,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalInnerClass
   origin: SOURCE
+  psi: KtClass(LocalInnerClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -512,6 +532,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
+  psi: KtClass(LocalClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -550,6 +571,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: localFunction
   origin: SOURCE
+  psi: KtNamedFunction(localFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -588,6 +610,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: nestedFunction
   origin: SOURCE
+  psi: KtNamedFunction(TopLevelClass.NestedClass.nestedFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -629,6 +652,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: NestedClass
   origin: SOURCE
+  psi: KtClass(TopLevelClass.NestedClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -654,6 +678,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: K
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.InnerClass.K)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -671,6 +696,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: L
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelClass.InnerClass.nestedFunction.L)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -688,6 +714,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: M
   origin: SOURCE
+  psi: KtTypeParameter(localFunction.M)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -705,6 +732,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: N
   origin: SOURCE
+  psi: KtTypeParameter(LocalClass.N)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -722,6 +750,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: O
   origin: SOURCE
+  psi: KtTypeParameter(localMemberFunction.O)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -752,6 +781,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: localMemberFunction
   origin: SOURCE
+  psi: KtNamedFunction(localMemberFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -785,6 +815,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: P
   origin: SOURCE
+  psi: KtTypeParameter(LocalInnerClass.P)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -810,6 +841,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalInnerClass
   origin: SOURCE
+  psi: KtClass(LocalInnerClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -843,6 +875,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
+  psi: KtClass(LocalClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -881,6 +914,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: localFunction
   origin: SOURCE
+  psi: KtNamedFunction(localFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -909,6 +943,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: localProperty
   origin: SOURCE
+  psi: KtProperty(localProperty)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -943,6 +978,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: nestedFunction
   origin: SOURCE
+  psi: KtNamedFunction(TopLevelClass.InnerClass.nestedFunction)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -984,6 +1020,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InnerClass
   origin: SOURCE
+  psi: KtClass(TopLevelClass.InnerClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1017,6 +1054,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: TopLevelClass
   origin: SOURCE
+  psi: KtClass(TopLevelClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1043,6 +1081,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: Q
   origin: SOURCE
+  psi: KtTypeParameter(TopLevelTypeAlias.Q)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -1064,6 +1103,7 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: TopLevelTypeAlias
   origin: SOURCE
+  psi: KtTypeAlias(TopLevelTypeAlias)
   typeParameters: [
     KaTypeParameterSymbol(Q)
   ]

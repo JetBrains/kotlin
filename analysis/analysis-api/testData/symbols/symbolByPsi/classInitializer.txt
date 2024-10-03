@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/A.i)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -43,6 +44,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -76,6 +78,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: i
   origin: SOURCE
+  psi: KtProperty(A.i)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -105,6 +108,7 @@ KaClassInitializerSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtClassInitializer(init {)
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingModule: KaSourceModule "Sources of main"
@@ -128,6 +132,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []

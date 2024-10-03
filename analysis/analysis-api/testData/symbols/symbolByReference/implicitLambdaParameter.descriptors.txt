@@ -17,6 +17,7 @@ KaValueParameterSymbol:
   modality: FINAL
   name: it
   origin: SOURCE_MEMBER_GENERATED
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

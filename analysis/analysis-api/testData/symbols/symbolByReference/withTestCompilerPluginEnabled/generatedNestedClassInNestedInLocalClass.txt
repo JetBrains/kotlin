@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Generated
   origin: PLUGIN
+  psi: null
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: KClass
   origin: LIBRARY
+  psi: KtClass(kotlin.reflect.KClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

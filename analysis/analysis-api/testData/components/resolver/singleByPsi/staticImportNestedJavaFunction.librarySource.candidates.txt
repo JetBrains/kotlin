@@ -16,7 +16,7 @@ KtCallExpression(95,100): 'foo()'
           callableId = /Dependency.Nested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

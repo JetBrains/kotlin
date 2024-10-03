@@ -445,7 +445,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -479,7 +479,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -513,7 +513,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -546,7 +546,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -580,7 +580,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -614,7 +614,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -699,7 +699,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -733,7 +733,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -767,7 +767,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -800,7 +800,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -834,7 +834,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -868,7 +868,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -937,7 +937,7 @@ KtNameReferenceExpression(208,212): 'plus'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -971,7 +971,7 @@ KtNameReferenceExpression(208,212): 'plus'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1005,7 +1005,7 @@ KtNameReferenceExpression(208,212): 'plus'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1038,7 +1038,7 @@ KtNameReferenceExpression(208,212): 'plus'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1072,7 +1072,7 @@ KtNameReferenceExpression(208,212): 'plus'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -1106,7 +1106,7 @@ KtNameReferenceExpression(208,212): 'plus'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

@@ -109,14 +109,14 @@ KtCallExpression(392,405): 'NestedClass()'
 KtNameReferenceExpression(392,403): 'NestedClass'
   KtSimpleNameReference:
     (in one.two.Base.NestedClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(422,424): 'c1'
   KtSimpleNameReference:
     c1: one.two.Child<one.two.Base.NestedClass>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -127,6 +127,6 @@ KtCallExpression(425,432): 'Inner()'
 KtNameReferenceExpression(425,430): 'Inner'
   KtSimpleNameReference:
     (in one.two.Base.Inner) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

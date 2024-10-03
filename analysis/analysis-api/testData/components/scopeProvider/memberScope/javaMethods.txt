@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -61,6 +62,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: doo
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.doo)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -86,6 +88,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: i
       origin: JAVA_SOURCE
+      psi: PsiParameterImpl(i)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -130,6 +133,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getStringValue
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.getStringValue)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -169,6 +173,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -195,6 +200,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -239,6 +245,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -279,6 +286,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -310,6 +318,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

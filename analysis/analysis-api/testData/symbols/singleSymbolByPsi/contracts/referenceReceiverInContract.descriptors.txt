@@ -25,6 +25,7 @@ KaNamedFunctionSymbol:
               name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
+              psi: null
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -59,6 +60,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: referenceReceiverInContract
   origin: SOURCE
+  psi: KtNamedFunction(referenceReceiverInContract)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -73,6 +75,7 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
+    psi: null
     receiverParameter: null
     returnType: KaFunctionType:
       annotations: []

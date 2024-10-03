@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(MyColor.MyColor)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +41,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.x)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -102,6 +105,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: x
         origin: SOURCE
+        psi: KtParameter(MyColor.MyColor.x)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -135,6 +139,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      psi: KtParameter(MyColor.MyColor.x)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -166,6 +171,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.y)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -195,6 +201,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -228,6 +235,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: y
         origin: SOURCE
+        psi: KtParameter(MyColor.MyColor.y)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -261,6 +269,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: y
       origin: SOURCE
+      psi: KtParameter(MyColor.MyColor.y)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -292,6 +301,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.z)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -321,6 +331,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -354,6 +365,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: z
         origin: SOURCE
+        psi: KtParameter(MyColor.MyColor.z)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -387,6 +399,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: z
       origin: SOURCE
+      psi: KtParameter(MyColor.MyColor.z)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -422,6 +435,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyColor
   origin: SOURCE
+  psi: KtClass(MyColor)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -447,6 +461,7 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtFunctionLiteral(<anonymous>)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -475,6 +490,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.delegate)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -504,6 +520,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -533,6 +550,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: delegate
   origin: SOURCE
+  psi: KtProperty(Some.delegate)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -566,6 +584,7 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtFunctionLiteral(<anonymous>)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -594,6 +613,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.lambda)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -628,6 +648,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -666,6 +687,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: lambda
   origin: SOURCE
+  psi: KtProperty(Some.lambda)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -708,6 +730,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.nonLazy)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -737,6 +760,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -770,6 +794,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: nonLazy
   origin: SOURCE
+  psi: KtProperty(Some.nonLazy)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -809,6 +834,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Some
   origin: SOURCE
+  psi: KtClass(Some)
   superTypes: [
     KaUsualClassType:
       annotations: []

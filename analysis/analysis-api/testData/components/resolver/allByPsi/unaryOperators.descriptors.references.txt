@@ -5,7 +5,7 @@ KtOperationReferenceExpression(49,50): '-'
 KtNameReferenceExpression(50,53): 'one'
   KtSimpleNameReference:
     (in <local>: usage) val one: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -16,7 +16,7 @@ KtOperationReferenceExpression(73,74): '+'
 KtNameReferenceExpression(74,77): 'one'
   KtSimpleNameReference:
     (in <local>: usage) val one: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -39,7 +39,7 @@ KtCallExpression(88,97): 'MyClass()'
 KtNameReferenceExpression(88,95): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -50,7 +50,7 @@ KtCallExpression(98,110): 'unaryMinus()'
 KtNameReferenceExpression(98,108): 'unaryMinus'
   KtSimpleNameReference:
     (in MyClass) operator fun unaryMinus(): MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -61,7 +61,7 @@ KtCallExpression(111,116): 'not()'
 KtNameReferenceExpression(111,114): 'not'
   KtSimpleNameReference:
     (in MyClass) operator fun not(): MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

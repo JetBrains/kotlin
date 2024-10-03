@@ -41,7 +41,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
 KtNameReferenceExpression(147,156): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
-  
+
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
@@ -56,21 +56,21 @@ KtNameReferenceExpression(166,175): 'javaClass'
 KtNameReferenceExpression(176,185): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
-  
+
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
 KtOperationReferenceExpression(185,187): '++'
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
-  
+
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
 
 KtOperationReferenceExpression(192,194): '--'
   KtSimpleNameReference:
     (in kotlin.Int) operator fun dec(): kotlin.Int
-  
+
   KtSimpleNameReference:
     (in kotlin.Int) operator fun dec(): kotlin.Int
 
@@ -81,35 +81,35 @@ KtNameReferenceExpression(194,203): 'javaClass'
 KtNameReferenceExpression(204,213): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
-  
+
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
 KtNameReferenceExpression(219,228): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
-  
+
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
 KtOperationReferenceExpression(228,230): '++'
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
-  
+
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
 
 KtNameReferenceExpression(236,245): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
-  
+
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
 KtOperationReferenceExpression(246,248): '++'
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
-  
+
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
 

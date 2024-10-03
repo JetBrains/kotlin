@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: KotlinClass
   origin: SOURCE
+  psi: KtClass(test.KotlinClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

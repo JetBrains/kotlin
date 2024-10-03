@@ -24,6 +24,7 @@ scopes:
         modality: FINAL
         name: <iterator>
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -66,6 +67,7 @@ scopes:
         modality: FINAL
         name: list
         origin: SOURCE
+        psi: KtParameter(test.usage.list)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -112,6 +114,7 @@ scopes:
         modality: FINAL
         name: usage
         origin: SOURCE
+        psi: KtNamedFunction(test.usage)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -138,6 +141,7 @@ scopes:
             modality: FINAL
             name: list
             origin: SOURCE
+            psi: KtParameter(test.usage.list)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -164,4 +168,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
-

@@ -258,7 +258,7 @@ KtCallExpression(203,208): 'foo()'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -295,7 +295,7 @@ KtNameReferenceExpression(203,206): 'foo'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -578,7 +578,7 @@ KtCallExpression(403,408): 'foo()'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -596,7 +596,7 @@ KtCallExpression(403,408): 'foo()'
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -633,7 +633,7 @@ KtNameReferenceExpression(403,406): 'foo'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -651,7 +651,7 @@ KtNameReferenceExpression(403,406): 'foo'
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1030,6 +1030,7 @@ KtCallExpression(625,630): 'foo()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1046,7 +1047,7 @@ KtCallExpression(625,630): 'foo()'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1064,7 +1065,7 @@ KtCallExpression(625,630): 'foo()'
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1104,6 +1105,7 @@ KtNameReferenceExpression(625,628): 'foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1120,7 +1122,7 @@ KtNameReferenceExpression(625,628): 'foo'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1138,7 +1140,7 @@ KtNameReferenceExpression(625,628): 'foo'
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1652,6 +1654,7 @@ KtCallExpression(891,896): 'foo()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1668,7 +1671,7 @@ KtCallExpression(891,896): 'foo()'
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1686,7 +1689,7 @@ KtCallExpression(891,896): 'foo()'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1726,6 +1729,7 @@ KtNameReferenceExpression(891,894): 'foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1742,7 +1746,7 @@ KtNameReferenceExpression(891,894): 'foo'
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1760,7 +1764,7 @@ KtNameReferenceExpression(891,894): 'foo'
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -2422,6 +2426,7 @@ KtCallExpression(1272,1282): 'body(this)'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+            psi: null
             receiverParameter: null
             returnType: KaTypeParameterType:
               annotations: []
@@ -2443,7 +2448,7 @@ KtCallExpression(1272,1282): 'body(this)'
           callableId = kotlin/Function2.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

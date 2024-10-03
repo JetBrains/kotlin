@@ -25,7 +25,7 @@ KtCallExpression(124,133): 'MyClass()'
 KtNameReferenceExpression(124,131): 'MyClass'
   KtSimpleNameReference:
     (in r.MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -36,7 +36,7 @@ KtCallExpression(156,165): 'MyClass()'
 KtNameReferenceExpression(156,163): 'MyClass'
   KtSimpleNameReference:
     (in r.MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -47,14 +47,14 @@ KtCallExpression(186,191): 'foo()'
 KtNameReferenceExpression(186,189): 'foo'
   KtSimpleNameReference:
     (in r) fun foo(): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(196,199): 'foo'
   KtSimpleNameReference:
     (in r) val foo: r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -69,7 +69,7 @@ KtCallExpression(206,213): '(foo)()'
 KtNameReferenceExpression(207,210): 'foo'
   KtSimpleNameReference:
     (in r) val foo: r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -80,14 +80,14 @@ KtCallExpression(218,226): 'invoke()'
 KtNameReferenceExpression(218,224): 'invoke'
   KtSimpleNameReference:
     (in r.MyClass) operator fun invoke(): r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(231,234): 'foo'
   KtSimpleNameReference:
     (in r) val foo: r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -98,7 +98,7 @@ KtCallExpression(235,243): 'invoke()'
 KtNameReferenceExpression(235,241): 'invoke'
   KtSimpleNameReference:
     (in r.MyClass) operator fun invoke(): r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -109,6 +109,6 @@ KtCallExpression(248,258): 'property()'
 KtNameReferenceExpression(248,256): 'property'
   KtSimpleNameReference:
     (in r) val property: r.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

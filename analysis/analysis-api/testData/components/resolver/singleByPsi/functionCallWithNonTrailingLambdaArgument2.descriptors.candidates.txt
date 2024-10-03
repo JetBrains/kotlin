@@ -55,7 +55,7 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
         O1 -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

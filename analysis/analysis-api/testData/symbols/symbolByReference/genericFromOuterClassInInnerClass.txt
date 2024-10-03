@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuter
   origin: SOURCE
+  psi: KtNamedFunction(test.TopLevel.Base.withOuter)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []

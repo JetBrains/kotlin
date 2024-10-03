@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(Anno.Anno)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +41,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Anno.param1)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -102,6 +105,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: param1
         origin: SOURCE
+        psi: KtParameter(Anno.Anno.param1)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -135,6 +139,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: param1
       origin: SOURCE
+      psi: KtParameter(Anno.Anno.param1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -166,6 +171,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Anno.param2)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -195,6 +201,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -228,6 +235,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: param2
         origin: SOURCE
+        psi: KtParameter(Anno.Anno.param2)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -261,6 +269,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: param2
       origin: SOURCE
+      psi: KtParameter(Anno.Anno.param2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -296,6 +305,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Anno
   origin: SOURCE
+  psi: KtClass(Anno)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -335,6 +345,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
+  psi: KtNamedFunction(X.x)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -373,6 +384,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
+  psi: KtClass(X)
   superTypes: [
     KaUsualClassType:
       annotations: []

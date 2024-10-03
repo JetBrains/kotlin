@@ -12,6 +12,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: bar
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(Dependency.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: PLUGIN
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -49,6 +50,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: $$result
   origin: PLUGIN
+  psi: KtScriptInitializer(42)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

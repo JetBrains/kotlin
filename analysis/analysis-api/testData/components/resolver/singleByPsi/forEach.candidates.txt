@@ -33,7 +33,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

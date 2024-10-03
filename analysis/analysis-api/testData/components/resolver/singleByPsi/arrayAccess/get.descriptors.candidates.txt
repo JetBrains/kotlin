@@ -31,7 +31,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -68,7 +68,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

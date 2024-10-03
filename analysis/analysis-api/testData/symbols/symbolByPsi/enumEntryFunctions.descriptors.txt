@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: a
   origin: SOURCE
+  psi: KtNamedFunction(MyEnumClass.FirstEntry.a)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -52,6 +53,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: FirstEntry
   origin: SOURCE
+  psi: KtEnumEntry(MyEnumClass.FirstEntry)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -77,6 +79,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SecondEntry
   origin: SOURCE
+  psi: KtEnumEntry(MyEnumClass.SecondEntry)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -111,6 +114,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: one
   origin: SOURCE
+  psi: KtNamedFunction(MyEnumClass.ThirdEntry.one)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -151,6 +155,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: one
   origin: SOURCE
+  psi: KtNamedFunction(MyEnumClass.ThirdEntry.one)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -177,6 +182,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: i
       origin: SOURCE
+      psi: KtParameter(MyEnumClass.ThirdEntry.one.i)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -212,6 +218,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: ThirdEntry
   origin: SOURCE
+  psi: KtEnumEntry(MyEnumClass.ThirdEntry)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -241,6 +248,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyEnumClass
   origin: SOURCE
+  psi: KtClass(MyEnumClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

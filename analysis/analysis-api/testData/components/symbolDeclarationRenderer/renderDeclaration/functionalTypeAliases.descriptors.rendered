@@ -21,4 +21,3 @@ fun withContextReceiver(f: suspend (String) -> Int)
 typealias WithEverything<T> = suspend context(T, B) String.(Int, T) -> String
 
 fun withEverything(f: suspend context(A, B) String.(Int, A) -> String)
-

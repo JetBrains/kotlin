@@ -12,6 +12,7 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: value
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl(java.lang.String.value)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -40,6 +41,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: hash
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl(java.lang.String.hash)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -78,6 +80,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.hash32)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -109,6 +112,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl(java.lang.String.hash32)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -146,6 +150,7 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
+    psi: ClsMethodImpl(java.lang.String.length)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -179,6 +184,7 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -223,6 +229,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: isEmpty
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.isEmpty)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -263,6 +270,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointAt
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.codePointAt)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -289,6 +297,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -333,6 +342,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointBefore
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.codePointBefore)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -359,6 +369,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -403,6 +414,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointCount
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.codePointCount)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -429,6 +441,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -458,6 +471,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -502,6 +516,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: offsetByCodePoints
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.offsetByCodePoints)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -528,6 +543,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -557,6 +573,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -601,6 +618,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getChars)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -627,6 +645,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -655,6 +674,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -699,6 +719,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getChars)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -725,6 +746,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -754,6 +776,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -783,6 +806,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -811,6 +835,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -858,6 +883,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getBytes)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -884,6 +910,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -913,6 +940,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -942,6 +970,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -970,6 +999,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1014,6 +1044,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getBytes)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1039,6 +1070,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1082,6 +1114,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getBytes)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1107,6 +1140,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1150,6 +1184,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.getBytes)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1189,6 +1224,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1215,6 +1251,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1259,6 +1296,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.contentEquals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1285,6 +1323,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1328,6 +1367,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.contentEquals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1354,6 +1394,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1397,6 +1438,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equalsIgnoreCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.equalsIgnoreCase)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1423,6 +1465,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1466,6 +1509,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1492,6 +1536,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1535,6 +1580,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: compareToIgnoreCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.compareToIgnoreCase)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1561,6 +1607,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1604,6 +1651,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.regionMatches)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1630,6 +1678,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1659,6 +1708,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1687,6 +1737,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1716,6 +1767,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1760,6 +1812,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.regionMatches)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1786,6 +1839,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1815,6 +1869,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1844,6 +1899,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1872,6 +1928,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1901,6 +1958,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p4
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p4)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1945,6 +2003,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.startsWith)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1971,6 +2030,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -1999,6 +2059,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2043,6 +2104,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.startsWith)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2069,6 +2131,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2112,6 +2175,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: endsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.endsWith)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2138,6 +2202,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2181,6 +2246,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2221,6 +2287,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.indexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2247,6 +2314,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2291,6 +2359,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.indexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2317,6 +2386,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2346,6 +2416,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2390,6 +2461,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.indexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2416,6 +2488,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2459,6 +2532,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.indexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2485,6 +2559,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2513,6 +2588,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2557,6 +2633,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOfSupplementary
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.indexOfSupplementary)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2583,6 +2660,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2612,6 +2690,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2656,6 +2735,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.lastIndexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2682,6 +2762,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2726,6 +2807,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.lastIndexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2752,6 +2834,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2781,6 +2864,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2825,6 +2909,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.lastIndexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2851,6 +2936,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2894,6 +2980,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.lastIndexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2920,6 +3007,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -2948,6 +3036,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2992,6 +3081,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOfSupplementary
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.lastIndexOfSupplementary)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3018,6 +3108,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3047,6 +3138,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3091,6 +3183,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.substring)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3116,6 +3209,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3160,6 +3254,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.substring)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3185,6 +3280,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3214,6 +3310,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3258,6 +3355,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: subSequence
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.subSequence)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3284,6 +3382,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3313,6 +3412,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3357,6 +3457,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: concat
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.concat)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3382,6 +3483,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3425,6 +3527,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.replace)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3450,6 +3553,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3479,6 +3583,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3523,6 +3628,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.replace)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3548,6 +3654,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3576,6 +3683,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3619,6 +3727,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: matches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.matches)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3645,6 +3754,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3688,6 +3798,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contains
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.contains)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3714,6 +3825,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3757,6 +3869,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replaceFirst
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.replaceFirst)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3782,6 +3895,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3810,6 +3924,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3853,6 +3968,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replaceAll
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.replaceAll)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3878,6 +3994,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3906,6 +4023,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -3949,6 +4067,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.split)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3974,6 +4093,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4002,6 +4122,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4046,6 +4167,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.split)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4071,6 +4193,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4114,6 +4237,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toLowerCase)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4139,6 +4263,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4182,6 +4307,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toLowerCase)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4221,6 +4347,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toUpperCase)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4246,6 +4373,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4289,6 +4417,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toUpperCase)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4328,6 +4457,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: trim
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.trim)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4367,6 +4497,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4407,6 +4538,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toCharArray
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.toCharArray)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4446,6 +4578,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: intern
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.intern)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4485,6 +4618,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: get
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.charAt)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4511,6 +4645,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4550,6 +4685,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: CaseInsensitiveComparator
   origin: JAVA_LIBRARY
+  psi: ClsClassImpl(java.lang.String.CaseInsensitiveComparator)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -4589,6 +4725,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4616,6 +4753,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4642,6 +4780,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4672,6 +4811,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4698,6 +4838,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4728,6 +4869,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4754,6 +4896,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4782,6 +4925,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4811,6 +4955,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4842,6 +4987,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4868,6 +5014,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -4896,6 +5043,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4925,6 +5073,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4959,6 +5108,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4985,6 +5135,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5013,6 +5164,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5042,6 +5194,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5071,6 +5224,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5105,6 +5259,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5131,6 +5286,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5159,6 +5315,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5190,6 +5347,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5216,6 +5374,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5244,6 +5403,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5273,6 +5433,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5302,6 +5463,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5332,6 +5494,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5358,6 +5521,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5386,6 +5550,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5415,6 +5580,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5444,6 +5610,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p3)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5474,6 +5641,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5500,6 +5668,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5528,6 +5697,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5558,6 +5728,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5584,6 +5755,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5612,6 +5784,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5642,6 +5815,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5668,6 +5842,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5696,6 +5871,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5725,6 +5901,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -5756,6 +5933,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5782,6 +5960,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5812,6 +5991,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5838,6 +6018,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5868,6 +6049,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5894,6 +6076,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5924,6 +6107,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5950,6 +6134,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -5978,6 +6163,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -6012,6 +6198,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(java.lang.String.String)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6038,6 +6225,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -6067,6 +6255,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p1)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -6096,6 +6285,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
+      psi: ClsParameterImpl(p2)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []

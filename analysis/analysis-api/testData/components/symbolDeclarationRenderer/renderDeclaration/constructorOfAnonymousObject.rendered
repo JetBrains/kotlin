@@ -5,4 +5,3 @@ interface IFace<T> {
 class Some
 
 private fun resolve(): IFace<Some>
-

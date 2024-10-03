@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -39,6 +40,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: J
   origin: SOURCE
+  psi: KtTypeParameter(foo.J)
   upperBounds: [
     KaUsualClassType:
       annotations: []
@@ -74,6 +76,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -101,6 +104,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: j
       origin: SOURCE
+      psi: KtParameter(foo.j)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -127,6 +131,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter(foo.T)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -157,6 +162,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -184,6 +190,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: j
       origin: SOURCE
+      psi: KtParameter(foo.j)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []

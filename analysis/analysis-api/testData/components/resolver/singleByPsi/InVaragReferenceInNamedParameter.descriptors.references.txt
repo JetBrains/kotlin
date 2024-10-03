@@ -1,7 +1,7 @@
 KtNameReferenceExpression(87,88): 'a'
   KtSimpleNameReference:
     vararg a: test.A
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

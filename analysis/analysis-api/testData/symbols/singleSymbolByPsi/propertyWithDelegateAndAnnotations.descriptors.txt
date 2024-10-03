@@ -19,6 +19,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/lazyProperty)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -48,6 +49,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -77,6 +79,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: lazyProperty
   origin: SOURCE
+  psi: KtProperty(lazyProperty)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -423,7 +423,7 @@ KtBinaryExpression(178,189): '0 + integer'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -457,7 +457,7 @@ KtBinaryExpression(178,189): '0 + integer'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -491,7 +491,7 @@ KtBinaryExpression(178,189): '0 + integer'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -524,7 +524,7 @@ KtBinaryExpression(178,189): '0 + integer'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -558,7 +558,7 @@ KtBinaryExpression(178,189): '0 + integer'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -630,7 +630,7 @@ KtOperationReferenceExpression(180,181): '+'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -664,7 +664,7 @@ KtOperationReferenceExpression(180,181): '+'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -698,7 +698,7 @@ KtOperationReferenceExpression(180,181): '+'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -731,7 +731,7 @@ KtOperationReferenceExpression(180,181): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -765,7 +765,7 @@ KtOperationReferenceExpression(180,181): '+'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -835,7 +835,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1008,7 +1008,7 @@ KtCallExpression(216,226): 'toString()'
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1047,7 +1047,7 @@ KtNameReferenceExpression(216,224): 'toString'
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

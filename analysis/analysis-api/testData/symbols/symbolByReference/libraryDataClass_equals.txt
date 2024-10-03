@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(one.DataClass.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(one.DataClass.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

@@ -24,6 +24,7 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -50,6 +51,7 @@ callables: 1
         modality: FINAL
         name: value
         origin: PLUGIN
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

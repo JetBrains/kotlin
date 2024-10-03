@@ -9,7 +9,7 @@ KtCallExpression(34,42): 'action()'
 KtNameReferenceExpression(34,40): 'action'
   KtSimpleNameReference:
     action: () -> kotlin.Unit
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -20,7 +20,7 @@ KtCallExpression(64,102): 'foo label@{'
 KtNameReferenceExpression(64,67): 'foo'
   KtSimpleNameReference:
     (in ROOT) fun foo(action: () -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

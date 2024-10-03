@@ -12,6 +12,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: field
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.field)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -41,6 +42,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: field2
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.field2)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -78,6 +80,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -104,6 +107,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -148,6 +152,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -188,6 +193,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -219,6 +225,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

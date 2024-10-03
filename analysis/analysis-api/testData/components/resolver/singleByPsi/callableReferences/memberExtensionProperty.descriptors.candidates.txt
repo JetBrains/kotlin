@@ -17,6 +17,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

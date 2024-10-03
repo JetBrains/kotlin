@@ -18,6 +18,7 @@ KtNameReferenceExpression(51,57): 'length'
               name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/test)
+              psi: null
               receiverParameter: null
               returnType: KaUsualClassType:
                 annotations: []

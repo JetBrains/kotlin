@@ -20,6 +20,7 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
+    psi: KtNamedFunction(Derived.getSomething)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -53,6 +54,7 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -93,6 +95,7 @@ KaSyntheticJavaPropertySymbol:
       modality: FINAL
       name: s
       origin: SOURCE
+      psi: KtParameter(Derived.setSomething.s)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -103,6 +106,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingJvmClassName: Derived
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+    psi: KtNamedFunction(Derived.setSomething)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -128,6 +132,7 @@ KaSyntheticJavaPropertySymbol:
         modality: FINAL
         name: s
         origin: SOURCE
+        psi: KtParameter(Derived.setSomething.s)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(A.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -39,6 +40,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(A.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -65,6 +67,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      psi: KtParameter(A.A.x)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -96,6 +99,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(A.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -122,6 +126,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: y
       origin: SOURCE
+      psi: KtParameter(A.A.y)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -151,6 +156,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: z
       origin: SOURCE
+      psi: KtParameter(A.A.z)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -186,6 +192,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []

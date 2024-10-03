@@ -12,6 +12,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: count
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.count)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []

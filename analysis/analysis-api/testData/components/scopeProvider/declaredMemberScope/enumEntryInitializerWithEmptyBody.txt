@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtEnumEntry(test.E.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

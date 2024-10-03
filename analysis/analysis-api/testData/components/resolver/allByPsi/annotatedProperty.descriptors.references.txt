@@ -9,98 +9,98 @@ KtNameReferenceExpression(32,38): 'Target'
 KtNameReferenceExpression(44,60): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(61,69): 'PROPERTY'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) PROPERTY
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(75,91): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(92,106): 'TYPE_PARAMETER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE_PARAMETER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(112,128): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(129,137): 'FUNCTION'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) FUNCTION
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(143,159): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(160,175): 'VALUE_PARAMETER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) VALUE_PARAMETER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(181,197): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(198,213): 'PROPERTY_GETTER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) PROPERTY_GETTER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(219,235): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(236,251): 'PROPERTY_SETTER'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) PROPERTY_SETTER
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(257,273): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(274,278): 'TYPE'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -119,7 +119,7 @@ KtValueArgument(356,372): '"property $prop"'
 KtNameReferenceExpression(367,371): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -134,7 +134,7 @@ KtValueArgument(385,407): '"type parameter $prop"'
 KtNameReferenceExpression(402,406): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -149,7 +149,7 @@ KtValueArgument(419,432): '"bound $prop"'
 KtNameReferenceExpression(427,431): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -184,7 +184,7 @@ KtValueArgument(491,507): '"receiver $prop"'
 KtNameReferenceExpression(502,506): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -199,7 +199,7 @@ KtValueArgument(515,536): '"receiver type $prop"'
 KtNameReferenceExpression(531,535): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -234,7 +234,7 @@ KtValueArgument(607,626): '"return type $prop"'
 KtNameReferenceExpression(621,625): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -285,7 +285,7 @@ KtValueArgument(736,750): '"getter $prop"'
 KtNameReferenceExpression(745,749): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -300,7 +300,7 @@ KtValueArgument(779,793): '"setter $prop"'
 KtNameReferenceExpression(788,792): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -315,13 +315,13 @@ KtValueArgument(809,833): '"setter parameter $prop"'
 KtNameReferenceExpression(828,832): 'prop'
   KtSimpleNameReference:
     (in myPack) const val prop: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(844,848): 'Unit'
   KtSimpleNameReference:
     (in kotlin) object Unit
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

@@ -201,7 +201,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -256,7 +256,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -345,7 +345,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -400,7 +400,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -573,7 +573,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -628,7 +628,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -708,7 +708,7 @@ KtConstructorDelegationCall(339,345): 'this()'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -749,7 +749,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}

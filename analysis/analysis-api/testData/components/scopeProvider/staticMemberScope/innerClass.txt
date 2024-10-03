@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: ClassInB
   origin: SOURCE
+  psi: KtClass(test.B.ClassInB)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -47,6 +48,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InnerClassInB
   origin: SOURCE
+  psi: KtClass(test.B.InnerClassInB)
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -18,7 +18,7 @@ KtCallExpression(135,138): 'i()'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -37,7 +37,7 @@ KtCallExpression(135,138): 'i()'
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

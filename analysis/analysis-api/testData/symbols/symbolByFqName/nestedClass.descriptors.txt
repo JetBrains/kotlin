@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
+  psi: null
   superTypes: [
     KaUsualClassType:
       annotations: []

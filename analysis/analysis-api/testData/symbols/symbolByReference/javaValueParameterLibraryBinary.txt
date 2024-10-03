@@ -17,6 +17,7 @@ KaValueParameterSymbol:
   modality: FINAL
   name: name
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl(JavaAnnotation.name)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

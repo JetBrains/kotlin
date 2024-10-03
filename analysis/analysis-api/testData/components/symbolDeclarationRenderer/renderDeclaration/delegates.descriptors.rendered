@@ -11,4 +11,3 @@ val delegate: MyRwProperty<Any?, Int>
 val value: Int
 
 var variable: Int
-

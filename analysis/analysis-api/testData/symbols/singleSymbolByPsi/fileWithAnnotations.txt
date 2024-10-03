@@ -7,6 +7,7 @@ KaFileSymbol:
   ]
   location: TOP_LEVEL
   origin: SOURCE
+  psi: KtFile(fileWithAnnotations.kt)
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

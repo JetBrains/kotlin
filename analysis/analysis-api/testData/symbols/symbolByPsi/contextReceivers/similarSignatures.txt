@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -47,6 +48,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtClass(B)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -90,6 +92,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
+  psi: KtNamedFunction(tooo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -133,6 +136,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
+  psi: KtNamedFunction(tooo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -182,6 +186,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
+  psi: KtNamedFunction(tooo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -231,6 +236,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
+  psi: KtNamedFunction(tooo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

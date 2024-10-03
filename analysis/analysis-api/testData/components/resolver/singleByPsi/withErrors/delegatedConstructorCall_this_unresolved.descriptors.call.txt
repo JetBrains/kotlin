@@ -68,6 +68,6 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public constructor Sub(p: Int) defined in Sub
     public constructor Sub(i: Int, j: Int) defined in Sub>

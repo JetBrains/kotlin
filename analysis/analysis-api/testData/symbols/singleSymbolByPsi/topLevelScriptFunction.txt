@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: topLevelFun
   origin: SOURCE
+  psi: KtNamedFunction(pack.TopLevelScriptFunction.topLevelFun)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: s
       origin: SOURCE
+      psi: KtParameter(pack.TopLevelScriptFunction.topLevelFun.s)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

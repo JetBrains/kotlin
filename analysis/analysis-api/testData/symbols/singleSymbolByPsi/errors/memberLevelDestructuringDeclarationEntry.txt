@@ -11,6 +11,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: <error property>
   origin: SOURCE
+  psi: KtDestructuringDeclaration(val (a, b) = X(1, 2))
   receiverParameter: null
   returnType: KaErrorType:
     annotations: []

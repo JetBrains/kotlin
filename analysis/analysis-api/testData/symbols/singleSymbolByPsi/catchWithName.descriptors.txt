@@ -17,6 +17,7 @@ KaValueParameterSymbol:
   modality: FINAL
   name: myException
   origin: SOURCE
+  psi: KtParameter(myException)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

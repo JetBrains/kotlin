@@ -43,6 +43,7 @@ KaPropertySetterSymbol:
     modality: FINAL
     name: value
     origin: SOURCE
+    psi: KtParameter(null.value)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -53,6 +54,7 @@ KaPropertySetterSymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+  psi: KtPropertyAccessor(@ExplicitSetAnnotation)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -83,6 +85,7 @@ KaPropertySetterSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtParameter(null.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

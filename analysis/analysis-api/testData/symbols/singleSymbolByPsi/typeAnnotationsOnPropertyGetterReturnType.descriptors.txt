@@ -14,6 +14,7 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: KtPropertyAccessor(get() {})
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [

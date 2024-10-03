@@ -13,4 +13,3 @@ abstract class My<T : Some> {
 
   open inner class T
 }
-

@@ -11,4 +11,3 @@ kotlin.Any
 [approximated all super types]
 I<ERROR(Cannot infer argument for type parameter T)>
 kotlin.Any
-

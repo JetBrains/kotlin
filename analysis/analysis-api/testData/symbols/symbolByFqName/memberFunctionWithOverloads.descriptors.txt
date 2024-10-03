@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -71,6 +72,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -101,6 +103,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

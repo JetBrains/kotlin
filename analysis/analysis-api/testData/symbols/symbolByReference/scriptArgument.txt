@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -48,6 +49,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -86,6 +88,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: args
   origin: LIBRARY
+  psi: KtProperty(kotlin.script.templates.standard.ScriptTemplateWithArgs.args)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

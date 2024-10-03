@@ -73,7 +73,7 @@ KtNameReferenceExpression(450,463): 'AnnoWithArray'
 KtNameReferenceExpression(464,467): 'arr'
   KtSimpleNameReference:
     arr: kotlin.IntArray
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -96,7 +96,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
 KtNameReferenceExpression(496,506): 'intArrayOf'
   KtSimpleNameReference:
     (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -123,7 +123,7 @@ KtValueArgument(533,554): 'AnnoWithKClass::class'
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KtSimpleNameReference:
     (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -138,14 +138,14 @@ KtValueArgument(573,598): 'one.AnnoWithKClass::class'
 KtNameReferenceExpression(573,576): 'one'
   KtSimpleNameReference:
     package one
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KtSimpleNameReference:
     (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -164,21 +164,21 @@ KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKCl
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   KtSimpleNameReference:
     (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(648,651): 'one'
   KtSimpleNameReference:
     package one
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KtSimpleNameReference:
     (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -197,7 +197,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
 KtNameReferenceExpression(703,710): 'arrayOf'
   KtSimpleNameReference:
     (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -208,7 +208,7 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
 KtNameReferenceExpression(711,714): 'one'
   KtSimpleNameReference:
     package one
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -219,7 +219,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
   KtSimpleNameReference:
     (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -242,7 +242,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
   KtSimpleNameReference:
     (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -257,7 +257,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
 KtNameReferenceExpression(758,768): 'intArrayOf'
   KtSimpleNameReference:
     (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -284,7 +284,7 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
 KtNameReferenceExpression(800,814): 'stringConstant'
   KtSimpleNameReference:
     (in one) const val stringConstant: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

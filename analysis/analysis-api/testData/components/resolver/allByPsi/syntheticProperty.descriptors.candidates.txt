@@ -67,7 +67,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -98,7 +98,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Boolean was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -129,7 +129,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -160,7 +160,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Char was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -191,7 +191,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but CharArray was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -222,7 +222,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -253,7 +253,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -283,7 +283,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -314,7 +314,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -376,7 +376,7 @@ KtNameReferenceExpression(78,83): 'print'
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -407,7 +407,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -438,7 +438,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -469,7 +469,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -500,7 +500,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -531,7 +531,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -562,7 +562,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -592,7 +592,7 @@ KtNameReferenceExpression(78,83): 'print'
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -623,7 +623,7 @@ KtNameReferenceExpression(78,83): 'print'
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -679,7 +679,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -730,6 +730,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -749,7 +750,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -823,7 +824,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
         value = 1
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -874,6 +875,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -893,7 +895,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1009,7 +1011,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1060,6 +1062,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1079,7 +1082,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1206,7 +1209,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1257,6 +1260,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1276,7 +1280,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1425,7 +1429,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1476,6 +1480,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1495,7 +1500,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1564,6 +1569,7 @@ KtPostfixExpression(219,230): 'something++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1599,6 +1605,7 @@ KtNameReferenceExpression(219,228): 'something'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1651,6 +1658,7 @@ KtOperationReferenceExpression(228,230): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1701,6 +1709,7 @@ KtPostfixExpression(235,248): '(something)++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1739,6 +1748,7 @@ KtNameReferenceExpression(236,245): 'something'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1791,6 +1801,7 @@ KtOperationReferenceExpression(246,248): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1826,6 +1837,7 @@ KtBinaryExpression(253,268): '(something) = 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1867,6 +1879,7 @@ KtNameReferenceExpression(254,263): 'something'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1905,6 +1918,7 @@ KtOperationReferenceExpression(265,266): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1969,7 +1983,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
         value = 1
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -2020,6 +2034,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2039,7 +2054,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -15,11 +15,11 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           callableId = /foo
       simpleAccess = Read
       typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public val <A> Foo<TypeVariable(A)>.foo: Int defined in root package
     public val <B> Foo<TypeVariable(B)>.foo: String defined in root package>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -36,7 +36,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           callableId = /foo
       simpleAccess = Read
       typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public val <A> Foo<TypeVariable(A)>.foo: Int defined in root package
     public val <B> Foo<TypeVariable(B)>.foo: String defined in root package>
     isInBestCandidates = true

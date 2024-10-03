@@ -12,6 +12,7 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: field
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.field)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

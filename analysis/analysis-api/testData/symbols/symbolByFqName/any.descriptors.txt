@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Any
   origin: LIBRARY
+  psi: null
   superTypes: [
     KaUsualClassType:
       annotations: []

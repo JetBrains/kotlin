@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: clone
   origin: LIBRARY
+  psi: KtClass(kotlin.Enum)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

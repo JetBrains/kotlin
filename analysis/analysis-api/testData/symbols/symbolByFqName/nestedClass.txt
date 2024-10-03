@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
+  psi: KtClass(kotlin.collections.MutableMap.MutableEntry)
   superTypes: [
     KaUsualClassType:
       annotations: []

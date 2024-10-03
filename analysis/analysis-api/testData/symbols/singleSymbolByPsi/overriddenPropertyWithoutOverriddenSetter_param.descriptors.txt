@@ -19,6 +19,7 @@ KaValueParameterSymbol:
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(pack/Impl.bar)
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -48,6 +49,7 @@ KaValueParameterSymbol:
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
+      psi: KtParameter(pack.Impl.Impl.bar)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -81,6 +83,7 @@ KaValueParameterSymbol:
     modality: FINAL
     name: bar
     origin: SOURCE
+    psi: KtParameter(pack.Impl.Impl.bar)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -121,6 +124,7 @@ KaValueParameterSymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -131,6 +135,7 @@ KaValueParameterSymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+      psi: KtParameter(pack.Impl.Impl.bar)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -156,6 +161,7 @@ KaValueParameterSymbol:
           modality: FINAL
           name: value
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -203,6 +209,7 @@ KaValueParameterSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtParameter(pack.Impl.Impl.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

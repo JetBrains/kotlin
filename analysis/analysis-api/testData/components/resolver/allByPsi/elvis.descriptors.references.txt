@@ -9,7 +9,7 @@ KtNameReferenceExpression(54,61): 'Boolean'
 KtNameReferenceExpression(79,84): 'other'
   KtSimpleNameReference:
     other: kotlin.Any?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -20,7 +20,7 @@ KtCallExpression(86,98): 'equals(this)'
 KtNameReferenceExpression(86,92): 'equals'
   KtSimpleNameReference:
     (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -43,7 +43,7 @@ KtNameReferenceExpression(144,151): 'MyClass'
 KtNameReferenceExpression(168,169): 'm'
   KtSimpleNameReference:
     m: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -54,7 +54,7 @@ KtOperationReferenceExpression(170,172): '?:'
 KtNameReferenceExpression(173,175): 'm2'
   KtSimpleNameReference:
     m2: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -65,7 +65,7 @@ KtOperationReferenceExpression(176,178): '?:'
 KtNameReferenceExpression(188,189): 'f'
   KtSimpleNameReference:
     (in <local>: check) val f: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -76,14 +76,14 @@ KtOperationReferenceExpression(190,192): '?:'
 KtNameReferenceExpression(193,195): 'm2'
   KtSimpleNameReference:
     m2: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(200,202): 'm2'
   KtSimpleNameReference:
     m2: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -94,6 +94,6 @@ KtOperationReferenceExpression(203,205): '?:'
 KtNameReferenceExpression(206,207): 'm'
   KtSimpleNameReference:
     m: MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

@@ -18,6 +18,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtObjectDeclaration(sample.A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -45,6 +46,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtClass(sample.B)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -68,6 +70,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(sample.B.B)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -94,6 +97,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: s
       origin: SOURCE
+      psi: KtParameter(sample.B.B.s)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -117,6 +121,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(sample.B.B)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -143,6 +148,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: n
       origin: SOURCE
+      psi: KtParameter(sample.B.B.n)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -170,6 +176,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nested
   origin: SOURCE
+  psi: KtClass(sample.B.Nested)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -202,6 +209,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtNamedFunction(sample.B.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -227,6 +235,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(sample/B.n)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -252,6 +261,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -277,6 +287,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: n
   origin: SOURCE
+  psi: KtProperty(sample.B.n)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -304,6 +315,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
+  psi: KtClass(sample.C)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -331,6 +343,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nested
   origin: SOURCE
+  psi: KtClass(sample.C.Nested)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -363,6 +376,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: baz
   origin: SOURCE
+  psi: KtNamedFunction(sample.baz)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -388,6 +402,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(sample/m)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -413,6 +428,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -438,6 +454,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: m
   origin: SOURCE
+  psi: KtProperty(sample.m)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -478,12 +495,14 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
       visibility: PUBLIC
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -509,6 +528,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -540,6 +560,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtObjectDeclaration(sample.A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -567,6 +588,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtClass(sample.B)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -590,6 +612,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(sample.B.B)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -616,6 +639,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: s
       origin: SOURCE
+      psi: KtParameter(sample.B.B.s)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -639,6 +663,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(sample.B.B)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -665,6 +690,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: n
       origin: SOURCE
+      psi: KtParameter(sample.B.B.n)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -692,6 +718,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nested
   origin: SOURCE
+  psi: KtClass(sample.B.Nested)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -724,6 +751,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtNamedFunction(sample.B.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -749,6 +777,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(sample/B.n)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -774,6 +803,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -799,6 +829,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: n
   origin: SOURCE
+  psi: KtProperty(sample.B.n)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -822,6 +853,7 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
+  psi: KtTypeAlias(sample.C)
   typeParameters: []
   visibility: PUBLIC
 
@@ -843,6 +875,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: D
   origin: SOURCE
+  psi: KtClass(sample.D)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -870,6 +903,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nested
   origin: SOURCE
+  psi: KtClass(sample.D.Nested)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -902,6 +936,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: baz
   origin: SOURCE
+  psi: KtNamedFunction(sample.baz)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -927,6 +962,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(sample/m)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -952,6 +988,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -977,6 +1014,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: m
   origin: SOURCE
+  psi: KtProperty(sample.m)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1017,12 +1055,14 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
       visibility: PUBLIC
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1048,6 +1088,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1058,4 +1099,3 @@ KaKotlinPropertySymbol:
     visibility: PUBLIC
   typeParameters: []
   visibility: PUBLIC
-

@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtSecondaryConstructor(A.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -38,6 +39,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: int
       origin: SOURCE
+      psi: KtParameter(A.A.int)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -86,6 +88,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []

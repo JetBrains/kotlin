@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -57,6 +58,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -71,6 +73,7 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+    psi: KtTypeReference(String)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -109,6 +112,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/x)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -138,6 +142,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -167,6 +172,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
+  psi: KtProperty(x)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -200,6 +206,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/y)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -229,6 +236,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: KtPropertyAccessor(get() = this)
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -243,6 +251,7 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/y)
+      psi: KtTypeReference(Int)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -281,6 +290,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
+  psi: KtProperty(y)
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
@@ -295,6 +305,7 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/y)
+    psi: KtTypeReference(Int)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

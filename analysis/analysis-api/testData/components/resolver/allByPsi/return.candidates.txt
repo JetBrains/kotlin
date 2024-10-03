@@ -168,7 +168,7 @@ KtCallExpression(180,749): 'foo1 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -176,7 +176,7 @@ KtCallExpression(180,749): 'foo1 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -223,7 +223,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -231,7 +231,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -289,7 +289,7 @@ KtCallExpression(195,743): 'foo2 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -297,7 +297,7 @@ KtCallExpression(195,743): 'foo2 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -342,7 +342,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -350,7 +350,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -406,7 +406,7 @@ KtCallExpression(214,733): 'foo3 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -414,7 +414,7 @@ KtCallExpression(214,733): 'foo3 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -457,7 +457,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -465,7 +465,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1

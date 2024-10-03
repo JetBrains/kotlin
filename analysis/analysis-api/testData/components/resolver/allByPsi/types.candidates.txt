@@ -139,6 +139,7 @@ KtCallExpression(251,263): 'InnerClass()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+            psi: KtTypeReference(one.two.TopLevelClass)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -177,6 +178,7 @@ KtNameReferenceExpression(251,261): 'InnerClass'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+            psi: KtTypeReference(one.two.TopLevelClass)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(P.P)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +41,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/P.x)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: KtParameter(P.P.x)
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -102,6 +105,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: x
         origin: SOURCE
+        psi: KtParameter(P.P.x)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -135,6 +139,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      psi: KtParameter(P.P.x)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -166,6 +171,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/P.y)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -195,6 +201,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: KtParameter(P.P.y)
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -228,6 +235,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: y
         origin: SOURCE
+        psi: KtParameter(P.P.y)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -261,6 +269,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: y
       origin: SOURCE
+      psi: KtParameter(P.P.y)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -296,6 +305,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: P
   origin: SOURCE
+  psi: KtClass(P)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -322,6 +332,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: l
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry(l)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -346,6 +357,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: r
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry(r)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -380,6 +392,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: destruct
   origin: SOURCE
+  psi: KtNamedFunction(destruct)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

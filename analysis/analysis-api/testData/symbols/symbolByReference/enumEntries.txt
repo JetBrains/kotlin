@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -54,6 +55,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(MyKotlinEnum)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

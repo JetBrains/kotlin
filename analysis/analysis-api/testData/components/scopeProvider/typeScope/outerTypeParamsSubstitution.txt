@@ -78,6 +78,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(A.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -113,6 +114,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      psi: KtParameter(A.foo.x)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -137,6 +139,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: y
       origin: SOURCE
+      psi: KtParameter(A.foo.y)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -160,6 +163,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/A.map)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -193,6 +197,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -226,6 +231,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: map
   origin: SOURCE
+  psi: KtProperty(A.map)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -265,6 +271,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -291,6 +298,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -322,6 +330,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -353,6 +362,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -361,4 +371,3 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-

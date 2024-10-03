@@ -3,10 +3,12 @@ packages: 2
     fqName: rex1
     location: TOP_LEVEL
     origin: SOURCE
+    psi: <invalid element PsiPackage:rex1>
   KaPackageSymbol:
     fqName: rex2
     location: TOP_LEVEL
     origin: SOURCE
+    psi: <invalid element PsiPackage:rex2>
 classifiers: 2
   KaNamedClassSymbol:
     annotations: []
@@ -26,6 +28,7 @@ classifiers: 2
     modality: ABSTRACT
     name: RexClass1
     origin: SOURCE
+    psi: KtClass(rex1.RexClass1)
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -56,6 +59,7 @@ classifiers: 2
     modality: ABSTRACT
     name: RexClass2
     origin: SOURCE
+    psi: KtClass(rex2.RexClass2)
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -92,6 +96,7 @@ callables: 2
     modality: FINAL
     name: rexCallable1
     origin: SOURCE
+    psi: KtNamedFunction(rex1.rexCallable1)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -127,6 +132,7 @@ callables: 2
     modality: FINAL
     name: rexCallable2
     origin: SOURCE
+    psi: KtNamedFunction(rex2.rexCallable2)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

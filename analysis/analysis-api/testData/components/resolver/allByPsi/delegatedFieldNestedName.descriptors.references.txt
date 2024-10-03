@@ -13,14 +13,14 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
   KtSimpleNameReference:
     (in kotlin.annotation) enum class AnnotationTarget
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(56,60): 'TYPE'
   KtSimpleNameReference:
     (in kotlin.annotation.AnnotationTarget) TYPE
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -43,7 +43,7 @@ KtOperationReferenceExpression(233,234): '+'
 KtNameReferenceExpression(235,240): 'outer'
   KtSimpleNameReference:
     (in second) const val outer: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -94,7 +94,7 @@ KtNameReferenceExpression(286,289): 'Int'
 KtNameReferenceExpression(295,304): 'Companion'
   KtSimpleNameReference:
     (in second.MyClass) companion object : @second.Anno second.Base<@second.Anno second.Base<@second.Anno kotlin.Int>>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -113,7 +113,7 @@ KtOperationReferenceExpression(318,319): '+'
 KtNameReferenceExpression(320,325): 'outer'
   KtSimpleNameReference:
     (in second) const val outer: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -144,7 +144,7 @@ KtNameReferenceExpression(351,357): 'String'
 KtNameReferenceExpression(362,374): 'NestedObject'
   KtSimpleNameReference:
     (in second.MyClass) object NestedObject : @second.Anno(i = 9) second.Second<@second.Anno(i = 10) kotlin.String>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -168,7 +168,7 @@ KtOperationReferenceExpression(408,409): '+'
 KtNameReferenceExpression(410,415): 'inner'
   KtSimpleNameReference:
     (in second) const val inner: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -241,7 +241,7 @@ KtOperationReferenceExpression(567,568): '+'
 KtNameReferenceExpression(569,574): 'inner'
   KtSimpleNameReference:
     (in second.MyClass.Companion) const val inner: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

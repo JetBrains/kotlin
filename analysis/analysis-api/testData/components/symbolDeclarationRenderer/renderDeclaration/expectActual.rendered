@@ -9,4 +9,3 @@ actual class MyClass
 actual fun foo(): String
 
 actual val x: Int
-

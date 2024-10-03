@@ -4,4 +4,3 @@ annotation class A(value: Int) {
 }
 
 fun x(): @A(value = 3) Int
-

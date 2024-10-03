@@ -16,7 +16,7 @@ KtCallExpression(104,109): 'foo()'
           callableId = one/two/TopLevelObject.Nested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

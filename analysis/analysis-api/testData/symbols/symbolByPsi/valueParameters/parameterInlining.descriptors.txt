@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: inlineParameter
       origin: SOURCE
+      psi: KtParameter(foo.inlineParameter)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -81,6 +83,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: crossinlineParameter
       origin: SOURCE
+      psi: KtParameter(foo.crossinlineParameter)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -115,6 +118,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: noinlineParameter
       origin: SOURCE
+      psi: KtParameter(foo.noinlineParameter)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

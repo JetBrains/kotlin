@@ -170,7 +170,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -207,7 +207,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -300,7 +300,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -337,7 +337,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -421,7 +421,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -458,7 +458,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -526,7 +526,7 @@ KtNameReferenceExpression(111,114): 'get'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -563,7 +563,7 @@ KtNameReferenceExpression(111,114): 'get'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -927,7 +927,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -964,7 +964,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

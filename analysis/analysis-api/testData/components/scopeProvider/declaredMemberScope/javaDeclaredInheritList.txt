@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: add
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.add)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: s
       origin: JAVA_SOURCE
+      psi: PsiParameterImpl(s)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
@@ -90,6 +92,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: removeAt
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.remove)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -115,6 +118,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: JAVA_SOURCE
+      psi: PsiParameterImpl(index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -150,6 +154,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.JavaClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -218,7 +218,7 @@ KtCallExpression(186,191): 'foo()'
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -251,7 +251,7 @@ KtNameReferenceExpression(186,189): 'foo'
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -286,7 +286,7 @@ KtNameReferenceExpression(196,199): 'foo'
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -387,7 +387,7 @@ KtNameReferenceExpression(207,210): 'foo'
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -488,7 +488,7 @@ KtNameReferenceExpression(231,234): 'foo'
           callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

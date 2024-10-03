@@ -7,4 +7,3 @@ class Outer {
 
   object Obj : Base()
 }
-

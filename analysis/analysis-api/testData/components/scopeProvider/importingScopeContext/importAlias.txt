@@ -21,6 +21,7 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
+        psi: KtClass(other.A)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -45,4 +46,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

@@ -30,6 +30,7 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              psi: KtParameter(atLeastOnceContract.block)
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -64,6 +65,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: atLeastOnceContract
   origin: SOURCE
+  psi: KtNamedFunction(atLeastOnceContract)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -90,6 +92,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: block
       origin: SOURCE
+      psi: KtParameter(atLeastOnceContract.block)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

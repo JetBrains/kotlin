@@ -19,7 +19,7 @@ KtCallExpression(135,138): 'i()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun Double.invoke(): Unit>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -38,7 +38,7 @@ KtCallExpression(135,138): 'i()'
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

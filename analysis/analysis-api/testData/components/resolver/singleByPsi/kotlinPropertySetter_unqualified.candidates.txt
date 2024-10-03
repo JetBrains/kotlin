@@ -17,6 +17,7 @@ KtNameReferenceExpression(50,51): 'i'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: KtTypeReference(A)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

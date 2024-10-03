@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGeneric
   origin: SOURCE
+  psi: KtNamedFunction(test.Base.noGeneric)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -65,6 +66,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGenericWithExplicitType
   origin: SOURCE
+  psi: KtNamedFunction(test.Base.noGenericWithExplicitType)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -109,6 +111,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(test.Base.withOuterGeneric)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -135,6 +138,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -179,6 +183,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(test.Base.withOuterGenericWithExplicitType)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -205,6 +210,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -249,6 +255,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGeneric
   origin: SOURCE
+  psi: KtNamedFunction(test.Base.withOwnGeneric)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -277,6 +284,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: tt
       origin: SOURCE
+      psi: KtParameter(test.Base.withOwnGeneric.tt)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -324,6 +332,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGenericWithExplicitType
   origin: SOURCE
+  psi: KtNamedFunction(test.Base.withOwnGenericWithExplicitType)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -352,6 +361,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: tt
       origin: SOURCE
+      psi: KtParameter(test.Base.withOwnGenericWithExplicitType.tt)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -399,6 +409,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(test.Base.withOuterAndOwnGeneric)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -427,6 +438,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -456,6 +468,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -499,6 +512,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(test.Base.withOuterAndOwnGenericWithExplicitType)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -527,6 +541,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -556,6 +571,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(test.ClassWithGenericBase)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -599,6 +615,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -625,6 +642,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -669,6 +687,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -709,6 +728,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -740,6 +760,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.ClassWithGenericBase)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

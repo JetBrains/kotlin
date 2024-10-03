@@ -1935,7 +1935,7 @@ KtNameReferenceExpression(569,574): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2160,7 +2160,7 @@ KtNameReferenceExpression(594,599): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

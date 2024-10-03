@@ -7,4 +7,3 @@ abstract class My {
 class Your : My() {
   class NestedThree : My.NestedOne()
 }
-

@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(Style.Style)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +41,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Style.value)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -102,6 +105,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: KtParameter(Style.Style.value)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -135,6 +139,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtParameter(Style.Style.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -168,6 +173,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(<local>/exitAnimation)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -197,6 +203,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
+    psi: KtPropertyAccessor(get() = "bar")
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -226,6 +233,7 @@ KaKotlinPropertySymbol:
   modality: OPEN
   name: exitAnimation
   origin: SOURCE
+  psi: KtProperty(Style.SHEET.exitAnimation)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -261,6 +269,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SHEET
   origin: SOURCE
+  psi: KtEnumEntry(Style.SHEET)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -288,6 +297,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Style.exitAnimation)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -317,6 +327,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: ABSTRACT
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -350,6 +361,7 @@ KaKotlinPropertySymbol:
   modality: ABSTRACT
   name: exitAnimation
   origin: SOURCE
+  psi: KtProperty(Style.exitAnimation)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -389,6 +401,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Style
   origin: SOURCE
+  psi: KtClass(Style)
   superTypes: [
     KaUsualClassType:
       annotations: []

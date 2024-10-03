@@ -15,7 +15,7 @@ KtNameReferenceExpression(55,59): 'TODO'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun TODO(): Nothing'.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

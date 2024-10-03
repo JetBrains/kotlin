@@ -33,6 +33,7 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
+        psi: KtClass(other.A)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -65,6 +66,7 @@ scopes:
         modality: FINAL
         name: b
         origin: SOURCE
+        psi: KtNamedFunction(other.b)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -76,4 +78,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

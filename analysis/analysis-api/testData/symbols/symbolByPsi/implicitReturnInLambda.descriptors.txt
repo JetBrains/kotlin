@@ -11,6 +11,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: b
   origin: SOURCE
+  psi: KtProperty(b)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -34,6 +35,7 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtFunctionLiteral(<anonymous>)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -59,6 +61,7 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      psi: KtParameter(<anonymous>.a)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -89,6 +92,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: lam1
   origin: SOURCE
+  psi: KtProperty(lam1)
   receiverParameter: null
   returnType: KaFunctionType:
     annotations: []
@@ -122,6 +126,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: c
   origin: SOURCE
+  psi: KtProperty(c)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -145,6 +150,7 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtFunctionLiteral(<anonymous>)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -170,6 +176,7 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      psi: KtParameter(<anonymous>.a)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -200,6 +207,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: lam2
   origin: SOURCE
+  psi: KtProperty(lam2)
   receiverParameter: null
   returnType: KaFunctionType:
     annotations: []
@@ -233,6 +241,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: b
   origin: SOURCE
+  psi: KtProperty(b)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -256,6 +265,7 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtFunctionLiteral(<anonymous>)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -281,6 +291,7 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: it
       origin: SOURCE_MEMBER_GENERATED
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -321,6 +332,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -357,6 +369,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtNamedFunction(bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -383,6 +396,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: lmbd
       origin: SOURCE
+      psi: KtParameter(bar.lmbd)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

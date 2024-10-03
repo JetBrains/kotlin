@@ -28,7 +28,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
           callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -59,7 +59,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

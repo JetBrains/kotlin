@@ -7,4 +7,3 @@ annotation class A2(value: String) {
 }
 
 fun x(): @A1 @A2(value = "LIST") List<@A2(value = "INT") Int>
-

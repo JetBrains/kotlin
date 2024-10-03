@@ -12,6 +12,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtEnumEntry(test.E.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -37,6 +38,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtEnumEntry(test.E.B)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -64,6 +66,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/E.foo)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -93,6 +96,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -126,6 +130,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtProperty(test.E.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -170,6 +175,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
+  psi: KtNamedFunction(test.E.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -210,6 +216,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: values
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.E)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -251,6 +258,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.E)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -277,6 +285,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE_MEMBER_GENERATED
+      psi: KtClass(test.E)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -316,6 +325,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -350,6 +360,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.E)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -386,6 +397,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.E)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

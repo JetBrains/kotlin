@@ -114,6 +114,7 @@
               name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              psi: null
               receiverParameter: null
               returnType: KaUsualClassType:
                 annotations: []
@@ -151,6 +152,7 @@
               name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              psi: null
               receiverParameter: null
               returnType: KaUsualClassType:
                 annotations: []
@@ -188,6 +190,7 @@
               name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              psi: null
               receiverParameter: null
               returnType: KaUsualClassType:
                 annotations: []

@@ -1,7 +1,7 @@
 KtNameReferenceExpression(84,87): 'obj'
   KtSimpleNameReference:
     obj: Foo
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

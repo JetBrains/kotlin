@@ -43,7 +43,7 @@ KtNameReferenceExpression(54,57): 'set'
           callableId = kotlin/collections/MutableList.set
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -92,7 +92,7 @@ KtNameReferenceExpression(54,57): 'set'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

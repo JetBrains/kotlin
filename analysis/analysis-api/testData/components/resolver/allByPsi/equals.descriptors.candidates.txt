@@ -1359,7 +1359,7 @@ KtNameReferenceExpression(482,489): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1394,7 +1394,7 @@ KtNameReferenceExpression(494,501): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1429,7 +1429,7 @@ KtNameReferenceExpression(506,513): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1464,7 +1464,7 @@ KtNameReferenceExpression(518,525): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1530,7 +1530,7 @@ KtNameReferenceExpression(530,537): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1667,7 +1667,7 @@ KtNameReferenceExpression(555,562): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1804,7 +1804,7 @@ KtNameReferenceExpression(580,587): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2049,7 +2049,7 @@ KtNameReferenceExpression(673,680): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2084,7 +2084,7 @@ KtNameReferenceExpression(685,692): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2233,7 +2233,7 @@ KtNameReferenceExpression(717,724): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2403,7 +2403,7 @@ KtNameReferenceExpression(742,749): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2483,7 +2483,7 @@ KtNameReferenceExpression(755,762): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2653,7 +2653,7 @@ KtNameReferenceExpression(777,784): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2809,7 +2809,7 @@ KtNameReferenceExpression(804,811): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2925,7 +2925,7 @@ KtNameReferenceExpression(825,832): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3131,7 +3131,7 @@ KtNameReferenceExpression(860,867): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3287,7 +3287,7 @@ KtNameReferenceExpression(885,892): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3353,7 +3353,7 @@ KtNameReferenceExpression(899,906): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3433,7 +3433,7 @@ KtNameReferenceExpression(910,917): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3499,7 +3499,7 @@ KtNameReferenceExpression(922,929): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3619,7 +3619,7 @@ KtNameReferenceExpression(937,944): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3699,7 +3699,7 @@ KtNameReferenceExpression(950,957): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3765,7 +3765,7 @@ KtNameReferenceExpression(961,968): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3885,7 +3885,7 @@ KtNameReferenceExpression(974,981): 'myClass'
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3991,7 +3991,7 @@ KtNameReferenceExpression(989,996): 'another'
           callableId = /another
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

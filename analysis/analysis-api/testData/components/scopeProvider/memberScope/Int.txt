@@ -24,6 +24,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: and
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.and)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -50,6 +51,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.and.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -97,6 +99,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -123,6 +126,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -170,6 +174,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -196,6 +201,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -243,6 +249,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -269,6 +276,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -316,6 +324,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -342,6 +351,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -389,6 +399,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -415,6 +426,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -462,6 +474,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.compareTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -488,6 +501,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.compareTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -532,6 +546,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: dec
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.dec)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -575,6 +590,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -601,6 +617,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -648,6 +665,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -674,6 +692,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -721,6 +740,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -747,6 +767,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -794,6 +815,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -820,6 +842,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -867,6 +890,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -893,6 +917,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -940,6 +965,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.div)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -966,6 +992,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.div.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1013,6 +1040,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1039,6 +1067,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1083,6 +1112,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: inc
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.inc)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1126,6 +1156,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: inv
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.inv)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1169,6 +1200,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1195,6 +1227,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1242,6 +1275,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1268,6 +1302,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1315,6 +1350,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1341,6 +1377,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1388,6 +1425,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1414,6 +1452,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1461,6 +1500,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1487,6 +1527,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1534,6 +1575,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.minus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1560,6 +1602,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.minus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1607,6 +1650,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: or
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.or)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1633,6 +1677,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.or.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1680,6 +1725,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1706,6 +1752,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1753,6 +1800,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1779,6 +1827,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1826,6 +1875,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1852,6 +1902,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1899,6 +1950,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1925,6 +1977,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1972,6 +2025,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1998,6 +2052,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2045,6 +2100,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.plus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2071,6 +2127,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.plus.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2115,6 +2172,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2141,6 +2199,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2185,6 +2244,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2211,6 +2271,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2255,6 +2316,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2281,6 +2343,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2325,6 +2388,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeTo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2351,6 +2415,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeTo.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2400,6 +2465,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeUntil)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2426,6 +2492,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeUntil.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2475,6 +2542,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeUntil)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2501,6 +2569,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeUntil.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2550,6 +2619,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeUntil)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2576,6 +2646,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeUntil.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2625,6 +2696,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rangeUntil)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2651,6 +2723,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rangeUntil.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2700,6 +2773,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2726,6 +2800,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2775,6 +2850,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2801,6 +2877,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2850,6 +2927,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2876,6 +2954,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2925,6 +3004,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2951,6 +3031,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3000,6 +3081,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3026,6 +3108,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3075,6 +3158,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.rem)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3101,6 +3185,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.rem.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3148,6 +3233,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: shl
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.shl)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3174,6 +3260,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bitCount
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.shl.bitCount)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3221,6 +3308,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: shr
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.shr)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3247,6 +3335,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bitCount
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.shr.bitCount)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3294,6 +3383,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3320,6 +3410,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3367,6 +3458,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3393,6 +3485,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3440,6 +3533,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3466,6 +3560,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3513,6 +3608,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3539,6 +3635,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3586,6 +3683,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3612,6 +3710,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3659,6 +3758,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.times)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3685,6 +3785,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.times.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -3732,6 +3833,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toByte
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toByte)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3775,6 +3877,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toChar
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toChar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3818,6 +3921,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toDouble
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toDouble)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3861,6 +3965,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toFloat
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toFloat)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3904,6 +4009,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toInt
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toInt)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3947,6 +4053,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toLong
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toLong)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3990,6 +4097,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toShort
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toShort)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4033,6 +4141,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4076,6 +4185,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: unaryMinus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.unaryMinus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4119,6 +4229,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: unaryPlus
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.unaryPlus)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4162,6 +4273,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: ushr
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.ushr)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4188,6 +4300,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bitCount
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.ushr.bitCount)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4235,6 +4348,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: xor
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Int.xor)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4261,6 +4375,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Int.xor.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -4305,6 +4420,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4340,6 +4456,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Companion
   origin: LIBRARY
+  psi: KtObjectDeclaration(kotlin.Int.Companion)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -4367,6 +4484,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: LIBRARY
+  psi: KtPrimaryConstructor(kotlin.Int.Int)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

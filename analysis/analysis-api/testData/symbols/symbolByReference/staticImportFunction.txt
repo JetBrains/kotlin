@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(one.two.TopLevelObject.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

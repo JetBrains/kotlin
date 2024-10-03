@@ -32,7 +32,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

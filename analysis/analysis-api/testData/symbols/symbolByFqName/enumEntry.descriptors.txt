@@ -12,6 +12,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

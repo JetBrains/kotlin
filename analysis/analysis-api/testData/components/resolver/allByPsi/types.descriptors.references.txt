@@ -53,6 +53,6 @@ KtCallExpression(251,263): 'InnerClass()'
 KtNameReferenceExpression(251,261): 'InnerClass'
   KtSimpleNameReference:
     (in one.two.TopLevelClass.InnerClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

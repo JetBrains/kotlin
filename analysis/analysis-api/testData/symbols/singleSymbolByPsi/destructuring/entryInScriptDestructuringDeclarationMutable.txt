@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -49,6 +50,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: a
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry(a)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -89,6 +91,7 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -99,6 +102,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclarationMutable.kts"
       deprecationStatus: null
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -124,6 +128,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

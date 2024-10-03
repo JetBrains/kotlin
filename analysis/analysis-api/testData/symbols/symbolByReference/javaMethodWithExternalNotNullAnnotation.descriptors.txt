@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.foo)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []

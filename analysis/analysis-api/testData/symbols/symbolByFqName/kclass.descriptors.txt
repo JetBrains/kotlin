@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: KClass
   origin: LIBRARY
+  psi: null
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -57,14 +57,14 @@ KtNameReferenceExpression(470,477): 'MyClass'
 KtNameReferenceExpression(497,504): 'MyClass'
   KtSimpleNameReference:
     (in pack) open class MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(506,520): 'memberFunction'
   KtSimpleNameReference:
     (in pack.MyClass) fun memberFunction(): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -75,7 +75,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
 KtNameReferenceExpression(521,527): 'invoke'
   KtSimpleNameReference:
     (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -86,42 +86,42 @@ KtCallExpression(528,537): 'MyClass()'
 KtNameReferenceExpression(528,535): 'MyClass'
   KtSimpleNameReference:
     (in pack.MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(543,550): 'MyClass'
   KtSimpleNameReference:
     (in pack) open class MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(552,566): 'memberProperty'
   KtSimpleNameReference:
     (in pack.MyClass) val memberProperty: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(567,571): 'name'
   KtSimpleNameReference:
     (in kotlin.reflect.KCallable) expect val name: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(577,582): 'Child'
   KtSimpleNameReference:
     (in pack) class Child : pack.MyClass()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(584,598): 'memberFunction'
   KtSimpleNameReference:
     (in pack.MyClass) fun memberFunction(): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -132,7 +132,7 @@ KtCallExpression(599,614): 'invoke(Child())'
 KtNameReferenceExpression(599,605): 'invoke'
   KtSimpleNameReference:
     (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -143,133 +143,133 @@ KtCallExpression(606,613): 'Child()'
 KtNameReferenceExpression(606,611): 'Child'
   KtSimpleNameReference:
     (in pack.Child) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(619,624): 'Child'
   KtSimpleNameReference:
     (in pack) class Child : pack.MyClass()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(626,640): 'memberProperty'
   KtSimpleNameReference:
     (in pack.MyClass) val memberProperty: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(641,645): 'name'
   KtSimpleNameReference:
     (in kotlin.reflect.KCallable) expect val name: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(659,663): 'pack'
   KtSimpleNameReference:
     package pack
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(664,671): 'MyClass'
   KtSimpleNameReference:
     (in pack) open class MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(673,690): 'extensionFunction'
   KtSimpleNameReference:
     (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(703,710): 'MyClass'
   KtSimpleNameReference:
     (in pack) open class MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(712,729): 'extensionProperty'
   KtSimpleNameReference:
     (in pack) val pack.MyClass.extensionProperty: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(744,749): 'Child'
   KtSimpleNameReference:
     (in pack) class Child : pack.MyClass()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(751,768): 'extensionFunction'
   KtSimpleNameReference:
     (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(782,786): 'pack'
   KtSimpleNameReference:
     package pack
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(787,792): 'Child'
   KtSimpleNameReference:
     (in pack) class Child : pack.MyClass()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(794,811): 'extensionProperty'
   KtSimpleNameReference:
     (in pack) val pack.MyClass.extensionProperty: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(817,830): 'ChildWithType'
   KtSimpleNameReference:
     (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(832,848): 'functionWithType'
   KtSimpleNameReference:
     (in pack.ChildWithType) fun functionWithType(): pack.MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(849,853): 'name'
   KtSimpleNameReference:
     (in kotlin.reflect.KCallable) expect val name: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(858,871): 'ChildWithType'
   KtSimpleNameReference:
     (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(873,889): 'propertyWithType'
   KtSimpleNameReference:
     (in pack.ChildWithType) var propertyWithType: pack.MyClass?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -280,7 +280,7 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
 KtNameReferenceExpression(890,896): 'invoke'
   KtSimpleNameReference:
     (in kotlin.reflect.KMutableProperty1) operator fun invoke(p1: T): V
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -291,35 +291,35 @@ KtCallExpression(897,912): 'ChildWithType()'
 KtNameReferenceExpression(897,910): 'ChildWithType'
   KtSimpleNameReference:
     (in pack.ChildWithType) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(921,937): 'topLevelFunction'
   KtSimpleNameReference:
     (in pack) fun topLevelFunction(i: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(944,960): 'topLevelVariable'
   KtSimpleNameReference:
     (in pack) var topLevelVariable: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(968,979): 'lateinitVar'
   KtSimpleNameReference:
     (in pack) lateinit var lateinitVar: pack.MyClass
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(980,993): 'isInitialized'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -338,28 +338,28 @@ KtNameReferenceExpression(1053,1054): 'T'
 KtNameReferenceExpression(1063,1076): 'classWithType'
   KtSimpleNameReference:
     classWithType: pack.ClassWithType<T>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1078,1094): 'functionWithType'
   KtSimpleNameReference:
     (in pack.ClassWithType) fun functionWithType(): T?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1099,1112): 'classWithType'
   KtSimpleNameReference:
     classWithType: pack.ClassWithType<T>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1114,1130): 'propertyWithType'
   KtSimpleNameReference:
     (in pack.ClassWithType) var propertyWithType: T?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -374,7 +374,7 @@ KtNameReferenceExpression(1157,1160): 'Int'
 KtNameReferenceExpression(1174,1175): 't'
   KtSimpleNameReference:
     (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -385,14 +385,14 @@ KtOperationReferenceExpression(1175,1177): '!!'
 KtNameReferenceExpression(1179,1195): 'functionWithType'
   KtSimpleNameReference:
     (in pack.ClassWithType) fun functionWithType(): T?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1200,1201): 't'
   KtSimpleNameReference:
     (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -403,6 +403,6 @@ KtOperationReferenceExpression(1201,1203): '!!'
 KtNameReferenceExpression(1205,1221): 'propertyWithType'
   KtSimpleNameReference:
     (in pack.ClassWithType) var propertyWithType: T?
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

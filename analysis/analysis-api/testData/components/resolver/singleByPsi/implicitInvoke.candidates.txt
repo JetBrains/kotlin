@@ -32,7 +32,7 @@ KtCallExpression(110,117): 'x(true)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -63,7 +63,7 @@ KtCallExpression(110,117): 'x(true)'
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Char' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

@@ -17,6 +17,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/topLevelPropertyWithAnnotations)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -49,6 +50,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: KtPropertyAccessor(KotlinStub$PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true])
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -78,6 +80,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: topLevelPropertyWithAnnotations
   origin: LIBRARY
+  psi: KtProperty(one.topLevelPropertyWithAnnotations)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

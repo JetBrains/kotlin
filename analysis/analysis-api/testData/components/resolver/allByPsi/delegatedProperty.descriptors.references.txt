@@ -26,7 +26,7 @@ KtCallExpression(77,87): 'Delegate()'
 KtNameReferenceExpression(77,85): 'Delegate'
   KtSimpleNameReference:
     (in myPack.Delegate) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

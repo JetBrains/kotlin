@@ -16,4 +16,3 @@ enum class SomeEnum(x: Some) {
 
   val x: Some
 }
-

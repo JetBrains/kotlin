@@ -47,7 +47,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         V -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -84,7 +84,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
+  psi: KtClass(test.SimpleScript.C)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -47,6 +48,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
+  psi: KtClass(test.SimpleScript.I)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -78,6 +80,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: O
   origin: SOURCE
+  psi: KtObjectDeclaration(test.SimpleScript.O)
   superTypes: [
     KaUsualClassType:
       annotations: []

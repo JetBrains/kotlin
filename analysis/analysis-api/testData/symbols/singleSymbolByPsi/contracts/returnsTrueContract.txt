@@ -37,6 +37,7 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: foo
                   origin: SOURCE
+                  psi: KtParameter(returnsTrueContract.foo)
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
@@ -66,6 +67,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: returnsTrueContract
   origin: SOURCE
+  psi: KtNamedFunction(returnsTrueContract)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -92,6 +94,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      psi: KtParameter(returnsTrueContract.foo)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

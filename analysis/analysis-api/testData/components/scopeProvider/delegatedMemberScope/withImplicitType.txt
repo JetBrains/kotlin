@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
+  psi: KtNamedFunction(I.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -61,6 +62,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: bar
   origin: DELEGATED
+  psi: KtNamedFunction(I.bar)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

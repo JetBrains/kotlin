@@ -20,6 +20,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass(A)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -53,6 +54,7 @@ KaKotlinPropertySymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
+  psi: KtProperty(I.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

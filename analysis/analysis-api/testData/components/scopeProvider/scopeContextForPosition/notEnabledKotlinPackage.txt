@@ -35,6 +35,7 @@ scopes:
         modality: FINAL
         name: param
         origin: SOURCE
+        psi: KtParameter(kotlin.myPackage.SomeClass.test.param)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -72,4 +73,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

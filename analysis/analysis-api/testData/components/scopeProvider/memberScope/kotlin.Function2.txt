@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: invoke
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.jvm.functions.Function2.invoke)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -46,6 +47,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: LIBRARY
+      psi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -74,6 +76,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: LIBRARY
+      psi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -127,6 +130,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -153,6 +157,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -197,6 +202,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -237,6 +243,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

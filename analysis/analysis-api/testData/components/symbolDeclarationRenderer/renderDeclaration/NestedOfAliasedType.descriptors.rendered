@@ -7,4 +7,3 @@ typealias TA = A
 class B : A() {
   class NestedInB : A.Nested()
 }
-

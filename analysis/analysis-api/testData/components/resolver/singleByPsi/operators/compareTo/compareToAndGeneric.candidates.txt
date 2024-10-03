@@ -32,7 +32,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun compareTo(value: MyClass): Int.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

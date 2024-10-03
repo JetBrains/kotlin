@@ -13,7 +13,7 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
 KtNameReferenceExpression(114,115): 'i'
   KtSimpleNameReference:
     (in EnumWithConstructor) val i: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -28,7 +28,7 @@ KtCallExpression(239,244): 'baz()'
 KtNameReferenceExpression(239,242): 'baz'
   KtSimpleNameReference:
     (in <local>: EnumWithoutConstructor.EntryWithBody) fun baz()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -39,125 +39,125 @@ KtNameReferenceExpression(280,299): 'EnumWithConstructor'
 KtNameReferenceExpression(307,311): 'with'
   KtSimpleNameReference:
     with: EnumWithConstructor
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(312,319): 'ordinal'
   KtSimpleNameReference:
     (in kotlin.Enum) val ordinal: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(345,350): 'Entry'
   KtSimpleNameReference:
     (in EnumWithConstructor) Entry
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(375,380): 'Entry'
   KtSimpleNameReference:
     (in EnumWithConstructor) Entry
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(381,385): 'name'
   KtSimpleNameReference:
     (in kotlin.Enum) val name: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
   KtSimpleNameReference:
     (in EnumWithConstructor) EntryWithBody
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(448,461): 'EntryWithBody'
   KtSimpleNameReference:
     (in EnumWithConstructor) EntryWithBody
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(462,463): 'i'
   KtSimpleNameReference:
     (in EnumWithConstructor) val i: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithoutConstructor
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(492,499): 'entries'
   KtSimpleNameReference:
     (in EnumWithoutConstructor) val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithoutConstructor
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(527,532): 'Entry'
   KtSimpleNameReference:
     (in EnumWithoutConstructor) Entry
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     (in ROOT) enum class EnumWithoutConstructor
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'
   KtSimpleNameReference:
     (in EnumWithoutConstructor) EntryWithBody
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

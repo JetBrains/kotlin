@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -43,6 +44,7 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: TypeAlias
   origin: SOURCE
+  psi: KtTypeAlias(TypeAlias)
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
@@ -72,6 +74,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: function
   origin: SOURCE
+  psi: KtNamedFunction(function)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -98,6 +101,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SOURCE
+      psi: KtParameter(function.t)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -138,6 +142,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: function
   origin: SOURCE
+  psi: KtNamedFunction(function)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -164,6 +169,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: t
       origin: SOURCE
+      psi: KtParameter(function.t)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

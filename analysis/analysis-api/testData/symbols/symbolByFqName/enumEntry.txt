@@ -12,6 +12,7 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
+  psi: KtEnumEntry(kotlin.LazyThreadSafetyMode.SYNCHRONIZED)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

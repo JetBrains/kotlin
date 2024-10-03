@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: InnerClass
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass.InnerClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

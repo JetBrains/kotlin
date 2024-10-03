@@ -17,7 +17,7 @@ KtNameReferenceExpression(51,55): 'Unit'
 KtNameReferenceExpression(80,84): 'prop'
   KtSimpleNameReference:
     (in <local>: foo) val prop: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -28,7 +28,7 @@ KtCallExpression(85,94): 'action1()'
 KtNameReferenceExpression(85,92): 'action1'
   KtSimpleNameReference:
     action1: kotlin.Int.() -> kotlin.Unit
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -39,21 +39,21 @@ KtCallExpression(99,112): 'action1(prop)'
 KtNameReferenceExpression(99,106): 'action1'
   KtSimpleNameReference:
     action1: kotlin.Int.() -> kotlin.Unit
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(107,111): 'prop'
   KtSimpleNameReference:
     (in <local>: foo) val prop: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(118,122): 'prop'
   KtSimpleNameReference:
     (in <local>: foo) val prop: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -64,7 +64,7 @@ KtCallExpression(123,132): 'action2()'
 KtNameReferenceExpression(123,130): 'action2'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -75,13 +75,13 @@ KtCallExpression(151,164): 'action2(prop)'
 KtNameReferenceExpression(151,158): 'action2'
   KtSimpleNameReference:
     action2: (kotlin.Int) -> kotlin.Unit
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(159,163): 'prop'
   KtSimpleNameReference:
     (in <local>: foo) val prop: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

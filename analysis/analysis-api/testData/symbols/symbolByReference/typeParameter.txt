@@ -11,6 +11,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter(test.T)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL

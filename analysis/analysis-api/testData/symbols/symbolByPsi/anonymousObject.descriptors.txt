@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: run
   origin: SOURCE
+  psi: KtNamedFunction(run)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -54,6 +55,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(<local>/data)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -83,6 +85,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -116,6 +119,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: data
   origin: SOURCE
+  psi: KtProperty(data)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -148,6 +152,7 @@ KaAnonymousObjectSymbol:
   modality: FINAL
   name: null
   origin: SOURCE
+  psi: KtObjectDeclaration(<no name>)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -176,6 +181,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/AnonymousContainer.anonymousObject)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -205,6 +211,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -238,6 +245,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: anonymousObject
   origin: SOURCE
+  psi: KtProperty(AnonymousContainer.anonymousObject)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -277,6 +285,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: AnonymousContainer
   origin: SOURCE
+  psi: KtClass(AnonymousContainer)
   superTypes: [
     KaUsualClassType:
       annotations: []

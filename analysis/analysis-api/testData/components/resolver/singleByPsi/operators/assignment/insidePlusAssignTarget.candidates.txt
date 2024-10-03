@@ -16,7 +16,7 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
         T -> (kotlin.String)
       }
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

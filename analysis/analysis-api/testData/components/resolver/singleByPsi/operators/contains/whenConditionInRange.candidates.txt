@@ -32,7 +32,7 @@ KtOperationReferenceExpression(169,171): 'in'
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun contains(str: String): Boolean.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {

@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: FileWalkDirection
   origin: LIBRARY
+  psi: KtClass(kotlin.io.FileWalkDirection)
   superTypes: [
     KaUsualClassType:
       annotations: []

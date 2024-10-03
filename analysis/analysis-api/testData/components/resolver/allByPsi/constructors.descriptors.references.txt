@@ -33,7 +33,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
 KtNameReferenceExpression(176,178): 'ci'
   KtSimpleNameReference:
     ci: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -48,7 +48,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
 KtNameReferenceExpression(216,218): 'cs'
   KtSimpleNameReference:
     cs: kotlin.String
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -63,7 +63,7 @@ KtCallExpression(251,257): 'call()'
 KtNameReferenceExpression(251,255): 'call'
   KtSimpleNameReference:
     (in r.BaseClass) fun call()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

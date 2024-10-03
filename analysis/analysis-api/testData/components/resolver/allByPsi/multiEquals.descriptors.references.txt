@@ -37,7 +37,7 @@ KtNameReferenceExpression(324,325): 'T'
 KtNameReferenceExpression(333,334): 'T'
   KtSimpleNameReference:
     (in <local>: interfaceAndClass) T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -48,7 +48,7 @@ KtNameReferenceExpression(337,356): 'InterfaceWithEquals'
 KtNameReferenceExpression(358,359): 'T'
   KtSimpleNameReference:
     (in <local>: interfaceAndClass) T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -79,7 +79,7 @@ KtNameReferenceExpression(469,476): 'Boolean'
 KtNameReferenceExpression(479,486): 'oldItem'
   KtSimpleNameReference:
     oldItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -90,7 +90,7 @@ KtOperationReferenceExpression(487,489): '=='
 KtNameReferenceExpression(490,497): 'newItem'
   KtSimpleNameReference:
     newItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -105,7 +105,7 @@ KtNameReferenceExpression(551,552): 'T'
 KtNameReferenceExpression(560,561): 'T'
   KtSimpleNameReference:
     (in <local>: classAndInterface) T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -116,7 +116,7 @@ KtNameReferenceExpression(564,578): 'MessagePreview'
 KtNameReferenceExpression(580,581): 'T'
   KtSimpleNameReference:
     (in <local>: classAndInterface) T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -147,7 +147,7 @@ KtNameReferenceExpression(696,703): 'Boolean'
 KtNameReferenceExpression(706,713): 'oldItem'
   KtSimpleNameReference:
     oldItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -158,7 +158,7 @@ KtOperationReferenceExpression(714,716): '=='
 KtNameReferenceExpression(717,724): 'newItem'
   KtSimpleNameReference:
     newItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -189,7 +189,7 @@ KtNameReferenceExpression(865,872): 'Boolean'
 KtNameReferenceExpression(875,882): 'oldItem'
   KtSimpleNameReference:
     oldItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -200,7 +200,7 @@ KtOperationReferenceExpression(883,885): '=='
 KtNameReferenceExpression(886,893): 'newItem'
   KtSimpleNameReference:
     newItem: T
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -215,7 +215,7 @@ KtNameReferenceExpression(934,948): 'MessagePreview'
 KtNameReferenceExpression(956,957): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -226,14 +226,14 @@ KtOperationReferenceExpression(958,960): '=='
 KtNameReferenceExpression(961,962): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(967,968): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -244,14 +244,14 @@ KtOperationReferenceExpression(969,971): '!='
 KtNameReferenceExpression(972,973): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(979,980): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -262,14 +262,14 @@ KtOperationReferenceExpression(981,983): '=='
 KtNameReferenceExpression(984,985): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(990,991): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -280,14 +280,14 @@ KtOperationReferenceExpression(992,994): '!='
 KtNameReferenceExpression(995,996): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1002,1003): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -298,21 +298,21 @@ KtCallExpression(1004,1013): 'equals(m)'
 KtNameReferenceExpression(1004,1010): 'equals'
   KtSimpleNameReference:
     (in InterfaceWithEquals) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1011,1012): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1018,1019): 'm'
   KtSimpleNameReference:
     m: MessagePreview
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -323,13 +323,13 @@ KtCallExpression(1020,1029): 'equals(i)'
 KtNameReferenceExpression(1020,1026): 'equals'
   KtSimpleNameReference:
     (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1027,1028): 'i'
   KtSimpleNameReference:
     i: InterfaceWithEquals
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

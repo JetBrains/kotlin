@@ -52,6 +52,7 @@ scopes:
         modality: FINAL
         name: memberInA
         origin: SOURCE
+        psi: KtNamedFunction(A.memberInA)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -83,6 +84,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -109,6 +111,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -140,6 +143,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -171,6 +175,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -194,6 +199,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass(A)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -242,6 +248,7 @@ scopes:
         modality: FINAL
         name: memberInB
         origin: SOURCE
+        psi: KtNamedFunction(B.memberInB)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -273,6 +280,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -299,6 +307,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -330,6 +339,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -361,6 +371,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -384,6 +395,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass(B)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -416,6 +428,7 @@ scopes:
         modality: FINAL
         name: localVarA
         origin: SOURCE
+        psi: KtProperty(localVarA)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -447,6 +460,7 @@ scopes:
         modality: FINAL
         name: lambdaArg
         origin: SOURCE
+        psi: KtParameter(<anonymous>.lambdaArg)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -472,6 +486,7 @@ scopes:
         modality: FINAL
         name: localVarB
         origin: SOURCE
+        psi: KtProperty(localVarB)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -501,6 +516,7 @@ scopes:
         modality: FINAL
         name: localFunB
         origin: SOURCE
+        psi: KtNamedFunction(localFunB)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -534,6 +550,7 @@ scopes:
         modality: FINAL
         name: param
         origin: SOURCE
+        psi: KtParameter(C.methodInC.param)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -555,6 +572,7 @@ scopes:
         modality: FINAL
         name: T
         origin: SOURCE
+        psi: KtTypeParameter(C.methodInC.T)
         upperBounds: []
         variance: INVARIANT
         visibility: LOCAL
@@ -582,6 +600,7 @@ scopes:
         modality: FINAL
         name: NestedInC
         origin: SOURCE
+        psi: KtClass(C.NestedInC)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -608,6 +627,7 @@ scopes:
         modality: OPEN
         name: NestedInJavaClass
         origin: JAVA_SOURCE
+        psi: PsiClassImpl(JavaClass.NestedInJavaClass)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -640,6 +660,7 @@ scopes:
         modality: FINAL
         name: methodInC
         origin: SOURCE
+        psi: KtNamedFunction(C.methodInC)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -668,6 +689,7 @@ scopes:
             modality: FINAL
             name: param
             origin: SOURCE
+            psi: KtParameter(C.methodInC.param)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -699,6 +721,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -725,6 +748,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -756,6 +780,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -787,6 +812,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -810,6 +836,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass(C)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -840,6 +867,7 @@ scopes:
         modality: FINAL
         name: NestedInC
         origin: SOURCE
+        psi: KtClass(C.NestedInC)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -872,6 +900,7 @@ scopes:
         modality: OPEN
         name: NestedInJavaClass
         origin: JAVA_SOURCE
+        psi: PsiClassImpl(JavaClass.NestedInJavaClass)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -895,26 +924,32 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(META-INF)
       KaPackageSymbol:
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(java)
       KaPackageSymbol:
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(javax)
       KaPackageSymbol:
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(kotlin)
       KaPackageSymbol:
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(org)
       KaPackageSymbol:
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(sun)
     classifiers: 3
       KaNamedClassSymbol:
         annotations: []
@@ -934,6 +969,7 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
+        psi: KtClass(A)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -960,6 +996,7 @@ scopes:
         modality: FINAL
         name: B
         origin: SOURCE
+        psi: KtClass(B)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -986,6 +1023,7 @@ scopes:
         modality: FINAL
         name: C
         origin: SOURCE
+        psi: KtClass(C)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -1018,6 +1056,7 @@ scopes:
         modality: FINAL
         name: withA
         origin: SOURCE
+        psi: KtNamedFunction(withA)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1044,6 +1083,7 @@ scopes:
             modality: FINAL
             name: f
             origin: SOURCE
+            psi: KtParameter(withA.f)
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -1084,6 +1124,7 @@ scopes:
         modality: FINAL
         name: withB
         origin: SOURCE
+        psi: KtNamedFunction(withB)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1110,6 +1151,7 @@ scopes:
             modality: FINAL
             name: f
             origin: SOURCE
+            psi: KtParameter(withB.f)
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -1150,6 +1192,7 @@ scopes:
         modality: FINAL
         name: withJavaClass
         origin: SOURCE
+        psi: KtNamedFunction(withJavaClass)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1176,6 +1219,7 @@ scopes:
             modality: FINAL
             name: f
             origin: SOURCE
+            psi: KtParameter(withJavaClass.f)
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -1216,6 +1260,7 @@ scopes:
         modality: FINAL
         name: topLevel
         origin: SOURCE
+        psi: KtNamedFunction(topLevel)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1237,4 +1282,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 19
-

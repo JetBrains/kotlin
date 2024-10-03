@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.add)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.add.element)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -94,6 +96,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.add)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -120,6 +123,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.add.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -149,6 +153,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.add.element)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -196,6 +201,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.addAll)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -222,6 +228,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.addAll.elements)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -274,6 +281,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.addAll)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -300,6 +308,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.addAll.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -329,6 +338,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.addAll.elements)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -381,6 +391,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.clear)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -425,6 +436,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.listIterator)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -473,6 +485,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.listIterator)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -503,6 +516,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.listIterator.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -551,6 +565,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.remove)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -577,6 +592,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.remove.element)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -624,6 +640,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.removeAll)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -650,6 +667,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.removeAll.elements)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -702,6 +720,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.removeAt)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -727,6 +746,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.removeAt.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -775,6 +795,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.retainAll)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -801,6 +822,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.retainAll.elements)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -853,6 +875,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: set
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.set)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -878,6 +901,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.set.index)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -907,6 +931,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.set.element)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -954,6 +979,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.collections.MutableList.subList)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -984,6 +1010,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.subList.fromIndex)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1013,6 +1040,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: toIndex
       origin: LIBRARY
+      psi: KtParameter(kotlin.collections.MutableList.subList.toIndex)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1063,6 +1091,7 @@ KaKotlinPropertySymbol:
   modality: ABSTRACT
   name: size
   origin: INTERSECTION_OVERRIDE
+  psi: KtProperty(kotlin.collections.List.size)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1111,6 +1140,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: isEmpty
   origin: INTERSECTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.isEmpty)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1155,6 +1185,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: contains
   origin: INTERSECTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.contains)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1181,6 +1212,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: INTERSECTION_OVERRIDE
+      psi: KtClass(kotlin.collections.MutableList)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1228,6 +1260,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: iterator
   origin: INTERSECTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.MutableCollection.iterator)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1276,6 +1309,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: containsAll
   origin: INTERSECTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.containsAll)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1302,6 +1336,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: elements
       origin: INTERSECTION_OVERRIDE
+      psi: KtClass(kotlin.collections.MutableList)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1354,6 +1389,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.get)
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -1379,6 +1415,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(kotlin.collections.MutableList)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1427,6 +1464,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.indexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1453,6 +1491,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(kotlin.collections.MutableList)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1500,6 +1539,7 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction(kotlin.collections.List.lastIndexOf)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1526,6 +1566,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
+      psi: KtClass(kotlin.collections.MutableList)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1573,6 +1614,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1599,6 +1641,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1643,6 +1686,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1683,6 +1727,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1723,6 +1768,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getFirst
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -1766,6 +1812,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getLast
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []

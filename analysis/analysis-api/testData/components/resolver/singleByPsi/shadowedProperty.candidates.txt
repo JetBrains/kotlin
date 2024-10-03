@@ -15,7 +15,7 @@ KtNameReferenceExpression(107,115): 'property'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -19,6 +19,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Foo
   origin: SOURCE
+  psi: KtClass(pack.Foo)
   superTypes: [
     KaUsualClassType:
       annotations: []

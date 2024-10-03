@@ -6,6 +6,7 @@ KaClassInitializerSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtClassInitializer(@Anno("init annotation: $constant") init {)
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(initWithAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"

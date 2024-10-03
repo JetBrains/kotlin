@@ -33,14 +33,14 @@ KtLabelReferenceExpression(151,160): '@iterator'
 KtNameReferenceExpression(161,166): 'start'
   KtSimpleNameReference:
     (in f.IntProgression) val start: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(196,203): 'current'
   KtSimpleNameReference:
     (in <local>: iterator.<no name>) var current: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -59,7 +59,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
 KtNameReferenceExpression(221,224): 'end'
   KtSimpleNameReference:
     (in f.IntProgression) val end: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -70,10 +70,10 @@ KtNameReferenceExpression(250,253): 'Int'
 KtNameReferenceExpression(256,263): 'current'
   KtSimpleNameReference:
     (in <local>: iterator.<no name>) var current: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -94,6 +94,6 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
 KtNameReferenceExpression(297,311): 'IntProgression'
   KtSimpleNameReference:
     (in f.IntProgression) constructor(start: kotlin.Int, end: kotlin.Int)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

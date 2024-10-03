@@ -48,26 +48,32 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(META-INF)
       KaPackageSymbol:
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(java)
       KaPackageSymbol:
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(javax)
       KaPackageSymbol:
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: KtLightPackage(kotlin)
       KaPackageSymbol:
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(org)
       KaPackageSymbol:
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: findPackage$3(sun)
     classifiers: 0
     callables: 1
       KaNamedFunctionSymbol:
@@ -93,6 +99,7 @@ scopes:
         modality: FINAL
         name: test
         origin: SOURCE
+        psi: KtNamedFunction(test)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -114,4 +121,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
-

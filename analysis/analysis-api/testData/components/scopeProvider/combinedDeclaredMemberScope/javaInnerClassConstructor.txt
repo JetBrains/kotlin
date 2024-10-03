@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.InnerClass.InnerClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -38,6 +39,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: other
       origin: JAVA_SOURCE
+      psi: PsiParameterImpl(other)
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []

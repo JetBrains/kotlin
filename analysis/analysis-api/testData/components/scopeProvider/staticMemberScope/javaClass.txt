@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: bar
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(JavaClass.bar)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -47,6 +48,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: superFoo
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(SuperClass.superFoo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -81,6 +83,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: superBar
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl(SuperClass.superBar)
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -107,6 +110,7 @@ KaJavaFieldSymbol:
   modality: OPEN
   name: foo
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl(JavaClass.foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -136,6 +140,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: InnerClass
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass.InnerClass)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -167,6 +172,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: NestedClass
   origin: JAVA_SOURCE
+  psi: PsiClassImpl(JavaClass.NestedClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

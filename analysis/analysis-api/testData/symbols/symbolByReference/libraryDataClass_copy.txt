@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: copy
   origin: LIBRARY
+  psi: KtNamedFunction(one.DataClass.copy)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: name
       origin: LIBRARY
+      psi: KtParameter(one.DataClass.copy.name)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

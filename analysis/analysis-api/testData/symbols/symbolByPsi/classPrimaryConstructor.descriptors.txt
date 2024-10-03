@@ -12,6 +12,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor(A.A)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +41,7 @@ KaConstructorSymbol:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/A.a)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -69,6 +71,7 @@ KaConstructorSymbol:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: KtParameter(A.A.a)
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -102,6 +105,7 @@ KaConstructorSymbol:
         modality: FINAL
         name: a
         origin: SOURCE
+        psi: KtParameter(A.A.a)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -135,6 +139,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      psi: KtParameter(A.A.a)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -164,6 +169,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: b
       origin: SOURCE
+      psi: KtParameter(A.A.b)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -199,6 +205,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass(A)
   superTypes: [
     KaUsualClassType:
       annotations: []

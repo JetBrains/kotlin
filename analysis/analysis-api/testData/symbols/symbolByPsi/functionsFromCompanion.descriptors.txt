@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: functionFromCompanion
   origin: SOURCE
+  psi: KtNamedFunction(MyClass.Companion.functionFromCompanion)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: i
       origin: SOURCE
+      psi: KtParameter(MyClass.Companion.functionFromCompanion.i)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -94,6 +96,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: staticFunctionFromCompanion
   origin: SOURCE
+  psi: KtNamedFunction(MyClass.Companion.staticFunctionFromCompanion)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -129,6 +132,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Companion
   origin: SOURCE
+  psi: KtObjectDeclaration(MyClass.Companion)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -160,6 +164,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyClass
   origin: SOURCE
+  psi: KtClass(MyClass)
   superTypes: [
     KaUsualClassType:
       annotations: []

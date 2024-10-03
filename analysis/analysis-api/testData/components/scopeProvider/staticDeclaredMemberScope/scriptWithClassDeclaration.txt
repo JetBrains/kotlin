@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Person
   origin: SOURCE
+  psi: KtClass(ScriptWithClassDeclaration.Person)
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -33,7 +33,7 @@ KtCallExpression(180,749): 'foo1 {'
 KtNameReferenceExpression(180,184): 'foo1'
   KtSimpleNameReference:
     (in returnPack) inline fun foo1(action: (kotlin.Int) -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -44,7 +44,7 @@ KtCallExpression(195,743): 'foo2 {'
 KtNameReferenceExpression(195,199): 'foo2'
   KtSimpleNameReference:
     (in returnPack) inline fun foo2(action: (kotlin.String) -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -55,7 +55,7 @@ KtCallExpression(214,733): 'foo3 {'
 KtNameReferenceExpression(214,218): 'foo3'
   KtSimpleNameReference:
     (in returnPack) inline fun foo3(action: (kotlin.Boolean) -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -66,7 +66,7 @@ KtCallExpression(237,413): 'foo1('
 KtNameReferenceExpression(237,241): 'foo1'
   KtSimpleNameReference:
     (in returnPack) inline fun foo1(action: (kotlin.Int) -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -89,7 +89,7 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
 KtNameReferenceExpression(431,435): 'foo2'
   KtSimpleNameReference:
     (in returnPack) inline fun foo2(action: (kotlin.String) -> kotlin.Unit)
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

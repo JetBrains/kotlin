@@ -29,7 +29,7 @@ KtCallExpression(131,140): 'MyClass()'
 KtNameReferenceExpression(131,138): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -40,7 +40,7 @@ KtCallExpression(145,154): 'MyClass()'
 KtNameReferenceExpression(145,152): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -51,7 +51,7 @@ KtCallExpression(155,166): 'contains(2)'
 KtNameReferenceExpression(155,163): 'contains'
   KtSimpleNameReference:
     (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -66,7 +66,7 @@ KtCallExpression(177,186): 'MyClass()'
 KtNameReferenceExpression(177,184): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -81,7 +81,7 @@ KtCallExpression(214,223): 'MyClass()'
 KtNameReferenceExpression(214,221): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -96,6 +96,6 @@ KtCallExpression(274,283): 'MyClass()'
 KtNameReferenceExpression(274,281): 'MyClass'
   KtSimpleNameReference:
     (in MyClass) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

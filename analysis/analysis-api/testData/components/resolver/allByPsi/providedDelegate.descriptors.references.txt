@@ -53,7 +53,7 @@ KtCallExpression(246,258): 'MyDelegate()'
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KtSimpleNameReference:
     (in myPack.MyDelegate) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -101,7 +101,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
 KtNameReferenceExpression(446,456): 'ResourceID'
   KtSimpleNameReference:
     (in myPack.ResourceID) constructor()
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 

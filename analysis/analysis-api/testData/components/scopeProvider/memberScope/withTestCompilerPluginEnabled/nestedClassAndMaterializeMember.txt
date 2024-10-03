@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: materialize
   origin: PLUGIN
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -61,6 +62,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.equals)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -87,6 +89,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      psi: KtParameter(kotlin.Any.equals.other)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -131,6 +134,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.hashCode)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -171,6 +175,7 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction(kotlin.Any.toString)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -206,6 +211,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nested
   origin: PLUGIN
+  psi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -233,6 +239,7 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass(test.MyClass)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

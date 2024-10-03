@@ -34,6 +34,7 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: value
                   origin: SOURCE
+                  psi: KtParameter(isInstancePredicateContract.value)
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
@@ -68,6 +69,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: isInstancePredicateContract
   origin: SOURCE
+  psi: KtNamedFunction(isInstancePredicateContract)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -94,6 +96,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: KtParameter(isInstancePredicateContract.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

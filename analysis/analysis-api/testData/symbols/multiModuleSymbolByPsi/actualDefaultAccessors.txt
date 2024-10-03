@@ -16,6 +16,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/variable)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -41,6 +42,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: KtPropertyAccessor(actual get)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -66,6 +68,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: variable
   origin: SOURCE
+  psi: KtProperty(variable)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -106,12 +109,14 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      psi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
       visibility: PUBLIC
+    psi: KtPropertyAccessor(actual set)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -137,6 +142,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        psi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

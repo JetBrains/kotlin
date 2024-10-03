@@ -16,6 +16,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: IntArray
   origin: LIBRARY
+  psi: KtClass(kotlin.IntArray)
   superTypes: [
     KaUsualClassType:
       annotations: []

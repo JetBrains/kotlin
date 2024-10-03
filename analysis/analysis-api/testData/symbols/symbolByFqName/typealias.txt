@@ -28,6 +28,7 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
+  psi: KtTypeAlias(kotlin.DeepRecursiveFunctionBlock)
   typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: null

@@ -17,6 +17,7 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/SimpleClass.memberVariableWithAnnotations)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -49,6 +50,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: KtPropertyAccessor(KotlinStub$PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true])
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -82,6 +84,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: memberVariableWithAnnotations
   origin: LIBRARY
+  psi: KtProperty(one.SimpleClass.memberVariableWithAnnotations)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -128,6 +131,7 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: LIBRARY
+      psi: KtParameter(null.value)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -138,6 +142,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+    psi: KtPropertyAccessor(KotlinStub$PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false])
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -166,6 +171,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: LIBRARY
+        psi: KtParameter(null.value)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

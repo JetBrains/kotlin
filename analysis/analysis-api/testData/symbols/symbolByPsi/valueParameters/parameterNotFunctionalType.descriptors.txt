@@ -21,6 +21,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
+  psi: KtNamedFunction(f)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +48,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p
       origin: SOURCE
+      psi: KtParameter(f.p)
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -87,6 +89,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: <no name provided>
       origin: SOURCE
+      psi: KtParameter(f.<no name>)
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []

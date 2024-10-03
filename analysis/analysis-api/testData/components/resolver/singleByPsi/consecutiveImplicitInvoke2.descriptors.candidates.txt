@@ -18,7 +18,7 @@ KtCallExpression(135,140): 'i()()'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Long but Double was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -38,7 +38,7 @@ KtCallExpression(135,140): 'i()()'
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Long but Int was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}

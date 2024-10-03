@@ -8,6 +8,7 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
+  psi: KtTypeParameter(foo.X)
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -38,6 +39,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction(foo)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -66,6 +68,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      psi: KtParameter(foo.x)
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []

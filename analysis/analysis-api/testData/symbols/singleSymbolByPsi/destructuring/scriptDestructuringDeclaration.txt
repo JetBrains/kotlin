@@ -10,6 +10,7 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtDestructuringDeclaration(val (a, b) = X(1, 2))
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(scriptDestructuringDeclaration.kts)
   getContainingModule: KaScriptModule "Script scriptDestructuringDeclaration.kts"

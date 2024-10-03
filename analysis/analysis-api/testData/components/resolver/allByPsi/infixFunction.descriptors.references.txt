@@ -21,7 +21,7 @@ KtOperationReferenceExpression(42,43): '-'
 KtNameReferenceExpression(44,45): 'i'
   KtSimpleNameReference:
     i: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -32,7 +32,7 @@ KtNameReferenceExpression(68,71): 'Int'
 KtNameReferenceExpression(98,107): 'parameter'
   KtSimpleNameReference:
     parameter: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -43,7 +43,7 @@ KtOperationReferenceExpression(108,115): 'myMinus'
 KtNameReferenceExpression(145,157): 'newParameter'
   KtSimpleNameReference:
     (in <local>: usage) val newParameter: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -58,7 +58,7 @@ KtOperationReferenceExpression(162,169): 'myMinus'
 KtNameReferenceExpression(195,207): 'newParameter'
   KtSimpleNameReference:
     (in <local>: usage) val newParameter: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -69,14 +69,14 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
 KtNameReferenceExpression(208,212): 'plus'
   KtSimpleNameReference:
     (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(213,222): 'parameter'
   KtSimpleNameReference:
     parameter: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
@@ -87,13 +87,13 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
 KtNameReferenceExpression(223,230): 'myMinus'
   KtSimpleNameReference:
     (in ROOT) infix fun kotlin.Int.myMinus(i: kotlin.Int): kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(231,247): 'oneMoreParameter'
   KtSimpleNameReference:
     (in <local>: usage) val oneMoreParameter: kotlin.Int
-  
+
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

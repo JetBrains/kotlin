@@ -31,6 +31,7 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/MyClass.property)
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -56,6 +57,7 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -81,6 +83,7 @@ scopes:
         modality: FINAL
         name: property
         origin: SOURCE
+        psi: KtProperty(test.MyClass.property)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -112,6 +115,7 @@ scopes:
         modality: FINAL
         name: member
         origin: SOURCE
+        psi: KtNamedFunction(test.MyClass.member)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -143,6 +147,7 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.equals)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -169,6 +174,7 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            psi: KtParameter(kotlin.Any.equals.other)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -200,6 +206,7 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.hashCode)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -231,6 +238,7 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction(kotlin.Any.toString)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -254,6 +262,7 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE
+        psi: KtPrimaryConstructor(test.MyClass.MyClass)
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -286,6 +295,7 @@ scopes:
             modality: FINAL
             name: param1
             origin: SOURCE
+            psi: KtParameter(test.MyClass.MyClass.param1)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -311,6 +321,7 @@ scopes:
             modality: FINAL
             name: param2
             origin: SOURCE
+            psi: KtParameter(test.MyClass.MyClass.param2)
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -333,6 +344,7 @@ scopes:
         modality: FINAL
         name: TypeParam
         origin: SOURCE
+        psi: KtTypeParameter(test.MyClass.TypeParam)
         upperBounds: []
         variance: INVARIANT
         visibility: LOCAL
@@ -366,6 +378,7 @@ scopes:
         modality: FINAL
         name: Param1
         origin: SOURCE
+        psi: KtClass(test.Param1)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -392,6 +405,7 @@ scopes:
         modality: FINAL
         name: Param2
         origin: SOURCE
+        psi: KtClass(test.Param2)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -418,6 +432,7 @@ scopes:
         modality: FINAL
         name: MyClass
         origin: SOURCE
+        psi: KtClass(test.MyClass)
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -442,4 +457,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 7
-

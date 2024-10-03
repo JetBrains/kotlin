@@ -3,5 +3,3 @@ interface AAA<T> {
 }
 
 fun foo(): ERROR
-
-

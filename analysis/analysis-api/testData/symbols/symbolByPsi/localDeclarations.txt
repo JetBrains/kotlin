@@ -11,6 +11,7 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: q
   origin: SOURCE
+  psi: KtProperty(q)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -45,6 +46,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: aaa
   origin: SOURCE
+  psi: KtNamedFunction(aaa)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -76,6 +78,7 @@ KaNamedClassSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
+  psi: KtClass(F)
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -112,6 +115,7 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: yyy
   origin: SOURCE
+  psi: KtNamedFunction(yyy)
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

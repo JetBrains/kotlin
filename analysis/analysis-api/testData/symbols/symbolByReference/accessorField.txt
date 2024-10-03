@@ -17,6 +17,7 @@ KaBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(/x)
+  psi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
