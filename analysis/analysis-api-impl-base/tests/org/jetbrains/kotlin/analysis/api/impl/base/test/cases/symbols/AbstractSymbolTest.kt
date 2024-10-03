@@ -151,7 +151,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         compareResults(pointersWithRendered, testServices, disablePsiBasedLogic)
 
-        configurator.doGlobalModuleStateModification(mainFile.project)
+//        configurator.doGlobalModuleStateModification(mainFile.project)
 
         restoreSymbolsInOtherReadActionAndCompareResults(
             directiveToIgnore = directiveToIgnore,

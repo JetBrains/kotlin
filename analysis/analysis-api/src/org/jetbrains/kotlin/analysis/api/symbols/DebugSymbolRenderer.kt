@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiQualifiedNamedElement
@@ -396,7 +397,7 @@ public class DebugSymbolRenderer(
 
     private fun renderPsi(psi: PsiElement, printer: PrettyPrinter) = printer {
         if (!psi.isValid) {
-            append("<invalid element $psi>")
+            append("<invalid element $psi because of ${PsiInvalidElementAccessException.findOutInvalidationReason(psi)}>")
             return
         }
         append(psi::class.java.simpleName)

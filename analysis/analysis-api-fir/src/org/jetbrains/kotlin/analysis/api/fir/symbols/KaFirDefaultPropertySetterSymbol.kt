@@ -41,7 +41,7 @@ internal class KaFirDefaultPropertySetterSymbol(
     val owningKaProperty: KaFirKotlinPropertySymbol<*>,
 ) : KaPropertySetterSymbol(), KaFirSymbol<FirPropertyAccessorSymbol> {
     private val backingPsiSetterWithoutBody: KtPropertyAccessor?
-        get() = (owningKaProperty.backingPsi as? KtProperty)?.setter
+        get() = (owningKaProperty.psi as? KtProperty)?.setter
 
     init {
         requireWithAttachment(
