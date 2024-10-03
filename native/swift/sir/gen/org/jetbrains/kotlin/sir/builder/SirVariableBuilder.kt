@@ -25,6 +25,7 @@ class SirVariableBuilder {
     var modality: SirModality = SirModality.UNSPECIFIED
     lateinit var name: String
     lateinit var type: SirType
+    var extensionReceiverParameter: SirParameter? = null
     lateinit var getter: SirGetter
     var setter: SirSetter? = null
 
@@ -39,6 +40,7 @@ class SirVariableBuilder {
             modality,
             name,
             type,
+            extensionReceiverParameter,
             getter,
             setter,
         )
@@ -69,6 +71,7 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.modality = original.modality
     copyBuilder.name = original.name
     copyBuilder.type = original.type
+    copyBuilder.extensionReceiverParameter = original.extensionReceiverParameter
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
     return copyBuilder.apply(init).build()

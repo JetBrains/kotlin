@@ -25,7 +25,7 @@ public class SirTrampolineFunction(
     override val attributes: MutableList<SirAttribute> get() = source.attributes
 
     override val extensionReceiverParameter: SirParameter?
-        get() = source.extensionReceiverParameter
+        get() = source.extensionReceiverParameter // TODO: is this right?
 
     override val parameters: List<SirParameter> by lazy {
         source.parameters.mapIndexed { index, element ->

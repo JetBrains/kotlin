@@ -165,6 +165,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("name", string)
         +field("type", typeType)
 
+        +field("extensionReceiverParameter", parameterType, nullable = true)
         +field("getter", getter)
         +field("setter", setter, nullable = true)
     }

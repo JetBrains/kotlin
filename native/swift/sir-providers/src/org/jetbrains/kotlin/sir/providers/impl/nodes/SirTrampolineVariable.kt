@@ -23,6 +23,7 @@ public class SirTrampolineVariable(
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: MutableList<SirAttribute> get() = source.attributes
+    override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val getter: SirGetter by lazy {
         buildGetterCopy(source.getter) {
             origin = SirOrigin.Trampoline(source.getter)

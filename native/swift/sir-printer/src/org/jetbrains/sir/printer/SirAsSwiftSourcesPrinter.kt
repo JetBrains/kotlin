@@ -154,6 +154,11 @@ public class SirAsSwiftSourcesPrinter(
         if (stableDeclarationsOrder) sortedWith(comparator) else this
 
     private fun SirVariable.print() {
+        extensionReceiverParameter?.let {
+            println("extension ${it.type.swiftRender} {")
+            pushIndent()
+        }
+
         printDocumentation()
         printAttributes()
         printModifiers()
@@ -169,6 +174,11 @@ public class SirAsSwiftSourcesPrinter(
             setter?.print()
         }
         println("}")
+
+        if (extensionReceiverParameter != null) {
+            popIndent()
+            println("}")
+        }
     }
 
     private fun SirCallable.print() {

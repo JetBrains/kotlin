@@ -22,6 +22,7 @@ abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationPar
     abstract override val modality: SirModality
     abstract val name: String
     abstract val type: SirType
+    abstract val extensionReceiverParameter: SirParameter?
     abstract val getter: SirGetter
     abstract val setter: SirSetter?
 }

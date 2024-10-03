@@ -22,6 +22,7 @@ internal class SirVariableImpl(
     override val modality: SirModality,
     override val name: String,
     override val type: SirType,
+    override val extensionReceiverParameter: SirParameter?,
     override val getter: SirGetter,
     override val setter: SirSetter?,
 ) : SirVariable() {

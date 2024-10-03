@@ -34,3 +34,9 @@ public fun __root___ext__TypesOfArguments__main_Foo__(receiver: kotlin.native.in
     __receiver.ext()
 }
 
+@ExportedBridge("__root___extProp_get__TypesOfArguments__main_Foo__")
+public fun __root___extProp_get__TypesOfArguments__main_Foo__(self: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    __self.extProp
+}
+
