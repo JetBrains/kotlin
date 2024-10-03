@@ -289,6 +289,18 @@ public fun __root___combine__TypesOfArguments__main_Class_without_package_Export
     combine(__arg1, __arg2, __arg3, __arg4)
 }
 
+@ExportedBridge("__root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___")
+public fun __root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___(receiver: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = if (receiver == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(receiver) as Class_without_package
+    __receiver.extensionOnNullabeRef()
+}
+
+@ExportedBridge("__root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___")
+public fun __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(receiver: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = if (receiver == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(receiver)
+    __receiver.extensionOnNullablePrimitive()
+}
+
 @ExportedBridge("__root___nullablePrim_get")
 public fun __root___nullablePrim_get(): kotlin.native.internal.NativePtr {
     val _result = nullablePrim

@@ -68,8 +68,11 @@ fun foo(arg1: Foo): Unit = TODO()
 fun foo(arg1: Foo?): Unit = TODO()
 
 // FILE: extension_fun.kt
-// we do not support extention fun. This should not be exported
+class Foo
 fun Int.foo(): Unit = TODO()
+fun Int?.foo(): Unit = TODO()
+fun Foo.foo(): Unit = TODO()
+fun Foo?.foo(): Unit = TODO()
 
 // FILE: suspend_function.kt
 // we do not support sus fun. This should not be exported

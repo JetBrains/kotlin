@@ -44,8 +44,11 @@ func objectIdentityWithGlobal() throws {
 func objectIdentityWithPassThrough() throws {
     let one = Foo(x: 1)
     let two = idFoo(foo: one)
+    let three = extId(receiver: one)
     try assertSame(actual: one, expected: two)
+    try assertSame(actual: one, expected: three)
     try assertEquals(actual: getX(foo: one), expected: 1)
+    try assertEquals(actual: extGetX(receiver: one), expected: 1)
 }
 
 func objectIdentityWithObject() throws {

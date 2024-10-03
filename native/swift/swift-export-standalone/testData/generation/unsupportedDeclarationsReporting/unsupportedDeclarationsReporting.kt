@@ -17,8 +17,6 @@ class Foo {
 
 interface MyInterface
 
-fun Foo.ext() {}
-
 val Foo.extProp
     get() = Unit
 

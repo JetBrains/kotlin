@@ -331,6 +331,16 @@ public func combine(
 ) -> Swift.Void {
     return __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
 }
+public func extensionOnNullabeRef(
+    receiver: main.Class_without_package?
+) -> Swift.Void {
+    return __root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+}
+public func extensionOnNullablePrimitive(
+    receiver: Swift.Int32?
+) -> Swift.Void {
+    return __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? .none)
+}
 public func nullable_input_prim(
     i: Swift.Int32?
 ) -> Swift.Void {

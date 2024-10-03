@@ -35,6 +35,9 @@ internal class SirFunctionFromKtSymbol(
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
     }
+    override val extensionReceiverParameter: SirParameter? by lazy {
+        translateExtensionParameter()
+    }
     override val parameters: List<SirParameter> by lazy {
         translateParameters()
     }

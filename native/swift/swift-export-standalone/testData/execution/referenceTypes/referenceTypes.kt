@@ -45,9 +45,13 @@ class Foo(var x: Int) {
 
 fun getX(foo: Foo) = foo.x
 
+fun Foo.extGetX() = x
+
 fun makeFoo(x: Int) = Foo(x)
 
 fun idFoo(foo: Foo) = foo
+
+fun Foo.extId() = this
 
 var globalFoo = Foo(42)
 

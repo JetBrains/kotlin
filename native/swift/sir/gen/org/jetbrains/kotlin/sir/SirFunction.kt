@@ -22,6 +22,7 @@ abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclar
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
     abstract val name: String
+    abstract val extensionReceiverParameter: SirParameter?
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
 }

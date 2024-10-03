@@ -69,6 +69,11 @@ func testArrayOfNever() throws {
     try assertReversed(reversed: reverseListOptNothing(l: optNeverArray), original: optNeverArray)
 }
 
+func testExtArrayOrInt() throws {
+    let original = array.map { Int32($0) }
+    try assertReversed(reversed: extReverseListInt(receiver: original), original: original)
+}
+
 class ListTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -87,6 +92,8 @@ class ListTests : TestProvider {
             TestCase(name: "testArrayOfArray", method: withAutorelease(testArrayOfArray)),
             TestCase(name: "testArrayOfOptArray", method: withAutorelease(testArrayOfOptArray)),
             TestCase(name: "testOptArray", method: withAutorelease(testOptArray)),
+
+            TestCase(name: "testExtArrayOrInt", method: withAutorelease(testExtArrayOrInt)),
         ]
     }
 }

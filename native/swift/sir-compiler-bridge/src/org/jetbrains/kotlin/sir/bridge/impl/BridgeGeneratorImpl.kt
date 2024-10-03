@@ -93,17 +93,20 @@ private class BridgeFunctionDescriptor(
     val returnType: Bridge,
     val kotlinFqName: List<String>,
     val selfParameter: BridgeParameter?,
+    val extensionReceiverParameter: BridgeParameter?,
     val typeNamer: SirTypeNamer,
 ) {
-    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
+    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, listOfNotNull(extensionReceiverParameter) + parameters, typeNamer)
     val cBridgeName = kotlinBridgeName
 
     val allParameters
-        get() = listOfNotNull(selfParameter) + parameters
+        get() = listOfNotNull(selfParameter, extensionReceiverParameter) + parameters
 
     val kotlinName
         get() = if (selfParameter != null) {
             "__${selfParameter.name}.${kotlinFqName.last()}"
+        } else if (extensionReceiverParameter != null) { // TODO both
+            "__${extensionReceiverParameter.name}.${kotlinFqName.last()}"
         } else {
             kotlinFqName.joinToString(separator = ".")
         }
@@ -124,6 +127,12 @@ private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFun
             }
             BridgeParameter("self", bridgeType(selfType))
         } else null,
+        extensionReceiverParameter = when (callable) {
+            is SirFunction -> callable.extensionReceiverParameter?.let {
+                BridgeParameter("receiver", bridgeType(it.type))
+            }
+            else -> null
+        },
         typeNamer = typeNamer,
     )
 }
@@ -138,6 +147,7 @@ private fun FunctionBridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer):
         obj.bridge,
         fqName,
         null,
+        null,
         typeNamer = typeNamer,
     )
 }
@@ -149,6 +159,7 @@ private fun FunctionBridgeRequest.initializationDescriptor(typeNamer: SirTypeNam
         listOf(obj) + callable.bridgeParameters(),
         bridgeType(callable.returnType),
         fqName,
+        null,
         null,
         typeNamer = typeNamer,
     )
@@ -172,7 +183,7 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
     return result
 }
 
-private inline fun BridgeFunctionDescriptor.createKotlinBridge(
+private fun BridgeFunctionDescriptor.createKotlinBridge(
     typeNamer: SirTypeNamer,
     buildCallSite: (name: String, args: List<String>) -> String,
 ) = buildList {
@@ -201,7 +212,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 private fun BridgeFunctionDescriptor.cDeclaration() =
     "${returnType.cType.repr} ${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
 
-private inline fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (name: String, args: List<String>) -> String) =
+private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (name: String, args: List<String>) -> String) =
     FunctionBridge(
         KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop)),
         CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
