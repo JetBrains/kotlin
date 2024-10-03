@@ -3051,6 +3051,24 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("extensionFunctionWithNestedReceiver.kt")
+      public void testExtensionFunctionWithNestedReceiver() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithNestedReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionWithPassedSupertype.kt")
+      public void testExtensionFunctionWithPassedSupertype() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithPassedSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionInSamWithPassedSupertype.kt")
+      public void testExtensionInSamWithPassedSupertype() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionInSamWithPassedSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("extensionParameterToValueParameter.kt")
       public void testExtensionParameterToValueParameter() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionParameterToValueParameter.kt");
@@ -15362,6 +15380,18 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("extensionFunctionAndSpreadOperator.kt")
+    public void testExtensionFunctionAndSpreadOperator() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAndSpreadOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionAsASupertypeOfValueClass.kt")
+    public void testExtensionFunctionAsASupertypeOfValueClass() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsASupertypeOfValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
     @TestMetadata("extensionFunctionAsSupertype.kt")
     public void testExtensionFunctionAsSupertype() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsSupertype.kt");
@@ -15374,15 +15404,45 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("extensionFunctionDifferentReceivers.kt")
+    public void testExtensionFunctionDifferentReceivers() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionDifferentReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunctionFakeOverride.kt")
     public void testExtensionFunctionFakeOverride() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionFakeOverride.kt");
     }
 
     @Test
+    @TestMetadata("extensionFunctionInInnerClass.kt")
+    public void testExtensionFunctionInInnerClass() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionInNestedClass.kt")
+    public void testExtensionFunctionInNestedClass() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInNestedClass.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunctionInSAMInterface.kt")
     public void testExtensionFunctionInSAMInterface() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInSAMInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionInValueClass.kt")
+    public void testExtensionFunctionInValueClass() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionOverride.kt")
+    public void testExtensionFunctionOverride() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionOverride.kt");
     }
 
     @Test
@@ -15395,6 +15455,42 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     @TestMetadata("extensionFunctionWithExtensionInSAMInterface.kt")
     public void testExtensionFunctionWithExtensionInSAMInterface() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithExtensionInSAMInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionWithInlineModifier.kt")
+    public void testExtensionFunctionWithInlineModifier() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithInlineModifier.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionWithNestedReceiver.kt")
+    public void testExtensionFunctionWithNestedReceiver() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithNestedReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionWithReceiverConflict.kt")
+    public void testExtensionFunctionWithReceiverConflict() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithReceiverConflict.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionMemberWithTypeParameter.kt")
+    public void testExtensionMemberWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionMemberWithTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionReceiverIsNotInlined.kt")
+    public void testExtensionReceiverIsNotInlined() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionReceiverIsNotInlined.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithTheSameDispatchAndExtensionReceiver.kt")
+    public void testFunctionWithTheSameDispatchAndExtensionReceiver() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/functionWithTheSameDispatchAndExtensionReceiver.kt");
     }
 
     @Test
@@ -15596,6 +15692,30 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("extensionMemberWithTypeParameter.kt")
+    public void testExtensionMemberWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionMemberWithTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyDifferentReceiver.kt")
+    public void testExtensionPropertyDifferentReceiver() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyDifferentReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyInInnerClass.kt")
+    public void testExtensionPropertyInInnerClass() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyInInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyInNestedClass.kt")
+    public void testExtensionPropertyInNestedClass() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyInNestedClass.kt");
+    }
+
+    @Test
     @TestMetadata("extensionPropertyInSAMInterface.kt")
     public void testExtensionPropertyInSAMInterface() {
       runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyInSAMInterface.kt");
@@ -15605,6 +15725,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     @TestMetadata("extensionPropertyWithExtensionAsReceiver.kt")
     public void testExtensionPropertyWithExtensionAsReceiver() {
       runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithExtensionAsReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyWithInline.kt")
+    public void testExtensionPropertyWithInline() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithInline.kt");
     }
 
     @Test
