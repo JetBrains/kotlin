@@ -1,0 +1,14 @@
+FILE: kotlin.kt
+    private open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(a: R|J1|): R|kotlin/Unit| {
+        R|<local>/a|.R|/Base.foo|()
+        R|/J1.J1|().R|/Base.foo|()
+    }

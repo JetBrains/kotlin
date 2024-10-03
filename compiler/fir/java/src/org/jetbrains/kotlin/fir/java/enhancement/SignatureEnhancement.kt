@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -103,8 +104,17 @@ class FirSignatureEnhancement(
     private val privateKtSuperClass: ConeKotlinType? by lazy {
         owner.symbol.getSuperTypes(session, substituteSuperTypes = false).firstOrNull {
             val fir = it.toSymbol(session)?.fir
-            fir != null && fir.origin !is FirDeclarationOrigin.Java && fir.visibility is Visibilities.Private
+            fir != null && fir.origin !is FirDeclarationOrigin.Java && fir.isEffectivelyPrivate()
         }
+    }
+
+    private fun FirClassLikeDeclaration.isEffectivelyPrivate(): Boolean {
+        var fir: FirClassLikeDeclaration? = this
+        while (fir != null) {
+            if (fir.visibility == Visibilities.Private) return true
+            fir = fir.getContainingClassSymbol()?.fir
+        }
+        return false
     }
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
@@ -264,7 +274,7 @@ class FirSignatureEnhancement(
     }
 
     private fun FirCallableSymbol<*>.isEnhanceable(): Boolean {
-        return origin is FirDeclarationOrigin.Java || isEnhanceableIntersection()
+        return origin is FirDeclarationOrigin.Java || isEnhanceableIntersection() || privateKtSuperClass != null
     }
 
     /**
