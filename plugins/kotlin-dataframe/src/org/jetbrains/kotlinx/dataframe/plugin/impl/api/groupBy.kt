@@ -92,7 +92,7 @@ fun KotlinTypeFacade.aggregate(
         }
         PluginDataFrameSchema(cols)
     } else {
-        PluginDataFrameSchema(emptyList())
+        PluginDataFrameSchema.EMPTY
     }
 }
 
