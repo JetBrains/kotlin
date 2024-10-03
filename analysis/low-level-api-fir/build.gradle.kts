@@ -61,6 +61,7 @@ dependencies {
     testImplementation(project(":analysis:symbol-light-classes"))
     testImplementation(projectTests(":plugins:scripting:scripting-tests"))
     testImplementation(project(":kotlin-scripting-common"))
+    testImplementation(projectTests(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
