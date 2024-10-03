@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
@@ -103,6 +104,12 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
     open fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer = error("Unsupported")
+
+    /**
+     * @see KotlinIrLinker.fixCallableReferences
+     */
+    internal open val callableReferencesToFix: Sequence<IrCallableReference<*>>
+        get() = emptySequence()
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =

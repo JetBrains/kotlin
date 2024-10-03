@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -39,6 +40,9 @@ abstract class BasicIrModuleDeserializer(
         get() = if (!shouldSaveDeserializationState) error("File deserialization state are not cached inside the instance because `shouldSaveDeserializationState` was set as `false`") else field
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
+
+    override val callableReferencesToFix: Sequence<IrCallableReference<*>>
+        get() = fileToDeserializerMap.values.asSequence().flatMap { it.declarationDeserializer.callableReferencesToFix }
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules

@@ -84,6 +84,14 @@ class IrBodyDeserializer(
 
     private val fileLoops = hashMapOf<Int, IrLoop>()
 
+    private val _callableReferencesToFix = mutableListOf<IrCallableReference<*>>()
+
+    /**
+     * @see KotlinIrLinker.fixCallableReferences
+     */
+    internal val callableReferencesToFix: List<IrCallableReference<*>>
+        get() = _callableReferencesToFix
+
     private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop =
         fileLoops.getOrPut(loopIndex, loopBuilder)
 
@@ -383,18 +391,19 @@ class IrBodyDeserializer(
             fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
         ) { proto.reflectionTargetSymbol }
         val callable = IrFunctionReferenceImplWithShape(
-            start,
-            end,
-            type,
-            symbol,
-            proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
+            startOffset = start,
+            endOffset = end,
+            type = type,
+            symbol = symbol,
+            typeArgumentsCount = proto.memberAccess.typeArgumentCount,
+            valueArgumentsCount = proto.memberAccess.valueArgumentCount,
             contextParameterCount = 0,
             hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
             hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
-            reflectionTarget,
-            origin
+            reflectionTarget = reflectionTarget,
+            origin = origin
         )
+        _callableReferencesToFix.add(callable)
         deserializeMemberAccessCommon(callable, proto.memberAccess)
 
         return callable
@@ -496,6 +505,7 @@ class IrBodyDeserializer(
             setter,
             origin
         )
+        _callableReferencesToFix.add(callable)
         deserializeMemberAccessCommon(callable, proto.memberAccess)
         return callable
     }

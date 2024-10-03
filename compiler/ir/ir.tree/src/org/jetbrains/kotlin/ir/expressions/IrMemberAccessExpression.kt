@@ -68,10 +68,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         isFromTargetUpdate: Boolean = false,
     ) {
         if (isFromTargetUpdate) {
-            require(hasDispatchReceiver == targetHasDispatchReceiver)
-            { "New symbol has different shape w.r.t. dispatch receiver" }
-            require(hasExtensionReceiver == targetHasExtensionReceiver)
-            { "New symbol has different shape w.r.t. extension receiver" }
             require(regularParameterCount + contextParameterCount == targetRegularParameterCount + targetContextParameterCount)
             { "New symbol has different shape w.r.t. value parameter count" }
         }
@@ -155,7 +151,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    protected fun updateTargetSymbol() {
+    fun updateTargetSymbol() {
         initializeTargetShapeFromSymbol(isFromTargetUpdate = true)
     }
 

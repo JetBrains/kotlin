@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -207,6 +210,55 @@ abstract class KotlinIrLinker(
         irInterner.reset()
     }
 
+    /**
+     * @see fixCallableReferences
+     */
+    private val callableReferencesToFix: Sequence<IrCallableReference<*>>
+        get() = deserializersForModules.values.asSequence().flatMap { it.callableReferencesToFix }
+
+    /**
+     * KLIBs don't contain enough information for initializing the correct shape for [IrFunctionReference]s and [IrPropertyReference]s.
+     *
+     * For example, consider the following code:
+     *
+     * ```kotlin
+     * class C {
+     *     fun foo() {}
+     * }
+     *
+     * fun bar() {}
+     * ```
+     *
+     * Function references `C::foo` and `::bar` will both be serialized (and deserialized) as having the following shape:
+     * ```
+     * dispatch_receiver = null
+     * extension_receiver = null
+     * value_argument = []
+     * ```
+     *
+     * However, `C::foo` has unbound dispatch receiver, while `::bar` doesn't have any dispatch receiver.
+     * To be able to adopt the new value parameter API ([KT-71850](https://youtrack.jetbrains.com/issue/KT-71850)),
+     * we have to be able to distinguish these two situations, because for `C::foo` the target function's [IrFunction.parameters]
+     * will be [[dispatch receiver]], while for `::bar` the target function's [IrFunction.parameters] will be an empty list,
+     * and [IrFunctionReference.arguments] must always match the target function's [IrFunction.parameters] list.
+     *
+     * The same applies to [IrPropertyReference].
+     *
+     * Because existing KLIBs already don't contain enough information for setting the correct shape, the following hack is used:
+     * when deserializing [IrFunctionReference]s and [IrPropertyReference]s, we collect them to lists in the corresponding deserializers.
+     * Then, after linking but before the partial linkage phase, we revisit these references and update their shape from the linked target
+     * function/property.
+     *
+     * See [KT-71849](https://youtrack.jetbrains.com/issue/KT-71849).
+     */
+    private fun fixCallableReferences() {
+        for (callableReference in callableReferencesToFix) {
+            if (callableReference.symbol.isBound) {
+                callableReference.updateTargetSymbol()
+            }
+        }
+    }
+
     override fun postProcess(inOrAfterLinkageStep: Boolean) {
         if (inOrAfterLinkageStep) {
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
@@ -219,6 +271,8 @@ abstract class KotlinIrLinker(
         triedToDeserializeDeclarationForSymbol.clear()
 
         if (inOrAfterLinkageStep) {
+            fixCallableReferences()
+
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
             partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
                 deserializersForModules.values.asSequence().map { it.moduleFragment }
