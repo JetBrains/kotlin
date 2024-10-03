@@ -254,7 +254,7 @@ abstract class KotlinIrLinker(
     private fun fixCallableReferences() {
         for (callableReference in callableReferencesToFix) {
             if (callableReference.symbol.isBound) {
-                callableReference.updateTargetSymbol()
+                callableReference.forceUpdateShapeFromTargetSymbol()
             }
         }
     }

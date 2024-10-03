@@ -99,7 +99,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     abstract val kind: IrModuleDeserializerKind
 
-    open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
+    open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
@@ -109,7 +109,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
      * @see KotlinIrLinker.fixCallableReferences
      */
     internal open val callableReferencesToFix: Sequence<IrCallableReference<*>>
-        get() = emptySequence()
+        get() = fileDeserializers().asSequence().flatMap { it.declarationDeserializer.callableReferencesToFix }
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -249,6 +249,9 @@ class IrModuleDeserializerWithBuiltIns(
     override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
         return delegate.signatureDeserializerForFile(fileName)
     }
+
+    override val callableReferencesToFix: Sequence<IrCallableReference<*>>
+        get() = delegate.callableReferencesToFix
 }
 
 open class CurrentModuleDeserializer(

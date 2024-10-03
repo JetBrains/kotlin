@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
@@ -174,4 +175,7 @@ class CurrentModuleWithICDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()
     }
+
+    override val callableReferencesToFix: Sequence<IrCallableReference<*>>
+        get() = delegate.callableReferencesToFix
 }

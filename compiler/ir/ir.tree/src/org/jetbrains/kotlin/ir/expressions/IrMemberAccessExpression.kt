@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
@@ -68,6 +63,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         isFromTargetUpdate: Boolean = false,
     ) {
         if (isFromTargetUpdate) {
+            require(hasDispatchReceiver == targetHasDispatchReceiver)
+            { "New symbol has different shape w.r.t. dispatch receiver" }
+            require(hasExtensionReceiver == targetHasExtensionReceiver)
+            { "New symbol has different shape w.r.t. extension receiver" }
             require(regularParameterCount + contextParameterCount == targetRegularParameterCount + targetContextParameterCount)
             { "New symbol has different shape w.r.t. value parameter count" }
         }
@@ -89,7 +88,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     internal fun initializeTargetShapeFromSymbol(isFromTargetUpdate: Boolean = false) {
         @Suppress("UNCHECKED_CAST")
         val target = (symbol as IrBindableSymbol<*, IrSymbolOwner>).getRealOwner()
@@ -151,8 +149,15 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    fun updateTargetSymbol() {
+    protected fun updateTargetSymbol() {
         initializeTargetShapeFromSymbol(isFromTargetUpdate = true)
+    }
+
+    /**
+     * Like [updateTargetSymbol], but doesn't validate that the initial shape is the same as that of the symbol.
+     */
+    fun forceUpdateShapeFromTargetSymbol() {
+        initializeTargetShapeFromSymbol(isFromTargetUpdate = false)
     }
 
     private fun <S : IrBindableSymbol<*, D>, D : IrSymbolOwner> S.getRealOwner(): D {
