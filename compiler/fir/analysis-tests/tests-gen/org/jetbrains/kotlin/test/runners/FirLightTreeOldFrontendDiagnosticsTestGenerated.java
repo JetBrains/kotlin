@@ -38626,6 +38626,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         runTest("compiler/testData/diagnostics/tests/testsWithJava17/newListMethods.kt");
       }
 
+      @Test
+      @TestMetadata("nullSourceInJvmModuleChecker.kt")
+      public void testNullSourceInJvmModuleChecker() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava17/nullSourceInJvmModuleChecker.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord")
       @TestDataPath("$PROJECT_ROOT")
