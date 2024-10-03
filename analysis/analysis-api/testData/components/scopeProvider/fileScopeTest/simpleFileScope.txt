@@ -81,7 +81,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: KtProperty(testVal)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

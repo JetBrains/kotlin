@@ -44,7 +44,7 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: KtProperty(one.two.TopLevelObject.bar)
+    psi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
