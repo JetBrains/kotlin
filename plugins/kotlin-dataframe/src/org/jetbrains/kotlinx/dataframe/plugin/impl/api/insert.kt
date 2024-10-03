@@ -132,7 +132,7 @@ internal fun PluginDataFrameSchema.insertImpl(
         columns.firstOrNull()?.referenceNode?.getRoot(),
         0,
         factory = { PluginDataFrameSchema(it) },
-        empty = PluginDataFrameSchema(emptyList()),
+        empty = PluginDataFrameSchema.EMPTY,
         rename = { rename(it) },
         createColumnGroup = { name, columns ->
             SimpleColumnGroup(name, columns)

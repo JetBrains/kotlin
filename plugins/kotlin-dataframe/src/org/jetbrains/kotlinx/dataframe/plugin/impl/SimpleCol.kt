@@ -18,6 +18,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 data class PluginDataFrameSchema(
     private val columns: List<SimpleCol>
 ) : DataFrameLikeContainer<SimpleCol> {
+    companion object {
+        val EMPTY = PluginDataFrameSchema(emptyList())
+    }
     override fun columns(): List<SimpleCol> {
         return columns
     }
