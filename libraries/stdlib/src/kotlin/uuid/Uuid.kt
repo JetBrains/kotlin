@@ -196,8 +196,7 @@ public class Uuid internal constructor(
     }
 
     override fun hashCode(): Int {
-        val x = mostSignificantBits xor leastSignificantBits
-        return (x shr 32).toInt() xor x.toInt()
+        return (mostSignificantBits xor leastSignificantBits).hashCode()
     }
 
     private fun writeReplace(): Any = serializedUuid(this)
