@@ -190,6 +190,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("breakLoopsBug.kt")
+    public void testBreakLoopsBug() {
+      runTest("compiler/testData/diagnostics/tests/breakLoopsBug.kt");
+    }
+
+    @Test
+    @TestMetadata("breakLoopsBug2.kt")
+    public void testBreakLoopsBug2() {
+      runTest("compiler/testData/diagnostics/tests/breakLoopsBug2.kt");
+    }
+
+    @Test
+    @TestMetadata("breakLoopsBug3.kt")
+    public void testBreakLoopsBug3() {
+      runTest("compiler/testData/diagnostics/tests/breakLoopsBug3.kt");
+    }
+
+    @Test
+    @TestMetadata("breakLoopsBug4.kt")
+    public void testBreakLoopsBug4() {
+      runTest("compiler/testData/diagnostics/tests/breakLoopsBug4.kt");
+    }
+
+    @Test
     @TestMetadata("Builders.kt")
     public void testBuilders() {
       runTest("compiler/testData/diagnostics/tests/Builders.kt");
