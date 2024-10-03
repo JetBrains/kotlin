@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class LLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTestGenerated extends AbstractLLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTest {
   @Test
   public void testAllFilesPresentInTestScripts() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/testScripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/testScripts"), Pattern.compile("^(.+)\\.(kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Test
