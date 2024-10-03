@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 testsJar()
