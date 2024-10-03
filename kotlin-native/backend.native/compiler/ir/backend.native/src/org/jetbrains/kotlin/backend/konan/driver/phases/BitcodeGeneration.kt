@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "CreateLLVMDeclarations",
-        description = "Map IR declarations to LLVM",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, module ->
@@ -42,7 +41,6 @@ internal data class RTTIInput(
 
 internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, RTTIInput>(
         name = "RTTI",
-        description = "RTTI generation",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
@@ -63,7 +61,6 @@ internal data class CodegenInput(
 
 internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CodegenInput>(
         name = "Codegen",
-        description = "Code generation",
         preactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         postactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         op = { generationState, input ->

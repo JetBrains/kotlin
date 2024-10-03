@@ -17,7 +17,6 @@ internal data class ObjectFilesPhaseInput(
 
 internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<PhaseContext, ObjectFilesPhaseInput>(
         name = "ObjectFiles",
-        description = "Bitcode to object file",
 ) { context, input ->
     BitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.objectFile)
 }

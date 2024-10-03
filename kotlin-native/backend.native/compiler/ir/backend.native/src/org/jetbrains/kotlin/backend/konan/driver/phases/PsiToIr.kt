@@ -97,7 +97,7 @@ internal class PsiToIrContextImpl(
 }
 
 internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrOutput>(
-        "PsiToIr", "Translate PSI to IR",
+        "PsiToIr",
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->

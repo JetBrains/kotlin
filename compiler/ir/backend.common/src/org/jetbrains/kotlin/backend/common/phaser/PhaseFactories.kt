@@ -61,7 +61,6 @@ private fun <Context : CommonBackendContext> createFilePhase(
 
     return createSimpleNamedCompilerPhase(
         name = annotation.name,
-        description = annotation.name,
         preactions = DEFAULT_IR_ACTIONS,
         postactions = DEFAULT_IR_ACTIONS,
         prerequisite = emptySet(),

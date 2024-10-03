@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -30,6 +29,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
 
+/**
+ * Saves/restores coroutines variables before/after suspension.
+ */
 internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
     private val context = generationState.context
     private val irFactory = context.irFactory
@@ -101,6 +103,9 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
     }
 }
 
+/**
+ * Computes visible variables at suspension points.
+ */
 internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGenerationState) : FileLoweringPass, IrElementVisitorVoid {
     private val invokeSuspendFunction = generationState.context.ir.symbols.invokeSuspendFunction
 

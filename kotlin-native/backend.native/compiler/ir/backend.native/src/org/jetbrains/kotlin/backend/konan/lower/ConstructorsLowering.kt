@@ -69,6 +69,9 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
 
 internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 
+/**
+ * Replaces constructor calls by (alloc + static call).
+ */
 internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
     private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
     private val createUninitializedArray = context.ir.symbols.createUninitializedArray

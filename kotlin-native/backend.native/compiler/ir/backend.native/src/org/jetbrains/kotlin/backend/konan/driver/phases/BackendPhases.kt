@@ -45,7 +45,6 @@ internal data class SpecialBackendChecksInput(
 
 internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrContext, SpecialBackendChecksInput>(
         "SpecialBackendChecks",
-        "Special backend checks",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, input ->
@@ -54,7 +53,6 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrC
 
 internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
         "SpecialBackendChecks",
-        "Special backend checks",
 ) { context, input ->
     val moduleFragment = input.fir2irActualizedResult.irModuleFragment
     SpecialBackendChecksTraversal(
@@ -75,7 +73,6 @@ internal val KlibIrInlinerPhase = createSimpleNamedCompilerPhase<PhaseContext, F
 
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
         name = "CopyDefaultValuesToActual",
-        description = "Copy default values from expect to actual declarations",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { _, input ->
@@ -101,7 +98,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2Ir
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "addEntryPoint",
-        description = "Add entry point for program",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, module ->
@@ -120,7 +116,6 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
 
 internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full>(
         "CreateTestBundlePhase",
-        "Create XCTest bundle"
 ) { context, input ->
     val config = context.config
     val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import java.io.File
 
 internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
-        "BuildCExports", "Build C exports",
+        "BuildCExports",
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
@@ -32,7 +32,6 @@ internal data class CExportGenerateApiInput(
 
 internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportGenerateApiInput>(
         name = "CExportGenerateApi",
-        description = "Create C header for the exported API",
 ) { context, input ->
     CAdapterApiExporter(
             elements = input.elements,
@@ -50,7 +49,6 @@ internal class CExportCompileAdapterInput(
 
 internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportCompileAdapterInput>(
         name = "CExportCompileAdapter",
-        description = "Compile C++ adapter to bitcode"
 ) { context, input ->
     produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)
 }

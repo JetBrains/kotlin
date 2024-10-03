@@ -25,7 +25,6 @@ internal data class LinkerPhaseInput(
 
 internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPhaseInput>(
         name = "Linker",
-        description = "Linker"
 ) { context, input ->
     val linker = Linker(
             config = context.config,
@@ -50,7 +49,6 @@ internal data class PreLinkCachesInput(
 
 internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<PhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
-        description = "Pre-link static caches",
 ) { context, input ->
     val inputFiles = input.objectFiles.map { it.absoluteFile.normalize().path } + input.caches.static
     val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectFile.absoluteFile.normalize().path)

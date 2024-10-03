@@ -28,7 +28,7 @@ internal data class SerializerInput(
 typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
-        "Serializer", "IR serializer",
+        "Serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config

@@ -113,6 +113,9 @@ internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFacto
     }
 }
 
+/**
+ * Adds accessors to private entities.
+ */
 internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
     private val cachesAbiSupport = context.cachesAbiSupport
 

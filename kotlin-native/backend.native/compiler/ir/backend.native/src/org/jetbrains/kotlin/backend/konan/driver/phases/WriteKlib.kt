@@ -25,7 +25,7 @@ internal data class KlibWriterInput(
         val produceHeaderKlib: Boolean
 )
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
-        "WriteKlib", "Write klib output",
+        "WriteKlib",
 ) { context, input ->
     val config = context.config
     val configuration = config.configuration

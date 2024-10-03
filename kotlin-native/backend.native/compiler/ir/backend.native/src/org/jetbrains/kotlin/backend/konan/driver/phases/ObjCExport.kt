@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
  */
 internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full, ObjCExportedInterface>(
         "ObjCExportInterface",
-        "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
     produceObjCExportInterface(context, input.moduleDescriptor, input.frontendServices)
@@ -36,7 +35,6 @@ internal data class CreateObjCFrameworkInput(
  */
 internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseContext, CreateObjCFrameworkInput>(
         "CreateObjCFramework",
-        "Create Objective-C framework"
 ) { context, input ->
     val config = context.config
     // TODO: Share this instance between multiple contexts (including NativeGenerationState)?
@@ -49,7 +47,6 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseCont
  */
 internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<PsiToIrContext, ObjCExportedInterface, ObjCExportCodeSpec>(
         "ObjCExportCodeCodeSpec",
-        "Objective-C IR symbols",
         outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
 ) { context, input ->
     input.createCodeSpec(context.symbolTable!!)

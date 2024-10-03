@@ -42,7 +42,7 @@ internal class FrontendContextImpl(
 }
 
 internal val FrontendPhase = createSimpleNamedCompilerPhase(
-        "Frontend", "Compiler frontend",
+        "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }
 ) { context: FrontendContext, input: KotlinCoreEnvironment ->
     lateinit var analysisResult: AnalysisResult

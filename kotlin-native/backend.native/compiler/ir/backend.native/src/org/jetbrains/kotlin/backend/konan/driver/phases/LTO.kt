@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "GHAPhase",
-        description = "Global hierarchy analysis",
         op = { generationState, irModule ->
             GlobalHierarchyAnalysis(generationState.context, irModule).run()
         }
@@ -30,7 +29,6 @@ internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Ir
 
 internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, ModuleDFG>(
         name = "BuildDFG",
-        description = "Data flow graph building",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, generationState, _ ->
@@ -53,7 +51,6 @@ internal data class DevirtualizationAnalysisInput(
 
 internal val DevirtualizationAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DevirtualizationAnalysisInput, DevirtualizationAnalysis.AnalysisResult>(
         name = "DevirtualizationAnalysis",
-        description = "Devirtualization analysis",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ ->
@@ -78,7 +75,6 @@ internal data class DCEInput(
 
 internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrSimpleFunction>?>(
         name = "DCEPhase",
-        description = "Dead code elimination",
         outputIfNotEnabled = { _, _, _, _ -> null },
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -98,7 +94,6 @@ internal data class DevirtualizationInput(
 
 internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DevirtualizationInput>(
         name = "Devirtualization",
-        description = "Devirtualization",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
@@ -123,7 +118,6 @@ internal data class EscapeAnalysisInput(
 
 internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, EscapeAnalysisInput, Map<IrElement, Lifetime>>(
         name = "EscapeAnalysis",
-        description = "Escape analysis",
         outputIfNotEnabled = { _, _, _, _ -> emptyMap() },
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -168,7 +162,6 @@ internal data class RedundantCallsInput(
 
 internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCompilerPhase<NativeGenerationState, RedundantCallsInput>(
         name = "RemoveRedundantCallsToStaticInitializersPhase",
-        description = "Redundant static initializers calls removal",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
