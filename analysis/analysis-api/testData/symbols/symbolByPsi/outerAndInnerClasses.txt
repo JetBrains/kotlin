@@ -60,7 +60,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T1)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T1
+      origin: SOURCE
+      psi: KtTypeParameter(X.Y.T1)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -112,7 +128,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T2)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T2
+      origin: SOURCE
+      psi: KtTypeParameter(X.Z.T2)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -200,7 +232,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T5)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T5
+      origin: SOURCE
+      psi: KtTypeParameter(K.T5)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -252,7 +300,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T6)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T6
+      origin: SOURCE
+      psi: KtTypeParameter(C.T6)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -322,7 +386,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T1)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T1
+      origin: SOURCE
+      psi: KtTypeParameter(Y.T1)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -374,7 +454,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T2)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T2
+      origin: SOURCE
+      psi: KtTypeParameter(Z.T2)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -462,7 +558,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T5)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T5
+      origin: SOURCE
+      psi: KtTypeParameter(K.T5)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -514,7 +626,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T6)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T6
+      origin: SOURCE
+      psi: KtTypeParameter(C.T6)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -548,7 +676,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T4)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T4
+      origin: SOURCE
+      psi: KtTypeParameter(U.T4)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -586,7 +730,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Unit
   typeParameters: [
-    KaTypeParameterSymbol(T3)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T3
+      origin: SOURCE
+      psi: KtTypeParameter(foo.T3)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: []
   visibility: PUBLIC
@@ -629,7 +789,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter(X.T)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -663,7 +839,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T4)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T4
+      origin: SOURCE
+      psi: KtTypeParameter(U.T4)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -701,7 +893,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Unit
   typeParameters: [
-    KaTypeParameterSymbol(T3)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T3
+      origin: SOURCE
+      psi: KtTypeParameter(X.foo.T3)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: []
   visibility: PUBLIC
@@ -744,7 +952,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter(X.T)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)

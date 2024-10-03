@@ -32,7 +32,23 @@ KaNamedFunctionSymbol:
     ]
     type: kotlin/collections/List<T>
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: KtTypeParameter(kotlin.collections.listOf.T)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -105,7 +121,23 @@ KaNamedFunctionSymbol:
     ]
     type: kotlin/collections/List<T>
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: KtTypeParameter(kotlin.collections.listOf.T)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -181,7 +213,23 @@ KaNamedFunctionSymbol:
     ]
     type: kotlin/collections/List<T>
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: KtTypeParameter(kotlin.collections.listOf.T)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   valueParameters: []
   visibility: PUBLIC

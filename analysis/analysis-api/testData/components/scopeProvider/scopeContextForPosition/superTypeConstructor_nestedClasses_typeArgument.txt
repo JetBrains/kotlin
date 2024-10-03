@@ -63,7 +63,20 @@ scopes:
             type: test/BaseInterface
         ]
         typeParameters: [
-          KaTypeParameterSymbol(T)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            psi: KtTypeParameter(test.Base.T)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         visibility: PUBLIC
       KaNamedClassSymbol:
@@ -112,3 +125,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
+

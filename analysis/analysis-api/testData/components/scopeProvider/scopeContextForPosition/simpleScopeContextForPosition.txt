@@ -667,7 +667,20 @@ scopes:
           typeArguments: []
           type: kotlin/Unit
         typeParameters: [
-          KaTypeParameterSymbol(T)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            psi: KtTypeParameter(C.methodInC.T)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         valueParameters: [
           KaValueParameterSymbol:
@@ -1282,3 +1295,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 19
+

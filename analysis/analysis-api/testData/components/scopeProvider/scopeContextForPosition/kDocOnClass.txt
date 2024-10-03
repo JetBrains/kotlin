@@ -273,7 +273,20 @@ scopes:
           ]
           type: test/MyClass<TypeParam>
         typeParameters: [
-          KaTypeParameterSymbol(TypeParam)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: TypeParam
+            origin: SOURCE
+            psi: KtTypeParameter(test.MyClass.TypeParam)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         valueParameters: [
           KaValueParameterSymbol:
@@ -440,7 +453,20 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: [
-          KaTypeParameterSymbol(TypeParam)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: TypeParam
+            origin: SOURCE
+            psi: KtTypeParameter(test.MyClass.TypeParam)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         visibility: PUBLIC
     callables: 0
@@ -457,3 +483,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 7
+

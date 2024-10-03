@@ -262,7 +262,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Boolean
   typeParameters: [
-    KaTypeParameterSymbol(TT)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: TT
+      origin: SOURCE
+      psi: KtTypeParameter(test.Base.withOwnGeneric.TT)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -339,7 +355,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Boolean
   typeParameters: [
-    KaTypeParameterSymbol(TT)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: TT
+      origin: SOURCE
+      psi: KtTypeParameter(test.Base.withOwnGenericWithExplicitType.TT)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -416,7 +448,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Long
   typeParameters: [
-    KaTypeParameterSymbol(TT)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: TT
+      origin: SOURCE
+      psi: KtTypeParameter(test.Base.withOuterAndOwnGeneric.TT)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -519,7 +567,23 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Long
   typeParameters: [
-    KaTypeParameterSymbol(TT)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: TT
+      origin: SOURCE
+      psi: KtTypeParameter(test.Base.withOuterAndOwnGenericWithExplicitType.TT)
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:

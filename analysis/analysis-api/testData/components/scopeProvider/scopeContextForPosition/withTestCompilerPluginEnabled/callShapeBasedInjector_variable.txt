@@ -416,7 +416,20 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: [
-          KaTypeParameterSymbol(T)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            psi: KtTypeParameter(DataFrame.T)
+            upperBounds: []
+            variance: OUT_VARIANCE
+            visibility: LOCAL
         ]
         visibility: PUBLIC
       KaNamedClassSymbol:
@@ -509,8 +522,34 @@ scopes:
           ]
           type: DataFrame<kotlin/Any?>
         typeParameters: [
-          KaTypeParameterSymbol(T)
-          KaTypeParameterSymbol(R)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            psi: KtTypeParameter(add.T)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: R
+            origin: SOURCE
+            psi: KtTypeParameter(add.R)
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         valueParameters: [
           KaValueParameterSymbol:
@@ -645,3 +684,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
+

@@ -24,7 +24,23 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: KtTypeParameter(kotlin.Lazy.T)
+      upperBounds: []
+      variance: OUT_VARIANCE
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
