@@ -1,7 +1,7 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
-void __root___foo__TypesOfArguments__Swift_Int32__(int32_t receiver);
+void __root___foo__TypesOfArguments__Swift_Int32__(int32_t self);
 
 int32_t __root___foo();
 

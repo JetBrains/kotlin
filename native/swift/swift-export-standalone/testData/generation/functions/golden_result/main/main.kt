@@ -4,9 +4,9 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
 @ExportedBridge("__root___foo__TypesOfArguments__Swift_Int32__")
-public fun __root___foo__TypesOfArguments__Swift_Int32__(receiver: Int): Unit {
-    val __receiver = receiver
-    __receiver.foo()
+public fun __root___foo__TypesOfArguments__Swift_Int32__(self: Int): Unit {
+    val __self = self
+    __self.foo()
 }
 
 @ExportedBridge("__root___foo")

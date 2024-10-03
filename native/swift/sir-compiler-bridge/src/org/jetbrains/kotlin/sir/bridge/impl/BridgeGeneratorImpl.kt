@@ -129,7 +129,7 @@ private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFun
         } else null,
         extensionReceiverParameter = when (callable) {
             is SirFunction -> callable.extensionReceiverParameter?.let {
-                BridgeParameter("receiver", bridgeType(it.type))
+                BridgeParameter("self", bridgeType(it.type))
             }
             is SirAccessor -> (callable.parent as SirVariable).extensionReceiverParameter?.let {
                 BridgeParameter("self", bridgeType(it.type))

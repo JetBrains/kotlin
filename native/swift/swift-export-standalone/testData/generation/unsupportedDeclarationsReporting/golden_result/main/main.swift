@@ -32,10 +32,10 @@ extension main.Foo {
         }
     }
 }
-public func ext(
-    receiver: main.Foo
-) -> Swift.Void {
-    return __root___ext__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+extension main.Foo {
+    public func ext() -> Swift.Void {
+        return __root___ext__TypesOfArguments__main_Foo__(self.__externalRCRef())
+    }
 }
 // Can't export foo: inline functions are not supported yet.
 // Can't export MyInterface: interface classifiers are not supported yet.

@@ -29,9 +29,9 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: ko
 }
 
 @ExportedBridge("__root___ext__TypesOfArguments__main_Foo__")
-public fun __root___ext__TypesOfArguments__main_Foo__(receiver: kotlin.native.internal.NativePtr): Unit {
-    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(receiver) as Foo
-    __receiver.ext()
+public fun __root___ext__TypesOfArguments__main_Foo__(self: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    __self.ext()
 }
 
 @ExportedBridge("__root___extProp_get__TypesOfArguments__main_Foo__")
