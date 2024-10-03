@@ -4,5 +4,6 @@ D:
       [Enhancement]: public abstract fun foo(value: R|kotlin/Any!|): R|kotlin/String!| from Java enhancement scope for /B [id: 2]
         [Enhancement]: public abstract fun foo(value: R|kotlin/Any!|): R|kotlin/String!| from Java enhancement scope for /A [id: 2]
   [Enhancement]: public open fun foo(value: R|kotlin/String!|): R|kotlin/String!| from Java enhancement scope for /D [id: 0]
-    [Enhancement]: public open fun foo(value: R|kotlin/String!|): R|kotlin/String!| from Use site scope of /C [id: 0]
-      [Enhancement]: public open fun foo(value: R|kotlin/String!|): R|kotlin/String!| from Java enhancement scope for /B [id: 0]
+    [Enhancement]: public open fun foo(value: R|kotlin/String!|): R|kotlin/String!| from Use site scope of /C [id: 1]
+      [Enhancement]: public open fun foo(value: R|kotlin/String!|): R|kotlin/String!| from Java enhancement scope for /B [id: 1]
+

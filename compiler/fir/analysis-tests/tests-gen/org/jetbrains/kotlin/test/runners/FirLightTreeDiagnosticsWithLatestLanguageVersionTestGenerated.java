@@ -1996,6 +1996,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("javaInheritsPrivateKtClass2.kt")
+      public void testJavaInheritsPrivateKtClass2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClass2.kt");
+      }
+
+      @Test
       @TestMetadata("javaInheritsPrivateKtClassDisabled.kt")
       public void testJavaInheritsPrivateKtClassDisabled() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClassDisabled.kt");
