@@ -33,7 +33,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: TT
       origin: JAVA_SOURCE
-      psi: null
+      psi: PsiTypeParameterImpl(TT)
       upperBounds: [
         KaFlexibleType:
           annotations: []
