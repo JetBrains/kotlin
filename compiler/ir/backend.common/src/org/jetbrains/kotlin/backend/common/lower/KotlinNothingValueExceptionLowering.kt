@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Throws a proper exception for calls returning value of type [Nothing].
+ */
 open class KotlinNothingValueExceptionLowering(
     val backendContext: CommonBackendContext, val skip: (IrDeclaration) -> Boolean = { false }
 ) : BodyLoweringPass {

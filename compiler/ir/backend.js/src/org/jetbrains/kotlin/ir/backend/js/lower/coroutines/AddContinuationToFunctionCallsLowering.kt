@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 /**
+ * Replace suspend function calls with calls with continuation.
+ *
  * Requires [AddContinuationToLocalSuspendFunctionsLowering] and
  * [AddContinuationToNonLocalSuspendFunctionsLowering] to transform function declarations first.
  */

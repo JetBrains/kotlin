@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-// Replaces IrExpressionBody with IrBlockBody returning this expression.
-// Taken from kotlin/native ReturnsInsertionLowering.kt
-
+/**
+ * Replaces [IrExpressionBody] with [IrBlockBody] returning this expression.
+ * Taken from Kotlin/Native's ReturnsInsertionLowering.kt.
+ */
 class ExpressionBodyTransformer(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrElementVisitorVoid {

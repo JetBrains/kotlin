@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -32,6 +31,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+/**
+ * Creates lazy object instance generator functions.
+ */
 class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField
@@ -89,6 +91,9 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
     }
 }
 
+/**
+ * Transforms [IrGetObjectValue] into an instance generator call.
+ */
 class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField

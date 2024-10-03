@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * Interop layer for function references and lambdas.
+ */
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     val generateInlineAnonymousFunctions: Boolean

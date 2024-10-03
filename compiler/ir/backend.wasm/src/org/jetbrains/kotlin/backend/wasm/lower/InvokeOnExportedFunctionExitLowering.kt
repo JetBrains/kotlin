@@ -25,26 +25,28 @@ import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
-// This pass needed to call coroutines event loop run after exported functions calls
-// @WasmExport
-// fun someExportedMethod() {
-//     println("hello world")
-// }
-//
-// converts into
-//
-// @WasmExport
-// fun someExportedMethod() {
-//     val currentIsNotFirstWasmExportCall = isNotFirstWasmExportCall
-//     try {
-//         isNotFirstWasmExportCall = true
-//         println("hello world")
-//     } finally {
-//         isNotFirstWasmExportCall = currentIsNotFirstWasmExportCall
-//         if (!currentIsNotFirstWasmExportCall) invokeOnExportedFunctionExit()
-//     }
-// }
-
+/**
+ * Calls exported function exit callback for WASI.
+ *
+ *     @WasmExport
+ *     fun someExportedMethod() {
+ *         println("hello world")
+ *     }
+ *
+ * converts into
+ *
+ *     @WasmExport
+ *     fun someExportedMethod() {
+ *         val currentIsNotFirstWasmExportCall = isNotFirstWasmExportCall
+ *         try {
+ *             isNotFirstWasmExportCall = true
+ *             println("hello world")
+ *         } finally {
+ *             isNotFirstWasmExportCall = currentIsNotFirstWasmExportCall
+ *             if (!currentIsNotFirstWasmExportCall) invokeOnExportedFunctionExit()
+ *         }
+ *     }
+ */
 internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val invokeOnExportedFunctionExit get() = context.wasmSymbols.invokeOnExportedFunctionExit
     private val irBooleanType = context.wasmSymbols.irBuiltIns.booleanType

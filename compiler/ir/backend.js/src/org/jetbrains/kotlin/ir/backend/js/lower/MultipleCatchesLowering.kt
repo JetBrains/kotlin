@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
+ * Replaces multiple catches with a single one.
+ *
  * Since JS does not support multiple catch blocks by default we should replace them with similar `when` statement, so
  *
  * try {}
@@ -51,7 +53,6 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
  * }
  * finally {}
  */
-
 class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val litTrue get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val nothingType = context.irBuiltIns.nothingType

@@ -218,6 +218,9 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     private data class FactoryMethod(val name: String, val callee: IrSimpleFunctionSymbol)
 }
 
+/**
+ * Removes `@JsImplicitExport` from unused collections if there is no strict-mode for TypeScript.
+ */
 class RemoveImplicitExportsFromCollections(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) {

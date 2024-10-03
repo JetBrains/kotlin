@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.name.Name
 
 private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 
+/**
+ * Replaces `when` with constant string cases to binary search by string hashcodes.
+ */
 class WasmStringSwitchOptimizerLowering(
     private val context: WasmBackendContext
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {

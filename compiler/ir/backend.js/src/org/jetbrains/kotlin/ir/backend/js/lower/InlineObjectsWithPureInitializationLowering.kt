@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Optimization: inlines object instance fields getters whenever it's possible.
+ */
 class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     private val IrClass.instanceField by context.mapping.objectToInstanceField
     private val IrClass.hasPureInitialization by context.mapping.objectsWithPureInitialization

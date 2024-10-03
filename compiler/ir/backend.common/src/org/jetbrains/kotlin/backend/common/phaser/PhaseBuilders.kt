@@ -94,14 +94,13 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
 fun <Context : CommonBackendContext> makeIrModulePhase(
     lowering: (Context) -> ModuleLoweringPass,
     name: String,
-    description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
     postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
 ): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
     createSimpleNamedCompilerPhase(
         name = name,
-        description = description,
+        description = name,
         preactions = DEFAULT_IR_ACTIONS + preconditions,
         postactions = DEFAULT_IR_ACTIONS + postconditions,
         prerequisite = prerequisite,

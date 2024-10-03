@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 
-/** Look for when-constructs where subject is enum entry.
- * Replace branches that are comparisons with compile-time known enum entries
- * with comparisons of ordinals.
+/**
+ * Optimization: replaces `when` subjects of enum types with their ordinals.
  */
 open class EnumWhenLowering(protected open val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 

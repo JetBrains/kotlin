@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-
+/**
+ * Links [kotlin.Throwable] and JavaScript `Error` together to provide proper interop between language and platform exceptions.
+ */
 class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunction: IrSimpleFunctionSymbol) : BodyLoweringPass {
     private val throwableConstructors = context.throwableConstructors
     private val newThrowableFunction = context.newThrowableSymbol

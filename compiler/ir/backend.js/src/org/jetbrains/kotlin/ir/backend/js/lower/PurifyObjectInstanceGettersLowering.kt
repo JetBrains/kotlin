@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 
+/**
+ * Optimization: make object instance getter functions pure whenever it's possible.
+ */
 class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     private var IrClass.instanceField by context.mapping.objectToInstanceField
 

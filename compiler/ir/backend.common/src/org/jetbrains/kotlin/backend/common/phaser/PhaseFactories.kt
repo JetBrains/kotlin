@@ -80,7 +80,7 @@ private fun <Context : CommonBackendContext> createModulePhase(
 ): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
     val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
 
-    return makeIrModulePhase(createLoweringPass, annotation.name, annotation.name)
+    return makeIrModulePhase(createLoweringPass, annotation.name)
 }
 
 private fun loadAnnotationAndCheckPrerequisites(

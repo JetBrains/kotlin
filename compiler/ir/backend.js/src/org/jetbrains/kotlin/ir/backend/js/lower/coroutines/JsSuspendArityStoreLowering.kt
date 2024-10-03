@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
+/**
+ * Stores arity for suspend functions to not remove it during DCE.
+ */
 class JsSuspendArityStoreLowering(context: JsIrBackendContext) : DeclarationTransformer {
 
     private var IrClass.suspendArityStore by context.mapping.suspendArityStore

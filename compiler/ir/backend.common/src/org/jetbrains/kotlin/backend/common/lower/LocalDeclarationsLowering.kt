@@ -57,12 +57,11 @@ val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 /*
-  Local functions raised in LocalDeclarationLowering continue to refer to
-  type parameters no longer visible to them.
-  We add new type parameters to their declarations, which
-  makes JVM accept those declarations. The generated IR is still
-  semantically incorrect (TODO: needs further fix), but code generation seems
-  to proceed nevertheless.
+ * Moves local declarations into nearest declaration container.
+ *
+ * Note that local functions raised here continue to refer to type parameters no longer visible to them. We add new type parameters
+ * to their declarations, which makes JVM accept those declarations. The generated IR is still semantically incorrect, but code generation
+ * seems to proceed nevertheless.
 */
 open class LocalDeclarationsLowering(
     val context: CommonBackendContext,

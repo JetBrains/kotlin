@@ -39,6 +39,9 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Creates nullable fields for lateinit properties.
+ */
 class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
@@ -55,7 +58,9 @@ class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBacken
     }
 }
 
-// Transform declarations
+/**
+ * References nullable fields from properties and getters + inserts checks.
+ */
 class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
@@ -105,7 +110,9 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
     }
 }
 
-// Transform usages
+/**
+ * Inserts checks for lateinit field references.
+ */
 class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

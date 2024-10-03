@@ -98,6 +98,9 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     }
 }
 
+/**
+ * Wraps `Long` and `Char` constants into constructor invocation.
+ */
 class ConstLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(ConstTransformer(context))

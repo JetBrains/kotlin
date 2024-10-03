@@ -61,6 +61,9 @@ val IrDeclaration.isEs6DelegatingConstructorCallReplacement: Boolean
 private val IrClass.constructorPostfix: String
     get() = fqNameWhenAvailable?.asString()?.replace('.', '_') ?: name.toString()
 
+/**
+ * Lowers synthetic primary constructor declarations to support ES classes.
+ */
 class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
@@ -132,6 +135,9 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
     }
 }
 
+/**
+ * Lowers constructor declarations to support ES classes.
+ */
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 

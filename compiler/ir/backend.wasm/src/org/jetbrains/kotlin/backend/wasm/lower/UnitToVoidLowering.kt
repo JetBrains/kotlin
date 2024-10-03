@@ -9,52 +9,58 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// NOTE: This is an optional lowering.
-// In the wasm backend we treat Unit type as a regular object (except for the function return values). This means that all expressions
-// with Unit return type will actually produce a real Unit instance. However sometimes Unit type signifies that the result of the
-// expression will never be used and for such cases we want to be able to avoid generating redundant Unit objects.
-// In order to simplify the reasoning we introduce special type 'Void'. It means absence of any value, so there are never any real
-// objects of type Void. The only way to produce a Void type is by calling intrinsic 'consumeAnyIntoVoid'. In the wasm code it will turn
-// into a single drop instruction.
-// This lowering visits all statements with Unit return type and tries to replace it with Void type. In the result of
-// such statements it emits 'consumeAnyIntoVoid(previous_result)'. In other words it tries to propagate 'consumeAnyIntoVoid' as
-// deep as possible, changing statement return type to Void on each nesting level it crosses. For example, from this code:
-//    block_body {
-//        block: Unit {
-//            if (some_condition): Unit {
-//                foo(): Unit
-//            } else {
-//                IMPLICIT_COERCION_TO_UNIT(bar(): Int)
-//            }
-//            foo.bar = 10
-//        }
-//        return 1
-//    }
-// We will get this code:
-//    block_body {
-//        block: Void {
-//            if (some_condition): Void {
-//                consumeAnyIntoVoid(foo(): Unit): Void
-//            } else {
-//                consumeAnyIntoVoid(bar(): Int): Void
-//            }
-//            foo.bar = 10
-//        }
-//        return 1
-//    }
-// NOTE: In order to reduce the amount of new nodes in the IR we only do this transformation if it involves 'when' or 'try/catch' statements
-// because WASM backend handles other cases well enough.
-// As a further optimization we can directly mark 'call', 'set_value' and 'set_field' with Void return type and handle them as special
-// cases in the backend.
-
+/**
+ * Replaces some `Unit`s with `Void`s. **NOTE**: This is an optional lowering.
+ *
+ * In the Wasm backend we treat `Unit` type as a regular object (except for the function return values). This means that all expressions
+ * with `Unit` return type will actually produce a real `Unit` instance. However, sometimes `Unit` type signifies that the result of the
+ * expression will never be used, and for such cases we want to be able to avoid generating redundant `Unit` objects.
+ *
+ * In order to simplify the reasoning we introduce a special type `Void`. It means absence of any value, so there are never any real
+ * objects of type `Void`. The only way to produce a `Void` type is by calling intrinsic `consumeAnyIntoVoid`. In the Wasm code it will turn
+ * into a single drop instruction.
+ *
+ * This lowering visits all statements with `Unit` return type and tries to replace it with `Void` type. In the result of
+ * such statements it emits `consumeAnyIntoVoid(previous_result)`. In other words, it tries to propagate `consumeAnyIntoVoid` as
+ * deep as possible, changing statement return type to `Void` on each nesting level it crosses. For example, from this code:
+ *
+ *    block_body {
+ *        block: Unit {
+ *            if (some_condition): Unit {
+ *                foo(): Unit
+ *            } else {
+ *                IMPLICIT_COERCION_TO_UNIT(bar(): Int)
+ *            }
+ *            foo.bar = 10
+ *        }
+ *        return 1
+ *    }
+ *
+ * We will get this code:
+ *
+ *    block_body {
+ *        block: Void {
+ *            if (some_condition): Void {
+ *                consumeAnyIntoVoid(foo(): Unit): Void
+ *            } else {
+ *                consumeAnyIntoVoid(bar(): Int): Void
+ *            }
+ *            foo.bar = 10
+ *        }
+ *        return 1
+ *    }
+ *
+ * **NOTE**: In order to reduce the amount of new nodes in the IR, we only do this transformation if it involves `when` or `try`/`catch`
+ * statements because Wasm backend handles other cases well enough.
+ *
+ * As a further optimization, we can directly mark `call`, `set_value` and `set_field` with `Void` return type and handle them as special
+ * cases in the backend.
+ */
 class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, AbstractValueUsageTransformer(context.irBuiltIns) {
     val builtIns = context.irBuiltIns
     val symbols = context.wasmSymbols

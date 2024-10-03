@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.name.FqName
  */
 var IrClass.originalFqName: FqName? by irAttribute(followAttributeOwner = false)
 
-// Move static member declarations from classes to top level
+/**
+ * Moves static member declarations from classes to the top level.
+ */
 class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     // There is no need to extract external fun, except for one special case of outlined function
     private fun IrDeclaration.isNotExternalOrIsSpecialOutlinedFun(): Boolean {

@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 const val CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS = 2
 
+/**
+ * Optimization: replaces synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.
+ */
 class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrFunction || !declaration.shouldBeConvertedToPlainConstructor(context)) {
@@ -155,6 +158,9 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
     }
 }
 
+/**
+ * Optimization: replaces usages of synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.
+ */
 class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -177,6 +183,8 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
 }
 
 /**
+ * Optimization: collects all constructors which could be translated into a regular constructor.
+ *
  * When we can't optimize class hierarchy chain if there is a class inside which:
  * 1. Has primary constructor which delegates to a secondary
  * 2. Has secondary constructor which delegates to a primary

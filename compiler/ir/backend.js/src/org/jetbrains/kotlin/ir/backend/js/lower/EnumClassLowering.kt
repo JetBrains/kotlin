@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
-import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * Replaces enum access with invocation of corresponding function.
+ */
 class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     private var IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
 
@@ -60,7 +63,9 @@ private fun createEntryAccessorName(enumName: String, enumEntry: IrEnumEntry) =
 
 private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irClass).defaultType
 
-// Should be applied recursively
+/**
+ * Transforms `enum class` into regular `class`.
+ */
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrConstructor.newConstructor by context.mapping.enumConstructorToNewConstructor
@@ -289,8 +294,9 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
     }
 }
 
-//-------------------------------------------------------
-
+/**
+ * Creates instance variable for each enum entry initialized with `null`.
+ */
 class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
@@ -327,6 +333,9 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
     }
 }
 
+/**
+ * Inserts enum entry field initialization into corresponding class constructors.
+ */
 class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private var IrEnumEntry.correspondingField by context.mapping.enumEntryToCorrespondingField
@@ -463,6 +472,9 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
 
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 
+/**
+ * Implements `valueOf, `values` and `entries` for enum classes.
+ */
 class EnumSyntheticFunctionsAndPropertiesLowering(
     val context: JsCommonBackendContext
 ) : DeclarationTransformer {
@@ -572,7 +584,9 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 private val IrClass.enumEntries: List<IrEnumEntry>
     get() = declarations.filterIsInstance<IrEnumEntry>()
 
-// Should be applied recursively
+/**
+ * Replaces an enum entry with the corresponding class.
+ */
 class EnumClassRemoveEntriesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         // Remove IrEnumEntry nodes from class declarations. Replace them with corresponding class declarations (if they have them).

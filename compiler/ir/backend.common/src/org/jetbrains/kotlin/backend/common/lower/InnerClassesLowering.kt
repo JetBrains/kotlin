@@ -30,6 +30,9 @@ interface InnerClassesSupport {
     fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor?
 }
 
+/**
+ * Adds 'outer this' fields to inner classes.
+ */
 open class InnerClassesLowering(val context: CommonBackendContext) : DeclarationTransformer {
     private val innerClassesSupport = context.innerClassesSupport
 
@@ -128,7 +131,9 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
     return oldConstructorParameterToNew
 }
 
-
+/**
+ * Replaces `this` with 'outer this' field references.
+ */
 open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : BodyLoweringPass {
     private val innerClassesSupport = context.innerClassesSupport
 

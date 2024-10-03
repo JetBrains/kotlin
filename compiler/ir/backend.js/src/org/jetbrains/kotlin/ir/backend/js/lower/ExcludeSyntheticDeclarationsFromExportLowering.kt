@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 
+/**
+ * Excludes synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`.
+ */
 class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.shouldBeExcludedFromExport()) {

@@ -480,7 +480,9 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     protected fun IrValueParameter.isMovedReceiver() = isMovedReceiverImpl()
 }
 
-// Remove default argument initializers.
+/**
+ * Removes default argument initializers.
+ */
 open class DefaultParameterCleaner(
     val context: CommonBackendContext,
     val replaceDefaultValuesWithStubs: Boolean = false
@@ -505,7 +507,9 @@ open class DefaultParameterCleaner(
     }
 }
 
-// Sets overriden symbols. Should be used in case `forceSetOverrideSymbols = false`
+/**
+ * Patch overrides for fake override dispatch functions. Should be used in case `forceSetOverrideSymbols = false`.
+ */
 class DefaultParameterPatchOverridenSymbolsLowering(
     val context: CommonBackendContext
 ) : DeclarationTransformer {

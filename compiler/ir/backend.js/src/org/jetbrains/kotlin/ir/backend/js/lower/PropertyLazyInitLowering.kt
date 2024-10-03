@@ -190,6 +190,9 @@ private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>): B
             expression.isPure(anyVariable = true)
         }
 
+/**
+ * Removes property initializers if they were initialized lazily.
+ */
 class RemoveInitializersForLazyProperties(
     private val context: JsCommonBackendContext
 ) : DeclarationTransformer {

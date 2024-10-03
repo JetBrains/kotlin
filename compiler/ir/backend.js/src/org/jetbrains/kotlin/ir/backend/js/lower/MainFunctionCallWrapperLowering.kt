@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+/**
+ * Generates main function call inside the wrapper-function.
+ */
 class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) : FileLoweringPass {
     private val mainFunctionDetector = JsMainFunctionDetector(context)
     private var IrSimpleFunction.mainFunctionWrapper by context.mapping.mainFunctionToItsWrapper

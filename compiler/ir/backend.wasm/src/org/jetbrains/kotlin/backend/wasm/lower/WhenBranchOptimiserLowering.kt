@@ -20,60 +20,74 @@ import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
- * Remove unreachable branches in `when` expressions
+ * Removes unreachable branches in `when` expressions.
  *
- * 1) It remove constant false branches
- * when {
- *   false -> something1
- *   else -> something2
- * }
- * to
- * when {
- *   else -> something2
- * }
- * ---------------------------------------
- * 2) It remove non-constant false branches
- * when {
- *   { something1; false } -> something2
- *   else -> something3
- * }
- * to
- * when {
- *   { something1; false } -> unreachable
- *   else -> something3
- * }
- * ---------------------------------------
- * 3) It remove unreachable branches
- * when {
- *   { something1; unreachable } -> something2
- *   else -> something3
- * }
- * to
- * when {
- *   else -> { something1; unreachable }
- * }
- * ---------------------------------------
- * 4) It remove all branches after constant true branches
- * when {
- *   true -> something1
- *   else -> something2
- * }
- * to
- * when {
- *   else -> something1
- * }
- * ---------------------------------------
- * 5) It remove all branches after non-constant true branches
- * when {
- *   { something1; true } -> something2
- *   else -> something3
- * }
- * to
- * when {
- *   else -> { something1; something2 }
- * }
+ * 1) Removes constant false branches
+ *
+ *       when {
+ *           false -> something1
+ *           else -> something2
+ *       }
+ *
+ *    becomes
+ *
+ *       when {
+ *           else -> something2
+ *       }
+ *
+ * 2) Removes non-constant false branches
+ *
+ *       when {
+ *           { something1; false } -> something2
+ *           else -> something3
+ *       }
+ *
+ *    becomes
+ *
+ *       when {
+ *           { something1; false } -> unreachable
+ *           else -> something3
+ *       }
+ *
+ * 3) Removes unreachable branches
+ *
+ *       when {
+ *           { something1; unreachable } -> something2
+ *           else -> something3
+ *       }
+ *
+ *    becomes
+ *
+ *       when {
+ *           else -> { something1; unreachable }
+ *       }
+ *
+ * 4) Removes all branches after constant true branches
+ *
+ *       when {
+ *           true -> something1
+ *           else -> something2
+ *       }
+ *
+ *    becomes
+ *
+ *       when {
+ *           else -> something1
+ *       }
+ *
+ * 5) Removes all branches after non-constant true branches
+ *
+ *       when {
+ *           { something1; true } -> something2
+ *           else -> something3
+ *       }
+ *
+ *    becomes
+ *
+ *       when {
+ *           else -> { something1; something2 }
+ *       }
  */
-
 class WhenBranchOptimiserLowering(val context: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(WhenBranchOptimiserTransformer(context))

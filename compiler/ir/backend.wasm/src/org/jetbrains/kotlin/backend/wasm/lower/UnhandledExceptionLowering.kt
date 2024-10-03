@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
@@ -27,28 +26,31 @@ import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
-// This pass needed to wrap around unhandled exceptions from JsExport functions and throw JS exception for call from JS site
-// @JsExport
-// fun someExportedMethod() {
-//     error("some error message")
-// }
-//
-// converts into
-//
-// @JsExport
-// fun someExportedMethod() {
-//     val currentIsNotFirstWasmExportCall = isNotFirstWasmExportCall
-//     try {
-//         isNotFirstWasmExportCall = true
-//         error("some error message")
-//     } catch (e: Throwable) {
-//         if (currentIsNotFirstWasmExportCall) throw e else throwAsJsException(e)
-//     } finally {
-//         isNotFirstWasmExportCall = currentIsNotFirstWasmExportCall
-//     }
-// }
-// TODO Wrap fieldInitializer function (now it building by later linkWasmCompiledFragments)
-
+/**
+ * Wraps `@JsExport` functions with try-catch to convert unhandled Wasm exceptions into JS exceptions.
+ *
+ *     @JsExport
+ *     fun someExportedMethod() {
+ *         error("some error message")
+ *     }
+ *
+ * converts into
+ *
+ *     @JsExport
+ *     fun someExportedMethod() {
+ *         val currentIsNotFirstWasmExportCall = isNotFirstWasmExportCall
+ *         try {
+ *             isNotFirstWasmExportCall = true
+ *             error("some error message")
+ *         } catch (e: Throwable) {
+ *             if (currentIsNotFirstWasmExportCall) throw e else throwAsJsException(e)
+ *         } finally {
+ *             isNotFirstWasmExportCall = currentIsNotFirstWasmExportCall
+ *         }
+ *     }
+ *
+ * TODO Wrap fieldInitializer function (now it building by later linkWasmCompiledFragments)
+ */
 internal class UnhandledExceptionLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val throwableType = context.irBuiltIns.throwableType
     private val irBooleanType = context.wasmSymbols.irBuiltIns.booleanType

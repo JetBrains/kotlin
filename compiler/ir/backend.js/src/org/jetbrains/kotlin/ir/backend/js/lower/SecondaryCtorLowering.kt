@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * Generates static functions for each secondary constructor.
+ */
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -235,6 +238,9 @@ private fun JsIrBackendContext.buildConstructorFactory(constructor: IrConstructo
     }
 }
 
+/**
+ * Replaces usages of secondary constructor with the corresponding static functions.
+ */
 class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

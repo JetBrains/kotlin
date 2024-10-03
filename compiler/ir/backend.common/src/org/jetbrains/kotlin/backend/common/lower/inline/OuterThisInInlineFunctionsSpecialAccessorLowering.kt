@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
+/**
+ * Generates a special private member accessor for outer@this implicit value parameter in inline functions.
+ */
 class OuterThisInInlineFunctionsSpecialAccessorLowering(
     context: CommonBackendContext,
 

@@ -6,41 +6,34 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
- * Adding associated objects into objects dictionary
+ * Adds associated objects into the objects dictionary.
  *
  * For code like this:
- * annotation class Key(klass: KClass<*>)
- * object OBJ
  *
- * @Key(OBJ::class)
- * class C
+ *     annotation class Key(klass: KClass<*>)
+ *     object OBJ
  *
- * add getter expression into tryGetAssociatedObject body:
- * internal fun tryGetAssociatedObject(klassId: Int, keyId: Int): Any? {
- *   ...
- *   if (C.klassId == klassId) if (Key.klassId == keyId) return OBJ
- *   ...
- *   return null
- * }
+ *     @Key(OBJ::class)
+ *     class C
+ *
+ * Adds getter expression into `tryGetAssociatedObject` body:
+ *
+ *     internal fun tryGetAssociatedObject(klassId: Int, keyId: Int): Any? {
+ *         ...
+ *         if (C.klassId == klassId) if (Key.klassId == keyId) return OBJ
+ *         ...
+ *         return null
+ *     }
  */
 class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringPass {
     lateinit var currentFile: IrFile

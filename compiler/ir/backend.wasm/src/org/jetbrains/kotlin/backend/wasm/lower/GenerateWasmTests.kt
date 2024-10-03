@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
+/**
+ * Generates code to execute kotlin.test cases.
+ */
 internal class GenerateWasmTests(private val context: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         generateJsTests(
@@ -20,6 +23,9 @@ internal class GenerateWasmTests(private val context: WasmBackendContext) : Modu
     }
 }
 
+/**
+ * Generates code to execute kotlin.test cases for IC.
+ */
 internal class GenerateWasmTestsIC(private val context: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         generateJsTests(

@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
+/**
+ * Optimization: removes the box parameter from the constructors which don't require it.
+ */
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
@@ -93,6 +96,9 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
     }
 }
 
+/**
+ * Optimization: collects all constructors which require a box parameter.
+ */
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
     private var IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 

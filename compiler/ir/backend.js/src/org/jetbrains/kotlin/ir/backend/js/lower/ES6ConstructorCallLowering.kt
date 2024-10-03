@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Lowers constructor usages to support ES classes.
+ */
 class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 

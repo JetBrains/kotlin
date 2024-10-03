@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 
-//This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
+/**
+ * Moves local classes into nearest declaration container.
+ */
 open class LocalClassPopupLowering(
     val context: BackendContext,
 ) : BodyLoweringPass {

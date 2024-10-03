@@ -22,18 +22,18 @@ import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
-/*
- Here we're extracting some local classes from inline bodies.
- The mental model of inlining is as following:
-  - for inline lambdas, since we don't see the keyword `inline` at a callsite,
-    it is logical to think that the lambda won't be copied but will be embedded as is at the callsite,
-    so all local classes declared in those inline lambdas are NEVER COPIED.
-  - as for the bodies of inline functions, then it is the opposite - we see the `inline` keyword,
-    so it is only logical to think that this is a macro substitution, so the bodies of inline functions
-    are copied. But the compiler could optimize the usage of some local classes and not copy them.
-    So in this case all local classes MIGHT BE COPIED.
+/**
+ * Extracts local classes from inline lambdas.
+ *
+ * The mental model of inlining is as following:
+ *  - for inline lambdas, since we don't see the keyword `inline` at the call site,
+ *    it is logical to think that the lambda won't be copied but will be embedded as is at the call site,
+ *    so all local classes declared in those inline lambdas are NEVER COPIED.
+ *  - as for the bodies of inline functions, it is the opposite - we see the `inline` keyword,
+ *    so it is only logical to think that this is a macro substitution, so the bodies of inline functions
+ *    are copied. But the compiler could optimize the usage of some local classes and not copy them.
+ *    So in this case all local classes MIGHT BE COPIED.
  */
-
 class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -168,6 +168,10 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
     })
 }
 
+/**
+ * Rewrites local classes so that they don't capture any locals. Locals are passed to the class explicitly, and usages of those locals
+ * inside the class are replaced with accesses to the class fields.
+ */
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -184,6 +188,9 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
     }
 }
 
+/**
+ * Moves local classes from inline functions into nearest declaration container.
+ */
 class LocalClassesExtractionFromInlineFunctionsLowering(
     context: CommonBackendContext,
 ) : LocalClassPopupLowering(context) {

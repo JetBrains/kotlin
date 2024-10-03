@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Replaces suspend intrinsic for generator-based coroutines.
+ */
 class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val valueParamSizeToItsCreateCoroutineUnintercepted =
         context.intrinsics.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()

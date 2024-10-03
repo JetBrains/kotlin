@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+/**
+ * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
+ */
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
         JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)

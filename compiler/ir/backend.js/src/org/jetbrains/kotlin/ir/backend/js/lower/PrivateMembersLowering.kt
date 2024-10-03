@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
+/**
+ * Extracts private members from classes.
+ */
 class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     private var IrFunction.correspondingStatic by context.mapping.privateMemberToCorrespondingStatic

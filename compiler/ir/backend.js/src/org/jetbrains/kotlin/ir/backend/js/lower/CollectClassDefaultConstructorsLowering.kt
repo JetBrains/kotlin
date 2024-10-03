@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isClass
 
+/**
+ * Collects classes default constructors to add it to metadata on code generating phase.
+ */
 class CollectClassDefaultConstructorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.couldContainDefaultConstructor()) {

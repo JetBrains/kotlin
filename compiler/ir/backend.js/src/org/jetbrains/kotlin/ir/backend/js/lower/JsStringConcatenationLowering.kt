@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
+/**
+ * Calls `toString` for values of some types when concatenating strings.
+ */
 class JsStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(JsStringConcatenationTransformer(context))

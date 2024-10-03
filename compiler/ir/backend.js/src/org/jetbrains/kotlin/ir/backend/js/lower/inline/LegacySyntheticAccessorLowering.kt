@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 /**
+ * Wraps top level inline function to access through them from inline functions (legacy lowering).
+ *
  * TODO: Drop in favor of [SyntheticAccessorLowering].
  */
 class LegacySyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {

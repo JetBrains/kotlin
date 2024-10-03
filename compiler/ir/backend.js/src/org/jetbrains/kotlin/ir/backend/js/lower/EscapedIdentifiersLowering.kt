@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
+/**
+ * Converts global variables with invalid names access to `globalThis` member expression.
+ */
 class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass {
     private val transformer = ReferenceTransformer(context)
     private val moduleKind = context.configuration[JSConfigurationKeys.MODULE_KIND]!!

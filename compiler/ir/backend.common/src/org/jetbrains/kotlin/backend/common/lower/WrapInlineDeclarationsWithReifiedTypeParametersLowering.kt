@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-// Replace callable reference on inline function with reified parameter
-// with callable reference on new non inline function with substituted types
+/**
+ * Replaces callable reference to an inline function with reified parameter with a callable reference to a new non-inline function
+ * with substituted types.
+ */
 class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: BackendContext) : BodyLoweringPass {
     private val irFactory
         get() = context.irFactory
