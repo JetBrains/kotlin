@@ -97,6 +97,11 @@ class FunctionCallTransformer(
 
     private interface CallTransformer {
         fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType?
+
+        /**
+         * must still generate let with declared class from interceptOrNull when interpretation fails.
+         * it should only return null if later some frontend checker fails compilation in general
+         */
         fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall?
     }
 
@@ -180,7 +185,7 @@ class FunctionCallTransformer(
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
             val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
-            val dataSchemaApis = materialize(dataFrameSchema, call, firstSchema)
+            val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
             val tokenFir = token.toClassSymbol(session)!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
@@ -228,8 +233,13 @@ class FunctionCallTransformer(
             val keyMarker = rootMarkers[0]
             val groupMarker = rootMarkers[1]
 
-            val keySchema = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop)
-            val groupSchema = PluginDataFrameSchema(groupBy.df.columns())
+            val (keySchema, groupSchema) = if (groupBy != null) {
+                val keySchema = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop)
+                val groupSchema = PluginDataFrameSchema(groupBy.df.columns())
+                keySchema to groupSchema
+            } else {
+                PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY
+            }
 
             val firstSchema = keyMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
             val firstSchema1 = groupMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
