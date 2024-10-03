@@ -1,5 +1,5 @@
 // LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 var result = ""
 
