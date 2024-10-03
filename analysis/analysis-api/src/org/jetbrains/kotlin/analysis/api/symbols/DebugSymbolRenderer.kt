@@ -237,7 +237,14 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (symbol !in currentSymbolStack && (renderSymbolsFully || symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol)) {
+        if (symbol !in currentSymbolStack &&
+            (renderSymbolsFully ||
+                    symbol is KaBackingFieldSymbol ||
+                    symbol is KaPropertyAccessorSymbol ||
+                    symbol is KaParameterSymbol ||
+                    symbol is KaTypeParameterSymbol
+                    )
+        ) {
             renderSymbol(symbol, printer, currentSymbolStack)
             return
         }
