@@ -366,7 +366,9 @@ class FirCallCompleter(
                 else -> null
             }
 
-            val expectedReturnTypeRef = expectedReturnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
+            val expectedReturnTypeRef = expectedReturnType?.let {
+                lambda.returnTypeRef.resolvedTypeFromPrototype(it, lambda.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
+            }
 
             when {
                 receiverType == null -> lambda.replaceReceiverParameter(null)
