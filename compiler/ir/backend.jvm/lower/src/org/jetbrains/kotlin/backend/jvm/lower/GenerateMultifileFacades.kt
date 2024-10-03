@@ -41,7 +41,16 @@ import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
 /**
- * Generates [JvmMultifileClass] facades, based on the information provided by [FileClassLowering].
+ * Generates [JvmMultifileClass] facades:
+ *
+ * - Before this phase runs, all files annotated with `@JvmMultifileClass` are grouped by their JVM name (value of the `@JvmName` annotation
+ *   on the file). This part is done by [FileClassLowering] and stored in [JvmBackendContext.multifileFacadesToAdd].
+ * - For each group, this phase generates a facade class, which "combines" methods from all multi-file parts.
+ *     - If `-Xmultifile-parts-inherit` is enabled, multi-file parts are made to inherit from each other, and the facade class inherits
+ *       from the bottommost multi-file part. In this case, all top-level functions and properties are available from the facade class
+ *       just by inheritance. The parts are then made synthetic. This mode is used in kotlin-stdlib.
+ *     - Otherwise, for each function in the multi-file part, a new function in the facade class is generated that calls it.
+ * - Finally, it updates call sites of functions from parts to point to the corresponding function from the facade.
  */
 @PhaseDescription(name = "GenerateMultifileFacades")
 internal class GenerateMultifileFacades(private val context: JvmBackendContext) : ModuleLoweringPass {

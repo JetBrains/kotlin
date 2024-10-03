@@ -31,6 +31,26 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+/**
+ * Transforms declarations and usages of variables captured in lambdas ("shared variables") to `ObjectRef`/`IntRef`/...
+ *
+ * For example:
+ *
+ *     var x = "a"
+ *     run {
+ *         x = "b"
+ *         println(x)
+ *     }
+ *
+ * becomes
+ *
+ *     var x = ObjectRef<String>()
+ *     x.element = "a"
+ *     run {
+ *         x.element = "b"
+ *         println(x.element)
+ *     }
+ */
 @PhaseDescription(name = "SharedVariables")
 class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {

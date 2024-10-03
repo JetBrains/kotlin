@@ -28,7 +28,22 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 /**
- * Replaces polymorphic methods with fake ones according to types at the call site.
+ * Replaces polymorphic methods (annotated with [java.lang.invoke.MethodHandle.PolymorphicSignature]) with fake ones according to types
+ * at the call site. This is similar to how the Java compiler generates calls to such methods.
+ *
+ * For example:
+ *
+ *     val mh: MethodHandle = ...
+ *     val result: String = mh.invokeExact(Foo()) as String
+ *
+ * In this case, [java.lang.invoke.MethodHandle.invokeExact] is a polymorphic method, which means that its declaration-site signature
+ * must be discarded, and the real signature must be computed from the argument types at the call site and the expected return type.
+ * It results in the following call in the bytecode:
+ *
+ *     invokevirtual java/lang/invoke/MethodHandle.invokeExact:(LFoo;)Ljava/lang/String;
+ *
+ * This lowering phase creates and calls a fake `IrFunction` which is the same as the original callee in everything except value parameter
+ * types and return type.
  */
 @PhaseDescription(name = "PolymorphicSignature")
 internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),

@@ -27,7 +27,24 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Optimizes `val x by ::y`: there is no need to construct a `KProperty` instance.
+ * Optimizes `val x by ::y`: instead of constructing a `KProperty` instance and calling `getValue`/`setValue` operators, generates calls
+ * to the getter/setter of the referenced property directly. If the property reference has a bound receiver which is non-trivial
+ * (its computation might lead to side effects), we compute the receiver once and store it in a field.
+ *
+ * Also, generates a `$delegate` method that returns the delegate anyway. This method is supposed to only be used from kotlin-reflect
+ * ([kotlin.reflect.KProperty0.getDelegate]).
+ *
+ * For example:
+ *
+ *     var x by f()::y
+ *
+ * becomes
+ *
+ *     var x
+ *         field = f()
+ *         get() = field.y()
+ *         set(value) { field.y = value }
+ *     fun getX$delegate() = x$field::y
  */
 @PhaseDescription(name = "PropertyReferenceDelegation")
 internal class PropertyReferenceDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {

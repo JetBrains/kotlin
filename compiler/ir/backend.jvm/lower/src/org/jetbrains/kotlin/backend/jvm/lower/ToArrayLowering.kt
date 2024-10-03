@@ -34,7 +34,13 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
 /**
- * Handles [java.util.Collection.toArray] functions.
+ * Handles [java.util.Collection.toArray] functions. There are two functions which are declared in Java `Collection`, but not in Kotlin:
+ *
+ *     Object[] toArray();
+ *     <T> T[] toArray(T[] a);
+ *
+ * This phase generates `toArray` overrides for `Collection` subclasses which call `kotlin.jvm.internal.CollectionToArray.toArray`,
+ * unless the function is already declared in the class.
  */
 @PhaseDescription(name = "ToArray")
 internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {

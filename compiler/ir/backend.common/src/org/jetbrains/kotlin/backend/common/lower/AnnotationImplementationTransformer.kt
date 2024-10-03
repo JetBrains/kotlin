@@ -36,6 +36,23 @@ val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
 /**
  * Creates synthetic annotations implementations and uses them in annotations constructor calls.
+ *
+ * For example:
+ *
+ *     annotation class A(val value: String)
+ *     fun f(): A = A("")
+ *
+ * becomes
+ *
+ *     annotation class A(val value: String)
+ *     fun f(): A = annotationImpl$A$0("")
+ *
+ *     class annotationImpl$A$0(override val value: String) : A {
+ *         override fun equals(other: Any?): Boolean = ...
+ *         override fun hashCode(): Int = ...
+ *         override fun toString(): String = ...
+ *         fun annotationType(): Class<*> = A::class.java // (JVM-only)
+ *     }
  */
 open class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer

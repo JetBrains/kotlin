@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * Generates method stubs for type alias annotations.
+ *
+ * For a `typealias T` annotated with something, we generate a private static method `T$annotations` with an empty body and generate
+ * annotations on that method (similarly to properties), so that if this typealias is used in another module, the compiler would be able
+ * to know where to look for the annotations.
  */
 @PhaseDescription(name = "TypeAliasAnnotationMethodsLowering")
 internal class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) : ClassLoweringPass {

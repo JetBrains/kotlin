@@ -23,7 +23,7 @@ class ProvisionalFunctionExpressionLoweringContext(
 )
 
 /**
- * Transforms [IrFunctionExpression] to a local function reference.
+ * Transforms [IrFunctionExpression] to a block with a local function and a reference to it.
  */
 @PhaseDescription(name = "FunctionExpression")
 class ProvisionalFunctionExpressionLowering(@Suppress("UNUSED_PARAMETER", "unused") context: CommonBackendContext) :

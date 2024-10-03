@@ -30,6 +30,24 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 /**
  * Encloses repeated annotations in a container annotation, generating a container class if needed.
+ * See the [Repeatable annotations KEEP](https://github.com/Kotlin/KEEP/blob/master/proposals/repeatable-annotations.md).
+ *
+ * For example:
+ *
+ *     @Repeatable annotation class A
+ *
+ *     @A @A @A
+ *     fun f() {}
+ *
+ * becomes
+ *
+ *     @Repeatable annotation class A {
+ *         @kotlin.jvm.internal.RepeatableContainer
+ *         annotation class Container(val value: Array<A>)
+ *     }
+ *
+ *     @A.Container(value = [A(), A(), A()])
+ *     fun f() {}
  */
 @PhaseDescription(name = "RepeatedAnnotation")
 internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
