@@ -339,7 +339,7 @@ public class SirAsSwiftSourcesPrinter(
     private fun SirCallable.collectParameters(): List<SirParameter> = when (this) {
         is SirGetter -> emptyList()
         is SirSetter -> emptyList()
-        is SirFunction -> parameters
+        is SirFunction -> listOfNotNull(extensionReceiverParameter) + parameters
         is SirInit -> parameters
     }
 

@@ -3,6 +3,12 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@ExportedBridge("__root___foo__TypesOfArguments__Swift_Int32__")
+public fun __root___foo__TypesOfArguments__Swift_Int32__(receiver: Int): Unit {
+    val __receiver = receiver
+    __receiver.foo()
+}
+
 @ExportedBridge("__root___foo")
 public fun __root___foo(): Int {
     val _result = foo()

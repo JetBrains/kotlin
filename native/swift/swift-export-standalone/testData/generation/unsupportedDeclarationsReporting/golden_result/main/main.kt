@@ -28,3 +28,9 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: ko
     kotlin.native.internal.initInstance(____kt, Foo())
 }
 
+@ExportedBridge("__root___ext__TypesOfArguments__main_Foo__")
+public fun __root___ext__TypesOfArguments__main_Foo__(receiver: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(receiver) as Foo
+    __receiver.ext()
+}
+

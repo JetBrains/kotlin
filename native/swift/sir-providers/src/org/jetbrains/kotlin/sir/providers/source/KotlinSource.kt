@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.source
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.sir.SirOrigin
@@ -18,4 +19,5 @@ public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
 
 public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
+    public class ReceiverParameter(public val parameter: KaReceiverParameterSymbol) : KotlinParameterOrigin()
 }

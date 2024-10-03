@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+void __root___foo__TypesOfArguments__Swift_Int32__(int32_t receiver);
+
 int32_t __root___foo();
 
 uintptr_t __root___return_any_should_append_runtime_import();

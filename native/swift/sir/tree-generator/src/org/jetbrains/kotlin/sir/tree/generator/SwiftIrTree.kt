@@ -136,6 +136,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(classMemberDeclaration)
 
         +field("name", string)
+        +field("extensionReceiverParameter", parameterType, nullable = true)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
     }

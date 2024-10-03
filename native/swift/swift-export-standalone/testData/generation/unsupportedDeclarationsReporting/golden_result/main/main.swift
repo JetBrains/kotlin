@@ -25,13 +25,17 @@ public final class Foo : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public func ext(
+    receiver: main.Foo
+) -> Swift.Void {
+    return __root___ext__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+}
 // Can't export extProp: extension properties are not supported yet.
-// Can't export ext: extension functions are not supported yet.
 // Can't export foo: inline functions are not supported yet.
 // Can't export MyInterface: interface classifiers are not supported yet.
 // Can't export a.b.c.A: abstract classes are not supported yet.
 // Can't export a.b.c.E: enum_class classifiers are not supported yet.
-// Can't export Foo.extFunMember: extension functions are not supported yet.
+// Can't export Foo.extFunMember: member extension functions are not supported yet.
 // Can't export Foo.extPropMember: extension properties are not supported yet.
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.

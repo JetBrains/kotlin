@@ -16,6 +16,7 @@ import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
@@ -31,6 +32,9 @@ internal class SirFunctionFromKtSymbol(
     }
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
+    }
+    override val extensionReceiverParameter: SirParameter? by lazy {
+        translateExtensionParameter()
     }
     override val parameters: List<SirParameter> by lazy {
         translateParameters()

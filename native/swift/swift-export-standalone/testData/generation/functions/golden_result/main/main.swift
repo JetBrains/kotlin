@@ -2,6 +2,11 @@
 import KotlinRuntime
 @_implementationOnly import KotlinBridges_main
 
+public func foo(
+    receiver: Swift.Int32
+) -> Swift.Void {
+    return __root___foo__TypesOfArguments__Swift_Int32__(receiver)
+}
 public func foo() -> Swift.Int32 {
     return __root___foo()
 }
