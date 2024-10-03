@@ -158,6 +158,10 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
         return findChildByType(KtTokens.SET_KEYWORD);
     }
 
+    /**
+     * @deprecated use `parameterList?.rightParenthesis`
+     */
+    @Deprecated
     @Nullable
     public PsiElement getRightParenthesis() {
         KtParameterList parameterList = getParameterList();
@@ -165,6 +169,10 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
         return parameterList.getRightParenthesis();
     }
 
+    /**
+     * @deprecated use `parameterList?.leftParenthesis`
+     */
+    @Deprecated
     @Nullable
     public PsiElement getLeftParenthesis() {
         KtParameterList parameterList = getParameterList();
