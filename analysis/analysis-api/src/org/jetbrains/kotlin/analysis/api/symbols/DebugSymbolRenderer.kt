@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiQualifiedNamedElement
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
@@ -21,13 +27,21 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionNotStubbed
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.types.Variance
@@ -360,6 +374,7 @@ public class DebugSymbolRenderer(
             is ClassId -> printer.append(value.asString())
             is DeprecationInfo -> renderDeprecationInfo(value, printer)
             is Visibility -> printer.append(value::class.java.simpleName)
+            is PsiElement -> renderPsi(value, printer)
             // Unsigned integers
             is UByte -> printer.append(value.toString())
             is UShort -> printer.append(value.toString())
@@ -370,6 +385,39 @@ public class DebugSymbolRenderer(
             is List<*> -> renderList(value, printer, renderSymbolsFully = false, currentSymbolStack)
             else -> printer.append(value.toString())
         }
+    }
+
+    private fun renderPsi(psi: PsiElement, printer: PrettyPrinter) = printer {
+        if (!psi.isValid) {
+            append("<invalid element $psi>")
+            return
+        }
+        append(psi::class.java.simpleName)
+        append("(")
+        append(
+            getPsiRepresentation(psi)
+                ?: runCatching { psi.text }.getOrNull()?.lines()?.firstOrNull { it.trim().isNotEmpty() }
+                ?: runCatching { (psi as? StubBasedPsiElementBase<*>)?.stub?.toString() }.getOrNull()
+                ?: NO_TEXT
+        )
+        append(")")
+    }
+
+    private fun getPsiRepresentation(psi: PsiElement): String? = when (psi) {
+        is PsiFile -> psi.name
+        is KtParameter -> psiOwnerRepresentation(psi.ownerFunction) + (psi.name ?: NO_NAME)
+        is KtTypeParameter -> psiOwnerRepresentation(psi.parentOfType<KtDeclaration>(withSelf = false)) + (psi.name ?: NO_NAME)
+        is KtConstructor<*> ->psiOwnerRepresentation(psi.parentOfType<KtClassOrObject>(withSelf = false)) + (psi.name ?: NO_NAME)
+        is KtNamedDeclaration -> psi.fqName?.asString() ?: psi.name ?: NO_NAME
+        is PsiQualifiedNamedElement -> psi.qualifiedName ?: psi.name ?: NO_NAME
+        is PsiMember -> PsiUtil.getMemberQualifiedName(psi)
+        is PsiNamedElement -> psi.name ?: NO_NAME
+        else -> null
+    }
+
+    private fun psiOwnerRepresentation(owner: PsiElement?): String {
+        if (owner == null) return ""
+        return getPsiRepresentation(owner) + "."
     }
 
     private fun KaSession.renderTypeProjection(
@@ -498,8 +546,10 @@ public class DebugSymbolRenderer(
 
     @KaNonPublicApi
     public companion object {
+        private const val NO_NAME = "<no name>"
+        private const val NO_TEXT = "<no text>"
+
         private val ignoredPropertyNames = setOf(
-            "psi",
             "token",
             "builder",
             "coneType",
@@ -514,6 +564,7 @@ public class DebugSymbolRenderer(
         )
     }
 }
+
 
 private val PrettyPrinter.printer: PrettyPrinter
     get() = this
