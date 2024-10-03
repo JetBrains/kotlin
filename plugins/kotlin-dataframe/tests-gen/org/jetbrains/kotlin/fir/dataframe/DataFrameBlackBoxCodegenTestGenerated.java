@@ -227,6 +227,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("inventNamesForLocalClasses.kt")
+  public void testInventNamesForLocalClasses() {
+    runTest("testData/box/inventNamesForLocalClasses.kt");
+  }
+
+  @Test
   @TestMetadata("join.kt")
   public void testJoin() {
     runTest("testData/box/join.kt");

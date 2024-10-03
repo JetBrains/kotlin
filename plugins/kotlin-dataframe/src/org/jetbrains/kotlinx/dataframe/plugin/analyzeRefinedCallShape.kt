@@ -30,7 +30,7 @@ internal inline fun <reified T> KotlinTypeFacade.analyzeRefinedCallShape(
     val rootMarkers = callReturnType.typeArguments.filterIsInstance<ConeClassLikeType>()
     if (rootMarkers.size != callReturnType.typeArguments.size) return null
 
-    val newSchema: T = call.interpreterName(session)?.let { name ->
+    val newSchema: T? = call.interpreterName(session)?.let { name ->
         when (name) {
             else -> name.load<Interpreter<*>>().let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)
@@ -40,19 +40,20 @@ internal inline fun <reified T> KotlinTypeFacade.analyzeRefinedCallShape(
                             if (!reporter.errorReported) {
                                 reporter.reportInterpretationError(call, "${processor::class} must return ${T::class}, but was $value")
                             }
-                            return null
+                            null
+                        } else {
+                            value
                         }
-                        value
                     }
                 dataFrameSchema
             }
         }
-    } ?: return null
+    }
 
     return CallResult(rootMarkers, newSchema)
 }
 
-data class CallResult<T>(val markers: List<ConeClassLikeType>, val result: T)
+data class CallResult<T>(val markers: List<ConeClassLikeType>, val result: T?)
 
 class RefinedArguments(val refinedArguments: List<RefinedArgument>) : List<RefinedArgument> by refinedArguments
 
