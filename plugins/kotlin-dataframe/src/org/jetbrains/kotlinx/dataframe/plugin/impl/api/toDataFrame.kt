@@ -288,12 +288,12 @@ internal fun KotlinTypeFacade.toDataFrame(
             }
     }
 
-    val receiver = explicitReceiver ?: return PluginDataFrameSchema(emptyList())
-    val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: return PluginDataFrameSchema(emptyList())
+    val receiver = explicitReceiver ?: return PluginDataFrameSchema.EMPTY
+    val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: return PluginDataFrameSchema.EMPTY
     return when {
-        arg.isStarProjection -> PluginDataFrameSchema(emptyList())
+        arg.isStarProjection -> PluginDataFrameSchema.EMPTY
         else -> {
-            val classLike = arg.type as? ConeClassLikeType ?: return PluginDataFrameSchema(emptyList())
+            val classLike = arg.type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
             val columns = convert(classLike, 0)
             PluginDataFrameSchema(columns)
         }
