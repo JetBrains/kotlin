@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension.Context as InCo
 
 class CodeFragmentCodegenInfo(
     val classDescriptor: ClassDescriptor,

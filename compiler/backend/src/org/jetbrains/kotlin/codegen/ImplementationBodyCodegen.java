@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap.PlatformMutability
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
@@ -443,14 +442,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (context.closure != null)
             genClosureFields(context.closure, v, typeMapper, state.getLanguageVersionSettings());
-
-        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
-            if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES
-                || extension.getShouldGenerateClassSyntheticPartsInLightClassesMode()
-            ) {
-                extension.generateClassSyntheticParts(this);
-            }
-        }
     }
 
     @Override
