@@ -16,12 +16,11 @@ import java.util.concurrent.atomic.AtomicReference
 
 fun <Context : CommonBackendContext> performByIrFile(
     name: String,
-    description: String,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
     supportParallel: Boolean,
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
-        name, description, emptySet(), PerformByIrFilePhase(lower, supportParallel), emptySet(), emptySet(), emptySet(),
+        name, emptySet(), PerformByIrFilePhase(lower, supportParallel), emptySet(), emptySet(), emptySet(),
         setOf(getIrDumper()), nlevels = 1,
     )
 

@@ -88,7 +88,6 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
 // TODO: A better name would be just `NamedCompilerPhase`, but it is already used (see below).
 abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
-    val description: String,
     val prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     val preconditions: Set<Checker<Input>> = emptySet(),
     val postconditions: Set<Checker<Output>> = emptySet(),
@@ -151,7 +150,6 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
 //  so we introduce a typealias instead as a temporary solution.
 class NamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
-    description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
     preconditions: Set<Checker<Data>> = emptySet(),
@@ -160,7 +158,7 @@ class NamedCompilerPhase<in Context : LoggingContext, Data>(
     private val actions: Set<Action<Data, Context>> = emptySet(),
     nlevels: Int = 0
 ) : AbstractNamedCompilerPhase<Context, Data, Data>(
-    name, description, prerequisite, preconditions, postconditions, nlevels
+    name, prerequisite, preconditions, postconditions, nlevels
 ) {
     override fun phaseBody(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, input: Data): Data =
         lower.invoke(phaseConfig, phaserState, context, input)
@@ -207,7 +205,6 @@ typealias SameTypeNamedCompilerPhase<Context, Data> = NamedCompilerPhase<Context
  */
 abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name: String,
-    description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     preconditions: Set<Checker<Input>> = emptySet(),
     postconditions: Set<Checker<Output>> = emptySet(),
@@ -216,7 +213,6 @@ abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Outp
     nlevels: Int = 0,
 ) : AbstractNamedCompilerPhase<Context, Input, Output>(
     name,
-    description,
     prerequisite,
     preconditions,
     postconditions,

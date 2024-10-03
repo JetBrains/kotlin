@@ -909,7 +909,6 @@ fun getJsPhases(
     configuration: CompilerConfiguration
 ): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
-    description = "IR module lowering",
     lower = getJsLowerings(configuration).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
@@ -966,7 +965,6 @@ val optimizationLoweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContex
 
 val jsOptimizationPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleOptimizationLowering",
-    description = "IR module optimization lowering",
     lower = optimizationLoweringList.toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1

@@ -54,7 +54,6 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
     name,
-    name,
     preactions = preactions,
     postactions = postactions.map { f ->
         fun(actionState: ActionState, data: Pair<Input, Output>, context: Context) = f(actionState, data.second, context)
@@ -75,7 +74,6 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     op: (Context, Input) -> Unit
 ): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(
-    name,
     name,
     preactions = preactions,
     postactions = postactions.map { f ->

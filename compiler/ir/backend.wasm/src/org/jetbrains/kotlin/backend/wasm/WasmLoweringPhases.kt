@@ -677,9 +677,7 @@ fun getWasmPhases(
     isIncremental: Boolean
 ): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
-    description = "IR module lowering",
     lower = getWasmLowerings(isIncremental).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
-

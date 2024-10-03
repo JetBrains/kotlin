@@ -125,7 +125,6 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
 
 val jvmLoweringPhases = SameTypeNamedCompilerPhase(
     name = "IrLowering",
-    description = "IR lowering",
     nlevels = 1,
     actions = DEFAULT_IR_ACTIONS,
     lower = buildModuleLoweringsPhase(
@@ -151,7 +150,6 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
     ).then(
         performByIrFile(
             name = "PerformByIrFile",
-            description = "Perform phases by IrFile",
             lower = jvmFilePhases,
             supportParallel = false,
         )

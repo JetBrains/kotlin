@@ -70,10 +70,7 @@ internal class PhaseEngine<C : PhaseContext>(
             val phaserState = PhaserState<Any>()
             val phaseConfig = config.flexiblePhaseConfig
             val context = BasicPhaseContext(config)
-            val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
-                    "Compiler",
-                    "The whole compilation process",
-            ) {
+            val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
                 override fun phaseBody(context: PhaseContext, input: Any) {
                     val engine = PhaseEngine(phaseConfig, phaserState, context)
                     body(engine)

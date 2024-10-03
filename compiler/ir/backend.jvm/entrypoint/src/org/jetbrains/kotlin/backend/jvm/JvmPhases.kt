@@ -57,16 +57,13 @@ private class GenerateAdditionalClassesPhase(private val context: JvmBackendCont
 // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
 internal val jvmCodegenPhases = SameTypeNamedCompilerPhase(
     name = "Codegen",
-    description = "Code generation",
     nlevels = 1,
     lower = performByIrFile(
         name = "CodegenByIrFileMultifileFacades",
-        description = "Code generation by IrFile, multifile facades",
         lower = createFilePhases(::CodegenMultifileFacades),
         supportParallel = true,
     ) then performByIrFile(
         name = "CodegenByIrFileRegular",
-        description = "Code generation by IrFile, regular files",
         lower = createFilePhases(::CodegenRegular),
         supportParallel = true,
     ) then createModulePhases(::GenerateAdditionalClassesPhase).single()
