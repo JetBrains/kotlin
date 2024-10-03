@@ -9,4 +9,7 @@ fun test() {
 
     A::class.java
     A()::class.java
+
+    Array<String>::class
+    Array<Array<IntArray>?>::class
 }

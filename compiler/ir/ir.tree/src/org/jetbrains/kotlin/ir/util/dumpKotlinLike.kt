@@ -1530,8 +1530,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) = wrap(expression, data) {
-        // TODO use classType
-        p.printWithNoIndent(expression.symbol.safeName)
+        expression.classType.printTypeWithNoIndent()
         p.printWithNoIndent("::class")
     }
 
