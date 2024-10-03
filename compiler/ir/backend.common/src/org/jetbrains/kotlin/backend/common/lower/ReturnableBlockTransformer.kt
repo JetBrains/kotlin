@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
@@ -28,55 +25,45 @@ import org.jetbrains.kotlin.ir.types.isUnit
  *
  * Converts returnable blocks into regular composite blocks when the only `return` is the last statement.
  *
- * ```
- * block {
- *   ...
- *   return@block e
- *   ...
- * }
- * ```
+ *     block {
+ *       ...
+ *       return@block e
+ *       ...
+ *     }
  *
  * is transformed into
  *
- * ```
- * {
- *   val result
- *   loop@ do {
- *     ...
  *     {
- *       result = e
- *       break@loop
+ *       val result
+ *       loop@ do {
+ *         ...
+ *         {
+ *           result = e
+ *           break@loop
+ *         }
+ *         ...
+ *       } while (false)
+ *       result
  *     }
- *     ...
- *   } while (false)
- *   result
- * }
- * ```
  *
  * When the only `return` for the block is the last statement:
  *
- * ```
- * block {
- *   ...
- *   return@block e
- * }
- * ```
+ *     block {
+ *       ...
+ *       return@block e
+ *     }
  *
  * is transformed into
  *
- * {
- *   ...
- *   e
- * }
- *
+ *     {
+ *       ...
+ *       e
+ *     }
  */
-open class ReturnableBlockLowering(val context: CommonBackendContext) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        container.transform(ReturnableBlockTransformer(context, (container as IrSymbolOwner).symbol), null)
-    }
-}
-
-class ReturnableBlockTransformer(val context: CommonBackendContext, val containerSymbol: IrSymbol? = null) : IrElementTransformerVoidWithContext() {
+class ReturnableBlockTransformer(
+    val context: CommonBackendContext,
+    val containerSymbol: IrSymbol? = null,
+) : IrElementTransformerVoidWithContext() {
     private var labelCnt = 0
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
 

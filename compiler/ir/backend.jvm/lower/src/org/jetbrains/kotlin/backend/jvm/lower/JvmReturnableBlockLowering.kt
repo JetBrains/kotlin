@@ -5,14 +5,22 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
-import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockLowering
+import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrBody
 
 @PhaseDescription(
     name = "ReturnableBlock",
     description = "Replace returnable blocks with do-while(false) loops",
     prerequisite = [ArrayConstructorLowering::class, AssertionLowering::class, DirectInvokeLowering::class]
 )
-internal class JvmReturnableBlockLowering(context: JvmBackendContext) : ReturnableBlockLowering(context)
+internal class JvmReturnableBlockLowering(val context: JvmBackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        container.transform(ReturnableBlockTransformer(context, (container as IrSymbolOwner).symbol), null)
+    }
+}
