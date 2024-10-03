@@ -35,6 +35,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import java.io.File
+import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
@@ -657,6 +658,163 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             )
         }
 
+        @Test
+        @DisplayName("The '-nostdlib' CLI argument is respected")
+        fun testNoStdlibArgumentIsRespected(): Unit = with(NonRepeatedModuleNameGenerator()) {
+            fun File.assertDependsOnlyOnStdlib() {
+                assertEquals(setOf("stdlib"), readDependsFromManifestFile(this))
+            }
+
+            // This library should have a dependency on stdlib.
+            // This library is going to be used in other compilations (see below).
+            val customLibraryWithDependencyOnStdlib: File = compileSingleModule(
+                moduleBaseName = "lib",
+                produceUnpackedKlib = true, // does not matter
+                warningHandler = null,
+                cliArgs = emptyList()
+            )
+            customLibraryWithDependencyOnStdlib.assertDependsOnlyOnStdlib()
+
+            fun compileWithoutStdlib(withoutPlatformLibs: Boolean = false, explicitDependency: String? = null): File =
+                compileSingleModule(
+                    moduleBaseName = "lib",
+                    produceUnpackedKlib = true, // does not matter
+                    warningHandler = null,
+                    cliArgs = buildList {
+                        this += "-nostdlib"
+                        if (withoutPlatformLibs) {
+                            this += "-no-default-libs"
+                        }
+                        if (explicitDependency != null) {
+                            this += "-l"
+                            this += explicitDependency
+                        }
+                    }
+                )
+
+            // The following compiler invocations must fail due to unavailability of stdlib:
+            run { // TODO(KT-71633): should fail!
+                compileWithoutStdlib()
+            }
+            expectFailingCompilation {
+                compileWithoutStdlib(withoutPlatformLibs = true)
+            }
+
+            // The following compiler invocations must fail due to unavailability of stdlib:
+            run { // TODO(KT-71633): should fail!
+                compileWithoutStdlib(
+                    explicitDependency = customLibraryWithDependencyOnStdlib.absolutePath
+                )
+            }
+            run { // TODO(KT-71633): should fail!
+                compileWithoutStdlib(
+                    withoutPlatformLibs = true,
+                    explicitDependency = customLibraryWithDependencyOnStdlib.absolutePath
+                )
+            }
+
+            val stdlibPath = testRunSettings.get<KotlinNativeHome>().librariesDir.resolve("common/stdlib").absolutePath
+
+            // The following compiler invocations should succeed because stdlib is specified by path as a user-defined library:
+            compileWithoutStdlib(explicitDependency = stdlibPath).assertDependsOnlyOnStdlib()
+            compileWithoutStdlib(withoutPlatformLibs = true, explicitDependency = stdlibPath).assertDependsOnlyOnStdlib()
+
+            // The following compiler invocations must fail due to unavailability of stdlib (stdlib specified by just a name):
+            run { // TODO(KT-71633): should fail!
+                compileWithoutStdlib(explicitDependency = "stdlib")
+            }
+            run { // TODO(KT-71633): should fail!
+                compileWithoutStdlib(withoutPlatformLibs = true, explicitDependency = "stdlib")
+            }
+        }
+
+        @Test
+        @DisplayName("The '-no-default-libs' CLI argument is respected")
+        fun testNoDefaultLibsArgumentIsRespected(): Unit = with(NonRepeatedModuleNameGenerator()) {
+            fun File.assertDependsOnlyOnStdlibAndPosix() {
+                assertEquals(
+                    setOf("stdlib", "org.jetbrains.kotlin.native.platform.posix"),
+                    readDependsFromManifestFile(this)
+                )
+            }
+
+            fun generateSourceFileWithPosixUsage(): File {
+                val suffix = nextSerialNumber().toString()
+                return getGeneratedSourcesDir().resolve("some_posix_api_usage$suffix.kt").apply {
+                    writeText("fun some_interop_function$suffix(l: Long): platform.posix.int32_t = TODO()")
+                }
+            }
+
+            // This library should have a dependency on stdlib and posix.
+            // This library is going to be used in other compilations (see below).
+            val customLibraryWithDependencyOnPosix: File = compileSingleModule(
+                moduleBaseName = "lib",
+                produceUnpackedKlib = true, // does not matter
+                warningHandler = null,
+                cliArgs = listOf(
+                    // Generate an auxiliary source file that accesses something from the posix library:
+                    generateSourceFileWithPosixUsage().absolutePath
+                )
+            )
+            customLibraryWithDependencyOnPosix.assertDependsOnlyOnStdlibAndPosix()
+
+            fun compileWithoutPlatformLibs(sourceFile: File? = null, explicitDependencies: List<String> = emptyList()) {
+                compileSingleModule(
+                    moduleBaseName = "lib",
+                    produceUnpackedKlib = true, // does not matter
+                    warningHandler = null,
+                    cliArgs = buildList {
+                        this += "-no-default-libs"
+                        for (explicitDependency in explicitDependencies) {
+                            this += "-l"
+                            this += explicitDependency
+                        }
+                        if (sourceFile != null) {
+                            this += sourceFile.absolutePath
+                        }
+                    }
+                )
+            }
+
+            // The following compiler invocations must fail due to unavailability of posix:
+            expectFailingCompilation {
+                compileWithoutPlatformLibs(sourceFile = generateSourceFileWithPosixUsage())
+            }
+            run { // TODO(KT-71633): should fail!
+                compileWithoutPlatformLibs(explicitDependencies = listOf(customLibraryWithDependencyOnPosix.absolutePath))
+            }
+
+            // The following compiler invocations must fail due to unavailability of posix:
+            run { // TODO(KT-71633): should fail!
+                compileWithoutPlatformLibs(
+                    sourceFile = generateSourceFileWithPosixUsage(),
+                    explicitDependencies = listOf("org.jetbrains.kotlin.native.platform.posix")
+                )
+            }
+            run { // TODO(KT-71633): should fail!
+                compileWithoutPlatformLibs(
+                    explicitDependencies = listOf(
+                        "org.jetbrains.kotlin.native.platform.posix",
+                        customLibraryWithDependencyOnPosix.absolutePath
+                    )
+                )
+            }
+
+            val posixPath = testRunSettings.get<KotlinNativeHome>()
+                .librariesDir.resolve(
+                    "platform/${testRunSettings.get<KotlinNativeTargets>().testTarget.name}/org.jetbrains.kotlin.native.platform.posix"
+                ).absolutePath
+
+            // The following compiler invocations should succeed because posix is specified by path as a user-defined library:
+            compileWithoutPlatformLibs(
+                sourceFile = generateSourceFileWithPosixUsage(),
+                explicitDependencies = listOf(posixPath)
+            )
+            compileWithoutPlatformLibs(
+                explicitDependencies = listOf(posixPath, customLibraryWithDependencyOnPosix.absolutePath)
+            )
+        }
+
         private fun NonRepeatedModuleNameGenerator.compileMainModule(
             dependency: String,
             warningHandler: ((String) -> Unit)? = null,
@@ -685,6 +843,19 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 fail("Normally should not get here")
             } catch (cte: CompilationToolException) {
                 assertTrue(cte.reason.contains("error: KLIB resolver: Library '$libraryPath' was found by its unique name '$uniqueName'"))
+            }
+        }
+
+        private inline fun expectFailingCompilation(block: () -> Unit) {
+            try {
+                block()
+                fail("Normally should not get here")
+            } catch (cte: CompilationToolException) {
+                assertTrue(
+                    cte.reason.lines().any { line ->
+                        line.startsWith("error: compilation failed") || line.contains("error: unresolved reference")
+                    }
+                )
             }
         }
 
@@ -779,8 +950,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
         modules.forEach { it.initDependencies(mapping::getValue) }
 
-        val generatedSourcesDir = buildDir.resolve("generated-sources")
-        generatedSourcesDir.mkdirs()
+        val generatedSourcesDir = getGeneratedSourcesDir()
 
         modules.forEach { module ->
             module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
@@ -800,6 +970,13 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         return modules.asList()
+    }
+
+    private fun getGeneratedSourcesDir(): File {
+        val generatedSourcesDir = buildDir.resolve("generated-sources")
+        generatedSourcesDir.mkdirs()
+
+        return generatedSourcesDir
     }
 
     private fun List<Module>.compileModules(
@@ -864,6 +1041,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
     }
 
+    private fun readDependsFromManifestFile(klibDir: File): Set<String> {
+        assertTrue(klibDir.isDirectory) { "KLIB directory does not exist: $klibDir" }
+
+        val manifestFile = klibDir.resolve("default/manifest")
+        assertTrue(manifestFile.isFile) { "Manifest file does not exist: $manifestFile" }
+
+        val manifestProperties = Properties().apply { manifestFile.inputStream().use { load(it) } }
+        val depends = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
+
+        return depends
+    }
+
     /**
      * Helps to avoid generating modules with same names and paths when [compileModules] is called repetitively
      * within a single test method execution.
@@ -874,10 +1063,12 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         private var counter = 0
 
         fun generateModuleNames(baseName: String): ModuleNames {
-            val fileName = baseName + (counter++).toString().padStart(2, '0')
+            val fileName = baseName + nextSerialNumber().toString().padStart(2, '0')
             val uniqueName = if (customUniqueName) "unique_$fileName" else fileName
             return ModuleNames(uniqueName, fileName)
         }
+
+        fun nextSerialNumber(): Int = counter++
     }
 
     companion object {
