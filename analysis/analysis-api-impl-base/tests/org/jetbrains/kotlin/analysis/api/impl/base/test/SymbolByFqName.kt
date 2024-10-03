@@ -8,14 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.TypeParameterData
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.SymbolDataWithOwner.TypeParameterData
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.SymbolDataWithOwner.ValueParameterData
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -147,16 +142,37 @@ sealed class SymbolData {
         }
     }
 
-    data class TypeParameterData(val name: Name, val ownerData: SymbolData): SymbolData() {
-        override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val owner = with(ownerData) { toSymbols(ktFile) }.singleOrNull() ?: error("No owner found")
-            requireIsInstance<KaDeclarationSymbol>(owner)
-            val parameterSymbol = owner.typeParameters.find { it.name == name }
-                ?: error("Type parameter with '$name' name is not found in $ownerData")
+    sealed class SymbolDataWithOwner : SymbolData() {
+        abstract val ownerData: SymbolData
 
-            return listOf(parameterSymbol)
+        final override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
+            val owner = with(ownerData) { toSymbols(ktFile) }.singleOrNull() ?: error("No owner found")
+            return toMemberSymbols(owner)
+        }
+
+        abstract fun KaSession.toMemberSymbols(owner: KaSymbol): List<KaSymbol>
+
+        data class TypeParameterData(val name: Name, override val ownerData: SymbolData) : SymbolDataWithOwner() {
+            override fun KaSession.toMemberSymbols(owner: KaSymbol): List<KaSymbol> {
+                requireIsInstance<KaDeclarationSymbol>(owner)
+                val parameterSymbol = owner.typeParameters.find { it.name == name }
+                    ?: error("Type parameter with '$name' name is not found in $ownerData")
+
+                return listOf(parameterSymbol)
+            }
+        }
+
+        data class ValueParameterData(val name: Name, override val ownerData: SymbolData) : SymbolDataWithOwner() {
+            override fun KaSession.toMemberSymbols(owner: KaSymbol): List<KaSymbol> {
+                requireIsInstance<KaFunctionSymbol>(owner)
+                val parameterSymbol = owner.valueParameters.find { it.name == name }
+                    ?: error("Value parameter with '$name' name is not found in $ownerData")
+
+                return listOf(parameterSymbol)
+            }
         }
     }
+
 
     companion object {
         val identifiers = arrayOf(
@@ -168,6 +184,7 @@ sealed class SymbolData {
             "script",
             "sam_constructor:",
             "type_parameter:",
+            "value_parameter:",
         )
 
         fun create(data: String): SymbolData {
@@ -182,17 +199,28 @@ sealed class SymbolData {
                 "enum_entry_initializer" -> EnumEntryInitializerData(extractCallableId(value))
                 "sam_constructor" -> SamConstructorData(ClassId.fromString(value))
                 "type_parameter" -> extractTypeParameterData(value)
+                "value_parameter" -> extractValueParameterData(value)
                 else -> error("Invalid symbol kind, expected one of: $identifiers")
             }
         }
     }
 }
 
-private fun extractTypeParameterData(data: String): TypeParameterData {
-    val typeParameterName = data.substringBefore(":")
+private fun extractOwnerData(data: String): Pair<String, SymbolData> {
+    val customData = data.substringBefore(":")
     val owner = data.substringAfter(":").trim()
     val ownerData = SymbolData.create(owner)
+    return customData to ownerData
+}
+
+private fun extractTypeParameterData(data: String): TypeParameterData {
+    val (typeParameterName, ownerData) = extractOwnerData(data)
     return TypeParameterData(Name.identifier(typeParameterName), ownerData)
+}
+
+private fun extractValueParameterData(data: String): ValueParameterData {
+    val (valueParameterName, ownerData) = extractOwnerData(data)
+    return ValueParameterData(Name.identifier(valueParameterName), ownerData)
 }
 
 private fun extractPackageFqName(data: String): FqName = FqName.fromSegments(data.split('.'))

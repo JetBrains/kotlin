@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -629,18 +632,10 @@ class LightTreeRawFirDeclarationBuilder(
                             DataClassMembersGenerator(
                                 classNode,
                                 this,
+                                firPrimaryConstructor,
                                 zippedParameters,
                                 context.packageFqName,
                                 context.className,
-                                createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
-                                createParameterTypeRefWithSourceKind = { property, kind -> property.returnTypeRef.copyWithNewSourceKind(kind) },
-                                addValueParameterAnnotations = { valueParam ->
-                                    valueParam.forEachChildren {
-                                        if (it.tokenType == MODIFIER_LIST) convertAnnotationList(it).filterTo(annotations) {
-                                            it.useSiteTarget.appliesToPrimaryConstructorParameter()
-                                        }
-                                    }
-                                },
                             ).generate()
                         }
 

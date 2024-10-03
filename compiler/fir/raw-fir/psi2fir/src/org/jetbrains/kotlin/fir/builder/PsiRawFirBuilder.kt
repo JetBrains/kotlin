@@ -1632,19 +1632,10 @@ open class PsiRawFirBuilder(
                                 DataClassMembersGenerator(
                                     classOrObject,
                                     this,
+                                    firPrimaryConstructor,
                                     zippedParameters,
                                     context.packageFqName,
                                     context.className,
-                                    createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
-                                    createParameterTypeRefWithSourceKind = { property, newKind ->
-                                        property.returnTypeRef.copyWithNewSourceKind(newKind)
-                                    },
-                                    addValueParameterAnnotations = {
-                                        addAnnotationsFrom(
-                                            it as KtParameter,
-                                            isFromPrimaryConstructor = true,
-                                        )
-                                    },
                                 ).generate()
                             }
 

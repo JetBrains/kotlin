@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -66,7 +67,12 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
                     psiElement is KtFile -> psiElement.symbol
                     psiElement is KtDeclaration -> psiElement.symbol
-                    else -> error("Unsupported declaration: ${psiElement?.let { it::class.simpleName }}")
+                    else -> {
+                        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
+                        with(symbolData) {
+                            toSymbols(mainFile).single()
+                        } as KaAnnotatedSymbol
+                    }
                 }
 
                 val query = testServices.moduleStructure.allDirectives.singleValue(Directives.QUERY)

@@ -1066,12 +1066,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     inner class DataClassMembersGenerator(
         private val source: T,
         private val classBuilder: FirRegularClassBuilder,
+        private val firPrimaryConstructor: FirConstructor,
         private val zippedParameters: List<Pair<T, FirProperty>>,
         private val packageFqName: FqName,
         private val classFqName: FqName,
-        private val createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
-        private val createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
-        private val addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
     ) {
         fun generate() {
             if (classBuilder.classKind != ClassKind.OBJECT) {
@@ -1114,10 +1112,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     currentDispatchReceiverType(),
                     zippedParameters,
                     isFromLibrary = false,
-                    createClassTypeRefWithSourceKind,
-                    createParameterTypeRefWithSourceKind,
+                    firPrimaryConstructor,
                     { src, kind -> src?.toFirSourceElement(kind) },
-                    addValueParameterAnnotations,
                     { it.isVararg },
                 )
             )
@@ -1259,10 +1255,8 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     dispatchReceiver: ConeClassLikeType?,
     zippedParameters: List<Pair<TParameter, FirProperty>>,
     isFromLibrary: Boolean,
-    createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
-    createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
+    firConstructor: FirConstructor,
     toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
-    addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
     isVararg: (TParameter) -> Boolean,
 ): FirSimpleFunction {
     fun generateComponentAccess(
@@ -1291,7 +1285,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     val declarationOrigin = if (isFromLibrary) FirDeclarationOrigin.Library else FirDeclarationOrigin.Synthetic.DataClassMember
 
     return buildSimpleFunction {
-        val classTypeRef = createClassTypeRefWithSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
+        val classTypeRef = firConstructor.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
         this.source = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers)
         moduleData = this@createDataClassCopyFunction.moduleData
         origin = declarationOrigin
@@ -1307,11 +1301,11 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         } else {
             FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
         }
+
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name
             val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers)
-            val propertyReturnTypeRef =
-                createParameterTypeRefWithSourceKind(firProperty, KtFakeSourceElementKind.DataClassGeneratedMembers)
+            val propertyReturnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
             valueParameters += buildValueParameter {
                 resolvePhase = this@createDataClassCopyFunction.resolvePhase
                 source = parameterSource
@@ -1325,9 +1319,15 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 isCrossinline = false
                 isNoinline = false
                 this.isVararg = isVararg(ktParameter)
-                addValueParameterAnnotations(ktParameter)
-                for (annotation in annotations) {
-                    annotation.replaceUseSiteTarget(null)
+                annotations += firProperty.correspondingValueParameterFromPrimaryConstructor?.annotations.orEmpty().map {
+                    // We may avoid redundant resolve by propagating suitable annotations as they are
+                    if (it.useSiteTarget == null)
+                        it
+                    else
+                        buildAnnotationCallCopy(it as FirAnnotationCall) {
+                            useSiteTarget = null
+                            containingDeclarationSymbol = this@buildValueParameter.symbol
+                        }
                 }
             }
         }

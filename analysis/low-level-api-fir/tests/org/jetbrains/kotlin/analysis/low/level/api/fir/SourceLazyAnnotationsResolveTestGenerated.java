@@ -52,6 +52,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     }
 
     @Test
+    @TestMetadata("dataClassCopyParameter.kt")
+    public void testDataClassCopyParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/dataClassCopyParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/dataClassCopyParameterWithExplicitPropertyUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/dataClassCopyParameterWithExplicitUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithImplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithImplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/dataClassCopyParameterWithImplicitPropertyUseSite.kt");
+    }
+
+    @Test
     @TestMetadata("deprecation_class.kt")
     public void testDeprecation_class() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/deprecation_class.kt");
@@ -185,6 +209,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameter.kt")
+    public void testDataClassCopyParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/dataClassCopyParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/dataClassCopyParameterWithExplicitPropertyUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/dataClassCopyParameterWithExplicitUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithImplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithImplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/dataClassCopyParameterWithImplicitPropertyUseSite.kt");
     }
 
     @Test
@@ -327,6 +375,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameter.kt")
+    public void testDataClassCopyParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/dataClassCopyParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/dataClassCopyParameterWithExplicitPropertyUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/dataClassCopyParameterWithExplicitUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithImplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithImplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/dataClassCopyParameterWithImplicitPropertyUseSite.kt");
     }
 
     @Test
@@ -535,6 +607,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameter.kt")
+    public void testDataClassCopyParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/dataClassCopyParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/dataClassCopyParameterWithExplicitPropertyUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithExplicitUseSite.kt")
+    public void testDataClassCopyParameterWithExplicitUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/dataClassCopyParameterWithExplicitUseSite.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopyParameterWithImplicitPropertyUseSite.kt")
+    public void testDataClassCopyParameterWithImplicitPropertyUseSite() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/dataClassCopyParameterWithImplicitPropertyUseSite.kt");
     }
 
     @Test
