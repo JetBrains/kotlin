@@ -17,7 +17,12 @@ public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSessi
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
         declarations
             .filter {
-                with(sirSession) { it.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
+                with(sirSession) {
+                    when (it.sirVisibility(ktAnalysisSession)) {
+                        null, SirVisibility.PRIVATE, SirVisibility.FILEPRIVATE, SirVisibility.INTERNAL -> false
+                        SirVisibility.PUBLIC, SirVisibility.PACKAGE -> true
+                    }
+                }
             }
             .map { with(sirSession) { it.sirDeclaration() } }
             .flatMap { with(sirSession) { listOf(it) + it.trampolineDeclarations() } }
