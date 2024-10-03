@@ -109,7 +109,6 @@ fun Project.configureJavaBasePlugin() {
 }
 
 val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val projectsUsedInKotlinGradlePlugin: Array<String> by rootProject.extra
 val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
 
 /**
@@ -131,7 +130,6 @@ fun Project.configureKotlinCompilationOptions() {
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
-        val kotlinLanguageVersionForKGP: String by rootProject.extra
         val useJvmFir by extra(project.kotlinBuildProperties.useFir)
         val useFirLT by extra(project.kotlinBuildProperties.useFirWithLightTree)
         val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
@@ -140,12 +138,8 @@ fun Project.configureKotlinCompilationOptions() {
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
                 freeCompilerArgs.addAll(commonCompilerArgs)
-                val languageVersionForProject = when {
-                    project.path in projectsUsedInKotlinGradlePlugin -> kotlinLanguageVersionForKGP
-                    else -> kotlinLanguageVersion
-                }
-                languageVersion.set(KotlinVersion.fromVersion(languageVersionForProject))
-                apiVersion.set(KotlinVersion.fromVersion(languageVersionForProject))
+                languageVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
+                apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
                 if (project.path in projectsUsedInIntelliJKotlinPlugin) {
