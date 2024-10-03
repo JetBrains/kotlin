@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -71,7 +70,7 @@ class FirSupertypeResolverTransformer(
         checkSessionConsistency(file)
         return withFileAnalysisExceptionWrapping(file) {
             file.accept(supertypeResolverVisitor, null)
-            supertypeComputationSession.breakLoops(session)
+            supertypeComputationSession.breakLoops(session, supertypeResolverVisitor.localClassesNavigationInfo)
             file.transform(applySupertypesTransformer, null)
         }
     }
@@ -95,7 +94,7 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     )
 
     this.accept(supertypeResolverVisitor, null)
-    supertypeComputationSession.breakLoops(session)
+    supertypeComputationSession.breakLoops(session, localClassesNavigationInfo)
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
@@ -230,7 +229,7 @@ open class FirSupertypeResolverVisitor(
     private val supertypeComputationSession: SupertypeComputationSession,
     private val scopeSession: ScopeSession,
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
-    private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
+    val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
     @property:PrivateForInline var useSiteFile: FirFile? = null,
     containingDeclarations: List<FirDeclaration> = emptyList(),
 ) : FirDefaultVisitor<Unit, Any?>() {
@@ -691,6 +690,7 @@ open class SupertypeComputationSession {
         looped: MutableSet<FirClassLikeDeclaration>, // always empty for LL FIR
         pathSet: MutableSet<FirClassLikeDeclaration>,
         path: MutableList<FirClassLikeDeclaration>,
+        localClassesNavigationInfo: LocalClassesNavigationInfo?,
     ) {
         require(path.isEmpty()) { "Path should be empty" }
         require(pathSet.isEmpty()) { "Path set should be empty" }
@@ -729,11 +729,15 @@ open class SupertypeComputationSession {
             pathSet.add(classLikeDeclaration)
             visited.add(classLikeDeclaration)
 
-            val parentId = classLikeDeclaration.symbol.classId.relativeClassName.parent()
-            if (!parentId.isRoot) {
-                val parentSymbol = session.symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(parentId.asString()))
-                if (parentSymbol is FirRegularClassSymbol) {
-                    checkIsInLoop(parentSymbol.fir, wasSubtypingInvolved, wereTypeArgumentsInvolved)
+            val parentId = classLikeDeclaration.symbol.classId.parentClassId
+            if (parentId != null) {
+                val parentFir = when {
+                    !parentId.isLocal -> session.symbolProvider.getClassLikeSymbolByClassId(parentId)?.fir
+                    localClassesNavigationInfo != null -> localClassesNavigationInfo.parentForClass[classLikeDeclaration]
+                    else -> error("Couldn't retrieve the parent of a local class because there's no `LocalClassesNavigationInfo`")
+                }
+                if (parentFir is FirClassLikeDeclaration) {
+                    checkIsInLoop(parentFir, wasSubtypingInvolved, wereTypeArgumentsInvolved)
                 }
             }
 
@@ -811,7 +815,7 @@ open class SupertypeComputationSession {
         require(path.isEmpty()) { "Path should be empty" }
     }
 
-    fun breakLoops(session: FirSession) {
+    fun breakLoops(session: FirSession, localClassesNavigationInfo: LocalClassesNavigationInfo?) {
         val visitedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
         val loopedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
         val path = mutableListOf<FirClassLikeDeclaration>()
@@ -825,6 +829,7 @@ open class SupertypeComputationSession {
                 looped = loopedClassLikeDecls,
                 pathSet = pathSet,
                 path = path,
+                localClassesNavigationInfo = localClassesNavigationInfo,
             )
         }
 
