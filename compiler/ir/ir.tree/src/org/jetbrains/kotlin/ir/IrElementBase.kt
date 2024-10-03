@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import java.util.IdentityHashMap
+import java.util.*
 
 abstract class IrElementBase : IrElement {
     /**
@@ -41,7 +41,22 @@ abstract class IrElementBase : IrElement {
     }
 
 
-    final override var attributeOwnerId: IrElement = this
+    private var lastWrite_attributeOwnerId: List<StackTraceElement>? = null
+    private var _attributeOwnerId: IrElement? = null
+    final override var attributeOwnerId: IrElement
+        get() {
+            if (_attributeOwnerId !== null) {
+                LocationTracker.recordReadStackTrace(LocationTracker.attributeOwnerId, lastWrite_attributeOwnerId, 1)
+            }
+            return _attributeOwnerId ?: this
+        }
+        set(rawValue) {
+            val value = if (rawValue === this) null else rawValue
+            if (value !== _attributeOwnerId) {
+                lastWrite_attributeOwnerId = LocationTracker.recordWriteStackTrace(1)
+                _attributeOwnerId = value
+            }
+        }
 
 
     /**
