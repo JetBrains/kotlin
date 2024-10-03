@@ -79,7 +79,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: JAVA_SOURCE
-      psi: null
+      psi: PsiTypeParameterImpl(T)
       upperBounds: [
         KaFlexibleType:
           annotations: []

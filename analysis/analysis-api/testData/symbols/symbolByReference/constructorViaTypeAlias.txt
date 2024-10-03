@@ -33,7 +33,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: E
       origin: JAVA_LIBRARY
-      psi: null
+      psi: ClsTypeParameterImpl(E)
       upperBounds: [
         KaFlexibleType:
           annotations: []
