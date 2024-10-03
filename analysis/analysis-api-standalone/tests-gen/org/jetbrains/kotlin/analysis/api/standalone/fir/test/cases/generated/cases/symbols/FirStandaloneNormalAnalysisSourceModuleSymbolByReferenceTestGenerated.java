@@ -65,6 +65,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("defaultJavaConstructorWithTypeParameter.kt")
+  public void testDefaultJavaConstructorWithTypeParameter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/defaultJavaConstructorWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");
