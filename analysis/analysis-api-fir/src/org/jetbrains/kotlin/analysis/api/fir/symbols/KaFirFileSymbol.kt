@@ -22,6 +22,9 @@ internal class KaFirFileSymbol private constructor(
     override val lazyFirSymbol: Lazy<FirFileSymbol>,
     override val analysisSession: KaFirSession,
 ) : KaFileSymbol(), KaFirKtBasedSymbol<KtFile, FirFileSymbol> {
+    init {
+        Unit
+    }
     constructor(file: KtFile, session: KaFirSession) : this(
         backingPsi = file,
         lazyFirSymbol = lazyPub {
@@ -36,7 +39,7 @@ internal class KaFirFileSymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.psi }
 
     override fun createPointer(): KaSymbolPointer<KaFileSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource()
