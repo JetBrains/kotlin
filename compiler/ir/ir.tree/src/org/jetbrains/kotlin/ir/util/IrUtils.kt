@@ -276,7 +276,7 @@ fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParame
     parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
 }
 
-private fun Boolean.toInt(): Int = if (this) 1 else 0
+internal fun Boolean.toInt(): Int = if (this) 1 else 0
 
 val IrFunction.explicitParametersCount: Int
     get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstractOrFail
+import org.jetbrains.kotlin.ir.util.toInt
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -77,9 +78,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         targetRegularParameterCount = regularParameterCount
 
         val allParametersCount =
-            (if (targetHasDispatchReceiver) 1 else 0) +
+            targetHasDispatchReceiver.toInt() +
                     targetContextParameterCount +
-                    (if (targetHasExtensionReceiver) 1 else 0) +
+                    targetHasExtensionReceiver.toInt() +
                     targetRegularParameterCount
 
         arguments.ensureCapacity(allParametersCount)
@@ -234,7 +235,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
 
     private fun getExtensionReceiverIndex(): Int {
-        return (if (targetHasDispatchReceiver) 1 else 0) + targetContextParameterCount
+        return targetHasDispatchReceiver.toInt() + targetContextParameterCount
     }
 
     private fun setReceiverArgument(index: Int, value: IrExpression?, targetHasThatReceiverParameter: Boolean): Boolean {
@@ -315,10 +316,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     private fun getRealValueArgumentIndex(index: Int): Int =
-        (if (targetHasDispatchReceiver) 1 else 0) +
-                (if (targetHasExtensionReceiver && index >= targetContextParameterCount) 1 else 0) +
-                index
-
+        targetHasDispatchReceiver.toInt() + (targetHasExtensionReceiver && index >= targetContextParameterCount).toInt() + index
 
     protected abstract val typeArguments: Array<IrType?>
 
