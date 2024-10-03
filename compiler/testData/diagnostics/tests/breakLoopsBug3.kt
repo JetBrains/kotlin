@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-71966
 
 package a

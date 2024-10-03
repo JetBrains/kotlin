@@ -326,6 +326,8 @@ private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
             looped = looped,
             pathSet = pathSet,
             path = path,
+            // LL resolver only works for non-local declarations
+            localClassesNavigationInfo = null,
         )
 
         require(path.isEmpty()) { "Path should be empty" }
