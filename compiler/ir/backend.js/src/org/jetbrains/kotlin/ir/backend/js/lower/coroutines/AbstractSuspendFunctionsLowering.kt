@@ -541,6 +541,10 @@ fun getSuspendFunctionKind(
             else
                 null
         is IrReturn -> {
+            fun IrTypeOperatorCall.isImplicitCast(): Boolean {
+                return this.operator == IrTypeOperator.IMPLICIT_CAST || this.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+            }
+
             var value: IrElement = lastStatement
             /*
              * Check if matches this pattern:
@@ -554,6 +558,7 @@ fun getSuspendFunctionKind(
                 value = when {
                     value is IrBlock && value.statements.size == 1 -> value.statements.first()
                     value is IrReturn -> value.value
+                    value is IrTypeOperatorCall && value.isImplicitCast() -> value.argument
                     else -> break@loop
                 }
             }

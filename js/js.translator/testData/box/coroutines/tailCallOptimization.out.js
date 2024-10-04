@@ -1,6 +1,6 @@
 function delay(timeMillis, $completion) {
-  var tmp = new $delayCOROUTINE$0(timeMillis, $completion);
-  tmp.result_1 = Unit_getInstance();
-  tmp.exception_1 = null;
-  return tmp.doResume_5yljmg_k$();
+  if (timeMillis.compareTo_9jj042_k$(new Long(0, 0)) <= 0)
+    return Unit_getInstance();
+  // Inline function 'delay.<anonymous>' call
+  return Unit_getInstance();
 }
