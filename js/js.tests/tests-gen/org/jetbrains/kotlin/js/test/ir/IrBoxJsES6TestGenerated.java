@@ -1024,6 +1024,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("tailCallOptimization.kt")
+    public void testTailCallOptimization() {
+      runTest("js/js.translator/testData/box/coroutines/tailCallOptimization.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("js/js.translator/testData/box/coroutines/tryFinally.kt");
