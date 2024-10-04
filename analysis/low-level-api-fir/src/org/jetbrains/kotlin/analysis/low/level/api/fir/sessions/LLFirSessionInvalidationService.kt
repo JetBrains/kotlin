@@ -146,7 +146,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
         // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will work,
         // so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
         if (!includeLibraryModules) {
-            val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModules()
+            val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModulesIfComputed()
             anchorModules?.forEach(::invalidate)
         }
 
