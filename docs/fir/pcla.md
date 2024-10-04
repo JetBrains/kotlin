@@ -511,8 +511,8 @@ There, we've got `it` used as a receiver in a call `it.add("")`, thus the first 
 
 And the answer is that before starting the selector (`add("")`), we simply try to fix necessary type variable with the following steps:
 - Temporary override what *proper type* means
-  - Type variables from outer CS might be used as a type argument for a proper type (e.g., `MutableList<Ev>` is proper).
-  - Even type variables from outer CS can't be used as top-level proper type (e.g, we can't fix `Tv` to `Ev`).
+  - Not fixed type variables might be used as a type argument for a proper type (e.g., `MutableList<Ev>` is proper).
+  - But they cannot be used as top-level proper type (e.g, we can't fix `Tv` to `Ev`).
   - See `ConstraintSystemCompletionContext.withTypeVariablesThatAreCountedAsProperTypes` 
     and `TypeSystemInferenceExtensionContext.isProperTypeForFixation` extension.
 - If there is some proper type for that TV, run regular result type computation `ResultType`.
