@@ -37,6 +37,7 @@ fun Test.setupV8() {
     with(V8Utils.d8Plugin) {
         dependsOn(project.d8SetupTaskProvider)
     }
+    dependsOn(V8Utils.d8Root.setupTaskProvider)
     val v8ExecutablePath = project.provider {
         V8Utils.d8Root.requireConfigured().executablePath.absolutePath
     }

@@ -62,6 +62,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
+useD8Plugin()
+
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(

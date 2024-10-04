@@ -52,6 +52,7 @@ fun Test.setUpJsBoxTests() {
     workingDir = rootDir
 }
 
+useD8Plugin()
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(releasedCompilerDist)
     systemProperty("kotlin.internal.js.test.latestReleasedCompilerLocation", releasedCompilerArtifactsTarget.get().asFile.absolutePath)
