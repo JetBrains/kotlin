@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.math.max
 
-abstract class LogicSystem(private val context: ConeInferenceContext) {
+open class LogicSystem(private val context: ConeInferenceContext) {
     val session: FirSession get() = context.session
     private val nullableNothingType = session.builtinTypes.nullableNothingType.coneType
     private val anyType = session.builtinTypes.anyType.coneType
-
-    abstract val variableStorage: VariableStorage
 
     protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
         return !isNullableNothing
@@ -42,6 +40,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // and joining that with a non-empty flow from another branch will fail.
         val commonFlow = flows.reduce { a, b -> a.lowestCommonAncestor(b) ?: error("no common ancestor in $a, $b") }
         val result = commonFlow.fork()
+        result.mergeVariables(flows)
         result.mergeAssignments(flows)
         if (union) {
             result.copyNonConflictingAliases(flows, commonFlow)
@@ -109,6 +108,10 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         return approveOperationStatement(flow.implications.toMutableMap(), statement, removeApprovedOrImpossible = false)
     }
 
+    fun approveOperationStatement(flow: MutableFlow, statement: OperationStatement): TypeStatements {
+        return approveOperationStatement(flow.implications.toMutableMap(), statement, removeApprovedOrImpossible = false)
+    }
+
     fun approveOperationStatement(
         flow: MutableFlow,
         statement: OperationStatement,
@@ -127,6 +130,14 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun isSameValueIn(a: PersistentFlow, b: MutableFlow, variable: RealVariable): Boolean {
         return a.assignmentIndex[variable] == b.assignmentIndex[variable]
+    }
+
+    private fun MutableFlow.mergeVariables(flows: Collection<PersistentFlow>) {
+        for (flow in flows) {
+            for (variable in flow.realVariables.keys) {
+                remember(variable)
+            }
+        }
     }
 
     private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>) {
@@ -237,7 +248,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val aliases = backwardsAliasMap.remove(variable)
             // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
             val replacementOrNext = replacement ?: aliases?.first()
-            variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
+            replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
             if (aliases != null && replacementOrNext != null) {

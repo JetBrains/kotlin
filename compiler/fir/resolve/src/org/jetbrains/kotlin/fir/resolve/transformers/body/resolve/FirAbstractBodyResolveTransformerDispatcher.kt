@@ -36,7 +36,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     open val buildCfgForFiles: Boolean get() = !implicitTypeOnly
 
     final override val context: BodyResolveContext =
-        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext())
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context, expandTypeAliases)
 

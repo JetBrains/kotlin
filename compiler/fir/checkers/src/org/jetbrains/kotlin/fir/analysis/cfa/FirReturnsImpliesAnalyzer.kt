@@ -46,9 +46,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         val contractDescription = function.contractDescription ?: return
         val effects = contractDescription.effects ?: return
 
-        val logicSystem = object : LogicSystem(context.session.typeContext) {
-            override val variableStorage = VariableStorage(context.session)
-        }
+        val logicSystem = LogicSystem(context.session.typeContext)
         val argumentVariables = Array(function.valueParameters.size + 1) { i ->
             if (i > 0) {
                 RealVariable.local(function.valueParameters[i - 1].symbol)
@@ -98,18 +96,18 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             }
         }
 
-        var flow = node.flow
+        var flow = node.flow.fork()
         val operation = effect.value.toOperation()
         if (operation != null) {
             if (resultExpression is FirLiteralExpression) {
                 if (!operation.isTrueFor(resultExpression.value)) return false
             } else if (resultExpression is FirExpression) {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
-                val resultVar = logicSystem.variableStorage.get(resultExpression, createReal = true, unwrapAlias = flow::unwrapVariable)
+                val resultVar = flow.create(resultExpression, context.session)
                 if (resultVar != null) {
                     val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
                     if (impliedByReturnValue.isNotEmpty()) {
-                        flow = flow.fork().also { logicSystem.addTypeStatements(it, impliedByReturnValue) }.freeze()
+                        flow = flow.also { logicSystem.addTypeStatements(it, impliedByReturnValue) }.freeze().fork()
                     }
                 }
             }
