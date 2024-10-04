@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.FULL_INLINEABLE_NAME_PREFIX
+import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.FULL_NOT_INLINEABLE_NAME_PREFIX
+import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.INLINEABLE_NAME_PREFIX
+import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.NOT_INLINEABLE_NAME_PREFIX
 
 class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid {
     companion object {
@@ -75,8 +78,9 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrEle
      * This function propagates the special function type kind for composable to function expressions like lambda expression.
      */
     override fun visitFunctionExpression(expression: IrFunctionExpression) {
-        if (expression.type.isSyntheticComposableFunction()) {
-            expression.function.mark()
+        when {
+            expression.type.isInlineableFunction() -> expression.function.mark(inlineable = true)
+            expression.type.isNotInlineableFunction() -> expression.function.mark(inlineable = false)
         }
         super.visitFunctionExpression(expression)
     }
@@ -85,27 +89,37 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrEle
      * This function propagates the special function type kind for composable to function references.
      */
     override fun visitFunctionReference(expression: IrFunctionReference) {
-        if (expression.type.isSyntheticComposableFunction()) {
-            expression.symbol.owner.mark()
+        when {
+            expression.type.isInlineableFunction() -> expression.symbol.owner.mark(inlineable = true)
+            expression.type.isNotInlineableFunction() -> expression.symbol.owner.mark(inlineable = false)
         }
         super.visitFunctionReference(expression)
     }
 
-    private fun IrType.isSyntheticComposableFunction() =
-        classOrNull?.owner?.let {
-            it.name.asString().startsWith("MyInlineableFunction") &&
-                    it.packageFqName?.asString() == "some"
+    private fun IrType.isInlineableFunction(): Boolean = isSyntheticSandboxFunction(INLINEABLE_NAME_PREFIX)
+    private fun IrType.isNotInlineableFunction(): Boolean = isSyntheticSandboxFunction(NOT_INLINEABLE_NAME_PREFIX)
+
+    private fun IrType.isSyntheticSandboxFunction(name: String): Boolean {
+        return classOrNull?.owner?.let {
+            it.name.asString().startsWith(name) && it.packageFqName?.asString() == "some"
         } ?: false
+    }
 
     private val inlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyInlineable"), false)
+    private val notInlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyNotInlineable"), false)
 
     private val inlineableSymbol = pluginContext.referenceClass(inlineableClassId)!!
+    private val notInlineableSymbol = pluginContext.referenceClass(notInlineableClassId)!!
 
-    private fun IrFunction.mark() {
+    private fun IrFunction.mark(inlineable: Boolean) {
         if (!hasAnnotation(inlineableClassId)) {
+            val symbol = when {
+                inlineable -> inlineableSymbol
+                else -> notInlineableSymbol
+            }
             annotations = annotations + IrConstructorCallImpl.fromSymbolOwner(
-                inlineableSymbol.owner.defaultType,
-                inlineableSymbol.constructors.single(),
+                symbol.owner.defaultType,
+                symbol.constructors.single(),
             )
         }
     }
@@ -156,11 +170,16 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrEle
         val irClass = classifier.owner as? IrClass ?: return null
         val fqName = irClass.fqNameWhenAvailable ?: return null
         val fqNameString = fqName.asString()
-        if (!fqNameString.startsWith(FULL_INLINEABLE_NAME_PREFIX)) return null
-        val number = fqNameString.removePrefix(FULL_INLINEABLE_NAME_PREFIX).toIntOrNull() ?: return null
-        val builtinClassId = FunctionTypeKind.Function.run {
-            ClassId(packageFqName, Name.identifier("$classNamePrefix$number"))
+        val prefixes = listOf(FULL_INLINEABLE_NAME_PREFIX, FULL_NOT_INLINEABLE_NAME_PREFIX)
+
+        for (prefix in prefixes) {
+            if (!fqNameString.startsWith(prefix)) continue
+            val number = fqNameString.removePrefix(prefix).toIntOrNull() ?: continue
+            val builtinClassId = FunctionTypeKind.Function.run {
+                ClassId(packageFqName, Name.identifier("$classNamePrefix$number"))
+            }
+            return pluginContext.referenceClass(builtinClassId)
         }
-        return pluginContext.referenceClass(builtinClassId)
+        return null
     }
 }

@@ -17,20 +17,27 @@ import org.jetbrains.kotlin.name.Name
 class SandboxFunctionTypeKindExtension(session: FirSession) : FirFunctionTypeKindExtension(session) {
     override fun FunctionTypeKindRegistrar.registerKinds() {
         registerKind(InlineablePluginFunction, KInlineableFunction)
+        registerKind(NotInlineablePluginFunction, KNotInlineableFunction)
     }
 }
 
 object PluginFunctionalNames {
-    val INLINEABLE_PACKAGE_FQN = FqName.topLevel(Name.identifier("some"))
+    val BASE_PACKAGE = FqName.topLevel(Name.identifier("some"))
     val MY_INLINEABLE_ANNOTATION_CLASS_ID = ClassId.topLevel("MyInlineable".fqn())
     val INLINEABLE_NAME_PREFIX = "MyInlineableFunction"
     val KINLINEABLE_NAME_PREFIX = "KMyInlineableFunction"
 
-    val FULL_INLINEABLE_NAME_PREFIX = INLINEABLE_PACKAGE_FQN.child(Name.identifier(INLINEABLE_NAME_PREFIX)).asString()
+    val FULL_INLINEABLE_NAME_PREFIX = BASE_PACKAGE.child(Name.identifier(INLINEABLE_NAME_PREFIX)).asString()
+
+    val MY_NOT_INLINEABLE_ANNOTATION_CLASS_ID = ClassId.topLevel("MyNotInlineable".fqn())
+    val NOT_INLINEABLE_NAME_PREFIX = "MyNotInlineableFunction"
+    val KNOT_INLINEABLE_NAME_PREFIX = "KMyNotInlineableFunction"
+
+    val FULL_NOT_INLINEABLE_NAME_PREFIX = BASE_PACKAGE.child(Name.identifier(INLINEABLE_NAME_PREFIX)).asString()
 }
 
 object InlineablePluginFunction : FunctionTypeKind(
-    PluginFunctionalNames.INLINEABLE_PACKAGE_FQN,
+    PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.INLINEABLE_NAME_PREFIX,
     PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
     isReflectType = false
@@ -45,7 +52,7 @@ object InlineablePluginFunction : FunctionTypeKind(
 }
 
 object KInlineableFunction : FunctionTypeKind(
-    PluginFunctionalNames.INLINEABLE_PACKAGE_FQN,
+    PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.KINLINEABLE_NAME_PREFIX,
     PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
     isReflectType = true
@@ -54,4 +61,31 @@ object KInlineableFunction : FunctionTypeKind(
         get() = LanguageVersion.KOTLIN_2_1.versionString
 
     override fun nonReflectKind(): FunctionTypeKind = InlineablePluginFunction
+}
+
+object NotInlineablePluginFunction : FunctionTypeKind(
+    PluginFunctionalNames.BASE_PACKAGE,
+    PluginFunctionalNames.NOT_INLINEABLE_NAME_PREFIX,
+    PluginFunctionalNames.MY_NOT_INLINEABLE_ANNOTATION_CLASS_ID,
+    isReflectType = false
+) {
+    override val prefixForTypeRender: String
+        get() = "@MyInlineable"
+
+    override val serializeAsFunctionWithAnnotationUntil: String
+        get() = LanguageVersion.KOTLIN_2_1.versionString
+
+    override fun reflectKind(): FunctionTypeKind = KNotInlineableFunction
+}
+
+object KNotInlineableFunction : FunctionTypeKind(
+    PluginFunctionalNames.BASE_PACKAGE,
+    PluginFunctionalNames.KNOT_INLINEABLE_NAME_PREFIX,
+    PluginFunctionalNames.MY_NOT_INLINEABLE_ANNOTATION_CLASS_ID,
+    isReflectType = true
+) {
+    override val serializeAsFunctionWithAnnotationUntil: String
+        get() = LanguageVersion.KOTLIN_2_1.versionString
+
+    override fun nonReflectKind(): FunctionTypeKind = NotInlineablePluginFunction
 }
