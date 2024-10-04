@@ -29,6 +29,18 @@ val commonMainFullSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainFullSources"))
 }
 
+val commonNonJvmMainFullSources by task<Sync> {
+    val sources = listOf(
+        "libraries/stdlib/common-non-jvm/src/",
+    )
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+        }
+    }
+    into(layout.buildDirectory.dir("commonNonJvmMainFullSources"))
+}
+
 val commonMainSources by task<Sync> {
     dependsOn(commonMainFullSources)
     from {
@@ -87,6 +99,15 @@ val commonMainCollectionSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainCollectionSources"))
 }
 
+val commonNonJvmMainSources by task<Sync> {
+    dependsOn(commonNonJvmMainFullSources)
+    from {
+        commonNonJvmMainFullSources.get().outputs.files.singleFile
+    }
+
+    into(layout.buildDirectory.dir("commonNonJvmMainSources"))
+}
+
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
@@ -142,12 +163,17 @@ val jsMainSources by task<Sync> {
 
 kotlin {
     sourceSets {
-        named("commonMain") {
+        val commonMain by getting {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
             kotlin.srcDir("common-src")
         }
+        val commonNonJvmMain by creating {
+            dependsOn(commonMain)
+            kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
+        }
         named("jsMain") {
+            dependsOn(commonNonJvmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("js-src")
         }

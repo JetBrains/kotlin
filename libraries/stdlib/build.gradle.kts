@@ -393,7 +393,13 @@ kotlin {
             kotlin.srcDir("jdk7/recursiveDeletionTest")
         }
 
+        val commonNonJvmMain by creating {
+            dependsOn(commonMain.get())
+            kotlin.srcDir("common-non-jvm/src")
+        }
+
         val jsMain by getting {
+            dependsOn(commonNonJvmMain)
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
                 srcDir(prepareJsIrMainSources.requiredForImport())
@@ -438,7 +444,7 @@ kotlin {
         }
 
         val nativeWasmMain by creating {
-            dependsOn(commonMain.get())
+            dependsOn(commonNonJvmMain)
             kotlin.srcDir("native-wasm/src")
         }
 
