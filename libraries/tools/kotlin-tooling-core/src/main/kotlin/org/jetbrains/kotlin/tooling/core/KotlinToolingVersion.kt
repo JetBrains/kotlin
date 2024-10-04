@@ -59,6 +59,7 @@ class KotlinToolingVersion(
     }
 
     val maturity: Maturity = run {
+        @Suppress("DEPRECATION_ERROR") // needed when compiled with AV > 1.4
         val classifier = this.classifier?.toLowerCase(Locale.ROOT)
         when {
             classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
@@ -129,6 +130,7 @@ class KotlinToolingVersion(
         if (this.major != other.major) return false
         if (this.minor != other.minor) return false
         if (this.patch != other.patch) return false
+        @Suppress("DEPRECATION_ERROR") // needed when compiled with AV > 1.4
         if (this.classifier?.toLowerCase(Locale.ROOT) != other.classifier?.toLowerCase(Locale.ROOT)) return false
         return true
     }
