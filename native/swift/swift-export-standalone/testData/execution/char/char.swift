@@ -24,6 +24,17 @@ func testUtf16CodeUnitToKotlinChar() throws {
     }
 }
 
+func testNullableChar() throws {
+    try assertEquals(actual: charAtIndexOrNull(str: "qwe", index: 0), expected: utf16CodeUnit("q"))
+    try assertNil(charAtIndexOrNull(str: "q", index: 1))
+
+    try assertNil(optionalChar)
+    optionalChar = charAtIndexOrNull(str: "qwe", index: 0)
+    try assertEquals(actual: optionalChar, expected: utf16CodeUnit("q"))
+    optionalChar = charAtIndexOrNull(str: "q", index: 1)
+    try assertNil(optionalChar)
+}
+
 class CharTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -32,6 +43,7 @@ class CharTests : TestProvider {
         tests = [
             TestCase(name: "testKotlinCharToUtf16CodeUnit", method: withAutorelease(testKotlinCharToUtf16CodeUnit)),
             TestCase(name: "testUtf16CodeUnitToKotlinChar", method: withAutorelease(testUtf16CodeUnitToKotlinChar)),
+            TestCase(name: "testNullableChar", method: withAutorelease(testNullableChar)),
         ]
     }
 }

@@ -249,7 +249,12 @@ private fun bridgeType(type: SirType): Bridge {
             }
 
             is Bridge.AsIs,
-            -> Bridge.AsOptionalWrapper(Bridge.AsNSNumber(bridge.swiftType))
+            -> Bridge.AsOptionalWrapper(
+                if (bridge.swiftType.isChar)
+                    Bridge.OptionalChar(bridge.swiftType)
+                else
+                    Bridge.AsNSNumber(bridge.swiftType)
+            )
 
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
@@ -424,7 +429,7 @@ private sealed class Bridge(
         }
     }
 
-    class AsNSNumber(
+    open class AsNSNumber(
         swiftType: SirType,
     ) : AsObjCBridged(swiftType, CType.NSNumber) {
         override val inSwiftSources = object : NilableIdentityValueConversion {
@@ -448,13 +453,24 @@ private sealed class Bridge(
                     SirSwiftModule.double -> "doubleValue"
                     SirSwiftModule.float -> "floatValue"
 
-                    SirSwiftModule.utf16CodeUnit -> TODO("Optional Char is unsupported. KT-71453")
+                    SirSwiftModule.utf16CodeUnit -> "uint16Value"
 
                     else -> error("Attempt to get ${swiftType.typeDeclaration} from NSNumber")
                 }
 
                 return "$valueExpression.$fromNSNumberValue"
             }
+        }
+    }
+
+    class OptionalChar(swiftType: SirType) : AsNSNumber(swiftType) {
+        init {
+            require(swiftType.isChar)
+        }
+
+        override val inKotlinSources = object : ValueConversion by super.inKotlinSources {
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                super@OptionalChar.inKotlinSources.kotlinToSwift(typeNamer, "${valueExpression}?.code")
         }
     }
 
@@ -551,3 +567,5 @@ private sealed class Bridge(
     interface InSwiftSourcesConversion : ValueConversion, NilRepresentable
 }
 
+private val SirType.isChar: Boolean
+    get() = this is SirNominalType && typeDeclaration == SirSwiftModule.utf16CodeUnit
