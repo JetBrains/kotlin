@@ -14,6 +14,7 @@ import kotlin.test.assertContentEquals
 class GenerateCompilerArgumentsCopyTest : TestCase() {
     fun testCompilerArgumentsCopyFunctionsAreUpToDate() {
         generateCompilerArgumentsCopy(::getPrinterForTests)
+        generateConfigureCommonLanguageFeatures(::getPrinterForTests)
     }
 
     fun testCopyDoesNotCopyTransientFields() {
