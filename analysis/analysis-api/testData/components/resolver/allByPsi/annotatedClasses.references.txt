@@ -128,7 +128,7 @@ KtNameReferenceExpression(504,508): 'prop'
 
 KtNameReferenceExpression(511,524): 'AbstractClass'
   KtSimpleNameReference:
-    (in AbstractClass) constructor()
+    (in AbstractClass) constructor <T>()
 
 KtNameReferenceExpression(526,530): 'Anno'
   KtSimpleNameReference:
@@ -176,7 +176,7 @@ KtNameReferenceExpression(677,681): 'prop'
 
 KtNameReferenceExpression(684,697): 'AbstractClass'
   KtSimpleNameReference:
-    (in AbstractClass) constructor()
+    (in AbstractClass) constructor <T>()
 
 KtNameReferenceExpression(699,703): 'Anno'
   KtSimpleNameReference:

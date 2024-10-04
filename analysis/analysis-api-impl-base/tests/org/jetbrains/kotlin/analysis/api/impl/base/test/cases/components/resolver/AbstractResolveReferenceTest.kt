@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -133,6 +134,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
             annotationFilter = KaRendererAnnotationsFilter.NONE
         }
         propertyAccessorsRenderer = KaPropertyAccessorsRenderer.NONE
+        typeParametersFilter = KaTypeParameterRendererFilter { _, _ -> true }
     }
 
 }

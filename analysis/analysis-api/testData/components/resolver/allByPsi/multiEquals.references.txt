@@ -52,7 +52,7 @@ KtNameReferenceExpression(362,376): 'MessagePreview'
 
 KtNameReferenceExpression(388,400): 'ItemCallback'
   KtSimpleNameReference:
-    (in ItemCallback) constructor()
+    (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(401,402): 'T'
   KtSimpleNameReference:
@@ -108,7 +108,7 @@ KtNameReferenceExpression(584,603): 'InterfaceWithEquals'
 
 KtNameReferenceExpression(615,627): 'ItemCallback'
   KtSimpleNameReference:
-    (in ItemCallback) constructor()
+    (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(628,629): 'T'
   KtSimpleNameReference:
@@ -144,7 +144,7 @@ KtNameReferenceExpression(745,759): 'MessagePreview'
 
 KtNameReferenceExpression(784,796): 'ItemCallback'
   KtSimpleNameReference:
-    (in ItemCallback) constructor()
+    (in ItemCallback) constructor <T>()
 
 KtNameReferenceExpression(797,798): 'T'
   KtSimpleNameReference:

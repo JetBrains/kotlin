@@ -84,4 +84,4 @@ KtNameReferenceExpression(419,422): 'Int'
 
 KtConstructorDelegationReferenceExpression(446,451): 'super'
   KtConstructorDelegationReference:
-    (in r.ClassWithType) constructor(i: kotlin.Int)
+    (in r.ClassWithType) constructor <T>(i: kotlin.Int)

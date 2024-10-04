@@ -48,7 +48,7 @@ KtNameReferenceExpression(171,182): 'NestedClass'
 
 KtNameReferenceExpression(186,190): 'Base'
   KtSimpleNameReference:
-    (in one.two.Base) constructor()
+    (in one.two.Base) constructor <B : one.two.Base.NestedClass>()
 
 KtNameReferenceExpression(191,192): 'C'
   KtSimpleNameReference:

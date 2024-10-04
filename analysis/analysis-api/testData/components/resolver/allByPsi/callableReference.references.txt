@@ -24,7 +24,7 @@ KtNameReferenceExpression(223,224): 'T'
 
 KtNameReferenceExpression(258,271): 'ClassWithType'
   KtSimpleNameReference:
-    (in pack.ClassWithType) constructor()
+    (in pack.ClassWithType) constructor <T>()
 
 KtNameReferenceExpression(272,279): 'MyClass'
   KtSimpleNameReference:
