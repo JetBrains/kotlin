@@ -122,6 +122,10 @@ internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
+internal object RegularKotlinNativeClassLoader {
+    val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader()
+}
+
 fun copyNativeHomeProperty() {
     System.setProperty("kotlin.native.home", ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue())
 }
@@ -141,7 +145,7 @@ object NativeTestSupport {
 
             TestProcessSettings(
                 nativeHome,
-                computeNativeClassLoader(),
+                RegularKotlinNativeClassLoader.kotlinNativeClassLoader,
                 computeBaseDirs(),
                 LLDB(nativeHome),
                 computeReleasedCompiler()
@@ -160,7 +164,7 @@ object NativeTestSupport {
      * For this, a cast of mangler object(within K/N classloader) to mangler interface(within app classloader) is needed,
      * which is possible when app classloader is provided as parent.
      */
-    fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
+    internal fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
         lazy {
             val nativeClassPath = ProcessLevelProperty.COMPILER_CLASSPATH.readValue()
                 .split(File.pathSeparatorChar)

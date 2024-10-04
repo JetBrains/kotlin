@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport
+import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
@@ -117,7 +117,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
 
     private val kotlinNativeClassLoader by lazy {
         copyNativeHomeProperty()
-        NativeTestSupport.computeNativeClassLoader(parent = null).classLoader
+        RegularKotlinNativeClassLoader.kotlinNativeClassLoader.classLoader
     }
 
     private val testTarget by lazy { HostManager.host }
