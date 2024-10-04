@@ -39,8 +39,9 @@ object PluginFunctionalNames {
 object InlineablePluginFunction : FunctionTypeKind(
     PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.INLINEABLE_NAME_PREFIX,
-    PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
-    isReflectType = false
+    annotationOnInvokeClassId = PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
+    isReflectType = false,
+    isInlineable = true,
 ) {
     override val prefixForTypeRender: String
         get() = "@MyInlineable"
@@ -55,7 +56,8 @@ object KInlineableFunction : FunctionTypeKind(
     PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.KINLINEABLE_NAME_PREFIX,
     PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
-    isReflectType = true
+    isReflectType = true,
+    isInlineable = false,
 ) {
     override val serializeAsFunctionWithAnnotationUntil: String
         get() = LanguageVersion.KOTLIN_2_1.versionString
@@ -67,7 +69,8 @@ object NotInlineablePluginFunction : FunctionTypeKind(
     PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.NOT_INLINEABLE_NAME_PREFIX,
     PluginFunctionalNames.MY_NOT_INLINEABLE_ANNOTATION_CLASS_ID,
-    isReflectType = false
+    isReflectType = false,
+    isInlineable = false,
 ) {
     override val prefixForTypeRender: String
         get() = "@MyInlineable"
@@ -82,7 +85,8 @@ object KNotInlineableFunction : FunctionTypeKind(
     PluginFunctionalNames.BASE_PACKAGE,
     PluginFunctionalNames.KNOT_INLINEABLE_NAME_PREFIX,
     PluginFunctionalNames.MY_NOT_INLINEABLE_ANNOTATION_CLASS_ID,
-    isReflectType = true
+    isReflectType = true,
+    isInlineable = false,
 ) {
     override val serializeAsFunctionWithAnnotationUntil: String
         get() = LanguageVersion.KOTLIN_2_1.versionString

@@ -596,7 +596,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 private fun FirValueParameter.isInlinable(session: FirSession): Boolean {
     if (isNoinline) return false
     val fullyExpandedType = returnTypeRef.coneType.fullyExpandedType(session)
-    return fullyExpandedType.isNonKFunctionType(session) && !fullyExpandedType.isMarkedNullable
+    return !fullyExpandedType.isMarkedNullable && fullyExpandedType.functionTypeKind(session)?.isInlineable == true
 }
 
 fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession): FirInlineDeclarationChecker.InlineFunctionBodyContext {
