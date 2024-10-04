@@ -15,4 +15,4 @@ package main
 
 import lib.*
 
-<expr>class Impl : Base()</expr>
+cl<caret>ass Impl : Base()

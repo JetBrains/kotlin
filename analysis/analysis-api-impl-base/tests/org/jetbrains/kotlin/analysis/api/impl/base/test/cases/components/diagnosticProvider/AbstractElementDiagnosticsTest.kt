@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val targetDeclaration = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
+        val targetDeclaration = testServices.expressionMarkerProvider.getSelectedElementOrElementAtCaretOfTypeByDirective(
+            mainFile,
+            mainModule.testModule,
+            defaultType = KtElement::class,
+        ) as KtElement
 
         analyze(mainFile) {
             val diagnostics = targetDeclaration.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)

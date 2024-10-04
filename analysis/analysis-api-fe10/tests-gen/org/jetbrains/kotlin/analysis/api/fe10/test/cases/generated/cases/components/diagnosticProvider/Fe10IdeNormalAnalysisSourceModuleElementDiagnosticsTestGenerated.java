@@ -46,6 +46,24 @@ public class Fe10IdeNormalAnalysisSourceModuleElementDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("classWithFunctionWithImplicitType.kt")
+  public void testClassWithFunctionWithImplicitType() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/classWithFunctionWithImplicitType.kt");
+  }
+
+  @Test
+  @TestMetadata("classWithNestedClass.kt")
+  public void testClassWithNestedClass() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/classWithNestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fileWithFunctionWithImplicitType.kt")
+  public void testFileWithFunctionWithImplicitType() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/fileWithFunctionWithImplicitType.kt");
+  }
+
+  @Test
   @TestMetadata("hiddenFromObjectiveC.kt")
   public void testHiddenFromObjectiveC() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/hiddenFromObjectiveC.kt");

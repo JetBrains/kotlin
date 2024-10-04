@@ -44,4 +44,10 @@ public class FirIdeNormalAnalysisScriptSourceModuleElementDiagnosticsTestGenerat
   public void testAllFilesPresentInElementDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
+
+  @Test
+  @TestMetadata("scriptWithFunctionWithImplicitType.kts")
+  public void testScriptWithFunctionWithImplicitType() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/scriptWithFunctionWithImplicitType.kts");
+  }
 }

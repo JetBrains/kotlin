@@ -22,4 +22,4 @@ import lib.*
 @Anno
 abstract class Base
 
-<expr>class Impl : Base()</expr>
+cl<caret>ass Impl : Base()
