@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
@@ -316,3 +317,17 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
     }
     return null
 }
+
+/**
+ * Instructs the annotated argument to enable the specified [LanguageFeature] when set to `true`.
+ */
+@Target(AnnotationTarget.FIELD)
+@Repeatable
+annotation class Enables(val feature: LanguageFeature)
+
+/**
+ * Instructs the annotated argument to disable the specified [LanguageFeature] when set to `true`.
+ */
+@Target(AnnotationTarget.FIELD)
+@Repeatable
+annotation class Disables(val feature: LanguageFeature)

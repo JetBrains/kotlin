@@ -207,6 +207,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         }
 
     @Argument(value = "-Xmulti-platform", description = "Enable language support for multiplatform projects.")
+    @Enables(LanguageFeature.MultiPlatformProjects)
     var multiPlatform = false
         set(value) {
             checkFrozen()
@@ -235,6 +236,10 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         value = "-Xnew-inference",
         description = "Enable the new experimental generic type inference algorithm."
     )
+    @Enables(LanguageFeature.NewInference)
+    @Enables(LanguageFeature.SamConversionPerArgument)
+    @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
+    @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
     var newInference = false
         set(value) {
             checkFrozen()
@@ -245,6 +250,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         value = "-Xinline-classes",
         description = "Enable experimental inline classes."
     )
+    @Enables(LanguageFeature.InlineClasses)
     var inlineClasses = false
         set(value) {
             checkFrozen()
@@ -255,6 +261,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         value = "-Xlegacy-smart-cast-after-try",
         description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks."
     )
+    @Disables(LanguageFeature.SoundSmartCastsAfterTry)
     var legacySmartCastAfterTry = false
         set(value) {
             checkFrozen()
@@ -594,6 +601,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         value = "-Xinference-compatibility",
         description = "Enable compatibility changes for the generic type inference algorithm."
     )
+    @Enables(LanguageFeature.InferenceCompatibility)
     var inferenceCompatibility = false
         set(value) {
             checkFrozen()
@@ -649,6 +657,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
                 "See https://youtrack.jetbrains.com/issue/KT-11914"
     )
+    @Enables(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
     var consistentDataClassCopyVisibility = false
         set(value) {
             checkFrozen()
@@ -659,6 +668,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         value = "-Xunrestricted-builder-inference",
         description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls."
     )
+    @Enables(LanguageFeature.UnrestrictedBuilderInference)
     var unrestrictedBuilderInference = false
         set(value) {
             checkFrozen()
@@ -670,6 +680,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = """Use builder inference by default for all calls with lambdas that can't be resolved without it.
 The corresponding calls' declarations may not be marked with @BuilderInference."""
     )
+    @Enables(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
     var enableBuilderInference = false
         set(value) {
             checkFrozen()
@@ -680,6 +691,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xself-upper-bound-inference",
         description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters."
     )
+    @Enables(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
     var selfUpperBoundInference = false
         set(value) {
             checkFrozen()
@@ -690,6 +702,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xcontext-receivers",
         description = "Enable experimental context receivers."
     )
+    @Enables(LanguageFeature.ContextReceivers)
     var contextReceivers = false
         set(value) {
             checkFrozen()
@@ -700,6 +713,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xnon-local-break-continue",
         description = "Enable experimental non-local break and continue."
     )
+    @Enables(LanguageFeature.BreakContinueInInlineLambdas)
     var nonLocalBreakContinue = false
         set(value) {
             checkFrozen()
@@ -710,6 +724,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xdirect-java-actualization",
         description = "Enable experimental direct Java actualization support."
     )
+    @Enables(LanguageFeature.DirectJavaActualization)
     var directJavaActualization = false
         set(value) {
             checkFrozen()
@@ -720,6 +735,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xmulti-dollar-interpolation",
         description = "Enable experimental multi-dollar interpolation."
     )
+    @Enables(LanguageFeature.MultiDollarInterpolation)
     var multiDollarInterpolation = false
         set(value) {
             checkFrozen()
@@ -741,6 +757,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow compiling scripts along with regular Kotlin sources.")
+    @Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
     var allowAnyScriptsInSourceRoots = false
         set(value) {
             checkFrozen()
@@ -807,6 +824,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         value = "-Xwhen-guards",
         description = "Enable experimental language support for when guards."
     )
+    @Enables(LanguageFeature.WhenGuards)
     var whenGuards = false
         set(value) {
             checkFrozen()
@@ -859,64 +877,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     open fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> =
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
-            if (multiPlatform) {
-                put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
-            }
-
-            if (consistentDataClassCopyVisibility) {
-                put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
-            }
-
-            if (unrestrictedBuilderInference) {
-                put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
-            }
-
-            if (enableBuilderInference) {
-                put(LanguageFeature.UseBuilderInferenceWithoutAnnotation, LanguageFeature.State.ENABLED)
-            }
-
-            if (selfUpperBoundInference) {
-                put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
-            }
-
-            if (newInference) {
-                put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
-            }
-
-            if (contextReceivers) {
-                put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
-            }
-
-            if (nonLocalBreakContinue) {
-                put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
-            }
-
-            if (directJavaActualization) {
-                put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
-            }
-
-            if (inlineClasses) {
-                put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
-            }
-
-            if (legacySmartCastAfterTry) {
-                put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
-            }
-
-            if (inferenceCompatibility) {
-                put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
-            }
-
-            if (whenGuards) {
-                put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
-            }
-
-            if (multiDollarInterpolation) {
-                put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
-            }
+            configureCommonLanguageFeatures(this@CommonCompilerArguments)
 
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {
@@ -924,10 +885,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
                     // breaking change manually instead of turning off whole progressive mode
                     if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
                 }
-            }
-
-            if (allowAnyScriptsInSourceRoots) {
-                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 
             // Internal arguments should go last, because it may be useful to override
