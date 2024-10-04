@@ -11,15 +11,13 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport
+import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.native.executors.RunProcessException
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.native.executors.*
-import org.jetbrains.kotlin.test.KtAssert.fail
 import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -86,7 +84,7 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
 
 
 fun callCompilerWithoutOutputInterceptor(compilerArgs: Array<String>): CompilationToolCallResult {
-    val compilerClassLoader = NativeTestSupport.computeNativeClassLoader(parent = null).classLoader
+    val compilerClassLoader = RegularKotlinNativeClassLoader.kotlinNativeClassLoader.classLoader
     return callCompilerWithoutOutputInterceptor(compilerArgs, compilerClassLoader)
 }
 
