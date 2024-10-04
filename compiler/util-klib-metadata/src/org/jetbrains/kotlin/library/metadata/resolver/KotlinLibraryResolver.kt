@@ -56,7 +56,7 @@ val TopologicalLibraryOrder: LibraryOrder = { input ->
 
     fun visit(node: KotlinResolvedLibrary, result: MutableList<KotlinResolvedLibrary>) {
         if (visited.contains(node)) return
-        if (tempMarks.contains(node)) error("Cyclic dependency in library graph for: ${node.library.libraryName}")
+        if (tempMarks.contains(node)) return // error("Cyclic dependency in library graph for: ${node.library.libraryName}")
         tempMarks.add(node)
         node.resolvedDependencies.forEach {
             visit(it, result)
