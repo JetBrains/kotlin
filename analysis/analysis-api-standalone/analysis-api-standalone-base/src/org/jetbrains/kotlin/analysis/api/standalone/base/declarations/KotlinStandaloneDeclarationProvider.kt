@@ -351,9 +351,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
 
             for (root in sharedBinaryRoots) {
-                KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
-                    collectStubsFromBinaryRoot(additionalRoot, binaryClassCache)
-                }?.let(::processCollectedStubs)
+                collectStubsFromBinaryRoot(root, binaryClassCache).let(::processCollectedStubs)
             }
 
             // In contrast to `sharedBinaryRoots`, which are shared between many different projects (e.g. the Kotlin stdlib), `binaryRoots`
@@ -426,10 +424,18 @@ class KotlinStandaloneDeclarationProviderFactory(
         }
 
     private fun buildStubByVirtualFile(file: VirtualFile, binaryClassCache: ClsKotlinBinaryClassCache): KotlinFileStubImpl? {
-        val fileContent = FileContentImpl.createByFile(file)
+        val entry = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java)
+            .fakeFileClsStubs.getOrPut(file.path) {
+                val content = FileContentImpl.createByFile(file).content
+                KotlinFakeClsStubsCache.Entry(
+                    content,
+                    binaryClassCache.isKotlinJvmCompiledFile(file, content)
+                )
+            }
+        val fileContent = FileContentImpl.createByContent(file, entry.content)
         val fileType = file.fileType
         val stubBuilder = when {
-            binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) && fileType == JavaClassFileType.INSTANCE -> {
+            entry.isKotlinJvmCompiledFile && fileType == JavaClassFileType.INSTANCE -> {
                 KotlinClsStubBuilder()
             }
             fileType == KotlinBuiltInFileType
@@ -473,19 +479,25 @@ class KotlinStandaloneDeclarationProviderFactory(
  * Otherwise, each test would start indexing of stdlib from scratch,
  * and under the lock which makes tests extremely slow*/
 class KotlinFakeClsStubsCache {
-    private val fakeFileClsStubs = ConcurrentHashMap<String, Map<VirtualFile, KotlinFileStubImpl>>()
+    val fakeFileClsStubs = ConcurrentHashMap<String, Entry>()
 
-    companion object {
-        fun processAdditionalRoot(
-            root: VirtualFile,
-            storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
-        ): Map<VirtualFile, KotlinFileStubImpl>? {
-            val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java) ?: return null
-            return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
-                storage(root)
-            }
-        }
-    }
+    class Entry(
+        val content: ByteArray,
+        val isKotlinJvmCompiledFile: Boolean,
+    )
+
+//    companion object {
+//        fun processAdditionalRoot(
+//            root: VirtualFile,
+//            storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
+//        ): Map<VirtualFile, KotlinFileStubImpl>? {
+//            return storage(root)
+//            val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java)!!
+//            return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
+//                storage(root)
+//            }
+//        }
+//    }
 }
 
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
