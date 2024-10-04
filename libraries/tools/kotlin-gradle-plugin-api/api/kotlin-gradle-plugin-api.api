@@ -1441,6 +1441,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind : java/lang
 	public static final field FRAMEWORK Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public static final field STATIC Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public static final field TEST Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public static final field TEST_BUNDLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public synthetic fun <init> (Ljava/lang/String;ILorg/jetbrains/kotlin/konan/target/CompilerOutputKind;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun availableFor (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Z
 	public final fun getCompilerOutputKind ()Lorg/jetbrains/kotlin/konan/target/CompilerOutputKind;
