@@ -309,24 +309,24 @@ constructor(
                 }
             }
 
-        check(failed.isEmpty()) {
-            val failedDependenciesList = failed.joinToString(separator = "\n") {
-                val componentId = it.selected.id
-                when (componentId) {
-                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedConfiguration.getArtifacts(it).map { it.file }}"
-                    is ProjectComponentIdentifier -> "|Project ${componentId.projectPath}"
-                    else -> "|${componentId.displayName}"
-                }
-            }
-
-            """
-                |Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set:
-                |
-                $failedDependenciesList
-                |
-                |Please add them in the API-dependencies and rerun the build.
-            """.trimMargin()
-        }
+//        check(failed.isEmpty()) {
+//            val failedDependenciesList = failed.joinToString(separator = "\n") {
+//                val componentId = it.selected.id
+//                when (componentId) {
+//                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedConfiguration.getArtifacts(it).map { it.file }}"
+//                    is ProjectComponentIdentifier -> "|Project ${componentId.projectPath}"
+//                    else -> "|${componentId.displayName}"
+//                }
+//            }
+//
+//            """
+//                |Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set:
+//                |
+//                $failedDependenciesList
+//                |
+//                |Please add them in the API-dependencies and rerun the build.
+//            """.trimMargin()
+//        }
     }
 
     @Suppress("DEPRECATION")

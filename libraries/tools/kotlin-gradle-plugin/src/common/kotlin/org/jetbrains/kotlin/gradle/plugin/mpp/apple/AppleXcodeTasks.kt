@@ -178,20 +178,20 @@ private fun fireEnvException(frameworkTaskName: String, environment: XcodeEnviro
 
 @ExperimentalSwiftExportDsl
 internal fun Project.registerEmbedSwiftExportTask(
-    binary: StaticLibrary,
+    removeme_library: StaticLibrary,
     environment: XcodeEnvironment,
     swiftExportExtension: SwiftExportExtension,
 ) {
     val envTargets = environment.targets
     val envBuildType = environment.buildType
-    val isMatchingBinary = envTargets.contains(binary.konanTarget) && binary.buildType == envBuildType
-    val binaryTaskName = binary.embedSwiftExportTaskName()
+    val isMatchingBinary = envTargets.contains(removeme_library.konanTarget) && removeme_library.buildType == envBuildType
+    val binaryTaskName = removeme_library.embedSwiftExportTaskName()
 
     if (isMatchingBinary) {
         if (!isRunWithXcodeEnvironment(
                 environment,
                 binaryTaskName,
-                "Embed swift export ${binary.namePrefix} library as requested by Xcode's environment variables"
+                "Embed swift export ${removeme_library.namePrefix} library as requested by Xcode's environment variables"
             )
         ) {
             return
@@ -202,13 +202,13 @@ internal fun Project.registerEmbedSwiftExportTask(
         val swiftExportTask = registerSwiftExportTask(
             swiftExportExtension,
             SwiftExportDSLConstants.TASK_GROUP,
-            binary
+            removeme_library
         )
 
         swiftExportTask.dependsOn(sandBoxTask)
-        binary.linkTaskProvider.dependsOn(sandBoxTask)
+        removeme_library.linkTaskProvider.dependsOn(sandBoxTask)
 
-        val embedAndSignTask = registerEmbedTask(binary, binaryTaskName, environment) { false } ?: return
+        val embedAndSignTask = registerEmbedTask(removeme_library, binaryTaskName, environment) { false } ?: return
 
         embedAndSignTask.dependsOn(swiftExportTask)
     }
