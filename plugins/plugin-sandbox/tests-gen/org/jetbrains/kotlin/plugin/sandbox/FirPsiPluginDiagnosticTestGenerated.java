@@ -98,6 +98,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("inlineability.kt")
+    public void testInlineability() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/functionalTypes/inlineability.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("plugins/plugin-sandbox/testData/diagnostics/functionalTypes/simple.kt");

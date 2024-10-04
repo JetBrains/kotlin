@@ -41,6 +41,9 @@ annotation class MetaSupertype
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.PROPERTY_GETTER)
 annotation class MyInlineable
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.PROPERTY_GETTER)
+annotation class MyNotInlineable
+
 annotation class AllPropertiesConstructor
 
 annotation class AddAnnotations
