@@ -389,6 +389,7 @@ private fun JavaTypeParameter.toFirTypeParameter(
     origin = javaOrigin(isFromSource)
     name = this@toFirTypeParameter.name
     symbol = FirTypeParameterSymbol()
+    this.source = this@toFirTypeParameter.toSourceElement()
     this.containingDeclarationSymbol = containingDeclarationSymbol
     for (upperBound in this@toFirTypeParameter.upperBounds) {
         bounds += upperBound.toFirJavaTypeRef(session, source)

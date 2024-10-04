@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -46,9 +47,8 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
             }
         }
 
-        if (problemNodes.any { it.typeParameter.source != null }) return
-
         val containers = problemNodes.map { it.container }
+        if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
         reporter.reportOn(declaration.source, FirErrors.EXPANSIVE_INHERITANCE_IN_JAVA, containers, context)
     }
 
