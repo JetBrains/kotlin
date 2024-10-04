@@ -3,29 +3,29 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
-        super<R|kotlin/Any|>()
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
+    public [ResolvedTo(STATUS)] [ContainingClassKey=I] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
+        LAZY_super<<implicit>>
     }
 
     private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|A| = R|<local>/p|
 
-    private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
-        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|A|
+    private final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
+        private [ResolvedTo(STATUS)] [ContainingClassKey=I] get(): R|A|
 
 }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] delegate.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=I] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
+            LAZY_super<<implicit>>
         }
 
         private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|A| = R|<local>/p|
 
-        private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
-            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|A|
+        private final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
+            private [ResolvedTo(STATUS)] [ContainingClassKey=I] get(): R|A|
 
     }
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {

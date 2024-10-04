@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
  * [LLFirResolveTarget] representing a class with all callable members (functions and properties).
  */
 internal class LLFirClassWithAllCallablesResolveTarget(designation: FirDesignation) : LLFirRegularClassResolveTarget(designation) {
+    override val visitClass: Boolean get() = true
     override fun visitMembers(visitor: LLFirResolveTargetVisitor, firRegularClass: FirRegularClass) {
         firRegularClass.forEachDeclaration {
             if (it is FirCallableDeclaration) {

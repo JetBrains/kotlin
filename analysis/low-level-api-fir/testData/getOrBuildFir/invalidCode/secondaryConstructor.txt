@@ -7,9 +7,9 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class JsQualifier : R|kotlin/Annotation|, R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JsQualifier] constructor(): R|JsQualifier| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class JsQualifier : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JsQualifier] constructor(): R|JsQualifier| {
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] val value: R|kotlin/String|

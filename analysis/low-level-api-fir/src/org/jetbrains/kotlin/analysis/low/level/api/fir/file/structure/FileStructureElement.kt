@@ -9,48 +9,26 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ScriptDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * Collects [KT -> FIR][KtToFirMapping] mapping and [diagnostics][FileStructureElementDiagnostics] for [declaration].
  *
- * @param declaration is a fully resolved declaration
+ * @param declaration is a fully resolved declaration (not necessary in [FirResolvePhase.BODY_RESOLVE] phase)
  *
  * @see FileStructure
- * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnosticsCollector
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
  */
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,
 ) {
-    init {
-        val actualResolvePhase = declaration.resolvePhase
-        requireWithAttachment(
-            actualResolvePhase == FirResolvePhase.BODY_RESOLVE,
-            {
-                """
-                    ${this::class.simpleName} can be created only for fully resolved declaration.
-                    Actual phase: $actualResolvePhase
-                """.trimIndent()
-            },
-        ) {
-            withFirEntry("declaration", declaration)
-        }
-    }
-
     val mappings: KtToFirMapping = KtToFirMapping(declaration)
 
     companion object {
@@ -121,7 +99,8 @@ internal class KtToFirMapping(firElement: FirDeclaration) {
                 val parent = current.parent
                 if (current.valueArgumentList == null &&
                     parent is KtQualifiedExpression &&
-                    parent.selectorExpression == current) getElement(parent)
+                    parent.selectorExpression == current
+                ) getElement(parent)
                 else getElement(current)
             }
             is KtBinaryExpression ->

@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object C : R|A| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {

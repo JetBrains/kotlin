@@ -22,13 +22,13 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] object C : R|A| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(RAW_FIR)] object C : A {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<A>
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class G : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] error_constructor(): R|G| {
             super<R|A|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
@@ -39,14 +39,8 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
             )
         }
 
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] constructor(): R|G| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
-                    ^foo Q|C|.R|/A.prop|.R|kotlin/String.toString|()
-                }
-
-            }
-            )
+        public [ResolvedTo(STATUS)] [ContainingClassKey=G] constructor(): R|G| {
+            LAZY_super<R|A|>
         }
 
     }

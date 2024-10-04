@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
@@ -205,18 +203,7 @@ internal class FileStructure private constructor(
     }
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
-        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
-            firFile,
-            firProvider,
-        )
-
-        firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-        if (firDeclaration is FirPrimaryConstructor) {
-            firDeclaration.valueParameters.forEach { parameter ->
-                parameter.correspondingProperty?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            }
-        }
-
+        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFile, firProvider)
         return FileElementFactory.createFileStructureElement(
             firDeclaration = firDeclaration,
             firFile = firFile,
@@ -241,12 +228,14 @@ internal class FileStructure private constructor(
 
             DeclarationStructureElement(firFile, firCodeFragment, moduleComponents)
         }
+
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
 
             RootStructureElement(firFile, moduleComponents)
         }
+
         container is KtDeclaration -> createDeclarationStructure(container)
         container is KtModifierList && container.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement -> {
             createDanglingModifierListStructure(container)

@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingAnnotationInClass.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class F : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class F : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=F] constructor(): R|F| {
             super<R|kotlin/Any|>()
         }

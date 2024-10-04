@@ -8,27 +8,45 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassSpecificMembersResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 internal object FileElementFactory {
     fun createFileStructureElement(
         firDeclaration: FirDeclaration,
         firFile: FirFile,
         moduleComponents: LLFirModuleResolveComponents,
-    ): FileStructureElement = when {
-        firDeclaration is FirRegularClass -> {
-            lazyResolveClassWithGeneratedMembers(firDeclaration)
+    ): FileStructureElement = when (firDeclaration) {
+        is FirRegularClass -> {
+            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
+
+            lazyResolveClassGeneratedMembers(firDeclaration)
             ClassDeclarationStructureElement(firFile, firDeclaration, moduleComponents)
         }
 
-        firDeclaration is FirScript -> RootScriptStructureElement(firFile, firDeclaration, moduleComponents)
-        else -> DeclarationStructureElement(firFile, firDeclaration, moduleComponents)
+        is FirScript -> {
+            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
+            RootScriptStructureElement(firFile, firDeclaration, moduleComponents)
+        }
+
+        else -> {
+            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            if (firDeclaration is FirPrimaryConstructor) {
+                firDeclaration.valueParameters.forEach { parameter ->
+                    parameter.correspondingProperty?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                }
+            }
+
+            DeclarationStructureElement(firFile, firDeclaration, moduleComponents)
+        }
     }
 
-    private fun lazyResolveClassWithGeneratedMembers(firClass: FirRegularClass) {
+    private fun lazyResolveClassGeneratedMembers(firClass: FirRegularClass) {
         val classMembersToResolve = buildList {
             for (member in firClass.declarations) {
                 when {
@@ -55,8 +73,9 @@ internal object FileElementFactory {
             }
         }
 
+        if (classMembersToResolve.isEmpty()) return
         val firClassDesignation = firClass.collectDesignation()
-        val designationWithMembers = LLFirClassWithSpecificMembersResolveTarget(
+        val designationWithMembers = LLFirClassSpecificMembersResolveTarget(
             firClassDesignation,
             classMembersToResolve,
         )

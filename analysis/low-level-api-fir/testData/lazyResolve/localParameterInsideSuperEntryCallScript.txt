@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -191,7 +191,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -296,7 +296,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -331,7 +331,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -401,7 +401,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
@@ -436,7 +436,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(object : R|one/Interface| {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {

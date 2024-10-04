@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorDelegationSuperCall.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|B| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|B|>(Int(1))
         }

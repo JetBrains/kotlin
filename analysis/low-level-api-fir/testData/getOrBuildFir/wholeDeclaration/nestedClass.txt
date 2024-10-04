@@ -3,7 +3,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
         super<R|kotlin/Any|>()
     }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
                 super<R|kotlin/Any|>()
             }

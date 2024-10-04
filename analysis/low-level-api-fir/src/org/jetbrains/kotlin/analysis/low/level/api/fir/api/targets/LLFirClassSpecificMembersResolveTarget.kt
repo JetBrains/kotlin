@@ -9,10 +9,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-internal class LLFirClassWithSpecificMembersResolveTarget(
+/**
+ * Resolves [members] of [designation]. Ignores the class itself.
+ */
+internal class LLFirClassSpecificMembersResolveTarget(
     designation: FirDesignation,
     val members: List<FirDeclaration>,
 ) : LLFirRegularClassResolveTarget(designation) {
+    override val visitClass: Boolean get() = false
     override fun visitMembers(visitor: LLFirResolveTargetVisitor, firRegularClass: FirRegularClass) {
         members.forEach(visitor::performAction)
     }

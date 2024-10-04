@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()
@@ -299,7 +299,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ String()

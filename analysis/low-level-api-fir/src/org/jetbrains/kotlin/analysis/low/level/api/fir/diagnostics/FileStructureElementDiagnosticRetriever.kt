@@ -33,7 +33,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
     private val moduleComponents: LLFirModuleResolveComponents,
 ) {
     fun retrieve(filter: DiagnosticCheckerFilter): FileStructureElementDiagnosticList {
-        resolveMembers()
+        forceBodyResolve()
 
         val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
         val context = if (declaration is FirFile) {
@@ -56,7 +56,9 @@ internal sealed class FileStructureElementDiagnosticRetriever(
      * not all of them are pre-resolved during [declaration] resolution.
      * For instance, functions and classes are not a part of the container body resolution.
      */
-    private fun resolveMembers() {
+    private fun forceBodyResolve() {
+        declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
         val additionalDeclarationsToResolve = when (declaration) {
             is FirFile -> declaration.declarations.let { declarations ->
                 (declarations.firstOrNull() as? FirScript)?.declarations ?: declarations

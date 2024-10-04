@@ -23,11 +23,16 @@ internal sealed class LLFirRegularClassResolveTarget(designation: FirDesignation
 
     abstract fun visitMembers(visitor: LLFirResolveTargetVisitor, firRegularClass: FirRegularClass)
 
+    abstract val visitClass: Boolean
+
     final override fun visitTargetElement(
         element: FirElementWithResolveState,
         visitor: LLFirResolveTargetVisitor,
     ) {
-        visitor.performAction(element)
+        if (visitClass) {
+            visitor.performAction(element)
+        }
+
         visitor.withRegularClass(element as FirRegularClass) {
             visitMembers(visitor, element)
         }

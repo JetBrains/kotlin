@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorDelegationSuperCallScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorDelegationSuperCallScript.kts>] class A : R|B| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-constructorDelegationSuperCallScript.kts>] class A : R|B| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|B|>(Int(1))
             }
