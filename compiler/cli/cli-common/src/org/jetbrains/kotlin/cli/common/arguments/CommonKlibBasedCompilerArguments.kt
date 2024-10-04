@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.LanguageFeature
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -77,4 +78,21 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
+
+    @Argument(
+        value = "-Xklib-ir-inliner",
+        description = "Enable experimental support to invoke IR Inliner before Klib serialization."
+    )
+    var irInlinerBeforeKlibSerialization = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    override fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {
+        super.configureExtraLanguageFeatures(map)
+        if (irInlinerBeforeKlibSerialization) {
+            map[LanguageFeature.IrInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+        }
+    }
 }

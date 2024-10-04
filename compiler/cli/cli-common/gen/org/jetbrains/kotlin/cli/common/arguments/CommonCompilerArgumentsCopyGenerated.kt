@@ -41,7 +41,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.inferenceCompatibility = from.inferenceCompatibility
     to.inlineClasses = from.inlineClasses
     to.intellijPluginRoot = from.intellijPluginRoot
-    to.irInlinerBeforeKlibSerialization = from.irInlinerBeforeKlibSerialization
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
     to.legacySmartCastAfterTry = from.legacySmartCastAfterTry
