@@ -70,7 +70,7 @@ abstract class AbstractFirKlibCrossCompilationIdentityTest(
             ::BlackBoxCodegenSuppressor
         )
         useConfigurators(
-            ::CommonEnvironmentConfigurator,
+//            ::CommonEnvironmentConfigurator,
             ::NativeEnvironmentConfigurator,
         )
         useAdditionalService(::LibraryProvider)
