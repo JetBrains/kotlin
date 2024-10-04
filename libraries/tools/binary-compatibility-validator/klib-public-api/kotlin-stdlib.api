@@ -1388,6 +1388,14 @@ final class <#A: kotlin/Any?> kotlin.concurrent.atomics/AtomicReference { // kot
     final fun getAndSet(#A): #A // kotlin.concurrent.atomics/AtomicReference.getAndSet|getAndSet(1:0){}[0]
 }
 
+final class <#A: kotlin/Any?> kotlin.internal/SharedVariableBox { // kotlin.internal/SharedVariableBox|null[0]
+    constructor <init>(#A) // kotlin.internal/SharedVariableBox.<init>|<init>(1:0){}[0]
+
+    final var element // kotlin.internal/SharedVariableBox.element|{}element[0]
+        final fun <get-element>(): #A // kotlin.internal/SharedVariableBox.element.<get-element>|<get-element>(){}[0]
+        final fun <set-element>(#A) // kotlin.internal/SharedVariableBox.element.<set-element>|<set-element>(1:0){}[0]
+}
+
 final class <#A: kotlin/Any?> kotlin.time/TimedValue { // kotlin.time/TimedValue|null[0]
     constructor <init>(#A, kotlin.time/Duration) // kotlin.time/TimedValue.<init>|<init>(1:0;kotlin.time.Duration){}[0]
 

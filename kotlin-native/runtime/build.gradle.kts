@@ -506,7 +506,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "2.2",
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
-            "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common",
+            "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
     ))
 
@@ -517,6 +517,10 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-stdlib").files("src").builtBy(":prepare:build.version:writeStdlibVersion"))
         srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
         srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
+    }
+
+    val commonNonJvm by sourceSets.creating {
+        srcDir(project(":kotlin-stdlib").file("common-non-jvm/src"))
     }
 
     val nativeWasm by sourceSets.creating {
