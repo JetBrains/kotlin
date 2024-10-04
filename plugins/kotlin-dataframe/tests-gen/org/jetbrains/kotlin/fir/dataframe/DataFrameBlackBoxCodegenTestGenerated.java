@@ -437,6 +437,24 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_nullableList.kt")
+  public void testToDataFrame_nullableList() {
+    runTest("testData/box/toDataFrame_nullableList.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_nullableListSubtree.kt")
+  public void testToDataFrame_nullableListSubtree() {
+    runTest("testData/box/toDataFrame_nullableListSubtree.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_nullableSubtree.kt")
+  public void testToDataFrame_nullableSubtree() {
+    runTest("testData/box/toDataFrame_nullableSubtree.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_superType.kt")
   public void testToDataFrame_superType() {
     runTest("testData/box/toDataFrame_superType.kt");

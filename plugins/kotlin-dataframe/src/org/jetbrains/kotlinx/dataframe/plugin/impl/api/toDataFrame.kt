@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -41,15 +43,19 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.withArguments
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.List
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.withNullability
 import org.jetbrains.kotlinx.dataframe.codeGen.*
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
@@ -197,7 +203,7 @@ internal fun KotlinTypeFacade.toDataFrame(
     val preserveClasses = traverseConfiguration.preserveClasses.mapNotNullTo(mutableSetOf()) { it.classId }
     val preserveProperties = traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
 
-    fun convert(classLike: ConeKotlinType, depth: Int): List<SimpleCol> {
+    fun convert(classLike: ConeKotlinType, depth: Int, makeNullable: Boolean): List<SimpleCol> {
         val symbol = classLike.toRegularClassSymbol(session) ?: return emptyList()
         val scope = symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.STATUS)
         val declarations = if (symbol.fir is FirJavaClass) {
@@ -260,7 +266,7 @@ internal fun KotlinTypeFacade.toDataFrame(
 
                 val keepSubtree = depth >= maxDepth && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn
                 if (keepSubtree || returnType.isValueType() || returnType.classId in preserveClasses || it in preserveProperties) {
-                    SimpleDataColumn(name, TypeApproximation(returnType))
+                    SimpleDataColumn(name, TypeApproximation(returnType.withNullability(ConeNullability.create(makeNullable), session.typeContext)))
                 } else if (
                     returnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)), session) ||
                     returnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection), isNullable = true), session)
@@ -271,19 +277,15 @@ internal fun KotlinTypeFacade.toDataFrame(
                         else -> session.builtinTypes.nullableAnyType.type
                     }
                     if (type.isValueType()) {
-                        SimpleDataColumn(name,
-                            TypeApproximation(
-                                List.constructClassLikeType(
-                                    arrayOf(type),
-                                    returnType.isNullable
-                                )
-                            )
-                        )
+                        val columnType = List.constructClassLikeType(arrayOf(type), returnType.isNullable)
+                            .withNullability(ConeNullability.create(makeNullable), session.typeContext)
+                            .wrap()
+                        SimpleDataColumn(name, columnType)
                     } else {
-                        SimpleFrameColumn(name, convert(type, depth + 1))
+                        SimpleFrameColumn(name, convert(type, depth + 1, makeNullable = false))
                     }
                 } else {
-                    SimpleColumnGroup(name, convert(returnType, depth + 1))
+                    SimpleColumnGroup(name, convert(returnType, depth + 1, returnType.isNullable || makeNullable))
                 }
             }
     }
@@ -293,8 +295,12 @@ internal fun KotlinTypeFacade.toDataFrame(
     return when {
         arg.isStarProjection -> PluginDataFrameSchema.EMPTY
         else -> {
-            val classLike = arg.type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
-            val columns = convert(classLike, 0)
+            val classLike = when (val type = arg.type) {
+                is ConeClassLikeType -> type
+                is ConeFlexibleType -> type.upperBound
+                else -> null
+            } ?: return PluginDataFrameSchema.EMPTY
+            val columns = convert(classLike, 0, makeNullable = classLike.isNullable)
             PluginDataFrameSchema(columns)
         }
     }
