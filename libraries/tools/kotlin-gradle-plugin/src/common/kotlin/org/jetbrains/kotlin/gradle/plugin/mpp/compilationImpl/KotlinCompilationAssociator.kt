@@ -65,7 +65,8 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
 
 internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
-        auxiliary.compileDependencyFiles += main.output.classesDirs
+        auxiliary.compileDependencyFiles +=
+            main.output.classesDirs + target.project.filesProvider { main.compileDependencyFiles }
 
         target.project.configurations.named(auxiliary.implementationConfigurationName).configure { configuration ->
             configuration.extendsFrom(target.project.configurations.findByName(main.implementationConfigurationName))
