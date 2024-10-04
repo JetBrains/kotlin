@@ -12,14 +12,13 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import org.jetbrains.kotlin.platformManagerProvider
 import javax.inject.Inject
 
 private abstract class ClangFrontendJob : WorkAction<ClangFrontendJob.Parameters> {
@@ -174,18 +173,8 @@ open class ClangFrontend @Inject constructor(
         }
     }
 
-    // Marked as input via [konanProperties], [konanDataDir].
-    private val platformManager = project.extensions.getByType<PlatformManager>()
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = project.nativeProtoDistribution.konanProperties
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanDataDir = project.providers.gradleProperty("konan.data.dir")
+    @get:Nested
+    protected val platformManagerProvider = objects.platformManagerProvider(project)
 
     @TaskAction
     fun compile() {
@@ -200,7 +189,7 @@ open class ClangFrontend @Inject constructor(
                 compilerExecutable.set(this@ClangFrontend.compiler)
                 arguments.set(defaultCompilerFlags(this@ClangFrontend.headersDirs))
                 arguments.addAll(this@ClangFrontend.arguments)
-                platformManager.set(this@ClangFrontend.platformManager)
+                platformManager.set(this@ClangFrontend.platformManagerProvider.platformManager)
             }
         }
     }

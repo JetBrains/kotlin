@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import org.jetbrains.kotlin.platformManagerProvider
 import java.io.OutputStream
 import javax.inject.Inject
 
@@ -142,18 +143,8 @@ open class CompileToExecutable @Inject constructor(
         objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
-    // Marked as input via [konanProperties], [konanDataDir].
-    private val platformManager = project.extensions.getByType<PlatformManager>()
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = project.nativeProtoDistribution.konanProperties
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanDataDir = project.providers.gradleProperty("konan.data.dir")
+    @get:Nested
+    protected val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
     /**
      * Target for which to compile.
@@ -225,6 +216,8 @@ open class CompileToExecutable @Inject constructor(
     fun compile() {
         val workQueue = workerExecutor.noIsolation()
 
+        val platformManager = platformManagerProvider.platformManager.get()
+
         val defaultClangFlags = buildClangFlags(platformManager.platform(target.get()).configurables)
         val sanitizerFlags = when (sanitizer.orNull) {
             null -> listOf()
@@ -255,7 +248,7 @@ open class CompileToExecutable @Inject constructor(
             targetName.set(this@CompileToExecutable.target.get().name)
             clangFlags.addAll(defaultClangFlags + compilerArgs.get() + sanitizerFlags)
             this.linkCommands.set(linkCommands)
-            platformManager.set(this@CompileToExecutable.platformManager)
+            this.platformManager.set(platformManager)
         }
     }
 }

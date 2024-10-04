@@ -13,21 +13,19 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import org.jetbrains.kotlin.platformManagerProvider
 import javax.inject.Inject
 
 private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
@@ -77,18 +75,8 @@ open class LlvmLink @Inject constructor(
     @get:Input
     val arguments: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
-    // Marked as input via [konanProperties], [konanDataDir].
-    private val platformManager = project.extensions.getByType<PlatformManager>()
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = project.nativeProtoDistribution.konanProperties
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanDataDir = project.providers.gradleProperty("konan.data.dir")
+    @get:Nested
+    protected val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
     @TaskAction
     fun link() {
@@ -98,7 +86,7 @@ open class LlvmLink @Inject constructor(
             inputFiles.from(this@LlvmLink.inputFiles)
             outputFile.set(this@LlvmLink.outputFile)
             arguments.set(this@LlvmLink.arguments)
-            platformManager.set(this@LlvmLink.platformManager)
+            platformManager.set(this@LlvmLink.platformManagerProvider.platformManager)
         }
     }
 }
