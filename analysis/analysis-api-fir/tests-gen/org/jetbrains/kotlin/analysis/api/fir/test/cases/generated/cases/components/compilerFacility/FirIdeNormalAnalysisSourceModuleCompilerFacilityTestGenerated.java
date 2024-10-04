@@ -182,6 +182,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("inaccessibleAnnotation.kt")
+    public void testInaccessibleAnnotation() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inaccessibleAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("inlineFunctionUsage.kt")
     public void testInlineFunctionUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineFunctionUsage.kt");

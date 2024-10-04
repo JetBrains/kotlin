@@ -901,7 +901,7 @@ class CallAndReferenceGenerator(
                 )
             }
         }
-
+        val annotationIsAccessible = coneType.toRegularClassSymbol(session) != null
         val symbol = type.classifierOrNull
         val firConstructorSymbol = (annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol)
             ?: run {
@@ -917,7 +917,11 @@ class CallAndReferenceGenerator(
             }
         val irConstructorCall = annotation.convertWithOffsets { startOffset, endOffset ->
             // This `if` can't be replaced with `when` yet, because smart casts won't work :(
-            if (symbol !is IrClassSymbol) {
+            // In compiler facility (debugger) scenario it's possible that annotation call is resolved in the session
+            //  where this annotation was applied, but invisible in the current session.
+            // In that case we shouldn't generate `IrConstructorCall`, as it will point to non-existing constructor
+            //  of stub IR for not found class
+            if (symbol !is IrClassSymbol || !annotationIsAccessible) {
                 return@convertWithOffsets IrErrorCallExpressionImpl(
                     startOffset, endOffset, type, "Unresolved reference: ${annotation.render()}"
                 )
