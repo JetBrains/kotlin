@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin
 
-import kotlinBuildProperties
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 
 open class PlatformManagerPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val konanDataDir = project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?
-        val platformManager = PlatformManager(buildDistribution(project.nativeProtoDistribution.root.asFile.absolutePath, konanDataDir), false)
-        project.extensions.add("platformManager", platformManager)
+        project.extensions.add("platformManager", project.objects.platformManagerProvider(project).platformManager.get())
     }
 }
