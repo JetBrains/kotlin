@@ -238,6 +238,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("companionObjectInEnumAccess.kt")
+    public void testCompanionObjectInEnumAccess() {
+      runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
+    }
+
+    @Test
     @TestMetadata("CompareToWithErrorType.kt")
     public void testCompareToWithErrorType() {
       runTest("compiler/testData/diagnostics/tests/CompareToWithErrorType.kt");
