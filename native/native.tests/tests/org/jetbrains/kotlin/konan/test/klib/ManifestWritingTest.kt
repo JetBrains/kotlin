@@ -105,15 +105,15 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
             KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
         }
 
-        internal fun readManifestAndSanitize(klibDir: File, testTarget: KonanTarget): String {
+        internal fun readManifestAndSanitize(klibDir: File, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): String {
             val manifestFile = File(klibDir, "default/manifest")
             assertTrue(manifestFile.exists()) { "File does not exist: $manifestFile" }
 
             val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
-            return sanitizeManifest(manifestProperties, testTarget).joinToString(separator = "\n") { (key, value) -> "$key = $value" }
+            return sanitizeManifest(manifestProperties, singleTargetInManifestToBeReplacedByTheAlias).joinToString(separator = "\n") { (key, value) -> "$key = $value" }
         }
 
-        private fun sanitizeManifest(original: Properties, testTarget: KonanTarget): List<Pair<String, String>> {
+        private fun sanitizeManifest(original: Properties, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): List<Pair<String, String>> {
             // intentionally not using Properties as output to guarantee stable order of properties
             val result = mutableListOf<Pair<String, String>>()
             original.entries.forEach {
@@ -124,9 +124,12 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
                     in TRANSIENT_MANIFEST_PROPERTIES -> SANITIZED_VALUE_STUB
 
                     KLIB_PROPERTY_NATIVE_TARGETS -> {
-                        val targets = value.split(" ")
-                        val singleTarget = targets.singleOrNull()
-                        if (singleTarget == testTarget.name) SANITIZED_TEST_RUN_TARGET else value
+                        val singleTargetPresentInManifest = value.split(" ").singleOrNull()
+                        if (singleTargetPresentInManifest != null && singleTargetInManifestToBeReplacedByTheAlias != null) {
+                            SANITIZED_TEST_RUN_TARGET
+                        } else {
+                            value
+                        }
                     }
 
                     else -> value

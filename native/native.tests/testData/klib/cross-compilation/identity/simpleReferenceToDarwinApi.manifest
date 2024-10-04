@@ -4,5 +4,5 @@ compiler_version = <value sanitized for test data stability>
 depends = stdlib org.jetbrains.kotlin.native.platform.Foundation
 ir_signature_versions = <value sanitized for test data stability>
 metadata_version = <value sanitized for test data stability>
-native_targets = <test-run-target>
+native_targets = macos_arm64
 unique_name = simpleReferenceToDarwinApi

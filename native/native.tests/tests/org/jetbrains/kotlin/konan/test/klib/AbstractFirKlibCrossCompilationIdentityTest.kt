@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
@@ -69,6 +70,9 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
             // Some tests require declarations only available in platform libraries.
             +ConfigurationDirectives.WITH_PLATFORM_LIBS
 
+            // Fix the Kotlin/Native target used in this test. Ignore the target passed by the CI server.
+            ConfigurationDirectives.WITH_FIXED_TARGET with KonanTarget.MACOS_ARM64.name
+
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
@@ -120,8 +124,6 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         RegularKotlinNativeClassLoader.kotlinNativeClassLoader.classLoader
     }
 
-    private val testTarget by lazy { HostManager.host }
-
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val klibFile = info.outputFile
         val defaultDir = klibFile.resolve("default")
@@ -134,7 +136,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         metadataDirHashDumper[module] += defaultDir.resolve("linkdata").computeMD5()
         irDirHashDumper[module] += defaultDir.resolve("ir").computeMD5()
 
-        manifestDumper[module] += readManifestAndSanitize(klibFile, testTarget)
+        manifestDumper[module] += readManifestAndSanitize(klibFile, singleTargetInManifestToBeReplacedByTheAlias = null)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
