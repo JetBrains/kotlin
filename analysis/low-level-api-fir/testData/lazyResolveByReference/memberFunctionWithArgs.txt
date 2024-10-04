@@ -1,0 +1,8 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|library/TopLevelClass.TopLevelClass|().R|library/TopLevelClass.memberFunction|(String())
+    }

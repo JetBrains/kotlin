@@ -1,0 +1,11 @@
+BODY_RESOLVE:
+TARGET: @R|library/Anno|(name = String(WithFoo)) public final [ResolvedTo(BODY_RESOLVE)] class WithAnno : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithAnno] constructor(): R|library/WithAnno|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval w: R|library/WithAnno?| = Null(null)
+    }

@@ -1,0 +1,27 @@
+BODY_RESOLVE:
+TARGET: public final data [ResolvedTo(BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
+    public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Int| = STUB): R|library/MyDataClass|
+
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Int|): R|library/MyDataClass|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval t: R|library/MyDataClass|
+    }
