@@ -20127,6 +20127,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
           }
 
           @Test
+          @TestMetadata("kt71662.kt")
+          public void testKt71662() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt71662.kt");
+          }
+
+          @Test
           @TestMetadata("namedArgumentTypeSubstitution.kt")
           public void testNamedArgumentTypeSubstitution() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/namedArgumentTypeSubstitution.kt");
