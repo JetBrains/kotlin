@@ -46,9 +46,9 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
-    @TestMetadata("mixingComposableAndNormalFunctions.kt")
-    public void testMixingComposableAndNormalFunctions() {
-      runTest("plugins/plugin-sandbox/testData/diagnostics/checkers/mixingComposableAndNormalFunctions.kt");
+    @TestMetadata("mixingInlineableAndNormalFunctions.kt")
+    public void testMixingInlineableAndNormalFunctions() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/checkers/mixingInlineableAndNormalFunctions.kt");
     }
 
     @Test
