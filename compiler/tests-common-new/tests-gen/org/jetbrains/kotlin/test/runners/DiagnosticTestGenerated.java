@@ -7308,6 +7308,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall.kt");
       }
 
+      @Test
+      @TestMetadata("nonKotlinContractCall2.kt")
+      public void testNonKotlinContractCall2() {
+        runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall2.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/contracts/neg")
       @TestDataPath("$PROJECT_ROOT")
