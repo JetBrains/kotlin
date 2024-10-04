@@ -1,3 +1,6 @@
 function delay(timeMillis, $completion) {
-  return suspendOrReturn(/*#__NOINLINE__*/_generator_delay__nu7n9t.bind(VOID, timeMillis), $completion);
+  if (timeMillis.compareTo_9jj042_k$(Long.new_kotlin_Long_147cmg_k$(0, 0)) <= 0)
+    return Unit_getInstance();
+  // Inline function 'delay.<anonymous>' call
+  return Unit_getInstance();
 }
