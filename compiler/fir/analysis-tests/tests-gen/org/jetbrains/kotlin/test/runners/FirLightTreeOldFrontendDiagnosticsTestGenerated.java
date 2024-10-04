@@ -19208,6 +19208,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("cstOfNullableNothingAndTypeVariableContainingTypes.kt")
+        public void testCstOfNullableNothingAndTypeVariableContainingTypes() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/cstOfNullableNothingAndTypeVariableContainingTypes.kt");
+        }
+
+        @Test
         @TestMetadata("elvisWithNothingRHS.kt")
         public void testElvisWithNothingRHS() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/elvisWithNothingRHS.kt");
