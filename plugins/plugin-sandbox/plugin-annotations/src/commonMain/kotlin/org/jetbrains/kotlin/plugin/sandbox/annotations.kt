@@ -39,7 +39,7 @@ annotation class SupertypeWithTypeArgument(val kClass: KClass<*>)
 annotation class MetaSupertype
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.PROPERTY_GETTER)
-annotation class MyComposable
+annotation class MyInlineable
 
 annotation class AllPropertiesConstructor
 

@@ -1,4 +1,4 @@
 FILE: ValueOfCustomFunctionTypeAsArgumentOfInlineFunction.kt
-    @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() public final inline fun <T> inlineFunction(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<T>|): R|T| {
-        ^inlineFunction R|<local>/block|.R|SubstitutionOverride<some/MyComposableFunction0.invoke: R|T|>|()
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final inline fun <T> inlineFunction(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<T>|): R|T| {
+        ^inlineFunction R|<local>/block|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|T|>|()
     }

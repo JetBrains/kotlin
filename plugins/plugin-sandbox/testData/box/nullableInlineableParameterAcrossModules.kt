@@ -2,16 +2,16 @@
 
 // MODULE: a
 // FILE: a.kt
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 fun RMenuItem(
     onClick: (() -> Unit)? = null,
-    trailing: (@MyComposable () -> Unit)? = null,
+    trailing: (@MyInlineable () -> Unit)? = null,
 ) {}
 
 // MODULE: b(a)
 // FILE: b.kt
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 fun bar(onClick: (() -> Unit)? = null) {
     RMenuItem(

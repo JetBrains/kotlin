@@ -27,17 +27,17 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
               GET_VAR 'val res2: kotlin.String declared in <root>.box' type=kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:runComposable visibility:public modality:FINAL <> (block:@[MyComposable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:block index:0 type:@[MyComposable] kotlin.Function0<kotlin.Unit>
+  FUN name:runInlineable visibility:public modality:FINAL <> (block:@[MyInlineable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:block index:0 type:@[MyInlineable] kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-        $this: GET_VAR 'block: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.runComposable' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:runComposable2 visibility:public modality:FINAL <> (block:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
+        $this: GET_VAR 'block: @[MyInlineable] kotlin.Function0<kotlin.Unit> declared in <root>.runInlineable' type=@[MyInlineable] kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:runInlineable2 visibility:public modality:FINAL <> (block:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.String
     VALUE_PARAMETER name:block index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun runComposable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun runInlineable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=null
-          $this: GET_VAR 'block: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.runComposable2' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          $this: GET_VAR 'block: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.runInlineable2' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
           p1: CONST String type=kotlin.String value="O"
   FUN name:runUsual visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             annotations:
-              MyComposable
+              MyInlineable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -76,11 +76,11 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
                       $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
               GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      VAR name:l2 type:@[MyComposable] kotlin.Function0<kotlin.Unit> [val]
+      VAR name:l2 type:@[MyInlineable] kotlin.Function0<kotlin.Unit> [val]
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             annotations:
-              MyComposable
+              MyInlineable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             annotations:
-              MyComposable
+              MyInlineable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -119,19 +119,19 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
                     CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: GET_VAR 'val l0: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: GET_VAR 'val l1: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        block: GET_VAR 'val l2: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        block: GET_VAR 'val l2: @[MyInlineable] kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=@[MyInlineable] kotlin.Function0<kotlin.Unit> origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: GET_VAR 'val l3: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             annotations:
-              MyComposable
+              MyInlineable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -141,11 +141,11 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
                     CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_5: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
-      CALL 'public final fun runComposable (block: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             annotations:
-              MyComposable
+              MyInlineable
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -160,11 +160,11 @@ FILE fqName:<root> fileName:/inlineableFunction.kt
   FUN name:test_2 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_2 (): kotlin.String declared in <root>'
-        CALL 'public final fun runComposable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+        CALL 'public final fun runInlineable2 (block: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
           block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
               annotations:
-                MyComposable
+                MyInlineable
               VALUE_PARAMETER name:it index:0 type:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.test_2'

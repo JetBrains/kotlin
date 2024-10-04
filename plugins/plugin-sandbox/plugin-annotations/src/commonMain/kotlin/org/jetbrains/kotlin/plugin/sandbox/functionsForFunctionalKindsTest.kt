@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox
 
 class Box<T>(val value: T)
 
-fun produceComposableFunction(): @MyComposable () -> Unit = null!!
-fun consumeComposableFunction(@Suppress("UNUSED_PARAMETER") block: @MyComposable () -> Unit) {}
+fun produceInlineableFunction(): @MyInlineable () -> Unit = null!!
+fun consumeInlineableFunction(@Suppress("UNUSED_PARAMETER") block: @MyInlineable () -> Unit) {}
 
-fun produceBoxedComposableFunction(): Box<@MyComposable () -> Unit> = Box(produceComposableFunction())
+fun produceBoxedInlineableFunction(): Box<@MyInlineable () -> Unit> = Box(produceInlineableFunction())

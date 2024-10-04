@@ -2,25 +2,25 @@
 // ISSUE: KT-58539
 
 // MODULE: common
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
-expect fun ExpectComposable(
+@MyInlineable
+expect fun ExpectInlineable(
     value: String,
-    content: @MyComposable (v: String) -> String
+    content: @MyInlineable (v: String) -> String
 ): String
 
 fun commonBox(): String {
-    return ExpectComposable("O") { it + "K" }
+    return ExpectInlineable("O") { it + "K" }
 }
 
 // MODULE: platform()()(common)
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
-actual fun ExpectComposable(
+@MyInlineable
+actual fun ExpectInlineable(
     value: String,
-    content: @MyComposable (v: String) -> String
+    content: @MyInlineable (v: String) -> String
 ): String {
     return content(value)
 }

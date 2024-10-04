@@ -3,7 +3,7 @@
 // LANGUAGE_VERSION: 2.0
 package test
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-fun runComposable(block: @MyComposable () -> Unit) {}
+fun runInlineable(block: @MyInlineable () -> Unit) {}
 

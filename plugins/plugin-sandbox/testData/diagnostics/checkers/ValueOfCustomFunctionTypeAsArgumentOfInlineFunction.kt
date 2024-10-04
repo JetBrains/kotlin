@@ -1,8 +1,8 @@
 // ISSUE: KT-65959
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
-inline fun <T> inlineFunction(block: @MyComposable () -> T): T {
+@MyInlineable
+inline fun <T> inlineFunction(block: @MyInlineable () -> T): T {
     return block()
 }

@@ -2,33 +2,33 @@ FILE: inference.kt
     public final fun <T : R|suspend () -> kotlin/Unit|> suspendId(f: R|T|): R|T| {
         ^suspendId R|<local>/f|
     }
-    public final fun <T : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|> composableId(f: R|T|): R|T| {
-        ^composableId R|<local>/f|
+    public final fun <T : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|> InlineableId(f: R|T|): R|T| {
+        ^InlineableId R|<local>/f|
     }
     public final fun test_1(): R|kotlin/Unit| {
-        R|/id|<R|some/MyComposableFunction0<kotlin/Unit>|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() id@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/id|<R|some/MyInlineableFunction0<kotlin/Unit>|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() id@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@id Unit
         }
         )
-        lval f: R|() -> kotlin/Unit| = R|/id<CS errors: /id>#|<R|() -> kotlin/Unit|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() id@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval f: R|() -> kotlin/Unit| = R|/id<CS errors: /id>#|<R|() -> kotlin/Unit|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() id@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@id Unit
         }
         )
-        R|/composableId|<R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|>(composableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@composableId Unit
+        R|/InlineableId|<R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|>(InlineableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@InlineableId Unit
         }
         )
-        R|/composableId|<R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() composableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@composableId Unit
+        R|/InlineableId|<R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() InlineableId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@InlineableId Unit
         }
         )
-        R|/suspendId<CS errors: /suspendId>#|<R|suspend () -> kotlin/Unit|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() suspendId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/suspendId<CS errors: /suspendId>#|<R|suspend () -> kotlin/Unit|>(@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() suspendId@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@suspendId Unit
         }
         )
     }
     public final fun test_2(): R|kotlin/Unit| {
-        R|/select|<R|some/MyComposableFunction0<kotlin/String>|>(vararg(@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() select@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+        R|/select|<R|some/MyInlineableFunction0<kotlin/String>|>(vararg(@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() select@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String(a)
         }
         , select@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
