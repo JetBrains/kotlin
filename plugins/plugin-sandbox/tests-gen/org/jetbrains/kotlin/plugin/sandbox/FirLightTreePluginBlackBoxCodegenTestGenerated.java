@@ -55,33 +55,15 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   }
 
   @Test
-  @TestMetadata("composableFunction.kt")
-  public void testComposableFunction() {
-    runTest("plugins/plugin-sandbox/testData/box/composableFunction.kt");
-  }
-
-  @Test
-  @TestMetadata("composableFunctionMultiModules.kt")
-  public void testComposableFunctionMultiModules() {
-    runTest("plugins/plugin-sandbox/testData/box/composableFunctionMultiModules.kt");
-  }
-
-  @Test
-  @TestMetadata("composableFunctionMultiModules2.kt")
-  public void testComposableFunctionMultiModules2() {
-    runTest("plugins/plugin-sandbox/testData/box/composableFunctionMultiModules2.kt");
-  }
-
-  @Test
   @TestMetadata("emittedMetadata.kt")
   public void testEmittedMetadata() {
     runTest("plugins/plugin-sandbox/testData/box/emittedMetadata.kt");
   }
 
   @Test
-  @TestMetadata("expectComposableFunction.kt")
-  public void testExpectComposableFunction() {
-    runTest("plugins/plugin-sandbox/testData/box/expectComposableFunction.kt");
+  @TestMetadata("expectInlineableFunction.kt")
+  public void testExpectInlineableFunction() {
+    runTest("plugins/plugin-sandbox/testData/box/expectInlineableFunction.kt");
   }
 
   @Test
@@ -94,6 +76,24 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
   public void testGeneratedClassWithMembersAndNestedClasses() {
     runTest("plugins/plugin-sandbox/testData/box/generatedClassWithMembersAndNestedClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableFunction.kt")
+  public void testInlineableFunction() {
+    runTest("plugins/plugin-sandbox/testData/box/inlineableFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableFunctionMultiModules.kt")
+  public void testInlineableFunctionMultiModules() {
+    runTest("plugins/plugin-sandbox/testData/box/inlineableFunctionMultiModules.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableFunctionMultiModules2.kt")
+  public void testInlineableFunctionMultiModules2() {
+    runTest("plugins/plugin-sandbox/testData/box/inlineableFunctionMultiModules2.kt");
   }
 
   @Test
@@ -127,9 +127,9 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   }
 
   @Test
-  @TestMetadata("nullableComposableParameterAcrossModules.kt")
-  public void testNullableComposableParameterAcrossModules() {
-    runTest("plugins/plugin-sandbox/testData/box/nullableComposableParameterAcrossModules.kt");
+  @TestMetadata("nullableInlineableParameterAcrossModules.kt")
+  public void testNullableInlineableParameterAcrossModules() {
+    runTest("plugins/plugin-sandbox/testData/box/nullableInlineableParameterAcrossModules.kt");
   }
 
   @Test

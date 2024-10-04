@@ -1,4 +1,4 @@
-FILE: mixingComposableAndNormalFunctions.kt
+FILE: mixingInlineableAndNormalFunctions.kt
     public abstract class MyClass : R|kotlin/reflect/KSuspendFunction0<kotlin/Unit>|, R|() -> kotlin/Unit| {
         public constructor(): R|MyClass| {
             super<R|kotlin/Any|>()

@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/composableFunction.kt
+FILE fqName:<root> fileName:/inlineableFunction.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:res1 type:kotlin.Int [val]

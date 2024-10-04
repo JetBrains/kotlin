@@ -1,4 +1,4 @@
-FILE: composableFunction.kt
+FILE: inlineableFunction.kt
     public final fun runUsual(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
