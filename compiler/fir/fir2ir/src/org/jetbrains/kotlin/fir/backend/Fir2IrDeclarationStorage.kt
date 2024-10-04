@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -1208,6 +1209,7 @@ class Fir2IrDeclarationStorage(
     private fun fillUnboundSymbols(cache: Map<out FirCallableDeclaration, IrSymbol>) {
         for ((firDeclaration, irSymbol) in cache) {
             if (irSymbol.isBound) continue
+            firDeclaration.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             generateDeclaration(firDeclaration.symbol)
         }
     }
