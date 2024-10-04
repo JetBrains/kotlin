@@ -2902,6 +2902,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("defaultJavaConstructorWithTypeParameter.kt")
+    public void testDefaultJavaConstructorWithTypeParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/defaultJavaConstructorWithTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("JavaAnnotationParameter.kt")
     public void testJavaAnnotationParameter() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/JavaAnnotationParameter.kt");
