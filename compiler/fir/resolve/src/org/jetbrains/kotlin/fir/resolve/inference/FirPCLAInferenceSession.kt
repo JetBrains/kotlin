@@ -172,7 +172,7 @@ class FirPCLAInferenceSession(
 
         if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()
             // Since 2.1 we do not differentiate outer variables in terms of semi-fixation
-            && !inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21)
+            && !is21Mode()
         ) {
             // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
             // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
@@ -205,13 +205,21 @@ class FirPCLAInferenceSession(
     private fun ConstraintSystemCompletionContext.prepareContextForTypeVariableForSemiFixation(
         coneTypeVariableTypeConstructor: ConeTypeVariableTypeConstructor,
         resultTypeCallback: () -> ConeKotlinType?,
-    ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(outerTypeVariables.orEmpty()) {
+    ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(
+        if (is21Mode())
+            notFixedTypeVariables.keys
+        else
+            outerTypeVariables.orEmpty()
+    ) {
         if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)) {
             return@withTypeVariablesThatAreCountedAsProperTypes null
         }
 
         resultTypeCallback()
     }
+
+    private fun is21Mode(): Boolean =
+        inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21)
 
     /**
      * This function returns true only when it's safe & sound to analyze and complete the candidate outside the PCLA context,
