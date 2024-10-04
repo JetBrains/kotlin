@@ -122,7 +122,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
 
             val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
 
-            val nativeTarget = nativeEnvironmentConfigurator.nativeTarget
+            val nativeTarget = nativeEnvironmentConfigurator.getNativeTarget(module)
             val nativeDistributionKlibPath = nativeEnvironmentConfigurator.distributionKlibPath().absolutePath
             val logger = testServices.compilerConfigurationProvider.getCompilerConfiguration(module).getLogger(treatWarningsAsErrors = true)
 

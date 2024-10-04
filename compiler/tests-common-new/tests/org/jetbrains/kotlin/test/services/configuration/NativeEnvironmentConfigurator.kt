@@ -30,13 +30,23 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             }
     }
 
-    val nativeTarget: KonanTarget by lazy {
+    private val defaultNativeTarget: KonanTarget by lazy {
         val userDefinedTarget = System.getProperty(TEST_PROPERTY_TEST_TARGET)
         if (userDefinedTarget != null) {
             HostManager().targets[userDefinedTarget]
                 ?: testServices.assertions.fail { "Unsupported target name specified in '$TEST_PROPERTY_TEST_TARGET': $userDefinedTarget" }
         } else {
             HostManager.host
+        }
+    }
+
+    fun getNativeTarget(module: TestModule): KonanTarget {
+        val testDefinedTarget = module.directives[ConfigurationDirectives.WITH_FIXED_TARGET].firstOrNull()
+        return if (testDefinedTarget != null) {
+            HostManager().targets[testDefinedTarget]
+                ?: testServices.assertions.fail { "Unsupported target name specified in '${ConfigurationDirectives.WITH_FIXED_TARGET}': $testDefinedTarget" }
+        } else {
+            defaultNativeTarget
         }
     }
 
@@ -50,6 +60,8 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
 
         if (ConfigurationDirectives.WITH_PLATFORM_LIBS in module.directives) {
+            val nativeTarget = getNativeTarget(module)
+
             // Diagnostic tests are agnostic of native target, so host is enforced to be a target.
             distributionKlibPath().resolve("platform").resolve(nativeTarget.name).listFiles()?.forEach {
                 result += it.absolutePath

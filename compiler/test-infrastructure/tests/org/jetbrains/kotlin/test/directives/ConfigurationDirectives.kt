@@ -24,5 +24,8 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    /** See also [WITH_PLATFORM_LIBS], [org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.nativeTarget]. */
+    val WITH_FIXED_TARGET by stringDirective("Run tests with the fixed Kotlin/Native target.")
+
     val DISABLE_TYPEALIAS_EXPANSION by directive("Disables automatic expansion of aliased types in type resolution")
 }
