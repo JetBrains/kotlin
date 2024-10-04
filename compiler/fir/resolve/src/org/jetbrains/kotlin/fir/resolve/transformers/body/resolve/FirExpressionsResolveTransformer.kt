@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -767,7 +768,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
         val lhsReference = leftArgument.toReference(session)
-        val lhsSymbol = lhsReference?.toResolvedVariableSymbol()
+        val lhsSymbol =
+            lhsReference?.let {
+                it.toResolvedVariableSymbol()
+                // In PCLA, calls might be not completed, thus not resolved (please, vote KTIJ-31545 if you dislike eccentric formatting)
+                    ?: (it as? FirNamedReferenceWithCandidate)?.candidateSymbol as? FirVariableSymbol<*>
+            }
+
         val lhsVariable = lhsSymbol?.fir
         val lhsIsVar = lhsVariable?.isVar == true
 
