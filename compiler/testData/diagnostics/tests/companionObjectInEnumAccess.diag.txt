@@ -1,0 +1,3 @@
+/companionObjectInEnumAccess.kt:9:17: error: variable 'staticValue' must be initialized
+        println(staticValue)
+                ^^^^^^^^^^^
