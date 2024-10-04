@@ -55,11 +55,12 @@ fun FirAnonymousFunction.transformInlineStatus(
     functionIsInline: Boolean,
     session: FirSession,
 ) {
-    val parameterIsSomeFunction = parameter.returnTypeRef.coneType.isSomeFunctionType(session)
+    val functionalKindOfParameter = parameter.returnTypeRef.coneType.functionTypeKind(session)
     val inlineStatus = when {
-        !parameterIsSomeFunction -> InlineStatus.NoInline
-        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+        functionalKindOfParameter == null -> InlineStatus.NoInline
+        !functionalKindOfParameter.isInlineable -> InlineStatus.NoInline
         parameter.isNoinline -> InlineStatus.NoInline
+        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
         functionIsInline -> InlineStatus.Inline
         else -> InlineStatus.NoInline
     }

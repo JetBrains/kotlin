@@ -59,7 +59,7 @@ FILE: inlineability.kt
 
         }
         )
-        R|/myNotInlineable|(<L> = myNotInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+        R|/myNotInlineable|(<L> = myNotInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=UNKNOWN>  {
             when () {
                 R|<local>/b| ->  {
                     ^testReturns Unit

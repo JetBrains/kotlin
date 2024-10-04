@@ -5,7 +5,7 @@ inline fun baseInline(f: () -> Unit) = f()
 <!NOTHING_TO_INLINE!>inline<!> fun baseNoInline(noinline f: () -> Unit) = f()
 
 inline fun myInlineable(f: @MyInlineable () -> Unit) = f()
-inline fun myNotInlineable(f: @MyNotInlineable () -> Unit) = f()
+<!NOTHING_TO_INLINE!>inline<!> fun myNotInlineable(f: @MyNotInlineable () -> Unit) = f()
 
 inline fun testUsageNotInlineable(
     regularInline: () -> Unit,
@@ -17,7 +17,7 @@ inline fun testUsageNotInlineable(
        1 -> <!USAGE_IS_NOT_INLINABLE!>regularInline<!>
        2 -> regularNoinline
        3 -> <!USAGE_IS_NOT_INLINABLE!>myInline<!>
-       4 -> <!USAGE_IS_NOT_INLINABLE!>myNoinline<!>
+       4 -> myNoinline
        else -> null
     }
 }
@@ -36,6 +36,6 @@ fun testReturns(b: Boolean) {
     }
 
     myNotInlineable {
-        if (b) return
+        if (b) <!RETURN_NOT_ALLOWED!>return<!>
     }
 }

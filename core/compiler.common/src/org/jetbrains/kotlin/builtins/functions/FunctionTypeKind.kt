@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.name.Name
  *       override operator fun invoke(p1: P1, p2: P2, ..., pN: PN): R
  *   }
  *
+ * [isInlineable] parameter determines if the specific functional type kind is inlineable or not, which allows the compiler to
+ *   properly (not) report diagnostic about inlineability like `DECLARATION_CANT_BE_INLINED`
+ *
  * Note that if you provide some new functional type kind it's your responsibility to handle all references to it in backend
  *   with [IrGenerationExtension] implementation
  */
@@ -42,7 +45,8 @@ abstract class FunctionTypeKind internal constructor(
     val packageFqName: FqName,
     val classNamePrefix: String,
     val isReflectType: Boolean,
-    val annotationOnInvokeClassId: ClassId?
+    val annotationOnInvokeClassId: ClassId?,
+    val isInlineable: Boolean,
 ) {
     /*
      * This constructor is needed to enforce not nullable [annotationOnInvokeClassId] for
@@ -52,8 +56,9 @@ abstract class FunctionTypeKind internal constructor(
         packageFqName: FqName,
         classNamePrefix: String,
         annotationOnInvokeClassId: ClassId,
-        isReflectType: Boolean
-    ) : this(packageFqName, classNamePrefix, isReflectType, annotationOnInvokeClassId)
+        isReflectType: Boolean,
+        isInlineable: Boolean,
+    ) : this(packageFqName, classNamePrefix, isReflectType, annotationOnInvokeClassId, isInlineable)
 
     /*
      * Specifies how corresponding type will be rendered
@@ -113,7 +118,8 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
         "Function",
         isReflectType = false,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = true,
     ) {
         override fun reflectKind(): FunctionTypeKind = KFunction
     }
@@ -122,7 +128,8 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME,
         "SuspendFunction",
         isReflectType = false,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = true,
     ) {
         override val prefixForTypeRender: String
             get() = "suspend"
@@ -134,7 +141,8 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KFunction",
         isReflectType = true,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = false,
     ) {
         override fun nonReflectKind(): FunctionTypeKind = Function
     }
@@ -143,7 +151,8 @@ abstract class FunctionTypeKind internal constructor(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KSuspendFunction",
         isReflectType = true,
-        annotationOnInvokeClassId = null
+        annotationOnInvokeClassId = null,
+        isInlineable = false,
     ) {
         override fun nonReflectKind(): FunctionTypeKind = SuspendFunction
     }

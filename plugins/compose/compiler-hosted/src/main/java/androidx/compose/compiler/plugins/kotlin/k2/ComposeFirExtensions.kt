@@ -68,7 +68,8 @@ object ComposableFunction : FunctionTypeKind(
     FqName("androidx.compose.runtime.internal"),
     "ComposableFunction",
     ComposeClassIds.Composable,
-    isReflectType = false
+    isReflectType = false,
+    isInlineable = true,
 ) {
     override val prefixForTypeRender: String
         get() = "@Composable"
@@ -83,7 +84,8 @@ object KComposableFunction : FunctionTypeKind(
     FqName("androidx.compose.runtime.internal"),
     "KComposableFunction",
     ComposeClassIds.Composable,
-    isReflectType = true
+    isReflectType = true,
+    isInlineable = false,
 ) {
     override val serializeAsFunctionWithAnnotationUntil: String
         get() = useLegacyCustomFunctionTypeSerializationUntil
