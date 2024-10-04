@@ -173,6 +173,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("typealiasedFunInterface.kt")
+    public void testTypealiasedFunInterface() {
+      runTest("compiler/testData/diagnostics/tests/typealiasedFunInterface.kt");
+    }
+
+    @Test
     @TestMetadata("Underscore.kt")
     public void testUnderscore() {
       runTest("compiler/testData/diagnostics/tests/Underscore.kt");
