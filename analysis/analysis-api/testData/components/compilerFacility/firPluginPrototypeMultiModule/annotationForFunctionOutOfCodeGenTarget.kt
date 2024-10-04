@@ -1,13 +1,13 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 // DUMP_IR
-// CHECK_CALLS_WITH_ANNOTATION: org.jetbrains.kotlin.plugin.sandbox.MyComposable
+// CHECK_CALLS_WITH_ANNOTATION: org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 // MODULE: main
 // FILE: main.kt
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import p3.BookmarkButton
 
-@MyComposable
+@MyInlineable
 fun PostCardSimple(
     navigateToArticle: (String) -> Unit,
     isFavorite: Boolean,
@@ -21,9 +21,9 @@ fun PostCardSimple(
 // FILE: utils/JetnewsIcons.kt
 package p3
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
+@MyInlineable
 fun BookmarkButton(
     isBookmarked: Boolean,
     onClick: () -> Unit,

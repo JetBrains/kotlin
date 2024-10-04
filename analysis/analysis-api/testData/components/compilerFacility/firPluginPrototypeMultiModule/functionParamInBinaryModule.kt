@@ -6,22 +6,22 @@
 // FILE: p3/foo.kt
 package p3
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
-fun Scaffold(topBar: @MyComposable () -> Unit, bottomBar: @MyComposable () -> Unit) {
+@MyInlineable
+fun Scaffold(topBar: @MyInlineable () -> Unit, bottomBar: @MyInlineable () -> Unit) {
 }
 
 // MODULE: main(lib)
 // FILE: main.kt
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import p3.Scaffold
 
-@MyComposable
+@MyInlineable
 private fun TopAppBar(title: String) {
 }
 
-@MyComposable
-private fun ArticleScreenContent(title: String, bottomBarContent: @MyComposable () -> Unit = { }) {
+@MyInlineable
+private fun ArticleScreenContent(title: String, bottomBarContent: @MyInlineable () -> Unit = { }) {
     Scaffold(topBar = { TopAppBar(title) }, bottomBar = bottomBarContent)
 }

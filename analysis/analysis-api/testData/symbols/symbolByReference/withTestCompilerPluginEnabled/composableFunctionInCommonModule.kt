@@ -4,7 +4,7 @@
 // MODULE: common
 // TARGET_PLATFORM: Common
 
-// FILE: MyComposable.kt
+// FILE: MyInlineable.kt
 package org.jetbrains.kotlin.plugin.sandbox
 
 /**
@@ -15,17 +15,17 @@ package org.jetbrains.kotlin.plugin.sandbox
  * We use it because it's currently problematic to attach this jar as a dependency to a common module.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.PROPERTY_GETTER)
-annotation class MyComposable
+annotation class MyInlineable
 
 // FILE: Common.kt
 package test
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
-public fun Foo(text: @MyComposable () -> Unit) {}
+@MyInlineable
+public fun Foo(text: @MyInlineable () -> Unit) {}
 
-@MyComposable
+@MyInlineable
 fun Bar() {
     Fo<caret>o {}
 }

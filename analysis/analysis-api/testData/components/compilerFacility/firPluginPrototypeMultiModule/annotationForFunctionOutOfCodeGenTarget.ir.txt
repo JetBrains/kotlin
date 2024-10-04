@@ -2,7 +2,7 @@ MODULE_FRAGMENT
   FILE fqName:<root> fileName:main.kt
     FUN name:PostCardSimple visibility:public modality:FINAL <> (navigateToArticle:kotlin.Function1<kotlin.String, kotlin.Unit>, isFavorite:kotlin.Boolean, onToggleFavorite:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
       annotations:
-        MyComposable
+        MyInlineable
       VALUE_PARAMETER name:navigateToArticle index:0 type:kotlin.Function1<kotlin.String, kotlin.Unit>
       VALUE_PARAMETER name:isFavorite index:1 type:kotlin.Boolean
       VALUE_PARAMETER name:onToggleFavorite index:2 type:kotlin.Function0<kotlin.Unit>

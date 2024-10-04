@@ -1,6 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: [
-    org/jetbrains/kotlin/plugin/sandbox/MyComposable()
+    org/jetbrains/kotlin/plugin/sandbox/MyInlineable()
       psi: KtAnnotationEntry
   ]
   callableId: test/Foo
@@ -53,7 +53,7 @@ KaNamedFunctionSymbol:
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [
-          org/jetbrains/kotlin/plugin/sandbox/MyComposable()
+          org/jetbrains/kotlin/plugin/sandbox/MyInlineable()
             psi: KtAnnotationEntry
         ]
         typeArguments: [
@@ -62,7 +62,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Unit
         ]
-        type: @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>
+        type: @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(Common.kt)
       getContainingJvmClassName: test.CommonKt

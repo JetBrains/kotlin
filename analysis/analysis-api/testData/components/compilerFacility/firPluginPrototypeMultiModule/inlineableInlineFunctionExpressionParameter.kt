@@ -18,17 +18,17 @@ class B {
 // FILE: p3/bar.kt
 package p3
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import p2.A
 
 interface RowScope
 
-inline fun Row(a: A, content: @MyComposable RowScope.() -> Unit) {
+inline fun Row(a: A, content: @MyInlineable RowScope.() -> Unit) {
     a.callA()
 }
 // MODULE: main(lib, lib2)
 // FILE: main.kt
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import p2.A
 import p2.B
 import p3.Row
