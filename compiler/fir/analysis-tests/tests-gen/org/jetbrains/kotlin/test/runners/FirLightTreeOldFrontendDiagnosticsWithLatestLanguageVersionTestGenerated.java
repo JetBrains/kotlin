@@ -19010,6 +19010,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("assignmentOperatorAmbiguity.kt")
+        public void testAssignmentOperatorAmbiguity() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/assignmentOperatorAmbiguity.kt");
+        }
+
+        @Test
+        @TestMetadata("assignmentPlusOperator.kt")
+        public void testAssignmentPlusOperator() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/assignmentPlusOperator.kt");
+        }
+
+        @Test
         @TestMetadata("assignmentUsingIncompletePCLACall.kt")
         public void testAssignmentUsingIncompletePCLACall() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/assignmentUsingIncompletePCLACall.kt");
