@@ -131,6 +131,8 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
                 target = nativeTarget,
                 distributionKlib = nativeDistributionKlibPath,
                 skipCurrentDir = true,
+                skipNativeCommonLibs = false,
+                skipNativePlatformLibs = false,
                 logger = logger
             ).libraryResolver()
 

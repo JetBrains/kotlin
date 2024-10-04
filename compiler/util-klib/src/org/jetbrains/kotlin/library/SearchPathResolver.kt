@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
-import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
+import org.jetbrains.kotlin.library.SearchPathResolver.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
@@ -113,13 +112,31 @@ fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibr
 abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     directLibs: List<String>,
     val distributionKlib: String?,
-    private val skipCurrentDir: Boolean,
+    skipCurrentDir: Boolean,
+    skipNativeCommonLibs: Boolean,
     override val logger: Logger
 ) : SearchPathResolver<L> {
+    constructor(
+        directLibs: List<String>,
+        distributionKlib: String?,
+        skipCurrentDir: Boolean,
+        logger: Logger
+    ) : this(
+        directLibs = directLibs,
+        distributionKlib = distributionKlib,
+        skipCurrentDir = skipCurrentDir,
+        skipNativeCommonLibs = false,
+        logger = logger
+    )
 
-    private val distHead: File? get() = distributionKlib?.File()?.child("common")
-    open val distPlatformHead: File? = null
-    private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
+    private val nativeDistCommonLibsDir: File? by lazy {
+        distributionKlib?.takeUnless { skipNativeCommonLibs }?.File()?.child("common")
+    }
+
+    protected open val nativeDistPlatformLibsDir: File? get() = null
+
+    @Deprecated("This property is deprecated and will be removed soon. Please, stop using it.")
+    open val distPlatformHead: File? get() = null
 
     abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
 
@@ -137,11 +154,13 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val searchRoots = mutableListOf<SearchRoot?>()
 
         // Current working dir:
-        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
+        if (!skipCurrentDir) {
+            searchRoots += SearchRoot(searchRootPath = File.userDir, allowLookupByRelativePath = true)
+        }
 
         // Current Kotlin/Native distribution:
-        searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
-        searchRoots += distPlatformHead?.let { SearchRoot(searchRootPath = it) }
+        searchRoots += nativeDistCommonLibsDir?.let { SearchRoot(searchRootPath = it) }
+        searchRoots += nativeDistPlatformLibsDir?.let { SearchRoot(searchRootPath = it) }
 
         searchRoots.filterNotNull()
     }
@@ -241,8 +260,9 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         get() = File(this, "klib")
 
     // The libraries from the default root are linked automatically.
+    @Deprecated("This property is deprecated and will be removed soon. Please, stop using it.")
     val defaultRoots: List<File>
-        get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
+        get() = listOfNotNull(nativeDistCommonLibsDir, nativeDistPlatformLibsDir).filter { it.exists }
 
     private fun getDefaultLibrariesFromDir(directory: File, prefix: String = "org.jetbrains.kotlin") =
         if (directory.exists) {
@@ -265,13 +285,13 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
         // Endorsed libraries in distHead.
         if (!noEndorsedLibs) {
-            distHead?.let {
+            nativeDistCommonLibsDir?.let {
                 result.addAll(getDefaultLibrariesFromDir(it))
             }
         }
         // Platform libraries resolve.
         if (!noDefaultLibs) {
-            distPlatformHead?.let {
+            nativeDistPlatformLibsDir?.let {
                 result.addAll(getDefaultLibrariesFromDir(it))
             }
         }
@@ -287,9 +307,29 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     directLibs: List<String>,
     distributionKlib: String?,
     skipCurrentDir: Boolean,
+    skipNativeCommonLibs: Boolean,
     logger: Logger,
     private val knownIrProviders: List<String>
-) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, skipCurrentDir, logger), SearchPathResolver<L> {
+) : KotlinLibrarySearchPathResolver<L>(
+    directLibs = directLibs,
+    distributionKlib = distributionKlib,
+    skipCurrentDir = skipCurrentDir,
+    skipNativeCommonLibs = skipNativeCommonLibs,
+    logger = logger
+), SearchPathResolver<L> {
+    constructor(
+        directLibs: List<String>,
+        distributionKlib: String?,
+        skipCurrentDir: Boolean,
+        logger: Logger,
+        knownIrProviders: List<String>
+    ) : this(
+        directLibs = directLibs,
+        distributionKlib = distributionKlib,
+        skipCurrentDir = skipCurrentDir,
+        skipNativeCommonLibs = false,
+        logger, knownIrProviders
+    )
 
     @Deprecated(
         "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",

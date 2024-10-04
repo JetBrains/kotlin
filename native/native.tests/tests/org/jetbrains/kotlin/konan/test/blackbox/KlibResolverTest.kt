@@ -672,8 +672,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 produceUnpackedKlib = true, // does not matter
                 warningHandler = null,
                 cliArgs = emptyList()
-            )
-            customLibraryWithDependencyOnStdlib.assertDependsOnlyOnStdlib()
+            ).apply { assertDependsOnlyOnStdlib() }
 
             fun compileWithoutStdlib(withoutPlatformLibs: Boolean = false, explicitDependency: String? = null): File =
                 compileSingleModule(
@@ -690,10 +689,10 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                             this += explicitDependency
                         }
                     }
-                )
+                ).apply { assertDependsOnlyOnStdlib() }
 
             // The following compiler invocations must fail due to unavailability of stdlib:
-            run { // TODO(KT-71633): should fail!
+            expectFailingCompilation {
                 compileWithoutStdlib()
             }
             expectFailingCompilation {
@@ -701,12 +700,12 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             }
 
             // The following compiler invocations must fail due to unavailability of stdlib:
-            run { // TODO(KT-71633): should fail!
+            expectFailingCompilation {
                 compileWithoutStdlib(
                     explicitDependency = customLibraryWithDependencyOnStdlib.absolutePath
                 )
             }
-            run { // TODO(KT-71633): should fail!
+            expectFailingCompilation {
                 compileWithoutStdlib(
                     withoutPlatformLibs = true,
                     explicitDependency = customLibraryWithDependencyOnStdlib.absolutePath
@@ -716,14 +715,14 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             val stdlibPath = testRunSettings.get<KotlinNativeHome>().librariesDir.resolve("common/stdlib").absolutePath
 
             // The following compiler invocations should succeed because stdlib is specified by path as a user-defined library:
-            compileWithoutStdlib(explicitDependency = stdlibPath).assertDependsOnlyOnStdlib()
-            compileWithoutStdlib(withoutPlatformLibs = true, explicitDependency = stdlibPath).assertDependsOnlyOnStdlib()
+            compileWithoutStdlib(explicitDependency = stdlibPath)
+            compileWithoutStdlib(withoutPlatformLibs = true, explicitDependency = stdlibPath)
 
             // The following compiler invocations must fail due to unavailability of stdlib (stdlib specified by just a name):
-            run { // TODO(KT-71633): should fail!
+            expectFailingAsNotFound("stdlib") {
                 compileWithoutStdlib(explicitDependency = "stdlib")
             }
-            run { // TODO(KT-71633): should fail!
+            expectFailingAsNotFound("stdlib") {
                 compileWithoutStdlib(withoutPlatformLibs = true, explicitDependency = "stdlib")
             }
         }
@@ -733,7 +732,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         fun testNoDefaultLibsArgumentIsRespected(): Unit = with(NonRepeatedModuleNameGenerator()) {
             fun File.assertDependsOnlyOnStdlibAndPosix() {
                 assertEquals(
-                    setOf("stdlib", "org.jetbrains.kotlin.native.platform.posix"),
+                    setOf("stdlib", POSIX),
                     readDependsFromManifestFile(this)
                 )
             }
@@ -758,11 +757,15 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             )
             customLibraryWithDependencyOnPosix.assertDependsOnlyOnStdlibAndPosix()
 
-            fun compileWithoutPlatformLibs(sourceFile: File? = null, explicitDependencies: List<String> = emptyList()) {
+            fun compileWithoutPlatformLibs(
+                sourceFile: File? = null,
+                explicitDependencies: List<String> = emptyList(),
+                warningHandler: ((String) -> Unit)? = null,
+            ) {
                 compileSingleModule(
                     moduleBaseName = "lib",
                     produceUnpackedKlib = true, // does not matter
-                    warningHandler = null,
+                    warningHandler = warningHandler,
                     cliArgs = buildList {
                         this += "-no-default-libs"
                         for (explicitDependency in explicitDependencies) {
@@ -780,21 +783,24 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             expectFailingCompilation {
                 compileWithoutPlatformLibs(sourceFile = generateSourceFileWithPosixUsage())
             }
-            run { // TODO(KT-71633): should fail!
-                compileWithoutPlatformLibs(explicitDependencies = listOf(customLibraryWithDependencyOnPosix.absolutePath))
-            }
+            compileWithoutPlatformLibs(
+                explicitDependencies = listOf(customLibraryWithDependencyOnPosix.absolutePath),
+                warningHandler = { warning ->
+                    assertTrue(warning.startsWith("warning: KLIB resolver: Could not find \"$POSIX\""))
+                }
+            )
 
             // The following compiler invocations must fail due to unavailability of posix:
-            run { // TODO(KT-71633): should fail!
+            expectFailingAsNotFound(POSIX) {
                 compileWithoutPlatformLibs(
                     sourceFile = generateSourceFileWithPosixUsage(),
-                    explicitDependencies = listOf("org.jetbrains.kotlin.native.platform.posix")
+                    explicitDependencies = listOf(POSIX)
                 )
             }
-            run { // TODO(KT-71633): should fail!
+            expectFailingAsNotFound(POSIX) {
                 compileWithoutPlatformLibs(
                     explicitDependencies = listOf(
-                        "org.jetbrains.kotlin.native.platform.posix",
+                        POSIX,
                         customLibraryWithDependencyOnPosix.absolutePath
                     )
                 )
@@ -1074,6 +1080,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     companion object {
         private const val USER_DIR = "user.dir"
         private val irProvidersMismatchSrcDir = File("native/native.tests/testData/irProvidersMismatch")
+
+        private const val POSIX = "org.jetbrains.kotlin.native.platform.posix"
 
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 

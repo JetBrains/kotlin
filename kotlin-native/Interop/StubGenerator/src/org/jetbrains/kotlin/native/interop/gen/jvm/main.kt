@@ -476,7 +476,7 @@ private fun compileSources(
 private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
 ): KotlinLibraryResolverImpl<KonanLibrary> {
-    return defaultResolver(
+    return defaultNativeKlibResolver(
         directLibs = cinteropArguments.library,
         target,
         Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
