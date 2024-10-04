@@ -3054,6 +3054,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
 	public abstract fun getInstallationDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun produceEnv (Lorg/gradle/api/provider/ProviderFactory;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/JsAggregatingExecutionSource : org/jetbrains/kotlin/gradle/execution/KotlinAggregateExecutionSource {
@@ -3265,6 +3266,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRo
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootEnvSpec$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public fun <init> ()V
+	public fun produceEnv (Lorg/gradle/api/provider/ProviderFactory;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootEnvSpec$Companion {
@@ -3339,6 +3341,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/
 	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
 	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public fun produceEnv (Lorg/gradle/api/provider/ProviderFactory;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion {
@@ -3367,7 +3370,6 @@ public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin$Companion {
-	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
@@ -4075,6 +4077,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpe
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public fun <init> ()V
 	public final fun getNodeJsSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	public fun produceEnv (Lorg/gradle/api/provider/ProviderFactory;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec$Companion {
@@ -5811,6 +5814,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootEnvSpe
 	public abstract fun getResolutions ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Property;
 	public abstract fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Property;
+	public fun produceEnv (Lorg/gradle/api/provider/ProviderFactory;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootEnvSpec$Companion {
