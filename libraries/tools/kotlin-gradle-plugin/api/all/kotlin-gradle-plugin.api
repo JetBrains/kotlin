@@ -301,6 +301,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinNativeBinaryContaine
 	public fun findSharedLib (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/SharedLibrary;
 	public fun findStaticLib (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/StaticLibrary;
 	public fun findTest (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
+	public fun findTestBundle (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
 	public fun getByName (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;
 	public fun getExecutable (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/Executable;
 	public fun getFramework (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;
@@ -310,6 +311,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinNativeBinaryContaine
 	public fun getStaticLib (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/StaticLibrary;
 	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun getTest (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;
+	public fun getTestBundle (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestBundle;
 	public fun isEmpty ()Z
 	public fun iterator ()Ljava/util/Iterator;
 	public synthetic fun matching (Lgroovy/lang/Closure;)Lorg/gradle/api/DomainObjectCollection;
