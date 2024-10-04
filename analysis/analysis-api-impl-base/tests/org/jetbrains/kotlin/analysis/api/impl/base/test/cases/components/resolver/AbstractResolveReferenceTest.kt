@@ -10,16 +10,24 @@ import com.intellij.psi.PsiReferenceService
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaDeclarationNameRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.CaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
@@ -110,9 +118,34 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
             testServices.assertions.assertEquals(symbols, symbolsAgain)
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
-            renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+            val options = createRenderingOptions(renderPsiClassName)
+            renderResolvedTo(symbols, options) { getAdditionalSymbolInfo(it) }
         }
     }
+
+    private fun createRenderingOptions(renderPsiClassName: Boolean): KaDeclarationRenderer {
+        if (!renderPsiClassName) return defaultRenderingOptions
+        return defaultRenderingOptions.with {
+
+            modifiersRenderer = modifiersRenderer.with {
+                val delegateModifierListRenderer = modifierListRenderer
+                modifierListRenderer = object : KaModifierListRenderer {
+                    override fun renderModifiers(
+                        analysisSession: KaSession,
+                        symbol: KaDeclarationSymbol,
+                        declarationModifiersRenderer: KaDeclarationModifiersRenderer,
+                        printer: PrettyPrinter,
+                    ) {
+                        printer {
+                            append("{psi: ${symbol.psi?.let { it::class.simpleName }}}")
+                        }
+                        delegateModifierListRenderer.renderModifiers(analysisSession, symbol, declarationModifiersRenderer, printer)
+                    }
+                }
+            }
+        }
+    }
+
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, module: KtTestModule, action: KaSession.() -> R): R {
         return analyseForTest(element) { action() }
@@ -129,7 +162,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         )
     }
 
-    private val renderingOptions = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES.with {
+    private val defaultRenderingOptions = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES.with {
         annotationRenderer = annotationRenderer.with {
             annotationFilter = KaRendererAnnotationsFilter.NONE
         }
