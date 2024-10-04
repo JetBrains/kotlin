@@ -5,13 +5,13 @@ FILE: mixingInlineableAndNormalFunctions.kt
         }
 
     }
-    public abstract class OurClass : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction1<kotlin/Int, kotlin/Unit>|, R|() -> kotlin/Unit| {
+    public abstract class OurClass : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction1<kotlin/Int, kotlin/Unit>|, R|() -> kotlin/Unit| {
         public constructor(): R|OurClass| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public abstract class YourClass : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  kotlin/reflect/KFunction1<kotlin/Boolean, kotlin/Unit>|, R|() -> kotlin/Unit| {
+    public abstract class YourClass : R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  kotlin/reflect/KFunction1<kotlin/Boolean, kotlin/Unit>|, R|() -> kotlin/Unit| {
         public constructor(): R|YourClass| {
             super<R|kotlin/Any|>()
         }

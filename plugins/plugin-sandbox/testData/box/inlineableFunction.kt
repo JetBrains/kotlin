@@ -1,35 +1,35 @@
 // DUMP_IR
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 fun runUsual(block: () -> Unit) { block.invoke() }
-fun runComposable(block: @MyComposable () -> Unit) { block.invoke() }
+fun runInlineable(block: @MyInlineable () -> Unit) { block.invoke() }
 
 fun test_1(): Int {
     var x = 0
     val l0 = { x++; Unit }
-    val l1: some.MyComposableFunction0<Unit> = { x++; Unit }
-    val l2: @MyComposable (() -> Unit) = { x++ }
-    val l3 = @MyComposable { x++; Unit }
+    val l1: some.MyInlineableFunction0<Unit> = { x++; Unit }
+    val l2: @MyInlineable (() -> Unit) = { x++ }
+    val l3 = @MyInlineable { x++; Unit }
 
     runUsual(l0)
     runUsual { x++ }
 
-    runComposable(l0)
-    runComposable(l1)
-    runComposable(l2)
-    runComposable(l3)
-    runComposable { x++ }
-    runComposable @MyComposable { x++ }
+    runInlineable(l0)
+    runInlineable(l1)
+    runInlineable(l2)
+    runInlineable(l3)
+    runInlineable { x++ }
+    runInlineable @MyInlineable { x++ }
     return x
 }
 
-fun runComposable2(block: some.MyComposableFunction1<String, String>): String {
+fun runInlineable2(block: some.MyInlineableFunction1<String, String>): String {
     return block.invoke("O")
 }
 
 fun test_2(): String {
-    return runComposable2 { it + "K" }
+    return runInlineable2 { it + "K" }
 }
 
 fun box(): String {

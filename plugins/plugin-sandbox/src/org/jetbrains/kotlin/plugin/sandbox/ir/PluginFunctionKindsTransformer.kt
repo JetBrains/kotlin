@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.plugin.sandbox.fir.types.ComposableNames.FULL_COMPOSABLE_NAME_PREFIX
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -28,8 +27,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames.FULL_INLINEABLE_NAME_PREFIX
 
-class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid {
+class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrElementVisitorVoid {
     companion object {
         private val INVOKE = Name.identifier("invoke")
     }
@@ -93,19 +93,19 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
 
     private fun IrType.isSyntheticComposableFunction() =
         classOrNull?.owner?.let {
-            it.name.asString().startsWith("MyComposableFunction") &&
+            it.name.asString().startsWith("MyInlineableFunction") &&
                     it.packageFqName?.asString() == "some"
         } ?: false
 
-    private val composableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyComposable"), false)
+    private val inlineableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyInlineable"), false)
 
-    private val composableSymbol = pluginContext.referenceClass(composableClassId)!!
+    private val inlineableSymbol = pluginContext.referenceClass(inlineableClassId)!!
 
     private fun IrFunction.mark() {
-        if (!hasAnnotation(composableClassId)) {
+        if (!hasAnnotation(inlineableClassId)) {
             annotations = annotations + IrConstructorCallImpl.fromSymbolOwner(
-                composableSymbol.owner.defaultType,
-                composableSymbol.constructors.single(),
+                inlineableSymbol.owner.defaultType,
+                inlineableSymbol.constructors.single(),
             )
         }
     }
@@ -156,8 +156,8 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
         val irClass = classifier.owner as? IrClass ?: return null
         val fqName = irClass.fqNameWhenAvailable ?: return null
         val fqNameString = fqName.asString()
-        if (!fqNameString.startsWith(FULL_COMPOSABLE_NAME_PREFIX)) return null
-        val number = fqNameString.removePrefix(FULL_COMPOSABLE_NAME_PREFIX).toIntOrNull() ?: return null
+        if (!fqNameString.startsWith(FULL_INLINEABLE_NAME_PREFIX)) return null
+        val number = fqNameString.removePrefix(FULL_INLINEABLE_NAME_PREFIX).toIntOrNull() ?: return null
         val builtinClassId = FunctionTypeKind.Function.run {
             ClassId(packageFqName, Name.identifier("$classNamePrefix$number"))
         }

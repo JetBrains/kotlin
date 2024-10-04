@@ -1,22 +1,22 @@
 FILE: simple.kt
     public final fun runUsual(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun runComposable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun runInlineable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval l0: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-        lval l1: R|some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval l1: R|some/MyInlineableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-        lval l2: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval l2: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-        lval l3: R|some/MyComposableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval l3: R|some/MyInlineableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
@@ -28,27 +28,27 @@ FILE: simple.kt
             ^@runUsual Unit
         }
         )
-        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@runUsual Unit
         }
         )
-        R|/runComposable|(R|<local>/l0|)
-        R|/runComposable|(R|<local>/l1|)
-        R|/runComposable|(R|<local>/l2|)
-        R|/runComposable|(R|<local>/l3|)
-        R|/runComposable|(<L> = runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@runComposable Unit
+        R|/runInlineable|(R|<local>/l0|)
+        R|/runInlineable|(R|<local>/l1|)
+        R|/runInlineable|(R|<local>/l2|)
+        R|/runInlineable|(R|<local>/l3|)
+        R|/runInlineable|(<L> = runInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@runInlineable Unit
         }
         )
-        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@runComposable Unit
+        R|/runInlineable|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() runInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@runInlineable Unit
         }
         )
     }
-    public final fun runComposable2(block: R|some/MyComposableFunction1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun runInlineable2(block: R|some/MyInlineableFunction1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
     }
     public final fun test_2(): R|kotlin/Unit| {
-        R|/runComposable2|(<L> = runComposable2@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {
+        R|/runInlineable2|(<L> = runInlineable2@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/String.length|
         }
         )

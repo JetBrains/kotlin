@@ -14,44 +14,44 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class ComposableLikeFunctionTypeKindExtension(session: FirSession) : FirFunctionTypeKindExtension(session) {
+class SandboxFunctionTypeKindExtension(session: FirSession) : FirFunctionTypeKindExtension(session) {
     override fun FunctionTypeKindRegistrar.registerKinds() {
-        registerKind(ComposableFunction, KComposableFunction)
+        registerKind(InlineablePluginFunction, KInlineableFunction)
     }
 }
 
-object ComposableNames {
-    val COMPOSABLE_PACKAGE_FQN = FqName.topLevel(Name.identifier("some"))
-    val MY_COMPOSABLE_ANNOTATION_CLASS_ID = ClassId.topLevel("MyComposable".fqn())
-    val COMPOSABLE_NAME_PREFIX = "MyComposableFunction"
-    val KCOMPOSABLE_NAME_PREFIX = "KMyComposableFunction"
+object PluginFunctionalNames {
+    val INLINEABLE_PACKAGE_FQN = FqName.topLevel(Name.identifier("some"))
+    val MY_INLINEABLE_ANNOTATION_CLASS_ID = ClassId.topLevel("MyInlineable".fqn())
+    val INLINEABLE_NAME_PREFIX = "MyInlineableFunction"
+    val KINLINEABLE_NAME_PREFIX = "KMyInlineableFunction"
 
-    val FULL_COMPOSABLE_NAME_PREFIX = COMPOSABLE_PACKAGE_FQN.child(Name.identifier(COMPOSABLE_NAME_PREFIX)).asString()
+    val FULL_INLINEABLE_NAME_PREFIX = INLINEABLE_PACKAGE_FQN.child(Name.identifier(INLINEABLE_NAME_PREFIX)).asString()
 }
 
-object ComposableFunction : FunctionTypeKind(
-    ComposableNames.COMPOSABLE_PACKAGE_FQN,
-    ComposableNames.COMPOSABLE_NAME_PREFIX,
-    ComposableNames.MY_COMPOSABLE_ANNOTATION_CLASS_ID,
+object InlineablePluginFunction : FunctionTypeKind(
+    PluginFunctionalNames.INLINEABLE_PACKAGE_FQN,
+    PluginFunctionalNames.INLINEABLE_NAME_PREFIX,
+    PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
     isReflectType = false
 ) {
     override val prefixForTypeRender: String
-        get() = "@MyComposable"
+        get() = "@MyInlineable"
 
     override val serializeAsFunctionWithAnnotationUntil: String
         get() = LanguageVersion.KOTLIN_2_1.versionString
 
-    override fun reflectKind(): FunctionTypeKind = KComposableFunction
+    override fun reflectKind(): FunctionTypeKind = KInlineableFunction
 }
 
-object KComposableFunction : FunctionTypeKind(
-    ComposableNames.COMPOSABLE_PACKAGE_FQN,
-    ComposableNames.KCOMPOSABLE_NAME_PREFIX,
-    ComposableNames.MY_COMPOSABLE_ANNOTATION_CLASS_ID,
+object KInlineableFunction : FunctionTypeKind(
+    PluginFunctionalNames.INLINEABLE_PACKAGE_FQN,
+    PluginFunctionalNames.KINLINEABLE_NAME_PREFIX,
+    PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID,
     isReflectType = true
 ) {
     override val serializeAsFunctionWithAnnotationUntil: String
         get() = LanguageVersion.KOTLIN_2_1.versionString
 
-    override fun nonReflectKind(): FunctionTypeKind = ComposableFunction
+    override fun nonReflectKind(): FunctionTypeKind = InlineablePluginFunction
 }

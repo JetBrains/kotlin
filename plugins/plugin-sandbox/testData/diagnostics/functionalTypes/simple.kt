@@ -1,31 +1,31 @@
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
 fun runUsual(block: () -> Unit) {}
-fun runComposable(block: @MyComposable () -> Unit) {}
+fun runInlineable(block: @MyInlineable () -> Unit) {}
 
 fun test_1() {
     val l0 = {}
-    val l1: some.MyComposableFunction0<Unit> = {}
-    val l2: @MyComposable (() -> Unit) = {}
-    val l3 = @MyComposable {}
+    val l1: some.MyInlineableFunction0<Unit> = {}
+    val l2: @MyInlineable (() -> Unit) = {}
+    val l3 = @MyInlineable {}
 
     runUsual(l0) // ok
     runUsual(<!ARGUMENT_TYPE_MISMATCH!>l1<!>) // error
     runUsual(<!ARGUMENT_TYPE_MISMATCH!>l2<!>) // error
     runUsual(<!ARGUMENT_TYPE_MISMATCH!>l3<!>) // error
     runUsual {} // ok
-    runUsual @MyComposable <!ARGUMENT_TYPE_MISMATCH!>{}<!> // error
+    runUsual @MyInlineable <!ARGUMENT_TYPE_MISMATCH!>{}<!> // error
 
-    runComposable(l0) // ok
-    runComposable(l1) // ok
-    runComposable(l2) // ok
-    runComposable(l3) // ok
-    runComposable {} // ok
-    runComposable @MyComposable {} // ok
+    runInlineable(l0) // ok
+    runInlineable(l1) // ok
+    runInlineable(l2) // ok
+    runInlineable(l3) // ok
+    runInlineable {} // ok
+    runInlineable @MyInlineable {} // ok
 }
 
-fun runComposable2(block: some.MyComposableFunction1<String, Int>) {}
+fun runInlineable2(block: some.MyInlineableFunction1<String, Int>) {}
 
 fun test_2() {
-    runComposable2 { it.length }
+    runInlineable2 { it.length }
 }

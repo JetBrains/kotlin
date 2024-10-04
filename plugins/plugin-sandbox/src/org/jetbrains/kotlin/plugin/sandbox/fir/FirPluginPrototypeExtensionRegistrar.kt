@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.*
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.FirNumberSignAttributeExtension
-import org.jetbrains.kotlin.plugin.sandbox.fir.types.ComposableLikeFunctionTypeKindExtension
+import org.jetbrains.kotlin.plugin.sandbox.fir.types.SandboxFunctionTypeKindExtension
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 
 class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
@@ -28,7 +28,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector
-        +::ComposableLikeFunctionTypeKindExtension
+        +::SandboxFunctionTypeKindExtension
         @OptIn(FirExtensionApiInternals::class)
         +::DataFrameLikeCallsRefinementExtension
         +::DataFrameLikeReturnTypeInjector

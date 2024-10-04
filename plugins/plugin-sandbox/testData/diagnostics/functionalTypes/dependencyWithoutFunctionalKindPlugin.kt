@@ -2,30 +2,30 @@ import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun consumeRegularFunction(block: () -> Unit) {}
 fun consumeSuspendFunction(block: suspend () -> Unit) {}
-fun consumeOurComposableFunction(block: @MyComposable () -> Unit) {}
+fun consumeOurInlineableFunction(block: @MyInlineable () -> Unit) {}
 
 fun test_1(
     block: () -> Unit,
-    composableBlock: @MyComposable () -> Unit,
+    InlineableBlock: @MyInlineable () -> Unit,
     suspendBlock: suspend () -> Unit,
 ) {
-    consumeComposableFunction(block)
-    consumeComposableFunction(composableBlock)
-    consumeComposableFunction(<!ARGUMENT_TYPE_MISMATCH!>suspendBlock<!>) // should be error
+    consumeInlineableFunction(block)
+    consumeInlineableFunction(InlineableBlock)
+    consumeInlineableFunction(<!ARGUMENT_TYPE_MISMATCH!>suspendBlock<!>) // should be error
 }
 
 fun test_2() {
-    val block = produceComposableFunction()
+    val block = produceInlineableFunction()
     consumeRegularFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
     consumeSuspendFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
-    consumeOurComposableFunction(block)
-    consumeComposableFunction(block)
+    consumeOurInlineableFunction(block)
+    consumeInlineableFunction(block)
 }
 
 fun test_3() {
-    val block = produceBoxedComposableFunction().value
+    val block = produceBoxedInlineableFunction().value
     consumeRegularFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
     consumeSuspendFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
-    consumeOurComposableFunction(block)
-    consumeComposableFunction(block)
+    consumeOurInlineableFunction(block)
+    consumeInlineableFunction(block)
 }

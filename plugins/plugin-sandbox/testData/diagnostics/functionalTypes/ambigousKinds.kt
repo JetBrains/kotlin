@@ -1,3 +1,3 @@
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-fun incorrect(block: <!AMBIGUOUS_FUNCTION_TYPE_KIND!>@MyComposable suspend () -> Unit<!>) {}
+fun incorrect(block: <!AMBIGUOUS_FUNCTION_TYPE_KIND!>@MyInlineable suspend () -> Unit<!>) {}

@@ -5,28 +5,28 @@
 
 package p3;
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 
-@MyComposable
+@MyInlineable
 public fun Foo(
-    text: @MyComposable () -> Unit,
+    text: @MyInlineable () -> Unit,
 ) {}
 
-@MyComposable
+@MyInlineable
 public fun FooReturn(
-) = @MyComposable {}
+) = @MyInlineable {}
 
 // MODULE: main(lib)
 // FILE: main.kt
 
-import org.jetbrains.kotlin.plugin.sandbox.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
 import p3.Foo
 import p3.FooReturn
 
-@MyComposable
+@MyInlineable
 public fun Bar() {
     Foo(
-        text = {}, // @Composable invocations can only happen from the context of a @Composable function
+        text = {}, // @Inlineable invocations can only happen from the context of a @Inlineable function
     )
     FooReturn()()
 }
