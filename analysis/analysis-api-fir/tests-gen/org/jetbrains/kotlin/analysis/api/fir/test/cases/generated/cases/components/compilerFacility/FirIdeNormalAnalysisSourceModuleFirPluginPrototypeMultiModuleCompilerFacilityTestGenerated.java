@@ -64,24 +64,6 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   }
 
   @Test
-  @TestMetadata("composableFunctionMultiModules.kt")
-  public void testComposableFunctionMultiModules() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableFunctionMultiModules.kt");
-  }
-
-  @Test
-  @TestMetadata("composableFunctionMultiModules2.kt")
-  public void testComposableFunctionMultiModules2() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableFunctionMultiModules2.kt");
-  }
-
-  @Test
-  @TestMetadata("composableInlineFunctionExpressionParameter.kt")
-  public void testComposableInlineFunctionExpressionParameter() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableInlineFunctionExpressionParameter.kt");
-  }
-
-  @Test
   @TestMetadata("functionParamInBinaryModule.kt")
   public void testFunctionParamInBinaryModule() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/functionParamInBinaryModule.kt");
@@ -97,5 +79,23 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   @TestMetadata("functionParamInBinaryModule3.kt")
   public void testFunctionParamInBinaryModule3() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/functionParamInBinaryModule3.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableFunctionMultiModules.kt")
+  public void testInlineableFunctionMultiModules() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/inlineableFunctionMultiModules.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableFunctionMultiModules2.kt")
+  public void testInlineableFunctionMultiModules2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/inlineableFunctionMultiModules2.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineableInlineFunctionExpressionParameter.kt")
+  public void testInlineableInlineFunctionExpressionParameter() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/inlineableInlineFunctionExpressionParameter.kt");
   }
 }
