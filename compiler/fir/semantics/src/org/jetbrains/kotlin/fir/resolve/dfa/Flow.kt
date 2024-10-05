@@ -7,12 +7,21 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 
 abstract class Flow {
+    internal abstract operator fun get(variable: RealVariable): FlowVariable?
+    internal fun getAlias(variable: RealVariable) = get(variable) as? FlowVariable.Alias
+    internal fun getReal(variable: RealVariable) = get(variable) as? FlowVariable.Real
+
     abstract val knownVariables: Set<RealVariable>
-    abstract fun unwrapVariable(variable: RealVariable): RealVariable
-    abstract fun getTypeStatement(variable: RealVariable): TypeStatement?
+
+    fun unwrapVariable(variable: RealVariable): RealVariable =
+        getAlias(variable)?.underlyingVariable ?: variable
+
+    fun getTypeStatement(variable: RealVariable): TypeStatement? =
+        getReal(unwrapVariable(variable))?.approvedTypeStatement?.copy(variable = variable)
+
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 
     abstract fun getKnown(variable: RealVariable): RealVariable?
@@ -41,43 +50,68 @@ abstract class Flow {
     }
 }
 
+internal sealed class FlowVariable {
+    abstract val variable: RealVariable
+    abstract val assignmentIndex: Int?
+    // TODO implications?
+
+    abstract fun copy(assignmentIndex: Int? = this.assignmentIndex): FlowVariable
+
+    data class Alias(
+        override val variable: RealVariable,
+        override val assignmentIndex: Int? = null,
+        // RealVariables thus form equivalence sets by values they reference. One is chosen
+        // as a representative of that set, while the rest are mapped to that representative
+        // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
+        val underlyingVariable: RealVariable,
+    ) : FlowVariable() {
+        override fun copy(assignmentIndex: Int?): FlowVariable {
+            return copy(
+                variable = variable,
+                assignmentIndex = assignmentIndex,
+                underlyingVariable = underlyingVariable,
+            )
+        }
+    }
+
+    data class Real(
+        override val variable: RealVariable,
+        override val assignmentIndex: Int? = null,
+        val members: PersistentSet<RealVariable> = persistentSetOf(),
+        val approvedTypeStatement: PersistentTypeStatement? = null,
+        // RealVariable describes a storage in memory; a pair of RealVariable with its assignment
+        // index at a particular execution point forms an SSA value corresponding to the result of
+        // an initializer.
+        val aliases: PersistentSet<RealVariable> = persistentSetOf(),
+    ) : FlowVariable() {
+        override fun copy(assignmentIndex: Int?): FlowVariable {
+            return copy(
+                variable = variable,
+                assignmentIndex = assignmentIndex,
+                members = members,
+                approvedTypeStatement = approvedTypeStatement,
+                aliases = aliases,
+            )
+        }
+    }
+}
+
 class PersistentFlow internal constructor(
     private val previousFlow: PersistentFlow?,
-
-    // This is basically a set, since it maps each key to itself. The only point of having it as a map
-    // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
-    internal val realVariables: PersistentMap<RealVariable, RealVariable>,
-    private val memberVariables: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
-
-    private val approvedTypeStatements: PersistentMap<RealVariable, PersistentTypeStatement>,
+    internal val variables: PersistentMap<RealVariable, FlowVariable>,
     internal val implications: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
-    // RealVariable describes a storage in memory; a pair of RealVariable with its assignment
-    // index at a particular execution point forms an SSA value corresponding to the result of
-    // an initializer.
-    internal val assignmentIndex: PersistentMap<RealVariable, Int>,
-    // RealVariables thus form equivalence sets by values they reference. One is chosen
-    // as a representative of that set, while the rest are mapped to that representative
-    // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
-    internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
-    private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
     override val knownVariables: Set<RealVariable>
-        get() = approvedTypeStatements.keys + directAliasMap.keys
+        get() = variables.keys
 
     val allVariablesForDebug: Set<DataFlowVariable>
-        get() = realVariables.keys +
-                approvedTypeStatements.keys +
-                directAliasMap.keys +
+        get() = variables.keys +
                 implications.keys +
                 implications.values.flatten().map { it.effect.variable }
 
-    override fun unwrapVariable(variable: RealVariable): RealVariable =
-        directAliasMap[variable] ?: variable
-
-    override fun getTypeStatement(variable: RealVariable): TypeStatement? =
-        approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
+    override operator fun get(variable: RealVariable) = variables[variable]
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
@@ -100,65 +134,37 @@ class PersistentFlow internal constructor(
 
     fun fork(): MutableFlow = MutableFlow(
         this,
-        realVariables.builder(),
-        memberVariables.builder(),
-        approvedTypeStatements.builder(),
+        variables.builder(),
         implications.builder(),
-        assignmentIndex.builder(),
-        directAliasMap.builder(),
-        backwardsAliasMap.builder(),
     )
 
     override fun getKnown(variable: RealVariable): RealVariable? =
-        realVariables[variable]
+        variables[variable]?.variable
 }
 
 class MutableFlow internal constructor(
     private val previousFlow: PersistentFlow?,
-
-    // This is basically a set, since it maps each key to itself. The only point of having it as a map
-    // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
-    private val realVariables: PersistentMap.Builder<RealVariable, RealVariable>,
-    private val memberVariables: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
-
-    internal val approvedTypeStatements: PersistentMap.Builder<RealVariable, PersistentTypeStatement>,
+    internal val variables: PersistentMap.Builder<RealVariable, FlowVariable>,
     internal val implications: PersistentMap.Builder<DataFlowVariable, PersistentList<Implication>>,
-    internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
-    internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
-    internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     constructor() : this(
         null,
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
-        emptyPersistentHashMapBuilder(),
-        emptyPersistentHashMapBuilder(),
-        emptyPersistentHashMapBuilder(),
-        emptyPersistentHashMapBuilder(),
-        emptyPersistentHashMapBuilder(),
     )
 
+    override operator fun get(variable: RealVariable) = variables[variable]
+
     override val knownVariables: Set<RealVariable>
-        get() = approvedTypeStatements.keys + directAliasMap.keys
-
-    override fun unwrapVariable(variable: RealVariable): RealVariable =
-        directAliasMap[variable] ?: variable
-
-    override fun getTypeStatement(variable: RealVariable): TypeStatement? =
-        approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
+        get() = variables.keys
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
 
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
-        realVariables.build(),
-        memberVariables.build(),
-        approvedTypeStatements.build(),
+        variables.build(),
         implications.build(),
-        assignmentIndex.build(),
-        directAliasMap.build(),
-        backwardsAliasMap.build(),
     )
 
     /**
@@ -185,23 +191,22 @@ class MutableFlow internal constructor(
     }
 
     override fun getKnown(variable: RealVariable): RealVariable? =
-        realVariables[variable]
+        variables[variable]?.variable
 
     /** Store a reference to a variable so that [get] can return it even if `createReal` is false. */
     fun remember(variable: RealVariable): RealVariable =
         rememberWithKnownReceivers(variable.mapReceivers(::remember))
 
     private fun rememberWithKnownReceivers(variable: RealVariable): RealVariable {
-        return realVariables.getOrPut(variable) {
+        return variables.getOrPut(variable) {
             variable.dispatchReceiver?.let { addMember(it, variable) }
             variable.extensionReceiver?.let { addMember(it, variable) }
-            variable
-        }
+            FlowVariable.Real(variable)
+        }.variable
     }
 
     private fun addMember(variable: RealVariable, member: RealVariable) {
-        val members = memberVariables[variable] ?: persistentSetOf()
-        memberVariables[variable] = members.add(member)
+        variables.updateReal(variable) { it.copy(members = it.members.add(member)) }
     }
 
     private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable =
@@ -217,7 +222,7 @@ class MutableFlow internal constructor(
      * [processMember] will be called that variable as the first argument and a new variable representing `y.p` as the second.
      */
     fun replaceReceiverReferencesInMembers(from: RealVariable, to: RealVariable?, processMember: (RealVariable, RealVariable?) -> Unit) {
-        for (member in memberVariables[from] ?: return) {
+        for (member in getReal(from)?.members ?: return) {
             val remapped = to?.let { rememberWithKnownReceivers(member.mapReceivers { if (it == from) to else it }) }
             processMember(member, remapped)
         }
@@ -226,3 +231,29 @@ class MutableFlow internal constructor(
 
 private fun <K, V> emptyPersistentHashMapBuilder(): PersistentMap.Builder<K, V> =
     persistentHashMapOf<K, V>().builder()
+
+internal inline fun MutableMap<RealVariable, FlowVariable>.update(
+    key: RealVariable,
+    transform: (FlowVariable) -> FlowVariable,
+) {
+    val variable = get(key) ?: return
+    this[key] = transform(variable)
+}
+
+internal inline fun MutableMap<RealVariable, FlowVariable>.updateReal(
+    key: RealVariable,
+    transform: (FlowVariable.Real) -> FlowVariable.Real,
+) {
+    val variable = getOrDefault(key, FlowVariable.Real(key))
+    if (variable !is FlowVariable.Real) return
+    this[key] = transform(variable)
+}
+
+internal inline fun MutableMap<RealVariable, FlowVariable>.updateAlias(
+    key: RealVariable,
+    transform: (FlowVariable.Alias) -> FlowVariable.Alias,
+) {
+    val variable = get(key)
+    if (variable !is FlowVariable.Alias) return
+    this[key] = transform(variable)
+}
