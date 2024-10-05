@@ -12,13 +12,13 @@ fun test() {
         //        OTv <:
 
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         // CovariantContainer<OTv> <: CovariantContainer<PNTv>  =>  OTv <: PNTv
@@ -31,13 +31,13 @@ fun test() {
         // ScopeOwner <: OTv <: PNTv
 
         // should fix PNTv := OTv := ScopeOwner for scope navigation
-        pntvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        pntvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>
 
     // ISSUE: KT-72030
     val resultC = pcla { otvOwner ->
@@ -52,13 +52,13 @@ fun test() {
         //        OTv <:
 
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
         // InvariantContainer<out OTv> <: InvariantContainer<out PNTv>  =>  CapturedType(out OTv) <: CapturedType(out PNTv)  =>  OTv <: PNTv
@@ -71,13 +71,13 @@ fun test() {
         // ScopeOwner <: OTv <: PNTv
 
         // should fix PNTv := OTv := ScopeOwner for scope navigation
-        pntvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        pntvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultD<!>
 }
 
 

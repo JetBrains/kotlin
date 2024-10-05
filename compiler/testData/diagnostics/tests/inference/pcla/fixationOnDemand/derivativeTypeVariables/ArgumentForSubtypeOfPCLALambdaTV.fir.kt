@@ -1,29 +1,29 @@
 fun test() {
     // ISSUE: KT-71662
     val resultA = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrain(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provideBox<!>()) // Box<PNTv> <: OTv
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrain(pntvOwner.provideBox()) // Box<PNTv> <: OTv
 
         // ScopeOwner <: PNTv
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(ScopeOwner())
+        pntvOwner.constrain(ScopeOwner())
 
         // expected current state of the constraint system:
         // Box<PNTv> <: OTv
         // ScopeOwner <: PNTv
 
         // should fix OTv := Box<PNTv> & PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>unbox<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>unbox<!>().function()
 
         // expected: Interloper </: Box<ScopeOwner>
         otvOwner.constrain(Interloper)
     }
     // expected: Box<ScopeOwner>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>resultA<!>
 
     // ISSUE: KT-72030
     val resultB = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrain(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provideBox<!>()) // Box<PNTv> <: OTv
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrain(pntvOwner.provideBox()) // Box<PNTv> <: OTv
 
         // Box<ScopeOwner> <: OTv
         otvOwner.constrain(Box<ScopeOwner>())
@@ -33,12 +33,12 @@ fun test() {
         //       Box<PNTv> <:
 
         // should fix PNTv := ScopeOwner for scope navigation
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        pntvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
         // expected: Interloper </: ScopeOwner
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(Interloper)
+        pntvOwner.constrain(Interloper)
     }
     // expected: CST(Box<ScopeOwner>, Interloper) == kotlin.Any
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>resultB<!>

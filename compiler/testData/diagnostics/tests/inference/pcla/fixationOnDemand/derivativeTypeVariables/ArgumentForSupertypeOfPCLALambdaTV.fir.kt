@@ -1,28 +1,28 @@
 fun test() {
     // ISSUE: KT-71662
     val resultA = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrainBox<!>(otvOwner.provide()) // OTv <: Box<PNTv>
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        pntvOwner.constrainBox(otvOwner.provide()) // OTv <: Box<PNTv>
 
         // ScopeOwner <: PNTv
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(ScopeOwner())
+        pntvOwner.constrain(ScopeOwner())
 
         // expected current state of the constraint system:
         // OTv <: Box<PNTv>
         // ScopeOwner <: PNTv
 
         // should fix OTv := Box<PNTv> & PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>unbox<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>unbox<!>().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Box<PNT>; Interloper")!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrainBox<!>(otvOwner.provide()) // OTv <: Box<PNTv>
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        pntvOwner.constrainBox(otvOwner.provide()) // OTv <: Box<PNTv>
 
         // Box<ScopeOwner> <: OTv
         otvOwner.constrain(Box<ScopeOwner>())
@@ -31,13 +31,13 @@ fun test() {
         // Box<ScopeOwner> <: OTv <: Box<PNTv>
 
         // should fix OTv := Box<ScopeOwner> & PNTv := ScopeOwner for scope navigation
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        pntvOwner.provide().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(Box<PNT> & Box<ScopeOwner>); Interloper")!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultB<!>
 }
 
 
