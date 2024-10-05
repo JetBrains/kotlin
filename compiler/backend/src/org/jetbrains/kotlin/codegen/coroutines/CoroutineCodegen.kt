@@ -519,7 +519,9 @@ class CoroutineCodegenForLambda private constructor(
                         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
                         lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
                         sourceFile = element.containingKtFile.name,
-                        initialVarsCountByType = varsCountByType
+                        languageVersionSettings = languageVersionSettings,
+                        initialVarsCountByType = varsCountByType,
+                        shouldOptimiseUnusedVariables = !state.config.enableDebugMode,
                     )
                     val maybeWithForInline = if (forInline)
                         SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod)

@@ -1,4 +1,5 @@
 // WITH_COROUTINES
+// API_VERSION: 2.2
 
 import helpers.*
 // TREAT_AS_ONE_FILE

@@ -2,6 +2,8 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
+// API_VERSION: 2.2
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

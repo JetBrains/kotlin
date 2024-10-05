@@ -1,3 +1,5 @@
+// API_VERSION: 2.2
+
 interface ApplicationCall
 
 interface AuthenticationService {
