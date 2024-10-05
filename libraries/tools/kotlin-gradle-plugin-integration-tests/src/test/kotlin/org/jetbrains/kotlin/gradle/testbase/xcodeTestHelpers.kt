@@ -17,8 +17,10 @@ import kotlin.test.assertEquals
 internal sealed class XcodeBuildAction(
     val action: String,
 ) {
-    object Build : XcodeBuildAction("build")
-    object Test : XcodeBuildAction("test")
+    data object Build : XcodeBuildAction("build")
+    data object BuildForTesting : XcodeBuildAction("build-for-testing")
+    data object Test : XcodeBuildAction("test")
+    data object TestWithoutBuilding : XcodeBuildAction("test-without-building")
     class Archive(val archivePath: String) : XcodeBuildAction("archive")
 }
 
@@ -91,8 +93,8 @@ internal fun TestProject.xcodebuild(
             "-derivedDataPath" set derivedDataPath
 
             when (action) {
-                is XcodeBuildAction.Build -> {}
-                is XcodeBuildAction.Test -> {
+                is XcodeBuildAction.Build, XcodeBuildAction.BuildForTesting -> {}
+                is XcodeBuildAction.Test, XcodeBuildAction.TestWithoutBuilding -> {
                     // Disable parallel testing to output stdout/stderr from tests to xcodebuild
                     add("-parallel-testing-enabled")
                     add("NO")

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.io.CleanupMode
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -36,7 +37,7 @@ import java.nio.file.Paths
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 
-    @TempDir
+    @TempDir(cleanup = CleanupMode.ON_SUCCESS)
     lateinit var workingDir: Path
 
     internal open fun TestProject.customizeProject() {}
