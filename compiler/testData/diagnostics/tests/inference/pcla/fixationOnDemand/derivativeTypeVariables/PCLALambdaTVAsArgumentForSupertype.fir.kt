@@ -1,26 +1,26 @@
 fun test() {
     val resultA = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrainBox(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>()) // PNTv <: Box<OTv>
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrainBox(pntvOwner.provide()) // PNTv <: Box<OTv>
 
         // Box<ScopeOwner> <: PNTv
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(Box<ScopeOwner>())
+        pntvOwner.constrain(Box<ScopeOwner>())
 
         // expected current state of the constraint system:
         // Box<ScopeOwner> <: PNTv <: Box<OTv>
 
         // should fix PNTv := Box<ScopeOwner> & OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrainBox(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>()) // PNTv <: Box<OTv>
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrainBox(pntvOwner.provide()) // PNTv <: Box<OTv>
 
         // ScopeOwner <: OTv
         otvOwner.constrain(ScopeOwner())
@@ -30,13 +30,13 @@ fun test() {
         // ScopeOwner <: OTv
 
         // should fix PNTv := Box<OTv> & OTv := ScopeOwner for scope navigation
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>unbox<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        pntvOwner.provide().unbox().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>
 }
 
 

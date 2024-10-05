@@ -1,27 +1,27 @@
 fun test() {
     val resultA = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrain(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>()) // PNTv <: OTv
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrain(pntvOwner.provide()) // PNTv <: OTv
 
         // ScopeOwner <: PNTv
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(ScopeOwner())
+        pntvOwner.constrain(ScopeOwner())
 
         // expected current state of the constraint system:
         // ScopeOwner <: PNTv <: OTv
 
         // should fix OTv := PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interloper")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     // ISSUE: KT-72030
     val resultB = pcla { otvOwner ->
-        val pntvOwner = otvOwner.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>createDerivativeTypeVariable<!>()
-        otvOwner.constrain(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>()) // PNTv <: OTv
+        val pntvOwner = otvOwner.createDerivativeTypeVariable()
+        otvOwner.constrain(pntvOwner.provide()) // PNTv <: OTv
 
         // ScopeOwner <: OTv
         otvOwner.constrain(ScopeOwner())
@@ -31,12 +31,12 @@ fun test() {
         //       PNTv <:
 
         // should fix PNTv := ScopeOwner for scope navigation
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>provide<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        pntvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
         // expected: Interloper </: ScopeOwner
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>pntvOwner<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>constrain<!>(Interloper)
+        pntvOwner.constrain(Interloper)
     }
     // expected: CST(ScopeOwner, Interloper) == BaseType
     <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
