@@ -12310,6 +12310,17 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        public class CleanupWithoutStdlibFunction {
+          @Test
+          public void testAllFilesPresentInCleanupWithoutStdlibFunction() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()
@@ -12317,6 +12328,17 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           @Test
           public void testAllFilesPresentInDebugMode() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        public class NoCleanup {
+          @Test
+          public void testAllFilesPresentInNoCleanup() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
         }
       }

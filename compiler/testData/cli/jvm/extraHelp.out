@@ -28,6 +28,7 @@ where advanced options include:
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
+                             If API Level >= 2.2 -- no-op.
   -Xir-inliner               Inline functions using the IR inliner instead of the bytecode inliner.
   -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.

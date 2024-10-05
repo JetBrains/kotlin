@@ -1,3 +1,5 @@
+// API_VERSION: LATEST
+
 suspend fun blackhole(a: Any) {}
 
 suspend fun topLevel(a: String, b: String) {

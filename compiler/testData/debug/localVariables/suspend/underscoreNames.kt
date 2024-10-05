@@ -18,7 +18,6 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:4 <init>:
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:10 foo: a:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$2, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit
 // test.kt:5 component1:
 // test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, <name for destructuring parameter 0>:A=A
 // test.kt:7 component3:
@@ -33,22 +32,6 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:4 <init>:
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:10 foo: a:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$2, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit
-// test.kt:5 component1:
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, <destruct>:A=A
-// test.kt:7 component3:
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, <destruct>:A=A, x_param:java.lang.String="O":java.lang.String
-// test.kt:13 invokeSuspend: $result:java.lang.Object=kotlin.Unit, <destruct>:A=A, x_param:java.lang.String="O":java.lang.String, y_param:java.lang.String="K":java.lang.String
-// test.kt:-1 invoke: p1:A=A, p2:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:10 foo: a:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$2, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-
-// EXPECTATIONS FIR JVM_IR +USE_INLINE_SCOPES_NUMBERS
-// test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:4 <init>:
-// test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:10 foo: a:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$2, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit
 // test.kt:5 component1:
 // test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, <destruct>:A=A
 // test.kt:7 component3:

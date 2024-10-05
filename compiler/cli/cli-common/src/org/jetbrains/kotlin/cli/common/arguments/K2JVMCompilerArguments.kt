@@ -748,7 +748,8 @@ It has no effect when -language-version is 2.0 or higher."""
     @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
-Currently this includes spilling all variables in a suspending context regardless of whether they are alive."""
+Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
+If API Level >= 2.2 -- no-op."""
     )
     var enableDebugMode = false
         set(value) {

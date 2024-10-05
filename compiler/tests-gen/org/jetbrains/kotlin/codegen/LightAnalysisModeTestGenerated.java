@@ -12599,6 +12599,64 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
       }
 
+      @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class CleanupWithoutStdlibFunction extends AbstractLightAnalysisModeTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCleanupWithoutStdlibFunction() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("backEdge.kt")
+        public void testBackEdge() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/backEdge.kt");
+        }
+
+        @TestMetadata("deadArgument.kt")
+        public void testDeadArgument() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/deadArgument.kt");
+        }
+
+        @TestMetadata("if.kt")
+        public void testIf() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/if.kt");
+        }
+
+        @TestMetadata("nullCleanup.kt")
+        public void testNullCleanup() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/nullCleanup.kt");
+        }
+
+        @TestMetadata("nullNotSpill.kt")
+        public void testNullNotSpill() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/nullNotSpill.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/simple.kt");
+        }
+
+        @TestMetadata("twoRefs.kt")
+        public void testTwoRefs() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/twoRefs.kt");
+        }
+
+        @TestMetadata("unusedParamNotSpill.kt")
+        public void testUnusedParamNotSpill() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/unusedParamNotSpill.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction/when.kt");
+        }
+      }
+
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)
@@ -12659,6 +12717,69 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("when.kt")
         public void testWhen() {
           runTest("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/when.kt");
+        }
+      }
+
+      @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class NoCleanup extends AbstractLightAnalysisModeTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNoCleanup() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("backEdge.kt")
+        public void testBackEdge() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/backEdge.kt");
+        }
+
+        @TestMetadata("if.kt")
+        public void testIf() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/if.kt");
+        }
+
+        @TestMetadata("inlineOnly.kt")
+        public void testInlineOnly() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/inlineOnly.kt");
+        }
+
+        @TestMetadata("kt63954.kt")
+        public void testKt63954() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/kt63954.kt");
+        }
+
+        @TestMetadata("nullCleanup.kt")
+        public void testNullCleanup() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/nullCleanup.kt");
+        }
+
+        @TestMetadata("nullNotSpill.kt")
+        public void testNullNotSpill() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/nullNotSpill.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/simple.kt");
+        }
+
+        @TestMetadata("twoRefs.kt")
+        public void testTwoRefs() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/twoRefs.kt");
+        }
+
+        @TestMetadata("unusedParamNotSpill.kt")
+        public void testUnusedParamNotSpill() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/unusedParamNotSpill.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup/when.kt");
         }
       }
     }

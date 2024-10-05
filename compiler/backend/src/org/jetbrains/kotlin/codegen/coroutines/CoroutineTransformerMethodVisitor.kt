@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -52,6 +54,7 @@ class CoroutineTransformerMethodVisitor(
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
     private val lineNumber: Int,
     private val sourceFile: String,
+    private val languageVersionSettings: LanguageVersionSettings,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -59,7 +62,8 @@ class CoroutineTransformerMethodVisitor(
     // JVM_IR backend generates $completion, while old backend does not
     private val putContinuationParameterToLvt: Boolean = true,
     // Parameters of suspend lambda are put to the same fields as spilled variables
-    private val initialVarsCountByType: Map<Type, Int> = emptyMap()
+    private val initialVarsCountByType: Map<Type, Int> = emptyMap(),
+    private val shouldOptimiseUnusedVariables: Boolean = true,
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -108,7 +112,7 @@ class CoroutineTransformerMethodVisitor(
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
-        } else {
+        } else if (nullOutUsingStdlibFunction(languageVersionSettings)) {
             actualCoroutineStart = methodNode.instructions.findLast { isSuspendLambdaParameterMarker(it) }?.next ?: actualCoroutineStart
         }
 
@@ -208,12 +212,21 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode)
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
-        methodNode.extendParameterRanges()
-        methodNode.extendSuspendLambdaParameterRanges()
+        if (nullOutUsingStdlibFunction(languageVersionSettings)) {
+            methodNode.extendParameterRanges()
+            methodNode.extendSuspendLambdaParameterRanges()
+        }
         dropSuspendLambdaParameterMarkers(methodNode)
+
+        if (!nullOutUsingStdlibFunction(languageVersionSettings) && shouldOptimiseUnusedVariables) {
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
+        }
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
     }
+
+    private fun nullOutUsingStdlibFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
 
     // When suspension point is inlined, it is in range of fake inliner variables.
     // Path from TABLESWITCH into unspilling goes to latter part of the range.
@@ -626,7 +639,9 @@ class CoroutineTransformerMethodVisitor(
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
 
-        val suspendLambdaParameters = methodNode.collectSuspendLambdaParameterSlots()
+        val suspendLambdaParameters =
+            if (nullOutUsingStdlibFunction(languageVersionSettings)) methodNode.collectSuspendLambdaParameterSlots()
+            else emptyList()
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         var initialSpilledVariablesCount = 0
@@ -640,9 +655,9 @@ class CoroutineTransformerMethodVisitor(
         val livenessFrames = analyzeLiveness(methodNode)
 
         // References shall be cleaned up after unspill (during spill in next suspension point) to prevent memory leaks,
-        val referencesToSpillBySuspensionPointIndex = arrayListOf<List<SpillableVariable>>()
+        val referencesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
         // while primitives shall not
-        val primitivesToSpillBySuspensionPointIndex = arrayListOf<List<SpillableVariable>>()
+        val primitivesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
 
         // Collect information about spillable variables, that we use to determine which variables we need to cleanup
         for (suspension in suspensionPoints) {
@@ -752,11 +767,18 @@ class CoroutineTransformerMethodVisitor(
             // store variable before suspension call
             insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
                 load(continuationIndex, AsmTypes.OBJECT_TYPE)
-                load(spillableVariable.slot, spillableVariable.type)
-                StackValue.coerce(spillableVariable.type, spillableVariable.normalizedType, this)
-                if (spillableVariable.shouldSpillNull) {
-                    invokeNullOutSpilledVariable()
+
+                if (shouldOptimiseUnusedVariables && spillableVariable.shouldSpillNull) {
+                    if (nullOutUsingStdlibFunction(languageVersionSettings)) {
+                        putOnStack(spillableVariable)
+                        invokeNullOutSpilledVariable()
+                    } else {
+                        aconst(null)
+                    }
+                } else {
+                    putOnStack(spillableVariable)
                 }
+
                 putfield(
                     classBuilderForCoroutineState.thisName,
                     spillableVariable.fieldName,
@@ -783,6 +805,11 @@ class CoroutineTransformerMethodVisitor(
                 splitLvtRecord(methodNode, suspension, local, localRestart)
             }
         }
+    }
+
+    private fun InstructionAdapter.putOnStack(spillableVariable: SpillableVariable) {
+        load(spillableVariable.slot, spillableVariable.type)
+        StackValue.coerce(spillableVariable.type, spillableVariable.normalizedType, this)
     }
 
     private fun findLocalCorrespondingToSpillableVariable(
@@ -862,12 +889,14 @@ class CoroutineTransformerMethodVisitor(
         livenessFrames: List<VariableLivenessFrame>,
         suspensionCallBeginIndex: Int,
         varsCountByType: MutableMap<Type, Int>,
-    ): ArrayList<SpillableVariable> {
+    ): MutableList<SpillableVariable> {
         val frame = frames[suspensionCallBeginIndex].sure { "Suspension points containing in dead code must be removed" }
         val localsCount = frame.locals
-        val variablesToSpill = arrayListOf<SpillableVariable>()
+        val variablesToSpill = mutableListOf<SpillableVariable>()
 
         val livenessFrame = livenessFrames[suspensionCallBeginIndex]
+
+        val completionSlot = getLastParameterIndex(methodNode.desc, methodNode.access)
 
         // 0 - this
         // 1 - parameter
@@ -877,7 +906,7 @@ class CoroutineTransformerMethodVisitor(
         for (slot in 0 until localsCount) {
             if (slot == continuationIndex || slot == dataIndex) continue
             // Do not spill $completion
-            if (isForNamedFunction && slot == getLastParameterIndex(methodNode.desc, methodNode.access)) continue
+            if (isForNamedFunction && slot == completionSlot) continue
             val value = frame.getLocal(slot)
             if (value.type == null) continue
             val visibleByDebugger = methodNode.localVariables.any {
@@ -889,7 +918,9 @@ class CoroutineTransformerMethodVisitor(
             val willBeVisibleByDebugger = !livenessFrame.isAlive(slot) && !visibleByDebugger &&
                     checkWhetherVariableWillBeVisible(methodNode, slot, suspensionCallBeginIndex)
 
-            val needToSpill = livenessFrame.isAlive(slot) || visibleByDebugger || willBeVisibleByDebugger
+            val needToSpill = livenessFrame.isAlive(slot) ||
+                    (nullOutUsingStdlibFunction(languageVersionSettings) || !shouldOptimiseUnusedVariables) &&
+                    (visibleByDebugger || willBeVisibleByDebugger)
             if (!needToSpill) continue
 
             if (value === StrictBasicValue.NULL_VALUE) {
@@ -938,14 +969,14 @@ class CoroutineTransformerMethodVisitor(
     private fun mapFieldNameToVariable(
         methodNode: MethodNode,
         suspensionPoints: List<SuspensionPoint>,
-        referencesToSpillBySuspensionPointIndex: ArrayList<List<SpillableVariable>>,
-        primitivesToSpillBySuspensionPointIndex: ArrayList<List<SpillableVariable>>,
-    ): ArrayList<List<SpilledVariableAndField>> {
-        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
+        referencesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
+        primitivesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
+    ): MutableList<List<SpilledVariableAndField>> {
+        val spilledToVariableMapping = mutableListOf<List<SpilledVariableAndField>>()
         for (suspensionPointIndex in suspensionPoints.indices) {
             val suspension = suspensionPoints[suspensionPointIndex]
 
-            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
+            val spilledToVariable = mutableListOf<SpilledVariableAndField>()
 
             referencesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { spillableVariable ->
                 calculateSpilledVariableAndField(methodNode, suspension, spillableVariable)
@@ -966,10 +997,10 @@ class CoroutineTransformerMethodVisitor(
         suspensionPoints: List<SuspensionPoint>,
         referencesToSpillBySuspensionPointIndex: List<List<SpillableVariable>>,
         initialSpilledVariablesCount: Int,
-    ): ArrayList<Pair<Int, Int>> {
+    ): MutableList<Pair<Int, Int>> {
         val predSuspensionPoints = calculateSuspensionPointPredecessorsMapping(methodNode, suspensionPoints)
 
-        val referencesToCleanBySuspensionPointIndex = arrayListOf<Pair<Int, Int>>() // current to pred
+        val referencesToCleanBySuspensionPointIndex = mutableListOf<Pair<Int, Int>>() // current to pred
         for (suspensionPointIndex in suspensionPoints.indices) {
             val suspensionPoint = suspensionPoints[suspensionPointIndex]
             // If we spill a variable - we are sure it is dead or visible
@@ -1229,9 +1260,10 @@ class CoroutineTransformerMethodVisitor(
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
 
-private fun MethodNode.collectSuspendLambdaParameterSlots(): List<Int> =
-    instructions.filter { isSuspendLambdaParameterMarker(it) }
+private fun MethodNode.collectSuspendLambdaParameterSlots(): List<Int> {
+    return instructions.filter { isSuspendLambdaParameterMarker(it) }
         .mapNotNull { (it?.previous?.previous as? VarInsnNode)?.`var` }.toList()
+}
 
 private fun MethodNode.extendSuspendLambdaParameterRanges() {
     val slots = collectSuspendLambdaParameterSlots()
@@ -1262,10 +1294,7 @@ private class SpillableVariable(
     val isAlive: Boolean,
 ) {
     init {
-        require(
-            value !== StrictBasicValue.NULL_VALUE && fieldName != null ||
-                    value === StrictBasicValue.NULL_VALUE && fieldName == null
-        ) {
+        require(isNull == (fieldName == null)) {
             "Value is $value, fieldName is $fieldName"
         }
     }
@@ -1430,6 +1459,136 @@ fun MethodNode.nodeTextWithVisibleVariables(): String {
 private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame>): String =
     liveness.zip(this.instructions.asSequence().toList()).joinToString("\n") { (a, b) -> "$a|${b.insnText}" }
 
+/*
+ * Before ApiVersion 2.2.
+ * We do not want to spill dead variables, thus, we shrink its LVT record to region, where the variable is alive,
+ * so, the variable will not be visible in debugger. User can still prolong life span of the variable by using it.
+ *
+ * This means, that function parameters do not longer span the whole function, including `this`.
+ * This might and will break some bytecode processors, including old versions of R8. See KT-24510.
+ */
+private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction: Boolean, suspensionPoints: List<LabelNode>) {
+    val liveness = analyzeLiveness(method)
+
+    fun List<LocalVariableNode>.findRecord(insnIndex: Int, variableIndex: Int): LocalVariableNode? {
+        for (variable in this) {
+            if (variable.index == variableIndex &&
+                method.instructions.indexOf(variable.start) <= insnIndex &&
+                insnIndex < method.instructions.indexOf(variable.end)
+            ) return variable
+        }
+        return null
+    }
+
+    fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
+        liveness[insnIndex].isAlive(variableIndex)
+
+    fun nextLabel(node: AbstractInsnNode?): LabelNode? {
+        var current = node
+        while (current != null) {
+            if (current is LabelNode) return current
+            current = current.next
+        }
+        return null
+    }
+
+    fun min(a: LabelNode, b: LabelNode): LabelNode =
+        if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) a else b
+
+    val oldLvt = arrayListOf<LocalVariableNode>()
+    for (record in method.localVariables) {
+        oldLvt += record
+    }
+    method.localVariables.clear()
+
+    val oldLvtNodeToLatestNewLvtNode = mutableMapOf<LocalVariableNode, LocalVariableNode>()
+    // Skip `this` for suspend lambda
+    val start = if (isForNamedFunction) 0 else 1
+    for (variableIndex in start until method.maxLocals) {
+        if (oldLvt.none { it.index == variableIndex }) continue
+        var startLabel: LabelNode? = null
+        var nextSuspensionPointIndex = 0
+        for (insnIndex in 0 until (method.instructions.size() - 1)) {
+            val insn = method.instructions[insnIndex]
+            if (insn is LabelNode && nextSuspensionPointIndex < suspensionPoints.size &&
+                suspensionPoints[nextSuspensionPointIndex] == insn
+            ) {
+                nextSuspensionPointIndex++
+            }
+            if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
+                startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
+            }
+            if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
+                // No variable in LVT -> do not add one
+                val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
+                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME ||
+                    lvtRecord.name == SUSPEND_CALL_RESULT_NAME ||
+                    JvmAbi.isFakeLocalVariableForInline(lvtRecord.name)
+                ) continue
+                // End the local when it is no longer live and then attempt to extend its range when safe.
+                val endLabel = nextLabel(insn.next)?.let { min(lvtRecord.end, it) } ?: lvtRecord.end
+                // startLabel can be null in case of parameters
+                @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
+
+                // Attempt to extend existing local variable node corresponding to the record in
+                // the original local variable table if there are no control-flow merges.
+                val latest = oldLvtNodeToLatestNewLvtNode[lvtRecord]
+                // If we can extend the previous range to where the local variable dies, we do not need a
+                // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
+                // done so when we added it below.
+                val extended =
+                    latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex) ?: false
+                if (!extended) {
+                    val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
+                    method.localVariables.add(new)
+                    // See if we can extend it all the way to the old end.
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex)
+                }
+            }
+        }
+    }
+
+    for (variable in oldLvt) {
+        // $continuation, $completion and $result are dead, but they are used by debugger, as well as fake inliner variables
+        // $continuation is used to create async stack trace
+        if (variable.name == CONTINUATION_VARIABLE_NAME ||
+            variable.name == SUSPEND_CALL_RESULT_NAME ||
+            JvmAbi.isFakeLocalVariableForInline(variable.name)
+        ) {
+            method.localVariables.add(variable)
+            continue
+        }
+        // $completion is used for stepping
+        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME) {
+            // There can be multiple $completion variables because of inlining, do not duplicate them
+            if (method.localVariables.any { it.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME }) continue
+
+            method.extendCompletionsRange(variable, getLastParameterIndex(method.desc, method.access))
+            continue
+        }
+        // this acts like $continuation for lambdas. For example, it is used by debugger to create async stack trace. Keep it.
+        if (variable.name == "this" && !isForNamedFunction) {
+            method.extendCompletionsRange(variable, 0)
+            continue
+        }
+    }
+}
+
+// $completion should behave like ordinary parameter - span the whole function,
+// unlike other parameters, it is safe to do so, since it always will have some value
+// either completion (when there was no suspension) or continuation, when there was suspension.
+// It is OK to have this discrepancy, since debugger walks through completion chain and to them
+// there is no difference whether there is an additional link in the chain.
+//
+// The same applies for suspend lambdas and `this`, but there is no additional link in the chain.
+private fun MethodNode.extendCompletionsRange(completion: LocalVariableNode, slot: Int) {
+    completion.start = getOrCreateStartingLabel()
+    completion.end = getOrCreateEndingLabel()
+    completion.index = slot
+    localVariables.add(completion)
+}
+
 // Parameters should behave like ordinary parameter - span the whole function,
 // however, building a state-machine changes starting and ending labels.
 // Fix them up.
@@ -1460,4 +1619,86 @@ fun MethodNode.getOrCreateEndingLabel(): LabelNode {
     val result = LabelNode()
     instructions.insert(last, result)
     return result
+}
+
+/*
+ * Before 2.2.
+ * We cannot extend a record if there is STORE instruction or a control-flow merge.
+ *
+ * STORE instructions can signify a unspilling operation, in which case, the variable will become visible before it unspilled.
+ *
+ * If there is a control-flow merge point in a range where a variable is dead, it might not have been restored on one of the paths
+ * and therefore it is not safe to extend the record across the control flow merge point.
+ *
+ * For example, code such as the following:
+ *
+ *    listOf<String>.forEach {
+ *       yield(it)
+ *    }
+ *
+ * Generates code of this form with a back edge after resumption that will lead to invalid locals tables
+ * if the local range is extended to the next suspension point. L1 is a merge point and therefore, we do
+ * not extend.
+ *
+ *        iterator = iterable.iterator()
+ *    L1: (iterable dies here)
+ *        load iterator.next if there
+ *        yield suspension point
+ *
+ *    L2: (resumption point)
+ *        restore live variables (not including iterable)
+ *        goto L1 (iterator not restored here, so we cannot not have iterator live at L1)
+ *
+ * Code such as:
+ *
+ *    val value = getValue()
+ *    return if (value == null) {
+ *        computeValueAsync()  // suspension point
+ *    } else {
+ *        value
+ *    } + "K"
+ *
+ * Generates code of this form, where it is not safe to extend the `value` local variable across the control-flow
+ * merge because it is dead and will not have been restored after the suspend point in one of the branches.
+ *
+ *      value = getValue()
+ *      if (value != null) goto L2
+ *  L1: (value dead here)
+ *      temp = computeValueAsync() // suspension point and resumption point, value NOT restored as it is dead
+ *      load temp
+ *      goto L3
+ *  L2: (value alive here)
+ *      load value
+ *  L3: (merge point, cannot extend `value` local across as it is not defined on one of the paths)
+ *      load "K"
+ *      add strings
+ *      return
+ *
+ * @return true if the range has been extended
+ */
+private fun LocalVariableNode.extendRecordIfPossible(
+    method: MethodNode,
+    suspensionPoints: List<LabelNode>,
+    endLabel: LabelNode,
+    liveness: List<VariableLivenessFrame>,
+    nextSuspensionPointIndex: Int
+): Boolean {
+    val nextSuspensionPointLabel =
+        suspensionPoints.drop(nextSuspensionPointIndex).find { it in InsnSequence(end, endLabel) } ?: endLabel
+
+    var current: AbstractInsnNode? = end
+    var index = method.instructions.indexOf(current)
+    while (current != null && current != nextSuspensionPointLabel) {
+        if (liveness[index].isControlFlowMerge()) return false
+        // TODO: HACK
+        // TODO: Find correct label, which is OK to be used as end label.
+        if (current.opcode == Opcodes.ARETURN && nextSuspensionPointLabel != endLabel) return false
+        if (current.isStoreOperation() && (current as VarInsnNode).`var` == index) {
+            return false
+        }
+        current = current.next
+        ++index
+    }
+    end = nextSuspensionPointLabel
+    return true
 }

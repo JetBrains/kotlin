@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// API_VERSION: LATEST
 
 suspend fun dummy() {}
 

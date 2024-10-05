@@ -1,4 +1,4 @@
-
+// API_VERSION: LATEST
 
 // FILE: test.kt
 suspend fun foo() {}

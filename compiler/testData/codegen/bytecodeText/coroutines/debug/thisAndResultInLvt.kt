@@ -1,3 +1,5 @@
+// API_VERSION: LATEST
+
 suspend fun dummy() {}
 
 val c: suspend () -> Unit = {

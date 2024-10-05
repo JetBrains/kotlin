@@ -1,3 +1,5 @@
+// API_VERSION: LATEST
+
 interface ApplicationCall
 
 interface AuthenticationService {
