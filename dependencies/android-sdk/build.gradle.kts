@@ -7,7 +7,7 @@ repositories {
         patternLayout {
             artifact("[artifact]-[revision].[ext]")
             artifact("[artifact]_[revision](-[classifier]).[ext]")
-            artifact("[artifact]_[revision](-[classifier]).[ext]")
+            artifact("[artifact]_[revision](_[classifier]).[ext]")
         }
         metadataSources {
             artifact()
@@ -147,7 +147,11 @@ fun androidPlatform(version: String): TaskProvider<Task> {
 }
 
 fun androidBuildTools(version: String): TaskProvider<Task> {
-    val revision = if (version == "34.0.0") "r34" else "r$version"
+    val revision = when (version) {
+        "34.0.0" -> "r34"
+        "35.0.0" -> "r35"
+        else -> "r$version"
+    }
 
     @Suppress("LocalVariableName")
     val buildTools_30_0_3_artifactId = mapOf(
@@ -194,6 +198,7 @@ androidBuildTools("29.0.3")
 androidBuildTools("30.0.3")
 androidBuildTools("33.0.1")
 androidBuildTools("34.0.0")
+androidBuildTools("35.0.0")
 
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)

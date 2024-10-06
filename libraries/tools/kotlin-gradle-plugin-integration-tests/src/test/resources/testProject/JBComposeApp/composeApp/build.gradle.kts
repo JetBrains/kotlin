@@ -1,19 +1,16 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     id("com.android.application")
     kotlin("plugin.compose")
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "1.6.10"
+    id("org.jetbrains.compose") version "1.7.0"
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
-        }
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
     }
     
     jvm("desktop")
@@ -22,8 +19,8 @@ kotlin {
         val desktopMain by getting
         
         androidMain.dependencies {
-            implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
-            implementation("androidx.activity:activity-compose:1.9.0")
+            implementation("androidx.compose.ui:ui-tooling-preview:1.7.4")
+            implementation("androidx.activity:activity-compose:1.9.3")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -69,7 +66,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     dependencies {
-        debugImplementation("androidx.compose.ui:ui-tooling:1.6.6")
+        debugImplementation("androidx.compose.ui:ui-tooling:1.7.4")
     }
 }
 

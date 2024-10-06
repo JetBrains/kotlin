@@ -2,10 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
-
 kotlin {
     jvmToolchain(8)
 }

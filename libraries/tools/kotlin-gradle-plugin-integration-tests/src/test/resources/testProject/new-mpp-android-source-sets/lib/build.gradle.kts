@@ -1,18 +1,20 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(34)
     namespace = "io.sellmair.mpp"
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(28)
+        minSdkVersion(22)
+        targetSdkVersion(34)
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -31,6 +33,11 @@ android {
         create("paid") {
             setDimension("pricing")
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     sourceSets {
@@ -59,7 +66,9 @@ android {
 }
 
 kotlin {
-    androidTarget()
+    androidTarget {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+    }
     macosX64("macos")
 
     sourceSets {

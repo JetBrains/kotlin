@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.test'
     id 'org.jetbrains.kotlin.android'
@@ -8,16 +10,16 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 34
     namespace 'org.jetbrains.kotlin.gradle.test.android.test'
 
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 22
+        minSdkVersion 22
+        targetSdkVersion 34
 
         testApplicationId 'org.jetbrains.kotlin.gradle.test.androidalfa'
     }
@@ -40,3 +42,5 @@ android {
     }
     lintOptions.abortOnError = false
 }
+
+kotlin.compilerOptions.jvmTarget = JvmTarget.JVM_1_8

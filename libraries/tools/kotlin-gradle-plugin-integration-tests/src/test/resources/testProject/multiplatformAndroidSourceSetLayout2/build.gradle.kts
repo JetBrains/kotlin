@@ -1,23 +1,25 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-}
-
 android {
-    compileSdk = 31
+    compileSdk = 34
     defaultConfig {
         minSdk = 31
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     namespace = "org.jetbrains.kotlin.sample"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
     android.flavorDimensions.add("market")
     android.flavorDimensions.add("price")
@@ -34,8 +36,13 @@ repositories {
 }
 
 kotlin {
-    androidTarget()
-    jvm()
+    jvmToolchain(17)
+    androidTarget {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+    }
+    jvm {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+    }
 
     val commonMain by sourceSets.getting
     val commonTest by sourceSets.getting

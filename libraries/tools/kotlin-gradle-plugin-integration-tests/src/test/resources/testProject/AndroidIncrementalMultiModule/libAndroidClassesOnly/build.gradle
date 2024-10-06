@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -7,23 +9,25 @@ android {
 
     namespace "com.example.lib2"
 
-    compileSdkVersion 23
+    compileSdkVersion 34
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 22
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
 
-    kotlin {
-        jvmToolchain(8)
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     buildTypes.release.minifyEnabled = false
     lintOptions.abortOnError = false
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+kotlin {
+    jvmToolchain(17)
+    compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }

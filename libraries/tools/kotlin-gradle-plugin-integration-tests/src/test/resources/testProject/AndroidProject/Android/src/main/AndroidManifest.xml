@@ -9,7 +9,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="org.jetbrains.kotlin.gradle.test.androidalfa.MainActivity"
-            android:label="@string/title_activity_main_activity1" >
+            android:label="@string/title_activity_main_activity1"
+            android:exported="false"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,7 +20,9 @@
         </activity>
         <activity
             android:name="org.jetbrains.kotlin.gradle.test.androidalfa.MainActivity2"
-            android:label="@string/title_activity_main_activity2" >
+            android:label="@string/title_activity_main_activity2"
+            android:exported="false"
+            >
         </activity>
     </application>
 

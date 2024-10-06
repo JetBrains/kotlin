@@ -20,7 +20,9 @@ import kotlin.io.path.writeText
 @DisplayName("Compose compiler Gradle plugin")
 class ComposeIT : KGPBaseTest() {
 
+    // AGP 8.6.0+ autoconfigures compose in the presence of Kotlin Compose plugin
     @DisplayName("Should not affect Android project where compose is not enabled")
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_85)
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("AndroidSimpleApp")
@@ -206,13 +208,19 @@ class ComposeIT : KGPBaseTest() {
                     gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
                 }
         ) {
+            val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
             build(":composeApp:assembleDebug") {
-                assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
-                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+                // AGP autoconfigures compose in the presence of Kotlin Compose plugin
+                if (agpVersion <= TestVersions.AgpCompatibilityMatrix.AGP_85) {
+                    assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
+                    assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+                }
             }
 
             build(":composeApp:desktopJar") {
-                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+                if (agpVersion <= TestVersions.AgpCompatibilityMatrix.AGP_85) {
+                    assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+                }
             }
         }
     }

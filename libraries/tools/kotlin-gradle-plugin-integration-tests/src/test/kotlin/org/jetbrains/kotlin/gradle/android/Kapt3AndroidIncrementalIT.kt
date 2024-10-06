@@ -136,6 +136,7 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
             appProject.buildGradle.modify {
                 //language=Gradle
                 """
+                |${it.substringBefore("plugins {")}
                 |plugins {
                 |   id("org.jetbrains.kotlin.kapt")
                 |${it.substringAfter("plugins {")}
