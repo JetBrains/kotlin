@@ -234,7 +234,7 @@ val gradleVersions = listOf(
     "8.7",
     "8.8",
     "8.9",
-    "8.10",
+    "8.10.2",
 )
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
