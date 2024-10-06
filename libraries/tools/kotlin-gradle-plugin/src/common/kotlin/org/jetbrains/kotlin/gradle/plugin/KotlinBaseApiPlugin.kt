@@ -66,6 +66,10 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         myProject.objects.newInstance(KotlinProjectExtension::class.java, myProject)
     }
 
+    override fun createKotlinJvmExtension(): KotlinJvmExtension {
+        return myProject.objects.newInstance(KotlinJvmProjectExtension::class.java, myProject)
+    }
+
     override val kaptExtension: KaptExtension by lazy {
         myProject.objects.newInstance(KaptExtension::class.java)
     }
