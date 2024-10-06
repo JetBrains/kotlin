@@ -1,11 +1,10 @@
-// WITH_STDLIB
 // ISSUE: KT-71662
 
 fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide().toString() // member
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>accessorBackedMemberProperty<!> = Value
         // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }
@@ -13,61 +12,41 @@ fun testStandardNavigation() {
     <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
-        otvOwner.constrain(ScopeOwner.Nullable(Value))
-        // should fix OTv := ScopeOwner<Value>? for scope navigation
-        <!TYPE_MISMATCH!>otvOwner.provide()<!>.toString() // extension
-        // expected: Interloper </: ScopeOwner<Value>?
+        otvOwner.constrain(ScopeOwner(Value))
+        // should fix OTv := ScopeOwner<Value> for scope navigation
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>delegatedMemberProperty<!> = Value
+        // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }
-    // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultB<!>
+    // expected: ScopeOwner<Value>
+    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
 
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide().hashCode() // member
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.accessorBackedExtensionProperty = Value
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOTA> & ScopeOwner<SOT>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
-        otvOwner.constrain(ScopeOwner.Nullable(Value))
-        // should fix OTv := ScopeOwner<Value>? for scope navigation
-        <!TYPE_MISMATCH!>otvOwner.provide()<!>.hashCode() // extension
-        // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(Interloper)
-    }
-    // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultD<!>
-
-    val resultE = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide().equals(ScopeOwner(Value))
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.delegatedExtensionProperty = Value
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOTB> & ScopeOwner<SOT>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultE<!>
-
-    val resultF = pcla { otvOwner ->
-        otvOwner.constrain(ScopeOwner(Value))
-        // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.fix()
-        // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
-    }
-    // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultF<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultD<!>
 }
 
 fun testSafeNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        otvOwner.provide()?.toString()
+        otvOwner.provide()?.<!UNRESOLVED_REFERENCE!>accessorBackedMemberProperty<!> = Value
         // expected: Interloper </: ScopeOwner<Value>?
         otvOwner.constrain(Interloper)
     }
@@ -77,7 +56,7 @@ fun testSafeNavigation() {
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        otvOwner.provide()?.hashCode()
+        otvOwner.provide()?.<!UNRESOLVED_REFERENCE!>delegatedMemberProperty<!> = Value
         // expected: Interloper </: ScopeOwner<Value>?
         otvOwner.constrain(Interloper)
     }
@@ -87,22 +66,22 @@ fun testSafeNavigation() {
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        otvOwner.provide()?.equals(ScopeOwner.Nullable(Value))
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.accessorBackedExtensionProperty = Value
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Nothing?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.fix()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.delegatedExtensionProperty = Value
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Nothing?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultD<!>
 }
 
 
@@ -117,12 +96,29 @@ interface BaseType
 
 object Value
 
-class ScopeOwner<SOT>(value: SOT): BaseType {
+class ScopeOwner<SOT>(private val value: SOT): BaseType {
+    var accessorBackedMemberProperty: SOT
+        get() = value
+        set(value) {}
+
+    operator fun getValue(reference: ScopeOwner<SOT>, property: Any?): SOT = value
+    operator fun setValue(reference: ScopeOwner<SOT>, property: Any?, value: SOT) {}
+    var delegatedMemberProperty: SOT by this
+
     companion object {
         fun <SOT> Nullable(value: SOT): ScopeOwner<SOT>? = null
     }
 }
 
-fun Any.fix() {}
+var <SOTA> ScopeOwner<SOTA>.accessorBackedExtensionProperty: SOTA
+    get() = accessorBackedMemberProperty
+    set(value) {}
+
+object GenericDelegate {
+    operator fun <SOTX> getValue(reference: ScopeOwner<SOTX>, property: Any?): SOTX = reference.accessorBackedMemberProperty
+    operator fun <SOTY> setValue(reference: ScopeOwner<SOTY>, property: Any?, value: SOTY) {}
+}
+
+var <SOTB> ScopeOwner<SOTB>.delegatedExtensionProperty: SOTB by GenericDelegate
 
 object Interloper: BaseType

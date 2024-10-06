@@ -6,7 +6,7 @@ fun test() {
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
         val callable = otvOwner.provide()::<!UNRESOLVED_REFERENCE!>memberFunction<!>
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>callable(TypeArgument)<!>
+        <!UNRESOLVED_REFERENCE!>callable<!>(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }
@@ -14,22 +14,22 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
 
     // ISSUE: KT-72031
-    val resultB = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>pcla<!> { otvOwner ->
+    val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        val callable = <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extensionFunction<!>
-        callable(TypeArgument)
+        val callable = <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::extensionFunction
+        <!UNRESOLVED_REFERENCE!>callable<!>(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTB>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Not found recorded type for pcla { otvOwner ->        otvOwner.constrain(ScopeOwner(Value))        // should fix OTv := ScopeOwner<Value> for scope navigation        val callable = otvOwner.provide()::extensionFunction        callable(TypeArgument)        // expected: Interloper </: ScopeOwner<Value>        otvOwner.constrain(Interloper)    }]")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTB)>")!>resultB<!>
 
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
         val callable = otvOwner.provide()::<!UNRESOLVED_REFERENCE!>InnerKlass<!>
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>callable(TypeArgument)<!>
+        <!UNRESOLVED_REFERENCE!>callable<!>(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }

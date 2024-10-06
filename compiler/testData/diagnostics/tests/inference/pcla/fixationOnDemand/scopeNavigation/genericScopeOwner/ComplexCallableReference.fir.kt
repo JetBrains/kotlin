@@ -53,48 +53,48 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultE<!>
 
     // ISSUE: KT-72031
-    val resultF = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>pcla<!> { otvOwner ->
+    val resultF = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>accessorBackedReadableExtensionProperty<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::accessorBackedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTA>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Not found recorded type for pcla { otvOwner ->        otvOwner.constrain(ScopeOwner(Value))        // should fix OTv := ScopeOwner<Value> for scope navigation        otvOwner.provide()::accessorBackedReadableExtensionProperty        // expected: Interloper </: ScopeOwner<Value>        otvOwner.constrain(Interloper)    }]")!>resultF<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTA)>")!>resultF<!>
 
     // ISSUE: KT-72031
-    val resultG = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>pcla<!> { otvOwner ->
+    val resultG = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>accessorBackedWriteableExtensionProperty<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::accessorBackedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTB>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Not found recorded type for pcla { otvOwner ->        otvOwner.constrain(ScopeOwner(Value))        // should fix OTv := ScopeOwner<Value> for scope navigation        otvOwner.provide()::accessorBackedWriteableExtensionProperty        // expected: Interloper </: ScopeOwner<Value>        otvOwner.constrain(Interloper)    }]")!>resultG<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTB)>")!>resultG<!>
 
     // ISSUE: KT-72031
-    val resultH = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>pcla<!> { otvOwner ->
+    val resultH = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegatedReadableExtensionProperty<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::delegatedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTC>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Not found recorded type for pcla { otvOwner ->        otvOwner.constrain(ScopeOwner(Value))        // should fix OTv := ScopeOwner<Value> for scope navigation        otvOwner.provide()::delegatedReadableExtensionProperty        // expected: Interloper </: ScopeOwner<Value>        otvOwner.constrain(Interloper)    }]")!>resultH<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTC)>")!>resultH<!>
 
     // ISSUE: KT-72031
-    val resultI = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>pcla<!> { otvOwner ->
+    val resultI = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegatedWriteableExtensionProperty<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::delegatedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTD>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Not found recorded type for pcla { otvOwner ->        otvOwner.constrain(ScopeOwner(Value))        // should fix OTv := ScopeOwner<Value> for scope navigation        otvOwner.provide()::delegatedWriteableExtensionProperty        // expected: Interloper </: ScopeOwner<Value>        otvOwner.constrain(Interloper)    }]")!>resultI<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTD)>")!>resultI<!>
 }
 
 
