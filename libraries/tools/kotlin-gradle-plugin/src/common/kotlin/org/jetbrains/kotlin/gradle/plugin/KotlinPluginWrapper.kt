@@ -189,7 +189,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
 abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
-    open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
+    open val projectExtensionClass: KClass<out KotlinBaseExtension> get() = KotlinProjectExtension::class
 
     abstract val pluginVariant: String
 

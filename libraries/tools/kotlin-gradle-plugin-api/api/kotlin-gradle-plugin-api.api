@@ -195,6 +195,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsE
 	public abstract fun getNative ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
 	public abstract fun getApiVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLanguageVersion ()Lorg/gradle/api/provider/Property;
@@ -642,6 +645,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHier
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$DefaultImpls {
 	public static synthetic fun apply$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public static synthetic fun default$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer {
+	public abstract fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public abstract synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
+	public abstract fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun jvmToolchain (I)V
+	public abstract fun jvmToolchain (Lorg/gradle/api/Action;)V
+	public abstract fun setKotlinDaemonJvmArgs (Ljava/util/List;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig {

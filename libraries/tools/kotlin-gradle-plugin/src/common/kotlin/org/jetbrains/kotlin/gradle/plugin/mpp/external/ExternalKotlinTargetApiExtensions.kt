@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 
 @ExternalKotlinTargetApi
+@Suppress("Deprecation")
 val KotlinTopLevelExtension.project: Project
     get() = this.project

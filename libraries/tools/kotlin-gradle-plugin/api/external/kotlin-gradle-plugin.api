@@ -298,11 +298,25 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;ZILjava/lang/Object;)V
 }
 
-public class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
+public class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
+	public field coreLibrariesVersion Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun explicitApi ()V
+	public fun explicitApiWarning ()V
+	public fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public fun getCoreLibrariesVersion ()Ljava/lang/String;
+	public fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public final fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
+	public fun getProject ()Lorg/gradle/api/Project;
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public fun jvmToolchain (I)V
+	public fun jvmToolchain (Lorg/gradle/api/Action;)V
+	public fun setCoreLibrariesVersion (Ljava/lang/String;)V
+	public fun setExplicitApi (Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;)V
+	public fun setKotlinDaemonJvmArgs (Ljava/util/List;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {

@@ -15,7 +15,10 @@ package org.jetbrains.kotlin.gradle.dsl
  * }
  * ```
  */
-@KotlinGradlePluginDsl
+@Deprecated(
+    "Use KotlinBaseExtension interface instead",
+    ReplaceWith("KotlinBaseExtension")
+)
 interface KotlinTopLevelExtensionConfig {
 
     /**
