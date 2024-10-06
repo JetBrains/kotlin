@@ -328,24 +328,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinSourceSetConvention : k
 	public fun getValue (Lorg/gradle/api/NamedDomainObjectContainer;Lkotlin/reflect/KProperty;)Lorg/gradle/api/NamedDomainObjectProvider;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig {
-	public field coreLibrariesVersion Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public fun explicitApi ()V
-	public fun explicitApiWarning ()V
-	public final fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
-	public fun getCoreLibrariesVersion ()Ljava/lang/String;
-	public fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
-	public final synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
-	public final fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public final fun jvmToolchain (I)V
-	public final fun jvmToolchain (Lorg/gradle/api/Action;)V
-	public fun setCoreLibrariesVersion (Ljava/lang/String;)V
-	public fun setExplicitApi (Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;)V
-	public final fun setKotlinDaemonJvmArgs (Ljava/util/List;)V
-	public final fun useCompilerVersion (Ljava/lang/String;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/dsl/NativeCacheKind : java/lang/Enum {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheKind$Companion;
 	public static final field DYNAMIC Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheKind;

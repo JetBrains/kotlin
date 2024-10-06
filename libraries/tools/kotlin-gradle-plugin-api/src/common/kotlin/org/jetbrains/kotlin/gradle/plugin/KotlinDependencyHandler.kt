@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -256,7 +256,13 @@ interface KotlinDependencyHandler : HasProject {
 
     /**
      * Creates a dependency to an official Kotlin library with the same version that is configured
+<<<<<<< HEAD
      * in [KotlinTopLevelExtensionConfig.coreLibrariesVersion].
+||||||| parent of d8f8907bc52f (fixup! [Gradle] Add public KotlinBaseExtension interface)
+     * in [KotlinTopLevelExtension.coreLibrariesVersion].
+=======
+     * in [KotlinBaseExtension.coreLibrariesVersion].
+>>>>>>> d8f8907bc52f (fixup! [Gradle] Add public KotlinBaseExtension interface)
      *
      * Note: The created dependency should be manually added to this entity using other methods from this DSL:
      * ```
@@ -294,7 +300,13 @@ interface KotlinDependencyHandler : HasProject {
      * // equivalent to
      * implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
      * ```
+<<<<<<< HEAD
      * @param version dependency version or `null` to use the version defined in [KotlinTopLevelExtensionConfig.coreLibrariesVersion].
+||||||| parent of d8f8907bc52f (fixup! [Gradle] Add public KotlinBaseExtension interface)
+     * @param version dependency version or `null` to use the version defined in [KotlinTopLevelExtension.coreLibrariesVersion].
+=======
+     * @param version dependency version or `null` to use the version defined in [KotlinBaseExtension.coreLibrariesVersion].
+>>>>>>> d8f8907bc52f (fixup! [Gradle] Add public KotlinBaseExtension interface)
      */
     fun kotlin(simpleModuleName: String, version: String?): ExternalModuleDependency
 

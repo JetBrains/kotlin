@@ -167,7 +167,7 @@ dependencies {
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     commonImplementation(project(":native:kotlin-klib-commonizer-api")) // TODO: consider removing in KT-70247
-    commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 

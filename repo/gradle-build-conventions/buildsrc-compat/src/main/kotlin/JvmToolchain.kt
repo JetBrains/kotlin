@@ -7,8 +7,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.*
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 enum class JdkMajorVersion(
@@ -37,6 +36,8 @@ fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
     configureJavaOnlyToolchain(jdkVersion)
 
     plugins.withId("org.jetbrains.kotlin.jvm") {
+        // Update to KotlinBaseExtension once the bootstrap version will be higher than 2.1.20-dev-201
+        @Suppress("Deprecation")
         val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
         kotlinExtension.jvmToolchain {
             setupToolchain(jdkVersion)
