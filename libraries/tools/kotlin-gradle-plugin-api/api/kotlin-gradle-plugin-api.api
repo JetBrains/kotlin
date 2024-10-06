@@ -173,6 +173,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption 
 	public abstract fun option (Ljava/lang/String;Ljava/lang/String;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension : org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension {
+	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;Lorg/gradle/api/Action;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifact : org/gradle/api/Named, org/gradle/api/plugins/ExtensionAware {
 	public abstract fun getArtifactName ()Ljava/lang/String;
 	public abstract fun getModules ()Ljava/util/Set;
@@ -1156,6 +1165,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeKt {
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory {
 	public abstract fun addCompilerPluginDependency (Lorg/gradle/api/provider/Provider;)V
 	public abstract fun createCompilerJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
+	public abstract fun createKotlinAndroidExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;
 	public abstract fun createKotlinJvmExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;
 	public abstract fun createKotlinJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;
 	public abstract fun getCompilerPlugins ()Lorg/gradle/api/file/FileCollection;

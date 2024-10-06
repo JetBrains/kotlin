@@ -61,13 +61,17 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         }
     }
 
-    @Deprecated("Use API to create specific Kotlin extensions")
+    @Deprecated("Use API to create specific Kotlin extensions such as 'createKotlinJvmExtension()' or 'createKotlinAndroidExtension()'")
     override val kotlinExtension: KotlinProjectExtension by lazy {
         myProject.objects.newInstance(KotlinProjectExtension::class.java, myProject)
     }
 
     override fun createKotlinJvmExtension(): KotlinJvmExtension {
         return myProject.objects.newInstance(KotlinJvmProjectExtension::class.java, myProject)
+    }
+
+    override fun createKotlinAndroidExtension(): KotlinAndroidExtension {
+        return myProject.objects.newInstance(KotlinAndroidProjectExtension::class.java, myProject)
     }
 
     override val kaptExtension: KaptExtension by lazy {
