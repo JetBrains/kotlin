@@ -160,7 +160,10 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
 
 abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
-abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
+abstract class KotlinJvmProjectExtension @Inject constructor(
+    project: Project
+) : KotlinSingleJavaTargetExtension(project),
+    KotlinJvmExtension {
     @Suppress("DEPRECATION")
     override val target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         get() = targetFuture.getOrThrow()
@@ -174,13 +177,13 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
         project.launch(Undispatched) { targetFuture.await().body() }
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    override fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 }

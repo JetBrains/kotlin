@@ -37,7 +37,7 @@ interface KotlinJvmFactory {
      * @since 1.7.0
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use API to create specific Kotlin extensions")
+    @Deprecated("Use API to create specific Kotlin extensions such as 'createKotlinJvmExtension()'")
     val kotlinExtension: KotlinTopLevelExtensionConfig
 
     /**
@@ -46,6 +46,15 @@ interface KotlinJvmFactory {
      * @since 2.1.0
      */
     val providerFactory: ProviderFactory
+
+    /**
+     * Creates a new instance of [KotlinJvmExtension] that can be used to configure JVM compilation tasks.
+     *
+     * Note that wiring the extension configuration with tasks should be done manually.
+     *
+     * @since 2.1.0
+     */
+    fun createKotlinJvmExtension(): KotlinJvmExtension
 
     /**
      * Creates a new instance of [KotlinJvmOptionsDeprecated] that can be used to configure JVM or Android-specific compilations.
