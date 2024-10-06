@@ -1,17 +1,17 @@
 fun test() {
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        val result = <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.nullaryFunction()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ExtensionFunctionResult")!>result<!>
+        val result = otvOwner.provide().nullaryFunction()
+        <!DEBUG_INFO_EXPRESSION_TYPE("MemberFunctionResult")!>result<!>
     }
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        val result = <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.unaryFunction(SpecificCallArgument())
-        <!DEBUG_INFO_EXPRESSION_TYPE("ExtensionFunctionResult")!>result<!>
+        val result = otvOwner.provide().unaryFunction(SpecificCallArgument())
+        <!DEBUG_INFO_EXPRESSION_TYPE("MemberFunctionResult")!>result<!>
     }
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        val result = <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.unaryFunction(GeneralCallArgument())
+        val result = otvOwner.provide().unaryFunction(GeneralCallArgument())
         <!DEBUG_INFO_EXPRESSION_TYPE("ExtensionFunctionResult")!>result<!>
     }
 }

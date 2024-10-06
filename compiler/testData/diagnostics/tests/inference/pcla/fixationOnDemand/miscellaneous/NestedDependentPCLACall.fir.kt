@@ -8,19 +8,19 @@ fun testA() {
             fotvOwner.constrain(ScopeOwner())
             // ScopeOwner <: FOTv <: SOTv
 
-            sotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            sotvOwner.provide().function()
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(Interloper)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(Interloper)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
-        <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>nestedResultAA<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultAA<!>
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultAA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultAA<!>
 }
 
 fun testB() {
@@ -33,19 +33,19 @@ fun testB() {
             fotvOwner.constrain(ScopeOwner())
             // ScopeOwner <: FOTv == SOTv
 
-            fotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            fotvOwner.provide().function()
             // FOTv := SOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(Interloper)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(Interloper)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
-        <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>nestedResultBA<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultBA<!>
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultBA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultBA<!>
 
     val resultBB = PCLA { fotvOwner ->
         val nestedResultBB = nestedPCLA(fotvOwner.provideAnchor()) { sotvOwner ->
@@ -54,19 +54,19 @@ fun testB() {
             sotvOwner.constrain(ScopeOwner())
             // ScopeOwner <: SOTv == FOTv
 
-            sotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            sotvOwner.provide().function()
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(Interloper)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(Interloper)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
-        <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>nestedResultBB<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultBB<!>
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultBB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultBB<!>
 }
 
 fun testC() {
@@ -79,19 +79,19 @@ fun testC() {
             fotvOwner.constrain(ScopeOwner())
             // ScopeOwner <: FOTv <: SOTv
 
-            sotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            sotvOwner.provide().function()
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(Interloper)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(Interloper)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
-        <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>nestedResultCA<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultCA<!>
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultCA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultCA<!>
 }
 
 fun testD() {
@@ -104,19 +104,19 @@ fun testD() {
             sotvOwner.constrain(ScopeOwner())
             // ScopeOwner <: SOTv <: FOTv
 
-            fotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            fotvOwner.provide().function()
             // FOTv := SOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(Interloper)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(Interloper)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
-        <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>nestedResultDA<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultDA<!>
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultDA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultDA<!>
 }
 
 
