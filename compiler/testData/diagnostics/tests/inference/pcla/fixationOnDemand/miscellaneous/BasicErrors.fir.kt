@@ -10,7 +10,7 @@ fun test() {
     }
     pcla { otvOwner ->
         otvOwner.constrain(InferenceTarget)
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>unresolved<!>
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>unresolved<!>
     }
 }
 

@@ -4,14 +4,14 @@ fun test() {
 
         fun local() {
             // should fix OTv := ScopeOwner for scope navigation
-            otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+            otvOwner.provide().function()
         }
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
@@ -19,15 +19,15 @@ fun test() {
         class Local {
             init {
                 // should fix OTv := ScopeOwner for scope navigation
-                otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+                otvOwner.provide().function()
             }
         }
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>
 }
 
 

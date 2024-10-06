@@ -6,12 +6,12 @@ fun testA() {
     val resultAA = pcla { otvOwner, otvValue ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvValue.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvValue.function()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultAA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultAA<!>
 }
 
 fun testB() {
@@ -20,13 +20,13 @@ fun testB() {
     val resultBA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        if (false) return@pcla { otvValue -> otvValue.<!UNRESOLVED_REFERENCE!>function<!>() }
+        if (false) return@pcla { otvValue -> otvValue.function() }
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
         return@pcla { _ ->  }
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultBA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultBA<!>
 }
 
 fun testC() {
@@ -41,12 +41,12 @@ fun testC() {
     val resultCA = pcla { sotvOwner ->
         sotvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        sotvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        sotvOwner.provide().function()
         // expected: Interloper </: ScopeOwner
-        sotvOwner.constrain(Interloper)
+        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & TOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Triple<BaseType, BaseType, BaseType>")!>resultCA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>")!>resultCA<!>
 }
 
 fun testD() {
@@ -59,14 +59,14 @@ fun testD() {
     ): OT = null!!
 
     val resultDA = pcla(
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ otvOwnerA -> otvOwnerA.constrain(ScopeOwner()) }<!>,
+        { otvOwnerA -> otvOwnerA.constrain(ScopeOwner()) },
         // should fix OTv := ScopeOwner for scope navigation
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ otvOwnerB -> otvOwnerB.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>() }<!>,
+        { otvOwnerB -> otvOwnerB.provide().function() },
         // expected: Interloper </: ScopeOwner
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ otvOwnerC -> otvOwnerC.constrain(Interloper) }<!>,
+        { otvOwnerC -> otvOwnerC.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>) },
     )
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultDA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultDA<!>
 }
 
 
