@@ -10,11 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsDeprecated
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -40,6 +36,8 @@ interface KotlinJvmFactory {
      *
      * @since 1.7.0
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("Use API to create specific Kotlin extensions")
     val kotlinExtension: KotlinTopLevelExtensionConfig
 
     /**
