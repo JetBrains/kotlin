@@ -1,0 +1,3 @@
+java.lang.IllegalStateException: No symbol found for public ScopeOwner<SOT>.constructor<A>(arg: R|A|): R|ScopeOwner.InnerKlass<A, SOT>| {
+    super<R|kotlin/Any|>()
+}

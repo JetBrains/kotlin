@@ -6,60 +6,60 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().toString() // member
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
-        <!TYPE_MISMATCH!>otvOwner.provide()<!>.toString() // extension
+        otvOwner.provide().toString() // extension
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultB<!>
 
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().hashCode() // member
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
-        <!TYPE_MISMATCH!>otvOwner.provide()<!>.hashCode() // extension
+        otvOwner.provide().hashCode() // extension
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultD<!>
 
     val resultE = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().equals(ScopeOwner())
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultE<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultE<!>
 
     val resultF = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.fix()
+        otvOwner.provide().fix()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultF<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultF<!>
 }
 
 fun testSafeNavigation() {
@@ -68,40 +68,40 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.toString()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.hashCode()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultB<!>
 
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.equals(ScopeOwner())
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.fix()
+        otvOwner.provide()?.fix()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultD<!>
 }
 
 
