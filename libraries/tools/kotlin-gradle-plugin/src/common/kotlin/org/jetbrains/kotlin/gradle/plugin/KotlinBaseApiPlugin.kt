@@ -61,6 +61,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         }
     }
 
+    @Deprecated("Use API to create specific Kotlin extensions")
     override val kotlinExtension: KotlinProjectExtension by lazy {
         myProject.objects.newInstance(KotlinProjectExtension::class.java, myProject)
     }
@@ -74,7 +75,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
     )
     override fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
-        val extension = kotlinExtension
+        @Suppress("DEPRECATION") val extension = kotlinExtension
         return registerKotlinJvmCompileTask(
             taskName,
             createCompilerJvmOptions(),
@@ -89,7 +90,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     override fun registerKotlinJvmCompileTask(taskName: String, moduleName: String): TaskProvider<out KotlinJvmCompile> {
         val compilerOptions = createCompilerJvmOptions()
         compilerOptions.moduleName.convention(moduleName)
-        val extension = kotlinExtension
+        @Suppress("DEPRECATION") val extension = kotlinExtension
         return registerKotlinJvmCompileTask(
             taskName,
             compilerOptions,
@@ -123,7 +124,10 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     override fun registerKaptGenerateStubsTask(taskName: String): TaskProvider<out KaptGenerateStubs> {
         val taskConfig = KaptGenerateStubsConfig(
             myProject,
-            providerFactory.provider { kotlinExtension.explicitApi },
+            providerFactory.provider {
+                @Suppress("DEPRECATION")
+                kotlinExtension.explicitApi
+            },
             kaptExtension
         )
         return myProject.registerTask(taskName, KaptGenerateStubsTask::class.java, listOf(myProject)).also {

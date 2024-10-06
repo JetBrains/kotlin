@@ -57,7 +57,7 @@ interface KotlinTopLevelExtensionConfig {
 }
 
 /**
- * Different modes that can be used to set the level of issue reporting for [KotlinTopLevelExtensionConfig.explicitApi] option.
+ * Different modes that can be used to set the level of issue reporting for [KotlinTopLevelExtension.explicitApi] option.
  */
 enum class ExplicitApiMode(
     /**

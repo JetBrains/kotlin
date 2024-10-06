@@ -145,6 +145,7 @@ class KotlinCompileApiTest {
     @Test
     fun testTopLevelExtension() {
         @Suppress("DEPRECATION") val task = plugin.registerKotlinJvmCompileTask("customCompileKotlin", "some-module")
+        @Suppress("DEPRECATION")
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
         assertEquals(ExplicitApiMode.Strict, (task.get() as KotlinCompile).explicitApiMode.orNull)
