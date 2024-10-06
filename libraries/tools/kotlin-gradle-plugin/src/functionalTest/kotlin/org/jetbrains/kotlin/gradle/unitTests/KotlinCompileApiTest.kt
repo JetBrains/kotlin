@@ -217,4 +217,36 @@ class KotlinCompileApiTest {
 
         assertNotEquals(jvmExtension1, jvmExtension2)
     }
+
+    @Test
+    fun testCreatingAndroidExtension() {
+        val androidExtension = plugin.createKotlinAndroidExtension()
+
+        val androidTask = plugin.registerKotlinJvmCompileTask(
+            "jvmTask",
+            androidExtension.compilerOptions,
+            plugin.providerFactory.provider { androidExtension.explicitApi }
+        )
+
+        androidExtension.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        androidExtension.compilerOptions.javaParameters.set(true)
+        androidExtension.explicitApi = ExplicitApiMode.Strict
+
+        project.evaluate()
+
+        assertEquals(JvmTarget.JVM_21, androidTask.get().compilerOptions.jvmTarget.get())
+        assertEquals(true, androidTask.get().compilerOptions.javaParameters.get())
+        assertEquals(
+            ExplicitApiMode.Strict,
+            (androidTask.get() as KotlinCompile).explicitApiMode.get()
+        )
+    }
+
+    @Test
+    fun testEachUniqueCreatedAndroidExtensionUnique() {
+        val androidExtension1 = plugin.createKotlinAndroidExtension()
+        val androidExtension2 = plugin.createKotlinAndroidExtension()
+
+        assertNotEquals(androidExtension1, androidExtension2)
+    }
 }

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 /**
  * A plugin DSL extension for configuring Kotlin JVM options for the entire project.
  *
- * This extension is only available when "org.jetbrains.kotlin.jvm" plugin is applied in the project.
+ * This extension is only available when "org.jetbrains.kotlin.android" plugin is applied in the project.
  *
  * Use the extension in your build script in the `kotlin` block:
  * ```kotlin
@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
  *
  * @since 2.1.0
  */
-interface KotlinJvmExtension : KotlinBaseExtension,
+interface KotlinAndroidExtension : KotlinBaseExtension,
     HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
 
     /**
-     * An instance of [KotlinTarget] for [KotlinPlatformType.jvm] platform.
+     * An instance of [KotlinTarget] for [KotlinPlatformType.androidJvm] platform.
      */
     val target: KotlinTarget
 }

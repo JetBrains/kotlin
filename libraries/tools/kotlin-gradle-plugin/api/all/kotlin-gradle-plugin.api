@@ -152,11 +152,12 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/Kotlin2JsProjectExtension 
 	public fun target (Lkotlin/jvm/functions/Function1;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension {
+public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension {
 	public fun <init> (Lorg/gradle/api/Project;)V
-	public final fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
-	public final fun compilerOptions (Lorg/gradle/api/Action;)V
-	public final fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
+	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
+	public fun compilerOptions (Lorg/gradle/api/Action;)V
+	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
+	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
@@ -738,6 +739,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBaseApiPlugin : o
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun createCompilerJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
+	public fun createKotlinAndroidExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;
 	public fun createKotlinJvmExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;
 	public fun createKotlinJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;
 	public fun getCompilerPlugins ()Lorg/gradle/api/file/FileCollection;
