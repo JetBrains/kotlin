@@ -155,9 +155,9 @@ internal class KaFirCompilerFacility(
             // Since the order of dependency files matters, we have to use "List" here. Otherwise, we will meet a case
             // that it has a missing "inline function" when filling inline functions as a part of the JVM bytecode-gen.
             val dependencyFiles = buildList {
-                addAll(compilationPeerData.filesInPostOrder)
+                addAll(compilationPeerData.filesToCompile)
 
-                val filesAsSet = compilationPeerData.filesInPostOrder.toHashSet()
+                val filesAsSet = compilationPeerData.filesToCompile.toHashSet()
                 codeFragmentMappings?.capturedFiles?.forEach { if (it !in filesAsSet) add(it) }
 
                 // The main file needs to be the last so caches for the context declarations are populated in FIR-to-IR.
@@ -178,22 +178,32 @@ internal class KaFirCompilerFacility(
 
         val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
 
-        val inlineFuncDependencyByteArray = mutableMapOf<String, ByteArray>()
-        dependencyFiles.forEach { dependencyFile ->
+        val inlineFunDependencyBytecode = mutableMapOf<String, ByteArray>()
+
+        for (dependencyFile in dependencyFiles) {
             var compileResult: KaCompilationResult? = null
             runFir2IrForDependency(
                 listOf(dependencyFile), configuration, jvmIrDeserializer, diagnosticReporter, irGeneratorExtensions
             ) { fir2IrResult, ktFiles, dependencyConfiguration ->
-                val codegenFactory =
-                    createJvmIrCodegenFactory(dependencyConfiguration, dependencyFile is KtCodeFragment, fir2IrResult.irModuleFragment)
-                val filter = SingleFileGenerateClassFilter(dependencyFile, compilationPeerData.inlinedClasses)
-                val jvmGeneratorExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer)
+                val codegenFactory = createJvmIrCodegenFactory(
+                    configuration = dependencyConfiguration,
+                    isCodeFragment = dependencyFile is KtCodeFragment,
+                    irModuleFragment = fir2IrResult.irModuleFragment
+                )
+
                 compileResult = runJvmIrCodeGen(
-                    fir2IrResult, dependencyConfiguration, target, ktFiles, null, codegenFactory, filter, diagnosticReporter,
-                    jvmGeneratorExtensions,
-                    allowedErrorFilter,
+                    fir2IrResult = fir2IrResult,
+                    configuration = dependencyConfiguration,
+                    target = target,
+                    targetFiles = ktFiles,
+                    codeFragmentMappings = null,
+                    codegenFactory = codegenFactory,
+                    generateClassFilter = SingleFileGenerateClassFilter(dependencyFile, compilationPeerData.inlinedClasses),
+                    diagnosticReporter = diagnosticReporter,
+                    jvmGeneratorExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer),
+                    allowedErrorFilter = allowedErrorFilter,
                 ) { generationState ->
-                    inlineFuncDependencyByteArray.forEach { (className, compileResult) ->
+                    inlineFunDependencyBytecode.forEach { (className, compileResult) ->
                         generationState.inlineCache.classBytes.put(className, compileResult)
                     }
                 }
@@ -201,21 +211,21 @@ internal class KaFirCompilerFacility(
             when (compileResult) {
                 is KaCompilationResult.Success -> {
                     val artifact = compileResult as KaCompilationResult.Success
-                    artifact.output.forEach { compiledFile ->
+                    for (compiledFile in artifact.output) {
                         val path = compiledFile.path
 
                         // `GenerationState.inlineCache` uses the path to class file without ".class" as a key. For example,
                         //  - The key for `Foo` class in `com.example.foo` package is `com/example/foo/Foo`.
                         //  - The key for companion object of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Companion`.
                         //  - The key for an inner class `Inner` of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Inner`.
-                        if (!path.endsWith(".class")) return@forEach
+                        if (!path.endsWith(".class")) continue
                         val className = path.substringBeforeLast(".class")
 
-                        inlineFuncDependencyByteArray[className] = compiledFile.content
+                        inlineFunDependencyBytecode[className] = compiledFile.content
                     }
                 }
                 is KaCompilationResult.Failure -> return compileResult!!
-                null -> return@forEach
+                null -> continue
             }
         }
 
@@ -264,7 +274,7 @@ internal class KaFirCompilerFacility(
             jvmGeneratorExtensions,
             allowedErrorFilter,
         ) { generationState ->
-            inlineFuncDependencyByteArray.forEach { (className, compileResult) ->
+            inlineFunDependencyBytecode.forEach { (className, compileResult) ->
                 generationState.inlineCache.classBytes.put(className, compileResult)
             }
         }
@@ -359,8 +369,10 @@ internal class KaFirCompilerFacility(
         irGeneratorExtensions: List<IrGenerationExtension>,
         handleFir2IrResult: ((Fir2IrActualizedResult, List<KtFile>, CompilerConfiguration) -> Unit)? = null,
     ) {
-        dependencyFiles.map { Pair(it, getFullyResolvedFirFile(it)) }.groupBy { it.second.llFirSession }
-            .map { (dependencySession, dependencyFiles) ->
+        dependencyFiles
+            .map { Pair(it, getFullyResolvedFirFile(it)) }
+            .groupBy { it.second.llFirSession }
+            .forEach { (dependencySession, dependencyFileMapping) ->
                 val dependencyConfiguration = configuration.copy().apply {
                     put(CommonConfigurationKeys.USE_FIR, true)
                     put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
@@ -369,13 +381,16 @@ internal class KaFirCompilerFacility(
                 val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer)
                 val fir2IrResult = runFir2Ir(
                     dependencySession,
-                    dependencyFiles.map { it.second },
+                    dependencyFileMapping.map { it.second },
                     dependencyFir2IrExtensions,
                     diagnosticReporter,
                     dependencyConfiguration,
                     irGeneratorExtensions
                 )
-                handleFir2IrResult?.let { it(fir2IrResult, dependencyFiles.map { it.first }, dependencyConfiguration) }
+
+                if (handleFir2IrResult != null) {
+                    handleFir2IrResult(fir2IrResult, dependencyFileMapping.map { it.first }, dependencyConfiguration)
+                }
             }
     }
 
