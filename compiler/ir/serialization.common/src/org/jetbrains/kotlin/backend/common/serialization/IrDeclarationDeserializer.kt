@@ -82,12 +82,6 @@ class IrDeclarationDeserializer(
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
 
-    /**
-     * @see KotlinIrLinker.fixCallableReferences
-     */
-    internal val callableReferencesToFix: List<IrCallableReference<*>>
-        get() = bodyDeserializer.callableReferencesToFix
-
     private fun deserializeName(index: Int): Name = irInterner.name(Name.guessByFirstCharacter(libraryFile.string(index)))
 
     private val irTypeCache = hashMapOf<Int, IrType>()

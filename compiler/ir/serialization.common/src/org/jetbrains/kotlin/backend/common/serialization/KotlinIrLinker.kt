@@ -15,14 +15,16 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -211,12 +213,6 @@ abstract class KotlinIrLinker(
     }
 
     /**
-     * @see fixCallableReferences
-     */
-    private val callableReferencesToFix: Sequence<IrCallableReference<*>>
-        get() = deserializersForModules.values.asSequence().flatMap { it.callableReferencesToFix }
-
-    /**
      * KLIBs don't contain enough information for initializing the correct shape for [IrFunctionReference]s and [IrPropertyReference]s.
      *
      * For example, consider the following code:
@@ -245,17 +241,34 @@ abstract class KotlinIrLinker(
      * The same applies to [IrPropertyReference].
      *
      * Because existing KLIBs already don't contain enough information for setting the correct shape, the following hack is used:
-     * when deserializing [IrFunctionReference]s and [IrPropertyReference]s, we collect them to lists in the corresponding deserializers.
-     * Then, after linking but before the partial linkage phase, we revisit these references and update their shape from the linked target
+     * After linking but before the partial linkage phase, we visit callable references and update their shape from the linked target
      * function/property.
      *
      * See [KT-71849](https://youtrack.jetbrains.com/issue/KT-71849).
      */
     private fun fixCallableReferences() {
-        for (callableReference in callableReferencesToFix) {
-            if (callableReference.symbol.isBound) {
-                callableReference.forceUpdateShapeFromTargetSymbol()
-            }
+        deserializersForModules.values.forEach {
+            it.moduleFragment.acceptChildrenVoid(
+                object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitFunctionReference(expression: IrFunctionReference) {
+                        if (expression.symbol.isBound) {
+                            expression.forceUpdateShapeFromTargetSymbol()
+                        }
+                        expression.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitPropertyReference(expression: IrPropertyReference) {
+                        if (expression.symbol.isBound) {
+                            expression.forceUpdateShapeFromTargetSymbol()
+                        }
+                        expression.acceptChildrenVoid(this)
+                    }
+                }
+            )
         }
     }
 
