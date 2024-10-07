@@ -76,7 +76,10 @@ class BuiltinTypes {
     val doubleType: FirImplicitBuiltinTypeRef = FirImplicitDoubleTypeRef(null)
     val floatType: FirImplicitBuiltinTypeRef = FirImplicitFloatTypeRef(null)
 
+    val uByteType: FirImplicitUByteTypeRef = FirImplicitUByteTypeRef(null)
+    val uShortType: FirImplicitUShortTypeRef = FirImplicitUShortTypeRef(null)
     val uIntType: FirImplicitUIntTypeRef = FirImplicitUIntTypeRef(null)
+    val uLongType: FirImplicitULongTypeRef = FirImplicitULongTypeRef(null)
 
     val nothingType: FirImplicitBuiltinTypeRef = FirImplicitNothingTypeRef(null)
     val nullableNothingType: FirImplicitBuiltinTypeRef = FirImplicitNullableNothingTypeRef(null)
