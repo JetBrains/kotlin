@@ -88,7 +88,8 @@ class KotlinNativeLibraryImpl(
             ) { task ->
                 task.description = "Assemble ${kind.description} '$artifactName' for a target '${target.name}'."
                 task.destinationDir.set(project.layout.buildDirectory.dir("$outDir/${target.visibleName}/${buildType.visibleName}"))
-                task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
+                val enabledOnCurrentHost = target.enabledOnCurrentHostForBinariesCompilation()
+                task.enabled = enabledOnCurrentHost
                 task.baseName.set(artifactName)
                 task.optimized.set(buildType.optimized)
                 task.debuggable.set(buildType.debuggable)
@@ -99,7 +100,7 @@ class KotlinNativeLibraryImpl(
                 @Suppress("DEPRECATION")
                 task.kotlinOptions(kotlinOptionsFn)
                 task.toolOptions(toolOptionsConfigure)
-                task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(project, task.konanTarget))
+                task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget))
                 task.kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
