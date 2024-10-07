@@ -7,6 +7,8 @@
 @file:kotlin.jvm.JvmName("NumbersKt")
 package kotlin
 
+import kotlin.math.abs
+
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
@@ -37,13 +39,13 @@ public actual inline fun Float.isInfinite(): Boolean = java.lang.Float.isInfinit
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Double.isFinite(): Boolean = abs(this) <= Double.MAX_VALUE
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Float.isFinite(): Boolean = abs(this) <= Float.MAX_VALUE
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
