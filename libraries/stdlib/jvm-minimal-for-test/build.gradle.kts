@@ -9,17 +9,6 @@ plugins {
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
-val builtins by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-    attributes {
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-    }
-}
-
-dependencies {
-    builtins(project(":core:builtins"))
-}
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
 val copyCommonSources by task<Sync> {
@@ -28,6 +17,7 @@ val copyCommonSources by task<Sync> {
             "kotlin/Annotation.kt",
             "kotlin/Any.kt",
             "kotlin/Array.kt",
+            "kotlin/ArrayIntrinsics.kt",
             "kotlin/Arrays.kt",
             "kotlin/Boolean.kt",
             "kotlin/Char.kt",
@@ -70,11 +60,15 @@ val copySources by task<Sync> {
         )
     from(stdlibProjectDir.resolve("jvm/src"))
         .include(
+            "kotlin/ArrayIntrinsics.kt",
             "kotlin/Unit.kt",
             "kotlin/collections/TypeAliases.kt",
             "kotlin/enums/EnumEntriesJVM.kt",
             "kotlin/io/Serializable.kt",
         )
+
+    from(stdlibProjectDir.resolve("jvm/builtins"))
+        .include("*.kt")
 
     into(layout.buildDirectory.dir("src/jvm"))
 }
@@ -127,9 +121,12 @@ kotlin {
 }
 
 val jvmJar by tasks.existing(Jar::class) {
-    dependsOn(builtins)
     archiveAppendix = null
-    from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
+    val compileKotlinStdlib = project(":kotlin-stdlib").tasks["compileKotlinJvm"]
+    from(compileKotlinStdlib.outputs.files) {
+        includeEmptyDirs = false
+        include("**/*.kotlin_builtins")
+    }
 }
 
 publishing {
