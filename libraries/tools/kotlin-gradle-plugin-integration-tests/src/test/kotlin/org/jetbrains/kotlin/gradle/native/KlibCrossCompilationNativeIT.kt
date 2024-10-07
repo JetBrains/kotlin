@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 
 @DisplayName("Tests for checking klib cross-compilation in KGP")
 @NativeGradlePluginTests
@@ -32,8 +34,17 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
-    fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion) {
-        nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion) {
+    fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
+        nativeProject(
+            "klibCrossCompilationWithGradlePropertyEnabled",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                // This line is required for the custom konan home location, to check that it is downloaded,
+                // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
+                // but please don't remove while `kotlin.native.enableKlibsCrossCompilation` flag exists.
+                konanDataDir = konanDataDir
+            )
+        ) {
             build(":compileKotlinIosArm64") {
                 KotlinTestUtils.assertEqualsToFile(
                     projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()

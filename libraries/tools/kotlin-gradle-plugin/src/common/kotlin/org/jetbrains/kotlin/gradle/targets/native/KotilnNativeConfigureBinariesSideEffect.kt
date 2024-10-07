@@ -110,11 +110,12 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
         task.dependsOn(compilation.compileTaskProvider)
 
-        task.enabled = binary.konanTarget.enabledOnCurrentHostForBinariesCompilation()
+        val enabledOnCurrentHost = binary.konanTarget.enabledOnCurrentHostForBinariesCompilation()
+        task.enabled = enabledOnCurrentHost
         task.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
         task.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
-        task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(project, task.konanTarget))
+        task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget))
 
         // Frameworks actively uses symlinks.
         // Gradle build cache transforms symlinks into regular files https://guides.gradle.org/using-build-cache/#symbolic_links

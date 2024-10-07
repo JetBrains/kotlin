@@ -14,7 +14,6 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -35,6 +34,7 @@ internal sealed class KotlinNativeProvider(project: Project) {
     //Using DirectoryProperty causes the native directory to be included in the configuration cache input.
     internal val bundleDirectory: Provider<String> = project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath }
 }
+
 /**
  * This Kotlin Native provider is a stub for the cases, when Kotlin Native tasks are not supported to be built.
  */
@@ -120,8 +120,8 @@ internal class KotlinNativeFromToolchainProvider(
         )
 }
 
-internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(project: Project, konanTarget: KonanTarget): KotlinNativeProvider {
-    if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
+internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(enabledOnCurrenHost: Boolean, konanTarget: KonanTarget, ): KotlinNativeProvider {
+    if (enabledOnCurrenHost) {
         return KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
     } else {
         return NoopKotlinNativeProvider(project)
