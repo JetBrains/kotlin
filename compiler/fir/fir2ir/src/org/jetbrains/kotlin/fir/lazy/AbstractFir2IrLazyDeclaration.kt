@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
-    IrDeclaration, IrLazyDeclarationBase, Fir2IrComponents where F : FirAnnotationContainer {
+    IrDeclaration, IrLazyDeclarationBase, Fir2IrComponents where F : FirDeclaration {
 
     val fir: F
 
@@ -27,6 +29,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
         get() = IrFactoryImpl
 
     override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+        fir.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
