@@ -32,14 +32,6 @@ internal class DefaultNativeLibraryLoader(
             if (library.versions.metadataVersion == null)
                 logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: $file")
 
-            val metadataVersion = library.metadataVersion
-            if (metadataVersion?.isCompatibleWithCurrentCompilerVersion() != true)
-                logger.errorAndExitJvmProcess(
-                    """
-                Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $file
-                Please make sure that all libraries passed to commonizer compatible metadata version ${MetadataVersion.INSTANCE}
-                """.trimIndent()
-                )
             return NativeLibrary(library)
         } catch (cause: Throwable) {
             throw NativeLibraryLoadingException(
