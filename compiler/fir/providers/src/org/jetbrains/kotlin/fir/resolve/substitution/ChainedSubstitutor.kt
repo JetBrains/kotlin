@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 
-//@ConsistentCopyVisibility
-@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR")
 data class ChainedSubstitutor private constructor(val first: ConeSubstitutor, val second: ConeSubstitutor) : ConeSubstitutor() {
     companion object {
         operator fun invoke(first: ConeSubstitutor, second: ConeSubstitutor): ConeSubstitutor {
