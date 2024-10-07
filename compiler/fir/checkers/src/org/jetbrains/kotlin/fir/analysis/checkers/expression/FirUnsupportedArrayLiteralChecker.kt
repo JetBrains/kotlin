@@ -10,22 +10,19 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
     override fun check(expression: FirArrayLiteral, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!isInsideAnnotationCall(context) &&
-            (context.callsOrAssignments.isNotEmpty() || !isInsideAnnotationClass(context))
-        ) {
+        if (!isInsideAnnotationCall(context) && !isInsideAnnotationConstructor(context)) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.UNSUPPORTED,
@@ -43,23 +40,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
         }
     }
 
-    private fun isInsideAnnotationClass(context: CheckerContext): Boolean {
-        for (declaration in context.containingDeclarations.asReversed()) {
-            if (declaration is FirRegularClass) {
-                if (declaration.isCompanion) {
-                    continue
-                }
-
-                if (declaration.classKind == ClassKind.ANNOTATION_CLASS) {
-                    return true
-                }
-            } else if (declaration is FirValueParameter || declaration is FirPrimaryConstructor) {
-                continue
-            }
-
-            break
-        }
-
-        return false
+    private fun isInsideAnnotationConstructor(context: CheckerContext): Boolean {
+        return context.findClosest<FirConstructor>()?.returnTypeRef?.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
     }
 }
