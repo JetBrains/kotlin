@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
@@ -110,7 +109,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 open class IrFileSerializer(
     private val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable,
-    private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
     private val publicAbiOnly: Boolean = false,
@@ -1166,7 +1164,7 @@ open class IrFileSerializer(
 
     private fun serializeIrClass(clazz: IrClass): ProtoClass {
         val proto = ProtoClass.newBuilder()
-            .setBase(serializeIrDeclarationBase(clazz, ClassFlags.encode(clazz, languageVersionSettings)))
+            .setBase(serializeIrDeclarationBase(clazz, ClassFlags.encode(clazz, settings.languageVersionSettings)))
             .setName(serializeName(clazz.name))
 
 

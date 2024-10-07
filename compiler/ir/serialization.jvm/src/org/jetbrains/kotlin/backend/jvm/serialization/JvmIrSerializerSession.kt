@@ -23,9 +23,10 @@ class JvmIrSerializerSession(
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
 ) : IrFileSerializer(
-    IrSerializationSettings(),
+    IrSerializationSettings(
+        languageVersionSettings = languageVersionSettings,
+    ),
     declarationTable,
-    languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {

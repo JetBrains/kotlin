@@ -47,9 +47,9 @@ class KonanIrModuleSerializer(
             KonanIrFileSerializer(
                     IrSerializationSettings(
                             compatibilityMode = compatibilityMode,
+                            languageVersionSettings = languageVersionSettings,
                     ),
                     KonanDeclarationTable(globalDeclarationTable),
-                    languageVersionSettings = languageVersionSettings,
                     bodiesOnlyForInlines = bodiesOnlyForInlines,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,

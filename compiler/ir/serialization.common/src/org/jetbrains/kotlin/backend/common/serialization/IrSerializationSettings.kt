@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+
 class IrSerializationSettings(
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
+    val languageVersionSettings: LanguageVersionSettings
 )

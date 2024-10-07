@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
-    languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
@@ -26,7 +24,6 @@ class KonanIrFileSerializer(
 ) : IrFileSerializer(
     settings,
     declarationTable,
-    languageVersionSettings,
     publicAbiOnly = publicAbiOnly,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     normalizeAbsolutePaths = normalizeAbsolutePaths,

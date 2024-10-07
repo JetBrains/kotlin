@@ -37,11 +37,11 @@ class JsIrModuleSerializer(
         JsIrFileSerializer(
             IrSerializationSettings(
                 compatibilityMode = compatibilityMode,
+                languageVersionSettings = languageVersionSettings,
             ),
             DeclarationTable(globalDeclarationTable),
             normalizeAbsolutePaths = normalizeAbsolutePaths,
             sourceBaseDirs = sourceBaseDirs,
-            languageVersionSettings = languageVersionSettings,
             jsIrFileMetadataFactory = jsIrFileMetadataFactory
         )
 }
