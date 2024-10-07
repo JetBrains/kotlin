@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -126,10 +127,15 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? 
     else -> null
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode = when {
+fun withExpectedType(
+    expectedTypeRef: FirTypeRef,
+    expectedTypeMismatchIsReportedInChecker: Boolean = false,
+    arrayLiteralPosition: ArrayLiteralPosition? = null,
+): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
-        expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
+        expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
+        arrayLiteralPosition = arrayLiteralPosition,
     )
     else -> ResolutionMode.ContextIndependent
 }
