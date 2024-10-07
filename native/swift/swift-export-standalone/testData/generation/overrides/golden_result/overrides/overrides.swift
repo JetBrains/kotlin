@@ -70,6 +70,9 @@ open class Child : overrides.Parent {
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
     }
+    open func genericReturnTypeFunc() -> [overrides.Child] {
+        return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
+    }
     open func nonoverride() -> Swift.Never {
         return Child_nonoverride(self.__externalRCRef())
     }
@@ -186,6 +189,9 @@ open class Parent : KotlinRuntime.KotlinBase {
     }
     open func finalOverrideHopFunc() -> Swift.Void {
         return Parent_finalOverrideHopFunc(self.__externalRCRef())
+    }
+    open func genericReturnTypeFunc() -> [overrides.Parent] {
+        return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
     }
     open func hopFunc() -> Swift.Void {
         return Parent_hopFunc(self.__externalRCRef())

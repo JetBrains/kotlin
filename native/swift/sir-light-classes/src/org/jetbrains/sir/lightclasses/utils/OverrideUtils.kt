@@ -22,7 +22,11 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
     is SirOptionalType -> (other as? SirOptionalType)?.let { wrappedType.isSubtypeOf(it.wrappedType) } ?: false
     is SirNominalType -> when (other) {
         is SirOptionalType -> this.isSubtypeOf(other.wrappedType)
-        is SirNominalType -> this.typeDeclaration.isSubclassOf(other.typeDeclaration)
+        is SirNominalType -> if (this.typeDeclaration == other.typeDeclaration) {
+            this.typeArguments == other.typeArguments
+        } else {
+            this.typeDeclaration.isSubclassOf(other.typeDeclaration)
+        }
         else -> false
     }
     else -> false
