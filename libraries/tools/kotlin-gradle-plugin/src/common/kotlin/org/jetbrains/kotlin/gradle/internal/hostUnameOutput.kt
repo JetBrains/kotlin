@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.internal.os.OperatingSystem
 
 internal val ProviderFactory.unameExecResult: Provider<String>
     get() {
         val cmd = exec {
-            it.executable = "uname"
-            it.args = listOf("-m")
+            if (OperatingSystem.current().isWindows){
+                it.executable = "powershell"
+                it.args = listOf("-NoProfile", "-Command", "(Get-WmiObject Win32_Processor).Architecture")
+            } else {
+                it.executable = "uname"
+                it.args = listOf("-m")
+            }
         }
 
         return cmd.standardOutput.asText.map { it.trim() }
