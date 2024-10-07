@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -68,10 +69,10 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
             +ConfigurationDirectives.WITH_STDLIB
 
             // Some tests require declarations only available in platform libraries.
-            +ConfigurationDirectives.WITH_PLATFORM_LIBS
+            +NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 
             // Fix the Kotlin/Native target used in this test. Ignore the target passed by the CI server.
-            ConfigurationDirectives.WITH_FIXED_TARGET with KonanTarget.MACOS_ARM64.name
+            NativeEnvironmentConfigurationDirectives.WITH_FIXED_TARGET with KonanTarget.MACOS_ARM64.name
 
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
 
