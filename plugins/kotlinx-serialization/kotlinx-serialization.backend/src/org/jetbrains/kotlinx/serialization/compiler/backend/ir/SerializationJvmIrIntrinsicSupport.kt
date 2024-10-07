@@ -32,18 +32,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.annotationArrayType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.doubleAnnotationArrayType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumFactoriesType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerArrayType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringArrayType
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringType
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUMS_FILE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
@@ -111,6 +105,15 @@ class SerializationJvmIrIntrinsicSupport(
     companion object {
         val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
         val kTypeType: Type = AsmTypes.K_TYPE
+        val enumFactoriesType: Type = Type.getObjectType("kotlinx/serialization/internal/${ENUMS_FILE}Kt")
+
+        val kSerializerType: Type = Type.getObjectType("kotlinx/serialization/$KSERIALIZER_CLASS")
+        val kSerializerArrayType: Type = Type.getObjectType("[Lkotlinx/serialization/$KSERIALIZER_CLASS;")
+
+        val annotationArrayType: Type = Type.getObjectType("[Ljava/lang/annotation/Annotation;")
+        val doubleAnnotationArrayType: Type = Type.getObjectType("[${annotationArrayType.descriptor}")
+        val stringType: Type = AsmTypes.JAVA_STRING_TYPE
+        val stringArrayType: Type = Type.getObjectType("[${stringType.descriptor}")
 
         val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor}${kTypeType.descriptor})${kSerializerType.descriptor}"
         val stubCallDescriptor = "(${kTypeType.descriptor})${kSerializerType.descriptor}"
@@ -613,5 +616,23 @@ class SerializationJvmIrIntrinsicSupport(
             invokespecial(serializerType.internalName, "<init>", signature.toString(), false)
         }
         return true
+    }
+
+    private fun InstructionAdapter.wrapStackValueIntoNullableSerializer() {
+        invokestatic(
+            "kotlinx/serialization/builtins/BuiltinSerializersKt", "getNullable",
+            "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
+        )
+    }
+
+    private fun <T> InstructionAdapter.fillArray(type: Type, args: List<T>, onEach: (Int, T) -> Unit) {
+        iconst(args.size)
+        newarray(type)
+        args.forEachIndexed { i, arg ->
+            dup()
+            iconst(i)
+            onEach(i, arg)
+            astore(type)
+        }
     }
 }
