@@ -5,11 +5,37 @@
 
 package kotlin.script.experimental.jvmhost.repl.k2
 
-/**
- * Interface for all REPL snippets, that makes it easier to inject the ReplState.
- *
- * TODO Should it be `$replState` to make it explicit that it is an internal variable and prevent potential clashes?
- */
+import kotlin.reflect.*
+import kotlin.reflect.full.createType
+
 interface ExecutableReplSnippet {
-    suspend fun execute(replState: ReplState)
+    /**
+     * Evaluates this snippet based on the current state of the REPL.
+     */
+    suspend fun evaluate(`$replState`: ReplState)
+}
+
+/**
+ * Just a helper function for now that makes it easier to create a mock property.
+ * This should be replaced by the compiler creating this output in the final
+ * implementation.
+ */
+inline fun <reified T> createMockProperty(name: String): KProperty<T> {
+    return object: KProperty<T> {
+        override val annotations: List<Annotation> = emptyList()
+        override val getter: KProperty.Getter<T> get() = TODO()
+        override val isAbstract: Boolean = false
+        override val isConst: Boolean = false
+        override val isFinal: Boolean = false
+        override val isLateinit: Boolean = false
+        override val isOpen: Boolean = false
+        override val isSuspend: Boolean = false
+        override val name: String = name
+        override val parameters: List<KParameter> = emptyList()
+        override val returnType: KType get() = T::class.createType()
+        override val typeParameters: List<KTypeParameter> = emptyList()
+        override val visibility: KVisibility? = null
+        override fun call(vararg args: Any?): T { TODO() }
+        override fun callBy(args: Map<KParameter, Any?>): T { TODO() }
+    }
 }

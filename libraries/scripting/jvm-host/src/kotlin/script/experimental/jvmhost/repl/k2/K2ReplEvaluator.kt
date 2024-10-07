@@ -27,48 +27,31 @@ class K2ReplEvaluator: ReplEvaluator<CompiledSnippet, EvaluatedSnippet> {
         configuration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<EvaluatedSnippet>> {
 
-        // Fow now, we are misusing the API and assume that the entire snippet
-        // chain should be evaluated. This is not how the current
-        // API is being used.
-        val snippets = snippet.toList { it }
+        // Fow now, we are assuming that `snippet` always only contain one element.
+        // Unclear if we can keep this invariant going forward
+        val snippetElement = snippet.get()
+        var snippetResults: LinkedSnippetImpl<EvaluatedSnippet>? = null
 
         // Construct a starting ReplState and run through the entire code
         // In a real use case, the ReplState should be part of a ReplSession
         // and preserved for the lifetime of the repl, so it can be parsed into
         // new code being run
         val state = ReplState()
-        var snippetResults: LinkedSnippetImpl<EvaluatedSnippet>? = null
-        snippets.forEachIndexed { i, el ->
-            val snippetClass: KClass<*> = el.getClass(configuration).valueOrThrow()
-            val snippetObj = snippetClass.createInstance() as ExecutableReplSnippet
-            snippetObj.execute(state)
-
-            // Return all intermediate results for now. We probably need to rethink this
-            // Only the last snippet will have a return value due to each statement being
-            // it its own snippet
-            val result = if (i == snippets.lastIndex) {
-                KJvmEvaluatedSnippet(
-                    compiledSnippet = el,
-                    configuration = configuration,
-                    result = ResultValue.Unit(
-                        scriptClass = snippetClass,
-                        scriptInstance = snippetObj,
-                    )
-                )
-            } else {
-                val cellIndex: Int = configuration[ScriptEvaluationConfiguration.cellIndex]!!
-                val resultValue = state.getOutput(cellIndex)
-                KJvmEvaluatedSnippet(
-                    compiledSnippet = el,
-                    configuration = configuration,
-                    result = resultValue ?: ResultValue.Unit(
-                        scriptClass = snippetClass,
-                        scriptInstance = snippetObj,
-                    )
-                )
-            }
-            snippetResults = snippetResults.add(result)
+        val snippetClass: KClass<*> = snippetElement.getClass(configuration).valueOrThrow()
+        val snippetObj = snippetClass.createInstance() as ExecutableReplSnippet
+        try {
+            snippetObj.evaluate(state)
+        } catch (e: Throwable) {
+            state.setErrorOutput(ResultValue.Error(error = e, scriptClass = snippetClass::class))
         }
-        return snippetResults!!.asSuccess()
+
+        val resultValue = state.getLastOutput()
+        val snippetResult = KJvmEvaluatedSnippet(
+            compiledSnippet = snippetElement,
+            configuration = configuration,
+            result = resultValue
+        )
+        snippetResults = snippetResults.add(snippetResult)
+        return snippetResults.asSuccess()
     }
 }
