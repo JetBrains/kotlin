@@ -545,4 +545,39 @@ class Strings {
         assertPrints(withUSThousandsSeparator, "12,345")
     }
 
+    @Sample
+    fun replaceWithExpression() {
+        val text = "The events are on 15-09-2024 and 16-10-2024."
+        // Regex to match dates in dd-mm-yyyy format
+        val dateRegex = "(?<day>\\d{2})-(?<month>\\d{2})-(?<year>\\d{4})".toRegex()
+        // Replacement expression that puts day, month and year values in the ISO 8601 recommended yyyy-mm-dd format
+        val replacement = "\${year}-\${month}-\${day}"
+
+        // Replacing all occurrences of dates from dd-mm-yyyy to yyyy-mm-dd format
+        assertPrints(text.replace(dateRegex, replacement), "The events are on 2024-09-15 and 2024-10-16.")
+
+        // One can also reference the matched groups by index
+        assertPrints(text.replace(dateRegex, "$3-$2-$1"), "The events are on 2024-09-15 and 2024-10-16.")
+
+        // Using a backslash to include the special character '$' as a literal in the result
+        assertPrints(text.replace(dateRegex, "$3-\\$2-$1"), "The events are on 2024-\$2-15 and 2024-\$2-16.")
+    }
+
+    @Sample
+    fun replaceFirstWithExpression() {
+        val text = "The events are on 15-09-2024 and 16-10-2024."
+        // Regex to match dates in dd-mm-yyyy format
+        val dateRegex = "(?<day>\\d{2})-(?<month>\\d{2})-(?<year>\\d{4})".toRegex()
+        // Replacement expression that puts day, month and year values in the ISO 8601 recommended yyyy-mm-dd format
+        val replacement = "\${year}-\${month}-\${day}"
+
+        // Replacing the first occurrence of a date from dd-mm-yyyy to yyyy-mm-dd format
+        assertPrints(text.replaceFirst(dateRegex, replacement), "The events are on 2024-09-15 and 16-10-2024.")
+
+        // One can also reference the matched groups by index
+        assertPrints(text.replaceFirst(dateRegex, "$3-$2-$1"), "The events are on 2024-09-15 and 16-10-2024.")
+
+        // Using a backslash to include the special character '$' as a literal in the result
+        assertPrints(text.replaceFirst(dateRegex, "$3-\\$2-$1"), "The events are on 2024-\$2-15 and 16-10-2024.")
+    }
 }

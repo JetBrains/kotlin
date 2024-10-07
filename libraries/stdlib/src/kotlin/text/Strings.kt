@@ -756,11 +756,13 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
 // public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
 
 /**
- * Returns a new string obtained by replacing each substring of this char sequence that matches the given regular expression
- * with the given [replacement].
+ * Replaces all occurrences of the given regular expression [regex] in this char sequence
+ * with the specified [replacement] expression.
  *
- * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
- * literally escape it with the [kotlin.text.Regex.Companion.escapeReplacement] method.
+ * This is a convenience function that is equivalent to `regex.replace(this, replacement)`.
+ * For details about its behaviour and the substitution syntax of [replacement] expression, refer to [Regex.replace].
+ *
+ * @sample samples.text.Strings.replaceWithExpression
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
@@ -775,9 +777,13 @@ public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchR
     regex.replace(this, transform)
 
 /**
- * Replaces the first occurrence of the given regular expression [regex] in this char sequence with specified [replacement] expression.
+ * Replaces the first occurrence of the given regular expression [regex] in this char sequence
+ * with the specified [replacement] expression.
  *
- * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
+ * This is a convenience function that is equivalent to `regex.replaceFirst(this, replacement)`.
+ * For details about its behaviour and the substitution syntax of [replacement] expression, refer to [Regex.replaceFirst].
+ *
+ * @sample samples.text.Strings.replaceFirstWithExpression
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
