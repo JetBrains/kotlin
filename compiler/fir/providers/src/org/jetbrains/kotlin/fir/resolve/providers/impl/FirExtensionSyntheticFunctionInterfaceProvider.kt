@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -88,15 +90,24 @@ class FirBuiltinSyntheticFunctionInterfaceProviderImpl internal constructor(
  */
 class FirStdlibBuiltinSyntheticFunctionInterfaceProvider internal constructor(
     session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider,
-) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider) {
+) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider), FirSessionComponent {
     private val generatedClassesList = mutableListOf<FirRegularClass>()
     val generatedClasses: List<FirRegularClass>
         get() = generatedClassesList
+
+    init {
+        @OptIn(SessionConfiguration::class)
+        session.register(FirStdlibBuiltinSyntheticFunctionInterfaceProvider::class, this)
+    }
 
     override fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
         return super.createSyntheticFunctionInterface(classId, kind)?.also { generatedClassesList.add(it.fir) }
     }
 }
+
+// It's not nullable because it should be used only in stdlib compilation mode in special places
+// If it's accessed but not initialized, then it's a bug
+val FirSession.stdlibSyntheticFunctionInterfacesSymbolProvider: FirStdlibBuiltinSyntheticFunctionInterfaceProvider by FirSession.sessionComponentAccessor()
 
 /*
  * Provides kotlin.FunctionN, kotlin.coroutines.SuspendFunctionN, kotlin.reflect.KFunctionN and kotlin.reflect.KSuspendFunctionN

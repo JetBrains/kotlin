@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirStdlibBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.stdlibSyntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -154,9 +152,10 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     ) {
         return emptyList()
     }
-    val symbolProvider =
-        (symbolProvider as FirCachingCompositeSymbolProvider).providers.filterIsInstance<FirStdlibBuiltinSyntheticFunctionInterfaceProvider>()
-            .single()
+    // FIR compiler always has a single library session, otherwise it's an initialization error
+    // TODO: But probably Kotlin IDE may have multiple library session, figure out that and fix if needed
+    val librarySession = moduleData.dependencies.single { it.session.kind == FirSession.Kind.Library }.session
+    val symbolProvider = librarySession.stdlibSyntheticFunctionInterfacesSymbolProvider
 
     return createSyntheticFiles(
         this@createFilesWithBuiltinsSyntheticDeclarationsIfNeeded.moduleData,
