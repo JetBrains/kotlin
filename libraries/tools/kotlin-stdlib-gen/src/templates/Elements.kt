@@ -610,7 +610,7 @@ object Elements : TemplateGroupBase() {
         specialFor(CharSequences) {
             sample("samples.text.Strings.find")
         }
-        specialFor(CharSequences) {
+        specialFor(ArraysOfUnsigned) {
             sample("samples.collections.Collections.Elements.find")
         }
         returns("T?")
