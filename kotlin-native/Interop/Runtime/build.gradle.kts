@@ -14,6 +14,8 @@ plugins {
     id("native-dependencies")
 }
 
+val library = solib("callbacks")
+
 native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
@@ -33,7 +35,7 @@ native {
     }
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
-    target(solib("callbacks"), objSet) {
+    target(library, objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
@@ -41,7 +43,7 @@ native {
               "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
     }
-    tasks.named(solib("callbacks")).configure {
+    tasks.named(library).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
         dependsOn(nativeDependencies.libffiDependency)
     }
@@ -81,14 +83,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
     }
 }
 
-val nativelibs by tasks.registering(Sync::class) {
-    val callbacksSolib = solib("callbacks")
-    dependsOn(callbacksSolib)
-
-    from(layout.buildDirectory.dir(callbacksSolib))
-    into(layout.buildDirectory.dir("nativelibs"))
-}
-
 val nativeLibs by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -99,5 +93,7 @@ val nativeLibs by configurations.creating {
 }
 
 artifacts {
-    add(nativeLibs.name, nativelibs)
+    add(nativeLibs.name, layout.buildDirectory.dir(library)) {
+        builtBy(library)
+    }
 }

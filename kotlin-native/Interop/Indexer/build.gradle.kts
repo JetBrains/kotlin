@@ -11,6 +11,15 @@ plugins {
     id("native-dependencies")
 }
 
+val nativeLibsForTest by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
 dependencies {
     api(project(":kotlin-stdlib"))
     api(project(":kotlin-native:Interop:Runtime"))
@@ -19,6 +28,8 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":compiler:util"))
+    nativeLibsForTest(project(":kotlin-native:libclangInterop", "nativeLibs"))
+    nativeLibsForTest(project(":kotlin-native:Interop:Runtime", "nativeLibs"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -39,15 +50,23 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
-tasks.withType<Test>().configureEach {
-    val projectsWithNativeLibs = listOf(
-            project(":kotlin-native:libclangInterop"),
-            project(":kotlin-native:Interop:Runtime")
+open class TestArgumentProvider @Inject constructor(
+        objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val nativeLibraries: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    override fun asArguments(): Iterable<String> = listOf(
+            "-Djava.library.path=${nativeLibraries.files.joinToString(File.pathSeparator) { it.parentFile.absolutePath }}"
     )
-    dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })
+}
+
+tasks.withType<Test>().configureEach {
     dependsOn(nativeDependencies.llvmDependency)
-    systemProperty("java.library.path", projectsWithNativeLibs.joinToString(File.pathSeparator) {
-        it.layout.buildDirectory.dir("nativelibs").get().asFile.absolutePath
+    jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
+        nativeLibraries.from(nativeLibsForTest)
     })
 
     systemProperty("kotlin.native.llvm.libclang", "${nativeDependencies.llvmPath}/" + if (HostManager.hostIsMingw) {

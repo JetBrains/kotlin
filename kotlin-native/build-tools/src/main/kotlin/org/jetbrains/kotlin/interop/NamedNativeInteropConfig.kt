@@ -10,12 +10,18 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.*
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -23,6 +29,20 @@ import org.jetbrains.kotlin.konan.target.Platform
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.utils.capitalized
 import java.io.File
+import javax.inject.Inject
+
+private open class StubGeneratorArgumentProvider @Inject constructor(
+        objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val nativeLibraries: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    override fun asArguments(): Iterable<String> = listOf(
+            "-Djava.library.path=${nativeLibraries.files.joinToString(File.pathSeparator) { it.parentFile.absolutePath }}"
+    )
+}
 
 class NamedNativeInteropConfig(
         private val project: Project,
@@ -136,16 +156,13 @@ class NamedNativeInteropConfig(
             notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
             dependsOn(project.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
             dependsOn(project.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
-            dependsOn(":kotlin-native:libclangInterop:nativelibs")
-            dependsOn(":kotlin-native:Interop:Runtime:nativelibs")
             classpath = project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CONFIGURATION)
             mainClass = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs("-ea")
+            jvmArgumentProviders.add(project.objects.newInstance<StubGeneratorArgumentProvider>().apply {
+                nativeLibraries.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_NATIVE_LIBS_CONFIGURATION))
+            })
             systemProperties(mapOf(
-                    "java.library.path" to project.files(
-                            project.project(":kotlin-native:libclangInterop").layout.buildDirectory.dir("nativelibs"),
-                            project.project(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs"),
-                    ).asPath,
                     // Set the konan.home property because we run the cinterop tool not from a distribution jar
                     // so it will not be able to determine this path by itself.
                     "konan.home" to project.nativeProtoDistribution.root.asFile.absolutePath,

@@ -10,6 +10,8 @@ plugins {
     id("native-dependencies")
 }
 
+val library = solib("clangstubs")
+
 val libclangextProject = project(":kotlin-native:libclangext")
 val libclangextTask = libclangextProject.path + ":build"
 val libclangextDir = libclangextProject.layout.buildDirectory.get().asFile
@@ -107,7 +109,7 @@ native {
     val objSet = arrayOf(sourceSets["main-c"]!!.transform(".c" to ".$obj"),
             sourceSets["main-cpp"]!!.transform(".cpp" to ".$obj"))
 
-    target(solib("clangstubs"), *objSet) {
+    target(library, *objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags(
                 "-shared",
@@ -116,16 +118,8 @@ native {
     }
 }
 
-tasks.named(solib("clangstubs")).configure {
+tasks.named(library).configure {
     dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
-}
-
-val nativelibs by tasks.registering(Sync::class) {
-    val clangstubsSolib = solib("clangstubs")
-    dependsOn(clangstubsSolib)
-
-    from(layout.buildDirectory.dir(clangstubsSolib))
-    into(layout.buildDirectory.dir("nativelibs"))
 }
 
 kotlinNativeInterop {
@@ -161,7 +155,9 @@ val nativeLibs by configurations.creating {
 }
 
 artifacts {
-    add(nativeLibs.name, nativelibs)
+    add(nativeLibs.name, layout.buildDirectory.dir(library)) {
+        builtBy(library)
+    }
 }
 
 // Please note that list of headers should be fixed manually.
