@@ -173,6 +173,8 @@ class DependencyDownloader(
             "The destination file is a directory: ${destination.canonicalPath}. Remove it and try again."
         }
 
+        println("Downloading dependency $source to $destination")
+
         var attempt = 1
         var waitTime = 0L
         val handleException = { e: Exception ->
@@ -181,7 +183,7 @@ class DependencyDownloader(
             }
             attempt++
             waitTime += attemptIntervalMs
-            println("Cannot download a dependency: $e\n" +
+            println("Cannot download a dependency $source: $e\n" +
                     "Waiting ${waitTime.toDouble() / 1000} sec and trying again (attempt: $attempt/$maxAttempts).")
             // TODO: Wait better
             Thread.sleep(waitTime)
