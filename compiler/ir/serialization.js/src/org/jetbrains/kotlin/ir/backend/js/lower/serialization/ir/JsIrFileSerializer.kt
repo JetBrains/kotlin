@@ -23,10 +23,7 @@ class JsIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
-) : IrFileSerializer(
-    settings,
-    declarationTable,
-) {
+) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isExportIgnoreDeclaration()
     override fun backendSpecificMetadata(irFile: IrFile) = jsIrFileMetadataFactory.createJsIrFileMetadata(irFile)

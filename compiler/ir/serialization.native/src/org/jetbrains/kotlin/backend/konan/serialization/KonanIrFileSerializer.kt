@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
-) : IrFileSerializer(
-    settings,
-    declarationTable,
-) {
+) : IrFileSerializer(settings, declarationTable) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {

@@ -764,10 +764,10 @@ open class IrFileSerializer(
     private fun serializeVarargElement(element: IrVarargElement): ProtoVarargElement {
         val proto = ProtoVarargElement.newBuilder()
         when (element) {
-            is IrExpression
-            -> proto.expression = serializeExpression(element)
-            is IrSpreadElement
-            -> proto.spreadElement = serializeSpreadElement(element)
+            is IrExpression,
+                -> proto.expression = serializeExpression(element)
+            is IrSpreadElement,
+                -> proto.spreadElement = serializeSpreadElement(element)
             else -> error("Unknown vararg element kind")
         }
         return proto.build()
@@ -1285,10 +1285,11 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry = ProtoFileEntry.newBuilder()
-        .setName(entry.matchAndNormalizeFilePath())
-        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
-        .build()
+    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry =
+        ProtoFileEntry.newBuilder()
+            .setName(entry.matchAndNormalizeFilePath())
+            .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
+            .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
     open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
