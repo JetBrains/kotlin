@@ -1,33 +1,28 @@
 // LANGUAGE: +ForbidCompanionInLocalInnerClass
 
-val TLObjectExpression = object {
-    inner class Inner {
-        companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
-    }
-}
-
 fun run(block: () -> Unit) {
     return block()
 }
 
 fun tlFun() {
-    object {
+    class Local {
         inner class Inner {
             companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
         }
     }
 
     run {
-        object {
+        class Local {
             inner class Inner {
-                companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
+                companion
+                <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
             }
         }
     }
 }
 
 val lambda = {
-    object {
+    class Local {
         inner class Inner {
             companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
         }
@@ -35,7 +30,7 @@ val lambda = {
 }
 
 val anonymous = fun() {
-    object {
+    class Local {
         inner class Inner {
             companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
         }
@@ -45,39 +40,20 @@ val anonymous = fun() {
 class Class {
     var propSetGet: Int
         get() {
-            object {
+            class Local1 {
                 inner class Inner {
-                    companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
+                    companion
+                    <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
                 }
             }
             return propSetGet
         }
         set(arg: Int) {
             propSetGet = arg
-            object {
+            class Local2 {
                 inner class Inner {
                     companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
                 }
             }
         }
-    val propObjectExpr = object {
-        inner class Inner {
-            companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
-        }
-    }
-    val propObjectExprNested = object {
-        inner class OuterInner {
-            inner class Inner {
-                companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
-            }
-        }
-    }
-}
-
-<!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
-    object {
-        inner class Inner {
-            companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_ERROR!>object<!>
-        }
-    }
 }

@@ -6675,6 +6675,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("companionInInnerOfLocalClass.kt")
+      public void testCompanionInInnerOfLocalClass() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/companionInInnerOfLocalClass.kt");
+      }
+
+      @Test
+      @TestMetadata("companionInInnerOfLocalClassAfter.kt")
+      public void testCompanionInInnerOfLocalClassAfter() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/companionInInnerOfLocalClassAfter.kt");
+      }
+
+      @Test
       @TestMetadata("companionInInnerOfObjectExpression.kt")
       public void testCompanionInInnerOfObjectExpression() {
         runTest("compiler/testData/diagnostics/tests/classObjects/companionInInnerOfObjectExpression.kt");

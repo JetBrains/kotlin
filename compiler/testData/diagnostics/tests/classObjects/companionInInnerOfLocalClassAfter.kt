@@ -1,33 +1,28 @@
 // LANGUAGE: +ForbidCompanionInLocalInnerClass
 
-val TLObjectExpression = object {
-    inner class Inner {
-        companion object
-    }
-}
-
 fun run(block: () -> Unit) {
     return block()
 }
 
 fun tlFun() {
-    object {
+    class Local {
         inner class Inner {
             companion object
         }
     }
 
     run {
-        object {
+        class Local {
             inner class Inner {
-                companion object
+                companion
+                object
             }
         }
     }
 }
 
-val <!EXPOSED_PROPERTY_TYPE!>lambda<!> = {
-    object {
+val lambda = {
+    class Local {
         inner class Inner {
             companion object
         }
@@ -35,7 +30,7 @@ val <!EXPOSED_PROPERTY_TYPE!>lambda<!> = {
 }
 
 val anonymous = fun() {
-    object {
+    class Local {
         inner class Inner {
             companion object
         }
@@ -45,39 +40,20 @@ val anonymous = fun() {
 class Class {
     var propSetGet: Int
         get() {
-            object {
+            class Local1 {
                 inner class Inner {
-                    companion object
+                    companion
+                    object
                 }
             }
             return propSetGet
         }
         set(arg: Int) {
             propSetGet = arg
-            object {
+            class Local2 {
                 inner class Inner {
                     companion object
                 }
             }
         }
-    val propObjectExpr = object {
-        inner class Inner {
-            companion object
-        }
-    }
-    val propObjectExprNested = object {
-        inner class OuterInner {
-            inner class Inner {
-                companion object
-            }
-        }
-    }
-}
-
-<!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
-    object {
-        inner <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Inner {
-            companion object
-        }
-    }
 }
