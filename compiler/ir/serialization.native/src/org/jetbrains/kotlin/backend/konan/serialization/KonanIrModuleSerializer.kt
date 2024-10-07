@@ -51,8 +51,8 @@ class KonanIrModuleSerializer(
                             publicAbiOnly = publicAbiOnly,
                             sourceBaseDirs = sourceBaseDirs,
                             normalizeAbsolutePaths = normalizeAbsolutePaths,
+                            bodiesOnlyForInlines = bodiesOnlyForInlines,
                     ),
                     KonanDeclarationTable(globalDeclarationTable),
-                    bodiesOnlyForInlines = bodiesOnlyForInlines,
             )
 }

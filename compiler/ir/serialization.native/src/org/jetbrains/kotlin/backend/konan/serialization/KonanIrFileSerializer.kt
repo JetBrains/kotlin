@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
-    bodiesOnlyForInlines: Boolean = false,
 ) : IrFileSerializer(
     settings,
     declarationTable,
-    bodiesOnlyForInlines = bodiesOnlyForInlines,
 ) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {

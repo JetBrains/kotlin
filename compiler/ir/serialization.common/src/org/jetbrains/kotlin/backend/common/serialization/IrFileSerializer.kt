@@ -109,7 +109,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 open class IrFileSerializer(
     private val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable,
-    private val bodiesOnlyForInlines: Boolean = false,
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
@@ -1076,7 +1075,7 @@ open class IrFileSerializer(
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
-        if (!bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {
+        if (!settings.bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {
             function.body?.let { proto.body = serializeIrStatementBody(it) }
         }
         isInsideInline = isInsideInlineBefore
@@ -1137,7 +1136,7 @@ open class IrFileSerializer(
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
-        if (!(bodiesOnlyForInlines &&
+        if (!(settings.bodiesOnlyForInlines &&
                     (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
                     (field.initializer?.expression !is IrConst))
         ) {
@@ -1307,7 +1306,7 @@ open class IrFileSerializer(
         val parent = member.parent
         require(parent is IrClass)
         if (backendSpecificSerializeAllMembers(parent)) return true
-        if (bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
+        if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
         if (skipIfPrivate(member)) {
             return false

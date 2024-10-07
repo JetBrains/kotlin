@@ -22,12 +22,10 @@ object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
 class JsIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
-    bodiesOnlyForInlines: Boolean = false,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(
     settings,
     declarationTable,
-    bodiesOnlyForInlines = bodiesOnlyForInlines,
 ) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isExportIgnoreDeclaration()

@@ -25,9 +25,9 @@ class JvmIrSerializerSession(
 ) : IrFileSerializer(
     IrSerializationSettings(
         languageVersionSettings = languageVersionSettings,
+        bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     ),
     declarationTable,
-    bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
 ) {
     init {
         assert(mode != JvmSerializeIrMode.NONE)
