@@ -413,7 +413,6 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
             diagnostic.severity
         )
     ) return@flatMap emptyList()
-    if (!diagnostic.isValid) return@flatMap emptyList()
     diagnostic.toMetaInfos(
         module,
         file,
