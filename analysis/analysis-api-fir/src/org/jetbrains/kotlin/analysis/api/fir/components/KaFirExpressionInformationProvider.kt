@@ -180,6 +180,9 @@ internal class KaFirExpressionInformationProvider(
             is KtPropertyDelegate ->
                 parent.expression == child
 
+            is KtWhenEntryGuard ->
+                parent.getExpression() == child
+
             !is KtExpression ->
                 errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
                     withPsiEntry("parent", parent)

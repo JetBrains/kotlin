@@ -1102,6 +1102,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("kt72315.kt")
+  public void testKt72315() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/kt72315.kt");
+  }
+
+  @Test
   @TestMetadata("labelledReturn.kt")
   public void testLabelledReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledReturn.kt");
