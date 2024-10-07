@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -21,16 +21,16 @@ object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
 }
 
 class JsIrFileSerializer(
+    settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
-    compatibilityMode: CompatibilityMode,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(
+    settings,
     declarationTable,
-    compatibilityMode = compatibilityMode,
     languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     normalizeAbsolutePaths = normalizeAbsolutePaths,

@@ -108,8 +108,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommo
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 
 open class IrFileSerializer(
+    private val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable,
-    private val compatibilityMode: CompatibilityMode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
@@ -206,7 +206,11 @@ open class IrFileSerializer(
     /* ------- IdSignature ------------------------------------------------------ */
 
     private fun protoIdSignature(declaration: IrDeclaration, recordInSignatureClashDetector: Boolean): Int {
-        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector)
+        val idSig = declarationTable.signatureByDeclaration(
+            declaration,
+            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+            recordInSignatureClashDetector
+        )
         return idSignatureSerializer.protoIdSignature(idSig)
     }
 
@@ -1366,7 +1370,11 @@ open class IrFileSerializer(
             }
 
             val byteArray = serializeDeclaration(it).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector = false)
+            val idSig = declarationTable.signatureByDeclaration(
+                it,
+                settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                recordInSignatureClashDetector = false
+            )
             require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 

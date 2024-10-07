@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -23,8 +23,8 @@ class JvmIrSerializerSession(
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
 ) : IrFileSerializer(
+    IrSerializationSettings(),
     declarationTable,
-    compatibilityMode = CompatibilityMode.CURRENT,
     languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()

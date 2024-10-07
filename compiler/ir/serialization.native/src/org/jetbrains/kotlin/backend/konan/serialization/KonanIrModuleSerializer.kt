@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -44,10 +45,12 @@ class KonanIrModuleSerializer(
 
     override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
             KonanIrFileSerializer(
+                    IrSerializationSettings(
+                            compatibilityMode = compatibilityMode,
+                    ),
                     KonanDeclarationTable(globalDeclarationTable),
                     languageVersionSettings = languageVersionSettings,
                     bodiesOnlyForInlines = bodiesOnlyForInlines,
-                    compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
                     publicAbiOnly = publicAbiOnly
