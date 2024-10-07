@@ -12471,8 +12471,13 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<T>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12484,8 +12489,13 @@ public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Byte>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12497,8 +12507,13 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Short>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12510,8 +12525,13 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Int>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12523,8 +12543,13 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Long>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12536,8 +12561,13 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Float>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12549,8 +12579,13 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Double>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12562,8 +12597,13 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Boolean>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
@@ -12575,8 +12615,13 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<Char>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
