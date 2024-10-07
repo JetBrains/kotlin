@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.util.getChildren
 
@@ -89,7 +90,18 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
         null -> null
         // todo this code is buggy. psi for fake declarations (e.g. ImplicitConstructor, EnumGeneratedDeclaration) means a completely different thing
         //  KT-63751
-        is KtPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        is KtPsiSourceElement -> {
+            val modifierListOwner = psi as? KtModifierListOwner
+
+            // TODO: drop in the context of KT-72295
+            // The check is required in the Analysis API mode as in this case property accessor
+            // has the containing property as a source
+            if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
+                return null
+            }
+
+            modifierListOwner?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        }
         is KtLightSourceElement -> {
             val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
