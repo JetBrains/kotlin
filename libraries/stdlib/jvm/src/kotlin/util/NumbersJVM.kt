@@ -37,13 +37,13 @@ public actual inline fun Float.isInfinite(): Boolean = java.lang.Float.isInfinit
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Double.isFinite(): Boolean = java.lang.Double.isFinite(this)
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Float.isFinite(): Boolean = java.lang.Float.isFinite(this)
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
