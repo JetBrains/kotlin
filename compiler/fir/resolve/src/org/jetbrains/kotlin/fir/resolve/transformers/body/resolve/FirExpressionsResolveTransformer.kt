@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument.VarargArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -607,7 +608,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         ResolutionMode.WithExpectedType(
                             it.toFirResolvedTypeRef(),
                             forceFullCompletion = false,
-                            fromAnnotationCallArgument = true,
+                            arrayLiteralPosition = ArrayLiteralPosition.AnnotationArgument,
                         )
                     } ?: ResolutionMode.ContextDependent
 
