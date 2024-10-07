@@ -11691,6 +11691,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("deprecatedGenericType.kt")
+      public void testDeprecatedGenericType() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedGenericType.kt");
+      }
+
+      @Test
       @TestMetadata("deprecatedHidden.kt")
       public void testDeprecatedHidden() {
         runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHidden.kt");
