@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
@@ -197,17 +198,6 @@ open class IrFileSerializer(
 
     private fun serializeName(name: Name): Int = serializeString(name.toString())
 
-    /* ------- IdSignature ------------------------------------------------------ */
-
-    private fun protoIdSignature(declaration: IrDeclaration, recordInSignatureClashDetector: Boolean): Int {
-        val idSig = declarationTable.signatureByDeclaration(
-            declaration,
-            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-            recordInSignatureClashDetector
-        )
-        return idSignatureSerializer.protoIdSignature(idSig)
-    }
-
     /* ------- IrSymbols -------------------------------------------------------- */
 
     companion object {
@@ -254,15 +244,24 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val symbolKind = protoSymbolKind(symbol)
+        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
+            ?: when (symbol) {
+                is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+                else -> {
+                    val declaration = symbol.owner as? IrDeclaration
+                        ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
 
-        val signatureId = when {
-            symbol is IrFileSymbol -> idSignatureSerializer.protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
-            else -> {
-                val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
-                protoIdSignature(declaration, recordInSignatureClashDetector = isDeclared)
+                    // Compute the signature:
+                    declarationTable.signatureByDeclaration(
+                        declaration,
+                        settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                        recordInSignatureClashDetector = isDeclared
+                    )
+                }
             }
-        }
+
+        val signatureId = idSignatureSerializer.protoIdSignature(signature)
+        val symbolKind = protoSymbolKind(symbol)
 
         return BinarySymbolData.encode(symbolKind, signatureId)
     }

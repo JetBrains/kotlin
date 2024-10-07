@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  *   Note: This transformation is only applied to those paths that were not relativized, i.e., have no common prefixes with [sourceBaseDirs].
  * @property bodiesOnlyForInlines Whether to serialize bodies of only inline functions. Effectively, this setting is only relevant to Kotlin/JVM.
  * @property shouldCheckSignaturesOnUniqueness Whether to run checks on uniqueness of generated signatures.
+ * @property reuseExistingSignaturesForSymbols Do not recompute signatures (i.e., reuse existing ones) for symbols where a signature
+ *   is already known.
  */
 class IrSerializationSettings(
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
@@ -32,4 +34,5 @@ class IrSerializationSettings(
     val normalizeAbsolutePaths: Boolean = false,
     val bodiesOnlyForInlines: Boolean = false,
     val shouldCheckSignaturesOnUniqueness: Boolean = true,
+    val reuseExistingSignaturesForSymbols: Boolean = false,
 )
