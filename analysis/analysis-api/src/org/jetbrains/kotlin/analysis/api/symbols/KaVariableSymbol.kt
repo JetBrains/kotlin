@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtProperty
 
 public sealed class KaVariableSymbol :
     KaCallableSymbol(),
@@ -204,6 +206,8 @@ public sealed class KaPropertySymbol :
     public abstract val isFromPrimaryConstructor: Boolean
     public abstract val isOverride: Boolean
     public abstract val isStatic: Boolean
+    public val isExternal: Boolean
+        get() = (psi as? KtProperty)?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true
 
     /**
      * Value which is provided for as property initializer.
