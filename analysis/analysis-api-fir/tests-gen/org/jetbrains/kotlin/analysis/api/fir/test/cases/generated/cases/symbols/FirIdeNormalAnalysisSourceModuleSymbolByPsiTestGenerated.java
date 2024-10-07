@@ -179,6 +179,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("externalProperty.kt")
+  public void testExternalProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/externalProperty.kt");
+  }
+
+  @Test
   @TestMetadata("facadeWithJvmName.kt")
   public void testFacadeWithJvmName() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/facadeWithJvmName.kt");

@@ -237,6 +237,7 @@ callables: 5
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
@@ -315,6 +316,7 @@ callables: 5
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
@@ -485,6 +487,7 @@ callables: 5
     isDelegatedProperty: false
     isExpect: false
     isExtension: true
+    isExternal: false
     isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false

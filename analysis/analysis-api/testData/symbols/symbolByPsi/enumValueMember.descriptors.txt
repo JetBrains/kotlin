@@ -93,6 +93,7 @@ KaConstructorSymbol:
         isDelegatedProperty: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isFromPrimaryConstructor: true
         isLateInit: false
         isOverride: false
@@ -221,6 +222,7 @@ KaKotlinPropertySymbol:
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: true
@@ -345,6 +347,7 @@ KaKotlinPropertySymbol:
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false

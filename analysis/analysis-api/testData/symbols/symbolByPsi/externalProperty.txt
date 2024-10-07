@@ -1,7 +1,30 @@
 KaKotlinPropertySymbol:
   annotations: []
-  backingFieldSymbol: null
-  callableId: /$$result
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(/property)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(externalProperty.kt)
+    getContainingJvmClassName: null
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  callableId: /property
   compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -19,28 +42,28 @@ KaKotlinPropertySymbol:
     isOverride: false
     location: PROPERTY
     modality: FINAL
-    origin: PLUGIN
+    origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/String
     valueParameters: []
     visibility: PUBLIC
-    getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
+    getContainingFileSymbol: KaFileSymbol(externalProperty.kt)
     getContainingJvmClassName: null
-    getContainingModule: KaScriptModule "Script scriptResult.kts"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(42)
+  initializer: null
   isActual: false
   isConst: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
-  isExternal: false
+  isExternal: true
   isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
@@ -48,21 +71,21 @@ KaKotlinPropertySymbol:
   isVal: true
   location: TOP_LEVEL
   modality: FINAL
-  name: $$result
-  origin: PLUGIN
+  name: property
+  origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Int
+    type: kotlin/String
   setter: null
   typeParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
+  getContainingFileSymbol: KaFileSymbol(externalProperty.kt)
   getContainingJvmClassName: null
-  getContainingModule: KaScriptModule "Script scriptResult.kts"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: get$$result
+  javaGetterName: getProperty
   javaSetterName: null
   setterDeprecationStatus: null
