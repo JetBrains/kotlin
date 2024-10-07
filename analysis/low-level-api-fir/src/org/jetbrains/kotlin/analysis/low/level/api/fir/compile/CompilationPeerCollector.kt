@@ -61,14 +61,14 @@ class CompilationPeerData(
      *  - A is main source module. A has dependency on source module libraries B and C.
      *  - B contains an inline function. B has dependency on a source module library C.
      *  - C contains an inline function.
-     *  - [filesInPostOrder] returned by [CompilationPeerCollector.process] will be {C, B, A}.
+     *  - [filesToCompile] returned by [CompilationPeerCollector.process] will be {C, B, A}.
      *
-     * More formally, i-th element of [filesInPostOrder] will not have inline-dependency on any j-th element of
-     * [filesInPostOrder], where j > i.
+     * More formally, i-th element of [filesToCompile] will not have inline-dependency on any j-th element of
+     * [filesToCompile], where j > i.
      *
      * This list does not contain duplicated files.
      */
-    val filesInPostOrder: List<KtFile>,
+    val filesToCompile: List<KtFile>,
 
     /** Local classes inlined as a part of inline functions. */
     val inlinedClasses: Set<KtClassOrObject>
@@ -97,11 +97,24 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
         if (containingKtFile.isCompiled || containingKtFile in collectedFiles) return
 
         if (!processed.add(declaration)) {
-            throw CyclicInlineDependencyException("Inline functions have a cyclic dependency:\n${
-                processed.map { fir ->
-                    "${fir.getContainingFile()?.let { "${it.packageFqName}/${it.name}" } ?: "(no containing file)"}:\n${fir.render()}"
+            val exceptionMessage = buildString {
+                appendLine("Inline functions have a cyclic dependency:")
+                for (problematicFir in processed) {
+                    val problematicFirFile = problematicFir.getContainingFile()
+                    if (problematicFirFile != null) {
+                        append('[')
+                            .append(problematicFirFile.packageFqName.asString())
+                            .append('/')
+                            .append(problematicFirFile.name)
+                            .appendLine(']')
+                    } else {
+                        appendLine("(No containing file)")
+                    }
+                    appendLine(problematicFir.render())
                 }
-            }")
+            }
+
+            throw CyclicInlineDependencyException(exceptionMessage.trim())
         }
 
         val inlineFunctionsUsedByDeclaration = mutableSetOf<FirDeclaration>()

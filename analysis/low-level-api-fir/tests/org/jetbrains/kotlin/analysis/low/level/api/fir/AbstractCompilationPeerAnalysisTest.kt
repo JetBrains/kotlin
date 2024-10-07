@@ -26,7 +26,7 @@ abstract class AbstractCompilationPeerAnalysisTest : AbstractAnalysisApiBasedTes
 
         val compilationPeerData = CompilationPeerCollector.process(firFile)
 
-        val actualItems = compilationPeerData.filesInPostOrder.map { "File " + it.name }.sorted() +
+        val actualItems = compilationPeerData.filesToCompile.map { "File " + it.name }.sorted() +
                 compilationPeerData.inlinedClasses.map { "Class " + it.name }
 
         val actualText = actualItems.joinToString(separator = "\n")
