@@ -1229,4 +1229,12 @@ object PositioningStrategies {
             return super.mark(parenthesized)
         }
     }
+
+    val DEPRECATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtConstructorCalleeExpression) element.typeReference?.let { return mark(it) }
+            if (element is KtTypeReference) return SELECTOR_BY_QUALIFIED.mark(element)
+            return REFERENCED_NAME_BY_QUALIFIED.mark(element)
+        }
+    }
 }

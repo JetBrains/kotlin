@@ -1410,6 +1410,18 @@ object LightTreePositioningStrategies {
             return super.mark(parenthesized, parenthesized.startOffset, parenthesized.endOffset, tree)
         }
     }
+
+    val DEPRECATION: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) return SELECTOR_BY_QUALIFIED.mark(node, startOffset, endOffset, tree)
+            return REFERENCED_NAME_BY_QUALIFIED.mark(node, startOffset, endOffset, tree)
+        }
+    }
 }
 
 fun KtSourceElement.hasValOrVar(): Boolean =

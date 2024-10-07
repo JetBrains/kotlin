@@ -145,38 +145,38 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val MISSING_STDLIB_CLASS by error<PsiElement>()
         val NO_THIS by error<PsiElement>()
 
-        val DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("reference")
             parameter<String>("message")
             isSuppressible = true
         }
 
-        val DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val DEPRECATION by warning<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("reference")
             parameter<String>("message")
         }
 
-        val VERSION_REQUIREMENT_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
-            parameter<Symbol>("reference")
-            parameter<VersionRequirement.Version>("version")
-            parameter<String>("currentVersion")
-            parameter<String>("message")
-        }
-
-        val VERSION_REQUIREMENT_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val VERSION_REQUIREMENT_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("reference")
             parameter<VersionRequirement.Version>("version")
             parameter<String>("currentVersion")
             parameter<String>("message")
         }
 
-        val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val VERSION_REQUIREMENT_DEPRECATION by warning<PsiElement>(PositioningStrategy.DEPRECATION) {
+            parameter<Symbol>("reference")
+            parameter<VersionRequirement.Version>("version")
+            parameter<String>("currentVersion")
+            parameter<String>("message")
+        }
+
+        val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")
             parameter<String>("message")
             isSuppressible = true
         }
-        val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")
             parameter<String>("message")

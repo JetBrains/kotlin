@@ -206,6 +206,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
     )
 
+    val DEPRECATION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DEPRECATION,
+        PositioningStrategies.DEPRECATION
+    )
+
     val WHEN_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.WHEN_EXPRESSION,
         PositioningStrategies.WHEN_EXPRESSION

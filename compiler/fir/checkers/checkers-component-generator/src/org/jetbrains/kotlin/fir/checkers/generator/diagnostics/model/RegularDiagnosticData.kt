@@ -127,6 +127,7 @@ enum class PositioningStrategy {
     CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
     PROPERTY_DELEGATE_BY_KEYWORD,
     OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
+    DEPRECATION,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.$name"
