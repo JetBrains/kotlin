@@ -45,7 +45,6 @@ PERFORMANCE_INLINE KShort  Kotlin_Float_toShort(KFloat a) { return (KShort) Kotl
 
 PERFORMANCE_INLINE KBoolean Kotlin_Float_isNaN(KFloat a)          { return isnan(a); }
 PERFORMANCE_INLINE KBoolean Kotlin_Float_isInfinite(KFloat a)          { return isinf(a); }
-PERFORMANCE_INLINE KBoolean Kotlin_Float_isFinite(KFloat a)          { return isfinite(a); }
 
 //--- Double ------------------------------------------------------------------//
 
@@ -65,7 +64,6 @@ PERFORMANCE_INLINE KLong Kotlin_Double_toLong(KDouble a) {
 
 ALWAYS_INLINE KBoolean Kotlin_Double_isNaN(KDouble a)          { return isnan(a); }
 ALWAYS_INLINE KBoolean Kotlin_Double_isInfinite(KDouble a)          { return isinf(a); }
-ALWAYS_INLINE KBoolean Kotlin_Double_isFinite(KDouble a)          { return isfinite(a); }
 
 //--- Bit operations ---------------------------------------------------------//
 
