@@ -48,11 +48,11 @@ class KonanIrModuleSerializer(
                     IrSerializationSettings(
                             compatibilityMode = compatibilityMode,
                             languageVersionSettings = languageVersionSettings,
+                            publicAbiOnly = publicAbiOnly,
                     ),
                     KonanDeclarationTable(globalDeclarationTable),
                     bodiesOnlyForInlines = bodiesOnlyForInlines,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    publicAbiOnly = publicAbiOnly
             )
 }

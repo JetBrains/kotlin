@@ -20,11 +20,9 @@ class KonanIrFileSerializer(
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>,
-    publicAbiOnly: Boolean = false,
 ) : IrFileSerializer(
     settings,
     declarationTable,
-    publicAbiOnly = publicAbiOnly,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs

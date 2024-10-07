@@ -9,5 +9,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 class IrSerializationSettings(
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
+    val publicAbiOnly: Boolean = false,
 )

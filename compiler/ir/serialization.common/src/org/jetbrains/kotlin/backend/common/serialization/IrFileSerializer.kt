@@ -111,7 +111,6 @@ open class IrFileSerializer(
     private val declarationTable: DeclarationTable,
     private val bodiesOnlyForInlines: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
-    private val publicAbiOnly: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
@@ -1013,7 +1012,10 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = if (publicAbiOnly && !isInsideInline) 0L else serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            coordinates = if (settings.publicAbiOnly && !isInsideInline)
+                0L
+            else
+                serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
@@ -1076,7 +1078,7 @@ open class IrFileSerializer(
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
-        if (!bodiesOnlyForInlines || function.isInline || (publicAbiOnly && isInsideInline)) {
+        if (!bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {
             function.body?.let { proto.body = serializeIrStatementBody(it) }
         }
         isInsideInline = isInsideInlineBefore
@@ -1224,7 +1226,12 @@ open class IrFileSerializer(
 
     private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
         val proto = ProtoErrorDeclaration.newBuilder()
-            .setCoordinates(if (publicAbiOnly) 0L else serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
+            .setCoordinates(
+                if (settings.publicAbiOnly)
+                    0L
+                else
+                    serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset)
+            )
         return proto.build()
     }
 
@@ -1293,7 +1300,8 @@ open class IrFileSerializer(
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
-        publicAbiOnly && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
+        settings.publicAbiOnly
+                && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
                 // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
                 && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
 
@@ -1383,7 +1391,12 @@ open class IrFileSerializer(
             proto.addDeclarationId(sigIndex)
         }
 
-        proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !(publicAbiOnly && protoBodyArray.isEmpty())))
+        proto.setFileEntry(
+            serializeFileEntry(
+                file.fileEntry,
+                includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+            )
+        )
 
         // TODO: is it Konan specific?
 
