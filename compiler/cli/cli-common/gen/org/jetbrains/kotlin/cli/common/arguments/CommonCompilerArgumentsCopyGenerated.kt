@@ -54,6 +54,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.noInline = from.noInline
     to.nonLocalBreakContinue = from.nonLocalBreakContinue
     to.optIn = from.optIn?.copyOf()
+    to.outputBuiltinsMetadata = from.outputBuiltinsMetadata
     to.phasesToDump = from.phasesToDump?.copyOf()
     to.phasesToDumpAfter = from.phasesToDumpAfter?.copyOf()
     to.phasesToDumpBefore = from.phasesToDumpBefore?.copyOf()
