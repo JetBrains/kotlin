@@ -52,7 +52,7 @@ class WithIndexLoopHeader(
                 ownsIndexVariable = false
                 incrementIndexStatement = null
             } else {
-                indexVariable = scope.createTmpVariable(
+                indexVariable = scope.createTemporaryVariable(
                     irInt(0),
                     nameHint = "index",
                     isMutable = true

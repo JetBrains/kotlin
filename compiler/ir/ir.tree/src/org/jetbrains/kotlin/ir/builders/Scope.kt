@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -80,6 +81,24 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             origin, startOffset, endOffset
         ).apply {
             initializer = irExpression
+        }
+    }
+
+    fun createTemporaryVariable(
+        irType: IrType,
+        nameHint: String? = null,
+        isMutable: Boolean = false,
+        initializer: IrExpression? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ): IrVariable {
+        return createTemporaryVariableDeclaration(
+            irType,
+            nameHint, isMutable,
+            origin, startOffset, endOffset
+        ).apply {
+            this.initializer = initializer
         }
     }
 }

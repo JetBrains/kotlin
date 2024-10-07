@@ -83,7 +83,7 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
         if (targetSymbol !is IrReturnableBlockSymbol) return expression
 
         val variable = map.getOrPut(targetSymbol) {
-            currentScope!!.scope.createTmpVariable(targetSymbol.owner.type, "tmp\$ret\$${labelCnt++}", true)
+            currentScope!!.scope.createTemporaryVariable(targetSymbol.owner.type, "tmp\$ret\$${labelCnt++}", true)
         }
 
         val builder = context.createIrBuilder(targetSymbol)

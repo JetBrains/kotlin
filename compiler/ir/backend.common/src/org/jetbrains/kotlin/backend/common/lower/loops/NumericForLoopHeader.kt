@@ -53,7 +53,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 // In the above example, if first() is a Long and last() is an Int, this creates a
                 // LongProgression so last() should be cast to a Long.
                 inductionVariable =
-                    scope.createTmpVariable(
+                    scope.createTemporaryVariable(
                         headerInfo.first.asElementType(),
                         nameHint = inductionVariableName,
                         isMutable = true,

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
@@ -329,7 +328,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                             "Not all arguments of <create> are used"
                         }
                     }
-                    val instanceVal = scope.createTmpVariable(instanceCreate, "i")
+                    val instanceVal = scope.createTemporaryVariable(instanceCreate, "i")
                     +instanceVal
 
                     assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)
