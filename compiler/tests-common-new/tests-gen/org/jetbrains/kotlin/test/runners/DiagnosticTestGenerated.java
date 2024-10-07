@@ -2245,6 +2245,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("arrayLiteralFalseNegativeInsideLambda.kt")
+      public void testArrayLiteralFalseNegativeInsideLambda() {
+        runTest("compiler/testData/diagnostics/tests/annotations/arrayLiteralFalseNegativeInsideLambda.kt");
+      }
+
+      @Test
       @TestMetadata("arrayLiteralInAnnotationCompanion_after.kt")
       public void testArrayLiteralInAnnotationCompanion_after() {
         runTest("compiler/testData/diagnostics/tests/annotations/arrayLiteralInAnnotationCompanion_after.kt");
