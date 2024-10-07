@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
 abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
+    protected val settings: IrSerializationSettings,
     protected val diagnosticReporter: IrDiagnosticReporter,
-    protected val compatibilityMode: CompatibilityMode,
-    protected val normalizeAbsolutePaths: Boolean,
-    protected val sourceBaseDirs: Collection<String>,
     private val shouldCheckSignaturesOnUniqueness: Boolean,
 ) {
     abstract fun createSerializerForFile(file: IrFile): Serializer

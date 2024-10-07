@@ -5,30 +5,21 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 class KonanIrModuleSerializer(
+        settings: IrSerializationSettings,
         diagnosticReporter: IrDiagnosticReporter,
         irBuiltIns: IrBuiltIns,
-        compatibilityMode: CompatibilityMode,
-        normalizeAbsolutePaths: Boolean,
-        sourceBaseDirs: Collection<String>,
-        private val languageVersionSettings: LanguageVersionSettings,
-        private val bodiesOnlyForInlines: Boolean = false,
-        private val publicAbiOnly: Boolean = false,
         shouldCheckSignaturesOnUniqueness: Boolean = true,
 ) : IrModuleSerializer<KonanIrFileSerializer>(
+        settings,
         diagnosticReporter,
-        compatibilityMode,
-        normalizeAbsolutePaths,
-        sourceBaseDirs,
         shouldCheckSignaturesOnUniqueness,
 ) {
 
@@ -44,15 +35,5 @@ class KonanIrModuleSerializer(
         file.fileEntry.name != NativeStandardInteropNames.cTypeDefinitionsFileName
 
     override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
-            KonanIrFileSerializer(
-                    IrSerializationSettings(
-                            compatibilityMode = compatibilityMode,
-                            languageVersionSettings = languageVersionSettings,
-                            publicAbiOnly = publicAbiOnly,
-                            sourceBaseDirs = sourceBaseDirs,
-                            normalizeAbsolutePaths = normalizeAbsolutePaths,
-                            bodiesOnlyForInlines = bodiesOnlyForInlines,
-                    ),
-                    KonanDeclarationTable(globalDeclarationTable),
-            )
+            KonanIrFileSerializer(settings, KonanDeclarationTable(globalDeclarationTable))
 }

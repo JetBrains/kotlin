@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
@@ -122,12 +123,13 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         ).serializeModule(frontendOutput.analysisResult.moduleDescriptor)
 
         val serializerIr = KonanIrModuleSerializer(
+            settings = IrSerializationSettings(
+                languageVersionSettings = configuration.languageVersionSettings,
+                normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+                sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
+            ),
             KtDiagnosticReporterWithImplicitIrBasedContext(inputArtifact.diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irPluginContext.irBuiltIns,
-            CompatibilityMode.CURRENT,
-            normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
-            sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
-            configuration.languageVersionSettings,
             shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
         ).serializedIrModule(inputArtifact.irModuleFragment)
 
@@ -194,14 +196,14 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                 shouldCheckSignaturesOnUniqueness,
             ->
             KonanIrModuleSerializer(
+                settings = IrSerializationSettings(
+                    compatibilityMode = compatibilityMode,
+                    normalizeAbsolutePaths = normalizeAbsolutePaths,
+                    sourceBaseDirs = sourceBaseDirs,
+                    languageVersionSettings = languageVersionSettings,
+                ),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = irBuiltIns,
-                compatibilityMode = compatibilityMode,
-                normalizeAbsolutePaths = normalizeAbsolutePaths,
-                sourceBaseDirs = sourceBaseDirs,
-                languageVersionSettings = languageVersionSettings,
-                bodiesOnlyForInlines = false,
-                publicAbiOnly = false,
                 shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
             )
         },

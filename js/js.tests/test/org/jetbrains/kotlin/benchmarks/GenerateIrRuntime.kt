@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -67,12 +67,10 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.Tag
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.createTempFile
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
-@OptIn(ExperimentalPathApi::class)
 @Tag("legacy-frontend")
 @Ignore
 class GenerateIrRuntime {
@@ -532,15 +530,12 @@ class GenerateIrRuntime {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         return JsIrModuleSerializer(
+            settings = IrSerializationSettings(languageVersionSettings = configuration.languageVersionSettings),
             KtDiagnosticReporterWithImplicitIrBasedContext(
                 DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 configuration.languageVersionSettings,
             ),
             irBuiltIns,
-            CompatibilityMode.CURRENT,
-            normalizeAbsolutePaths = false,
-            emptyList(),
-            configuration.languageVersionSettings,
         ).serializedIrModule(module)
     }
 
