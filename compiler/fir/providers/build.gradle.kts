@@ -17,3 +17,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+    }
+}
