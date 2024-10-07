@@ -30,6 +30,86 @@ class SetOperationsTest {
         assertTrue(listOf<Int>().subtract(listOf(1)).none())
     }
 
+    @Test fun subtractFromIntArray() {
+        assertEquals(listOf(1, 3), intArrayOf(1, 3).subtract(listOf(5)).toList())
+        assertEquals(listOf(1, 3), intArrayOf(1, 3, 5).subtract(listOf(5)).toList())
+        assertTrue(intArrayOf(1, 3, 5).subtract(listOf(1, 3, 5)).none())
+        assertTrue(intArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromLongArray() {
+        assertEquals(listOf(1L, 3L), longArrayOf(1L, 3L).subtract(listOf(5L)).toList())
+        assertEquals(listOf(1L, 3L), longArrayOf(1L, 3L, 5L).subtract(listOf(5L)).toList())
+        assertTrue(longArrayOf(1L, 3L, 5L).subtract(listOf(1L, 3L, 5L)).none())
+        assertTrue(longArrayOf().subtract(listOf(1L)).none())
+    }
+
+    @Test fun subtractFromShortArray() {
+        assertEquals(listOf(1.toShort(), 3.toShort()), shortArrayOf(1, 3).subtract(listOf(5.toShort())).toList())
+        assertEquals(listOf(1.toShort(), 3.toShort()), shortArrayOf(1, 3, 5).subtract(listOf(5.toShort())).toList())
+        assertTrue(shortArrayOf(1, 3, 5).subtract(listOf(1.toShort(), 3.toShort(), 5.toShort())).none())
+        assertTrue(shortArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromByteArray() {
+        assertEquals(listOf(1.toByte(), 3.toByte()), byteArrayOf(1, 3).subtract(listOf(5.toByte())).toList())
+        assertEquals(listOf(1.toByte(), 3.toByte()), byteArrayOf(1, 3, 5).subtract(listOf(5.toByte())).toList())
+        assertTrue(byteArrayOf(1, 3, 5).subtract(listOf(1.toByte(), 3.toByte(), 5.toByte())).none())
+        assertTrue(byteArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromCharArray() {
+        assertEquals(listOf('a', 'c'), charArrayOf('a', 'c').subtract(listOf('e')).toList())
+        assertEquals(listOf('a', 'c'), charArrayOf('a', 'c', 'e').subtract(listOf('e')).toList())
+        assertTrue(charArrayOf('a', 'c', 'e').subtract(listOf('a', 'c', 'e')).none())
+        assertTrue(charArrayOf().subtract(listOf('a')).none())
+    }
+
+    @Test fun subtractFromFloatArray() {
+        assertEquals(listOf(1f, 3f), floatArrayOf(1f, 3f).subtract(listOf(5f)).toList())
+        assertEquals(listOf(1f, 3f), floatArrayOf(1f, 3f, 5f).subtract(listOf(5f)).toList())
+        assertTrue(floatArrayOf(1f, 3f, 5f).subtract(listOf(1f, 3f, 5f)).none())
+        assertTrue(floatArrayOf().subtract(listOf(1f)).none())
+    }
+
+    @Test fun subtractFromDoubleArray() {
+        assertEquals(listOf(1.0, 3.0), doubleArrayOf(1.0, 3.0).subtract(listOf(5.0)).toList())
+        assertEquals(listOf(1.0, 3.0), doubleArrayOf(1.0, 3.0, 5.0).subtract(listOf(5.0)).toList())
+        assertTrue(doubleArrayOf(1.0, 3.0, 5.0).subtract(listOf(1.0, 3.0, 5.0)).none())
+        assertTrue(doubleArrayOf().subtract(listOf(1.0)).none())
+    }
+
+    @Test fun subtractFromArray() {
+        data class O(val x: Int)
+        assertEquals(listOf(O(1), O(3)), arrayOf(O(1), O(3)).subtract(listOf(O(5))).toList())
+        assertEquals(listOf(O(1), O(3)), arrayOf(O(1), O(3), O(5)).subtract(listOf(O(5))).toList())
+        assertTrue(arrayOf(O(1), O(3), O(5)).subtract(listOf(O(1), O(3), O(5))).none())
+        assertTrue(arrayOf<O>().subtract(listOf(O(1))).none())
+    }
+
+    @Test
+    fun subtractIdentitySetFromArray() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(c), arrayOf(a, b, c).subtract(IdentitySet(a, b)))
+        assertEquals(setOf(c), arrayOf(c, b, a).subtract(IdentitySet(a, b)))
+    }
+
+    @Test fun subtractFromIdentitySet() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(c), IdentitySet(c, b, a).subtract(IdentitySet(a, b)))
+        assertEquals(setOf(c), IdentitySet(a, b, c).subtract(IdentitySet(a, b)))
+    }
+
     @Test fun intersect() {
         assertTrue(listOf(1, 3).intersect(listOf(5)).none())
         assertEquals(listOf(5), listOf(1, 3, 5).intersect(listOf(5)).toList())

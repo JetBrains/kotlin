@@ -171,9 +171,14 @@ object SetOps : TemplateGroupBase() {
         returns("Set<T>")
         body {
             """
-            val set = this.toMutableSet()
-            set.removeAll(other)
-            return set
+            val otherCollection = other.convertToListIfNotCollection()
+            val result = mutableSetOf<T>()
+            for (e in this) {
+                if (!otherCollection.contains(e)) {
+                    result.add(e)
+                }
+            }
+            return result
             """
         }
     }

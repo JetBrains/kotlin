@@ -1720,9 +1720,14 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
  * The returned set preserves the element iteration order of the original collection.
  */
 public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.removeAll(other)
-    return set
+    val otherCollection = other.convertToListIfNotCollection()
+    val result = mutableSetOf<T>()
+    for (e in this) {
+        if (!otherCollection.contains(e)) {
+            result.add(e)
+        }
+    }
+    return result
 }
 
 /**
