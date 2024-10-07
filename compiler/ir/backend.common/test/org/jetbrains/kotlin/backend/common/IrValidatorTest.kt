@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
@@ -741,6 +743,35 @@ class IrValidatorTest {
     }
 
     @Test
+    fun `not validated, if vararg param of type Array of String does not have varargElementType=String`() {
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        val param = function.addValueParameter(Name.identifier("v"), TestIrBuiltins.arrayOfStringType)
+        param.varargElementType = TestIrBuiltins.anyType
+        val file = createIrFile()
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Vararg type=kotlin.Array<kotlin.String> is expected to be an array of its underlying varargElementType=kotlin.Any
+                    VALUE_PARAMETER name:v index:0 type:kotlin.Array<kotlin.String> varargElementType:kotlin.Any [vararg]
+                      inside FUN name:foo visibility:public modality:FINAL <> (v:kotlin.Array<kotlin.String>) returnType:kotlin.Any
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `not validated, if passed vararg of type BooleanArray does not have varargElementType=Boolean`() {
         val function = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
@@ -776,6 +807,50 @@ class IrValidatorTest {
                       inside CALL 'public final fun foo (vararg v: kotlin.Boolean): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:foo visibility:public modality:FINAL <> (v:kotlin.BooleanArray) returnType:kotlin.Any
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 10, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `not validated, if passed vararg of type Array of String does not have varargElementType=String`() {
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        val param = function.addValueParameter(Name.identifier("v"), TestIrBuiltins.arrayOfStringType)
+        param.varargElementType = TestIrBuiltins.stringType
+
+        val body = IrFactoryImpl.createBlockBody(5, 24)
+        val vararg = IrVarargImpl(9, 20, TestIrBuiltins.arrayOfStringType, TestIrBuiltins.anyType)
+        val functionCall =
+            IrCallImpl(
+                6, 23, TestIrBuiltins.anyType, function.symbol,
+                typeArgumentsCount = 0,
+            ).apply {
+                putValueArgument(0, vararg)
+            }
+        body.statements.add(functionCall)
+        function.body = body
+
+        val file = createIrFile()
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Vararg type=kotlin.Array<kotlin.String> is expected to be an array of its underlying varargElementType=kotlin.Any
+                    VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.Any
+                      inside CALL 'public final fun foo (vararg v: kotlin.String): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:foo visibility:public modality:FINAL <> (v:kotlin.Array<kotlin.String>) returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null)
@@ -905,6 +980,8 @@ private object TestIrBuiltins : IrBuiltIns() {
     val uintArray: IrClassSymbol by builtinClass("UIntArray")
     val ulongArray: IrClassSymbol by builtinClass("ULongArray")
     val booleanArrayType: IrType by builtinType(booleanArray)
+    val array: IrClassSymbol by builtinClass("Array")
+    val arrayOfStringType: IrType by builtinType(array, listOf(stringType))
 
     override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
         get() = missingBuiltIn()
@@ -1075,6 +1152,13 @@ private object TestIrBuiltins : IrBuiltIns() {
 
     private fun builtinType(klass: IrClassSymbol, nullable: Boolean = false) = object {
         val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), emptyList(), emptyList())
+        operator fun getValue(thisRef: TestIrBuiltins, property: KProperty<*>): IrType {
+            return type
+        }
+    }
+
+    private fun builtinType(klass: IrClassSymbol, arguments: List<IrTypeArgument>, nullable: Boolean = false) = object {
+        val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), arguments, emptyList())
         operator fun getValue(thisRef: TestIrBuiltins, property: KProperty<*>): IrType {
             return type
         }
