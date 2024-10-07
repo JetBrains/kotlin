@@ -607,7 +607,12 @@ object Elements : TemplateGroupBase() {
     } builder {
         inline(Inline.Only)
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
-        sample("samples.collections.Collections.Elements.find")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.find")
+        }
+        specialFor(CharSequences) {
+            sample("samples.collections.Collections.Elements.find")
+        }
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }

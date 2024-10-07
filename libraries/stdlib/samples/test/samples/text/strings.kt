@@ -436,6 +436,18 @@ class Strings {
     }
 
     @Sample
+    fun find() {
+        val text = "k1o2t3l4i5n6"
+
+        val firstNumberInText = text.find { it.isDigit() }
+        val firstUpperCaseInText = text.find { it.isUpperCase() }
+
+
+        assertPrints(firstNumberInText, "1")
+        assertPrints(firstUpperCaseInText, null)
+    }
+
+    @Sample
     fun last() {
         val string = "Kotlin 1.4.0"
         assertPrints(string.last(), "0")
