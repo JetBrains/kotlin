@@ -110,8 +110,6 @@ open class IrFileSerializer(
     private val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable,
     private val bodiesOnlyForInlines: Boolean = false,
-    private val normalizeAbsolutePaths: Boolean = false,
-    private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
@@ -1428,7 +1426,7 @@ open class IrFileSerializer(
         val file = File(fileName)
         val path = file.toPath()
 
-        for (base in sourceBaseDirs) {
+        for (base in settings.sourceBaseDirs) {
             if (path.startsWith(base)) {
                 return file.toRelativeString(File(base))
             }
@@ -1442,7 +1440,7 @@ open class IrFileSerializer(
             return it.replace(File.separatorChar, '/')
         }
 
-        if (!normalizeAbsolutePaths) return name
+        if (!settings.normalizeAbsolutePaths) return name
 
         return name.replace(File.separatorChar, '/')
 

@@ -11,4 +11,6 @@ class IrSerializationSettings(
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
     val languageVersionSettings: LanguageVersionSettings,
     val publicAbiOnly: Boolean = false,
+    val sourceBaseDirs: Collection<String> = emptyList(),
+    val normalizeAbsolutePaths: Boolean = false,
 )

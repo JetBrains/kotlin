@@ -23,15 +23,11 @@ class JsIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
     bodiesOnlyForInlines: Boolean = false,
-    normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(
     settings,
     declarationTable,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    normalizeAbsolutePaths = normalizeAbsolutePaths,
-    sourceBaseDirs = sourceBaseDirs
 ) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isExportIgnoreDeclaration()

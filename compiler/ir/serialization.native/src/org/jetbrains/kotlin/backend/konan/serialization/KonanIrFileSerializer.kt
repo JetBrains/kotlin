@@ -18,14 +18,10 @@ class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: DeclarationTable,
     bodiesOnlyForInlines: Boolean = false,
-    normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>,
 ) : IrFileSerializer(
     settings,
     declarationTable,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    normalizeAbsolutePaths = normalizeAbsolutePaths,
-    sourceBaseDirs = sourceBaseDirs
 ) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {

@@ -28,7 +28,6 @@ class JvmIrSerializerSession(
     ),
     declarationTable,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
-    normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {
     init {
         assert(mode != JvmSerializeIrMode.NONE)

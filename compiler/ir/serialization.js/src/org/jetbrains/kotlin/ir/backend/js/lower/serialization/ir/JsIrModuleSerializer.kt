@@ -38,10 +38,10 @@ class JsIrModuleSerializer(
             IrSerializationSettings(
                 compatibilityMode = compatibilityMode,
                 languageVersionSettings = languageVersionSettings,
+                sourceBaseDirs = sourceBaseDirs,
+                normalizeAbsolutePaths = normalizeAbsolutePaths,
             ),
             DeclarationTable(globalDeclarationTable),
-            normalizeAbsolutePaths = normalizeAbsolutePaths,
-            sourceBaseDirs = sourceBaseDirs,
             jsIrFileMetadataFactory = jsIrFileMetadataFactory
         )
 }
