@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -141,11 +138,32 @@ fun ResolutionMode.contextType(components: BodyResolveComponents): FirTypeRef? =
 }
 
 fun ResolutionMode.fullyExpandedClassFromContext(components: BodyResolveComponents, session: FirSession): FirRegularClass? =
-    contextType(components)?.coneTypeOrNull?.simplifyIntersection(session)?.toRegularClassSymbol(session)?.fir
+    contextType(components)?.coneTypeOrNull?.singleDefiniteType(session)?.toRegularClassSymbol(session)?.fir
 
-fun ConeKotlinType.simplifyIntersection(session: FirSession): ConeKotlinType? = when (this) {
-    is ConeIntersectionType -> ConeTypeIntersector.intersectTypes(session.typeContext, intersectedTypes)
-    else -> this
+fun ConeKotlinType.singleDefiniteType(session: FirSession): ConeKotlinType? {
+    if (kind != ProjectionKind.INVARIANT && kind != ProjectionKind.OUT) return null
+    return when (this) {
+        is ConeErrorType -> null
+        is ConeFlexibleType -> {
+            val lowerDefiniteType = lowerBound.singleDefiniteType(session) ?: return null
+            val upperDefiniteType = upperBound.singleDefiniteType(session) ?: return null
+            lowerDefiniteType.takeIf { it == upperDefiniteType }
+        }
+        is ConeDefinitelyNotNullType -> original.singleDefiniteType(session)
+        is ConeIntersectionType -> {
+            val withoutAny = intersectedTypes.filter { !it.isAnyOrNullableAny }
+            when (val result = ConeTypeIntersector.intersectTypes(session.typeContext, withoutAny)) {
+                is ConeIntersectionType -> null
+                else -> result.singleDefiniteType(session)
+            }
+        }
+        is ConeLookupTagBasedType -> this
+        is ConeCapturedType -> { // only <T : A>
+            if (constructor.typeParameterMarker == null) return null
+            constructor.supertypes?.singleOrNull()?.singleDefiniteType(session)
+        }
+        else -> null
+    }?.withNullability(false, session.typeContext)
 }
 
 fun withExpectedType(expectedTypeRef: FirTypeRef, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode = when {
