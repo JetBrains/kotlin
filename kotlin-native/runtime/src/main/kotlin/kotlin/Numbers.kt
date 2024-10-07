@@ -38,14 +38,12 @@ public actual external fun Float.isInfinite(): Boolean
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-@GCUnsafeCall("Kotlin_Double_isFinite")
-public actual external fun Double.isFinite(): Boolean
+public actual fun Double.isFinite(): Boolean = (toRawBits() and 0x7fffffff_ffffffffL) < 0x7ff00000_00000000L
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-@GCUnsafeCall("Kotlin_Float_isFinite")
-public actual external fun Float.isFinite(): Boolean
+public actual fun Float.isFinite(): Boolean = (toRawBits() and 0x7fffffff) < 0x7f800000
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]

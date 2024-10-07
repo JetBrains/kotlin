@@ -64,8 +64,6 @@ PERFORMANCE_INLINE KLong Kotlin_Double_toLong(KDouble a) {
 }
 
 ALWAYS_INLINE KBoolean Kotlin_Double_isNaN(KDouble a)          { return isnan(a); }
-ALWAYS_INLINE KBoolean Kotlin_Double_isInfinite(KDouble a)          { return isinf(a); }
-ALWAYS_INLINE KBoolean Kotlin_Double_isFinite(KDouble a)          { return isfinite(a); }
 
 //--- Bit operations ---------------------------------------------------------//
 
