@@ -86,7 +86,7 @@ kotlin {
     }
 
     targets {
-        fromPreset(presets.jvm, 'jvm') {
+        jvm('jvm') {
             compilations.all {
                 compileTaskProvider.configure {
                     compilerOptions {
@@ -98,7 +98,7 @@ kotlin {
         }
 
         if (HostManager.hostIsMingw) {
-            fromPreset(presets.mingwX64, 'windows') {
+            mingwX64('windows') {
                 binaries.all {
                     linkerOpts = ["-L${getMingwPath()}/lib".toString()]
                 }
@@ -111,7 +111,7 @@ kotlin {
         }
 
         if (HostManager.hostIsLinux) {
-            fromPreset(presets.linuxX64, 'linux') {
+            linuxX64('linux') {
                 compilations.main.cinterops {
                     libcurl {
                         includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
@@ -121,14 +121,14 @@ kotlin {
         }
 
         if (HostManager.hostIsMac) {
-            fromPreset(presets.macosX64, 'macosX64') {
+            macosX64('macosX64') {
                 compilations.main.cinterops {
                     libcurl {
                         includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
                     }
                 }
             }
-            fromPreset(presets.macosArm64, 'macosArm64') {
+            macosArm64('macosArm64') {
                 compilations.main.cinterops {
                     libcurl {
                         includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
@@ -136,7 +136,7 @@ kotlin {
                 }
             }
         }
-        fromPreset(presets.js, 'js') {
+        js('js') {
             compilations.main.compileTaskProvider.configure {
                 compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL
             }

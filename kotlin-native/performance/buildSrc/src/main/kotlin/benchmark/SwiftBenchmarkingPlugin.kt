@@ -7,13 +7,10 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import javax.inject.Inject
 import java.nio.file.Paths
-import java.net.URL
 import java.util.concurrent.TimeUnit
 import java.nio.file.Path
 import kotlin.reflect.KClass
@@ -68,10 +65,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         }
     }
 
-    override fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> =
+    override fun Project.determinePreset(): TargetPreset =
             defaultHostPreset(this).also { preset ->
-                logger.quiet("$project has been configured for ${preset.name} platform.")
-            } as AbstractKotlinNativeTargetPreset<*>
+                logger.quiet("$project has been configured for ${preset} platform.")
+            }
 
     override fun KotlinNativeTarget.configureNativeOutput(project: Project) {
         binaries.framework(nativeFrameworkName, listOf(project.benchmark.buildType)) {
@@ -114,7 +111,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             val process = processBuilder.start()
             val output = process.inputStream.bufferedReader().readText()
             process.waitFor(timeoutAmount, timeoutUnit)
-            return output
+            output
         } catch (e: Exception) {
             println("Couldn't run command ${this.joinToString(" ")}")
             println(e.stackTrace.joinToString("\n"))

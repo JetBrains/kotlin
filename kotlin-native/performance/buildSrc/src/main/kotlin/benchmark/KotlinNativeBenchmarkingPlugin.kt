@@ -101,7 +101,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
         get() = nativeBinary.outputFile.absolutePath
 
     override val Project.nativeLinkTask: Task
-        get() = nativeBinary.linkTask
+        get() = nativeBinary.linkTaskProvider.get()
 
     override fun configureMPPExtension(project: Project) {
         super.configureMPPExtension(project)

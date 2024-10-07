@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin
 
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -13,7 +12,6 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import java.io.File
 
@@ -29,21 +27,6 @@ internal val Project.ext: ExtraPropertiesExtension
 
 internal val Project.kotlin: KotlinMultiplatformExtension
     get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
-
-internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.macosX64: KotlinTargetPreset<*>
-    get() = getByName(::macosX64.name)
-
-internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.macosArm64: KotlinTargetPreset<*>
-    get() = getByName(::macosArm64.name)
-
-internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.linuxX64: KotlinTargetPreset<*>
-    get() = getByName(::linuxX64.name)
-
-internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.mingwX64: KotlinTargetPreset<*>
-    get() = getByName(::mingwX64.name)
-
-internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.linuxArm64: KotlinTargetPreset<*>
-    get() = getByName(::linuxArm64.name)
 
 internal val NamedDomainObjectContainer<out KotlinCompilation<*>>.main: KotlinNativeCompilation
     get() = getByName(::main.name) as KotlinNativeCompilation
