@@ -88,6 +88,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+    override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isExternal }
 
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 

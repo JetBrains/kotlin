@@ -72,6 +72,7 @@ KaValueParameterSymbol:
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isFromPrimaryConstructor: true
     isLateInit: false
     isOverride: true
