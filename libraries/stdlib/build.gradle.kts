@@ -52,13 +52,6 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
-val configurationBuiltins = resolvingConfiguration("builtins") {
-    attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
-}
-dependencies {
-    configurationBuiltins(project(":core:builtins"))
-}
-
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
@@ -81,6 +74,12 @@ kotlin {
     val diagnosticNamesArg = if (renderDiagnosticNames) "-Xrender-internal-diagnostic-names" else null
 
     explicitApi()
+
+    val tmpJar by task<Jar> {
+        dependsOn(":kotlin-stdlib:compileKotlinJvm")
+        destinationDirectory.set(layout.buildDirectory.dir("libs"))
+        archiveAppendix.set("tmp")
+    }
 
     metadata {
         compilations {
@@ -135,6 +134,7 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
+                                "-Xoutput-builtins-metadata",
                                 diagnosticNamesArg,
                             )
                         )
@@ -150,6 +150,7 @@ kotlin {
             val mainJdk7 by creating {
                 associateWith(main)
                 compileTaskProvider.configure {
+                    dependsOn(tmpJar.get())
                     this as UsesKotlinJavaToolchain
                     kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
                     compilerOptions {
@@ -363,13 +364,14 @@ kotlin {
             kotlin.srcDir("jvm/compileOnly")
         }
         val jvmMain by getting {
-            project.configurations.getByName("jvmMainCompileOnly").extendsFrom(configurationBuiltins)
+            project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
                 api("org.jetbrains:annotations:13.0")
             }
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
                 "jvm/runtime",
+                "jvm/builtins",
             )
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
@@ -377,6 +379,9 @@ kotlin {
         }
 
         val jvmMainJdk7 by getting {
+            dependencies {
+                compileOnly(files(tmpJar.get().outputs.files))
+            }
             kotlin.srcDir("jdk7/src")
         }
         val jvmMainJdk8 by getting {
@@ -625,12 +630,10 @@ tasks {
         archiveAppendix.set("metadata")
     }
     val jvmJar by existing(Jar::class) {
-        dependsOn(configurationBuiltins)
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
         manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
-        from { zipTree(configurationBuiltins.singleFile) }
         from(kotlin.jvm().compilations["mainJdk7"].output.allOutputs)
         from(kotlin.jvm().compilations["mainJdk8"].output.allOutputs)
         from(project.sourceSets["java9"].output)
