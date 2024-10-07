@@ -1801,9 +1801,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
             when (data) {
-                is ResolutionMode.WithExpectedType -> {
-                    // Default value of array parameter (Array<T> or primitive array such as IntArray, FloatArray, ...)
-                    // or argument for array parameter in annotation call.
+                is ResolutionMode.WithExpectedType if data.arrayLiteralPosition != null -> {
+                    // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
                     arrayLiteral.transformChildren(
                         transformer,
                         data.expectedType?.coneTypeOrNull?.arrayElementType()?.let { withExpectedType(it) }
@@ -1822,12 +1821,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 else -> {
                     // Other unsupported usage.
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    // We set the type to Array<Any> because arguments need to have a type during resolution of the synthetic call.
+                    // We set the arrayLiteral's type to the expect type or Array<Any>
+                    // because arguments need to have a type during resolution of the synthetic call.
                     // We remove the type so that it will be set during completion to the CST of the arguments.
                     arrayLiteral.replaceConeTypeOrNull(
-                        StandardClassIds.Array.constructClassLikeType(
-                            arrayOf(StandardClassIds.Any.constructClassLikeType())
-                        )
+                        (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.coneType
+                            ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                     )
                     val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
                         arrayLiteral,

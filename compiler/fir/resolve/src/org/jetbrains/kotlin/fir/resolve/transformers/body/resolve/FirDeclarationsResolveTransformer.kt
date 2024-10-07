@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1042,10 +1044,15 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode
     ): FirValueParameter = whileAnalysing(session, valueParameter) {
         dataFlowAnalyzer.enterValueParameter(valueParameter)
+        val insideAnnotationConstructorDeclaration =
+            (valueParameter.containingFunctionSymbol as? FirConstructorSymbol)?.resolvedReturnType?.toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
                 valueParameter,
-                withExpectedType(valueParameter.returnTypeRef)
+                withExpectedType(
+                    valueParameter.returnTypeRef,
+                    arrayLiteralPosition = if (insideAnnotationConstructorDeclaration) ArrayLiteralPosition.AnnotationParameter else null
+                )
             ) as FirValueParameter
         }
 
