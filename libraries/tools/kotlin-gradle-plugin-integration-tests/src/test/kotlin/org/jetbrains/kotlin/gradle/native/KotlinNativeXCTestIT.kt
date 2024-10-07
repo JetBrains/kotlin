@@ -16,7 +16,7 @@ import kotlin.io.path.deleteRecursively
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Integration of the Kotlin/Native XCTest support in tests")
 @NativeGradlePluginTests
-internal class XCTestIT : KGPBaseTest() {
+internal class KotlinNativeXCTestIT : KGPBaseTest() {
 
     private val devFrameworkPath by lazy { "${Xcode.findCurrent().iphonesimulatorSdkPlatform}/Developer/Library/Frameworks/" }
 
@@ -37,54 +37,26 @@ internal class XCTestIT : KGPBaseTest() {
     @DisplayName("Test bundle running under xcodebuild without the host application")
     @GradleTest
     fun testBundleWithXcodebuild(gradleVersion: GradleVersion) {
-        XCTestHelpers().use {
-            nativeProject("native-apple-test-bundle-xcode", gradleVersion) {
-                // Put the path to Developer Frameworks where XCTest.framework is located
-                buildGradleKts.replaceFirst("<PATH_TO_FRAMEWORKS>", devFrameworkPath)
-
-                // Build a project and check that a Test bundle was created
-                val xctestBundleProjectPath = "build/bin/iosSimulatorArm64/iosAppTestsDebugTestBundle/iosAppTests.xctest"
-                build("linkIosAppTestsDebugTestBundleIosSimulatorArm64", forceOutput = true) {
-                    assertDirectoryInProjectExists("build/bin/iosSimulatorArm64/iosAppTestsDebugTestBundle/iosAppTests.xctest")
-                }
-
-                // Prepare the simulator (boot it) to be able to run UI tests
-                val simulator = it.createSimulator().apply {
-                    boot()
-                }
-
-                val derivedDataPath = projectPath.resolve("iosApp/DerivedData")
-                // Build the project so that Xcode creates the whole build directory structure with application and tests
-                xcodebuild(
-                    xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
-                    scheme = "iosAppTests",
-                    destination = "generic/platform=iOS Simulator",
-                    action = XcodeBuildAction.BuildForTesting,
-                    derivedDataPath = derivedDataPath
-                )
-
-                // Copy test bundle into the Xcode build output directory
-                val destination = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator/iosAppTests.xctest")
-                destination.deleteRecursively()
-                projectPath.resolve(xctestBundleProjectPath).copyRecursively(destination)
-
-                // Now, run tests
-                xcodebuild(
-                    xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
-                    scheme = "iosAppTests",
-                    destination = "platform=iOS Simulator,id=${simulator.udid}",
-                    action = XcodeBuildAction.TestWithoutBuilding,
-                    derivedDataPath = derivedDataPath
-                )
-            }
-        }
+        testWithXcodeProject(
+            gradleVersion,
+            "native-apple-test-bundle-xcode",
+            "iosAppTests.xctest"
+        )
     }
 
     @DisplayName("Test bundle running under xcodebuild with the host application")
     @GradleTest
     fun testBundleWithXcodebuildWithHostApp(gradleVersion: GradleVersion) {
+        testWithXcodeProject(
+            gradleVersion,
+            "native-apple-test-bundle-xcode-hostapp",
+            "iosApp.app/PlugIns/iosAppTests.xctest"
+        )
+    }
+
+    private fun testWithXcodeProject(gradleVersion: GradleVersion, projectName: String, pathToBundle: String) {
         XCTestHelpers().use {
-            nativeProject("native-apple-test-bundle-xcode-hostapp", gradleVersion) {
+            nativeProject(projectName, gradleVersion) {
                 // Put the path to Developer Frameworks where XCTest.framework is located
                 buildGradleKts.replaceFirst("<PATH_TO_FRAMEWORKS>", devFrameworkPath)
 
@@ -109,8 +81,8 @@ internal class XCTestIT : KGPBaseTest() {
                     derivedDataPath = derivedDataPath
                 )
 
-                // Copy test bundle into the Xcode build output directory into Application's PlugIns directory
-                val destination = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator/iosApp.app/PlugIns/iosAppTests.xctest")
+                // Copy test bundle into the Xcode build output directory into the appropriate directory
+                val destination = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator/$pathToBundle")
                 destination.deleteRecursively()
                 projectPath.resolve(xctestBundleProjectPath).copyRecursively(destination)
 
