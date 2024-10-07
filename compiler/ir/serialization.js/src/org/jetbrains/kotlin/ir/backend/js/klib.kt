@@ -647,10 +647,10 @@ fun serializeModuleIntoKlib(
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
+                    shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                 ),
                 irDiagnosticReporter,
                 irBuiltins,
-                shouldCheckSignaturesOnUniqueness,
             ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
         },
         metadataSerializer = metadataSerializer,

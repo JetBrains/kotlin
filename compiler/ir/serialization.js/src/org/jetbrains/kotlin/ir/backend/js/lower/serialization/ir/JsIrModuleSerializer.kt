@@ -16,12 +16,11 @@ class JsIrModuleSerializer(
     settings: IrSerializationSettings,
     diagnosticReporter: IrDiagnosticReporter,
     irBuiltIns: IrBuiltIns,
-    shouldCheckSignaturesOnUniqueness: Boolean = true,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
-) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter, shouldCheckSignaturesOnUniqueness) {
+) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter) {
 
     override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(settings, DeclarationTable(globalDeclarationTable), jsIrFileMetadataFactory = jsIrFileMetadataFactory)
+        JsIrFileSerializer(settings, DeclarationTable(globalDeclarationTable), jsIrFileMetadataFactory)
 }

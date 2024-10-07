@@ -74,10 +74,10 @@ internal fun PhaseContext.firSerializerBase(
                         languageVersionSettings = languageVersionSettings,
                         bodiesOnlyForInlines = produceHeaderKlib,
                         publicAbiOnly = produceHeaderKlib,
+                        shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                     ),
                     diagnosticReporter = irDiagnosticReporter,
                     irBuiltIns = irBuiltIns,
-                    shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                 )
             },
     )

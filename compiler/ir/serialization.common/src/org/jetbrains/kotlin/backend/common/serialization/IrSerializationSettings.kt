@@ -14,4 +14,5 @@ class IrSerializationSettings(
     val sourceBaseDirs: Collection<String> = emptyList(),
     val normalizeAbsolutePaths: Boolean = false,
     val bodiesOnlyForInlines: Boolean = false,
+    val shouldCheckSignaturesOnUniqueness: Boolean = true,
 )

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.library.SerializedIrModule
 abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected val settings: IrSerializationSettings,
     protected val diagnosticReporter: IrDiagnosticReporter,
-    private val shouldCheckSignaturesOnUniqueness: Boolean,
 ) {
     abstract fun createSerializerForFile(file: IrFile): Serializer
 
@@ -40,7 +39,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
             .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
             .filter(this::backendSpecificFileFilter)
             .map(this::serializeIrFile)
-        if (shouldCheckSignaturesOnUniqueness) {
+        if (settings.shouldCheckSignaturesOnUniqueness) {
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
         return SerializedIrModule(serializedFiles)

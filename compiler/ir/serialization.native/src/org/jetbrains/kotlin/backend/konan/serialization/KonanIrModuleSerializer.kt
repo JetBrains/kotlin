@@ -16,12 +16,7 @@ class KonanIrModuleSerializer(
         settings: IrSerializationSettings,
         diagnosticReporter: IrDiagnosticReporter,
         irBuiltIns: IrBuiltIns,
-        shouldCheckSignaturesOnUniqueness: Boolean = true,
-) : IrModuleSerializer<KonanIrFileSerializer>(
-        settings,
-        diagnosticReporter,
-        shouldCheckSignaturesOnUniqueness,
-) {
+) : IrModuleSerializer<KonanIrFileSerializer>(settings, diagnosticReporter) {
 
     override val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
 

@@ -127,10 +127,10 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
                 languageVersionSettings = configuration.languageVersionSettings,
                 normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
                 sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
+                shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
             ),
             KtDiagnosticReporterWithImplicitIrBasedContext(inputArtifact.diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irPluginContext.irBuiltIns,
-            shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
         ).serializedIrModule(inputArtifact.irModuleFragment)
 
         return SerializerOutput(
@@ -201,10 +201,10 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
                     languageVersionSettings = languageVersionSettings,
+                    shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                 ),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = irBuiltIns,
-                shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
             )
         },
         inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
