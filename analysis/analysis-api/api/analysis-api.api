@@ -1026,6 +1026,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol
 	public abstract fun getHasSetter ()Z
 	public abstract fun getSetter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaPropertySetterSymbol;
 	public abstract fun isDelegatedProperty ()Z
+	public abstract fun isExternal ()Z
 	public abstract fun isFromPrimaryConstructor ()Z
 	public abstract fun isOverride ()Z
 	public abstract fun isStatic ()Z

@@ -37,6 +37,9 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
     override val isStatic: Boolean
         get() = withValidityAssertion { DescriptorUtils.isStaticDeclaration(descriptor) }
 
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor.isExternal }
+
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 
