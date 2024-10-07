@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * [toString] is not delegated by default because the [delegate] is usually not the same kind of scope as this delegating scope.
  */
-abstract class FirDelegatingContainingNamesAwareScope(protected val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
+abstract class FirDelegatingContainingNamesAwareScope(val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
     override fun getCallableNames(): Set<Name> = delegate.getCallableNames()
     override fun getClassifierNames(): Set<Name> = delegate.getClassifierNames()
     override fun mayContainName(name: Name): Boolean = delegate.mayContainName(name)

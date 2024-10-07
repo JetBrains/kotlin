@@ -321,7 +321,13 @@ internal class KaFirScopeProvider(
             val availableScopes = towerDataElement
                 .getAvailableScopes { coneType -> withSyntheticPropertiesScopeOrSelf(coneType) }
                 .flatMap { flattenFirScope(it) }
-            availableScopes.map { IndexedValue(index, it) }
+            availableScopes.map {
+                if (towerDataElement.implicitReceiver != null && it is FirContainingNamesAwareScope) {
+                    IndexedValue(index, FirNoClassifiersScope(it))
+                } else {
+                    IndexedValue(index, it)
+                }
+            }
         }
         val ktScopesWithKinds = createScopesWithKind(firScopes)
 
@@ -370,7 +376,7 @@ internal class KaFirScopeProvider(
         is FirDefaultStarImportingScope -> KaScopeKinds.DefaultStarImportingScope(indexInTower)
 
         is FirScriptDeclarationsScope -> KaScopeKinds.ScriptMemberScope(indexInTower)
-
+        is FirNoClassifiersScope -> getScopeKind(firScope.delegate, indexInTower)
         else -> unexpectedElementError("scope", firScope)
     }
 
