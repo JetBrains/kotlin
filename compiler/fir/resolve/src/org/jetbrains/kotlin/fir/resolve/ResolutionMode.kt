@@ -29,11 +29,12 @@ sealed class ResolutionMode(
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,
         /**
-         * Expected type for an annotation call argument is used for inferring array literal types.
-         * It does not produce a constraint during completion because it can contain type parameter types which aren't substituted
-         * to type variable types.
+         * Expected type is used for inferring array literal types in places where array literal syntax is supported
+         * Currently, it's an argument of annotation call or a default value of parameter in annotation class constructor
+         * `ArrayLiteralPosition.AnnotationArgument` does not produce a constraint during completion because
+         * it can contain type parameter types which aren't substituted to type variable types.
          */
-        val fromAnnotationCallArgument: Boolean = false,
+        val arrayLiteralPosition: ArrayLiteralPosition? = null,
         /**
          * It might be ok if the types turn out to be incompatible.
          * Consider the following examples with properties and their backing fields:
@@ -60,7 +61,7 @@ sealed class ResolutionMode(
             mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
             expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
             fromCast = fromCast,
-            fromAnnotationCallArgument = fromAnnotationCallArgument,
+            arrayLiteralPosition = arrayLiteralPosition,
             shouldBeStrictlyEnforced = shouldBeStrictlyEnforced,
             forceFullCompletion = forceFullCompletion
         )
@@ -70,10 +71,15 @@ sealed class ResolutionMode(
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
-                    "fromAnnotationCallArgument=${fromAnnotationCallArgument}, " +
+                    "arrayLiteralPosition=${arrayLiteralPosition}, " +
                     "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
                     "forceFullCompletion=${forceFullCompletion}, "
         }
+    }
+
+    enum class ArrayLiteralPosition {
+        AnnotationArgument,
+        AnnotationParameter,
     }
 
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode(forceFullCompletion = false) {
