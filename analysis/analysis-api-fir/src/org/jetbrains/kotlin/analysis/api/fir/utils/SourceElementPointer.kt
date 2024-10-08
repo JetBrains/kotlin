@@ -3,17 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(SuspiciousFakeSourceCheck::class)
+
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.fakeElement
 
 internal fun KtSourceElement.createPointer(): SourceElementPointer {
     return when (this) {
-        is KtFakeSourceElement -> FakePsiSourceElementPointer(this)
+        is KtFakePsiSourceElement -> FakePsiSourceElementPointer(this)
         is KtRealPsiSourceElement -> RealPsiSourceElementPointer(this)
         else -> NonPsiSourceElementPointer
     }
@@ -38,7 +41,7 @@ private class RealPsiSourceElementPointer(source: KtRealPsiSourceElement) : Sour
     }
 }
 
-private class FakePsiSourceElementPointer(source: KtFakeSourceElement) : SourceElementPointer {
+private class FakePsiSourceElementPointer(source: KtFakePsiSourceElement) : SourceElementPointer {
     private val psiPointer = SmartPointerManager.getInstance(source.psi.project).createSmartPsiElementPointer(source.psi)
     private val kind = source.kind
     private val startOffset = source.startOffset

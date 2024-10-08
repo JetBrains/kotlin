@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -55,7 +55,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
         //    (e.g. on generated methods of external enum classes (which are handled by another checker))
         // 2) reporting duplicate diagnostics
         //    (e.g. on properties with generated accessors and type parameters of classes with generated primary constructors)
-        if (declaration.source is KtFakeSourceElement) return
+        if (declaration.source?.kind is KtFakeSourceElementKind) return
 
         fun ConeKotlinType.isSupportedInJsInterop(position: Position): Boolean {
             if (isUnit || isNothing) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -29,7 +29,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
             if (declaration != outermostLambda)
                 return
 
-            val unusedParams = declaration.valueParameters.map { it.symbol }.filter { it.source !is KtFakeSourceElement }.toMutableSet()
+            val unusedParams = declaration.valueParameters.map { it.symbol }.filter { it.source?.kind !is KtFakeSourceElementKind }.toMutableSet()
             declaration.body?.accept(unusedParamsVisitor, unusedParams)
 
             unusedParams.forEach {
@@ -60,7 +60,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
                 }
 
                 val unusedParams =
-                    anonymousFunction.valueParameters.map { it.symbol }.filter { it.source !is KtFakeSourceElement }.toMutableSet()
+                    anonymousFunction.valueParameters.map { it.symbol }.filter { it.source?.kind !is KtFakeSourceElementKind }.toMutableSet()
                 data.addAll(unusedParams)
 
                 anonymousFunction.acceptChildren(this, data)
