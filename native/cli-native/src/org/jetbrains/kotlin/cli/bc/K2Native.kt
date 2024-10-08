@@ -104,23 +104,27 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
 
-        configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
-        configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-        configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
+        if (arguments.normalizeAbsolutePath)
+            configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, true)
+        if (arguments.renderInternalDiagnosticNames)
+            configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, true)
+        if (!arguments.enableSignatureClashChecks)
+            configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, false)
 
-        configuration.put(KlibConfigurationKeys.NO_DOUBLE_INLINING, arguments.noDoubleInlining)
+        if (arguments.noDoubleInlining)
+            configuration.put(KlibConfigurationKeys.NO_DOUBLE_INLINING, true)
         arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
-        configuration.put(
-            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
-            arguments.narrowedSyntheticAccessorsVisibility
-        )
-        configuration.put(
-            KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategy.parseOrDefault(
-                arguments.duplicatedUniqueNameStrategy,
-                default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
+        if (arguments.narrowedSyntheticAccessorsVisibility)
+            configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY, true)
+        arguments.duplicatedUniqueNameStrategy?.let {
+            configuration.put(
+                KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+                DuplicatedUniqueNameStrategy.parseOrDefault(
+                    it,
+                    default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
+                )
             )
-        )
+        }
 
         return environment
     }
@@ -140,10 +144,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
             }
 
-            override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
+            // runs `runKonanDriver()`, based on `configuration`, modified with parsing of `arguments`
+            override fun spawn(
+                arguments: List<String>,
+                configuration: CompilerConfiguration,
+                setupConfiguration: CompilerConfiguration.() -> Unit
+            ) {
                 val spawnedArguments = K2NativeCompilerArguments()
                 parseCommandLineArguments(arguments, spawnedArguments)
-                val spawnedConfiguration = CompilerConfiguration()
+                val spawnedConfiguration = configuration.copy()
 
                 spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 spawnedConfiguration.performanceManager = configuration.performanceManager

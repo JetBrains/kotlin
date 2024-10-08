@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -352,7 +353,10 @@ class CacheBuilder(
             makePerFileCache: Boolean,
             filesToCache: List<String>,
     ) {
-        compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+        compilationSpawner.spawn(
+                konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */,
+                CompilerConfiguration(),
+        ) {
             val libraryPath = library.libraryFile.absolutePath
             val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }

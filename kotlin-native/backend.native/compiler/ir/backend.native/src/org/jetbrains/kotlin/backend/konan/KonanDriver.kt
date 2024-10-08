@@ -51,7 +51,7 @@ private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
 interface CompilationSpawner {
     fun spawn(configuration: CompilerConfiguration)
-    fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
+    fun spawn(arguments: List<String>, configuration: CompilerConfiguration, setupConfiguration: CompilerConfiguration.() -> Unit)
 }
 
 class KonanDriver(
@@ -186,7 +186,7 @@ class KonanDriver(
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
-        compilationSpawner.spawn(emptyList()) {
+        compilationSpawner.spawn(emptyList(), configuration) {
             fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
             fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))
             // For the first stage, use "-p library" produce mode.
