@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.java.JavaBinarySourceElement
+import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -50,10 +48,8 @@ class SourceElementChecker(val context: IrPluginContext) : IrElementVisitorVoid 
                     throw AssertionError("No virtual file found: ${binaryClass.classId}")
                 }
             }
-            is JavaBinarySourceElement -> {
-                val javaClass = sourceElement.javaClass
-                (javaClass as VirtualFileBoundJavaClass).virtualFile
-                    ?: throw AssertionError("No virtual file found: ${javaClass.fqName}")
+            is VirtualFileBasedSourceElement -> {
+                sourceElement.virtualFile
             }
             is DeserializedContainerSource -> {
                 // Klib element is possible here in JS test

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toReference
-import org.jetbrains.kotlin.fir.java.JavaBinarySourceElement
+import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.modules.javaModuleResolverProvider
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -53,7 +53,7 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         @OptIn(SymbolInternals::class)
         val sourceElement = symbol.fir.sourceElement
         val virtualFile = when (sourceElement) {
-            is JavaBinarySourceElement -> sourceElement.virtualFile
+            is VirtualFileBasedSourceElement -> sourceElement.virtualFile
             is KotlinJvmBinarySourceElement -> (sourceElement.binaryClass as? VirtualFileKotlinClass)?.file ?: return
             else -> return
         }

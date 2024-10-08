@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.*
 
 class FirJavaFacadeForSource(
@@ -207,8 +206,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 this.isJavaRecord = true
             }
 
-            if (javaClass is BinaryJavaClass) {
-                sourceElement = JavaBinarySourceElement(javaClass)
+            if (javaClass is VirtualFileBoundJavaClass) {
+                javaClass.virtualFile?.let {
+                    sourceElement = VirtualFileBasedSourceElement(it)
+                }
             }
         }
     }
