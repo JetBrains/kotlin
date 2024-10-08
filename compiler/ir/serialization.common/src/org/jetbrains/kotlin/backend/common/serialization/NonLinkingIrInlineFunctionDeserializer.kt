@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -46,9 +43,15 @@ class NonLinkingIrInlineFunctionDeserializer(
     // TODO: consider the case of `external inline` functions that exist in Kotlin/Native stdlib
     fun deserializeInlineFunction(function: IrSimpleFunction) {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
-        check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
         if (function.body != null) return
+
+        if (function.isFakeOverride) {
+            function.collectRealOverrides(filter = IrSimpleFunction::isInline).forEach(::deserializeInlineFunction)
+            return
+        }
+
+        check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
         val functionSignature: IdSignature = function.symbol.signature ?: signatureComputer.computeSignature(function)
         val topLevelSignature: IdSignature = functionSignature.topLevelSignature()
