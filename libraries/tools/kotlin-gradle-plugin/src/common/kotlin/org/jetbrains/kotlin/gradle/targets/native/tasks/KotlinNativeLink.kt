@@ -180,7 +180,7 @@ constructor(
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()
 
     private val exportLibrariesResolvedConfiguration = if (binary is AbstractNativeLibrary) {
-        LazyResolvedConfiguration(project.configurations.getByName(binary.exportConfigurationName))
+        LazyResolvedConfiguration(project.configurations.maybeCreateResolvable(binary.exportConfigurationName))
     } else {
         null
     }

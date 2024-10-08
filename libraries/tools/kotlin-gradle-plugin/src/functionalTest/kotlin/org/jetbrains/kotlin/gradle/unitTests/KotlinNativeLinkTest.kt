@@ -70,15 +70,13 @@ class KotlinNativeLinkTest {
 
     @Test
     fun `KT-72112 - eager KotlinNativeLink task instantiation - doesn't fail configuration`() {
-        assertThrows<RuntimeException> {
-            buildProjectWithMPP {
-                // Force all tasks to instantiate eagerly
-                tasks.all { }
-                kotlin {
-                    iosSimulatorArm64().binaries.framework { }
-                }
-            }.evaluate()
-        }
+        buildProjectWithMPP {
+            // Force all tasks to instantiate eagerly
+            tasks.all { }
+            kotlin {
+                iosSimulatorArm64().binaries.framework { }
+            }
+        }.evaluate()
     }
 
 }
