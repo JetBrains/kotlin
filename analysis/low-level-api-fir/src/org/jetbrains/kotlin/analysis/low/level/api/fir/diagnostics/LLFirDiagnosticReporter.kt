@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 
@@ -59,8 +60,9 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     }
 }
 
+@OptIn(SuspiciousFakeSourceCheck::class)
 private fun KtDiagnostic.isAboutImplicitImport() =
-    (element is KtFakeSourceElement && (element as KtFakeSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
+    (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
 
 
 private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -208,7 +207,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                         import.source?.kind?.shouldSkipErrorTypeReporting != true &&
                         import.importedName?.identifierOrNullIfSpecial?.isNotEmpty() == true &&
                         import.resolvesToClass(context)
-            }.filterNot { (it.source as? KtFakeSourceElement)?.kind == KtFakeSourceElementKind.ImplicitImport  }
+            }.filterNot { it.source?.kind == KtFakeSourceElementKind.ImplicitImport  }
         interestingImports
             .groupBy { it.aliasName ?: it.importedName!! }
             .values

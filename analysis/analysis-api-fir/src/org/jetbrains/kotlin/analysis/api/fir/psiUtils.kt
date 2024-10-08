@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
@@ -44,10 +45,11 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
 )
 
+@OptIn(SuspiciousFakeSourceCheck::class)
 internal fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null
     is KtRealPsiSourceElement -> source.psi
-    is KtFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
+    is KtFakePsiSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
     else -> null
 }
 

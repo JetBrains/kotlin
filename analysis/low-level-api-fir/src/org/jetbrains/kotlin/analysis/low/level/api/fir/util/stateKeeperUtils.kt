@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
@@ -42,7 +43,8 @@ private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
     KtFakeSourceElementKind.EnumGeneratedDeclaration,
 )
 
+@OptIn(SuspiciousFakeSourceCheck::class)
 internal fun isCallableWithSpecialBody(fir: FirCallableDeclaration): Boolean {
-    val source = fir.source as? KtFakeSourceElement ?: return false
+    val source = fir.source as? KtFakePsiSourceElement ?: return false
     return source.kind in SPECIAL_BODY_CALLABLE_SOURCE_KINDS
 }

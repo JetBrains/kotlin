@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
@@ -485,11 +484,7 @@ internal class KaFirDataFlowProvider(
             }
 
             val source = element.source
-            if (source is KtFakeSourceElement && source.kind in FORBIDDEN_FAKE_SOURCE_KINDS) {
-                return false
-            }
-
-            return true
+            return source?.kind !in FORBIDDEN_FAKE_SOURCE_KINDS
         }
 
         private inline fun withElement(element: FirElement, block: () -> Unit) {
