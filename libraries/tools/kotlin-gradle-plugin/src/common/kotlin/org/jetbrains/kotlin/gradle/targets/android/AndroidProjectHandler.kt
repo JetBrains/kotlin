@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
@@ -60,13 +59,15 @@ internal class AndroidProjectHandler(
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
-        val plugin = androidPluginIds
+        androidPluginIds
             .asSequence()
             .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
             .firstOrNull()
-            ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
-                                                    "plugins to be applied to the project:\n\t" +
-                                                    androidPluginIds.joinToString("\n\t") { "* $it" })
+            ?: throw InvalidPluginException(
+                "'kotlin-android' expects one of the Android Gradle " +
+                        "plugins to be applied to the project:\n\t" +
+                        androidPluginIds.joinToString("\n\t") { "* $it" }
+            )
 
         project.forAllAndroidVariants { variant ->
             val compilationFactory = KotlinJvmAndroidCompilationFactory(kotlinAndroidTarget, variant)
@@ -88,7 +89,7 @@ internal class AndroidProjectHandler(
         project.whenEvaluated {
             forAllAndroidVariants { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                postprocessVariant(variant, compilation, project, ext, plugin)
+                postprocessVariant(variant, compilation, project, ext)
 
                 val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
@@ -219,7 +220,6 @@ internal class AndroidProjectHandler(
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
-        androidPlugin: BasePlugin
     ) {
 
         getTestedVariantData(variantData)?.let { testedVariant ->
@@ -236,13 +236,12 @@ internal class AndroidProjectHandler(
                 task.dependsOn(sources)
             }
         }
-        wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
+        wireKotlinTasks(project, compilation, androidExt, variantData, javaTask, kotlinTask)
     }
 
     private fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin,
         androidExt: BaseExtension,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
@@ -262,8 +261,8 @@ internal class AndroidProjectHandler(
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.configure { kotlinTaskInstance ->
             kotlinTaskInstance.libraries
+                .from({ androidExt.bootClasspath })
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))
-                .from({ AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 
             kotlinTaskInstance.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
         }
@@ -271,8 +270,8 @@ internal class AndroidProjectHandler(
         KaptGenerateStubsConfig.configureLibraries(
             project,
             kotlinTask,
+            { androidExt.bootClasspath },
             variantData.getCompileClasspath(preJavaClasspathKey),
-            { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) }
         )
         KaptGenerateStubsConfig.wireJavaAndKotlinOutputs(
             project,

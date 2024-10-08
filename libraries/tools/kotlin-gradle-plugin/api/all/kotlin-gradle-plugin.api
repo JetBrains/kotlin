@@ -981,11 +981,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/VariantImplem
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/VariantImplementationFactories$VariantImplementationFactory : java/io/Serializable {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/android/AndroidGradleWrapper {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/android/AndroidGradleWrapper;
-	public final fun getRuntimeJars (Lcom/android/build/gradle/BasePlugin;Lcom/android/build/gradle/BaseExtension;)Ljava/lang/Object;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension$Companion;
 	public fun <init> (Lorg/gradle/api/Project;)V
