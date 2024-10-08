@@ -4,24 +4,24 @@ fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide().<!UNRESOLVED_REFERENCE!>InnerKlass<!>()
+        otvOwner.provide().InnerKlass()
         // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    resultA
 }
 
 fun testSafeNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        otvOwner.provide()?.<!UNRESOLVED_REFERENCE!>InnerKlass<!>()
+        otvOwner.provide()?.InnerKlass()
         // expected: Interloper </: ScopeOwner<Value>?
         otvOwner.constrain(Interloper)
     }
     // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultA<!>
+    resultA
 }
 
 

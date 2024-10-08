@@ -1,4 +1,3 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-72031
 // ISSUE: KT-71662
 
 fun test() {
@@ -7,94 +6,94 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::<!UNRESOLVED_REFERENCE!>InnerClass<!>
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
     
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide()::<!UNRESOLVED_REFERENCE!>accessorBackedReadableMemberProperty<!>
+        otvOwner.provide()::accessorBackedReadableMemberProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultB<!>
 
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide()::<!UNRESOLVED_REFERENCE!>accessorBackedWritableMemberProperty<!>
+        otvOwner.provide()::accessorBackedWritableMemberProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultC<!>
 
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide()::<!UNRESOLVED_REFERENCE!>delegatedReadableMemberProperty<!>
+        otvOwner.provide()::delegatedReadableMemberProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultD<!>
 
     val resultE = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide()::<!UNRESOLVED_REFERENCE!>delegatedWriteableMemberProperty<!>
+        otvOwner.provide()::delegatedWriteableMemberProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultE<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultE<!>
 
     // ISSUE: KT-72031
     val resultF = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::accessorBackedReadableExtensionProperty
+        otvOwner.provide()::accessorBackedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTA>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT> & ScopeOwner<SOTA>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTA)>")!>resultF<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultF<!>
 
     // ISSUE: KT-72031
     val resultG = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::accessorBackedWriteableExtensionProperty
+        otvOwner.provide()::accessorBackedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTB>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT> & ScopeOwner<SOTB>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTB)>")!>resultG<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultG<!>
 
     // ISSUE: KT-72031
     val resultH = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::delegatedReadableExtensionProperty
+        otvOwner.provide()::delegatedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTC>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT> & ScopeOwner<SOTC>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTC)>")!>resultH<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultH<!>
 
     // ISSUE: KT-72031
     val resultI = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>::delegatedWriteableExtensionProperty
+        otvOwner.provide()::delegatedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOTD>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT> & ScopeOwner<SOTD>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<TypeVariable(SOTD)>")!>resultI<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultI<!>
 }
 
 

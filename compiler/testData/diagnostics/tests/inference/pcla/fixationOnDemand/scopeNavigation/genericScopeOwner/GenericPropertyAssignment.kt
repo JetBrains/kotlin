@@ -5,44 +5,44 @@ fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.accessorBackedProperty = Value
+        otvOwner.provide().accessorBackedProperty = Value
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.delegatedProperty = Value
+        otvOwner.provide().delegatedProperty = Value
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultB<!>
 }
 
 fun testSafeNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.accessorBackedProperty = Value
+        otvOwner.provide()?.accessorBackedProperty = Value
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable(Value))
         // should fix OTv := ScopeOwner<Value>? for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.delegatedProperty = Value
+        otvOwner.provide()?.delegatedProperty = Value
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultB<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultB<!>
 }
 
 

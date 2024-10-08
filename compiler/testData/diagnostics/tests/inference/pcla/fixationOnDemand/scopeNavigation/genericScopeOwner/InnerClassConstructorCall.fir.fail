@@ -1,0 +1,1 @@
+KT-72115: java.lang.IllegalStateException: No symbol found for public ScopeOwner<SOT>.constructor<C>(arg: R|C|): R|ScopeOwner.InnerKlass<C, SOT>| {

@@ -4,7 +4,7 @@ fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner(Value))
         // should fix OTv := ScopeOwner<Value> for scope navigation
-        otvOwner.provide().<!UNRESOLVED_REFERENCE!>memberFunction<!>(TypeArgument)
+        otvOwner.provide().memberFunction(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
         otvOwner.constrain(Interloper)
     }

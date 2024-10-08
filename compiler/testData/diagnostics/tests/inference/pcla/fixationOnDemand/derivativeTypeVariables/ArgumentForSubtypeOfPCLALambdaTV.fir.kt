@@ -12,13 +12,13 @@ fun test() {
         // ScopeOwner <: PNTv
 
         // should fix OTv := Box<PNTv> & PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!UNRESOLVED_REFERENCE!>unbox<!>().function()
+        otvOwner.provide().unbox().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultA<!>
 
     // ISSUE: KT-72030
     val resultB = pcla { otvOwner ->
