@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
@@ -141,7 +142,11 @@ class KaptApiTest {
 
     @Test
     fun testGenerateStubs() {
-        val task = plugin.registerKaptGenerateStubsTask(GENERATE_STUBS).get()
+        val task = plugin.registerKaptGenerateStubsTask(
+            GENERATE_STUBS,
+            plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),
+            plugin.kaptExtension,
+        ).get()
         assertEquals(GENERATE_STUBS, task.name)
     }
 
@@ -149,7 +154,11 @@ class KaptApiTest {
     fun testGenerateStubsOptions() {
         val stubsDir = tmpDir.newFolder()
         val kaptClasspath = setOf(tmpDir.newFolder())
-        val task = plugin.registerKaptGenerateStubsTask(GENERATE_STUBS).let { provider ->
+        val task = plugin.registerKaptGenerateStubsTask(
+            GENERATE_STUBS,
+            plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),
+            plugin.kaptExtension,
+        ).let { provider ->
             provider.configure {
                 it.stubsDir.fileValue(stubsDir)
                 it.kaptClasspath.from(kaptClasspath)
@@ -158,6 +167,32 @@ class KaptApiTest {
         }
         assertEquals(stubsDir, task.stubsDir.get().asFile)
         assertEquals(kaptClasspath, task.kaptClasspath.files)
+    }
+
+
+    @Test
+    fun testGenerateStubsTaskHasCompilerOptionsFromCompileTask() {
+        val customCompileTask = plugin.registerKotlinJvmCompileTask(
+            "customCompileKotlin",
+            plugin.createCompilerJvmOptions(),
+        )
+        customCompileTask.configure {
+            it.compilerOptions.progressiveMode.set(true)
+            it.compilerOptions.freeCompilerArgs.add("-Xdump-declarations-to=foo")
+            it.compilerOptions.moduleName.set("foo")
+            it.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        }
+
+        val kaptGenerateStubsTask = plugin.registerKaptGenerateStubsTask(
+            "kaptGenerateStubs",
+            customCompileTask,
+            plugin.kaptExtension
+        )
+
+        assertEquals(true, kaptGenerateStubsTask.get().compilerOptions.progressiveMode.get())
+        assertEquals(JvmTarget.JVM_21, kaptGenerateStubsTask.get().compilerOptions.jvmTarget.get())
+        assertEquals(listOf("-Xdump-declarations-to=foo"), kaptGenerateStubsTask.get().compilerOptions.freeCompilerArgs.get())
+        assertEquals("foo", kaptGenerateStubsTask.get().compilerOptions.moduleName.get())
     }
 
     private fun configureKapt(configAction: Kapt.() -> Unit): KaptWithoutKotlincTask {

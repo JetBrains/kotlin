@@ -152,7 +152,28 @@ interface KotlinJvmFactory {
      *
      * @since 1.7.0
      */
+    @Deprecated("Replaced with 'registerKaptGenerateStubsTask(taskName, compileTask, kaptExtension, explicitApiMode)'")
     fun registerKaptGenerateStubsTask(taskName: String): TaskProvider<out KaptGenerateStubs>
+
+    /**
+     * Registers a new kapt generation task with the given [taskName].
+     *
+     * This task creates Java source stubs from Kotlin sources.
+     * It is designed to be used together with the [Kapt] task. Run this task before the [Kapt] task.
+     *
+     * @param taskName task name to set
+     * @param compileTask related [KotlinJvmCompile] task that is part of the same compilation unit
+     * @param kaptExtension an instance of [KaptExtensionConfig]
+     * @param explicitApiMode [ExplicitApiMode] for this task
+     *
+     * @since 2.1.0
+     */
+    fun registerKaptGenerateStubsTask(
+        taskName: String,
+        compileTask: TaskProvider<out KotlinJvmCompile>,
+        kaptExtension: KaptExtensionConfig,
+        explicitApiMode: Provider<ExplicitApiMode> = providerFactory.provider { ExplicitApiMode.Disabled },
+    ): TaskProvider<out KaptGenerateStubs>
 
     /**
      * Registers a new kapt task with the given [taskName].
