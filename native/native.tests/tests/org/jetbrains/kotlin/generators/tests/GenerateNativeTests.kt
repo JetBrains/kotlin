@@ -174,18 +174,18 @@ fun main() {
             }
         }
 
-        // KLIB IR Iliner tests (IR inliner is invoked before K2 Klib Serializer)
+        // 1st phase IR Inliner tests (IR inliner is invoked before K2 Klib Serializer)
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxKlibIrInlinerTestGenerated",
+                suiteTestClassName = "FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(
                     *frontendFir(),
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
             }
         }
 
