@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.SpecialNames
 
 object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -29,13 +30,20 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
             if (declaration != outermostLambda)
                 return
 
-            val unusedParams = declaration.valueParameters.map { it.symbol }.filter { it.source?.kind !is KtFakeSourceElementKind }.toMutableSet()
+            val unusedParams = declaration.getReportableParameters()
+
             declaration.body?.accept(unusedParamsVisitor, unusedParams)
 
             unusedParams.forEach {
                 reporter.reportOn(it.source, UNUSED_ANONYMOUS_PARAMETER, it, context)
             }
         }
+    }
+
+    private fun FirAnonymousFunction.getReportableParameters(): MutableSet<FirValueParameterSymbol> {
+        return valueParameters
+            .filter { it.source?.kind !is KtFakeSourceElementKind && it.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR }
+            .mapTo(mutableSetOf()) { it.symbol }
     }
 
     private val unusedParamsVisitor: FirVisitor<Unit, MutableSet<FirValueParameterSymbol>> =
@@ -59,9 +67,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
                     return
                 }
 
-                val unusedParams =
-                    anonymousFunction.valueParameters.map { it.symbol }.filter { it.source?.kind !is KtFakeSourceElementKind }.toMutableSet()
-                data.addAll(unusedParams)
+                data.addAll(anonymousFunction.getReportableParameters())
 
                 anonymousFunction.acceptChildren(this, data)
             }
