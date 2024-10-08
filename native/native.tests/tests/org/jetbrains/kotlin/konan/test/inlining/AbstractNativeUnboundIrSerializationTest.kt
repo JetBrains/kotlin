@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.BoxCodegenWithoutBinarySuppressor
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -61,7 +59,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
@@ -118,20 +116,11 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
     }
 
     override fun runTest(@TestDataFile filePath: String) {
-        mutePlatformTestIfNecessary(filePath)
-
         val sourceTransformer = registeredSourceTransformers[getAbsoluteFile(filePath)]
         if (sourceTransformer != null)
             super.runTest(filePath, sourceTransformer)
         else
             super.runTest(filePath)
-    }
-
-    private fun mutePlatformTestIfNecessary(filePath: String) {
-        if (HostManager.hostIsMac) return
-
-        if (InTextDirectivesUtils.isDirectiveDefined(File(filePath).readText(), WITH_PLATFORM_LIBS.name))
-            Assumptions.abort<Nothing>("Unbound IR serialization tests that use platform libs are not supported at non-Mac hosts. Test source: $filePath")
     }
 }
 
@@ -146,11 +135,15 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
         lateinit var partiallyLinkedFunctionProto: ProtoDeclaration
     }
 
+    private var functionsUnderTestCounter = 0
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val ir = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend)
 
         val functionsUnderTest = collectInlineFunctions(ir.irModuleFragment)
         if (functionsUnderTest.isEmpty()) return
+
+        functionsUnderTestCounter += functionsUnderTest.size
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
@@ -178,7 +171,7 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                if (declaration.isInline) {
+                if (declaration.isInline && !declaration.isEffectivelyPrivate()) {
                     result += InlineFunctionUnderTest(
                         signature = signatureComposer.computeSignature(declaration),
                         fullyLinkedFunction = declaration
@@ -278,5 +271,9 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
         return { serializer.serializeDeclaration(it) }
     }
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) = Unit
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        // It does not make sense to keep tests without a single inline function as "green", because nothing
+        // effectively has been tested there. Neither makes it sense to keep them red. Thus, muted.
+        assumeTrue(functionsUnderTestCounter > 0, "No inline functions found for test")
+    }
 }
