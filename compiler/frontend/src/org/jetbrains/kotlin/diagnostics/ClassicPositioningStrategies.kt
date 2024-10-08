@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility
 object ClassicPositioningStrategies {
     @JvmField
     val ACTUAL_DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> =
-        object : PositioningStrategies.DeclarationHeader<KtNamedDeclaration>() {
+        object : PositioningStrategies.DeclarationHeader<KtNamedDeclaration>(true) {
             override fun mark(element: KtNamedDeclaration): List<TextRange> {
                 val nameIdentifier = element.nameIdentifier
                 return when {
@@ -43,7 +43,7 @@ object ClassicPositioningStrategies {
 
     @JvmField
     val INCOMPATIBLE_DECLARATION: PositioningStrategy<KtNamedDeclaration> =
-        object : PositioningStrategies.DeclarationHeader<KtNamedDeclaration>() {
+        object : PositioningStrategies.DeclarationHeader<KtNamedDeclaration>(true) {
             override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
                 val element = diagnostic.psiElement as KtNamedDeclaration
                 val callableDeclaration = element as? KtCallableDeclaration

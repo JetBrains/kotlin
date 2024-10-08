@@ -30,6 +30,7 @@ open class LightTreePositioningStrategy {
         return markElement(node, startOffset, endOffset, tree)
     }
 
+    @DiagnosticLossRisk
     open fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
         return !hasSyntaxErrors(node, tree)
     }

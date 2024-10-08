@@ -14,6 +14,16 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
+/**
+ * Overriding `isValid` can lead to a loss of diagnostics in tests.
+ *
+ * Note that it's only called in tests. In the real world, the diagnostics are still reported.
+ *
+ * Instead of filtering diagnostics using `isValid`, the checker should be adapted.
+ */
+@RequiresOptIn
+annotation class DiagnosticLossRisk
+
 open class PositioningStrategy<in E : PsiElement> {
     open fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
         @Suppress("UNCHECKED_CAST")
@@ -24,6 +34,7 @@ open class PositioningStrategy<in E : PsiElement> {
         return markElement(element)
     }
 
+    @DiagnosticLossRisk
     open fun isValid(element: E): Boolean {
         return !hasSyntaxErrors(element)
     }
