@@ -11,6 +11,7 @@ val kotlin_version: String by extra
 allprojects {
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     }
 }
 
