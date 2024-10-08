@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.analysis.checkers.getParameterNameFromAnnotation
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -104,12 +105,12 @@ object FirDiagnosticRenderers {
     }
 
     val DECLARATION_NAME = Renderer { symbol: FirBasedSymbol<*> ->
-        val name = when (symbol) {
-            is FirCallableSymbol<*> -> symbol.name
-            is FirClassLikeSymbol<*> -> symbol.classId.shortClassName
+        when (symbol) {
+            is FirValueParameterSymbol -> symbol.getParameterNameFromAnnotation() ?: symbol.name.asString()
+            is FirCallableSymbol<*> -> symbol.name.asString()
+            is FirClassLikeSymbol<*> -> symbol.classId.shortClassName.asString()
             else -> return@Renderer "???"
         }
-        name.asString()
     }
 
     val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
