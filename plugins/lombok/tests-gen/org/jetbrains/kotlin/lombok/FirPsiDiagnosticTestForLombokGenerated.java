@@ -25,6 +25,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("builderMethodPreserving.kt")
+  public void testBuilderMethodPreserving() {
+    runTest("plugins/lombok/testData/diagnostics/builderMethodPreserving.kt");
+  }
+
+  @Test
   @TestMetadata("superBuilderAnnotationArguments.kt")
   public void testSuperBuilderAnnotationArguments() {
     runTest("plugins/lombok/testData/diagnostics/superBuilderAnnotationArguments.kt");
