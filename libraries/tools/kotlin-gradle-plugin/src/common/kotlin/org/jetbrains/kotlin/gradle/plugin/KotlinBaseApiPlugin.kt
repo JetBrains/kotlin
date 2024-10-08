@@ -129,6 +129,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return registeredKotlinJvmCompileTask
     }
 
+    @Deprecated("Replaced with 'registerKaptGenerateStubsTask(taskName, compileTask, kaptExtension, explicitApiMode)'")
     override fun registerKaptGenerateStubsTask(taskName: String): TaskProvider<out KaptGenerateStubs> {
         val taskConfig = KaptGenerateStubsConfig(
             myProject,
@@ -141,6 +142,34 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.registerTask(taskName, KaptGenerateStubsTask::class.java, listOf(myProject)).also {
             taskConfig.execute(it)
         }
+    }
+
+    override fun registerKaptGenerateStubsTask(
+        taskName: String,
+        compileTask: TaskProvider<out KotlinJvmCompile>,
+        kaptExtension: KaptExtensionConfig,
+        explicitApiMode: Provider<ExplicitApiMode>
+    ): TaskProvider<out KaptGenerateStubs> {
+        val taskConfig = KaptGenerateStubsConfig(
+            myProject,
+            explicitApiMode,
+            kaptExtension
+        )
+
+        val kaptGenerateStubsTask =  myProject.registerTask(
+            taskName,
+            KaptGenerateStubsTask::class.java,
+            listOf(myProject)
+        )
+
+        taskConfig.execute(kaptGenerateStubsTask)
+
+        kaptGenerateStubsTask.configure {
+            val compileTaskCompilerOptions = compileTask.get().compilerOptions
+            KaptGenerateStubsConfig.syncOptionsFromCompileTask(compileTaskCompilerOptions, it)
+        }
+
+        return kaptGenerateStubsTask
     }
 
     override fun registerKaptTask(taskName: String): TaskProvider<out Kapt> {
