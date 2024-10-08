@@ -472,6 +472,7 @@ public final class org/jetbrains/kotlin/analysis/api/components/KaSubtypingError
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaSymbolRelationProvider {
 	public abstract fun getAllOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lkotlin/sequences/Sequence;
+	public abstract fun getConstructedClass (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSamConstructorSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 	public abstract fun getContainingDeclaration (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;
 	public abstract fun getContainingFile (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaFileSymbol;
 	public abstract fun getContainingModule (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
