@@ -562,13 +562,15 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
                 )
             )
         }
-        compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
     }
     configureRunViaKotlinBuildToolsApi()
 }
 
 fun Project.configureRunViaKotlinBuildToolsApi() {
     project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
+    }
     afterEvaluate {
         val gradlePluginsBuildToolsApiClasspath by rootProject.buildscript.configurations
         configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
