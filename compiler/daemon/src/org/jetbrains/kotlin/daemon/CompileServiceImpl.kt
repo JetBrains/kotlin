@@ -93,7 +93,7 @@ abstract class CompileServiceImplBase(
     val compilerId: CompilerId,
     val port: Int,
     val timer: Timer,
-) {
+) : CompileService {
     protected val log by lazy { Logger.getLogger("compiler") }
 
     init {
@@ -525,6 +525,7 @@ abstract class CompileServiceImplBase(
     }
 
     fun configurePeriodicActivities() {
+        log.info("Periodic liveness check activities configured")
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicAndAfterSessionCheck() }
         }

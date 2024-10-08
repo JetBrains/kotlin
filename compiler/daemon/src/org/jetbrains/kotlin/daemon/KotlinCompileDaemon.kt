@@ -107,14 +107,17 @@ abstract class KotlinCompileDaemonBase {
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
+        val initiatorInfo = InitiatorInformation()
         runSynchronized {
             var serverRun: Any?
             try {
-                val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
-                                                                 inheritOtherJvmOptions = true,
-                                                                 inheritAdditionalProperties = true)
+                val daemonJVMOptions = configureDaemonJVMOptions(
+                    inheritMemoryLimits = true,
+                    inheritOtherJvmOptions = true,
+                    inheritAdditionalProperties = true
+                )
 
-                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, initiatorInfo, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
                 if (filteredArgs.any()) {
                     val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
@@ -146,6 +149,7 @@ abstract class KotlinCompileDaemonBase {
                 val timer = Timer(true)
                 val (compilerService, port) = getCompileServiceAndPort(compilerSelector, compilerId, daemonOptions, daemonJVMOptions, timer)
                 compilerService.startDaemonElections()
+                compilerService.registerClient(initiatorInfo)
                 compilerService.configurePeriodicActivities()
                 serverRun = runCompileService(compilerService)
 
@@ -170,6 +174,12 @@ abstract class KotlinCompileDaemonBase {
             }
             awaitServerRun(serverRun)
         }
+    }
+}
+
+private fun CompileService.registerClient(information: InitiatorInformation) {
+    information.clientMarkerFile?.let {
+        registerClient(it.absolutePath)
     }
 }
 
