@@ -12,6 +12,14 @@ FILE: unusedAnonymLambdaParam.kt
             R|/baz|()
         }
         )
+        R|/foo|(<L> = foo@fun <anonymous>(<unused var>: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        )
+        R|/foo|(<L> = foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        )
     }
     public final fun bar2(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {

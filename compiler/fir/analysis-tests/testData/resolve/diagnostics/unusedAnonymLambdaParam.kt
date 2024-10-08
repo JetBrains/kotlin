@@ -7,6 +7,8 @@ fun baz(p1: Int) {}
 
 fun bar1() {
     foo { <!UNUSED_ANONYMOUS_PARAMETER!>p1<!>: Int -> baz() }
+    foo { _ -> }
+    foo { }
 }
 
 fun bar2() {
