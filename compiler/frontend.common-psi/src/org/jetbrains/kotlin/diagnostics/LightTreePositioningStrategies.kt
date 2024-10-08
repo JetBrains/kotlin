@@ -135,6 +135,7 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> = markElement(getElementToMark(node, tree), startOffset, endOffset, tree, node)
 
+        @OptIn(DiagnosticLossRisk::class)
         override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean =
             super.isValid(getElementToMark(node, tree), tree)
 
@@ -250,22 +251,6 @@ object LightTreePositioningStrategies {
                 return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
             }
             return markElement(nameIdentifier, startOffset, endOffset, tree, node)
-        }
-
-        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-            //in FE 1.0 this is part of DeclarationHeader abstract strategy
-            if (node.tokenType != KtNodeTypes.OBJECT_DECLARATION
-                && node.tokenType != KtNodeTypes.FUN
-                && node.tokenType != KtNodeTypes.PRIMARY_CONSTRUCTOR
-                && node.tokenType != KtNodeTypes.SECONDARY_CONSTRUCTOR
-                && node.tokenType != KtNodeTypes.OBJECT_LITERAL
-                && node.tokenType != KtNodeTypes.PROPERTY_ACCESSOR
-            ) {
-                if (tree.nameIdentifier(node) == null) {
-                    return false
-                }
-            }
-            return super.isValid(node, tree)
         }
     }
 
@@ -569,10 +554,6 @@ object LightTreePositioningStrategies {
             val delegate = tree.findChildByType(node, KtNodeTypes.PROPERTY_DELEGATE)
             return markElement(delegate ?: node, startOffset, endOffset, tree, node)
         }
-
-        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-            return tree.findChildByType(node, KtNodeTypes.PROPERTY_DELEGATE) != null
-        }
     }
 
     val PROPERTY_DELEGATE_BY_KEYWORD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
@@ -585,10 +566,6 @@ object LightTreePositioningStrategies {
             val byKeyword = tree.getParent(node)
                 ?.let { tree.byKeyword(it) }
             return markElement(byKeyword ?: node, startOffset, endOffset, tree, node)
-        }
-
-        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-            return tree.getParent(node)?.tokenType == KtNodeTypes.PROPERTY_DELEGATE
         }
     }
 
@@ -1286,6 +1263,7 @@ object LightTreePositioningStrategies {
             }
         }
 
+        @OptIn(DiagnosticLossRisk::class)
         override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean = true
     }
 
@@ -1638,10 +1616,6 @@ private fun keywordStrategy(
             return markElement(fieldKeyword, startOffset, endOffset, tree, node)
         }
         return LightTreePositioningStrategies.DEFAULT.mark(node, startOffset, endOffset, tree)
-    }
-
-    override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-        return tree.keywordExtractor(node) != null
     }
 }
 

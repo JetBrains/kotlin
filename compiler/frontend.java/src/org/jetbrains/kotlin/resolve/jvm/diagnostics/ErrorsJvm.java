@@ -19,19 +19,25 @@ import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS =
-            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
 
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> ACCIDENTAL_OVERRIDE =
-            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> CONFLICTING_INHERITED_JVM_DECLARATIONS =
-            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
 
-    DiagnosticFactory0<KtDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_NON_PUBLIC_MEMBER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_CONST_OR_JVM_FIELD = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_EXTERNAL_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR,
+                                                                                            DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION = DiagnosticFactory0.create(ERROR,
+                                                                                                              DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION = DiagnosticFactory0.create(ERROR,
+                                                                                                        DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_NON_PUBLIC_MEMBER = DiagnosticFactory0.create(ERROR,
+                                                                                                  DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_CONST_OR_JVM_FIELD = DiagnosticFactory0.create(ERROR,
+                                                                                                   DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_EXTERNAL_IN_INTERFACE = DiagnosticFactory0.create(ERROR,
+                                                                                                      DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_JVM_NAME = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> ILLEGAL_JVM_NAME = DiagnosticFactory0.create(ERROR);
@@ -63,9 +69,12 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
-    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR,
+                                                                                                        DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR,
+                                                                                                    DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
+    DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR,
+                                                                                                         DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
 
     DiagnosticFactory0<KtExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
@@ -128,7 +137,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR,
+                                                                                                 DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE = DiagnosticFactory0.create(ERROR);
 
@@ -179,7 +189,8 @@ public interface ErrorsJvm {
     DiagnosticFactoryForDeprecation0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConcurrentHashMapContains);
 
-    DiagnosticFactory0<KtNamedFunction> TAILREC_WITH_DEFAULTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtNamedFunction> TAILREC_WITH_DEFAULTS = DiagnosticFactory0.create(WARNING,
+                                                                                          DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
 
     DiagnosticFactoryForDeprecation0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall);
@@ -187,9 +198,9 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE =
-            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
     DiagnosticFactory3<KtDeclaration, CallableDescriptor, CallableDescriptor, String> EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE =
-            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK);
 
     DiagnosticFactory1<PsiElement, String> DANGEROUS_CHARACTERS = DiagnosticFactory1.create(WARNING);
 
