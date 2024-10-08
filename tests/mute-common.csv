@@ -1,2 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
+org.jetbrains.kotlin.compose.compiler.gradle.EnabledPlatformsConfigurationTest.allKotlinPlatformsAreUsedByDefault, KTI-1993,,FLAKY
+org.jetbrains.kotlin.compose.compiler.gradle.EnabledPlatformsConfigurationTest.disableKotlinPlatforms, KTI-1993,,FLAKY
