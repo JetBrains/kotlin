@@ -1,0 +1,3 @@
+/noValueForParameterOfLambda.kt:5:12: error: no value passed for parameter 's'
+    lambda(1)
+           ^^

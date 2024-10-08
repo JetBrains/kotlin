@@ -1,0 +1,1 @@
+/noValueForParameterOfLambda.kt:(105,107): error: No value passed for parameter 'p2'.

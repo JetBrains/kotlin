@@ -1216,6 +1216,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("noValueForParameterOfLambda.kt")
+    public void testNoValueForParameterOfLambda() {
+      runTest("compiler/testData/diagnostics/tests/noValueForParameterOfLambda.kt");
+    }
+
+    @Test
     @TestMetadata("nonConstNotCall.kt")
     public void testNonConstNotCall() {
       runTest("compiler/testData/diagnostics/tests/nonConstNotCall.kt");
