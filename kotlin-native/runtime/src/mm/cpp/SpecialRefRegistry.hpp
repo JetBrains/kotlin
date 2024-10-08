@@ -166,7 +166,7 @@ class SpecialRefRegistry : private Pinned {
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
                 // Notify GC about the removal.
-                gc::beforeHeapRefUpdate(mm::DirectRefAccessor(obj_), nullptr, true);
+                gc::afterSpecialRefReleaseToZero(mm::DirectRefAccessor(obj_));
             }
         }
 
