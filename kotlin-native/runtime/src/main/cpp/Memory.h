@@ -164,6 +164,7 @@ extern "C" {
 struct MemoryState;
 
 MemoryState* InitMemory();
+void RestoreMemoryState(MemoryState*); // TODO(KT-72121): remove this hack
 void DeinitMemory(MemoryState*, bool destroyRuntime);
 void ClearMemoryForTests(MemoryState*);
 
