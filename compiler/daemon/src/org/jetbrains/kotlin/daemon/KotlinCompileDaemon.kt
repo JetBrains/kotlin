@@ -68,15 +68,13 @@ abstract class KotlinCompileDaemonBase {
     val log by lazy { Logger.getLogger("daemon") }
 
     private fun loadVersionFromResource(): String? {
-        (KotlinCompileDaemonBase::class.java.classLoader as? URLClassLoader)
-            ?.findResource("META-INF/MANIFEST.MF")
-            ?.let {
-                try {
-                    return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
-                }
-                catch (e: IOException) {}
+        try {
+            KotlinCompileDaemonBase::class.java.classLoader.getResourceAsStream("META-INF/MANIFEST.MF").use {
+                return Manifest(it).mainAttributes.getValue("Implementation-Version")
             }
-        return null
+        } catch (_: IOException) {
+            return null
+        }
     }
 
     protected open fun <T> runSynchronized(block: () -> T) = block()
