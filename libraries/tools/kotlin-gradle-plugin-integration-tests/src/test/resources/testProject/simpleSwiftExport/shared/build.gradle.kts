@@ -19,6 +19,11 @@ kotlin {
         sourceSets.commonMain {
             enableSubprojectSrc("consumerSubproject")
             enableSubprojectSrc("consumerUglySubproject")
+
+            dependencies {
+                implementation(project(":subproject"))
+                implementation(project(":not-good-looking-project-name"))
+            }
         }
     } else if (properties.containsKey("swiftexport.dsl.customName")) {
         swiftExport {
@@ -31,6 +36,10 @@ kotlin {
 
         sourceSets.commonMain {
             enableSubprojectSrc("consumerSubproject")
+
+            dependencies {
+                implementation(project(":subproject"))
+            }
         }
     } else if (properties.containsKey("swiftexport.dsl.flattenPackage")) {
         swiftExport {
@@ -43,6 +52,10 @@ kotlin {
 
         sourceSets.commonMain {
             enableSubprojectSrc("consumerSubproject")
+
+            dependencies {
+                implementation(project(":subproject"))
+            }
         }
     } else if (properties.containsKey("swiftexport.dsl.placeholder")) {
 /*REPLACE_ME*/
