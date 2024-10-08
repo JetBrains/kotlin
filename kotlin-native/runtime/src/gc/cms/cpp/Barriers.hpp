@@ -35,6 +35,8 @@ void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
+// Potentially a removal from global root set. May be seen as overwritting a heap ref with `nullptr`.
+void afterSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept;
 
 ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 

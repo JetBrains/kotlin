@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "GCImpl.hpp"
+#include "Memory.h"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 
@@ -127,6 +128,8 @@ namespace {
 
 // TODO decide whether it's really beneficial to NO_INLINE the slow path
 NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+
     ObjHeader* prev;
     if (loadAtomic) {
         prev = ref.loadAtomic(std::memory_order_relaxed);
@@ -154,6 +157,16 @@ PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor 
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
         beforeHeapRefUpdateSlowPath(ref, value, loadAtomic);
+    }
+}
+
+PERFORMANCE_INLINE void gc::barriers::afterSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept {
+    auto phase = currentPhase();
+    BarriersLogDebug(phase, "Write *%p <- NULL (%p overwritten)", ref.location(), ref.load());
+    if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
+        // Can be called both from native code and from Kotlin code.
+        CalledFromNativeGuard guard(/*reentrant=*/true);
+        beforeHeapRefUpdateSlowPath(ref, nullptr, true);
     }
 }
 

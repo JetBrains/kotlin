@@ -91,6 +91,10 @@ PERFORMANCE_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHe
     barriers::beforeHeapRefUpdate(ref, value, loadAtomic);
 }
 
+PERFORMANCE_INLINE void gc::afterSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept {
+    barriers::afterSpecialRefReleaseToZero(ref);
+}
+
 PERFORMANCE_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_OBJ(gc::barriers::weakRefReadBarrier(weakReferee));
 }
