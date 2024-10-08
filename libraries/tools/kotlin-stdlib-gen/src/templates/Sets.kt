@@ -155,6 +155,21 @@ object SetOps : TemplateGroupBase() {
             return set
             """
         }
+        specialFor(ArraysOfPrimitives) {
+            // In general, converting receiver to a set may lead to function's contract not being obeyed.
+            // However, primitive values will end up being auto-boxed no matter what.
+            // On some platforms (namely, on JVM), some auto-boxed instances could be taken from a cache,
+            // others will be allocated. Either way, the order of operations won't make any difference even
+            // if `other.contains` use referential equality (newly allocated instance won't be contained by `other`,
+            // for pooled instances the order of operation won't matter).
+            body {
+                """
+                val set = this.toMutableSet()
+                set.retainAll(other)
+                return set
+                """
+            }
+        }
     }
 
     val f_subtract = fn("subtract(other: Iterable<T>)") {
@@ -180,6 +195,21 @@ object SetOps : TemplateGroupBase() {
             }
             return result
             """
+        }
+        specialFor(ArraysOfPrimitives) {
+            // In general, converting receiver to a set may lead to function's contract not being obeyed.
+            // However, primitive values will end up being auto-boxed no matter what.
+            // On some platforms (namely, on JVM), some auto-boxed instances could be taken from a cache,
+            // others will be allocated. Either way, the order of operations won't make any difference even
+            // if `other.contains` use referential equality (newly allocated instance won't be contained by `other`,
+            // for pooled instances the order of operation won't matter).
+            body {
+                """
+                val set = this.toMutableSet()
+                set.removeAll(other)
+                return set
+                """
+            }
         }
     }
 
