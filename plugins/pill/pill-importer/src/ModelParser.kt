@@ -262,22 +262,34 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
             method.invoke(kotlinCompileTask) as List<String>
         }
 
-        val extraArguments = getExtraArguments(compileArguments)
+        fun parseBoolean(name: String) = compileArguments.contains("-$name")
+        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
+
+        fun parseVersion(name: String, limit: KotlinLanguageVersion): String? {
+            val rawVersion = parseString(name) ?: return null
+            return if (KotlinLanguageVersion.parse(rawVersion) >= limit) rawVersion else null
+        }
+
+        val apiVersion = parseVersion("api-version", MIN_API_VERSION)
+        val languageVersion = parseVersion("language-version", MIN_LANGUAGE_VERSION)
+        val isVersionUnspecified = apiVersion == null || languageVersion == null
+
+        val extraArguments = getExtraArguments(compileArguments) { arg ->
+            // Skip 'warnings-as-errors' in cases when API/language versions are absent or too old to be compiled with JPS
+            !isVersionUnspecified || arg != "-Werror"
+        }
 
         val pluginClasspath = mutableListOf<String>()
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
             pluginClasspath += "\$KOTLIN_BUNDLED\$/lib/kotlinx-serialization-compiler-plugin.jar"
         }
 
-        fun parseBoolean(name: String) = compileArguments.contains("-$name")
-        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
-
         return PSourceRootKotlinOptions(
             parseBoolean("no-stdlib"),
             parseBoolean("no-reflect"),
             parseString("module-name"),
-            parseString("api-version"),
-            parseString("language-version"),
+            apiVersion ?: MIN_API_VERSION.toString(),
+            languageVersion ?: MIN_LANGUAGE_VERSION.toString(),
             parseString("jvm-target").takeUnless { it == "1.6" },
             extraArguments,
             pluginClasspath
@@ -310,13 +322,16 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
     }
 
     private companion object {
+        private val MIN_API_VERSION = KotlinLanguageVersion(1, 6)
+        private val MIN_LANGUAGE_VERSION = KotlinLanguageVersion(1, 6)
+
         private val SKIPPED_STANDALONE_ARGUMENTS =
             listOf("-no-stdlib", "-no-reflect", "-Xfriend-paths=", "-Xbuild-file=", "-Xplugin=")
 
         private val SKIPPED_ARGUMENTS_WITH_VALUE =
             listOf("-classpath", "-d", "-module-name", "-api-version", "-language-version", "-jvm-target", "-P")
 
-        private fun getExtraArguments(args: List<String>): List<String> {
+        private fun getExtraArguments(args: List<String>, filter: (String) -> Boolean): List<String> {
             val result = mutableListOf<String>()
             var index = 0
             while (index < args.size) {
@@ -330,12 +345,34 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
                     continue
                 }
 
-                result += arg
+                if (filter(arg)) {
+                    result += arg
+                }
+
                 index += 1
             }
             return result
         }
     }
+}
+
+/**
+ * Represents a Kotlin language or API version.
+ */
+private data class KotlinLanguageVersion(val major: Int, val minor: Int) : Comparable<KotlinLanguageVersion> {
+    companion object {
+        fun parse(rawVersion: String): KotlinLanguageVersion {
+            val chunks = rawVersion.split('.')
+            require(chunks.size == 2)
+            return KotlinLanguageVersion(chunks[0].toInt(), chunks[1].toInt())
+        }
+    }
+
+    override fun compareTo(other: KotlinLanguageVersion): Int {
+        return compareValuesBy(this, other, { it.major }, { it.minor })
+    }
+
+    override fun toString(): String = "$major.$minor"
 }
 
 /**
