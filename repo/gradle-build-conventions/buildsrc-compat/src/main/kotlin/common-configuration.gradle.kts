@@ -287,15 +287,6 @@ fun Project.configureArtifacts() {
 }
 
 fun Project.configureTests() {
-    val ignoreTestFailures: Boolean by rootProject.extra
-    if (!plugins.hasPlugin("compiler-tests-convention")) {
-        tasks.configureEach {
-            if (this is VerificationTask) {
-                ignoreFailures = ignoreTestFailures
-            }
-        }
-    }
-
     val concurrencyLimitService = project.gradle.sharedServices.registerIfAbsent(
         "concurrencyLimitService",
         ConcurrencyLimitService::class

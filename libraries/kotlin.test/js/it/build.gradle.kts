@@ -80,7 +80,7 @@ fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
         }
         doLast {
             println(tcOutput.get().asFile.readText())
-            if (exitCodeFile.get().asFile.readText() != "0" /* && !rootProject.ignoreTestFailures*/) {
+            if (exitCodeFile.get().asFile.readText() != "0") {
                 throw GradleException("$testName integration test failed")
             }
 
