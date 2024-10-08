@@ -196,7 +196,7 @@ class KaptApiTest {
     }
 
     private fun configureKapt(configAction: Kapt.() -> Unit): KaptWithoutKotlincTask {
-        val provider = plugin.registerKaptTask(TASK_NAME)
+        val provider = plugin.registerKaptTask(TASK_NAME, plugin.kaptExtension)
         provider.configure(configAction)
         return provider.get() as KaptWithoutKotlincTask
     }

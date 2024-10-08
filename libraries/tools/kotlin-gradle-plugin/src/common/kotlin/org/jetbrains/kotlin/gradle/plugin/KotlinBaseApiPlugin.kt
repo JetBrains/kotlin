@@ -172,10 +172,18 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return kaptGenerateStubsTask
     }
 
+    @Deprecated("Replaced with 'registerKaptTask(taskName, kaptExtension)'")
     override fun registerKaptTask(taskName: String): TaskProvider<out Kapt> {
-        val taskConfiguration = KaptWithoutKotlincConfig(myProject, kaptExtension)
+        return registerKaptTask(taskName, kaptExtension)
+    }
+
+    override fun registerKaptTask(
+        taskName: String,
+        kaptExtension: KaptExtensionConfig,
+    ): TaskProvider<out Kapt> {
+        val kaptTaskConfiguration = KaptWithoutKotlincConfig(myProject, kaptExtension)
         return myProject.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
-            taskConfiguration.execute(it)
+            kaptTaskConfiguration.execute(it)
         }
     }
 }

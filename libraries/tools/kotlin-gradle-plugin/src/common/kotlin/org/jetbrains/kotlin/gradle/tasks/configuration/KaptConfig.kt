@@ -14,6 +14,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disableClassloaderCacheForProcessors
@@ -30,7 +31,7 @@ import java.io.File
 
 internal open class KaptConfig<TASK : KaptTask>(
     project: Project,
-    protected val ext: KaptExtension,
+    protected val ext: KaptExtensionConfig,
 ) : TaskConfigAction<TASK>(project) {
 
     init {
@@ -60,7 +61,7 @@ internal open class KaptConfig<TASK : KaptTask>(
     internal constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtension
+        ext: KaptExtensionConfig
     ) : this(project, ext) {
         configureTask { task ->
             task.classpath.from(
@@ -182,10 +183,12 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
             )
             task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
             task.mapDiagnosticLocations = ext.mapDiagnosticLocations
-            task.annotationProcessorFqNames.set(providers.provider {
-                @Suppress("DEPRECATION")
-                ext.processors.split(',').filter { it.isNotEmpty() }
-            })
+            if (ext is KaptExtension) {
+                task.annotationProcessorFqNames.set(providers.provider {
+                    @Suppress("DEPRECATION")
+                    ext.processors.split(',').filter { it.isNotEmpty() }
+                })
+            }
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
             task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
@@ -195,7 +198,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtension
+        ext: KaptExtensionConfig
     ) : super(project, kaptGenerateStubsTask, ext) {
         project.configurations.findResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
             ?: project.configurations.createResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
@@ -221,11 +224,13 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
         }
     }
 
-    constructor(project: Project, ext: KaptExtension) : super(project, ext) {
+    constructor(project: Project, ext: KaptExtensionConfig) : super(project, ext) {
         configureTask { task ->
             val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
-            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
-            task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+            if (ext is KaptExtension) {
+                val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
+                task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+            }
         }
     }
 }
