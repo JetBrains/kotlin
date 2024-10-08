@@ -48,7 +48,7 @@ internal class NativeInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
-        generationState.inlineFunctionOrigins[function]?.let { return it.irFunction }
+        generationState.inlineFunctionOrigins[function]?.let { return it }
 
         val packageFragment = function.getPackageFragment()
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
@@ -57,7 +57,7 @@ internal class NativeInlineFunctionResolver(
         val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
             val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
+            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction.irFunction
             irFile = deserializedInlineFunction.irFile
             function to firstAccess
         } else {
@@ -66,8 +66,7 @@ internal class NativeInlineFunctionResolver(
             if (partiallyLoweredFunction == null)
                 function to true
             else {
-                generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(partiallyLoweredFunction, irFile, function.startOffset, function.endOffset)
+                generationState.inlineFunctionOrigins[function] = partiallyLoweredFunction
                 partiallyLoweredFunction to false
             }
         }
@@ -75,9 +74,7 @@ internal class NativeInlineFunctionResolver(
         if (shouldLower) {
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
-                generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(possiblyLoweredFunction.getOrSaveLoweredInlineFunction(),
-                                irFile, function.startOffset, function.endOffset)
+                generationState.inlineFunctionOrigins[function] = possiblyLoweredFunction.getOrSaveLoweredInlineFunction()
             }
         }
         return possiblyLoweredFunction
