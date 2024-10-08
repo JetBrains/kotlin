@@ -50,6 +50,9 @@ public:
 
     static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
 
+    // TODO(KT-72121): Remove this hack.
+    static void SetCurrentThreadDataNode(Node* node) noexcept { currentThreadDataNode_ = node; }
+
     template <typename F>
     void waitAllThreads(F&& f) noexcept {
         // Disable new threads coming and going.

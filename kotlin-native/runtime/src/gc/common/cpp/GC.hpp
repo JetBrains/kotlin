@@ -102,6 +102,8 @@ bool isMarked(ObjHeader* object) noexcept;
 // If the mark bit was unset, this will return `false`.
 bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
+extern const bool kRequiresThreadDataDuringThreadDestruction;
+
 } // namespace gc
 
 template <>

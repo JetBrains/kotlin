@@ -127,6 +127,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
   ::runtimeState = state;
+  RestoreMemoryState(state->memoryState);
   --aliveRuntimesCount;
   ClearTLS(state->memoryState);
   if (destroyRuntime)
