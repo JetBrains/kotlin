@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -26,6 +27,10 @@ class KotlinJvmWithJavaTargetPreset(
 
     override fun getName(): String = PRESET_NAME
 
+    @Deprecated(
+        "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX",
+        level = DeprecationLevel.ERROR
+    )
     override fun createTargetInternal(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
         project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic())
 

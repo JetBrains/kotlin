@@ -333,6 +333,7 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         }
 
         existingTarget == null -> {
+            @Suppress("DEPRECATION_ERROR")
             val newTarget = targetPreset.createTargetInternal(targetName)
             targets.add(newTarget)
             configure(newTarget)

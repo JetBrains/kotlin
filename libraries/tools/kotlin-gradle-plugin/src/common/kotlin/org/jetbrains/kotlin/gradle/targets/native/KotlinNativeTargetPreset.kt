@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
@@ -45,6 +46,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     protected abstract fun instantiateTarget(name: String): T
 
+    @Deprecated(
+        "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX",
+        level = DeprecationLevel.ERROR
+    )
     override fun createTargetInternal(name: String): T {
         if (!project.nativeProperties.isToolchainEnabled.get()) {
             @Suppress("DEPRECATION")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
@@ -50,7 +51,12 @@ class KotlinMetadataTargetPreset(
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
     }
 
+    @Deprecated(
+        "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX",
+        level = DeprecationLevel.ERROR
+    )
     override fun createTargetInternal(name: String): KotlinMetadataTarget =
+        @Suppress("DEPRECATION_ERROR")
         super.createTargetInternal(name).apply {
             val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)

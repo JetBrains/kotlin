@@ -263,6 +263,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
         body: KotlinJsTargetDsl.() -> Unit,
     ): KotlinJsTargetDsl {
         if (!targetFuture.isCompleted) {
+            @Suppress("DEPRECATION_ERROR")
             val target: KotlinJsTargetDsl = irPreset
                 .createTargetInternal("js")
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 
@@ -30,6 +31,10 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
 
     protected abstract fun instantiateTarget(name: String): R
 
+    @Deprecated(
+        "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX",
+        level = DeprecationLevel.ERROR
+    )
     override fun createTargetInternal(name: String): R {
         val result = instantiateTarget(name).apply {
             targetName = name
