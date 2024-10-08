@@ -34,7 +34,7 @@ dependencies {
         }
     }
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation(libs.kotlinx.coroutines.core)
 
     // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
     // (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
