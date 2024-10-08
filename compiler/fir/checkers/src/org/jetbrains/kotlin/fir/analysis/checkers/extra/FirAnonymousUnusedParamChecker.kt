@@ -50,7 +50,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
                 resolvedNamedReference: FirResolvedNamedReference,
                 data: MutableSet<FirValueParameterSymbol>,
             ) {
-                data.removeAll { resolvedNamedReference.resolvedSymbol == it }
+                data.remove(resolvedNamedReference.resolvedSymbol)
             }
 
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MutableSet<FirValueParameterSymbol>) {
