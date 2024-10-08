@@ -6991,6 +6991,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("basicVariable.kt")
+      public void testBasicVariable() {
+        runTest("compiler/testData/diagnostics/tests/collectionLiterals/basicVariable.kt");
+      }
+
+      @Test
       @TestMetadata("collectionLiteralsAsPrimitiveArrays.kt")
       public void testCollectionLiteralsAsPrimitiveArrays() {
         runTest("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsAsPrimitiveArrays.kt");
