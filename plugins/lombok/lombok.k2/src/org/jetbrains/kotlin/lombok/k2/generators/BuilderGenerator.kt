@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -33,17 +32,17 @@ class BuilderGenerator(
         return builderClassId.constructClassLikeType(emptyArray(), isMarkedNullable = false)
     }
 
-    override fun getBuilderType(builderClassSymbol: FirRegularClassSymbol): ConeKotlinType {
-        return builderClassSymbol.defaultType()
+    override fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType {
+        return builderSymbol.defaultType()
     }
 
     override fun getBuilderMethods(
         builder: Builder,
         classSymbol: FirClassSymbol<*>,
-        builderClassSymbol: FirRegularClassSymbol
+        builderSymbol: FirClassSymbol<*>
     ): List<FirJavaMethod> {
         return listOf(
-            builderClassSymbol.createJavaMethod(
+            builderSymbol.createJavaMethod(
                 Name.identifier(builder.buildMethodName),
                 valueParameters = emptyList(),
                 returnTypeRef = classSymbol.defaultType().toFirResolvedTypeRef(),
@@ -54,7 +53,7 @@ class BuilderGenerator(
     }
 
     override fun FirJavaClassBuilder.completeBuilder(
-        classSymbol: FirClassSymbol<*>, builderClassSymbol: FirRegularClassSymbol,
+        classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>,
     ) {
         superTypeRefs += listOf(session.builtinTypes.anyType)
     }
