@@ -29,6 +29,10 @@ interface AbstractFir2IrLazyDeclaration<F> :
         get() = IrFactoryImpl
 
     override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+        // Normally lazy resolve would be not necessary here,
+        // but in context of Kotlin project itself opened in IDE we can have here
+        // an annotated built-in function in sources, like arrayOfNull (KT-70856).
+        // For any other project, built-ins functions come from libraries and it's not actual.
         fir.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
