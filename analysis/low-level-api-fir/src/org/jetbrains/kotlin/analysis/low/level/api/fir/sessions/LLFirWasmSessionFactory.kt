@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getWasmTarget
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
@@ -83,8 +84,7 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
     }
 
     private fun LLFirSession.registerWasmComponents() {
-        val platform = ktModule.targetPlatform.singleOrNull()
-        val target = (platform as? WasmPlatformWithTarget)?.target ?: WasmTarget.JS
+        val target = ktModule.targetPlatform.getWasmTarget()
         registerWasmComponents(target)
     }
 

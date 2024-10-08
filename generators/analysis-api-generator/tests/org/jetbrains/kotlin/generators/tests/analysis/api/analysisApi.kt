@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.imports.AbstractKaDefaultImportsProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
@@ -336,6 +337,16 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("sessionInvalidation")
         }
     }
+    group("imports") {
+        test<AbstractKaDefaultImportsProviderTest>(
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+                    and testModuleKindIs(TestModuleKind.Source)
+                    and frontendIs(FrontendKind.Fir),
+        ) {
+            model("defaultImportProvider")
+        }
+    }
+
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {

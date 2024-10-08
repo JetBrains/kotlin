@@ -25,7 +25,7 @@ interface DefaultStarImportingScopeMarker
 class FirSingleLevelDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    private val priority: DefaultImportPriority,
+    val priority: DefaultImportPriority,
     private val additionalExcludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(
     session, scopeSession,

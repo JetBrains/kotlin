@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 class FirDefaultSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    private val priority: DefaultImportPriority,
+    val priority: DefaultImportPriority,
     private val excludedImportNames: Set<FqName>,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
