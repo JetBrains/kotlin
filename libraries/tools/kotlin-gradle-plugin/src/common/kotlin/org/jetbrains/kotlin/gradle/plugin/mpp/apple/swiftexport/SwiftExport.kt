@@ -5,24 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.maybeCreateSwiftExportClasspathResolvableConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.ExportedSwiftExportApiConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.ExportedSwiftExportApiConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftExportedModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
@@ -35,14 +37,31 @@ internal object SwiftExportConstants {
     const val SWIFT_EXPORT_BINARY = "SwiftExportBinary"
 }
 
+private class SwiftExportOutputs(
+    outputs: Provider<Directory>,
+    val swiftApiModuleName: Provider<String>,
+) {
+    val files = outputs.map { it.dir("files") }
+    val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
+}
+
+private fun Project.swiftExportOutputs(
+    target: KotlinNativeTarget,
+    configuration: String,
+    swiftApiModuleName: Provider<String>,
+) = SwiftExportOutputs(
+    layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration"),
+    swiftApiModuleName
+)
+
 internal fun Project.registerSwiftExportTask(
     swiftExportExtension: SwiftExportExtension,
     taskGroup: String,
-    binary: StaticLibrary,
+    buildType: NativeBuildType,
+    target: KotlinNativeTarget,
 ): TaskProvider<*> {
-    val mainCompilation = binary.target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-    val buildConfiguration = binary.buildType.configuration
-    val target = binary.target
+    val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    val buildConfiguration = buildType.configuration
 
     val swiftApiModuleName = swiftExportExtension
         .moduleName
@@ -50,26 +69,32 @@ internal fun Project.registerSwiftExportTask(
 
     val taskNamePrefix = lowerCamelCaseName(
         target.disambiguationClassifier ?: target.name,
-        binary.buildType.getName(),
+        buildType.getName(),
     )
+
+    val swiftExportOutputs = swiftExportOutputs(target, buildConfiguration, swiftApiModuleName)
+
+    val staticLibrary = registerSwiftExportCompilationAndGetBinary(
+        buildType = buildType,
+        target = target,
+        mainCompilation = mainCompilation,
+        swiftExportOutputs = swiftExportOutputs
+    ) {
+        it.ExportedSwiftExportApiConfiguration
+        swiftExportExtension.addBinary(it)
+    }
+
+    val swiftExportCompilation = target.compilations.getByName(SwiftExportConstants.SWIFT_EXPORT_COMPILATION)
 
     val swiftExportTask = registerSwiftExportRun(
         taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
-        binary = binary,
-        configuration = buildConfiguration,
+        swiftExportOutputs = swiftExportOutputs,
+        exportConfigurationName = staticLibrary.ExportedSwiftExportApiConfigurationName,
         mainCompilation = mainCompilation,
-        swiftApiModuleName = swiftApiModuleName,
+        swiftExportCompilation = swiftExportCompilation,
         swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
         exportedModules = swiftExportExtension.exportedModules
-    )
-
-    val staticLibrary = registerSwiftExportCompilationAndGetBinary(
-        buildType = binary.buildType,
-        compilations = target.compilations,
-        binaries = target.binaries,
-        mainCompilation = mainCompilation,
-        swiftExportTask = swiftExportTask
     )
 
     val swiftApiLibraryName = swiftApiModuleName.map { it + "Library" }
@@ -114,10 +139,10 @@ internal fun Project.registerSwiftExportTask(
 private fun Project.registerSwiftExportRun(
     taskNamePrefix: String,
     taskGroup: String,
-    binary: StaticLibrary,
-    configuration: String,
+    swiftExportOutputs: SwiftExportOutputs,
+    exportConfigurationName: String,
     mainCompilation: KotlinNativeCompilation,
-    swiftApiModuleName: Provider<String>,
+    swiftExportCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>>,
 ): TaskProvider<SwiftExportTask> {
@@ -126,10 +151,7 @@ private fun Project.registerSwiftExportRun(
         "swiftExport"
     )
 
-    val outputs = layout.buildDirectory.dir("SwiftExport/${binary.target.name}/$configuration")
-    val files = outputs.map { it.dir("files") }
-    val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val exportConfiguration = project.configurations.getByName(binary.exportConfigurationName)
+    val exportConfiguration = configurations.getByName(exportConfigurationName)
     val configurationProvider = provider { LazyResolvedConfiguration(exportConfiguration) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
@@ -140,7 +162,7 @@ private fun Project.registerSwiftExportRun(
         task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
-        task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
+        task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftModules.set(
             configurationProvider.zip(exportedModules) { configuration, modules ->
@@ -148,7 +170,7 @@ private fun Project.registerSwiftExportRun(
             }
         )
 
-        task.mainModuleInput.moduleName.set(swiftApiModuleName)
+        task.mainModuleInput.moduleName.set(swiftExportOutputs.swiftApiModuleName)
         task.mainModuleInput.flattenPackage.set(swiftApiFlattenPackage)
         task.kotlinNativeProvider.set(
             mainCompilation.compileTaskProvider.flatMap { it.kotlinNativeProvider }
@@ -158,25 +180,25 @@ private fun Project.registerSwiftExportRun(
         )
 
         // Output
-        task.parameters.outputPath.set(files)
-        task.parameters.swiftModulesFile.set(serializedModules)
+        task.parameters.outputPath.set(swiftExportOutputs.files)
+        task.parameters.swiftModulesFile.set(swiftExportOutputs.serializedModules)
+    }.also {
+        swiftExportCompilation.compileTaskProvider.dependsOn(it)
     }
 }
 
 private fun registerSwiftExportCompilationAndGetBinary(
     buildType: NativeBuildType,
-    compilations: NamedDomainObjectContainer<KotlinNativeCompilation>,
-    binaries: KotlinNativeBinaryContainer,
+    target: KotlinNativeTarget,
     mainCompilation: KotlinNativeCompilation,
-    swiftExportTask: TaskProvider<SwiftExportTask>,
+    swiftExportOutputs: SwiftExportOutputs,
+    onCreateBinary: (StaticLibrary) -> Unit
 ): AbstractNativeLibrary {
-    compilations.getOrCreate(
+    target.compilations.getOrCreate(
         SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
-            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map {
-                it.parameters.outputPath.getFile()
-            })
+            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportOutputs.files.getFile())
 
             swiftExportCompilation.compileTaskProvider.configure {
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
@@ -184,15 +206,17 @@ private fun registerSwiftExportCompilationAndGetBinary(
                 it.compilerOptions.optIn.add("kotlin.native.internal.InternalForKotlinNative")
             }
 
-            binaries.staticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY) { staticLib ->
+            target.binaries.staticLib(SwiftExportConstants.SWIFT_EXPORT_BINARY) { staticLib ->
                 staticLib.compilation = swiftExportCompilation
                 staticLib.binaryOption("swiftExport", "true")
                 staticLib.binaryOption("cInterfaceMode", "none")
+
+                onCreateBinary(staticLib)
             }
         }
     )
 
-    return binaries.getStaticLib(
+    return target.binaries.getStaticLib(
         SwiftExportConstants.SWIFT_EXPORT_BINARY,
         buildType
     )

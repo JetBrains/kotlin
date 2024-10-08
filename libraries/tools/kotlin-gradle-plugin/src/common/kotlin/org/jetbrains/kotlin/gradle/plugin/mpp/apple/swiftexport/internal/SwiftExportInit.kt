@@ -11,8 +11,13 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -24,7 +29,7 @@ private const val SWIFT_EXPORT_EMBEDDABLE_MODULE = "swift-export-embeddable"
 internal fun Project.initSwiftExportClasspathConfigurations() {
     if (project.kotlinPropertiesProvider.swiftExportEnabled) {
         maybeCreateSwiftExportClasspathDependenciesConfiguration()
-        maybeCreateSwiftExportClasspathResolvableConfiguration()
+        SwiftExportClasspathResolvableConfiguration
     }
 }
 
@@ -40,13 +45,26 @@ private fun Project.maybeCreateSwiftExportClasspathDependenciesConfiguration(): 
         }.get()
 }
 
-internal fun Project.maybeCreateSwiftExportClasspathResolvableConfiguration(): Configuration {
-    return configurations.findResolvable(SWIFT_EXPORT_CLASSPATH_RESOLVABLE)
-        ?: project.configurations.createResolvable(SWIFT_EXPORT_CLASSPATH_RESOLVABLE) {
-            description = "Resolves the runtime classpath for the SwiftExport worker."
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, usageByName(Usage.JAVA_RUNTIME))
-            extendsFrom(maybeCreateSwiftExportClasspathDependenciesConfiguration())
-        }
-}
+internal val Project.SwiftExportClasspathResolvableConfiguration: Configuration
+    get() = configurations.maybeCreateResolvable(SWIFT_EXPORT_CLASSPATH_RESOLVABLE) {
+        description = "Resolves the runtime classpath for the SwiftExport worker."
+        attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, usageByName(Usage.JAVA_RUNTIME))
+        extendsFrom(maybeCreateSwiftExportClasspathDependenciesConfiguration())
+    }
+
+internal val AbstractNativeLibrary.ExportedSwiftExportApiConfigurationName: String
+    get() = target.disambiguateName(
+        lowerCamelCaseName(buildType.configuration, "exported", "swift", "export", "api", "configuration")
+    )
+
+internal val AbstractNativeLibrary.ExportedSwiftExportApiConfiguration: Configuration
+    get() = project.configurations.maybeCreateResolvable(ExportedSwiftExportApiConfigurationName) {
+        description = "Swift Export dependencies configuration for ${target.name}"
+        isVisible = false
+        isTransitive = false
+        usesPlatformOf(target)
+        attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+    }

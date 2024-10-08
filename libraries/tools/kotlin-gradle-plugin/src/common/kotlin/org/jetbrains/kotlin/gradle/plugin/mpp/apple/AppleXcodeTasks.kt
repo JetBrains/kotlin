@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
-import org.jetbrains.kotlin.gradle.plugin.mpp.StaticLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
@@ -178,37 +176,44 @@ private fun fireEnvException(frameworkTaskName: String, environment: XcodeEnviro
 
 @ExperimentalSwiftExportDsl
 internal fun Project.registerEmbedSwiftExportTask(
-    binary: StaticLibrary,
+    target: KotlinNativeTarget,
     environment: XcodeEnvironment,
     swiftExportExtension: SwiftExportExtension,
 ) {
     val envTargets = environment.targets
     val envBuildType = environment.buildType
-    val isMatchingBinary = envTargets.contains(binary.konanTarget) && binary.buildType == envBuildType
-    val binaryTaskName = binary.embedSwiftExportTaskName()
+    val binaryTaskName = embedSwiftExportTaskName()
 
-    if (isMatchingBinary) {
-        if (!isRunWithXcodeEnvironment(
-                environment,
-                binaryTaskName,
-                "Embed swift export ${binary.namePrefix} library as requested by Xcode's environment variables"
-            )
-        ) {
-            return
-        }
+    if (!isRunWithXcodeEnvironment(
+            environment,
+            binaryTaskName,
+            "Embed swift export library as requested by Xcode's environment variables"
+        )
+    ) {
+        return
+    }
 
+    if (!envTargets.contains(target.konanTarget)) {
+        return
+    }
+
+    envBuildType?.let { buildType ->
         val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
 
         val swiftExportTask = registerSwiftExportTask(
             swiftExportExtension,
             SwiftExportDSLConstants.TASK_GROUP,
-            binary
+            buildType,
+            target
         )
 
         swiftExportTask.dependsOn(sandBoxTask)
-        binary.linkTaskProvider.dependsOn(sandBoxTask)
 
-        val embedAndSignTask = registerEmbedTask(binary, binaryTaskName, environment) { false } ?: return
+        val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Embed Swift Export artifacts requested by Xcode's environment variables"
+            task.isEnabled = false
+        }
 
         embedAndSignTask.dependsOn(swiftExportTask)
     }
@@ -384,9 +389,9 @@ private fun NativeBinary.embedAndSignTaskName(): String = lowerCamelCaseName(
     AppleXcodeTasks.embedAndSignTaskPostfix
 )
 
-private fun NativeBinary.embedSwiftExportTaskName(): String = lowerCamelCaseName(
+private fun embedSwiftExportTaskName(): String = lowerCamelCaseName(
     "embed",
-    namePrefix.let { it.ifBlank { SwiftExportDSLConstants.SWIFT_EXPORT_LIBRARY_PREFIX } },
+    SwiftExportDSLConstants.SWIFT_EXPORT_LIBRARY_PREFIX,
     "ForXcode"
 )
 
