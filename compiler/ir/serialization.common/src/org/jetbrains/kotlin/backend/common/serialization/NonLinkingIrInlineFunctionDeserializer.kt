@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
+    private val signatureComputer: PublicIdSignatureComputer,
     libraries: List<KotlinLibrary>
 ) {
     private val irInterner = IrInterningService()
@@ -39,25 +44,33 @@ class NonLinkingIrInlineFunctionDeserializer(
     private val moduleDeserializers = libraries.map(::ModuleDeserializer)
 
     // TODO: consider the case of `external inline` functions that exist in Kotlin/Native stdlib
-    fun deserializeInlineFunction(signature: IdSignature): IrSimpleFunction {
-        val topLevelSignature = signature.topLevelSignature()
-        val topLevelDeclaration = moduleDeserializers.firstNotNullOfOrNull { it.getTopLevelDeclarationOrNull(topLevelSignature) }
+    fun deserializeInlineFunction(function: IrSimpleFunction) {
+        check(function.isInline) { "Non-inline function: ${function.render()}" }
+        check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
-        val function = when {
-            topLevelDeclaration == null -> null
+        if (function.body != null) return
 
-            signature == topLevelSignature -> topLevelDeclaration as? IrSimpleFunction
+        val functionSignature: IdSignature = function.symbol.signature ?: signatureComputer.computeSignature(function)
+        val topLevelSignature: IdSignature = functionSignature.topLevelSignature()
 
-            else -> {
-                val symbol = referencePublicSymbol(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
-                runIf(symbol.isBound) { symbol.owner as IrSimpleFunction }
-            }
+        val topLevelDeclaration: IrDeclaration? = moduleDeserializers.firstNotNullOfOrNull {
+            it.getTopLevelDeclarationOrNull(topLevelSignature)
         }
 
-        check(function != null) { "Function not found: $signature" }
-        check(function.isInline) { "Non-inline function: $signature" }
+        val deserializedBody: IrBody? = when {
+            topLevelDeclaration == null -> null
 
-        return function
+            functionSignature == topLevelSignature -> topLevelDeclaration as? IrSimpleFunction
+
+            else -> {
+                val symbol = referencePublicSymbol(functionSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
+                runIf(symbol.isBound) { symbol.owner as IrSimpleFunction }
+            }
+        }?.body
+
+        check(deserializedBody != null) { "Function not found: ${function.render()}, $functionSignature" }
+
+        function.body = deserializedBody
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
