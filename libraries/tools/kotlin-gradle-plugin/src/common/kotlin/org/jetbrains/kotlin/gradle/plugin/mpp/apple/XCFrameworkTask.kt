@@ -244,37 +244,39 @@ internal constructor(
     fun assemble() {
         val xcfName = xcFrameworkName.get()
 
-        validateInputFrameworks(xcfName)
-        val frameworksForXCFramework = xcframeworkSlices(xcfName)
+        val frameworksForXCFramework = xcframeworkSlices(
+            frameworkName = singleFrameworkName(xcfName)
+        )
 
         createXCFramework(frameworksForXCFramework, outputXCFrameworkFile)
     }
 
-    internal fun validateInputFrameworks(xcfName: String) {
+    internal fun singleFrameworkName(xcfName: String): String {
         val frameworks = groupedFrameworkFiles.values.flatten()
-        if (frameworks.isNotEmpty()) {
-            val rawXcfName = baseName.get()
-            val name = frameworks.first().name
-            if (frameworks.any { it.name != name }) {
-                error("All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
-                              frameworks.joinToString("\n") { it.file.path })
-            }
-            if (name != xcfName) {
-                toolingDiagnosticsCollector.get().report(
-                    this, KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName(
-                        xcFramework = rawXcfName,
-                        innerFrameworks = name,
-                    )
-                )
-            }
+        if (frameworks.isEmpty()) error("XCFramework $xcfName is empty")
+
+        val rawXcfName = baseName.get()
+        val name = frameworks.first().name
+        if (frameworks.any { it.name != name }) {
+            error("All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
+                          frameworks.joinToString("\n") { it.file.path })
         }
+        if (name != xcfName) {
+            toolingDiagnosticsCollector.get().report(
+                this, KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName(
+                    xcFramework = rawXcfName,
+                    innerFrameworks = name,
+                )
+            )
+        }
+        return name
     }
 
-    internal fun xcframeworkSlices(xcfName: String) = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
+    internal fun xcframeworkSlices(frameworkName: String) = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
         when {
             files.size == 1 -> files.first()
             files.size > 1 -> FrameworkDescriptor(
-                fatFrameworksDir.resolve(group.targetName).resolve("$xcfName.framework"),
+                fatFrameworksDir.resolve(group.targetName).resolve("${frameworkName}.framework"),
                 files.all { it.isStatic },
                 group.targets.first() //will be not used
             )

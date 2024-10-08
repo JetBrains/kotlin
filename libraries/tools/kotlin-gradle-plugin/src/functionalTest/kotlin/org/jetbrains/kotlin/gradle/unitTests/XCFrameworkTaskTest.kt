@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.FrameworkDescriptor
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -222,9 +219,8 @@ class XCFrameworkTaskTest {
         assertEquals(
             listOf(
                 "xcodebuild", "-create-xcframework",
-                // FIXME: KT-66894, KT-65675
-                "-framework", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/test.framework").path,
-                "-debug-symbols", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/test.framework.dSYM").path,
+                "-framework", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/bar.framework").path,
+                "-debug-symbols", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/bar.framework.dSYM").path,
                 "-framework", project.buildFile("bin/iosArm64/releaseFramework/bar.framework").path,
                 "-debug-symbols", project.buildFile("bin/iosArm64/releaseFramework/bar.framework.dSYM").path,
                 "-output", project.buildFile("XCFrameworks/release/test.xcframework").path,
@@ -292,7 +288,7 @@ class XCFrameworkTaskTest {
         assertThrows<RuntimeException> {
             assertIsInstance<XCFrameworkTask>(
                 project.tasks.getByName("assembleTestReleaseXCFramework")
-            ).validateInputFrameworks()
+            ).singleFrameworkName()
         }
     }
 
@@ -303,11 +299,10 @@ class XCFrameworkTaskTest {
 fun XCFrameworkTask.xcodebuildArguments(
     fileExists: (File) -> Boolean = { it.exists() }
 ) = xcodebuildArguments(
-    frameworkFiles = xcframeworkSlices(xcFrameworkName.get()),
+    frameworkFiles = xcframeworkSlices(),
     output = outputXCFrameworkFile,
     fileExists = fileExists,
 )
 
-fun XCFrameworkTask.validateInputFrameworks() = validateInputFrameworks(xcFrameworkName.get())
-
-fun XCFrameworkTask.xcframeworkSlices() = xcframeworkSlices(xcFrameworkName.get())
+fun XCFrameworkTask.singleFrameworkName() = singleFrameworkName(xcFrameworkName.get())
+fun XCFrameworkTask.xcframeworkSlices() = xcframeworkSlices(singleFrameworkName())
