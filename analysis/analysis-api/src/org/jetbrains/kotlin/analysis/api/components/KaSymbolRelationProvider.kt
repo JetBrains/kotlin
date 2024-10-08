@@ -47,6 +47,12 @@ public interface KaSymbolRelationProvider {
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
+     * Returns [KaClassLikeSymbol] of the corresponding SAM interface
+     */
+    public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+
+
+    /**
      * A list of **all** explicitly declared symbols that are overridden by symbol
      *
      * E.g., if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
