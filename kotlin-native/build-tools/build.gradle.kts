@@ -51,10 +51,6 @@ dependencies {
         }
     }
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    val metadataVersion = "0.0.1-dev-10"
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
-
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
