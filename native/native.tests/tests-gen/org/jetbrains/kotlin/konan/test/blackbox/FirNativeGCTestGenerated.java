@@ -145,6 +145,12 @@ public class FirNativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("workerCancelJobsWithGC.kt")
+  public void testWorkerCancelJobsWithGC() {
+    runTest("native/native.tests/testData/gc/workerCancelJobsWithGC.kt");
+  }
+
+  @Test
   @TestMetadata("worker_bound_reference0.kt")
   public void testWorker_bound_reference0() {
     runTest("native/native.tests/testData/gc/worker_bound_reference0.kt");
