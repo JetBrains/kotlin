@@ -92,8 +92,7 @@ interface KotlinJvmFactory {
      * @since 1.7.0
      */
     @Deprecated(
-        message = "Replaced by registerKotlinJvmCompileTask with module name",
-        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
+        message = "Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'",
     )
     fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile>
 
@@ -106,8 +105,7 @@ interface KotlinJvmFactory {
      * @since 1.9.20
      */
     @Deprecated(
-        message = "Replaced by registerKotlinJvmCompileTask with compiler options and explicit API mode",
-        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
+        message = "Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'",
     )
     fun registerKotlinJvmCompileTask(taskName: String, moduleName: String): TaskProvider<out KotlinJvmCompile>
 
