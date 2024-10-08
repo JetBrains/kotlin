@@ -11,7 +11,7 @@ class A {
 package base
 
 open class B : <!EXPOSED_SUPER_CLASS!>A<!>() {
-    private val f = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>f<!> = "FAIL"
 }
 
 // FILE: C.java

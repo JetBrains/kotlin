@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticL
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -60,6 +61,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
+
+        val PROPERTY_HIDES_JAVA_FIELD by warning<KtProperty>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirFieldSymbol>("hidden")
+        }
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

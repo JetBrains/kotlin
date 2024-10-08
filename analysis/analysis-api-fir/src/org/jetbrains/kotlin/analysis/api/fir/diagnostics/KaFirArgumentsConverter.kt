@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -58,6 +59,7 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KaSymbolByFirBuild
         is FirNamedFunctionSymbol -> convertArgument(argument, firSymbolBuilder)
         is FirPropertySymbol -> convertArgument(argument, firSymbolBuilder)
         is FirBackingFieldSymbol -> convertArgument(argument, firSymbolBuilder)
+        is FirFieldSymbol -> convertArgument(argument, firSymbolBuilder)
         is FirVariableSymbol<*> -> convertArgument(argument, firSymbolBuilder)
         is FirTypeParameterSymbol -> convertArgument(argument, firSymbolBuilder)
         is FirCallableSymbol<*> -> convertArgument(argument, firSymbolBuilder)
@@ -109,6 +111,10 @@ private fun convertArgument(argument: FirPropertySymbol, firSymbolBuilder: KaSym
 
 private fun convertArgument(argument: FirBackingFieldSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.variableBuilder.buildVariableSymbol(argument.fir.propertySymbol)
+}
+
+private fun convertArgument(argument: FirFieldSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return firSymbolBuilder.variableBuilder.buildVariableSymbol(argument)
 }
 
 private fun convertArgument(argument: FirVariableSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

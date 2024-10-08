@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER
@@ -171,6 +172,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type argument is not within its bounds: must be subtype of ''{0}''.",
             RENDER_TYPE,
             RENDER_TYPE
+        )
+        map.put(
+            PROPERTY_HIDES_JAVA_FIELD,
+            "This property hides Java field ''{0}'' thus making it inaccessible.",
+            SYMBOL,
         )
 
         map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of type parameter cannot be an array.")

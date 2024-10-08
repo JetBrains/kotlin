@@ -8,7 +8,7 @@ public class A {
 
 // FILE: B.kt
 open class B : A() {
-    private val f = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>f<!> = "FAIL"
 }
 
 // FILE: C.java

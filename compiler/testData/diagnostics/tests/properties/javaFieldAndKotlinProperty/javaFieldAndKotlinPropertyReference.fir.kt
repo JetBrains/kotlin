@@ -8,7 +8,7 @@ public class BaseJava {
 
 // FILE: Derived.kt
 class Derived : BaseJava() {
-    private val a = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = "FAIL"
 }
 
 fun box(): String {

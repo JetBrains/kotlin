@@ -35,7 +35,7 @@ class KotlinClass : JavaClass() {
 class KotlinClass2 : JavaClass() {
     override fun foo() {}
 
-    val field: String = "abc"
+    val <!PROPERTY_HIDES_JAVA_FIELD!>field<!>: String = "abc"
 }
 
 fun test(a: KotlinClass, b: KotlinClass2) {

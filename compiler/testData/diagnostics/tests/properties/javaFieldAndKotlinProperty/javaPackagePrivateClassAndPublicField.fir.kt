@@ -24,7 +24,7 @@ class Intermediate extends a.Base {
 package b
 
 private class Final : Intermediate() {
-    private val foo = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>foo<!> = "FAIL"
 }
 
 fun box(): String =

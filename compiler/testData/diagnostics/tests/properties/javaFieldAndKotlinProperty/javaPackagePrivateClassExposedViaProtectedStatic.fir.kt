@@ -20,7 +20,7 @@ import p.JavaWrapper
 
 class KotlinWrapper : JavaWrapper() {
     protected class KotlinDerived : JavaDerived() {
-        private val foo = "FAIL"
+        private val <!PROPERTY_HIDES_JAVA_FIELD!>foo<!> = "FAIL"
     }
 
     fun bar() = KotlinDerived().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>foo<!>
