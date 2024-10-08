@@ -520,7 +520,7 @@ fun main() {
                 suiteTestClassName = "NativeUnboundIrSerializationTestGenerated",
                 annotations = listOf(*frontendFir(), klib())
             ) {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k1BoxTestDir)
                 model("codegen/boxInline")
             }
         }
