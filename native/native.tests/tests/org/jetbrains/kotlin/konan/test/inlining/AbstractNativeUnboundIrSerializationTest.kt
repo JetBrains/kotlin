@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -124,11 +123,8 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
     }
 }
 
-class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
-    private class InlineFunctionUnderTest(
-        val signature: IdSignature,
-        val fullyLinkedFunction: IrSimpleFunction
-    ) {
+private class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
+    private class InlineFunctionUnderTest(val fullyLinkedFunction: IrSimpleFunction) {
         lateinit var partiallyLinkedFunction: IrSimpleFunction
 
         lateinit var fullyLinkedFunctionProto: ProtoDeclaration
@@ -152,36 +148,19 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
             configuration.getLogger(treatWarningsAsErrors = true)
         )
 
-        val deserializer = NonLinkingIrInlineFunctionDeserializer(ir.irPluginContext.irBuiltIns, listOf(library))
+        val deserializer = NonLinkingIrInlineFunctionDeserializer(
+            irBuiltIns = ir.irPluginContext.irBuiltIns,
+            signatureComputer = PublicIdSignatureComputer(KonanManglerIr),
+            libraries = listOf(library)
+        )
 
         for (function in functionsUnderTest) {
-            function.partiallyLinkedFunction = deserializer.deserializeInlineFunction(function.signature)
+            // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
+            function.partiallyLinkedFunction = function.fullyLinkedFunction.copyWithoutBody()
+            deserializer.deserializeInlineFunction(function.partiallyLinkedFunction)
         }
 
         checkFunctionsSerialization(configuration, ir.irPluginContext.irBuiltIns, functionsUnderTest)
-    }
-
-    private fun collectInlineFunctions(irFragment: IrModuleFragment): List<InlineFunctionUnderTest> {
-        val signatureComposer = PublicIdSignatureComputer(KonanManglerIr)
-        val result = mutableListOf<InlineFunctionUnderTest>()
-
-        irFragment.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                if (declaration.isInline && !declaration.isEffectivelyPrivate()) {
-                    result += InlineFunctionUnderTest(
-                        signature = signatureComposer.computeSignature(declaration),
-                        fullyLinkedFunction = declaration
-                    )
-                }
-                super.visitSimpleFunction(declaration)
-            }
-        })
-
-        return result
     }
 
     private fun checkFunctionsSerialization(
@@ -209,7 +188,7 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
 
             assertions.assertEquals(fullyLinkedFunctionBytes.size, partiallyLinkedFunctionBytes.size) {
                 """
-                    Different byte length for serialized function proto ${function.signature.render()}
+                    Different byte length for serialized function proto $function
                     Fully-linked: ${fullyLinkedFunctionBytes.size}
                     Partially-linked: ${partiallyLinkedFunctionBytes.size}
                 """.trimIndent()
@@ -217,63 +196,96 @@ class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHa
 
             assertions.assertTrue(fullyLinkedFunctionBytes.contentEquals(partiallyLinkedFunctionBytes)) {
                 """
-                    Different byte sequence for serialized function proto ${function.signature.render()}
+                    Different byte sequence for serialized function proto $function
                 """.trimIndent()
             }
         }
-    }
-
-    private fun createSerializer(configuration: CompilerConfiguration, irBuiltIns: IrBuiltIns): (IrSimpleFunction) -> ProtoDeclaration {
-        val languageVersionSettings = configuration.languageVersionSettings
-
-        val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            DiagnosticReporterFactory.createPendingReporter(configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)),
-            languageVersionSettings,
-        )
-
-        val moduleSerializer = KonanIrModuleSerializer(
-            settings = IrSerializationSettings(
-                languageVersionSettings = languageVersionSettings,
-
-                /*
-                 * Important: Do not recompute a signature for a symbol that already has the signature. Why?
-                 *
-                 * Normally, symbols coming from the frontend should not have any signatures. And there should not be
-                 * any problems with computing signatures for them, as far as their IR is fully linked.
-                 *
-                 * But for symbols coming from `NonLinkingIrInlineFunctionDeserializer` the IR is unlinked (or partially linked).
-                 * Computing signatures for such symbols in 99% cases would result in "X is unbound. Signature: Y" error.
-                 * So, for such symbols it's better to take the signature as it is and not try to recompute it. Hopefully,
-                 * the signature should already be deserialized together with the symbol.
-                 */
-                reuseExistingSignaturesForSymbols = true,
-            ),
-            diagnosticReporter,
-            irBuiltIns,
-        )
-
-        // Only needed for local signature computation.
-        val dummyFile = IrFileImpl(
-            fileEntry = object : IrFileEntry {
-                override val name: String = "<dummy-file>"
-                override val maxOffset get() = shouldNotBeCalled()
-                override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = shouldNotBeCalled()
-                override fun getLineNumber(offset: Int): Int = shouldNotBeCalled()
-                override fun getColumnNumber(offset: Int): Int = shouldNotBeCalled()
-                override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = shouldNotBeCalled()
-            },
-            symbol = IrFileSymbolImpl(),
-            packageFqName = FqName("<dummy-package>")
-        )
-
-        val serializer = moduleSerializer.createSerializerForFile(dummyFile)
-
-        return { serializer.serializeDeclaration(it) }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         // It does not make sense to keep tests without a single inline function as "green", because nothing
         // effectively has been tested there. Neither makes it sense to keep them red. Thus, muted.
         assumeTrue(functionsUnderTestCounter > 0, "No inline functions found for test")
+    }
+
+    companion object {
+        private fun collectInlineFunctions(irFragment: IrModuleFragment): List<InlineFunctionUnderTest> {
+            val result = mutableListOf<InlineFunctionUnderTest>()
+
+            irFragment.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                    if (declaration.isInline && !declaration.isEffectivelyPrivate()) {
+                        result += InlineFunctionUnderTest(fullyLinkedFunction = declaration)
+                    }
+                    super.visitSimpleFunction(declaration)
+                }
+            })
+
+            return result
+        }
+
+        private fun IrSimpleFunction.copyWithoutBody(): IrSimpleFunction {
+            val body = this.body
+            try {
+                this.body = null
+                return deepCopyWithSymbols(initialParent = this.parent).also {
+                    it.correspondingPropertySymbol = this.correspondingPropertySymbol
+                }
+            } finally {
+                this.body = body
+            }
+        }
+
+        private fun createSerializer(configuration: CompilerConfiguration, irBuiltIns: IrBuiltIns): (IrSimpleFunction) -> ProtoDeclaration {
+            val languageVersionSettings = configuration.languageVersionSettings
+
+            val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                DiagnosticReporterFactory.createPendingReporter(configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)),
+                languageVersionSettings,
+            )
+
+            val moduleSerializer = KonanIrModuleSerializer(
+                settings = IrSerializationSettings(
+                    languageVersionSettings = languageVersionSettings,
+
+                    /*
+                     * Important: Do not recompute a signature for a symbol that already has the signature. Why?
+                     *
+                     * Normally, symbols coming from the frontend should not have any signatures. And there should not be
+                     * any problems with computing signatures for them, as far as their IR is fully linked.
+                     *
+                     * But for symbols coming from `NonLinkingIrInlineFunctionDeserializer` the IR is unlinked (or partially linked).
+                     * Computing signatures for such symbols in 99% cases would result in "X is unbound. Signature: Y" error.
+                     * So, for such symbols it's better to take the signature as it is and not try to recompute it. Hopefully,
+                     * the signature should already be deserialized together with the symbol.
+                     */
+                    reuseExistingSignaturesForSymbols = true,
+                ),
+                diagnosticReporter,
+                irBuiltIns,
+            )
+
+            // Only needed for local signature computation.
+            val dummyFile = IrFileImpl(
+                fileEntry = object : IrFileEntry {
+                    override val name: String = "<dummy-file>"
+                    override val maxOffset get() = shouldNotBeCalled()
+                    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = shouldNotBeCalled()
+                    override fun getLineNumber(offset: Int): Int = shouldNotBeCalled()
+                    override fun getColumnNumber(offset: Int): Int = shouldNotBeCalled()
+                    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = shouldNotBeCalled()
+                },
+                symbol = IrFileSymbolImpl(),
+                packageFqName = FqName("<dummy-package>")
+            )
+
+            val serializer = moduleSerializer.createSerializerForFile(dummyFile)
+
+            return { serializer.serializeDeclaration(it) }
+        }
     }
 }
