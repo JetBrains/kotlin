@@ -78,10 +78,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         myProject.objects.newInstance(KaptExtension::class.java)
     }
 
-    @Deprecated(
-        message = "Replaced by registerKotlinJvmCompileTask with module name",
-        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
-    )
+    @Deprecated("Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'")
     override fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
         @Suppress("DEPRECATION") val extension = kotlinExtension
         return registerKotlinJvmCompileTask(
@@ -91,10 +88,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         )
     }
 
-    @Deprecated(
-        "Replaced by registerKotlinJvmCompileTask with compiler options and explicit API mode",
-        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
-    )
+    @Deprecated("Replaced with 'registerKotlinJvmCompileTask(taskName, compilerOptions, explicitApiMode)'")
     override fun registerKotlinJvmCompileTask(taskName: String, moduleName: String): TaskProvider<out KotlinJvmCompile> {
         val compilerOptions = createCompilerJvmOptions()
         compilerOptions.moduleName.convention(moduleName)
