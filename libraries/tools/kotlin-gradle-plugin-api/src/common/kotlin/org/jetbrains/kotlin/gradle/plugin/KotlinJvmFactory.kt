@@ -182,7 +182,23 @@ interface KotlinJvmFactory {
      *
      * @since 1.7.0
      */
+    @Deprecated("Replaced with 'registerKaptTask(taskName, kaptExtension)'")
     fun registerKaptTask(taskName: String): TaskProvider<out Kapt>
+
+    /**
+     * Registers a new kapt task with the given [taskName].
+     *
+     * This task runs annotation processing.
+     *
+     * @param taskName task name to set
+     * @param kaptExtension an instance of [KaptExtensionConfig]
+     *
+     * @since 2.1.0
+     */
+    fun registerKaptTask(
+        taskName: String,
+        kaptExtension: KaptExtensionConfig,
+    ): TaskProvider<out Kapt>
 
     /**
      * Adds a compiler plugin dependency to this project.
