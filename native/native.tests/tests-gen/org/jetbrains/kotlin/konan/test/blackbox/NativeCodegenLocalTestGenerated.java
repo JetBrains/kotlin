@@ -500,6 +500,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       }
 
       @Test
+      @TestMetadata("release_on_unattached_thread.kt")
+      public void testRelease_on_unattached_thread() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/release_on_unattached_thread.kt");
+      }
+
+      @Test
       @TestMetadata("sharing.kt")
       public void testSharing() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/sharing.kt");

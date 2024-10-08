@@ -213,6 +213,29 @@ class WorkerTest {
     }
 
     @Test
+    fun cancelJobsAfterTerminationRequest() {
+        val worker = Worker.start()
+
+        val canUnblockQueue = AtomicInt(0)
+        val blockQueueFuture = worker.execute(TransferMode.SAFE, { canUnblockQueue }) { canUnblockQueue ->
+            while (canUnblockQueue.value == 0) {}
+        }
+        val terminateRequestFuture = worker.requestTermination()
+        val afterTerminationFuture = worker.execute(TransferMode.SAFE, {}) {
+            error("Executed job after termination")
+        }
+
+        // Now that the entire queue is ready, unblock the first task, it will be successful, and wait for the termination request.
+        canUnblockQueue.value = 1
+        blockQueueFuture.result
+        terminateRequestFuture.result
+        // And now wait for the worker to complete termination, cleaning up after itself.
+        waitWorkerTermination(worker)
+        val exception = assertFailsWith<IllegalStateException> { afterTerminationFuture.result }
+        assertEquals("Future is cancelled", exception.message)
+    }
+
+    @Test
     fun executeAfterOnMain() {
         var done = false
         Worker.current.executeAfter(0) {
