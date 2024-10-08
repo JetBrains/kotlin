@@ -138,6 +138,16 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
+     *
+     * To configure multiple stability configuration files, use the following code:
+     * ```
+     * composeCompiler {
+     *     stabilityConfigurationFiles.addAll(
+     *        project.layout.projectDirectory.file("configuration-file1.conf"),
+     *        project.layout.projectDirectory.file("configuration-file2.conf"),
+     *     )
+     * }
+     * ```
      */
     abstract val stabilityConfigurationFiles: ListProperty<RegularFile>
 
