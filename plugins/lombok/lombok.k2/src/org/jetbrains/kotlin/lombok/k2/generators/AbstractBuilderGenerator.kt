@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
+import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -65,7 +67,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected val builderClassCache: FirCache<FirClassSymbol<*>, FirJavaClass?, Nothing?> =
         session.firCachesFactory.createCache(::createAndInitializeBuilder)
 
-    private val functionsCache: FirCache<FirClassSymbol<*>, Map<Name, List<FirJavaMethod>>?, Nothing?> =
+    // Lombok doesn't add a new function if a function with the same name already exists disregarding parameters
+    // It means the multimap with several functions on the same name is unnecessary
+    private val functionsCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
         session.firCachesFactory.createCache(::createFunctions)
 
     protected abstract val builderModality: Modality
@@ -76,11 +80,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType
 
-    protected abstract fun getBuilderMethods(
+    protected abstract fun MutableMap<Name, FirJavaMethod>.addBuilderMethodsIfNeeded(
         builder: T,
         classSymbol: FirClassSymbol<*>,
-        builderSymbol: FirClassSymbol<*>
-    ): List<FirJavaMethod>
+        builderSymbol: FirClassSymbol<*>,
+        existingFunctionNames: Set<Name>,
+    )
 
     protected abstract fun FirJavaClassBuilder.completeBuilder(classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>)
 
@@ -97,7 +102,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val classSymbol = context?.owner ?: return emptyList()
-        return functionsCache.getValue(classSymbol)?.get(callableId.callableName).orEmpty().map { it.symbol }
+        return functionsCache.getValue(classSymbol)?.get(callableId.callableName)?.let { listOf(it.symbol) } ?: emptyList()
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -109,95 +114,150 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         return builderClassCache.getValue(owner)?.symbol
     }
 
-    private fun createFunctions(classSymbol: FirClassSymbol<*>): Map<Name, List<FirJavaMethod>>? {
-        val builder = getBuilder(classSymbol) ?: return null
-        val entityFunctions = mutableListOf<FirJavaMethod>()
-        val entityClassId = classSymbol.classId
+    private fun createFunctions(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
+        val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol<*>
+        if (containingClassSymbol != null) {
+            val builder = getBuilder(containingClassSymbol)
+            if (builder != null) {
+                // Generate builder methods only for existing Java classes.
+                // Otherwise, methods are generated together with class generation (`createAndInitializeBuilder`).
+                val existingJavaBuilderSymbol = session.javaSymbolProvider?.getClassLikeSymbolByClassId(classSymbol.classId)
+                    ?: return null
+                return generateBuilderMethods(
+                    builder,
+                    entitySymbol = containingClassSymbol,
+                    builderSymbol = classSymbol,
+                    existingJavaBuilderSymbol.getExistingFunctionNames()
+                )
+            }
+        }
+
+        return getBuilder(classSymbol)?.let { generateEntityMethods(it, classSymbol) }
+    }
+
+    private fun generateEntityMethods(builder: T, entitySymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
+        val entityFunctions = mutableMapOf<Name, FirJavaMethod>()
+        val entityClassId = entitySymbol.classId
         val builderClassName = builder.builderClassName.replace("*", entityClassId.shortClassName.asString())
         val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
 
-        val builderType = constructBuilderType(builderClassId)
+        val builderTypeRef = constructBuilderType(builderClassId).toFirResolvedTypeRef()
         val visibility = builder.visibility.toVisibility()
-        entityFunctions += classSymbol.createJavaMethod(
-            Name.identifier(builder.builderMethodName),
-            valueParameters = emptyList(),
-            returnTypeRef = builderType.toFirResolvedTypeRef(),
-            visibility = visibility,
-            modality = Modality.FINAL,
-            dispatchReceiverType = null,
-            isStatic = true
-        )
+        val existingFunctionNames = entitySymbol.getExistingFunctionNames()
 
-        if (builder.requiresToBuilder) {
-            entityFunctions += classSymbol.createJavaMethod(
-                Name.identifier(TO_BUILDER),
+        entityFunctions.addIfNeeded(Name.identifier(builder.builderMethodName), existingFunctionNames) {
+            entitySymbol.createJavaMethod(
+                it,
                 valueParameters = emptyList(),
-                returnTypeRef = builderType.toFirResolvedTypeRef(),
+                returnTypeRef = builderTypeRef,
                 visibility = visibility,
                 modality = Modality.FINAL,
+                dispatchReceiverType = null,
+                isStatic = true
             )
         }
 
-        return entityFunctions.groupBy { it.name }
+        if (builder.requiresToBuilder) {
+            entityFunctions.addIfNeeded(Name.identifier(TO_BUILDER), existingFunctionNames) {
+                entitySymbol.createJavaMethod(
+                    it,
+                    valueParameters = emptyList(),
+                    returnTypeRef = builderTypeRef,
+                    visibility = visibility,
+                    modality = Modality.FINAL,
+                )
+            }
+        }
+
+        return entityFunctions
     }
+
+    private fun FirClassSymbol<*>.getExistingFunctionNames(): Set<Name> =
+        declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>().mapTo(mutableSetOf()) { it.name }
 
     @OptIn(SymbolInternals::class)
     private fun createAndInitializeBuilder(classSymbol: FirClassSymbol<*>): FirJavaClass? {
         val javaClass = classSymbol.fir as? FirJavaClass ?: return null
         val builder = getBuilder(classSymbol) ?: return null
         val builderName = Name.identifier(builder.builderClassName.replace("*", classSymbol.name.asString()))
+
+        val builderClassId = javaClass.classId.createNestedClassId(builderName)
+        val existingJavaBuilderSymbol = session.javaSymbolProvider?.getClassLikeSymbolByClassId(builderClassId)
+        if (existingJavaBuilderSymbol != null) {
+            // Extend existing classes using `generateFunctions` instead of generating a new class
+            return null
+        }
+
         val visibility = builder.visibility.toVisibility()
         val builderClass = classSymbol.createEmptyBuilderClass(
             session,
             builderName,
-            visibility,
+            visibility
         ) { builderSymbol ->
             object : FirJavaDeclarationList {
                 override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
                     buildList {
-                        this += builderSymbol.createDefaultJavaConstructor(visibility)
-
-                        this += getBuilderMethods(builder, classSymbol, builderSymbol)
-
-                        val fields = javaClass.declarations.filterIsInstance<FirJavaField>()
-                        for (field in fields) {
-                            when (val singular = lombokService.getSingular(field.symbol)) {
-                                null -> createSetterMethod(builder, field, builderSymbol, this)
-                                else -> createMethodsForSingularFields(builder, singular, field, builderSymbol, this)
-                            }
-                        }
+                        add(builderSymbol.createDefaultJavaConstructor(visibility))
+                        addAll(generateBuilderMethods(builder, classSymbol, builderSymbol, existingFunctionNames = emptySet()).values)
                     }
                 }
             }
         } ?: return null
 
-
         return builderClass
     }
 
-    private fun createSetterMethod(
+    @OptIn(SymbolInternals::class)
+    private fun generateBuilderMethods(
+        builder: T,
+        entitySymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
+        existingFunctionNames: Set<Name>,
+    ): Map<Name, FirJavaMethod> {
+        val entityJavaClass = entitySymbol.fir as FirJavaClass
+
+        return buildMap {
+            addBuilderMethodsIfNeeded(builder, entitySymbol, builderSymbol, existingFunctionNames)
+
+            val fields = entityJavaClass.declarations.filterIsInstance<FirJavaField>()
+            for (field in fields) {
+                when (val singular = lombokService.getSingular(field.symbol)) {
+                    null -> {
+                        addSetterMethodIfNeeded(builder, field, builderSymbol, existingFunctionNames)
+                    }
+                    else -> {
+                        addMethodsForSingularFieldsIfNeeded(builder, singular, field, builderSymbol, existingFunctionNames)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun MutableMap<Name, FirJavaMethod>.addSetterMethodIfNeeded(
         builder: AbstractBuilder,
         field: FirJavaField,
         builderSymbol: FirClassSymbol<*>,
-        destination: MutableList<FirDeclaration>,
+        existingFunctionNames: Set<Name>,
     ) {
         val fieldName = field.name
         val setterName = fieldName.toMethodName(builder)
-        destination += builderSymbol.createJavaMethod(
-            name = setterName,
-            valueParameters = listOf(ConeLombokValueParameter(fieldName, field.returnTypeRef)),
-            returnTypeRef = getBuilderType(builderSymbol).toFirResolvedTypeRef(),
-            modality = Modality.FINAL,
-            visibility = builder.visibility.toVisibility()
-        )
+        addIfNeeded(setterName, existingFunctionNames) {
+            builderSymbol.createJavaMethod(
+                name = it,
+                valueParameters = listOf(ConeLombokValueParameter(fieldName, field.returnTypeRef)),
+                returnTypeRef = getBuilderType(builderSymbol).toFirResolvedTypeRef(),
+                modality = Modality.FINAL,
+                visibility = builder.visibility.toVisibility()
+            )
+        }
     }
 
-    private fun createMethodsForSingularFields(
+    private fun MutableMap<Name, FirJavaMethod>.addMethodsForSingularFieldsIfNeeded(
         builder: AbstractBuilder,
         singular: Singular,
         field: FirJavaField,
         builderSymbol: FirClassSymbol<*>,
-        destination: MutableList<FirDeclaration>,
+        existingFunctionNames: Set<Name>,
     ) {
         val fieldJavaTypeRef = field.returnTypeRef as? FirJavaTypeRef ?: return
         val javaClassifierType = fieldJavaTypeRef.type as? JavaClassifierType ?: return
@@ -264,29 +324,50 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol).toFirResolvedTypeRef()
         val visibility = builder.visibility.toVisibility()
 
-        destination += builderSymbol.createJavaMethod(
-            name = nameInSingularForm.toMethodName(builder),
-            valueParameters,
-            returnTypeRef = builderType,
-            modality = Modality.FINAL,
-            visibility = visibility
-        )
+        addIfNeeded(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
+            builderSymbol.createJavaMethod(
+                name = it,
+                valueParameters,
+                returnTypeRef = builderType,
+                modality = Modality.FINAL,
+                visibility = visibility
+            )
+        }
 
-        destination += builderSymbol.createJavaMethod(
-            name = field.name.toMethodName(builder),
-            valueParameters = listOf(ConeLombokValueParameter(field.name, addMultipleParameterType)),
-            returnTypeRef = builderType,
-            modality = Modality.FINAL,
-            visibility = visibility
-        )
+        addIfNeeded(field.name.toMethodName(builder), existingFunctionNames) {
+            builderSymbol.createJavaMethod(
+                name = it,
+                valueParameters = listOf(ConeLombokValueParameter(field.name, addMultipleParameterType)),
+                returnTypeRef = builderType,
+                modality = Modality.FINAL,
+                visibility = visibility
+            )
+        }
 
-        destination += builderSymbol.createJavaMethod(
-            name = Name.identifier("clear${field.name.identifier.capitalize()}"),
-            valueParameters = listOf(),
-            returnTypeRef = builderType,
-            modality = Modality.FINAL,
-            visibility = visibility
-        )
+        addIfNeeded(Name.identifier("clear${field.name.identifier.capitalize()}"), existingFunctionNames) {
+            builderSymbol.createJavaMethod(
+                name = it,
+                valueParameters = listOf(),
+                returnTypeRef = builderType,
+                modality = Modality.FINAL,
+                visibility = visibility
+            )
+        }
+    }
+
+    /* Lombok doesn't add a generated method if a class already has a method with the same name.
+       The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
+       "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
+     */
+    protected inline fun MutableMap<Name, FirJavaMethod>.addIfNeeded(
+        functionName: Name,
+        existingFunctionNames: Set<Name>,
+        createJavaMethod: (name: Name) -> FirJavaMethod
+    ) {
+        if (functionName !in existingFunctionNames) {
+            val existedMethod = put(functionName, createJavaMethod(functionName))
+            require(existedMethod == null) { "Function with $functionName already created" }
+        }
     }
 
     @OptIn(SymbolInternals::class)

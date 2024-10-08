@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-58695
 
 // FILE: MyClass.java
@@ -40,7 +39,7 @@ fun box(): String {
     val myClass = myClassBuilder.aString("test").build()
 
     return if (myClassBuilder is MyClass.CustomMyClassBuilder && // Check if custom `builder` method is called
-        MyClass.MyClassBuilder.<!UNRESOLVED_REFERENCE!>myStaticField<!> == 100 && // Check if custom `build` method is called
+        MyClass.MyClassBuilder.myStaticField == 100 && // Check if custom `build` method is called
         myClass.aString == "test"
      ) {
         "OK"

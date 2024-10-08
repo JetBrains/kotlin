@@ -36,20 +36,21 @@ class BuilderGenerator(
         return builderSymbol.defaultType()
     }
 
-    override fun getBuilderMethods(
+    override fun MutableMap<Name, FirJavaMethod>.addBuilderMethodsIfNeeded(
         builder: Builder,
         classSymbol: FirClassSymbol<*>,
-        builderSymbol: FirClassSymbol<*>
-    ): List<FirJavaMethod> {
-        return listOf(
+        builderSymbol: FirClassSymbol<*>,
+        existingFunctionNames: Set<Name>,
+    ) {
+        addIfNeeded(Name.identifier(builder.buildMethodName), existingFunctionNames) {
             builderSymbol.createJavaMethod(
-                Name.identifier(builder.buildMethodName),
+                it,
                 valueParameters = emptyList(),
                 returnTypeRef = classSymbol.defaultType().toFirResolvedTypeRef(),
                 visibility = builder.visibility.toVisibility(),
                 modality = Modality.FINAL
             )
-        )
+        }
     }
 
     override fun FirJavaClassBuilder.completeBuilder(
