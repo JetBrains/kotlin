@@ -35,6 +35,7 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
     JVM_1_8(JvmPlatforms.jvm8),
 
     JS(JsPlatforms.defaultJsPlatform),
+    WasmWasi(WasmPlatforms.wasmWasi),
     Wasm(WasmPlatforms.wasmJs),
     Native(NativePlatforms.unspecifiedNativePlatform)
 }

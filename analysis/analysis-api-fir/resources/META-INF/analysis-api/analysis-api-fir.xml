@@ -24,6 +24,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirDefaultImportsProvider"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"
