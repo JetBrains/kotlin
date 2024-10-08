@@ -74,6 +74,7 @@ runBenchmarks(
             title = "No-op configuration time"
 
             runTasks("help")
+        }
 
         scenario {
             title = "UP-TO-DATE configuration time"
