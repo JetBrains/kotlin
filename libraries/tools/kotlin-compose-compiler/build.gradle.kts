@@ -52,6 +52,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     implementation(platform(libs.junit.bom))
                     implementation(libs.junit.jupiter.api)
                     implementation(project(":kotlin-test"))
+                    implementation(project(":compiler:tests-mutes:mutes-junit5"))
 
                     runtimeOnly(libs.junit.jupiter.engine)
                 }
@@ -60,6 +61,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     all {
                         testTask.configure {
                             shouldRunAfter(test)
+                            workingDir = rootDir
                         }
                     }
                 }
