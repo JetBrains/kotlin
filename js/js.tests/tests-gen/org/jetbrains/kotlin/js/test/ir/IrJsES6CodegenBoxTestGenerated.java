@@ -38782,6 +38782,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       }
 
       @Test
+      @TestMetadata("multiModuleNullCheck.kt")
+      public void testMultiModuleNullCheck() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/multiModuleNullCheck.kt");
+      }
+
+      @Test
       @TestMetadata("multipleLayers.kt")
       public void testMultipleLayers() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");

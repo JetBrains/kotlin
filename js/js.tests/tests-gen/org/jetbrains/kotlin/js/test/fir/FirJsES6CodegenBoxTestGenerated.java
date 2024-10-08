@@ -38827,6 +38827,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("multiModuleNullCheck.kt")
+      public void testMultiModuleNullCheck() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/multiModuleNullCheck.kt");
+      }
+
+      @Test
       @TestMetadata("multipleLayers.kt")
       public void testMultipleLayers() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");
