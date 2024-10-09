@@ -12,7 +12,7 @@ fun <E4, F : E4> noSmartCast4(arg: E4?, fn: F): E4 = TODO()
 fun testSmartCast(s: String?) {
     id(
         if (s != null) ""
-        else smartCast(null) { "" }
+        else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>smartCast<!>(null) { "" }
     )
     s.length
 }

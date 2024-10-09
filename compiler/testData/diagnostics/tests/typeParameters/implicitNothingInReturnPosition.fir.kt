@@ -39,7 +39,7 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!RETURN_TYPE_MISMATCH!>this?.decodeIn(typeFrom) ?: kotlin.Unit<!>
+    return <!RETURN_TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: kotlin.Unit<!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
@@ -47,11 +47,11 @@ fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
 }
 
 fun <T> Any.decodeOut3(typeFrom: Context<out T>): T {
-    val x = this.decodeIn(typeFrom)
+    val x = this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
 }
 
 fun <T> Any.decodeOut4(typeFrom: Context<out T>): T {
-    val x: Any = this.decodeIn(typeFrom)
+    val x: Any = this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
 }
 
 class TrieNode<out E> {

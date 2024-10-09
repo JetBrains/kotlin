@@ -2677,6 +2677,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION) { firDiagnostic ->
+        ImplicitNothingTypeArgumentInReturnPositionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE) { firDiagnostic ->
         AbbreviatedNothingReturnTypeImpl(
             firDiagnostic as KtPsiDiagnostic,

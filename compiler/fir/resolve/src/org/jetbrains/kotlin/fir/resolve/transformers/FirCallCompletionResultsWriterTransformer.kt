@@ -388,7 +388,9 @@ class FirCallCompletionResultsWriterTransformer(
 
         result.transformArgumentList(expectedArgumentsTypeMapping)
 
-        result.replaceConeTypeOrNull(resultType)
+        // Check if implicitly inferred type parameter in return position to Nothing? is expected.
+        val expectedType = (data as? ExpectedArgumentType.ExpectedType)?.type?.takeIf { it.isNothing }
+        result.replaceConeTypeOrNull(resultType.withAttributes(resultType.attributes.addExpectedType(expectedType)))
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
 
         if (enableArrayOfCallTransformation) {

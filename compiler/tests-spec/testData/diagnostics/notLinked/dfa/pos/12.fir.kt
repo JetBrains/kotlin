@@ -3811,12 +3811,12 @@ fun Nothing?.case_62() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>this<!>.hashCode()
 
         hashCode()
-        apply {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>apply<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>
             hashCode()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
         }
-        also {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>also<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.hashCode()
         }
@@ -3830,12 +3830,12 @@ fun Nothing.case_63() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
 
         hashCode()
-        apply {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>apply<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>
             hashCode()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
         }
-        also {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>also<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.hashCode()
         }

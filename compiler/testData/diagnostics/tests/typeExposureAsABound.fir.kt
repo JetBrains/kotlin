@@ -10,5 +10,5 @@ fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Foo<!>> foo(x: T?) 
 
 // FILE: Main.kt
 fun box() = "OK".also {
-    foo(null)?.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null)?.<!UNRESOLVED_REFERENCE!>bar<!>()
 }

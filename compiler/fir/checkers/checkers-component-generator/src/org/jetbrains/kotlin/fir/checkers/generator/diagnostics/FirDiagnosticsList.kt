@@ -869,6 +869,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val IMPLICIT_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
         val IMPLICIT_NOTHING_PROPERTY_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
+        val IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
 
         val ABBREVIATED_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
             isSuppressible = true

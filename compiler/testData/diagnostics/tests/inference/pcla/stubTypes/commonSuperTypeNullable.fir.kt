@@ -60,13 +60,13 @@ fun test() {
     val ret2 = build {
         emit("1")
         select(get(), null)
-        select(Test.foo(null), Test.foo(get()))
+        select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), Test.foo(get()))
         select(Test.foo(get()), null)
         select(null, getInv())
-        select(Test.foo(getInv()), Test.foo(null))
-        select(Test.foo(null), getInv())
-        select(getInv(), Test.foo(null))
-        select(id(null), id(get()))
+        select(Test.foo(getInv()), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))
+        select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), getInv())
+        select(getInv(), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))
+        select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>id<!>(null), id(get()))
         build2 {
             emit(1)
             select(this@build.get(), get(), null)

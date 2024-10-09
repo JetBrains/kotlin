@@ -2279,6 +2279,11 @@ internal class ImplicitNothingPropertyTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitNothingPropertyType
 
+internal class ImplicitNothingTypeArgumentInReturnPositionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitNothingTypeArgumentInReturnPosition
+
 internal class AbbreviatedNothingReturnTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

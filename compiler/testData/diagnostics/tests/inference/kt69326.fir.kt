@@ -14,5 +14,5 @@ fun foo(x: MyExpression<String>) {
     checkNotNull(getElement(x.min1())).<!UNRESOLVED_REFERENCE!>length<!>
 
     getElement(x.min2())!!.length
-    checkNotNull(getElement(x.min2())).<!UNRESOLVED_REFERENCE!>length<!>
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>checkNotNull<!>(getElement(x.min2())).<!UNRESOLVED_REFERENCE!>length<!>
 }

@@ -9,7 +9,7 @@ fun test() {
         <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>make<!>()
     )
 
-    select(make(), null)
+    select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>make<!>(), null)
 
-    if (true) make() else TODO()
+    if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>make<!>() else TODO()
 }

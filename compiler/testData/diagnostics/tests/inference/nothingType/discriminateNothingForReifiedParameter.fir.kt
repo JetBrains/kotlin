@@ -13,7 +13,7 @@ inline fun <reified M> materializeReifiedUnbound(): M = TODO()
 fun <T> select(a: T, b: T): T = TODO()
 
 fun test1() {
-    take(null)
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>take<!>(null)
 }
 
 fun test2() {
@@ -21,7 +21,7 @@ fun test2() {
 }
 
 fun test3() {
-    <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
 }
 
 fun test4(): Bound = takeReifiedUnbound(null)
@@ -34,7 +34,7 @@ fun test5(): Bound? = select(
 fun test6() {
     select(
         null,
-        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
     )
 }
 

@@ -1897,6 +1897,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ImplicitNothingPropertyType::class
     }
 
+    interface ImplicitNothingTypeArgumentInReturnPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ImplicitNothingTypeArgumentInReturnPosition::class
+    }
+
     interface AbbreviatedNothingReturnType : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = AbbreviatedNothingReturnType::class
     }
