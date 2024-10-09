@@ -934,12 +934,6 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
-    @TestMetadata("typealiasUnsignedConst.kt")
-    public void testTypealiasUnsignedConst() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/typealiasUnsignedConst.kt");
-    }
-
-    @Test
     @TestMetadata("unraryExpression.kt")
     public void testUnraryExpression() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/unraryExpression.kt");
@@ -949,12 +943,6 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("unraryExpressionOperator.kt")
     public void testUnraryExpressionOperator() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/unraryExpressionOperator.kt");
-    }
-
-    @Test
-    @TestMetadata("unsignedConst.kt")
-    public void testUnsignedConst() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/unsignedConst.kt");
     }
 
     @Test
