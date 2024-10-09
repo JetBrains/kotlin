@@ -62,11 +62,9 @@ internal class NativeInlineFunctionResolver(
 
         if (shouldLower) {
             lower(function, functionIsCached)
-            if (!functionIsCached) {
-                function.getOrSaveLoweredInlineFunction()
-            }
         }
-        return function
+
+        return function.getOrSaveLoweredInlineFunction()
     }
 
     private fun lower(function: IrFunction, functionIsCached: Boolean) {
