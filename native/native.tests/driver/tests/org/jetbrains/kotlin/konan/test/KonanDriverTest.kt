@@ -270,6 +270,48 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testSplitCompilationPipelineWithKlibResolverFlags() {
+        Assumptions.assumeFalse(HostManager.hostIsMingw &&
+                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
+                                        testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
+        ) // KT-65963
+
+        val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
+        val libFile = buildDir.resolve("lib.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_lib.kt").absolutePath,
+            "-produce", "library",
+            "-o", libFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+        ) {
+            timeout = konancTimeout
+        }
+
+        val libFile2 = buildDir.resolve("lib2.klib")
+        File(libFile.absolutePath).copyRecursively(libFile2)
+
+        val mainFile = buildDir.resolve("out.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_main.kt").absolutePath,
+            "-o", mainFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-l", libFile.absolutePath,
+            "-l", libFile2.absolutePath,
+            "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+        ) {
+            timeout = konancTimeout
+        }.let {
+            assertTrue(
+                it.stderr.contains("warning: KLIB resolver: The same 'unique_name=lib' found in more than one library"),
+                "`warning: KLIB resolver: The same 'unique_name=lib' found in more than one library` must be in stdout." +
+                        "\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+    }
+
+    @Test
     fun noSourcesOrIncludeKlib() {
         val rootDir = testSuiteDir.resolve("kt68673")
         val libFile = buildDir.resolve("program.klib")
