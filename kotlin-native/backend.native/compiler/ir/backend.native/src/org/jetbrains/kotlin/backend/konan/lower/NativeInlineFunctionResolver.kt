@@ -61,12 +61,7 @@ internal class NativeInlineFunctionResolver(
             function to firstAccess
         } else {
             irFile = packageFragment as IrFile
-            val partiallyLoweredFunction = function.loweredInlineFunction
-            if (partiallyLoweredFunction == null)
-                function to true
-            else {
-                partiallyLoweredFunction to false
-            }
+            function to true
         }
 
         if (shouldLower) {
