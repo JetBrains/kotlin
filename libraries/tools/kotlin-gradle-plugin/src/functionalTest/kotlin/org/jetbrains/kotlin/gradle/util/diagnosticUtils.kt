@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -34,7 +35,11 @@ internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: 
  * [compactRendering] == true will omit projects with no diagnostics from the report, as well as
  * name of the project if it's a single one with diagnostics (useful for small one-project tests)
  */
-internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Boolean = true) {
+internal fun Project.checkDiagnostics(
+    testDataName: String,
+    compactRendering: Boolean = true,
+    filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),
+) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
         val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
         if (diagnostics.isEmpty() && compactRendering)
@@ -52,7 +57,7 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
     }
 
     val actualRenderedText = if (diagnosticsPerProject.size == 1 && compactRendering) {
-        diagnosticsPerProject.entries.single().value.render()
+        diagnosticsPerProject.entries.single().value.filter { it.id !in filterDiagnosticIds.map { it.id } }.render()
     } else {
         diagnosticsPerProject
             .entries

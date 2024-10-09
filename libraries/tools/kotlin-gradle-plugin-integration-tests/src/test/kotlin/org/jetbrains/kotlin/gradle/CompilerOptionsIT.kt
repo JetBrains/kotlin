@@ -154,7 +154,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 "compileKotlinJs",
                 // we do not allow modifying free args for K/N at execution time
             )
-            build(*compileTasks.toTypedArray()) {
+            build(*compileTasks.toTypedArray(), "-Pkotlin.build.report.output=JSON", "-Pkotlin.build.report.json.directory=/Users/Nataliya.Valtman/Development/configuration_cache_fus") {
                 assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
             }
         }
