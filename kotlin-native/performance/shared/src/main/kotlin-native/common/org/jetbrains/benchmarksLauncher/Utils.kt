@@ -54,8 +54,6 @@ actual fun printStderr(message: String) {
     fflush(STDERR)
 }
 
-actual fun nanoTime(): Long = kotlin.system.getTimeNanos()
-
 actual class Blackhole {
     @ThreadLocal
     actual companion object {

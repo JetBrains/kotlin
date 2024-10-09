@@ -12,7 +12,7 @@ import kotlin.system.getTimeNanos
  */
 internal object NativeRandom : Random() {
     private const val MULTIPLIER = 0x5deece66dL
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private val _seed = AtomicLong(mult(getTimeNanos()))
 
     /**
