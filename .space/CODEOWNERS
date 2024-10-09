@@ -57,33 +57,33 @@
 /compiler/backend.common.jvm/ "Kotlin JVM"
 /compiler/backend-common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/build-tools/ "Kotlin Build Tools"
-/compiler/builtins-serializer/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/cli/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/builtins-serializer/ "Kotlin Frontend"
+/compiler/cli/ "Kotlin Frontend"
 /compiler/cli/cli-js/ "Kotlin Common Backend" "Kotlin Wasm"
 /compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt "Kotlin Native"
 /compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt "Kotlin Wasm"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArgumentsCopyGenerated.kt "Kotlin Wasm"
-/compiler/compiler.version/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/compiler-runner/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/compiler.version/ "Kotlin Frontend"
+/compiler/compiler-runner/ "Kotlin Frontend"
 /compiler/compiler-runner-unshaded/ "Kotlin Build Tools"
-/compiler/config/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/config/ "Kotlin Frontend"
 /compiler/config.jvm/ "Kotlin JVM"
-/compiler/container/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/container/ "Kotlin Frontend"
 /compiler/daemon/ "Kotlin Build Tools"
-/compiler/fir/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/fir/ "Kotlin Frontend"
 /compiler/fir/fir2ir/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/compiler/frontend/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/frontend.common/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/frontend.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/frontend.common-psi/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/frontend.java/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/frontend/ "Kotlin Frontend"
+/compiler/frontend.common/ "Kotlin Frontend"
+/compiler/frontend.common.jvm/ "Kotlin Frontend"
+/compiler/frontend.common-psi/ "Kotlin Frontend"
+/compiler/frontend.java/ "Kotlin Frontend"
 /compiler/incremental-compilation-impl/ "Kotlin Build Tools"
 /compiler/ir/backend.common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/ir/backend.js/ "Kotlin Common Backend"
 /compiler/ir/backend.jvm/ "Kotlin JVM"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
-/compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend" Simon.Ogorodnik
+/compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend"
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
@@ -94,15 +94,15 @@
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/ir/serialization.native/ "Kotlin Native"
 /compiler/ir/ir.inline/ "Kotlin Common Backend"
-/compiler/javac-wrapper/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/javac-wrapper/ "Kotlin Frontend"
 /compiler/light-classes/ "Kotlin IDE Analysis Core"
-/compiler/plugin-api/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/preloader/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/psi/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/resolution/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/resolution.common/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/resolution.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
-/compiler/serialization/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/plugin-api/ "Kotlin Frontend"
+/compiler/preloader/ "Kotlin Frontend"
+/compiler/psi/ "Kotlin Frontend"
+/compiler/resolution/ "Kotlin Frontend"
+/compiler/resolution.common/ "Kotlin Frontend"
+/compiler/resolution.common.jvm/ "Kotlin Frontend"
+/compiler/serialization/ "Kotlin Frontend"
 /compiler/test-infrastructure/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"
 
@@ -211,31 +211,31 @@
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
 /compiler/tests-spec/ "Kotlin Frontend"
-/compiler/util/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/util/ "Kotlin Frontend"
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Common Backend"
 /compiler/util-klib/ "Kotlin Common Backend"
 /compiler/util-klib-abi/ "Kotlin Common Backend"
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
-/core/builtins/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common.js/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common.native/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common.wasm/ "Kotlin Frontend" Simon.Ogorodnik
-/core/compiler.common.web/ "Kotlin Frontend" Simon.Ogorodnik
-/core/descriptors/ "Kotlin Frontend" Simon.Ogorodnik
-/core/descriptors.jvm/ "Kotlin Frontend" Simon.Ogorodnik
+/core/builtins/ "Kotlin Frontend"
+/core/compiler.common/ "Kotlin Frontend"
+/core/compiler.common.jvm/ "Kotlin Frontend"
+/core/compiler.common.js/ "Kotlin Frontend"
+/core/compiler.common.native/ "Kotlin Frontend"
+/core/compiler.common.wasm/ "Kotlin Frontend"
+/core/compiler.common.web/ "Kotlin Frontend"
+/core/descriptors/ "Kotlin Frontend"
+/core/descriptors.jvm/ "Kotlin Frontend"
 /core/descriptors.runtime/ "Kotlin Libraries"
-/core/deserialization/ "Kotlin Frontend" Simon.Ogorodnik
-/core/deserialization.common/ "Kotlin Frontend" Simon.Ogorodnik
-/core/deserialization.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
-/core/metadata/ "Kotlin Frontend" Simon.Ogorodnik
+/core/deserialization/ "Kotlin Frontend"
+/core/deserialization.common/ "Kotlin Frontend"
+/core/deserialization.common.jvm/ "Kotlin Frontend"
+/core/metadata/ "Kotlin Frontend"
 /core/metadata.jvm/ "Kotlin JVM"
 /core/reflection.jvm/ "Kotlin Libraries"
-/core/script.runtime/ "Kotlin Frontend" Simon.Ogorodnik
-/core/util.runtime/ "Kotlin Frontend" Simon.Ogorodnik
+/core/script.runtime/ "Kotlin Frontend"
+/core/util.runtime/ "Kotlin Frontend"
 
 /dependencies/ "Kotlin Build Infrastructure"
 
