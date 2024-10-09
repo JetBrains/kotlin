@@ -305,6 +305,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("playground.kt")
+  public void testPlayground() {
+    runTest("testData/box/playground.kt");
+  }
+
+  @Test
   @TestMetadata("propertiesOrder.kt")
   public void testPropertiesOrder() {
     runTest("testData/box/propertiesOrder.kt");
