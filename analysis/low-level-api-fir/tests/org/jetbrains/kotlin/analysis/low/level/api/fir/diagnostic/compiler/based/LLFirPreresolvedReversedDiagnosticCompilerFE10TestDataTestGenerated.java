@@ -35797,6 +35797,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       public void testSimpleCorrectKT() {
         runTest("compiler/testData/diagnostics/tests/samConversions/SimpleCorrectKT.kt");
       }
+
+      @Test
+      @TestMetadata("typeMismatchOnGenericSam.kt")
+      public void testTypeMismatchOnGenericSam() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/typeMismatchOnGenericSam.kt");
+      }
     }
 
     @Nested
