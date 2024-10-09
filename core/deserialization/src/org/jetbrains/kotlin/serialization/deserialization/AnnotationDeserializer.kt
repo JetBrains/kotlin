@@ -108,7 +108,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                 check(result is ArrayValue && result.value.size == value.arrayElementList.size) {
                     "Deserialized ArrayValue should have the same number of elements as the original array value: $result"
                 }
-                val expectedElementType = builtIns.getArrayElementType(expectedType)
+                val expectedElementType = builtIns.getArrayElementTypeOrNull(expectedType) ?: return false
                 result.value.indices.all { i ->
                     doesValueConformToExpectedType(result.value[i], expectedElementType, value.getArrayElement(i))
                 }
