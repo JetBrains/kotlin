@@ -157,7 +157,15 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         for (function in functionsUnderTest) {
             // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
             function.partiallyLinkedFunction = function.fullyLinkedFunction.emulateInlineFunctionRepresentedByLazyIr()
-            deserializer.deserializeInlineFunction(function.partiallyLinkedFunction)
+
+            if (function.partiallyLinkedFunction.isFakeOverride) {
+                // If this is a fake override, then it has no body and nothing specifically can be deserialized for the function
+                // itself. Instead, we shall deserialize the body of the resolved fake override, which eventually will be copied
+                // to the call site during inlining.
+                deserializer.deserializeInlineFunction(function.partiallyLinkedFunction.resolveFakeOverrideOrFail())
+            } else {
+                deserializer.deserializeInlineFunction(function.partiallyLinkedFunction)
+            }
         }
 
         checkFunctionsSerialization(configuration, ir.irPluginContext.irBuiltIns, functionsUnderTest)
