@@ -443,6 +443,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("trimIndent.kt")
+  public void testTrimIndent() {
+    runTest("testData/box/trimIndent.kt");
+  }
+
+  @Test
+  @TestMetadata("trimMargin.kt")
+  public void testTrimMargin() {
+    runTest("testData/box/trimMargin.kt");
+  }
+
+  @Test
   @TestMetadata("ungroup.kt")
   public void testUngroup() {
     runTest("testData/box/ungroup.kt");
