@@ -46,6 +46,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDefaultTypeTestGenerated ext
   }
 
   @Test
+  @TestMetadata("anonymousObject.kt")
+  public void testAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/anonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("anonymousObjectWithBaseClass.kt")
+  public void testAnonymousObjectWithBaseClass() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/anonymousObjectWithBaseClass.kt");
+  }
+
+  @Test
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/innerClass.kt");
@@ -67,6 +79,30 @@ public class FirStandaloneNormalAnalysisSourceModuleDefaultTypeTestGenerated ext
   @TestMetadata("innerClassWithParameters2.kt")
   public void testInnerClassWithParameters2() {
     runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/innerClassWithParameters2.kt");
+  }
+
+  @Test
+  @TestMetadata("innerLocalClass.kt")
+  public void testInnerLocalClass() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/innerLocalClass.kt");
+  }
+
+  @Test
+  @TestMetadata("innerLocalClassParameter.kt")
+  public void testInnerLocalClassParameter() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/innerLocalClassParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("localAnonymousObject.kt")
+  public void testLocalAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/localAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("localClass.kt")
+  public void testLocalClass() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/localClass.kt");
   }
 
   @Test
@@ -109,6 +145,30 @@ public class FirStandaloneNormalAnalysisSourceModuleDefaultTypeTestGenerated ext
   @TestMetadata("topLevelObject.kt")
   public void testTopLevelObject() {
     runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/topLevelObject.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAlias.kt")
+  public void testTypeAlias() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/typeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasTypeParameter.kt")
+  public void testTypeAliasTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/typeAliasTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasTypeParameterWithBound.kt")
+  public void testTypeAliasTypeParameterWithBound() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/typeAliasTypeParameterWithBound.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasWithParameters.kt")
+  public void testTypeAliasWithParameters() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/typeAliasWithParameters.kt");
   }
 
   @Test

@@ -3,6 +3,6 @@ KaUsualClassType:
   typeArguments: [
     KaTypeParameterType:
       annotations: []
-      type: T
+      type: K
   ]
-  type: pack/TopLevelClass.NestedClass<T, A, B>
+  type: pack/one/Foo<K>

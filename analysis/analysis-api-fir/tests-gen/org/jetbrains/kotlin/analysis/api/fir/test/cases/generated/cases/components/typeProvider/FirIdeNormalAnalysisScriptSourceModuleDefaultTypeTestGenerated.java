@@ -62,4 +62,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleDefaultTypeTestGenerated exte
   public void testNestedClassScriptWithParameters() {
     runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/nestedClassScriptWithParameters.kts");
   }
+
+  @Test
+  @TestMetadata("scriptAnonymousObject.kts")
+  public void testScriptAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/scriptAnonymousObject.kts");
+  }
+
+  @Test
+  @TestMetadata("scriptLocalObject.kts")
+  public void testScriptLocalObject() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/defaultType/scriptLocalObject.kts");
+  }
 }

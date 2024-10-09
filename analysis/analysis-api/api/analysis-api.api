@@ -573,7 +573,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun getBuiltinTypes ()Lorg/jetbrains/kotlin/analysis/api/components/KaBuiltinTypes;
 	public abstract fun getCommonSupertype (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getCommonSupertype ([Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public abstract fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public synthetic fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getDirectSuperTypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Ljava/util/List;
 	public static synthetic fun getDirectSuperTypes$default (Lorg/jetbrains/kotlin/analysis/api/components/KaTypeProvider;Lorg/jetbrains/kotlin/analysis/api/types/KaType;ZILjava/lang/Object;)Ljava/util/List;
 	public fun getDirectSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;

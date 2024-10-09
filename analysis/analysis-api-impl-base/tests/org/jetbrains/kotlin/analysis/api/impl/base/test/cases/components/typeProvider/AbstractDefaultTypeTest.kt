@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePr
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -26,7 +26,7 @@ abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
                 toSymbols(mainFile).single()
             }
 
-            val defaultType = (symbol as KaNamedClassSymbol).defaultType
+            val defaultType = (symbol as KaClassifierSymbol).defaultType
             val actual = DebugSymbolRenderer().renderType(this@analyseForTest, defaultType)
             testServices.assertions.assertEqualsToTestDataFileSibling(actual)
 

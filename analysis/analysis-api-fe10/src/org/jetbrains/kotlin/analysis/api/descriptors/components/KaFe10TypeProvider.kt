@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -81,9 +81,9 @@ internal class KaFe10TypeProvider(
             return enhancement?.toKtType(analysisContext)
         }
 
-    override val KaNamedClassSymbol.defaultType: KaType
+    override val KaClassifierSymbol.defaultType: KaType
         get() = withValidityAssertion {
-            val kotlinType = (getSymbolDescriptor(this) as? ClassDescriptor)?.defaultType
+            val kotlinType = (getSymbolDescriptor(this) as? ClassifierDescriptor)?.defaultType
                 ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, nameOrAnonymous.toString())
             return kotlinType.toKtType(analysisContext)
         }

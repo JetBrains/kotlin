@@ -1,0 +1,3 @@
+KaTypeParameterType:
+  annotations: []
+  type: PARAM

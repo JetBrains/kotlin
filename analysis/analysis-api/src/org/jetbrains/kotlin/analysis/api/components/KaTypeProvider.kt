@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -58,7 +59,15 @@ public interface KaTypeProvider {
     public val KaType.enhancedTypeOrSelf: KaType?
         get() = withValidityAssertion { enhancedType ?: this }
 
-    public val KaNamedClassSymbol.defaultType: KaType
+    /**
+     * Returns the representation of [this] in terms of [KaType].
+     *
+     * @see KaTypeCreator
+     */
+    public val KaClassifierSymbol.defaultType: KaType
+
+    @Deprecated("Use `defaultType` from `KaClassifierSymbol` directly", level = DeprecationLevel.HIDDEN)
+    public val KaNamedClassSymbol.defaultType: KaType get() = defaultType
 
     @Deprecated("Use 'defaultType' instead.", replaceWith = ReplaceWith("defaultType"))
     public fun KaNamedClassSymbol.buildSelfClassType(): KaType = defaultType
