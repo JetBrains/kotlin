@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.localClassName
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -263,7 +264,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             createParameterDeclarations()
 
             // copy the generated name for IrClass, partially solves KT-47194
-            generationState.copyLocalClassName(functionReference, this)
+            this.localClassName = functionReference.localClassName
         }
 
         /**
