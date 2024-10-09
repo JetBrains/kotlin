@@ -63,7 +63,6 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
 }
 
 internal val KlibIrInlinerPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput, Fir2IrOutput>(
-        "KlibIrInlinerPhase",
         "IR Inliner before Klib writing",
         outputIfNotEnabled = { _, _, _, input -> input }
 ) { context, input ->
