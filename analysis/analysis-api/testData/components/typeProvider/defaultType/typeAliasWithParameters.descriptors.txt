@@ -1,3 +1,0 @@
-KaClassErrorType:
-  annotations: []
-  type: ERROR_TYPE

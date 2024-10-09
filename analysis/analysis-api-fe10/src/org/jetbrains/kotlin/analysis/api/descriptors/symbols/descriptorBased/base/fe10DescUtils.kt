@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import com.intellij.psi.impl.compiled.ClsElementImpl
-import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -15,9 +19,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultSetterParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.*
@@ -301,7 +302,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
 
             return when (val typeDeclaration = typeConstructor.declarationDescriptor) {
                 is FunctionClassDescriptor -> KaFe10FunctionType(unwrappedType, typeDeclaration, analysisContext)
-                is ClassDescriptor -> KaFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
+                is ClassifierDescriptorWithTypeParameters -> KaFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {
                     val errorType =
                         ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, typeConstructor, typeDeclaration.toString())

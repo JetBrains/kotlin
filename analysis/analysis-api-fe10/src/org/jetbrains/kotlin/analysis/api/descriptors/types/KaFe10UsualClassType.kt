@@ -8,30 +8,25 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaClassSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.getAbbreviation
 
 internal class KaFe10UsualClassType(
     override val fe10Type: SimpleType,
-    private val descriptor: ClassDescriptor,
+    private val descriptor: ClassifierDescriptorWithTypeParameters,
     override val analysisContext: Fe10AnalysisContext
 ) : KaUsualClassType(), KaFe10Type {
     override val qualifiers: List<KaResolvedClassTypeQualifier>
@@ -50,7 +45,7 @@ internal class KaFe10UsualClassType(
 
                 nestedType.allInnerTypes.mapTo(this) { innerType ->
                     KaBaseResolvedClassTypeQualifier(
-                        innerType.classDescriptor.toKaClassSymbol(analysisContext),
+                        innerType.classifierDescriptor.toKtClassifierSymbol(analysisContext)!!,
                         innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
                     )
                 }
@@ -62,7 +57,13 @@ internal class KaFe10UsualClassType(
         get() = withValidityAssertion { descriptor.maybeLocalClassId }
 
     override val symbol: KaClassLikeSymbol
-        get() = withValidityAssertion { KaFe10DescNamedClassSymbol(descriptor, analysisContext) }
+        get() = withValidityAssertion {
+            when (descriptor) {
+                is ClassDescriptor -> KaFe10DescNamedClassSymbol(descriptor, analysisContext)
+                is TypeAliasDescriptor -> KaFe10DescTypeAliasSymbol(descriptor, analysisContext)
+                else -> error("Unexpected classifier descriptor type ${descriptor::class.simpleName}")
+            }
+        }
 
     override val typeArguments: List<KaTypeProjection>
         get() = withValidityAssertion { fe10Type.arguments.map { it.toKtTypeProjection(analysisContext) } }
