@@ -11,7 +11,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
-import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -167,7 +166,7 @@ internal interface ContextUtils : RuntimeAware {
             return LLVMLinkage.LLVMExternalLinkage
         if (context.config.producePerFileCache) {
             val originalFunction = irFunction.originalConstructor ?: irFunction
-            if (originalFunction in generationState.calledFromExportedInlineFunctions)
+            if (originalFunction.isCalledFromExportedInlineFunction)
                 return LLVMLinkage.LLVMExternalLinkage
         }
 
