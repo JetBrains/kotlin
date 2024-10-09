@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -97,7 +98,7 @@ class IrLazyFunction(
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 
-    override var originalBeforeInline: IrAttributeContainer?
+    override var originalBeforeInline: IrElement?
         get() = null
         set(_) = error("We should never need to change originalBeforeInline of external declarations.")
 

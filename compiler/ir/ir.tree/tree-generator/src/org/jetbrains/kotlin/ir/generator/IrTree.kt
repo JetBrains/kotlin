@@ -332,7 +332,7 @@ object IrTree : AbstractTreeBuilder() {
             deepCopyExcludeFromApply = true
         }
         // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
+        +field("originalBeforeInline", rootElement, nullable = true, isChild = false) {
             deepCopyExcludeFromApply = true
         }
     }
