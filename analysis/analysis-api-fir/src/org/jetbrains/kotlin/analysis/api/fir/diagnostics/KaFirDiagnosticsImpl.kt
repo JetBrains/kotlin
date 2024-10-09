@@ -4677,6 +4677,20 @@ internal class AccidentalOverrideClashByJvmSignatureImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.AccidentalOverrideClashByJvmSignature
 
+internal class ImplementationByDelegationWithDifferentGenericSignatureErrorImpl(
+    override val base: KaFunctionSymbol,
+    override val override: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KaFirDiagnostic.ImplementationByDelegationWithDifferentGenericSignatureError
+
+internal class ImplementationByDelegationWithDifferentGenericSignatureWarningImpl(
+    override val base: KaFunctionSymbol,
+    override val override: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KaFirDiagnostic.ImplementationByDelegationWithDifferentGenericSignatureWarning
+
 internal class NotYetSupportedLocalInlineFunctionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -31,6 +31,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirStrictfpApplicabilityChecker,
             FirOverrideJavaNullabilityWarningChecker.Regular,
             FirOverrideJavaNullabilityWarningChecker.ForExpectClass,
+            FirImplementationByDelegationWithDifferentGenericSignatureChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>

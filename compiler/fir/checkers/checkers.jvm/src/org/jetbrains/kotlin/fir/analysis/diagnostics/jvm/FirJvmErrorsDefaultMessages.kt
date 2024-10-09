@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FIELD_IN_J
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_NAME
@@ -146,6 +147,14 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "This situation provokes a JVM clash and thus is forbidden. To fix it, you have to delete either this function or one of overridden functions.",
             SYMBOL_WITH_CONTAINING_DECLARATION,
             STRING,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+
+        map.put(
+            IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE,
+            "The function {0} from an interface is generic, but the function {1} from a delegate is not.\n" +
+                    "Such an implementation can provoke runtime errors.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
 

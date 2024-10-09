@@ -11359,6 +11359,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("Delegation_DifferentGenerics_After.kt")
+      public void testDelegation_DifferentGenerics_After() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_After.kt");
+      }
+
+      @Test
+      @TestMetadata("Delegation_DifferentGenerics_Substitution.kt")
+      public void testDelegation_DifferentGenerics_Substitution() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_Substitution.kt");
+      }
+
+      @Test
       @TestMetadata("Delegation_Hierarchy.kt")
       public void testDelegation_Hierarchy() {
         runTest("compiler/testData/diagnostics/tests/delegation/Delegation_Hierarchy.kt");

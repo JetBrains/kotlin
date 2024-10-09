@@ -3880,6 +3880,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val regular: KaFunctionSymbol
     }
 
+    interface ImplementationByDelegationWithDifferentGenericSignatureError : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ImplementationByDelegationWithDifferentGenericSignatureError::class
+        val base: KaFunctionSymbol
+        val override: KaFunctionSymbol
+    }
+
+    interface ImplementationByDelegationWithDifferentGenericSignatureWarning : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ImplementationByDelegationWithDifferentGenericSignatureWarning::class
+        val base: KaFunctionSymbol
+        val override: KaFunctionSymbol
+    }
+
     interface NotYetSupportedLocalInlineFunction : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = NotYetSupportedLocalInlineFunction::class
     }

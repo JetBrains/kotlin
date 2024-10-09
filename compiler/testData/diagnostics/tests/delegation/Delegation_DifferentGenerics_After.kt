@@ -1,7 +1,7 @@
 // ISSUE: KT-46120, KT-72140
 // WITH_STDLIB
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LANGUAGE: -ForbidImplementationByDelegationWithDifferentGenericSignature
+// LANGUAGE: +ForbidImplementationByDelegationWithDifferentGenericSignature
 
 // FILE: JI.java
 

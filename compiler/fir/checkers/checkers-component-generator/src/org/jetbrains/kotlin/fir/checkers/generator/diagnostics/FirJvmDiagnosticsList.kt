@@ -52,6 +52,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<FirNamedFunctionSymbol>("regular")
         }
 
+        val IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE by deprecationError<KtTypeReference>(
+            ForbidImplementationByDelegationWithDifferentGenericSignature
+        ) {
+            parameter<FirNamedFunctionSymbol>("base")
+            parameter<FirNamedFunctionSymbol>("override")
+        }
+
         val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
     }
 
