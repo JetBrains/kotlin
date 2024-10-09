@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.backend.konan.isFunctionInterfaceFile
+import org.jetbrains.kotlin.backend.konan.isCalledFromExportedInlineFunction
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.ir.IrElement
@@ -94,7 +95,7 @@ internal class CacheInfoBuilder(
 
             private fun processFunction(function: IrFunction) {
                 if (generationState.context.irLinker.getCachedDeclarationModuleDeserializer(function) == null) {
-                    generationState.calledFromExportedInlineFunctions.add(function)
+                    function.isCalledFromExportedInlineFunction = true
                     (function as? IrConstructor)?.constructedClass?.let {
                         generationState.constructedFromExportedInlineFunctions.add(it)
                     }
