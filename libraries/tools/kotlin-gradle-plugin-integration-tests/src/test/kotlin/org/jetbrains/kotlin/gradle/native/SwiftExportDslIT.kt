@@ -247,4 +247,49 @@ class SwiftExportDslIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("embedSwiftExport executes normally when no dependency block defined")
+    @GradleTest
+    fun testSwiftExportDSLWithoutDependencies(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
+            projectPath.resolve("shared/build.gradle.kts").replaceText(
+                DSL_REPLACE_PLACEHOLDER,
+                """
+                |       swiftExport {
+                |           export(project(":not-good-looking-project-name"))
+                |           export(project(":subproject"))
+                |       }
+                """.trimMargin()
+            )
+
+            build(
+                ":shared:embedSwiftExportForXcode",
+                "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
+                val subprojectSwiftModule = buildProductsDir.resolve("Subproject.swiftmodule")
+                val notGoodLookingProjectSwiftModule = buildProductsDir.resolve("NotGoodLookingProjectName.swiftmodule")
+
+                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
+                assertDirectoryExists(subprojectSwiftModule.toPath(), "Subproject.swiftmodule doesn't exist")
+                assertDirectoryExists(notGoodLookingProjectSwiftModule.toPath(), "NotGoodLookingProjectName.swiftmodule doesn't exist")
+            }
+        }
+    }
 }
