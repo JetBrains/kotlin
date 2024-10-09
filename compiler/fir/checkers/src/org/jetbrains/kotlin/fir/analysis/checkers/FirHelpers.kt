@@ -173,11 +173,8 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
  * Calling [getContainingClassSymbol] for the symbol of `(1)` will return
  * `expect class MyClass`, but calling it for `(2)` will give `actual class MyClass`.
  */
-fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? = when (this) {
-    is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(moduleData.session)
-    is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(moduleData.session)
-    is FirAnonymousInitializerSymbol -> containingDeclarationSymbol as? FirClassLikeSymbol<*>
-    else -> null
+fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? {
+    return moduleData.session.firProvider.getContainingClass(this)
 }
 
 /**

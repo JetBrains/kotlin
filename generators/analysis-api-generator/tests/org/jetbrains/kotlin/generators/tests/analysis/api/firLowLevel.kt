@@ -305,6 +305,13 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("firClassByPsiClass")
         }
 
+        testClass<AbstractSourcePsiBasedContainingClassCalculatorConsistencyTest> {
+            model("psiBasedContainingClass", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptPsiBasedContainingClassCalculatorConsistencyTest> {
+            model("psiBasedContainingClass", pattern = TestGeneratorUtil.KTS)
+        }
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
