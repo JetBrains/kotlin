@@ -99,7 +99,7 @@ internal class CacheInfoBuilder(
 
             private fun processFunction(function: IrFunction) {
                 if (generationState.context.moduleDeserializerProvider.getDeserializerOrNull(function) == null) {
-                    generationState.calledFromExportedInlineFunctions.add(function)
+                    function.isCalledFromExportedInlineFunction = true
                     (function as? IrConstructor)?.constructedClass?.let {
                         generationState.constructedFromExportedInlineFunctions.add(it)
                     }
