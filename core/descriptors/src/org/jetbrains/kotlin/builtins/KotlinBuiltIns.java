@@ -581,9 +581,18 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
+        KotlinType result = getArrayElementTypeOrNull(arrayType);
+        if (result == null) {
+            throw new IllegalStateException("not array: " + arrayType);
+        }
+        return result;
+    }
+
+    @Nullable
+    public KotlinType getArrayElementTypeOrNull(@NotNull KotlinType arrayType) {
         if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
-                throw new IllegalStateException();
+                return null;
             }
             return arrayType.getArguments().get(0).getType();
         }
@@ -599,7 +608,7 @@ public abstract class KotlinBuiltIns {
         }
 
 
-        throw new IllegalStateException("not array: " + arrayType);
+        return null;
     }
 
     @Nullable
