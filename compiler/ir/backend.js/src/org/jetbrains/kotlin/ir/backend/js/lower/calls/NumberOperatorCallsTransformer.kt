@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -112,9 +113,19 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 ?: irError("No 'until' function found for descriptor") {
                     withIrEntry("call.symbol.owner", call.symbol.owner)
                 }
-            return irCall(call, function).apply {
-                extensionReceiver = dispatchReceiver
-                dispatchReceiver = null
+            return IrCallImpl(
+                call.startOffset,
+                call.endOffset,
+                call.type,
+                function,
+                call.typeArgumentsCount,
+                call.origin,
+            ).apply {
+                copyTypeArgumentsFrom(call)
+                extensionReceiver = call.dispatchReceiver
+                for (i in 0..<call.valueArgumentsCount) {
+                    putValueArgument(i, call.getValueArgument(i))
+                }
             }
         }
     }
