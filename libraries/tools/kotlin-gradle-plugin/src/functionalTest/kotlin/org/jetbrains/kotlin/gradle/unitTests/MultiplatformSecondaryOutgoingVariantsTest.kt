@@ -13,6 +13,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.toAttribute
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import kotlin.test.*
 
@@ -197,6 +202,48 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     fun checkNonPackedKlibRuntimeVariantResolved() {
         val hasRuntimeClasspath = setOf(KotlinPlatformType.wasm, KotlinPlatformType.js)
         checkNonPackedKlibVariantResolved(hasDependencies = { it.platformType in hasRuntimeClasspath }) { it.runtimeDependencyFiles }
+    }
+
+    @Test
+    fun checkDefaultResolvedVariant() {
+        val project = buildKmpProjectWithKlibTargets(projectBuilder = { withName("app") }, preApplyCode = {
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
+            enableNonPackedKlibsUsage(true)
+        })
+        val configurations = project.configurations
+        for (target in project.multiplatformExtension.targets) {
+            if (target.platformType !in PLATFORM_TYPES_SUPPORTING_NON_PACKED_KLIB) continue
+            val myDependencyScope = configurations.dependencyScope("${target.name}DependencyScope").get()
+            val myResolvable = configurations.resolvable("${target.name}Resolvable") {
+                it.extendsFrom(myDependencyScope)
+                it.attributes {
+                    it.setAttribute(KotlinPlatformType.attribute, target.platformType)
+                    if (target is KotlinNativeTarget) {
+                        it.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
+                    }
+                    if (target.platformType == KotlinPlatformType.wasm && target is KotlinJsIrTarget) {
+                        val wasmType = target.wasmTargetType?.toAttribute()
+                            ?: error("Wasm type attribute expected to be set for $target")
+                        it.setAttribute(KotlinWasmTargetAttribute.wasmTargetAttribute, wasmType)
+                    }
+                    it.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+                }
+            }.get()
+
+            project.dependencies.add(myDependencyScope.name, project.dependencies.project(project.path))
+
+            val resolvedFiles = try {
+                myResolvable.resolve()
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed to resolve dependencies for $target", e)
+            }
+            for (file in resolvedFiles) {
+                assert(file.invariantSeparatorsPath.matches(".*/libs/${project.name}-[a-zA-Z0-9-]+.klib".toRegex())) {
+                    "Expected ${file.path} (resolved from $target) to be a klib in the packed form"
+                }
+            }
+        }
     }
 
     /**
