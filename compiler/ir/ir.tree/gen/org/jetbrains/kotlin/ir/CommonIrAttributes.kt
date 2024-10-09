@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir
 
 /**
- * original element before inlining. Useful only with IR
+ * Original element before inlining. Useful only with IR
  * inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
  * idempotence invariant and can contain a chain of declarations.
  *

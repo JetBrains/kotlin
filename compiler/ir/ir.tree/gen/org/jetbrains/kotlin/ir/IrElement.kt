@@ -38,7 +38,7 @@ interface IrElement {
     val endOffset: Int
 
     /**
-     * original element before copying. Always satisfies the following
+     * Original element before copying. Always satisfies the following
      * invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
      */
     var attributeOwnerId: IrElement

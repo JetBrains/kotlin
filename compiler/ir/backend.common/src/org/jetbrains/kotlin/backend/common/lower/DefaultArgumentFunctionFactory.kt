@@ -33,10 +33,6 @@ abstract class DefaultArgumentFunctionFactory(
 
     protected abstract fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean)
 
-    protected fun IrFunction.copyAttributesFrom(original: IrFunction) {
-        (this as? IrAttributeContainer)?.copyAttributes(original as? IrAttributeContainer)
-    }
-
     protected fun IrFunction.copyReturnTypeFrom(original: IrFunction) {
         returnType = original.returnType.remapTypeParameters(original.classIfConstructor, classIfConstructor)
     }

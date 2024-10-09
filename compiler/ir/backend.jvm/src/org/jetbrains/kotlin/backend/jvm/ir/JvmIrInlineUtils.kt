@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -57,7 +58,7 @@ val IrDeclaration.isInPublicInlineScope: Boolean
 
 // Map declarations to original declarations before lowering.
 private val IrDeclaration.original: IrDeclaration
-    get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrDeclaration ?: this
+    get() = (this.attributeOwnerId as? IrDeclaration) ?: this
 
 fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
@@ -80,19 +81,19 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
-private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
-    val original = this.originalBeforeInline as? IrAttributeContainer ?: return null
+private fun IrElement.getDeclarationBeforeInline(): IrDeclaration? {
+    val original = this.originalBeforeInline ?: return null
     return original.extractRelatedDeclaration()
 }
 
-fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
+fun IrElement.getAttributeOwnerBeforeInline(): IrElement? {
     if (this.originalBeforeInline == null) return null
-    return generateSequence(this) { it.originalBeforeInline as? IrAttributeContainer }.last()
+    return generateSequence(this) { it.originalBeforeInline }.last()
 }
 
 val IrDeclaration.fileParentBeforeInline: IrFile
     get() {
-        val original = (this as? IrAttributeContainer)?.getDeclarationBeforeInline()
+        val original = this.getDeclarationBeforeInline()
             ?: this.parentClassOrNull?.getDeclarationBeforeInline()
             ?: this
         return original.fileParent

@@ -482,7 +482,7 @@ private fun makePrimaryConstructorImpl(
         metadata = oldPrimaryConstructor.metadata
         oldPrimaryConstructor.metadata = null
     }
-    copyAttributes(oldPrimaryConstructor as? IrAttributeContainer)
+    copyAttributes(oldPrimaryConstructor)
     // body is added in the Lowering file as it needs to be lowered
 }
 

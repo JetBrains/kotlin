@@ -62,10 +62,10 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
         super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
-    private fun IrInlinedFunctionBlock.collectDeclarationsThatMustBeRegenerated(): Set<IrAttributeContainer> {
-        val classesToRegenerate = mutableSetOf<IrAttributeContainer>()
+    private fun IrInlinedFunctionBlock.collectDeclarationsThatMustBeRegenerated(): Set<IrElement> {
+        val classesToRegenerate = mutableSetOf<IrElement>()
         this.acceptVoid(object : IrElementVisitorVoid {
-            private val containersStack = mutableListOf<IrAttributeContainer>()
+            private val containersStack = mutableListOf<IrElement>()
             private val inlinableParameters = mutableListOf<IrValueParameter>()
             private val reifiedArguments = mutableListOf<IrType>()
             private var processingBeforeInlineDeclaration = false
@@ -102,7 +102,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
 
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
-            private fun visitAnonymousDeclaration(declaration: IrAttributeContainer) {
+            private fun visitAnonymousDeclaration(declaration: IrElement) {
                 containersStack += declaration
                 if (declaration.hasReifiedTypeArguments(reifiedArguments)) {
                     saveDeclarationsFromStackIntoRegenerationPool()
@@ -130,7 +130,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
 
             override fun visitBlock(expression: IrBlock) {
                 if (expression.isLambdaBlock()) {
-                    val function = expression.statements.first() as? IrAttributeContainer ?: return super.visitBlock(expression)
+                    val function = expression.statements.first()
                     val reference = expression.statements.last() as IrFunctionReference
                     containersStack += reference
                     visitAnonymousDeclaration(function)
@@ -180,7 +180,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
         return classesToRegenerate
     }
 
-    private fun IrAttributeContainer.hasReifiedTypeArguments(reifiedArguments: List<IrType>): Boolean {
+    private fun IrElement.hasReifiedTypeArguments(reifiedArguments: List<IrType>): Boolean {
         var hasReified = false
 
         fun IrType.recursiveWalkDown(visitor: IrElementVisitorVoid) {
@@ -222,9 +222,9 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
         return hasReified
     }
 
-    private fun IrElement.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated: Set<IrAttributeContainer>) {
+    private fun IrElement.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated: Set<IrElement>) {
         this.acceptChildrenVoid(object : IrElementVisitorVoid {
-            private fun checkAndSetUpCorrectAttributes(element: IrAttributeContainer) {
+            private fun checkAndSetUpCorrectAttributes(element: IrElement) {
                 when {
                     element !in mustBeRegenerated && element.originalBeforeInline != null -> element.setUpOriginalAttributes()
                     else -> element.acceptChildrenVoid(this)
@@ -252,11 +252,11 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
     private fun IrElement.setUpOriginalAttributes() {
         acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
-                if (element is IrAttributeContainer && element.originalBeforeInline != null) {
+                if (element.originalBeforeInline != null) {
                     // Basically we need to generate SEQUENCE of `element.originalBeforeInline` and find the original one.
                     //  But we process nested inlined functions first, so `element.originalBeforeInline` will be processed already.
                     //  This mean that when we start to precess current container, all inner ones in SEQUENCE will already be processed.
-                    element.attributeOwnerId = (element.originalBeforeInline as IrAttributeContainer).attributeOwnerId
+                    element.attributeOwnerId = element.originalBeforeInline!!.attributeOwnerId
                     element.originalBeforeInline = null
                 }
                 element.acceptChildrenVoid(this)

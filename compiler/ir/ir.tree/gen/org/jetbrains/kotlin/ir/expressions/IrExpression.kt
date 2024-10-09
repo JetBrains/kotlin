@@ -10,14 +10,13 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
-abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
+abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement {
     abstract var type: IrType
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =

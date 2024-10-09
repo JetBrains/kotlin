@@ -87,8 +87,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
 
     private fun handleInlineLambda(expression: IrInlinedFunctionBlock) {
         expression.insertInStackAndProcess()
-        // `inlinedElement` here can be either `IrFunctionExpression` or `IrFunctionReference`, so cast must be safe
-        val argument = expression.inlinedElement as IrAttributeContainer
+        val argument = expression.inlinedElement!!
         val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument) as? IrFunction ?: return
         expression.addFakeLocalVariableForLambda(argument, callee)
     }
@@ -129,7 +128,7 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
         if (inlinedBlock.isLambdaInlining()) {
-            val argument = inlinedBlock.inlinedElement as IrAttributeContainer
+            val argument = inlinedBlock.inlinedElement!!
             val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument)
             if (callee == null || callee != inlinedStack.lastOrNull()) return
         }
@@ -257,13 +256,13 @@ private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
 }
 
 private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
-    fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
-        is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this
+    fun IrElement.unwrapInlineLambdaIfAny(): IrElement = when (this) {
+        is IrBlock -> statements.lastOrNull()?.unwrapInlineLambdaIfAny() ?: this
         is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA } ?: this
         else -> this
     }
 
-    val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
+    val originalInlinedElement = inlinedElement.attributeOwnerId
     for (block in this.filter { it.isFunctionInlining() }) {
         block.inlineCall!!.getAllArgumentsWithIr().forEach {
             // pretty messed up thing, this is needed to get the original expression that was inlined

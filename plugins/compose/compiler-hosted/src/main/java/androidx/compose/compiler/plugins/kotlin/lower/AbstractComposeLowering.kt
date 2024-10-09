@@ -120,13 +120,10 @@ abstract class AbstractComposeLowering(
     val FeatureFlag.enabled get() = featureFlags.isEnabled(this)
 
     fun metricsFor(function: IrFunction): FunctionMetrics =
-        (function as? IrAttributeContainer)?.let {
-            context.irTrace[ComposeWritableSlices.FUNCTION_METRICS, it] ?: run {
-                val metrics = metrics.makeFunctionMetrics(function)
-                context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, it, metrics)
-                metrics
+        context.irTrace[ComposeWritableSlices.FUNCTION_METRICS, function]
+            ?: metrics.makeFunctionMetrics(function).also {
+                context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, function, it)
             }
-        } ?: metrics.makeFunctionMetrics(function)
 
     fun IrType.unboxInlineClass() = unboxType() ?: this
 

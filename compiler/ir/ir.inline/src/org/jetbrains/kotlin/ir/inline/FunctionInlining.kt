@@ -228,14 +228,14 @@ open class FunctionInlining(
     private fun IrBlock.markAsRegenerated(): IrBlock {
         if (!regenerateInlinedAnonymousObjects) return this
         acceptVoid(object : IrElementVisitorVoid {
-            private fun IrAttributeContainer.setUpCorrectAttributeOwner() {
+            private fun IrElement.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
                 this.originalBeforeInline = this.attributeOwnerId
                 this.attributeOwnerId = this
             }
 
             override fun visitElement(element: IrElement) {
-                if (element is IrAttributeContainer && element !is IrInlinedFunctionBlock) element.setUpCorrectAttributeOwner()
+                if (element !is IrInlinedFunctionBlock) element.setUpCorrectAttributeOwner()
                 element.acceptChildrenVoid(this)
             }
         })

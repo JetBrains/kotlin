@@ -94,7 +94,7 @@ internal class KonanPartialModuleDeserializer(
 
         val idSig = declaration.getSignature()
                 ?: (declaration.parent as? IrDeclaration)?.getSignature()
-                ?: ((declaration as? IrAttributeContainer)?.attributeOwnerId as? IrDeclaration)?.getSignature()
+                ?: (declaration.attributeOwnerId as? IrDeclaration)?.getSignature()
                 ?: error("Can't find signature of ${declaration.render()}")
         val topLevelIdSig = idSig.topLevelSignature()
         return topLevelIdSig.fileSignature()?.fileName

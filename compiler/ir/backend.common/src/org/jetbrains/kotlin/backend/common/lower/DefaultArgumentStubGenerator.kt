@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -527,7 +528,7 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 
 open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, copyOriginalFunctionLocation: Boolean = true) : DefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation) {
     final override fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean) {
-        copyAttributesFrom(original)
+        copyAttributes(original)
         copyTypeParametersFrom(original)
         copyReturnTypeFrom(original)
         copyReceiversFrom(original)
