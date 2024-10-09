@@ -50,7 +50,7 @@ private val softDeprecatedTargets = setOf(
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
 interface CompilationSpawner {
-    fun spawn(configuration: CompilerConfiguration)
+    fun spawn(configuration: CompilerConfiguration, setupConfiguration: CompilerConfiguration.() -> Unit)
     fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
 }
 
@@ -186,7 +186,7 @@ class KonanDriver(
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
-        compilationSpawner.spawn(emptyList()) {
+        compilationSpawner.spawn(configuration) {
             fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
             fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))
             // For the first stage, use "-p library" produce mode.
@@ -206,17 +206,18 @@ class KonanDriver(
             copy(KonanConfigKeys.OBJC_GENERICS)
         }
 
-        // For the second stage, remove already compiled source files from the configuration.
-        configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
-        // Frontend version must not be passed to 2nd stage (same as Gradle plugin does when calling CLI compiler), since there are no sources anymore
-        configuration.put(CommonConfigurationKeys.USE_FIR, false)
         // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
         require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
-        // We need to remove this flag, as it would otherwise override header written previously.
-        // Unfortunately, there is no way to remove the flag, so empty string is put instead
-        configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { configuration.put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, "") }
-        configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
-                configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
-        compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).
+        compilationSpawner.spawn(configuration) { // Need to spawn a new compilation to create fresh environment (without sources).
+            // For the second stage, remove already compiled source files from the configuration.
+            put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
+            // Frontend version must not be passed to 2nd stage (same as Gradle plugin does when calling CLI compiler), since there are no sources anymore
+            put(CommonConfigurationKeys.USE_FIR, false)
+            // We need to remove this flag, as it would otherwise override header written previously.
+            // Unfortunately, there is no way to remove the flag, so empty string is put instead
+            get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, "") }
+            put(KonanConfigKeys.INCLUDED_LIBRARIES,
+                    get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
+        }
     }
 }

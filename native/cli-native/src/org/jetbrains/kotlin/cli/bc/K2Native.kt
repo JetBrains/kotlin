@@ -131,13 +131,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             rootDisposable: Disposable
     ) {
         val konanDriver = KonanDriver(environment.project, environment, configuration, object : CompilationSpawner {
-            override fun spawn(configuration: CompilerConfiguration) {
+            override fun spawn(configuration: CompilerConfiguration, setupConfiguration: CompilerConfiguration.() -> Unit) {
                 val spawnedArguments = K2NativeCompilerArguments()
                 parseCommandLineArguments(emptyList(), spawnedArguments)
-                val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
-                        rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+                val spawnedConfiguration = configuration.copy()
+                spawnedConfiguration.setupConfiguration()
 
-                runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
+                val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
+                    rootDisposable, spawnedConfiguration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+
+                runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             }
 
             override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
@@ -159,8 +162,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
                     spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
                 }
-                spawnedConfiguration.setupConfiguration()
+                // Warning! The following invocation of `prepareEnvironment()` would reset a dozen of configuration keys,
+                // in case no user CLI arguments would be provided in formal param `arguments: List<String>`
+                // so, lambda `setupConfiguration()` should not be invoked before it.
                 val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
+                spawnedConfiguration.setupConfiguration()
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             }
         })
