@@ -131,11 +131,13 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 expression
             } else {
                 expression
-                    .apply { dispatchReceiver = globalThisReceiver }
                     .also {
                         if (function.dispatchReceiverParameter == null) {
                             function.dispatchReceiverParameter = function.dummyDispatchReceiverParameter
                         }
+                    }
+                    .apply {
+                        insertDispatchReceiver(globalThisReceiver)
                     }
             }
 
