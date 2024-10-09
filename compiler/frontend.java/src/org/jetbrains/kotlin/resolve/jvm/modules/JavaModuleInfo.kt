@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
@@ -113,6 +114,7 @@ class JavaModuleInfo(
                     }
                 }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
             } catch (e: Exception) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw FileReadingException (
                     "Could not load module definition from: ${file.canonicalPath}. The file might be broken " +
                             "by incorrect post-processing via bytecode tools. Please remove this file from the classpath.",

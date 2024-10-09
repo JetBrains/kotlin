@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.lang.ref.SoftReference
 
 class ClsKotlinBinaryClassCache {
@@ -73,7 +74,7 @@ class ClsKotlinBinaryClassCache {
                 file, jvmMetadataVersion, fileContent = fileContent
             )
         } catch (e: Exception) {
-            if (e is ControlFlowException) throw e
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             return null
         }
 

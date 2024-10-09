@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isGenericArrayOfTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.math.BigInteger
 
 class ConstantExpressionEvaluator(
@@ -1258,6 +1259,7 @@ fun evaluateBinary(
     return try {
         evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
         null
     }
 }
@@ -1273,6 +1275,7 @@ private fun evaluateBinaryAndCheck(
     val actualResult = try {
         evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
         null
     }
 

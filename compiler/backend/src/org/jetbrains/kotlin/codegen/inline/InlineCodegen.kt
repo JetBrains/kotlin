@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -62,6 +63,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 e, sourceCompiler.callElement as? PsiElement
             )
         } catch (e: Exception) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             throw CompilationException(
                 "Couldn't inline method call: ${sourceCompiler.callElementText}\nMethod: ${nodeAndSmap?.node?.nodeText}",
                 e, sourceCompiler.callElement as? PsiElement

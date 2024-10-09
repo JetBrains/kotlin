@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
@@ -160,6 +161,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
             val konanFile = File(absolutePathString())
             ToolingSingleFileKlibResolveStrategy.tryResolve(konanFile, IntellijLogBasedLogger)
         } catch (e: Exception) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             LOG.warn("Cannot resolve a KLib $this", e)
             null
         }
