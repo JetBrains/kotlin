@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.isStrictSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrClass.cachedStubsForCollectionClass: List<StubsForCollectionClass>? by irAttribute(followAttributeOwner = false)
@@ -63,6 +65,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
                                 overriddenFun.owner.parentAsClass.symbol == readOnlyClass
                             })
                 }
+                .filter { !it.hasAnnotation(StandardClassIds.Annotations.PlatformDependent) }
                 .toList()
         }
     }
