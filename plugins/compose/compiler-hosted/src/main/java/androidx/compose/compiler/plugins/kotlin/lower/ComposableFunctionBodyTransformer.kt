@@ -622,7 +622,7 @@ class ComposableFunctionBodyTransformer(
                 encounteredCapturedComposableCall()
             }
             metrics.recordFunction(scope.metrics)
-            (declaration as? IrAttributeContainer)?.let {
+            declaration?.let {
                 context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, it, scope.metrics)
             }
         }

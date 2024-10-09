@@ -78,9 +78,9 @@ abstract class MemoizedValueClassAbstractReplacements(
             metadata = function.metadata
             function.metadata = null
         }
-        copyAttributes(function as? IrAttributeContainer)
 
         if (function is IrSimpleFunction) {
+            copyAttributes(function)
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val oldProperty = propertySymbol.owner

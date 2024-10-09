@@ -31,7 +31,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
     protected abstract fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean)
 
     protected fun IrFunction.copyAttributesFrom(original: IrFunction) {
-        (this as? IrAttributeContainer)?.copyAttributes(original as? IrAttributeContainer)
+        this.copyAttributes(original)
     }
 
     protected fun IrFunction.copyReturnTypeFrom(original: IrFunction) {
