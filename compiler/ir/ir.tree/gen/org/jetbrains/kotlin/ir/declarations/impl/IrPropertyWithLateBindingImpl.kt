@@ -39,13 +39,13 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
 ) : IrPropertyWithLateBinding() {
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var metadata: MetadataSource? = null
-
     override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
+
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var metadata: MetadataSource? = null
 
     override val containerSource: DeserializedContainerSource?
         get() = null

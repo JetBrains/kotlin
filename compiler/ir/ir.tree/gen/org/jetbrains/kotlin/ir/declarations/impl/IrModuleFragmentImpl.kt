@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -24,6 +25,10 @@ class IrModuleFragmentImpl(
 
     override val endOffset: Int
         get() = UNDEFINED_OFFSET
+
+    override var attributeOwnerId: IrElement = this
+
+    override var originalBeforeInline: IrElement? = null
 
     override val name: Name
         get() = descriptor.name

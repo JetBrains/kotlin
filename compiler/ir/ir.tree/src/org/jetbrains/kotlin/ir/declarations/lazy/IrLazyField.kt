@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -59,6 +60,9 @@ class IrLazyField(
     override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar(stubGenerator.lock) {
         stubGenerator.generatePropertyStub(descriptor).symbol
     }
+
+    override var attributeOwnerId: IrElement = this
+    override var originalBeforeInline: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -47,6 +48,9 @@ class IrLazyValueParameter(
     override var varargElementType: IrType? by lazyVar(stubGenerator.lock) {
         varargElementKotlinType?.toIrType()
     }
+
+    override var attributeOwnerId: IrElement = this
+    override var originalBeforeInline: IrElement? = null
 
     init {
         symbol.bind(this)

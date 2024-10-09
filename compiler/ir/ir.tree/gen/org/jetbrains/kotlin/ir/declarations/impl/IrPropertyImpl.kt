@@ -40,13 +40,13 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
 ) : IrProperty() {
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var metadata: MetadataSource? = null
-
     override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
+
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var metadata: MetadataSource? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
