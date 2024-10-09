@@ -33,7 +33,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
-class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+/**
+ * extensions inside scope classes are generated here:
+ * @see org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator
+ */
+class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {
         val dataSchema = FqName(DataSchema::class.qualifiedName!!)
     }
