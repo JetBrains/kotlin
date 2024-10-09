@@ -11353,6 +11353,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("Delegation_DifferentGenerics.kt")
+      public void testDelegation_DifferentGenerics() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics.kt");
+      }
+
+      @Test
       @TestMetadata("Delegation_Hierarchy.kt")
       public void testDelegation_Hierarchy() {
         runTest("compiler/testData/diagnostics/tests/delegation/Delegation_Hierarchy.kt");
