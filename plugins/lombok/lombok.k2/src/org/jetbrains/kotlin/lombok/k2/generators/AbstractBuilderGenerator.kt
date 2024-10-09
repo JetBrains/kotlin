@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -74,13 +76,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract val builderModality: Modality
 
-    protected abstract fun getBuilder(classSymbol: FirClassSymbol<*>): T?
+    protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
     protected abstract fun constructBuilderType(builderClassId: ClassId): ConeClassLikeType
 
     protected abstract fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType
 
-    protected abstract fun MutableMap<Name, FirJavaMethod>.addBuilderMethodsIfNeeded(
+    protected abstract fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
         builder: T,
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
@@ -145,7 +147,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val visibility = builder.visibility.toVisibility()
         val existingFunctionNames = entitySymbol.getExistingFunctionNames()
 
-        entityFunctions.addIfNeeded(Name.identifier(builder.builderMethodName), existingFunctionNames) {
+        entityFunctions.addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) {
             entitySymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
@@ -158,7 +160,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         if (builder.requiresToBuilder) {
-            entityFunctions.addIfNeeded(Name.identifier(TO_BUILDER), existingFunctionNames) {
+            entityFunctions.addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) {
                 entitySymbol.createJavaMethod(
                     it,
                     valueParameters = emptyList(),
@@ -217,34 +219,34 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val entityJavaClass = entitySymbol.fir as FirJavaClass
 
         return buildMap {
-            addBuilderMethodsIfNeeded(builder, entitySymbol, builderSymbol, existingFunctionNames)
+            addSpecialBuilderMethods(builder, entitySymbol, builderSymbol, existingFunctionNames)
 
             val fields = entityJavaClass.declarations.filterIsInstance<FirJavaField>()
             for (field in fields) {
                 when (val singular = lombokService.getSingular(field.symbol)) {
                     null -> {
-                        addSetterMethodIfNeeded(builder, field, builderSymbol, existingFunctionNames)
+                        addSetterMethod(builder, field, builderSymbol, existingFunctionNames)
                     }
                     else -> {
-                        addMethodsForSingularFieldsIfNeeded(builder, singular, field, builderSymbol, existingFunctionNames)
+                        addMethodsForSingularFields(builder, singular, field, builderSymbol, existingFunctionNames)
                     }
                 }
             }
         }
     }
 
-    private fun MutableMap<Name, FirJavaMethod>.addSetterMethodIfNeeded(
+    private fun MutableMap<Name, FirJavaMethod>.addSetterMethod(
         builder: AbstractBuilder,
-        field: FirJavaField,
+        item: FirVariable,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        val fieldName = field.name
+        val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
-        addIfNeeded(setterName, existingFunctionNames) {
+        addIfNonClashing(setterName, existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
-                valueParameters = listOf(ConeLombokValueParameter(fieldName, field.returnTypeRef)),
+                valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
                 returnTypeRef = getBuilderType(builderSymbol).toFirResolvedTypeRef(),
                 modality = Modality.FINAL,
                 visibility = builder.visibility.toVisibility()
@@ -252,18 +254,18 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    private fun MutableMap<Name, FirJavaMethod>.addMethodsForSingularFieldsIfNeeded(
+    private fun MutableMap<Name, FirJavaMethod>.addMethodsForSingularFields(
         builder: AbstractBuilder,
         singular: Singular,
-        field: FirJavaField,
+        item: FirVariable,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        val fieldJavaTypeRef = field.returnTypeRef as? FirJavaTypeRef ?: return
+        val fieldJavaTypeRef = item.returnTypeRef as? FirJavaTypeRef ?: return
         val javaClassifierType = fieldJavaTypeRef.type as? JavaClassifierType ?: return
         val typeName = (javaClassifierType.classifier as? JavaClass)?.fqName?.asString() ?: return
 
-        val nameInSingularForm = (singular.singularName ?: field.name.identifier.singularForm)?.let(Name::identifier) ?: return
+        val nameInSingularForm = (singular.singularName ?: item.name.identifier.singularForm)?.let(Name::identifier) ?: return
 
         val addMultipleParameterType: FirTypeRef
         val valueParameters: List<ConeLombokValueParameter>
@@ -324,7 +326,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol).toFirResolvedTypeRef()
         val visibility = builder.visibility.toVisibility()
 
-        addIfNeeded(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
+        addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
                 valueParameters,
@@ -334,17 +336,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             )
         }
 
-        addIfNeeded(field.name.toMethodName(builder), existingFunctionNames) {
+        addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
-                valueParameters = listOf(ConeLombokValueParameter(field.name, addMultipleParameterType)),
+                valueParameters = listOf(ConeLombokValueParameter(item.name, addMultipleParameterType)),
                 returnTypeRef = builderType,
                 modality = Modality.FINAL,
                 visibility = visibility
             )
         }
 
-        addIfNeeded(Name.identifier("clear${field.name.identifier.capitalize()}"), existingFunctionNames) {
+        addIfNonClashing(Name.identifier("clear${item.name.identifier.capitalize()}"), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
                 valueParameters = listOf(),
@@ -359,7 +361,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
        The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
        "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
      */
-    protected inline fun MutableMap<Name, FirJavaMethod>.addIfNeeded(
+    protected inline fun MutableMap<Name, FirJavaMethod>.addIfNonClashing(
         functionName: Name,
         existingFunctionNames: Set<Name>,
         createJavaMethod: (name: Name) -> FirJavaMethod
