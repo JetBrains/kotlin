@@ -194,9 +194,15 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
     fun target(body: Action<TARGET>) = body.execute(target)
 }
 
+interface KotlinSingleJavaTargetCompilerSupportExtension {
+    val compilerOptions: KotlinJvmCompilerOptions
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>)
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit)
+}
+
 abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
-abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
+abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project), KotlinSingleJavaTargetCompilerSupportExtension {
     @Suppress("DEPRECATION")
     override val target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         get() = targetFuture.getOrThrow()
@@ -210,13 +216,13 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
         project.launch(Undispatched) { targetFuture.await().body() }
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    override fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 }
@@ -339,7 +345,7 @@ abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJava
     }
 }
 
-abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project) {
+abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project), KotlinSingleJavaTargetCompilerSupportExtension {
     override val target: KotlinAndroidTarget get() = targetFuture.getOrThrow()
     override val targetFuture = CompletableFuture<KotlinAndroidTarget>()
 
@@ -347,13 +353,13 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
         targetFuture.await().body()
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    override fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 }
