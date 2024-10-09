@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
@@ -162,7 +163,7 @@ internal class PreCodegenInliner(
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
                                 .forEach { (irElement, liveVariables) ->
-                                    generationState.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
+                                    (irElement as IrSuspensionPoint).liveVariablesAtSuspensionPoint = liveVariables
                                 }
 
                         val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction)

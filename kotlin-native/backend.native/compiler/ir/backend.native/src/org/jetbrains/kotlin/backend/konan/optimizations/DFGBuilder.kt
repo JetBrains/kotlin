@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
+import org.jetbrains.kotlin.backend.konan.lower.visibleVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -311,8 +313,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             }
             if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
-                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]
-                        ?: generationState.visibleVariablesAtSuspensionPoints[expression]
+                liveVariablesStack.push(expression.liveVariablesAtSuspensionPoint
+                        ?: expression.visibleVariablesAtSuspensionPoint
                         ?: error("No live variables for ${declaration.render()} at ${expression.suspensionPointIdParameter.name}"))
             }
             if (expression is IrLoop) {

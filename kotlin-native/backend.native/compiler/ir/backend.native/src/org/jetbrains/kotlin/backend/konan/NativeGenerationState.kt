@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
 internal class FileLowerState {
     private var functionReferenceCount = 0
@@ -67,8 +66,7 @@ internal class NativeGenerationState(
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
-    val liveVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
-    val visibleVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
+    var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState
 
