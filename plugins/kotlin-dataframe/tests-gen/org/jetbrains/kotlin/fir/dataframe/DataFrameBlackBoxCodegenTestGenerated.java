@@ -53,6 +53,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnName_invalidSymbol.kt")
+  public void testColumnName_invalidSymbol() {
+    runTest("testData/box/columnName_invalidSymbol.kt");
+  }
+
+  @Test
   @TestMetadata("columnWithStarProjection.kt")
   public void testColumnWithStarProjection() {
     runTest("testData/box/columnWithStarProjection.kt");
