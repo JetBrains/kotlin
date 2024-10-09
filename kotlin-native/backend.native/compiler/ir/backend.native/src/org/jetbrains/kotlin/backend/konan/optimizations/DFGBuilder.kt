@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
@@ -309,7 +310,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             }
             if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
-                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]!!)
+                liveVariablesStack.push(expression.liveVariablesAtSuspensionPoint!!)
             }
             if (expression is IrLoop) {
                 parentLoops[expression] = currentLoop
