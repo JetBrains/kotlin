@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -26,7 +27,7 @@ class IrConstImpl internal constructor(
 ) : IrConst() {
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrElement? = null
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =

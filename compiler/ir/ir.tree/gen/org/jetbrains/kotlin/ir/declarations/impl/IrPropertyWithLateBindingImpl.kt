@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,7 +45,7 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
 
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrElement? = null
 
     override val containerSource: DeserializedContainerSource?
         get() = null

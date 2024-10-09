@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -36,7 +37,7 @@ class IrRichFunctionReferenceImpl internal constructor(
 ) : IrRichFunctionReference() {
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrElement? = null
 
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }
