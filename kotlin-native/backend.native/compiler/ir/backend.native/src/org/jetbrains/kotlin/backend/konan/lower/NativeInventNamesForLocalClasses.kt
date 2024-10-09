@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.localClassName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 
@@ -24,6 +25,6 @@ internal class NativeInventNamesForLocalClasses(val generationState: NativeGener
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
-        generationState.putLocalClassName(declaration, localClassName)
+        declaration.localClassName = localClassName
     }
 }
