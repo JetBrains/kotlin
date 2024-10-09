@@ -50,22 +50,18 @@ internal class NativeInlineFunctionResolver(
 
         function.loweredInlineFunction?.let { return it }
 
-        val packageFragment = function.getPackageFragment()
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
-        val irFile: IrFile
         val functionIsCached = moduleDeserializer != null && function.body == null
         val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
-            val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            irFile = deserializedInlineFunction.irFile
+            val (firstAccess, _) = moduleDeserializer.deserializeInlineFunction(function)
             function to firstAccess
         } else {
-            irFile = packageFragment as IrFile
             function to true
         }
 
         if (shouldLower) {
-            lower(possiblyLoweredFunction, irFile, functionIsCached)
+            lower(possiblyLoweredFunction, functionIsCached)
             if (!functionIsCached) {
                 possiblyLoweredFunction.getOrSaveLoweredInlineFunction()
             }
@@ -73,7 +69,7 @@ internal class NativeInlineFunctionResolver(
         return possiblyLoweredFunction
     }
 
-    private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
+    private fun lower(function: IrFunction, functionIsCached: Boolean) {
         val body = function.body ?: return
 
         val doubleInliningEnabled = !context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
