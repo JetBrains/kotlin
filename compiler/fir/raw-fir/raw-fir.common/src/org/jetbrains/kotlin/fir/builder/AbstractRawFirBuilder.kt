@@ -1070,6 +1070,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         private val zippedParameters: List<Pair<T, FirProperty>>,
         private val packageFqName: FqName,
         private val classFqName: FqName,
+        private val addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
     ) {
         fun generate() {
             if (classBuilder.classKind != ClassKind.OBJECT) {
@@ -1114,6 +1115,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     isFromLibrary = false,
                     firPrimaryConstructor,
                     { src, kind -> src?.toFirSourceElement(kind) },
+                    addValueParameterAnnotations,
                     { it.isVararg },
                 )
             )
@@ -1257,6 +1259,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     isFromLibrary: Boolean,
     firConstructor: FirConstructor,
     toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
+    addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
     isVararg: (TParameter) -> Boolean,
 ): FirSimpleFunction {
     fun generateComponentAccess(
@@ -1319,15 +1322,9 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 isCrossinline = false
                 isNoinline = false
                 this.isVararg = isVararg(ktParameter)
-                annotations += firProperty.correspondingValueParameterFromPrimaryConstructor?.annotations.orEmpty().map {
-                    // We may avoid redundant resolve by propagating suitable annotations as they are
-                    if (it.useSiteTarget == null)
-                        it
-                    else
-                        buildAnnotationCallCopy(it as FirAnnotationCall) {
-                            useSiteTarget = null
-                            containingDeclarationSymbol = this@buildValueParameter.symbol
-                        }
+                addValueParameterAnnotations(ktParameter)
+                for (annotation in annotations) {
+                    annotation.replaceUseSiteTarget(null)
                 }
             }
         }

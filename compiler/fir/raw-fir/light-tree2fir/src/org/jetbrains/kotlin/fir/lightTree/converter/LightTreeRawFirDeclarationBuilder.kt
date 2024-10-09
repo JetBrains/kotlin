@@ -636,6 +636,15 @@ class LightTreeRawFirDeclarationBuilder(
                                 zippedParameters,
                                 context.packageFqName,
                                 context.className,
+                                addValueParameterAnnotations = { valueParam ->
+                                    withContainerSymbol(symbol) {
+                                        valueParam.forEachChildren {
+                                            if (it.tokenType == MODIFIER_LIST) convertAnnotationList(it).filterTo(annotations) {
+                                                it.useSiteTarget.appliesToPrimaryConstructorParameter()
+                                            }
+                                        }
+                                    }
+                                },
                             ).generate()
                         }
 
