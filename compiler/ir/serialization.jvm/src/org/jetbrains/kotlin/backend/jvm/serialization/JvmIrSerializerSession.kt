@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
 class JvmIrSerializerSession(
-    private val declarationTable: DeclarationTable,
+    declarationTable: DeclarationTable,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
@@ -39,7 +39,7 @@ class JvmIrSerializerSession(
         var anySaved = false
         val proto = JvmIr.ClassOrFile.newBuilder()
 
-        declarationTable.inFile(irFile) {
+        inFile(irFile) {
             irFile.declarations.filter { it !is IrClass }.forEach { topDeclaration ->
                 forEveryDeclarationToSerialize(topDeclaration, mode) { declaration ->
                     proto.addDeclaration(serializeDeclaration(declaration))
@@ -57,7 +57,7 @@ class JvmIrSerializerSession(
 
     fun serializeTopLevelClass(irClass: IrClass): JvmIr.ClassOrFile? {
         val proto = JvmIr.ClassOrFile.newBuilder()
-        declarationTable.inFile(irClass.parent as IrFile) {
+        inFile(irClass.parent as IrFile) {
             forEveryDeclarationToSerialize(irClass, mode) { declaration ->
                 proto.addDeclaration(serializeDeclaration(declaration))
             }

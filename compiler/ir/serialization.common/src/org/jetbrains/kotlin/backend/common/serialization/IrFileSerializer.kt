@@ -1354,7 +1354,9 @@ open class IrFileSerializer(
         }
     }
 
-    fun serializeIrFile(file: IrFile): SerializedIrFile = declarationTable.inFile(file) {
+    fun <T> inFile(file: IrFile, block: () -> T): T = declarationTable.inFile(file, block)
+
+    fun serializeIrFile(file: IrFile): SerializedIrFile = inFile(file) {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
