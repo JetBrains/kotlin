@@ -5,8 +5,8 @@
 
 import formatters from "./formatters/index.mjs";
 
-window.devtoolsFormatters = Array.isArray(window.devtoolsFormatters) ? window.devtoolsFormatters : []
-window.devtoolsFormatters.push({
+globalThis.devtoolsFormatters = Array.isArray(globalThis.devtoolsFormatters) ? globalThis.devtoolsFormatters : []
+globalThis.devtoolsFormatters.push({
     header(value, configObject) {
         const formatter = formatters.get(value);
         return formatter ? formatter.header(value) : null;
