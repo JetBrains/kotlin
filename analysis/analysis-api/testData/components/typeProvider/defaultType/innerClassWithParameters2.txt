@@ -4,11 +4,5 @@ KaUsualClassType:
     KaTypeParameterType:
       annotations: []
       type: T
-    KaTypeParameterType:
-      annotations: []
-      type: A
-    KaTypeParameterType:
-      annotations: []
-      type: B
   ]
-  type: pack/TopLevelClass<A, B>.pack/TopLevelClass.NestedClass<T>
+  type: pack/TopLevelClass.NestedClass<T, A, B>

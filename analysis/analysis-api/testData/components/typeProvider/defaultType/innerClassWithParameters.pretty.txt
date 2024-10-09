@@ -1,1 +1,1 @@
-pack.TopLevelClass<T>.NestedClass
+pack.TopLevelClass<A>.NestedClass<T>

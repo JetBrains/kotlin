@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object UsualClassTypeQualifierBuilder {
     fun buildQualifiers(
@@ -63,7 +63,12 @@ internal object UsualClassTypeQualifierBuilder {
                 val typeParametersCount = currentClass.typeParameters.count { it is FirTypeParameter }
                 val begin = typeParametersLeft - typeParametersCount
                 val end = typeParametersLeft
-                check(begin >= 0)
+                checkWithAttachment(begin >= 0, { "Unexpected number of type parameters" }) {
+                    withEntry("designation", designation.toString())
+                    withFirEntry("currentClass", currentClass)
+                    withConeTypeEntry("coneType", coneType)
+                }
+
                 typeParametersLeft -= typeParametersCount
                 coneType.typeArguments.slice(begin until end).map { builder.typeBuilder.buildTypeProjection(it) }
             } else emptyList()

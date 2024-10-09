@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -86,10 +88,8 @@ internal class KaFirTypeProvider(
 
     override val KaNamedClassSymbol.defaultType: KaType
         get() = withValidityAssertion {
-            analysisSession.buildClassType(this) {
-                for (typeParameterSymbol in typeParameters) {
-                    argument(analysisSession.buildTypeParameterType(typeParameterSymbol))
-                }
+            with(analysisSession) {
+                firSymbol.defaultType().asKtType()
             }
         }
 

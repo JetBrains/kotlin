@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // ISSUE: KT-71345
 package pack
 
