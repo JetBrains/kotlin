@@ -156,11 +156,43 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
 
         for (function in functionsUnderTest) {
             // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
-            function.partiallyLinkedFunction = function.fullyLinkedFunction.copyWithoutBody()
+            function.partiallyLinkedFunction = function.fullyLinkedFunction.emulateInlineFunctionRepresentedByLazyIr()
             deserializer.deserializeInlineFunction(function.partiallyLinkedFunction)
         }
 
         checkFunctionsSerialization(configuration, ir.irPluginContext.irBuiltIns, functionsUnderTest)
+    }
+
+    private fun IrSimpleFunction.emulateInlineFunctionRepresentedByLazyIr(): IrSimpleFunction {
+        assertions.assertTrue(this.isInline)
+
+        if (isFakeOverride) {
+            // This is a fake override inline function. It naturally has no body. But it has inline function(s) among
+            // overridden symbols.
+            // When this function is inlined, the body of the resolved override will be copied to the call site.
+            // At the first phase of compilation, both the inline function itself and all its overrides are
+            // represented as Lazy Ir function nodes without bodies. So, to emulate the realistic scenario we have
+            // to remove bodies for all overridden functions.
+            assertions.assertTrue(this.body == null)
+
+            val originalOverride = resolveFakeOverrideOrFail()
+            val patchedOverride = originalOverride.emulateInlineFunctionRepresentedByLazyIr()
+
+            return deepCopyWithSymbols(initialParent = this.parent).apply {
+                overriddenSymbols = overriddenSymbols.map { if (it == originalOverride.symbol) patchedOverride.symbol else it }
+            }
+        } else {
+            // Make a bodiless copy.
+            val body = this.body
+            try {
+                this.body = null
+                return deepCopyWithSymbols(initialParent = this.parent).also {
+                    it.correspondingPropertySymbol = this.correspondingPropertySymbol
+                }
+            } finally {
+                this.body = body
+            }
+        }
     }
 
     private fun checkFunctionsSerialization(
@@ -226,18 +258,6 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             })
 
             return result
-        }
-
-        private fun IrSimpleFunction.copyWithoutBody(): IrSimpleFunction {
-            val body = this.body
-            try {
-                this.body = null
-                return deepCopyWithSymbols(initialParent = this.parent).also {
-                    it.correspondingPropertySymbol = this.correspondingPropertySymbol
-                }
-            } finally {
-                this.body = body
-            }
         }
 
         private fun createSerializer(configuration: CompilerConfiguration, irBuiltIns: IrBuiltIns): (IrSimpleFunction) -> ProtoDeclaration {
