@@ -103,6 +103,17 @@ enabledTargets(platformManager).forEach { target ->
         }
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
+            // During the execution of the `:kotlin-native:publish` task, the `:kotlin-native:bundleRegular` subtask
+            // traverses the `nativeDistribution` root directory (`kotlin-native/dist/`) to create the bundle.
+            // At the same time, the `nativeDistribution` root directory might be populated with `platformLibs` by the
+            // `bundlePrebuilt` subtask, which is also triggered by calling `:kotlin-native:publish`.
+            //
+            // This behavior can result in "Comparison method violates its general contract!" errors because Gradle
+            // traverses a **sorted** file list that is being concurrently modified, violating the sorting contract.
+            // To prevent this issue, we ensure that the installation of `platformLibs` does not occur while
+            // `bundleRegular` is traversing the directory.
+            mustRunAfter(":kotlin-native:bundleRegular")
+
             from(libTask)
             into(nativeDistribution.map { it.platformLib(name = artifactName, target = targetName) })
         }
