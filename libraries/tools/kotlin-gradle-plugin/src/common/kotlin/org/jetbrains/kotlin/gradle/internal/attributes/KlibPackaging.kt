@@ -41,9 +41,11 @@ private class KlibPackagingCompatibilityRule : AttributeCompatibilityRule<KlibPa
 private class KlibPackagingDisambiguationRule : AttributeDisambiguationRule<KlibPackaging> {
     override fun execute(details: MultipleCandidatesDetails<KlibPackaging>) = with(details) {
         val candidateNames = getCandidateNames()
+        val consumerValue = consumerValue
         when {
-            KlibPackaging.NON_PACKED in candidateNames -> chooseCandidateByName(KlibPackaging.NON_PACKED)
+            consumerValue != null && consumerValue in candidateValues -> closestMatch(consumerValue)
             KlibPackaging.PACKED in candidateNames -> chooseCandidateByName(KlibPackaging.PACKED)
+            KlibPackaging.NON_PACKED in candidateNames -> chooseCandidateByName(KlibPackaging.NON_PACKED)
         }
     }
 }

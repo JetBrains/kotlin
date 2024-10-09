@@ -12,9 +12,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Exec
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
@@ -91,6 +93,9 @@ private fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration 
             extendsFrom(apiConfiguration)
             val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
             compileConfiguration.copyAttributesTo(project.providers, this)
+            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+                KlibPackaging.setAttributeTo(project, attributes, false)
+            }
         }
 }
 
