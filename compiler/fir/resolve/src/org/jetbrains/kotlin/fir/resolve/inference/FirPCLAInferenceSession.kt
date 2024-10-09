@@ -193,7 +193,8 @@ class FirPCLAInferenceSession(
             inferenceComponents.resultTypeResolver.findResultType(
                 c,
                 variableWithConstraints,
-                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN,
+                allowLeavingTypeVariables = is21Mode(),
             ) as ConeKotlinType
         } ?: return null
         val variable = variableWithConstraints.typeVariable
