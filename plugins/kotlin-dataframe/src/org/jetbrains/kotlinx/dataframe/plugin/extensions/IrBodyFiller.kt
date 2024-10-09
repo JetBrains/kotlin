@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
@@ -63,6 +64,7 @@ import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.serialize
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import java.io.File
 
 class IrBodyFiller(
@@ -209,7 +211,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0, 1).also {
             val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
             it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
-            val columName = pluginKey.columnName ?: declaration.name.identifier
+            val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
+            val columnName = (annotation?.valueArguments?.get(0) as? IrConst<*>)?.value as? String
+            val columName = columnName ?: declaration.name.identifier
             it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName))
         }
 
