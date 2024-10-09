@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "DANGEROUS_CHARACTERS", "NonAsciiCharacters")
 
 package kotlin.metadata.test
 
@@ -97,6 +97,9 @@ private class ClassWithProperties {
 
     lateinit var g: String
 
+    val `абвгд"""`: Int
+        get() = 2 + 2
+
     fun getH(): String = ""
 }
 
@@ -123,6 +126,9 @@ private object ObjectWithProperties {
     val f by lazy { String() }
 
     lateinit var g: String
+
+    val `абвгд"""`: Int
+        get() = 2 + 2
 
     fun getH(): String = ""
 }

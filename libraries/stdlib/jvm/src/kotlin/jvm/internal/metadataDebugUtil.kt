@@ -54,5 +54,15 @@ private fun Array<String>.toJson(): String {
 }
 
 private fun String.toJson(): String {
-    return "\"$this\""
+    return buildString {
+        append('"')
+        for (c in this@toJson) {
+            if (c == '"') {
+                append("\\\"")
+            } else {
+                append(c)
+            }
+        }
+        append('"')
+    }
 }
