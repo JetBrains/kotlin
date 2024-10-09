@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFunctionInterfaceFile
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionSerializer
+import org.jetbrains.kotlin.backend.konan.isCalledFromExportedInlineFunction
+import org.jetbrains.kotlin.backend.konan.isConstructedFromExportedInlineFunctions
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
@@ -100,9 +102,7 @@ internal class CacheInfoBuilder(
             private fun processFunction(function: IrFunction) {
                 if (generationState.context.moduleDeserializerProvider.getDeserializerOrNull(function) == null) {
                     function.isCalledFromExportedInlineFunction = true
-                    (function as? IrConstructor)?.constructedClass?.let {
-                        generationState.constructedFromExportedInlineFunctions.add(it)
-                    }
+                    (function as? IrConstructor)?.constructedClass?.isConstructedFromExportedInlineFunctions = true
                     if (function.isInline && !function.isExported) {
                         // An exported inline function calls a non-exported inline function:
                         // should track its callees as well as it won't be handled by the main visitor.
