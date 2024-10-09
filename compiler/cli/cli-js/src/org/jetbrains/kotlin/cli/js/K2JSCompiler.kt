@@ -374,6 +374,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                     .mapNotNull { it.loadIrFragments()?.mainFragment }
                     .let { fragments -> if (arguments.preserveIcOrder) fragments.sortedBy { it.fragmentTag } else fragments }
 
+                val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
                 val res = compileWasm(
                     wasmCompiledFileFragments = wasmArtifacts,
                     moduleName = moduleName,
@@ -382,7 +383,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                     baseFileName = outputName,
                     emitNameSection = arguments.wasmDebug,
                     generateWat = arguments.wasmGenerateWat,
+                    generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF),
                     generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
+                    useDebuggerCustomFormatters = useDebuggerCustomFormatters
                 )
 
                 performanceManager?.notifyGenerationFinished()
@@ -391,7 +394,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                     result = res,
                     dir = outputDir,
                     fileNameBase = outputName,
-                    useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+                    useDebuggerCustomFormatters = useDebuggerCustomFormatters
                 )
                 icCaches.cacheGuard.release()
             } else {
@@ -447,6 +450,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         if (arguments.wasm) {
             val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+            val generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF)
             val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
             val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
@@ -495,6 +499,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 baseFileName = outputName,
                 emitNameSection = arguments.wasmDebug,
                 generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+                generateDwarf = generateDwarf,
                 generateSourceMaps = generateSourceMaps,
                 useDebuggerCustomFormatters = useDebuggerCustomFormatters
             )
@@ -868,6 +873,10 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 WARNING,
                 "The '-Xtyped-arrays' command line option does nothing and will be removed in a future release"
             )
+        }
+
+        if (arguments.generateDwarf) {
+            configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
         }
 
         if (arguments.debuggerCustomFormatters) {
