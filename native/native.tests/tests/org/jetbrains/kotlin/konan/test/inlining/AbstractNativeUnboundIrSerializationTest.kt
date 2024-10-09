@@ -156,7 +156,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
 
         for (function in functionsUnderTest) {
             // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
-            function.partiallyLinkedFunction = function.fullyLinkedFunction.emulateInlineFunctionRepresentedByLazyIr()
+            function.partiallyLinkedFunction = emulateInlineFunctionRepresentedByLazyIr(function.fullyLinkedFunction)
 
             if (function.partiallyLinkedFunction.isFakeOverride) {
                 // If this is a fake override, then it has no body and nothing specifically can be deserialized for the function
@@ -171,34 +171,36 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         checkFunctionsSerialization(configuration, ir.irPluginContext.irBuiltIns, functionsUnderTest)
     }
 
-    private fun IrSimpleFunction.emulateInlineFunctionRepresentedByLazyIr(): IrSimpleFunction {
-        assertions.assertTrue(this.isInline)
+    private fun emulateInlineFunctionRepresentedByLazyIr(original: IrSimpleFunction): IrSimpleFunction {
+        assertions.assertTrue(original.isInline)
 
-        if (isFakeOverride) {
+        if (original.isFakeOverride) {
             // This is a fake override inline function. It naturally has no body. But it has inline function(s) among
             // overridden symbols.
             // When this function is inlined, the body of the resolved override will be copied to the call site.
             // At the first phase of compilation, both the inline function itself and all its overrides are
             // represented as Lazy Ir function nodes without bodies. So, to emulate the realistic scenario we have
             // to remove bodies for all overridden functions.
-            assertions.assertTrue(this.body == null)
+            assertions.assertTrue(original.body == null)
 
-            val originalOverride = resolveFakeOverrideOrFail()
-            val patchedOverride = originalOverride.emulateInlineFunctionRepresentedByLazyIr()
+            val originalOverride = original.resolveFakeOverrideOrFail()
+            val patchedOverride = emulateInlineFunctionRepresentedByLazyIr(originalOverride)
 
-            return deepCopyWithSymbols(initialParent = this.parent).apply {
-                overriddenSymbols = overriddenSymbols.map { if (it == originalOverride.symbol) patchedOverride.symbol else it }
+            return original.deepCopyWithSymbols(initialParent = original.parent).also { copy ->
+                copy.overriddenSymbols = copy.overriddenSymbols.map { overriddenSymbol ->
+                    if (overriddenSymbol == originalOverride.symbol) patchedOverride.symbol else overriddenSymbol
+                }
             }
         } else {
             // Make a bodiless copy.
-            val body = this.body
+            val body = original.body
             try {
-                this.body = null
-                return deepCopyWithSymbols(initialParent = this.parent).also {
-                    it.correspondingPropertySymbol = this.correspondingPropertySymbol
+                original.body = null
+                return original.deepCopyWithSymbols(initialParent = original.parent).also { copy ->
+                    copy.correspondingPropertySymbol = original.correspondingPropertySymbol
                 }
             } finally {
-                this.body = body
+                original.body = body
             }
         }
     }
