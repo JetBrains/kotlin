@@ -28,8 +28,6 @@ expect fun printStderr(message: String)
 
 expect fun currentTime(): String
 
-expect fun nanoTime(): Long
-
 expect class Blackhole {
     companion object {
         var consumer: Int

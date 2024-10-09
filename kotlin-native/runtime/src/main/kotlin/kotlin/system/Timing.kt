@@ -21,7 +21,7 @@ import kotlin.time.*
  * using [Duration.inWholeMilliseconds].
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @GCUnsafeCall("Kotlin_system_getTimeMillis")
 public external fun getTimeMillis() : Long
 
@@ -38,7 +38,7 @@ public external fun getTimeMillis() : Long
  * using [Duration.inWholeNanoseconds].
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @GCUnsafeCall("Kotlin_system_getTimeNanos")
 public external fun getTimeNanos() : Long
 
@@ -55,7 +55,7 @@ public external fun getTimeNanos() : Long
  * using [Duration.inWholeMicroseconds].
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @GCUnsafeCall("Kotlin_system_getTimeMicros")
 public external fun getTimeMicros() : Long
 
@@ -72,7 +72,7 @@ public external fun getTimeMicros() : Long
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeMilliseconds"))
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public inline fun measureTimeMillis(block: () -> Unit) : Long {
     val start = getTimeMillis()
     block()
@@ -90,7 +90,7 @@ public inline fun measureTimeMillis(block: () -> Unit) : Long {
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeMicroseconds", "kotlin.time.measureTime"))
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public inline fun measureTimeMicros(block: () -> Unit) : Long {
     val start = getTimeMicros()
     block()
@@ -110,7 +110,7 @@ public inline fun measureTimeMicros(block: () -> Unit) : Long {
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeNanoseconds", "kotlin.time.measureTime"))
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public inline fun measureNanoTime(block: () -> Unit) : Long {
     val start = getTimeNanos()
     block()
