@@ -172,6 +172,16 @@ inline fun ImportCollectingPrinter.printFunctionWithBlockBody(
     printBlock(blockBody)
 }
 
+data class PrimaryConstructorParameter(
+    val functionParameter: FunctionParameter,
+    val kind: VariableKind,
+    val visibility: Visibility = Visibility.PUBLIC,
+) {
+    val name by functionParameter::name
+    val type by functionParameter::type
+    val defaultValue by functionParameter::defaultValue
+}
+
 private fun IndentingPrinter.printDeprecation(deprecation: Deprecated) {
     println("@Deprecated(")
     withIndent {
