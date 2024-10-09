@@ -49096,6 +49096,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     @TestDataPath("$PROJECT_ROOT")
     public class Multiplatform {
       @Test
+      @TestMetadata("actualDeprecated.kt")
+      public void testActualDeprecated() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualDeprecated.kt");
+      }
+
+      @Test
       @TestMetadata("actualExternalInJs.kt")
       public void testActualExternalInJs() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt");
