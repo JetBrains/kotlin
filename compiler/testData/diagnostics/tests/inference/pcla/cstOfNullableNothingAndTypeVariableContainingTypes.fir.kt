@@ -1,13 +1,13 @@
 // ISSUE: KT-72116
 
 fun reproduce() {
-    val resultA = <!NEW_INFERENCE_ERROR!>pcla { otvOwner ->
+    val resultA = pcla { otvOwner ->
         otvOwner.constrain(null)
         otvOwner.constrain(GenericKlass(TypeArgument()))
-        <!NEW_INFERENCE_ERROR!>otvOwner.provide()<!>.<!INAPPLICABLE_CANDIDATE!>fix<!>()
-    }<!>
+        otvOwner.provide().fix()
+    }
     // expected: GenericKlass<TypeArgument>?
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("GenericKlass<TypeArgument>?")!>resultA<!>
 }
 
 class TypeVariableOwner<T> {

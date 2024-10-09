@@ -60,8 +60,13 @@ class ResultTypeResolver(
         return if (direction == ResolveDirection.TO_SUBTYPE) nothingType() else nullableAnyType()
     }
 
-    fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker {
-        findResultTypeOrNull(c, variableWithConstraints, direction)?.let { return it }
+    fun findResultType(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        direction: ResolveDirection,
+        allowLeavingTypeVariables: Boolean = false,
+    ): KotlinTypeMarker {
+        findResultTypeOrNull(c, variableWithConstraints, direction, allowLeavingTypeVariables)?.let { return it }
 
         // no proper constraints
         return c.getDefaultType(direction, variableWithConstraints.constraints, variableWithConstraints.typeVariable)
@@ -93,11 +98,14 @@ class ResultTypeResolver(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
+        // This should be set to `true` if it's OK to leave type variables in the resulting type (not on top-level).
+        // Currently, only used for PCLA and Delegation inference.
+        allowLeavingTypeVariables: Boolean = false,
     ): KotlinTypeMarker? {
         val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints, isStrictMode = false)
         if (resultTypeFromEqualConstraint?.isAppropriateResultTypeFromEqualityConstraints(c) == true) return resultTypeFromEqualConstraint
 
-        val subType = c.findSubType(variableWithConstraints)
+        val subType = c.findSubType(variableWithConstraints, allowLeavingTypeVariables)
         val superType = c.findSuperType(variableWithConstraints)
 
         val (preparedSubType, preparedSuperType) = if (c.isK2 && useImprovedCapturedTypeApproximation) {
@@ -362,7 +370,10 @@ class ResultTypeResolver(
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
 
-    private fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+    private fun Context.findSubType(
+        variableWithConstraints: VariableWithConstraints,
+        allowLeavingTypeVariables: Boolean,
+    ): KotlinTypeMarker? {
         val lowerConstraintTypes = prepareLowerConstraints(variableWithConstraints.constraints)
 
         if (lowerConstraintTypes.isNotEmpty()) {
@@ -375,17 +386,17 @@ class ResultTypeResolver(
                 }
 
                 when {
-                    typesWithoutStubs.isNotEmpty() -> {
-                        commonSuperType = computeCommonSuperType(typesWithoutStubs)
-                    }
-                    // `typesWithoutStubs.isEmpty()` means that there are no lower constraints without type variables.
-                    // It's only possible for the PCLA case, because otherwise none of the constraints would be considered as proper.
-                    // So, we just get currently computed `commonSuperType` and substitute all local stub types
-                    // with corresponding type variables.
-                    outerSystemVariablesPrefixSize > 0 -> {
-                        // outerSystemVariablesPrefixSize > 0 only for PCLA (K2)
+                    // For PCLA/DI and semi-fixation, it's not an exceptional situation when there are some type variables in constraints
+                    // Thus, we do not filter them out and just substitute stub types back to type variables
+                    allowLeavingTypeVariables ||
+                            // Hopefully, this part would be removed when 2.0 is obsolete
+                            (isObsolete20PCLA() && typesWithoutStubs.isEmpty() && outerSystemVariablesPrefixSize > 0) -> {
                         @OptIn(K2Only::class)
                         commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
+                    }
+
+                    typesWithoutStubs.isNotEmpty() -> {
+                        commonSuperType = computeCommonSuperType(typesWithoutStubs)
                     }
                 }
             }
@@ -395,6 +406,8 @@ class ResultTypeResolver(
 
         return null
     }
+
+    private fun isObsolete20PCLA(): Boolean = !languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21)
 
     private fun Context.computeCommonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker =
         with(NewCommonSuperTypeCalculator) { commonSuperType(types) }
