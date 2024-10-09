@@ -915,7 +915,7 @@ tasks {
         dependsOn(":kotlin-assignment-compiler-plugin:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:test")
         dependsOn(":plugins:plugin-sandbox:test")
-        dependsOn(":plugins:plugin-sandbox:fir-plugin-ic-test:test")
+        dependsOn(":plugins:plugin-sandbox:plugin-sandbox-ic-test:test")
         dependsOn(":kotlin-imports-dumper-compiler-plugin:test")
         dependsOn(":plugins:jvm-abi-gen:test")
         dependsOn(":plugins:js-plain-objects:compiler-plugin:test")

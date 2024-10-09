@@ -178,7 +178,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/plugin-sandbox/fir-plugin-ic-test/tests-gen", "plugins/plugin-sandbox/fir-plugin-ic-test/testData") {
+        testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData") {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
