@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
@@ -27,7 +28,7 @@ class IrReturnImpl internal constructor(
 ) : IrReturn() {
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrElement? = null
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254
     constructor(

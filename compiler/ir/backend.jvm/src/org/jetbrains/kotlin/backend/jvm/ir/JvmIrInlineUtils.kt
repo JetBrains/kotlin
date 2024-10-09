@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -80,13 +81,13 @@ fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
 private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
-    val original = this.originalBeforeInline ?: return null
+    val original = this.originalBeforeInline as? IrAttributeContainer ?: return null
     return original.extractRelatedDeclaration()
 }
 
 fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
     if (this.originalBeforeInline == null) return null
-    return generateSequence(this) { it.originalBeforeInline }.last()
+    return generateSequence(this) { it.originalBeforeInline as? IrAttributeContainer }.last()
 }
 
 val IrDeclaration.fileParentBeforeInline: IrFile

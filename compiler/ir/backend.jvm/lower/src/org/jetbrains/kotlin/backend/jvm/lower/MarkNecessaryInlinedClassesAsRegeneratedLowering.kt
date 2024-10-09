@@ -255,7 +255,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                     // Basically we need to generate SEQUENCE of `element.originalBeforeInline` and find the original one.
                     //  But we process nested inlined functions first, so `element.originalBeforeInline` will be processed already.
                     //  This mean that when we start to precess current container, all inner ones in SEQUENCE will already be processed.
-                    element.attributeOwnerId = element.originalBeforeInline!!.attributeOwnerId
+                    element.attributeOwnerId = (element.originalBeforeInline as IrAttributeContainer).attributeOwnerId
                     element.originalBeforeInline = null
                 }
                 element.acceptChildrenVoid(this)
