@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -42,7 +42,7 @@ internal class JvmInventNamesForLocalClasses(private val context: JvmBackendCont
         return sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
     }
 
-    override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
+    override fun putLocalClassName(declaration: IrElement, localClassName: String) {
         // We can visit the same class twice: before IR inlining and after. The name that was before is more preferable.
         if (declaration.localClassType != null) return
         declaration.localClassType = Type.getObjectType(localClassName)

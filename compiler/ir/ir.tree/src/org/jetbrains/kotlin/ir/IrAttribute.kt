@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.utils.DummyDelegate
 import java.lang.ref.WeakReference
@@ -79,7 +78,7 @@ private fun <E : IrElement> E.unwrapAttributeOwner(attribute: IrAttribute<E, *>)
     // To ensure the new behavior is the-same-or-better, the tracking and comparison can be used as well.
 
     return if (attribute.followAttributeOwner)
-        (this as IrAttributeContainer).attributeOwnerId
+        this.attributeOwnerId
     else this
 }
 

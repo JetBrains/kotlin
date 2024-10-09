@@ -41,7 +41,7 @@ interface FakeInliningLocalVariables<Container : IrElement> {
         }
     }
 
-    fun Container.addFakeLocalVariableForLambda(argument: IrAttributeContainer, callee: IrFunction) {
+    fun Container.addFakeLocalVariableForLambda(argument: IrElement, callee: IrFunction) {
         val argumentToFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(callee)
         val lambdaReferenceName = argument.localClassType!!.internalName.substringAfterLast("/")
         val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"

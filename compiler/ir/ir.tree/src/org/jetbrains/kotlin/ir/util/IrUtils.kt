@@ -620,7 +620,7 @@ val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrFunction.originalFunction: IrFunction
-    get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this
+    get() = (this.attributeOwnerId as? IrFunction) ?: this
 
 val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
@@ -1262,7 +1262,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         if (copyMetadata) metadata = oldFunction.metadata
 
-        copyAttributes(oldFunction as? IrAttributeContainer)
+        copyAttributes(oldFunction)
     }
 }
 

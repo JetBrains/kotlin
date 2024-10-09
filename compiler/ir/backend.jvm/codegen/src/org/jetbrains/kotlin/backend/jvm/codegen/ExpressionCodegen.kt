@@ -497,7 +497,7 @@ class ExpressionCodegen(
             val lastStatement = callee?.body?.statements?.lastOrNull()
             if (lastStatement is IrReturn) {
                 val returnTarget = lastStatement.returnTargetSymbol.owner
-                val originalReturnTarget = (returnTarget as? IrAttributeContainer)?.attributeOwnerId ?: returnTarget
+                val originalReturnTarget = returnTarget?.attributeOwnerId ?: returnTarget
                 if (originalReturnTarget == inlinedBlock.inlineDeclaration) {
                     // if return is implicit we must put new LN at the end of expression
                     inlinedBlock.statements.last().markLineNumber(startOffset = lastStatement.startOffset != lastStatement.endOffset)

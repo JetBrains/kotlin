@@ -117,7 +117,7 @@ abstract class AbstractComposeLowering(
     val FeatureFlag.enabled get() = featureFlags.isEnabled(this)
 
     fun metricsFor(function: IrFunction): FunctionMetrics =
-        (function as? IrAttributeContainer)?.let {
+        function?.let {
             context.irTrace[ComposeWritableSlices.FUNCTION_METRICS, it] ?: run {
                 val metrics = metrics.makeFunctionMetrics(function)
                 context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, it, metrics)

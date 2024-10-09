@@ -89,7 +89,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
     private fun generateContinuationClassForNamedFunction(
         irFunction: IrFunction,
         dispatchReceiverParameter: IrValueParameter?,
-        attributeContainer: IrAttributeContainer,
+        attributeContainer: IrElement,
         capturesCrossinline: Boolean
     ): IrClass =
         context.irFactory.buildClass {
@@ -355,7 +355,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     +generateContinuationClassForNamedFunction(
                         newFunction,
                         view.dispatchReceiverParameter,
-                        function as IrAttributeContainer,
+                        function,
                         capturesCrossinline
                     )
                     if (newFunction.body is IrExpressionBody) {
