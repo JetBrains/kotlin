@@ -204,6 +204,12 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
+            // reset cache settings for 1st stage, to avoid error `...is cached..., but its dependency isn't`
+            put(KonanConfigKeys.AUTO_CACHEABLE_FROM, emptyList())
+            put(KonanConfigKeys.AUTO_CACHE_DIR, "")
+            put(KonanConfigKeys.CACHE_DIRECTORIES, emptyList())
+            put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, false)
+            put(KonanConfigKeys.INCREMENTAL_CACHE_DIR, "")
         }
 
         // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
