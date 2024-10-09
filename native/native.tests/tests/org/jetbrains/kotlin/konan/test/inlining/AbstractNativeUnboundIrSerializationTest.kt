@@ -49,11 +49,8 @@ import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
@@ -143,15 +140,20 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val library = resolveSingleFileKlib(
-            KFile(info.outputFile.absolutePath),
-            configuration.getLogger(treatWarningsAsErrors = true)
-        )
+        val libraries = (sequenceOf(info) + module.allDependencies.asSequence()
+            .map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+            .mapNotNull { testServices.dependencyProvider.getArtifactSafe(it, ArtifactKinds.KLib) })
+            .map {
+                resolveSingleFileKlib(
+                    KFile(it.outputFile.absolutePath),
+                    configuration.getLogger(treatWarningsAsErrors = true)
+                )
+            }.toList()
 
         val deserializer = NonLinkingIrInlineFunctionDeserializer(
             irBuiltIns = ir.irPluginContext.irBuiltIns,
             signatureComputer = PublicIdSignatureComputer(KonanManglerIr),
-            libraries = listOf(library)
+            libraries = libraries
         )
 
         for (function in functionsUnderTest) {
