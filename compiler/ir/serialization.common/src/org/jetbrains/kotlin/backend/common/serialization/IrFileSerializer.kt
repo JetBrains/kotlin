@@ -1007,6 +1007,8 @@ open class IrFileSerializer(
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
+            if (declaration.origin.name == "LOCAL_FUNCTION_FOR_LAMBDA")
+                print("")
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
             coordinates = if (settings.publicAbiOnly && !isInsideInline)
                 0L
