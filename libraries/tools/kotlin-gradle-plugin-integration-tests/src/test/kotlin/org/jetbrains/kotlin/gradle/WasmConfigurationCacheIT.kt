@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class WasmConfigurationCacheIT : KGPBaseTest() {
@@ -65,6 +66,28 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testBrowser(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                "assemble",
+                buildOptions = defaultBuildOptions,
+                executedTaskNames = listOf(":compileKotlinWasmJs", ":wasmJsBrowserDistribution")
+            )
+        }
+    }
+
+    @DisplayName("Browser case works correctly with custom formatters")
+    @GradleTest
+    fun testWasmCustomFormattersUsage(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            buildGradleKts.appendText(
+                //language=Kotlin
+                """
+                |
+                | tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
+                |    compilerOptions.freeCompilerArgs.add("-Xwasm-debugger-custom-formatters")
+                | }
+                """.trimMargin()
+            )
+
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,
