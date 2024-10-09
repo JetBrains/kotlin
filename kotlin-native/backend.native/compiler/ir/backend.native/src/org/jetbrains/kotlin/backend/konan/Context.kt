@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(followAttributeOwner = false)
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
@@ -51,12 +53,9 @@ internal class Context(
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
-    // TODO: Remove after adding special <userData> property to IrDeclaration.
-    private val layoutBuilders = ConcurrentHashMap<IrClass, ClassLayoutBuilder>()
-
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder =
             (irClass.metadata as? KonanMetadata.Class)?.layoutBuilder
-                    ?: layoutBuilders.getOrPut(irClass) { ClassLayoutBuilder(irClass, this) }
+                    ?: irClass::layoutBuilder.getOrSetIfNull { ClassLayoutBuilder(irClass, this) }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 
