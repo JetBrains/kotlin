@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTargetVisitor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
@@ -15,22 +17,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.destructuringDeclarationContainerVariable
-import org.jetbrains.kotlin.fir.declarations.isItAllowedToCallLazyResolveToTheSamePhase
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -189,13 +179,13 @@ internal sealed class LLFirTargetResolver(
             // copy method shares the return type of generated properties as the return type
             // of corresponding value parameter and annotations from them
             DataClassResolver.isCopy(function.name) -> {
-                for (declaration in containingClass(function).declarations) {
-                    val property = declaration as? FirProperty ?: continue
-                    if (property.fromPrimaryConstructor == true) {
-                        property.lazyResolveToPhase(resolverPhase)
-                    } else {
-                        break // all generated properties are sequential, so we can stop if we encounter another property
-                    }
+                val primaryConstructor = containingClass(function).declarations.firstNotNullOfOrNull { declaration ->
+                    (declaration as? FirConstructor)?.takeIf { it.isPrimary }
+                }
+
+                primaryConstructor?.lazyResolveToPhase(resolverPhase)
+                primaryConstructor?.valueParameters?.forEach {
+                    it.correspondingProperty?.lazyResolveToPhase(resolverPhase)
                 }
             }
         }
