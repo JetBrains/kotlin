@@ -1,0 +1,11 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: A
+    KaTypeParameterType:
+      annotations: []
+      type: B
+  ]
+  type: pack/Foo<A, B>

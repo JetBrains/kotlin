@@ -1,0 +1,1 @@
+pack.Foo.NestedClass<C, D, E>
