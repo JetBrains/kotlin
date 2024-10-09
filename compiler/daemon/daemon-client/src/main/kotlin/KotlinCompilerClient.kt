@@ -539,17 +539,23 @@ object KotlinCompilerClient {
             "-XX:+UseCodeCacheFlushing",
             if (gcAutoConfiguration.shouldAutoConfigureGc) "-XX:+Use${gcAutoConfiguration.preferredGc}GC" else null,
         )
+        // TODO: KT-72161. Investigate IDEA's JSR223 Kotlin Script integration. Possibly transform this into regular arguments
+        val initiatorInfoAsSystemProperties = listOfNotNull(
+            initiatorInfo.clientMarkerFile?.absolutePath?.let {
+                "-D${CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.property}=$it"
+            }
+        )
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
         ) +
                 platformSpecificOptions +
                 jvmArguments +
                 additionalOptimizationOptions +
+                initiatorInfoAsSystemProperties +
                 javaIllegalAccessWorkaround +
                 COMPILER_DAEMON_CLASS_FQN +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                initiatorInfo.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+                compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
         reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)

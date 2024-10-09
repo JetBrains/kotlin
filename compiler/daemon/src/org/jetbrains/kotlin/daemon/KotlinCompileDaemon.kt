@@ -105,7 +105,7 @@ abstract class KotlinCompileDaemonBase {
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
-        val initiatorInfo = InitiatorInformation()
+        val initiatorInfo = InitiatorInformation(CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.value?.let { File(it) })
         runSynchronized {
             var serverRun: Any?
             try {
@@ -115,7 +115,7 @@ abstract class KotlinCompileDaemonBase {
                     inheritAdditionalProperties = true
                 )
 
-                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, initiatorInfo, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
+                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
                 if (filteredArgs.any()) {
                     val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
