@@ -224,13 +224,16 @@ class IrDeclarationDeserializer(
         setParent: Boolean = true,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
+        val origin = deserializeIrDeclarationOrigin(proto.originName)
+        if (origin.name == "LOCAL_FUNCTION_FOR_LAMBDA")
+            print("")
         val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val result = block(
             s,
             uid,
             coordinates.startOffset, coordinates.endOffset,
-            deserializeIrDeclarationOrigin(proto.originName), proto.flags
+            origin, proto.flags
         )
         // avoid duplicate annotations for local variables
         result.annotations = deserializeAnnotations(proto.annotationList)
