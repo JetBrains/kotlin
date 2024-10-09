@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public final data [ResolvedTo(BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
+TARGET: public final data [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class MyDataClass : R|kotlin/Any| {
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Int| = STUB): R|library/MyDataClass|

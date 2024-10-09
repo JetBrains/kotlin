@@ -27,7 +27,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final data [ResolvedTo(BODY_RESOLVE)] class MyDependency : R|kotlin/Any| {
+public final data [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class MyDependency : R|kotlin/Any| {
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|one/B|
 
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|one/D|

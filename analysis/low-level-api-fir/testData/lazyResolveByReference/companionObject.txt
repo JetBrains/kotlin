@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public final [ResolvedTo(BODY_RESOLVE)] class ClassWithImplicitConstructorAndCompanion : R|kotlin/Any| {
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class ClassWithImplicitConstructorAndCompanion : R|kotlin/Any| {
     public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
     }
 
