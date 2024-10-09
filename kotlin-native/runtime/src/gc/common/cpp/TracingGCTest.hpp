@@ -25,6 +25,7 @@
 #include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
+#include "ThreadState.hpp"
 #include "WeakRef.hpp"
 
 using namespace kotlin;
@@ -615,13 +616,13 @@ public:
     template <typename F>
     [[nodiscard]] std::future<void> Execute(F&& f) {
         return executor_.execute(
-                [this, f = std::forward<F>(f)] { f(*executor_.context().memory_->memoryState()->GetThreadData(), *this); });
+                [this, f = std::forward<F>(f)] { f(*executor_.context().threadData_, *this); });
     }
 
     StackObjectHolder& AddStackRoot() {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddStackRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = std::make_unique<StackObjectHolder>(*context.memory_->memoryState()->GetThreadData());
+        auto holder = std::make_unique<StackObjectHolder>(*context.threadData_);
         auto& holderRef = *holder;
         context.stackRoots_.push_back(std::move(holder));
         return holderRef;
@@ -639,7 +640,7 @@ public:
     GlobalObjectHolder& AddGlobalRoot() {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = std::make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData());
+        auto holder = std::make_unique<GlobalObjectHolder>(*context.threadData_);
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
         return holderRef;
@@ -648,23 +649,25 @@ public:
     GlobalObjectHolder& AddGlobalRoot(ObjHeader* object) {
         RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
         auto& context = executor_.context();
-        auto holder = std::make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData(), object);
+        auto holder = std::make_unique<GlobalObjectHolder>(*context.threadData_, object);
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
-    std::vector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
+    std::vector<ObjHeader*> Alive() { return ::Alive(*executor_.context().threadData_); }
 
 private:
     struct Context {
-        std::unique_ptr<ScopedMemoryInit> memory_;
+        CalledFromNativeGuard runtimeInitializer_;
+        mm::ThreadData* threadData_;
         std::vector<std::unique_ptr<StackObjectHolder>> stackRoots_;
         std::vector<std::unique_ptr<GlobalObjectHolder>> globalRoots_;
 
-        Context() : memory_(std::make_unique<ScopedMemoryInit>()) {
+        Context() {
+            threadData_ = mm::ThreadRegistry::Instance().CurrentThreadData();
             // SingleThreadExecutor must work in the runnable state, so that GC does not collect between tasks.
-            AssertThreadState(memory_->memoryState(), ThreadState::kRunnable);
+            AssertThreadState(threadData_, ThreadState::kRunnable);
         }
     };
 
