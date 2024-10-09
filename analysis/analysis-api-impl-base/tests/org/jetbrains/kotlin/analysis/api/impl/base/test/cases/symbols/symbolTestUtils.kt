@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.isLocal
@@ -35,17 +37,17 @@ internal fun KaSession.checkContainingJvmClassName(
     symbol: KaCallableSymbol,
     testServices: TestServices
 ) {
-    if (ktFile.isScript()) return
-    val expectedClassName = when {
-        symbol.isLocal ->
-            null
-        ktClass != null ->
-            // member
-            ktClass.getClassId()?.asFqNameString()
-        else ->
-            // top-level
-            ktFile.javaFileFacadeFqName.asString()
+    fun KaCallableSymbol.computeExpectedJvmClassName(): String? {
+        return when {
+            this is KaParameterSymbol -> (containingSymbol as KaFunctionSymbol).computeExpectedJvmClassName()
+            this.isLocal -> null
+            ktClass != null -> ktClass.getClassId()?.asFqNameString() // Member
+            else -> ktFile.javaFileFacadeFqName.asString() // Top-level
+        }
     }
+
+    if (ktFile.isScript()) return
+    val expectedClassName = symbol.computeExpectedJvmClassName()
     val actualClassName = symbol.containingJvmClassName
     testServices.assertions.assertEquals(expectedClassName, actualClassName) {
         "Invalid JvmClassName for $symbol, expected $expectedClassName but $actualClassName found"

@@ -46,6 +46,12 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByP
   }
 
   @Test
+  @TestMetadata("classNameClash.kt")
+  public void testClassNameClash() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/classNameClash.kt");
+  }
+
+  @Test
   @TestMetadata("classes.kt")
   public void testClasses() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/classes.kt");
