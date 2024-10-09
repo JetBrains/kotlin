@@ -48,7 +48,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
                 override suspend fun evaluate(`${'$'}replState`: ReplState) {
                     println("Hello, world!")
                     `${'$'}replState`.setUnitOutput(this) 
@@ -78,7 +78,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -114,7 +114,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -154,7 +154,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -196,7 +196,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -230,7 +230,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String?>("field1") 
 
@@ -265,7 +265,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String?>("field1") 
 
@@ -304,7 +304,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String?>("field1") 
 
@@ -347,7 +347,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -385,7 +385,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -427,7 +427,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -469,7 +469,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<Int>("field1") 
 
@@ -513,7 +513,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
             import kotlin.properties.Delegates
 
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 val `field1${'$'}replProperty` = createMockProperty<String>("field1") 
 
@@ -555,7 +555,7 @@ class ReplPropertySmokeTest : TestCase() {
             import kotlin.script.experimental.jvmhost.repl.k2.ReplState
             import kotlin.script.experimental.jvmhost.repl.k2.ExecutableReplSnippet
 
-            class Snippet0: ExecutableReplSnippet  {
+            object Snippet0 : ExecutableReplSnippet {
 
                 private val `name${'$'}replProperty` = createMockProperty<String>("name")
                 private val `age${'$'}replProperty` = createMockProperty<Int>("age")

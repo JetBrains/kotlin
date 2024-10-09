@@ -9,11 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import kotlin.script.experimental.api.ReplCompiler
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.util.KotlinJars.k2ReplTestsClassPath
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
@@ -51,10 +47,30 @@ class K2ReplCompiler(private val outputDir: File) : ReplCompiler<K2CompiledSnipp
 
             // Just hardcode the FQN for the snippet for now
             // Make sure this matches the one in `ReplSmokeTests`
-            val packageName = "repl.snippet$i.Snippet$i"
-            val buildDir = File(outputDir, "out/repl/snippet$i")
-            compiledSnippets = compiledSnippets.add(K2CompiledSnippet(buildDir, packageName))
+            val classFQN = extractClassFullyQualifiedName(snippet.text)
+            val buildDir = extractBuildDir(classFQN)
+            compiledSnippets = compiledSnippets.add(K2CompiledSnippet(buildDir, classFQN))
         }
         return compiledSnippets!!.asSuccess()
+    }
+
+    private fun extractBuildDir(classFQN: String): File {
+        // Right now this assumes that the number matches the class name
+        val regex = Regex("repl\\.snippet\\d*.Snippet(\\d*)")
+        val snippetNumber = regex.matchEntire(classFQN)!!.groups[1]!!.value.toInt()
+        return File(outputDir, "out/repl/snippet$snippetNumber")
+    }
+
+    private fun extractClassFullyQualifiedName(sourceCode: String): String {
+        // Assume package name is always the first line
+        val packageName = sourceCode.lineSequence().firstOrNull()?.removePrefix("package ")?.trim() ?: ""
+
+        // Assume that compiled Repl snippets are always object classes
+        val className = sourceCode.lineSequence()
+            .first { it.startsWith("object") }
+            .removePrefix("object ")
+            .removeSuffix(" : ExecutableReplSnippet {")
+
+        return "$packageName.$className"
     }
 }
