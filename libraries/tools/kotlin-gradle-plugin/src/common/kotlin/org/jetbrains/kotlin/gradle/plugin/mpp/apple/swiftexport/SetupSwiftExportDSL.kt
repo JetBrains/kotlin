@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 
 internal object SwiftExportDSLConstants {
-    const val SWIFT_EXPORT_LIBRARY_PREFIX = "swiftExport"
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
     const val TASK_GROUP = "SwiftExport"
 }

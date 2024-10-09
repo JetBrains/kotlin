@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
@@ -220,15 +220,30 @@ class SwiftExportUnitTests {
         val subProject2 = projects[2]
         val subProject3 = projects[3]
 
-        val projectCompileTask = project.tasks.getByName("compileKotlinIosSimulatorArm64")
-        val subProject1CompileTask = subProject1.tasks.getByName("compileKotlinIosSimulatorArm64")
-        val subProject2CompileTask = subProject2.tasks.getByName("compileKotlinIosSimulatorArm64")
-        val subProject3CompileTask = subProject3.tasks.getByName("compileKotlinIosSimulatorArm64")
+        val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
+        val projectLibraries = linkTask.libraries.filter { it.name.contains("stdlib").not() }
 
-        val projectCompileTaskDependencies = projectCompileTask.taskDependencies.getDependencies(null)
-        assert(projectCompileTaskDependencies.contains(subProject1CompileTask))
-        assert(projectCompileTaskDependencies.contains(subProject2CompileTask))
-        assert(projectCompileTaskDependencies.contains(subProject3CompileTask))
+        val mainProjectLibrary = project.layout.buildDirectory
+            .file("classes/kotlin/iosSimulatorArm64/main/klib/shared").get().asFile
+
+        val subProject1Library = subProject1.layout.buildDirectory
+            .file("classes/kotlin/iosSimulatorArm64/main/klib/subproject").get().asFile
+
+        val subProject2Library = subProject2.layout.buildDirectory
+            .file("classes/kotlin/iosSimulatorArm64/main/klib/anotherproject").get().asFile
+
+        val subProject3Library = subProject3.layout.buildDirectory
+            .file("classes/kotlin/iosSimulatorArm64/main/klib/miniproject").get().asFile
+
+        assertEquals(
+            hashSetOf(
+                mainProjectLibrary,
+                subProject1Library,
+                subProject2Library,
+                subProject3Library
+            ),
+            projectLibraries.files
+        )
     }
 
     @Test
@@ -249,7 +264,7 @@ class SwiftExportUnitTests {
         val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
         val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
         val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib(
-            SwiftExportDSLConstants.SWIFT_EXPORT_LIBRARY_PREFIX,
+            SwiftExportConstants.SWIFT_EXPORT_BINARY,
             buildType
         )
 
