@@ -51,8 +51,8 @@ public class User2 {
 
 fun test() {
     // Correct
-    val user = User.<!UNRESOLVED_REFERENCE!>builder<!>().name("name").age(42).build()
+    val user = User.builder().name("name").age(42).build()
 
     // Incorrect, `age` is not accessible because the first constructor always wins
-    val user2 = User2.<!UNRESOLVED_REFERENCE!>builder<!>().name("name2").age(5).build()
+    val user2 = User2.builder().name("name2").<!UNRESOLVED_REFERENCE!>age<!>(5).build()
 }

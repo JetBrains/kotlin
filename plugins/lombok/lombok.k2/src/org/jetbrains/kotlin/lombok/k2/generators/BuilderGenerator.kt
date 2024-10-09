@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
+import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -24,6 +25,8 @@ class BuilderGenerator(
     session: FirSession,
 ) : AbstractBuilderGenerator<Builder>(session) {
     override val builderModality: Modality = Modality.FINAL
+
+    override val annotationClassId: ClassId = LombokNames.BUILDER_ID
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): Builder? {
         return lombokService.getBuilder(symbol)

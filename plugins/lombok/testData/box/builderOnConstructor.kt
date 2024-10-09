@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-71547
 
 // FILE: User.java
@@ -29,7 +28,7 @@ public class User {
 // FILE: test.kt
 
 fun box(): String {
-    val userBuilder = User.<!UNRESOLVED_REFERENCE!>builder<!>()
+    val userBuilder = User.builder()
         .name("John")
         .age(42)
 
