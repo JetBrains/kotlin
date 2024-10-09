@@ -47,7 +47,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         if (function.body != null) return
 
         if (function.isFakeOverride) {
-            function.collectRealOverrides(filter = IrSimpleFunction::isInline).forEach(::deserializeInlineFunction)
+            function.collectRealOverrides(filter = { !it.isInline }).forEach(::deserializeInlineFunction)
             return
         }
 
