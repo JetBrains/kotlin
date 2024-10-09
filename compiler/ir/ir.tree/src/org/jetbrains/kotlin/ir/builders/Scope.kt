@@ -57,7 +57,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         startOffset: Int,
         endOffset: Int
     ): IrVariable {
-        val name = Name.identifier(getNameForTemporary(nameHint))
+        val name = Name.identifier(nameHint ?: "tmp")
         return IrVariableImpl(
             startOffset, endOffset, origin, IrVariableSymbolImpl(), name,
             irType, isMutable, isConst = false, isLateinit = false
