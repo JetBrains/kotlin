@@ -27,6 +27,7 @@ inline MemoryState* InitMemoryForTests() { return InitMemory(); }
 void DeinitMemoryForTests(MemoryState* memoryState);
 
 // Scopely initializes the memory subsystem of the current thread for tests.
+// TODO(KT-72132): consider dropping this class.
 class ScopedMemoryInit : private kotlin::Pinned {
 public:
     ScopedMemoryInit() : memoryState_(InitMemoryForTests()) {
