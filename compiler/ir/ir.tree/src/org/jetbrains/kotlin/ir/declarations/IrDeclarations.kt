@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
-fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
+fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {
     if (other != null) {
         attributeOwnerId = other.attributeOwnerId
         originalBeforeInline = other.originalBeforeInline

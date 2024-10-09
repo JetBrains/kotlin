@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -20,4 +21,8 @@ class IrElseBranchImpl internal constructor(
     override val endOffset: Int,
     override var condition: IrExpression,
     override var result: IrExpression,
-) : IrElseBranch()
+) : IrElseBranch() {
+    override var attributeOwnerId: IrElement = this
+
+    override var originalBeforeInline: IrElement? = null
+}

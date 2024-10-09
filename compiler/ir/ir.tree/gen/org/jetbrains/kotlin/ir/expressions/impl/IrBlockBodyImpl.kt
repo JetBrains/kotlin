@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -19,5 +20,9 @@ class IrBlockBodyImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
 ) : IrBlockBody() {
+    override var attributeOwnerId: IrElement = this
+
+    override var originalBeforeInline: IrElement? = null
+
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

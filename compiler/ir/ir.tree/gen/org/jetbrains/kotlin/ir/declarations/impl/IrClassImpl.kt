@@ -34,6 +34,10 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var modality: Modality,
     override val source: SourceElement,
 ) : IrClass() {
+    override var attributeOwnerId: IrElement = this
+
+    override var originalBeforeInline: IrElement? = null
+
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var isExternal: Boolean = false
@@ -42,10 +46,6 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()
-
-    override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 
     override var metadata: MetadataSource? = null
 

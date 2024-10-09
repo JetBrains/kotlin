@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -41,4 +42,7 @@ class IrLazyTypeParameter(
             descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
         }
     }
+
+    override var attributeOwnerId: IrElement = this
+    override var originalBeforeInline: IrElement? = null
 }
