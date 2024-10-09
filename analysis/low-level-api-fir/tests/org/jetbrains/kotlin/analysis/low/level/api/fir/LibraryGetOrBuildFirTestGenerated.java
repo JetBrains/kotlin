@@ -102,6 +102,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typeParameter.kt");
   }
 
+  @Test
+  @TestMetadata("typealiasUnsignedConst.kt")
+  public void testTypealiasUnsignedConst() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typealiasUnsignedConst.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedConst.kt")
+  public void testUnsignedConst() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/unsignedConst.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource")
   @TestDataPath("$PROJECT_ROOT")
