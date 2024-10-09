@@ -43,14 +43,9 @@ class NonLinkingIrInlineFunctionDeserializer(
     // TODO: consider the case of `external inline` functions that exist in Kotlin/Native stdlib
     fun deserializeInlineFunction(function: IrSimpleFunction) {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
+        check(!function.isFakeOverride) { "Deserialization of fake overrides is not supported: ${function.render()}" }
 
         if (function.body != null) return
-
-        // TODO: in the future the logic for handling fake overrides
-        if (function.isFakeOverride) {
-            function.collectRealOverrides(filter = { !it.isInline }).forEach(::deserializeInlineFunction)
-            return
-        }
 
         check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
