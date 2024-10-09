@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.propertyIfBackingField
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -89,6 +90,16 @@ class Fir2IrLazyField(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = correspondingPropertySymbol
         set(_) = mutationNotSupported()
+
+    override var attributeOwnerId: IrElement
+        get() = this
+        set(_) = mutationNotSupported()
+
+    override var originalBeforeInline: IrElement?
+        get() = null
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var metadata: MetadataSource?
         get() = null
