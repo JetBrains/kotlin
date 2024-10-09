@@ -52,21 +52,21 @@ internal class NativeInlineFunctionResolver(
 
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val functionIsCached = moduleDeserializer != null && function.body == null
-        val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
+        val shouldLower = if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
             val (firstAccess, _) = moduleDeserializer.deserializeInlineFunction(function)
-            function to firstAccess
+            firstAccess
         } else {
-            function to true
+            true
         }
 
         if (shouldLower) {
-            lower(possiblyLoweredFunction, functionIsCached)
+            lower(function, functionIsCached)
             if (!functionIsCached) {
-                possiblyLoweredFunction.getOrSaveLoweredInlineFunction()
+                function.getOrSaveLoweredInlineFunction()
             }
         }
-        return possiblyLoweredFunction
+        return function
     }
 
     private fun lower(function: IrFunction, functionIsCached: Boolean) {
