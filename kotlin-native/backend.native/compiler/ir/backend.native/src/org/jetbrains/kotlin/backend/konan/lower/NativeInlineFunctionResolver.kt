@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  */
 private var IrFunction.loweredInlineFunction: IrFunction? by irAttribute(followAttributeOwner = false)
 
+private var IrFunction.inlineFunctionOrigin: InlineFunctionOriginInfo? by irAttribute(followAttributeOwner = false)
+
 internal fun IrFunction.getOrSaveLoweredInlineFunction(): IrFunction =
         this::loweredInlineFunction.getOrSetIfNull { this.deepCopyWithSymbols(this.parent) }
 
@@ -48,7 +50,7 @@ internal class NativeInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
-        generationState.inlineFunctionOrigins[function]?.let { return it.irFunction }
+        function.inlineFunctionOrigin?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
@@ -57,7 +59,7 @@ internal class NativeInlineFunctionResolver(
         val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
             val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
+            function.inlineFunctionOrigin = deserializedInlineFunction
             irFile = deserializedInlineFunction.irFile
             function to firstAccess
         } else {
@@ -66,7 +68,7 @@ internal class NativeInlineFunctionResolver(
             if (partiallyLoweredFunction == null)
                 function to true
             else {
-                generationState.inlineFunctionOrigins[function] =
+                function.inlineFunctionOrigin =
                         InlineFunctionOriginInfo(partiallyLoweredFunction, irFile, function.startOffset, function.endOffset)
                 partiallyLoweredFunction to false
             }
@@ -75,7 +77,7 @@ internal class NativeInlineFunctionResolver(
         if (shouldLower) {
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
-                generationState.inlineFunctionOrigins[function] =
+                function.inlineFunctionOrigin =
                         InlineFunctionOriginInfo(possiblyLoweredFunction.getOrSaveLoweredInlineFunction(),
                                 irFile, function.startOffset, function.endOffset)
             }
