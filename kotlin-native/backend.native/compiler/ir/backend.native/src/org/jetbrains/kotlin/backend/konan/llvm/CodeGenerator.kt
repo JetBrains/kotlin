@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 
 internal class CodeGenerator(override val generationState: NativeGenerationState) : ContextUtils {
@@ -323,8 +325,10 @@ internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunc
     return getVirtualFunctionTrampolineImpl(anyMethod ?: irFunction)
 }
 
+private var IrFunction.virtualFunctionTrampoline: LlvmCallable? by irAttribute(followAttributeOwner = false)
+
 private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleFunction) =
-        generationState.virtualFunctionTrampolines.getOrPut(irFunction) {
+        irFunction::virtualFunctionTrampoline.getOrSetIfNull {
             val targetName = if (irFunction.isExported())
                 irFunction.computeSymbolName()
             else
