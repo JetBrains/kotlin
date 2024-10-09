@@ -1,1 +1,1 @@
-public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](value = Int(42)) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun copy([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|pack/Anno|[Types](value = Int(42)) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(ANNOTATION_ARGUMENTS)] p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|

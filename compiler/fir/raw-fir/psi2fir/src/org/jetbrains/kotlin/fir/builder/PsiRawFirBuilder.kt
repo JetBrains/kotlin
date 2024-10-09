@@ -1636,6 +1636,14 @@ open class PsiRawFirBuilder(
                                     zippedParameters,
                                     context.packageFqName,
                                     context.className,
+                                    addValueParameterAnnotations = {
+                                        withContainerSymbol(symbol) {
+                                            addAnnotationsFrom(
+                                                it as KtParameter,
+                                                isFromPrimaryConstructor = true,
+                                            )
+                                        }
+                                    },
                                 ).generate()
                             }
 

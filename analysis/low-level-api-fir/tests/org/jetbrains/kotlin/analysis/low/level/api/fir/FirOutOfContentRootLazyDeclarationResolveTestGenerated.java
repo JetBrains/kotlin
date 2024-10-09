@@ -1702,6 +1702,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("dataClassCopyAnnotation.kt")
+    public void testDataClassCopyAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassCopyAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("serializable_starImport.kt")
     public void testSerializable_starImport() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/serializable_starImport.kt");
