@@ -33,3 +33,12 @@ npm upgrade
 
 cd $root_dir
 echo "End upgrade 'libraries/kotlin.test/js/it/package-lock.json'"
+
+# Upgrade wasm/wasm.debug.browsers/package-lock.json
+
+echo "Start upgrade 'wasm/wasm.debug.browsers/package-lock.json'"
+cd ./wasm/wasm.debug.browsers
+npm upgrade
+
+cd $root_dir
+echo "End upgrade 'wasm/wasm.debug.browsers/package-lock.json'"
