@@ -49,6 +49,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS("kotlin.daemon.environment.variables.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
     LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
+    COMPILE_DAEMON_INITIATOR_MARKER_FILE("kotlin.daemon.initiator.marker.file"), // TODO: possibly remove this property after KT-72161
 
     OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),
