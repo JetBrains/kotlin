@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
@@ -19,7 +20,7 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
     internal val clashDetector = IdSignatureClashDetector()
 
-    protected val table = hashMapOf<IrDeclaration, IdSignature>()
+    protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
@@ -53,7 +54,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     class Default(globalTable: GlobalDeclarationTable) : DeclarationTable<GlobalDeclarationTable>(globalTable)
 
     val mangler = globalDeclarationTable.mangler
-    protected val table = hashMapOf<IrDeclaration, IdSignature>()
+    protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
 
     private val signaturer = IdSignatureFactory(mangler) { declaration, compatibleMode ->
         signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
