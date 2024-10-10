@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
 // ISSUE: KT-69985
 // ISSUE: KT-72170
 
@@ -102,12 +104,12 @@ fun testA() {
 
     <!UNRESOLVED_REFERENCE!>topLevelFunction<!>()
 
-    <!UNRESOLVED_REFERENCE!>Klass<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>Klass<!>().klassFunction()
     Klass.KlassOwnedKlass().klassOwnedKlassFunction()
     Objekt.ObjektOwnedKlass().objektOwnedKlassFunction()
-    <!UNRESOLVED_REFERENCE!>KlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>KlassOwnedKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassOwnedKlassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>ObjektOwnedKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>objektOwnedKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>KlassAlias<!>().klassFunction()
+    <!UNRESOLVED_REFERENCE!>KlassOwnedKlassAlias<!>().klassOwnedKlassFunction()
+    <!UNRESOLVED_REFERENCE!>ObjektOwnedKlassAlias<!>().objektOwnedKlassFunction()
 
     // ISSUE: KT-69986
     Klass.KlassOwnedObjekt.klassOwnedObjektFunction()
@@ -117,10 +119,10 @@ fun testA() {
     ObjektAlias.objektFunction()
     ObjektOwnedObjektAlias.objektOwnedObjektFunction()
 
-    <!UNRESOLVED_REFERENCE!>JavaKlass<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>javaKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>JavaKlass<!>().javaKlassFunction()
     JavaKlass.NestedJavaKlass().nestedJavaKlassFunction()
-    <!UNRESOLVED_REFERENCE!>JavaKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>javaKlassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>NestedJavaKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>nestedJavaKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>JavaKlassAlias<!>().javaKlassFunction()
+    <!UNRESOLVED_REFERENCE!>NestedJavaKlassAlias<!>().nestedJavaKlassFunction()
 
     // ISSUE: KT-72171
     JavaKlass.javaKlassStaticFunction()
@@ -180,12 +182,12 @@ fun testB() {
 
     <!UNRESOLVED_REFERENCE!>topLevelFunction<!>()
 
-    <!UNRESOLVED_REFERENCE!>Klass<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>Klass<!>().klassFunction()
     Klass.KlassOwnedKlass().klassOwnedKlassFunction()
     Objekt.ObjektOwnedKlass().objektOwnedKlassFunction()
-    <!UNRESOLVED_REFERENCE!>KlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>KlassOwnedKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>klassOwnedKlassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>ObjektOwnedKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>objektOwnedKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>KlassAlias<!>().klassFunction()
+    <!UNRESOLVED_REFERENCE!>KlassOwnedKlassAlias<!>().klassOwnedKlassFunction()
+    <!UNRESOLVED_REFERENCE!>ObjektOwnedKlassAlias<!>().objektOwnedKlassFunction()
 
     // ISSUE: KT-69986
     Klass.KlassOwnedObjekt.klassOwnedObjektFunction()
@@ -195,10 +197,10 @@ fun testB() {
     ObjektAlias.objektFunction()
     ObjektOwnedObjektAlias.objektOwnedObjektFunction()
 
-    <!UNRESOLVED_REFERENCE!>JavaKlass<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>javaKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>JavaKlass<!>().javaKlassFunction()
     JavaKlass.NestedJavaKlass().nestedJavaKlassFunction()
-    <!UNRESOLVED_REFERENCE!>JavaKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>javaKlassFunction<!>()
-    <!UNRESOLVED_REFERENCE!>NestedJavaKlassAlias<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>nestedJavaKlassFunction<!>()
+    <!UNRESOLVED_REFERENCE!>JavaKlassAlias<!>().javaKlassFunction()
+    <!UNRESOLVED_REFERENCE!>NestedJavaKlassAlias<!>().nestedJavaKlassFunction()
 
     // ISSUE: KT-72171
     JavaKlass.javaKlassStaticFunction()
