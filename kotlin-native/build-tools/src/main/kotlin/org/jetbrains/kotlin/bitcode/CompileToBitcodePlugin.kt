@@ -596,6 +596,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
 
             val compileTask = project.tasks.register<CompileToExecutable>("${testName}Compile") {
+                // TODO(KT-72188): Make it cacheable again
+                outputs.doNotCacheIf("Linked dynamic libraries have an absolute rpath") { target.family.isAppleFamily }
                 description = "Compile tests group '$testTaskName' for $target${sanitizer.description}"
                 group = VERIFICATION_BUILD_TASK_GROUP
                 this.target.set(target)
