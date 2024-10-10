@@ -55,6 +55,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: TypeParametersStressTestKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -442,6 +443,7 @@ KaNamedFunctionSymbol:
     type: <local>/LocalClass<H, G, F, E>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -563,6 +565,7 @@ KaNamedFunctionSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -609,6 +612,7 @@ KaNamedFunctionSymbol:
     type: TopLevelClass.NestedClass<E>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: TopLevelClass.NestedClass
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -773,6 +777,7 @@ KaNamedFunctionSymbol:
     type: <local>/LocalClass<N, M, L, K, C, D>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -894,6 +899,7 @@ KaNamedFunctionSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -964,6 +970,7 @@ KaNamedFunctionSymbol:
     type: TopLevelClass.InnerClass<K, C, D>
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: TopLevelClass.InnerClass
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

@@ -235,6 +235,7 @@ KaNamedFunctionSymbol:
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -306,6 +307,7 @@ KaNamedFunctionSymbol:
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -377,6 +379,7 @@ KaNamedFunctionSymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: A
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

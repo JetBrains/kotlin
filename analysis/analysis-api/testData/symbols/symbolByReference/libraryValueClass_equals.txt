@@ -65,5 +65,6 @@ KaNamedFunctionSymbol:
     type: one/ValueClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.ValueClass
+  canBeOperator: true
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null

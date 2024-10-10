@@ -92,6 +92,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -238,6 +239,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -308,6 +310,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -378,6 +381,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -477,6 +481,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -576,6 +581,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -674,6 +680,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -830,6 +837,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -989,6 +997,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
@@ -1057,6 +1066,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1125,6 +1135,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1164,6 +1175,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1234,6 +1246,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1303,6 +1316,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1372,6 +1386,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1441,6 +1456,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1510,6 +1526,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1579,6 +1596,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1735,6 +1753,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -1920,6 +1939,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2018,6 +2038,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2087,6 +2108,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2156,6 +2178,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2196,6 +2219,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2266,6 +2290,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2365,6 +2390,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2434,6 +2460,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2532,6 +2559,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2631,6 +2659,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2701,6 +2730,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2800,6 +2830,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2869,6 +2900,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -2967,6 +2999,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3066,6 +3099,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3135,6 +3169,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3233,6 +3268,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3332,6 +3368,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3400,6 +3437,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3498,6 +3536,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3594,6 +3633,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3663,6 +3703,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3732,6 +3773,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3828,6 +3870,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -3924,6 +3967,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4021,6 +4065,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4089,6 +4134,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4157,6 +4203,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4196,6 +4243,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4264,6 +4312,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4303,6 +4352,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4342,6 +4392,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4382,6 +4433,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4421,6 +4473,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4460,6 +4513,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
@@ -4530,6 +4584,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
+  canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 

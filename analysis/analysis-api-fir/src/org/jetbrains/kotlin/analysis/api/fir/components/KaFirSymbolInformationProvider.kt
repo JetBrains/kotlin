@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -49,6 +47,17 @@ internal class KaFirSymbolInformationProvider(
                 }
             }?.toDeprecationInfo()
         }
+
+    override fun KaNamedFunctionSymbol.canBeOperator(): Boolean =
+        withValidityAssertion {
+            val functionFir = this@canBeOperator.firSymbol.fir as? FirSimpleFunction ?: return false
+            return OperatorFunctionChecks.isOperator(
+                functionFir,
+                analysisSession.firSession,
+                analysisSession.getScopeSessionFor(analysisSession.firSession)
+            ) == CheckResult.SuccessCheck
+        }
+
 
     private fun KaFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
         if (!hasAnnotations) return false

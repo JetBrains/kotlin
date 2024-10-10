@@ -66,6 +66,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -137,6 +138,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -182,5 +184,6 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

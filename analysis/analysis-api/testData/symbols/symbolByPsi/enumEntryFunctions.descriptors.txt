@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
     type: MyEnumClass.FirstEntry
   getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -125,6 +126,7 @@ KaNamedFunctionSymbol:
     type: MyEnumClass.ThirdEntry
   getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -195,6 +197,7 @@ KaNamedFunctionSymbol:
     type: MyEnumClass.ThirdEntry
   getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

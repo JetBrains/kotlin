@@ -66,6 +66,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
 

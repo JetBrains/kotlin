@@ -39,5 +39,6 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib-js"
   deprecationStatus: null

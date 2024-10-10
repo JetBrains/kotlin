@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
     type: test/Base<T>
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -83,6 +84,7 @@ KaNamedFunctionSymbol:
     type: test/Base<T>
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -153,6 +155,7 @@ KaNamedFunctionSymbol:
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -223,6 +226,7 @@ KaNamedFunctionSymbol:
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -298,6 +302,7 @@ KaNamedFunctionSymbol:
     type: test/Base<T>
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -373,6 +378,7 @@ KaNamedFunctionSymbol:
     type: test/Base<T>
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -473,6 +479,7 @@ KaNamedFunctionSymbol:
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -573,6 +580,7 @@ KaNamedFunctionSymbol:
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -643,6 +651,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -683,6 +692,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -723,6 +733,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 

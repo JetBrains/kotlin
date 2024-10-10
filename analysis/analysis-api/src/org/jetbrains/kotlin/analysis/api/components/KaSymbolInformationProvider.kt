@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -20,6 +21,9 @@ public interface KaSymbolInformationProvider {
      */
     @KaExperimentalApi
     public val KaSymbol.deprecationStatus: DeprecationInfo?
+
+    @KaExperimentalApi
+    public fun KaNamedFunctionSymbol.canBeOperator(): Boolean
 
     /**
      * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.

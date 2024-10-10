@@ -37,6 +37,7 @@ KaNamedFunctionSymbol:
     type: JavaC
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaC
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

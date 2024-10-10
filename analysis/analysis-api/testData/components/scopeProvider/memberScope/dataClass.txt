@@ -335,6 +335,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -517,6 +518,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -557,6 +559,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -597,6 +600,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -725,6 +729,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -795,6 +800,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -835,6 +841,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -875,6 +882,7 @@ KaNamedFunctionSymbol:
     type: Abc
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

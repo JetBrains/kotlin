@@ -112,6 +112,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -178,5 +179,6 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

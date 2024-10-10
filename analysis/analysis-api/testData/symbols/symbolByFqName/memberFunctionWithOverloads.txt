@@ -43,6 +43,7 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.List
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -121,5 +122,6 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.List
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null

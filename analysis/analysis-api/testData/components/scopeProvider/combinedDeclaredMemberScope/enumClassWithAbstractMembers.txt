@@ -185,6 +185,7 @@ KaNamedFunctionSymbol:
     type: test/E
   getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -226,6 +227,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -292,6 +294,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

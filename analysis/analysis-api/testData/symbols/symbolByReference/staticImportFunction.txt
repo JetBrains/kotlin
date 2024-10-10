@@ -35,5 +35,6 @@ KaNamedFunctionSymbol:
     type: one/two/TopLevelObject
   getContainingFileSymbol: KaFileSymbol(dependency.kt)
   getContainingJvmClassName: one.two.TopLevelObject
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
