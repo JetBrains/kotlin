@@ -328,7 +328,7 @@ class FirCallResolver(
             @OptIn(ApplicabilityDetail::class)
             if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
-                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression,
+                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression, isUsedAsReceiver
                 )
                     ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !result.applicability.isSuccess }
                     ?.let { return it.qualifier }
