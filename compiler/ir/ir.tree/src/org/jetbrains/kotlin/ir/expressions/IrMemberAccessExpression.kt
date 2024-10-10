@@ -109,19 +109,43 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    var dispatchReceiver: IrExpression? = null
+    private var _dispatchReceiver: IrExpression? = null
+    var dispatchReceiver: IrExpression?
+        get() = _dispatchReceiver
         set(value) {
             registerCaller()
-            checkTargetHasReceiver(field, value, targetHasDispatchReceiver, IrFunction::dispatchReceiverParameter)
-            field = value
+            checkTargetHasReceiver(_dispatchReceiver, value, targetHasDispatchReceiver, IrFunction::dispatchReceiverParameter)
+            _dispatchReceiver = value
         }
 
-    var extensionReceiver: IrExpression? = null
+    private var _extensionReceiver: IrExpression? = null
+    var extensionReceiver: IrExpression?
+        get() = _extensionReceiver
         set(value) {
             registerCaller()
-            checkTargetHasReceiver(field, value, targetHasExtensionReceiver, IrFunction::extensionReceiverParameter)
-            field = value
+            checkTargetHasReceiver(_extensionReceiver, value, targetHasExtensionReceiver, IrFunction::extensionReceiverParameter)
+            _extensionReceiver = value
         }
+
+    fun insertDispatchReceiver(value: IrExpression?) {
+        _dispatchReceiver = value
+        targetHasDispatchReceiver = true
+    }
+
+    fun removeDispatchReceiver() {
+        _dispatchReceiver = null
+        targetHasDispatchReceiver = false
+    }
+
+    fun insertExtensionReceiver(value: IrExpression?) {
+        _extensionReceiver = value
+        targetHasExtensionReceiver = true
+    }
+
+    fun removeExtensionReceiver() {
+        _extensionReceiver = null
+        targetHasExtensionReceiver = false
+    }
 
     private fun checkTargetHasReceiver(
         oldValue: IrExpression?,
