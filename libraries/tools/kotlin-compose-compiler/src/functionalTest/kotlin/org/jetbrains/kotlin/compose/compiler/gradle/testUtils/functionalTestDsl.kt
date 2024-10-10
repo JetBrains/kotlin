@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compose.compiler.gradle.testUtils
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtraPropertiesExtension
@@ -21,7 +22,10 @@ fun buildProject(
     .builder()
     .apply(projectBuilder)
     .build()
-    .also { disableDownloadingKonanFromMavenCentral(it) }
+    .also {
+        it.enableDependencyVerification(false)
+        disableDownloadingKonanFromMavenCentral(it)
+    }
     .apply(configureProject)
     .let { it as ProjectInternal }
 
@@ -66,4 +70,9 @@ fun Project.applyKotlinComposePlugin() {
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
+}
+
+fun Project.enableDependencyVerification(enabled: Boolean = true) {
+    gradle.startParameter.dependencyVerificationMode = if (enabled) DependencyVerificationMode.STRICT
+    else DependencyVerificationMode.OFF
 }
