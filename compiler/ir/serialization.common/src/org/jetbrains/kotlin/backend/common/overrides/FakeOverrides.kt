@@ -49,9 +49,15 @@ open class FakeOverrideDeclarationTable(
     mangler: KotlinMangler.IrMangler,
     globalDeclarationTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler),
 ) : DeclarationTable<FakeOverrideGlobalDeclarationTable>(globalDeclarationTable) {
+
     fun clear() {
         table.clear()
         globalDeclarationTable.clear()
+    }
+
+    fun addDeserializedDeclarationAndSignature(declaration: IrDeclaration, signature: IdSignature) {
+        check(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
+        table[declaration] = signature
     }
 }
 
@@ -269,7 +275,7 @@ class IrLinkerFakeOverrideProvider(
     val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
 
     fun enqueueClass(clazz: IrClass, signature: IdSignature, compatibilityMode: CompatibilityMode) {
-        fakeOverrideDeclarationTable.assumeDeclarationSignature(clazz, signature)
+        fakeOverrideDeclarationTable.addDeserializedDeclarationAndSignature(clazz, signature)
         fakeOverrideCandidates[clazz] = compatibilityMode
     }
 
