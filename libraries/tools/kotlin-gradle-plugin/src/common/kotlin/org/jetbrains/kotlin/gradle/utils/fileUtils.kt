@@ -13,8 +13,12 @@ import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSour
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import java.util.function.Consumer
+import kotlin.collections.map
+import kotlin.use
 
 /**
  * Create all possible case-sensitive permutations for given [String].
@@ -150,4 +154,74 @@ internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: Configurab
     // * https://github.com/gradle/gradle/issues/27881 ConfigurableFileTree.from() doesn't preserve Task Dependencies
     // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
     return project.filesProvider(fileTree) { fileTree.dir }
+}
+
+// copied from IJ
+internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
+    val jarDirs: Array<Path>
+    val fileName = home.fileName
+    if (fileName != null && "Home" == fileName.toString() && Files.exists(home.resolve("../Classes/classes.jar"))) {
+        val libDir = home.resolve("lib")
+        val classesDir = home.resolveSibling("Classes")
+        val libExtDir = libDir.resolve("ext")
+        val libEndorsedDir = libDir.resolve("endorsed")
+        jarDirs = arrayOf(libEndorsedDir, libDir, classesDir, libExtDir)
+    } else if (Files.exists(home.resolve("lib/jrt-fs.jar"))) {
+        jarDirs = emptyArray()
+    } else {
+        val libDir = home.resolve(if (isJre) "lib" else "jre/lib")
+        val libExtDir = libDir.resolve("ext")
+        val libEndorsedDir = libDir.resolve("endorsed")
+        jarDirs = arrayOf(libEndorsedDir, libDir, libExtDir)
+    }
+
+    val rootFiles: MutableList<Path> = ArrayList<Path>()
+
+    val pathFilter: MutableSet<String?> = hashSetOf()
+    for (jarDir in jarDirs) {
+        if (Files.isDirectory(jarDir)) {
+            try {
+                Files.newDirectoryStream(jarDir, "*.jar").use { stream ->
+                    for (jarFile in stream) {
+                        val jarFileName = jarFile.getFileName().toString()
+                        if (jarFileName == "alt-rt.jar" || jarFileName == "alt-string.jar") {
+                            continue  // filter out alternative implementations
+                        }
+                        val canonicalPath = jarFile.toRealPath().toString()
+                        if (!pathFilter.add(canonicalPath)) {
+                            continue  // filter out duplicate (symbolically linked) .jar files commonly found in OS X JDK distributions
+                        }
+                        rootFiles.add(jarFile)
+                    }
+                }
+            } catch (_: IOException) {
+            }
+        }
+    }
+
+    if (rootFiles.any { path -> path.getFileName().toString().startsWith("ibm") }) {
+        // ancient IBM JDKs split JRE classes between `rt.jar` and `vm.jar`, and the latter might be anywhere
+        try {
+            Files.walk(if (isJre) home else home.resolve("jre")).use { paths ->
+                paths.filter { path: Path? -> path!!.getFileName().toString() == "vm.jar" }
+                    .findFirst()
+                    .ifPresent(Consumer { e -> rootFiles.add(e) })
+            }
+        } catch (ignored: IOException) {
+        }
+    }
+
+    val classesZip = home.resolve("lib/classes.zip")
+    if (Files.isRegularFile(classesZip)) {
+        rootFiles.add(classesZip)
+    }
+
+    if (rootFiles.isEmpty()) {
+        val classesDir = home.resolve("classes")
+        if (Files.isDirectory(classesDir)) {
+            rootFiles.add(classesDir)
+        }
+    }
+
+    return rootFiles.map { it.toFile() }
 }
