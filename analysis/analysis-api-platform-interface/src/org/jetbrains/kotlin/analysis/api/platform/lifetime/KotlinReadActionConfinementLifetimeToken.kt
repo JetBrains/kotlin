@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.lifetime
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
@@ -30,8 +31,15 @@ public class KotlinReadActionConfinementLifetimeToken(
         return onCreatedTimeStamp == modificationTracker.modificationCount
     }
 
+    @OptIn(KaImplementationDetail::class)
     override fun getInvalidationReason(): String {
-        if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation."
+        if (onCreatedTimeStamp != modificationTracker.modificationCount) {
+            return if (modificationTracker is ModificationTrackerWithInvalidationReason) {
+                "Session is invalidated: ${modificationTracker.getInvalidationReason()}"
+            } else {
+                "Session is invalidated"
+            }
+        }
         error("Cannot get an invalidation reason for a valid lifetime token.")
     }
 
