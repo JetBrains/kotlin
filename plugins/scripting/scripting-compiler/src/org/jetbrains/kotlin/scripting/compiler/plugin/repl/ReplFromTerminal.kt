@@ -47,8 +47,9 @@ class ReplFromTerminal(
                     "Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                             "(JRE ${System.getProperty("java.runtime.version")})"
                 )
+                printlnWelcomeMessage("Warning: this REPL implementation is deprecated and will be removed soon.")
                 if (compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-                    printlnWelcomeMessage("Warning: REPL is not yet compatible with the Kotlin version ${KotlinCompilerVersion.VERSION}, using '-language-version 1.9'.")
+                    printlnWelcomeMessage("Warning: REPL is not compatible with the Kotlin version ${KotlinCompilerVersion.VERSION}, using '-language-version 1.9'.")
                 }
                 printlnWelcomeMessage("Type :help for help, :quit for quit")
             }
