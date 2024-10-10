@@ -14,9 +14,7 @@ import com.intellij.psi.util.descendants
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.ENUM_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
-import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
@@ -1128,7 +1126,7 @@ object PositioningStrategies {
 
     val PROPERTY_DELEGATE_BY_KEYWORD: PositioningStrategy<KtExpression> = object : PositioningStrategy<KtExpression>() {
         override fun mark(element: KtExpression): List<TextRange> {
-            return markElement((element.parent as? KtPropertyDelegate)?.byKeywordNode?.psi ?: element)
+            return markElement((element.parent as? KtPropertyDelegate)?.byKeyword ?: element)
         }
     }
 
