@@ -49,6 +49,8 @@ internal class PreCodegenInliner(
     private val kSuspendFunctionImpl = symbols.kSuspendFunctionImpl
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
 
+    private val inlineThreshold = context.config.preCodegenInlineThreshold.toInt()
+
     private val rootSet = callGraph.rootSet
 
     /**
@@ -128,8 +130,7 @@ internal class PreCodegenInliner(
                         }
 
                         val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
-                        val threshold = 40
-                        val shouldInline = !isALoop && calleeSize <= threshold
+                        val shouldInline = !isALoop && calleeSize <= inlineThreshold
                                 && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
                                 && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)

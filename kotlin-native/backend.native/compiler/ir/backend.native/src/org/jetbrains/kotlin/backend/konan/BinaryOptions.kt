@@ -91,7 +91,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val smallBinary by booleanOption()
 
-    val enablePreCodegenInliner by booleanOption()
+    val preCodegenInlineThreshold by uintOption()
 }
 
 open class BinaryOption<T : Any>(
