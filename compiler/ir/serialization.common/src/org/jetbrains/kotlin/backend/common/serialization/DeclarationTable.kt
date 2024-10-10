@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 import org.jetbrains.kotlin.ir.util.render
 
-abstract class GlobalDeclarationTable(private val mangler: KotlinMangler.IrMangler) {
+abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
     internal val clashDetector = IdSignatureClashDetector()
 
@@ -48,25 +48,21 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler.IrMangl
             }
         }
     }
-
-    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): Boolean = with(mangler) { declaration.isExported(compatibleMode) }
 }
 
 open class DeclarationTable(globalTable: GlobalDeclarationTable) {
     protected val table = hashMapOf<IrDeclaration, IdSignature>()
     protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
+
     // TODO: we need to disentangle signature construction with declaration tables.
     open val signaturer: IdSignatureFactory = IdSignatureFactory(globalTable.publicIdSignatureComputer, this)
 
     fun <R> inFile(file: IrFile?, block: () -> R): R =
         signaturer.inFile(file?.symbol, block)
 
-    private fun IrDeclaration.isLocalDeclaration(compatibleMode: Boolean): Boolean {
-        return !isExportedDeclaration(this, compatibleMode)
+    private fun IrDeclaration.shouldHaveLocalSignature(compatibleMode: Boolean): Boolean {
+        return with(globalDeclarationTable.mangler) { !this@shouldHaveLocalSignature.isExported(compatibleMode) }
     }
-
-    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean) =
-        globalDeclarationTable.isExportedDeclaration(declaration, compatibleMode)
 
     protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
 
@@ -75,13 +71,13 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
     }
 
     fun privateDeclarationSignature(declaration: IrDeclaration, compatibleMode: Boolean, builder: () -> IdSignature): IdSignature {
-        assert(declaration.isLocalDeclaration(compatibleMode))
+        assert(declaration.shouldHaveLocalSignature(compatibleMode))
         return table.getOrPut(declaration) { builder() }
     }
 
     fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }
-        return if (declaration.isLocalDeclaration(compatibleMode)) {
+        return if (declaration.shouldHaveLocalSignature(compatibleMode)) {
             allocateIndexedSignature(declaration, compatibleMode)
         } else {
             globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
