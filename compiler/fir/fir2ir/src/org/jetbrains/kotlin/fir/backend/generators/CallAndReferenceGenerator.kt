@@ -747,7 +747,10 @@ class CallAndReferenceGenerator(
             irRhs.type = variableAssignment.lValue.resolvedType.toIrType()
         }
 
-        val irRhsWithCast = wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
+        val irRhsWithCast = with(visitor.implicitCastInserter) {
+            wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
+                .insertSpecialCast(variableAssignment.rValue, variableAssignment.rValue.resolvedType, variableAssignment.lValue.resolvedType)
+        }
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
@@ -851,7 +854,7 @@ class CallAndReferenceGenerator(
         }.applyTypeArguments(lValue).applyReceivers(lValue, explicitReceiverExpression)
     }
 
-    /** Wrap an assignment - as needed - with an implicit cast to the left-hard side type. */
+    /** Wrap an assignment - as needed - with an implicit cast to the left-hand side type. */
     private fun wrapWithImplicitCastForAssignment(assignment: FirVariableAssignment, value: IrExpression): IrExpression {
         if (value is IrTypeOperatorCall) return value // Value is already cast.
 

@@ -15,7 +15,7 @@ fun test() {
   a = a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> Hello<out @FlexibleNullability String?> */)
+ /*-> Hello<out @FlexibleNullability String?> */) /*!! SomeJavaClass<out @FlexibleNullability String?> */
   a /*as SomeJavaClass<out @FlexibleNullability String?> */.set(i = 0, hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }

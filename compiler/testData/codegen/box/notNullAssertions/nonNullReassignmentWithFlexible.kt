@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: ANY
 // FILE: J.java
 public class J {
     public J getParent() { return null; }
