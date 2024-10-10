@@ -124,6 +124,10 @@ abstract class KotlinJsIrLink @Inject constructor(
             if (usingCacheDirectory()) {
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
+
+            if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
+                args.debuggerCustomFormatters = true
+            }
         }
     }
 
