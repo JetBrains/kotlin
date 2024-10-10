@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import kotlin.contracts.ExperimentalContracts
@@ -28,9 +29,9 @@ internal fun KaSession.isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbo
  * Doesn't check visibility of containing symbol, so nested callables are visible
  */
 internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
+    if (symbol.hasNoProvidedName()) return false
     if (!isPublic(symbol)) return false
     if (symbol.isExpect) return false
-
     if (isHiddenFromObjCByDeprecation(symbol)) return false
     if (isHiddenFromObjCByAnnotation(symbol)) return false
     if (isSealedClassConstructor(symbol)) return false
@@ -39,9 +40,7 @@ internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
 }
 
 internal fun KaSession.isVisibleInObjC(symbol: KaClassSymbol): Boolean {
-    // TODO if(specialMapped()) return false
-    // TODO if(!defaultType.isObjCObjectType()) return false
-
+    if (symbol.hasNoProvidedName()) return false
     if (!isPublic(symbol)) return false
     if (isHiddenFromObjCByDeprecation(symbol)) return false
     if (isHiddenFromObjCByAnnotation(symbol)) return false
@@ -49,6 +48,14 @@ internal fun KaSession.isVisibleInObjC(symbol: KaClassSymbol): Boolean {
     if (symbol.isExpect) return false
     if (isInlined(symbol)) return false
     return true
+}
+
+internal fun KaClassSymbol.hasNoProvidedName(): Boolean {
+    return name == SpecialNames.NO_NAME_PROVIDED
+}
+
+internal fun KaCallableSymbol.hasNoProvidedName(): Boolean {
+    return name == SpecialNames.NO_NAME_PROVIDED
 }
 
 /*

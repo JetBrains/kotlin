@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -38,6 +40,8 @@ import java.nio.file.Files
 interface InlineSourceCodeAnalysis {
 
     fun createKtFile(@Language("kotlin") sourceCode: String): KtFile
+
+    fun createObjCExportFile(@Language("kotlin") sourceCode: String, run: ObjCExportContext.(KtResolvedObjCExportFile) -> Unit)
 
     fun createKtFiles(
         builder: KtModuleBuilder.() -> Unit,
@@ -80,6 +84,18 @@ private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSo
         return createStandaloneAnalysisApiSession(tempDir = tempDir, kotlinSources = mapOf("TestSources.kt" to sourceCode))
             .modulesWithFiles.entries.single()
             .value.single() as KtFile
+    }
+
+    override fun createObjCExportFile(@Language("kotlin") sourceCode: String, run: ObjCExportContext.(KtResolvedObjCExportFile) -> Unit) {
+        val ktFile = createKtFile(sourceCode)
+        analyze(ktFile) {
+            val kaSession = this
+            withKtObjCExportSession(KtObjCExportConfiguration()) {
+                with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
+                    run(analyze(ktFile) { with(KtObjCExportFile(ktFile)) { resolve() } })
+                }
+            }
+        }
     }
 
     override fun createKtFiles(builder: InlineSourceCodeAnalysis.KtModuleBuilder.() -> Unit): Map<String, KtFile> {
