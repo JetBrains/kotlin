@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -48,6 +49,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
+
+internal class ScriptDeclarationShapeLowering(val context: JvmBackendContext) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        TODO("Not yet implemented")
+    }
+}
+
+
 
 @PhaseDescription(name = "ScriptsToClasses")
 internal class ScriptsToClassesLowering(val context: JvmBackendContext) : ModuleLoweringPass {
