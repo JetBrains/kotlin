@@ -66,6 +66,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   deprecationStatus: null
 

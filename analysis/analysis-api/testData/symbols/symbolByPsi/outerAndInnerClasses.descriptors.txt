@@ -576,6 +576,7 @@ KaNamedFunctionSymbol:
     type: X<T>
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -688,6 +689,7 @@ KaNamedFunctionSymbol:
     type: X<T>
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingJvmClassName: X
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

@@ -62,5 +62,6 @@ KaNamedFunctionSymbol:
     type: dynamic
   getContainingFileSymbol: KaFileSymbol(functionFromJsDynamicScopeWithArguments.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

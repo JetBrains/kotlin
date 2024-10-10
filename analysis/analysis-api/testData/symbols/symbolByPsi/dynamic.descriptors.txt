@@ -183,6 +183,7 @@ KaNamedFunctionSymbol:
     type: Foo
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

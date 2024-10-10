@@ -72,5 +72,6 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(Common.kt)
   getContainingJvmClassName: test.CommonKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of common"
   deprecationStatus: null

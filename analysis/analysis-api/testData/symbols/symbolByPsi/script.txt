@@ -31,6 +31,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
 
@@ -163,6 +164,7 @@ KaNamedFunctionSymbol:
     type: C
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: C
+  canBeOperator: false
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
 

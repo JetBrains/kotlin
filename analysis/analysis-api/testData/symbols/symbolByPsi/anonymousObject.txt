@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
     type: <anonymous>
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingJvmClassName: null
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

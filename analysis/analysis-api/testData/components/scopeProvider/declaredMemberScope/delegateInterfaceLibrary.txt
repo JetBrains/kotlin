@@ -470,6 +470,7 @@ KaNamedFunctionSymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
 
@@ -891,6 +892,7 @@ KaNamedFunctionSymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
 

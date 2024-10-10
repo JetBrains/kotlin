@@ -34,5 +34,6 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: lib.LibKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=Use 'bar() instead)

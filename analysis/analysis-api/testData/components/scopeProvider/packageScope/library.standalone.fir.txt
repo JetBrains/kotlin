@@ -31,6 +31,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -67,6 +68,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -103,6 +105,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -162,6 +165,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -221,6 +225,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -280,6 +285,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -316,6 +322,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -352,6 +359,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -388,6 +396,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -447,6 +456,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -506,6 +516,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -565,6 +576,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -601,6 +613,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -637,6 +650,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -673,6 +687,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -732,6 +747,7 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -791,6 +807,7 @@ KaNamedFunctionSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
@@ -850,6 +867,7 @@ KaNamedFunctionSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
+  canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 

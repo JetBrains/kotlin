@@ -68,6 +68,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -141,6 +142,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -214,6 +216,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -287,6 +290,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -360,6 +364,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -433,6 +438,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -506,6 +512,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -546,6 +553,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -619,6 +627,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -692,6 +701,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -765,6 +775,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -838,6 +849,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -911,6 +923,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -984,6 +997,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1057,6 +1071,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1097,6 +1112,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1140,6 +1156,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1213,6 +1230,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1286,6 +1304,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1359,6 +1378,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1432,6 +1452,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1505,6 +1526,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1578,6 +1600,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1651,6 +1674,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1724,6 +1748,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1797,6 +1822,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1870,6 +1896,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1943,6 +1970,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2016,6 +2044,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2089,6 +2118,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2159,6 +2189,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2229,6 +2260,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2299,6 +2331,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2369,6 +2402,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2444,6 +2478,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2519,6 +2554,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2594,6 +2630,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2669,6 +2706,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2744,6 +2782,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2819,6 +2858,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2894,6 +2934,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2969,6 +3010,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3044,6 +3086,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3119,6 +3162,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3192,6 +3236,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3265,6 +3310,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3338,6 +3384,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3411,6 +3458,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3484,6 +3532,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3557,6 +3606,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3630,6 +3680,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3703,6 +3754,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3746,6 +3798,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3789,6 +3842,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3832,6 +3886,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3875,6 +3930,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3918,6 +3974,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3961,6 +4018,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4004,6 +4062,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4047,6 +4106,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4090,6 +4150,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4133,6 +4194,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4206,6 +4268,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4279,6 +4342,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -4319,6 +4383,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
+  canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 

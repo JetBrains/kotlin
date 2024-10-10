@@ -35,5 +35,6 @@ KaNamedFunctionSymbol:
     type: B
   getContainingFileSymbol: KaFileSymbol(withOverridden.kt)
   getContainingJvmClassName: B
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

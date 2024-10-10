@@ -351,6 +351,7 @@ KaNamedFunctionSymbol:
     type: X
   getContainingFileSymbol: KaFileSymbol(annotations.kt)
   getContainingJvmClassName: X
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

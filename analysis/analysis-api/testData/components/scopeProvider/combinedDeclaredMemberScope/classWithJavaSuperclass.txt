@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
     type: test/KotlinClass
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 

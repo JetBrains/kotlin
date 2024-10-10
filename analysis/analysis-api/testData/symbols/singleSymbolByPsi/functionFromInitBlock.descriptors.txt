@@ -61,5 +61,6 @@ KaNamedFunctionSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(functionFromInitBlock.kt)
   getContainingJvmClassName: pack.KClient
+  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
