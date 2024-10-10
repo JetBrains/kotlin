@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.metadataVersion
 
 abstract class AbstractNativeKlibSerializerFacade(
@@ -68,7 +69,7 @@ abstract class AbstractNativeKlibSerializerFacade(
                 compilerVersion = KotlinCompilerVersion.getVersion(),
                 metadataVersion = configuration.metadataVersion().toString(),
             ),
-            target = HostManager.host,
+            target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
             output = outputArtifact.outputFile.path,
             moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME),
             nopack = true,
