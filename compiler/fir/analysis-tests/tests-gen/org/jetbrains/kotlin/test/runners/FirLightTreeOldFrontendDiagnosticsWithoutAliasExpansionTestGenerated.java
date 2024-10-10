@@ -2394,17 +2394,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/multiplatform")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Multiplatform {
-      @Test
-      @TestMetadata("duplicateSupertype.kt")
-      public void testDuplicateSupertype() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt");
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reflection")
     @TestDataPath("$PROJECT_ROOT")
     public class Reflection {

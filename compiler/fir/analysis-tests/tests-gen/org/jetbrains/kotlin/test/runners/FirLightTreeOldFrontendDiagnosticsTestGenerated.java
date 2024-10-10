@@ -46792,46 +46792,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/multiplatform")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Multiplatform {
-      @Test
-      @TestMetadata("actualDeprecated.kt")
-      public void testActualDeprecated() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualDeprecated.kt");
-      }
-
-      @Test
-      @TestMetadata("actualExternalInJs.kt")
-      public void testActualExternalInJs() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt");
-      }
-
-      @Test
-      public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("collections.kt")
-      public void testCollections() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/collections.kt");
-      }
-
-      @Test
-      @TestMetadata("duplicateSupertype.kt")
-      public void testDuplicateSupertype() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt");
-      }
-
-      @Test
-      @TestMetadata("jvmOverloads.kt")
-      public void testJvmOverloads() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/jvmOverloads.kt");
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
     public class Native {

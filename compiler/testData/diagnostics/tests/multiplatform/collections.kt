@@ -1,13 +1,14 @@
 // LANGUAGE: +MultiPlatformProjects
+// WITH_STDLIB
 
 // MODULE: common
 // FILE: common.kt
 // TARGET_PLATFORM: Common
 
-import kotlin.collections.listOf
+import kotlin.collections.<!UNRESOLVED_REFERENCE!>listOf<!>
 
 fun common() {
-    listOf("foo", "bar").map { it }
+    <!UNRESOLVED_REFERENCE!>listOf<!>("foo", "bar").<!DEBUG_INFO_MISSING_UNRESOLVED!>map<!> { <!UNRESOLVED_REFERENCE!>it<!> }
 }
 
 // MODULE: jvm

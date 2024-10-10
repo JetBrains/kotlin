@@ -33,6 +33,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("actualDeprecated.kt")
+  public void testActualDeprecated() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/actualDeprecated.kt");
+  }
+
+  @Test
+  @TestMetadata("actualExternalInJs.kt")
+  public void testActualExternalInJs() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/actualExternalInJs.kt");
+  }
+
+  @Test
   @TestMetadata("actualMissingConstructor.kt")
   public void testActualMissingConstructor() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualMissingConstructor.kt");
@@ -158,6 +170,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("collections.kt")
+  public void testCollections() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/collections.kt");
+  }
+
+  @Test
   @TestMetadata("delegationToExpectInterfaceMixedWithInheritance.kt")
   public void testDelegationToExpectInterfaceMixedWithInheritance() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfaceMixedWithInheritance.kt");
@@ -197,6 +215,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt")
   public void testDontDeprioritizeExpectFunIfShapeIsMoreSpecific() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt");
+  }
+
+  @Test
+  @TestMetadata("duplicateSupertype.kt")
+  public void testDuplicateSupertype() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/duplicateSupertype.kt");
   }
 
   @Test
@@ -353,6 +377,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
   public void testJsExternalTypeExtendsActualExternalType() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmOverloads.kt")
+  public void testJvmOverloads() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/jvmOverloads.kt");
   }
 
   @Test

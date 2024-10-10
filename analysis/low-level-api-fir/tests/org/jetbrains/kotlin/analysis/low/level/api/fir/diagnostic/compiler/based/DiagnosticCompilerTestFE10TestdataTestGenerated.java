@@ -27220,6 +27220,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("actualDeprecated.kt")
+      public void testActualDeprecated() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualDeprecated.kt");
+      }
+
+      @Test
+      @TestMetadata("actualExternalInJs.kt")
+      public void testActualExternalInJs() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualExternalInJs.kt");
+      }
+
+      @Test
       @TestMetadata("actualMissingConstructor.kt")
       public void testActualMissingConstructor() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/actualMissingConstructor.kt");
@@ -27345,6 +27357,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("collections.kt")
+      public void testCollections() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/collections.kt");
+      }
+
+      @Test
       @TestMetadata("delegationToExpectInterfaceMixedWithInheritance.kt")
       public void testDelegationToExpectInterfaceMixedWithInheritance() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfaceMixedWithInheritance.kt");
@@ -27384,6 +27402,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt")
       public void testDontDeprioritizeExpectFunIfShapeIsMoreSpecific() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt");
+      }
+
+      @Test
+      @TestMetadata("duplicateSupertype.kt")
+      public void testDuplicateSupertype() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/duplicateSupertype.kt");
       }
 
       @Test
@@ -27540,6 +27564,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
       public void testJsExternalTypeExtendsActualExternalType() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloads.kt")
+      public void testJvmOverloads() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/jvmOverloads.kt");
       }
 
       @Test
@@ -49708,46 +49738,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("isInitialized.kt")
       public void testIsInitialized() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/lateinit/isInitialized.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/multiplatform")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Multiplatform {
-      @Test
-      @TestMetadata("actualDeprecated.kt")
-      public void testActualDeprecated() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualDeprecated.kt");
-      }
-
-      @Test
-      @TestMetadata("actualExternalInJs.kt")
-      public void testActualExternalInJs() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt");
-      }
-
-      @Test
-      public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("collections.kt")
-      public void testCollections() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/collections.kt");
-      }
-
-      @Test
-      @TestMetadata("duplicateSupertype.kt")
-      public void testDuplicateSupertype() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt");
-      }
-
-      @Test
-      @TestMetadata("jvmOverloads.kt")
-      public void testJvmOverloads() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/jvmOverloads.kt");
       }
     }
 
