@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
-import org.jetbrains.kotlin.types.error.*
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeConstructor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -971,6 +972,10 @@ internal class DescriptorRendererImpl(
 
         renderName(property, builder, true)
         builder.append(": ").append(renderType(property.type))
+
+        if (propertyDelegateRenderer != null && property.isDelegated) {
+            builder.append(' ').append(propertyDelegateRenderer!!(property))
+        }
 
         renderReceiverAfterName(property, builder)
 

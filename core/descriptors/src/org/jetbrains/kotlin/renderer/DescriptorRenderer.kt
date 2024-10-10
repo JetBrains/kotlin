@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier.values
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -240,6 +241,7 @@ interface DescriptorRendererOptions {
 
     var includePropertyConstant: Boolean
     var propertyConstantRenderer: ((ConstantValue<*>) -> String?)?
+    var propertyDelegateRenderer: ((PropertyDescriptor) -> String)?
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
     var receiverAfterName: Boolean

@@ -30,21 +30,21 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.A.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+          PROPERTY[fqName=a.InheritingClasses.A.ap, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[abstract public]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.A.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.A.c, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.A.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.A.op, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
@@ -82,14 +82,14 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.B.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+          PROPERTY[fqName=a.InheritingClasses.B.ap, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.B.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.B.op, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
@@ -115,7 +115,7 @@ PsiJetFileStubImpl[package=a]
       CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.C.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.C.c, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[abstract public]
             TYPE_REFERENCE
               USER_TYPE
@@ -136,7 +136,7 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.D.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.D.c, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[abstract public]
             TYPE_REFERENCE
               USER_TYPE

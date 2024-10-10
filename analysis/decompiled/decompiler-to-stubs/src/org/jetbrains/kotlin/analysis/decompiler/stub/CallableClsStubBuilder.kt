@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
@@ -268,26 +271,30 @@ private class PropertyClsStubBuilder(
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
         return KotlinPropertyStubImpl(
-            parent,
-            callableName.ref(),
-            isVar,
-            isTopLevel,
-            hasDelegate = false,
-            hasDelegateExpression = false,
+            parent = parent,
+            name = callableName.ref(),
+            isVar = isVar,
+            isTopLevel = isTopLevel,
             hasInitializer = initializer != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
-            initializer,
-            origin = createStubOrigin(protoContainer)
+            constantInitializer = initializer,
+            origin = createStubOrigin(protoContainer),
         )
     }
 
     override fun createCallableSpecialParts() {
+        val flags = propertyProto.flags
+        if (Flags.IS_DELEGATED.get(flags)) {
+            val delegateStub = KotlinPropertyDelegateStubImpl(parent = callableStub, hasExpression = true)
+            KotlinNameReferenceExpressionStubImpl(delegateStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
+        }
+
         if ((callableStub as KotlinPropertyStub).hasInitializer()) {
             KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
         }
-        val flags = propertyProto.flags
+
         if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
             val getterFlags = propertyProto.getterFlags
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {

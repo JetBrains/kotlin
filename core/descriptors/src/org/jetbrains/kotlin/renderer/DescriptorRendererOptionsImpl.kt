@@ -1,27 +1,16 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.renderer
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.PropertyReference1Impl
 import kotlin.properties.Delegates
@@ -88,6 +77,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
     override var propertyConstantRenderer: ((ConstantValue<*>) -> String?)? by property(null)
+    override var propertyDelegateRenderer: ((PropertyDescriptor) -> String)? by property(null)
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
     override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })

@@ -11,7 +11,7 @@ PsiJetFileStubImpl[package=test]
       OBJECT_DECLARATION[classId=test/NamedCompanionObject.Named, fqName=test.NamedCompanionObject.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
+          PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=test]
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
-                  PROPERTY[fqName=test.NamedCompanionObject.Named.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                  PROPERTY[fqName=test.NamedCompanionObject.Named.A.B.i, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                     MODIFIER_LIST[public final]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -53,7 +53,7 @@ PsiJetFileStubImpl[package=test]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.NamedCompanionObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY[fqName=test.NamedCompanionObject.c, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
@@ -95,7 +95,7 @@ PsiJetFileStubImpl[package=test]
                           OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
-                              PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                              PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST[public final]
                                 TYPE_REFERENCE
                                   USER_TYPE

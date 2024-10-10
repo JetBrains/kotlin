@@ -48,7 +48,7 @@ public interface KtNodeTypes {
     IElementType DELEGATED_SUPER_TYPE_ENTRY         = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY;
     IElementType SUPER_TYPE_CALL_ENTRY              = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY;
     IElementType SUPER_TYPE_ENTRY                   = KtStubElementTypes.SUPER_TYPE_ENTRY;
-    IElementType PROPERTY_DELEGATE                  = new KtNodeType("PROPERTY_DELEGATE", KtPropertyDelegate.class);
+    IElementType PROPERTY_DELEGATE                  = KtStubElementTypes.PROPERTY_DELEGATE;
     IElementType CONSTRUCTOR_CALLEE                 = KtStubElementTypes.CONSTRUCTOR_CALLEE;
     IElementType VALUE_PARAMETER_LIST               = KtStubElementTypes.VALUE_PARAMETER_LIST;
     IElementType VALUE_PARAMETER                    = KtStubElementTypes.VALUE_PARAMETER;

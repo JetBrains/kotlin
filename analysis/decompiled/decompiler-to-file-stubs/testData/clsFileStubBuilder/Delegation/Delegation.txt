@@ -23,14 +23,14 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      PROPERTY[fqName=Delegation.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY[fqName=Delegation.c, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=Delegation.g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
+      PROPERTY[fqName=Delegation.g, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
         MODIFIER_LIST[open public]
         TYPE_REFERENCE
           USER_TYPE

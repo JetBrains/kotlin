@@ -2,14 +2,14 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  PROPERTY[fqName=test.p1Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
+  PROPERTY[fqName=test.p1Val, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  PROPERTY[fqName=test.p1ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
+  PROPERTY[fqName=test.p1ExtVal, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -23,14 +23,14 @@ PsiJetFileStubImpl[package=test]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
       MODIFIER_LIST[public final]
-  PROPERTY[fqName=test.p1Var, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
+  PROPERTY[fqName=test.p1Var, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  PROPERTY[fqName=test.annotatedConstVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
+  PROPERTY[fqName=test.annotatedConstVal, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
     MODIFIER_LIST[public const]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         CONSTRUCTOR_CALLEE
@@ -88,14 +88,14 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  PROPERTY[fqName=test.p2Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
+  PROPERTY[fqName=test.p2Val, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  PROPERTY[fqName=test.p2ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
+  PROPERTY[fqName=test.p2ExtVal, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

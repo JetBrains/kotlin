@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=test]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=test.UnderscoreParameterName.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=foo]
+      PROPERTY[fqName=test.UnderscoreParameterName.foo, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           NULLABLE_TYPE

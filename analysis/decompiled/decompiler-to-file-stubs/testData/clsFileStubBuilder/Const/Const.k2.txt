@@ -5,7 +5,7 @@ PsiJetFileStubImpl[package=test]
   OBJECT_DECLARATION[classId=test/Const, fqName=test.Const, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Const, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      PROPERTY[fqName=test.Const.inObject, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
+      PROPERTY[fqName=test.Const.inObject, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
         MODIFIER_LIST[private final const]
         TYPE_REFERENCE
           USER_TYPE

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
 import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
 
@@ -201,46 +200,31 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     }
 
     public boolean hasDelegate() {
-        KotlinPropertyStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.hasDelegate();
-        }
-
         return getDelegate() != null;
     }
 
     @Nullable
     public KtPropertyDelegate getDelegate() {
-        KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasDelegate()) {
-            return null;
-        }
-
-        return (KtPropertyDelegate) findChildByType(PROPERTY_DELEGATE);
+        return getStubOrPsiChild(KtStubElementTypes.PROPERTY_DELEGATE);
     }
 
     public boolean hasDelegateExpression() {
-        KotlinPropertyStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.hasDelegateExpression();
+        KtPropertyDelegate delegate = getDelegate();
+        if (delegate == null) {
+            return false;
         }
 
-        return getDelegateExpression() != null;
+        return delegate.hasExpression();
     }
 
     @Nullable
     public KtExpression getDelegateExpression() {
-        KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasDelegateExpression()) {
+        KtPropertyDelegate delegate = getDelegate();
+        if (delegate == null) {
             return null;
         }
 
-        KtPropertyDelegate delegate = getDelegate();
-        if (delegate != null) {
-            return delegate.getExpression();
-        }
-
-        return null;
+        return delegate.getExpression();
     }
 
     @Override

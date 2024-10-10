@@ -48,8 +48,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
 
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()),
-                psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
-                psi.hasDelegateExpression(), psi.hasInitializer(),
+                psi.isVar(), psi.isTopLevel(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
                 KtPsiUtilKt.safeFqNameForLazyResolve(psi),
                 /* constantInitializer = */ null,
@@ -62,8 +61,6 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
-        dataStream.writeBoolean(stub.hasDelegate());
-        dataStream.writeBoolean(stub.hasDelegateExpression());
         dataStream.writeBoolean(stub.hasInitializer());
         dataStream.writeBoolean(stub.isExtension());
         dataStream.writeBoolean(stub.hasReturnTypeRef());
@@ -91,8 +88,6 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
-        boolean hasDelegate = dataStream.readBoolean();
-        boolean hasDelegateExpression = dataStream.readBoolean();
         boolean hasInitializer = dataStream.readBoolean();
         boolean hasReceiverTypeRef = dataStream.readBoolean();
         boolean hasReturnTypeRef = dataStream.readBoolean();
@@ -101,7 +96,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
         return new KotlinPropertyStubImpl(
-                (StubElement<?>) parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer,
+                (StubElement<?>) parentStub, name, isVar, isTopLevel, hasInitializer,
                 hasReceiverTypeRef, hasReturnTypeRef, fqName, KotlinConstantValueKt.createConstantValue(dataStream),
                 KotlinStubOrigin.deserialize(dataStream)
         );

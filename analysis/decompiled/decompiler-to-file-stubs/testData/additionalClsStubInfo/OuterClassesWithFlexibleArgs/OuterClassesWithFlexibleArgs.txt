@@ -19,7 +19,7 @@ KotlinStub$CLASS[classId=test/OuterClassesWithFlexibleArgs, fqName=test.OuterCla
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=L]
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=test.OuterClassesWithFlexibleArgs.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
+    KotlinStub$PROPERTY[fqName=test.OuterClassesWithFlexibleArgs.baz, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE    upperBound: d.JavaClass.InnerClass<L .. L?>?

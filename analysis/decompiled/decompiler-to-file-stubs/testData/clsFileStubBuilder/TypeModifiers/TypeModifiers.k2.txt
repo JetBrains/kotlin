@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=TypeModifiers.function, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]
+      PROPERTY[fqName=TypeModifiers.function, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.suspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
+      PROPERTY[fqName=TypeModifiers.suspendFunction, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
@@ -28,7 +28,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.suspendExtFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendExtFunction]
+      PROPERTY[fqName=TypeModifiers.suspendExtFunction, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendExtFunction]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
@@ -45,7 +45,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
+      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           FUNCTION_TYPE

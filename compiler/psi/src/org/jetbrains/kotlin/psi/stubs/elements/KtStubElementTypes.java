@@ -25,6 +25,7 @@ public interface KtStubElementTypes {
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     KtPropertyAccessorElementType PROPERTY_ACCESSOR = new KtPropertyAccessorElementType("PROPERTY_ACCESSOR");
     KtBackingFieldElementType BACKING_FIELD = new KtBackingFieldElementType("BACKING_FIELD");
+    KtPropertyDelegateElementType PROPERTY_DELEGATE = new KtPropertyDelegateElementType("PROPERTY_DELEGATE");
     KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
 
     KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");

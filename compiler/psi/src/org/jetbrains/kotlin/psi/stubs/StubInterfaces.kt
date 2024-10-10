@@ -128,14 +128,16 @@ interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
     fun hasBlockBody(): Boolean
 }
 
+interface KotlinPropertyDelegateStub : StubElement<KtPropertyDelegate> {
+    fun hasExpression(): Boolean
+}
+
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {
     fun hasInitializer(): Boolean
 }
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun isVar(): Boolean
-    fun hasDelegate(): Boolean
-    fun hasDelegateExpression(): Boolean
     fun hasInitializer(): Boolean
     fun hasReturnTypeRef(): Boolean
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,7 @@ private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private const val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 private const val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
+private const val DECOMPILED_PROPERTY_DELEGATE = "by $COMPILED_DEFAULT_INITIALIZER"
 
 fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     withDefinedIn = false
@@ -38,6 +39,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
     includePropertyConstant = true
     propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
+    propertyDelegateRenderer = { _ -> DECOMPILED_PROPERTY_DELEGATE }
 }
 
 /**

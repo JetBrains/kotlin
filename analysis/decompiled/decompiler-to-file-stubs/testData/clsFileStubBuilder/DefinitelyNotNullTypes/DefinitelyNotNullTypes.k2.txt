@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Any]
     CLASS_BODY
-      PROPERTY[fqName=DefinitelyNotNullTypes.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      PROPERTY[fqName=DefinitelyNotNullTypes.x, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[private final]
         TYPE_REFERENCE
           INTERSECTION_TYPE

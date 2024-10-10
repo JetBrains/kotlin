@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=]
   OBJECT_DECLARATION[classId=/SpecialNames, fqName=SpecialNames, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=SpecialNames, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      PROPERTY[fqName=SpecialNames.1M, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=1M]
+      PROPERTY[fqName=SpecialNames.1M, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=1M]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE

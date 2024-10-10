@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -22,7 +22,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaParameter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaParameter, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -41,7 +41,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -56,7 +56,7 @@ PsiJetFileStubImpl[package=]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -75,7 +75,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           MODIFIER_LIST[]

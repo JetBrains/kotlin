@@ -40,42 +40,42 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     CLASS_BODY
-      PROPERTY[fqName=test.ClassMembers.p, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p]
+      PROPERTY[fqName=test.ClassMembers.p, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p]
         MODIFIER_LIST[private final]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.ClassMembers.p2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=p2]
+      PROPERTY[fqName=test.ClassMembers.p2, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=p2]
         MODIFIER_LIST[open public]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=test.ClassMembers.p5, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p5]
+      PROPERTY[fqName=test.ClassMembers.p5, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p5]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=test.ClassMembers.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+      PROPERTY[fqName=test.ClassMembers.foo, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.ClassMembers.openVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=openVal]
+      PROPERTY[fqName=test.ClassMembers.openVal, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=openVal]
         MODIFIER_LIST[open public]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.ClassMembers.abstractVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
+      PROPERTY[fqName=test.ClassMembers.abstractVar, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
         MODIFIER_LIST[abstract public]
         TYPE_REFERENCE
           USER_TYPE

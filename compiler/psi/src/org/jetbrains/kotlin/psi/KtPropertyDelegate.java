@@ -10,12 +10,27 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyDelegateStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Objects;
 
-public class KtPropertyDelegate extends KtElementImpl {
+public class KtPropertyDelegate extends KtElementImplStub<KotlinPropertyDelegateStub> {
     public KtPropertyDelegate(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtPropertyDelegate(@NotNull KotlinPropertyDelegateStub stub) {
+        super(stub, KtStubElementTypes.PROPERTY_DELEGATE);
+    }
+
+    public boolean hasExpression() {
+        KotlinPropertyDelegateStub stub = getStub();
+        if (stub != null) {
+            return stub.hasExpression();
+        }
+
+        return getExpression() != null;
     }
 
     /**
@@ -23,6 +38,18 @@ public class KtPropertyDelegate extends KtElementImpl {
      */
     @Nullable
     public KtExpression getExpression() {
+        KotlinPropertyDelegateStub stub = getStub();
+        if (stub != null) {
+            if (!stub.hasExpression()) {
+                return null;
+            }
+
+            if (getContainingKtFile().isCompiled()) {
+                // don't load ast
+                return null;
+            }
+        }
+
         return findChildByClass(KtExpression.class);
     }
 

@@ -2,13 +2,15 @@ PsiJetFileStubImpl[package=pack]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=pack]
   IMPORT_LIST
-  PROPERTY[fqName=pack.myProperty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=myProperty]
+  PROPERTY[fqName=pack.myProperty, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=myProperty]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_DELEGATE[hasExpression=true]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
       MODIFIER_LIST[public final]
   FUN[fqName=pack.action, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=action]

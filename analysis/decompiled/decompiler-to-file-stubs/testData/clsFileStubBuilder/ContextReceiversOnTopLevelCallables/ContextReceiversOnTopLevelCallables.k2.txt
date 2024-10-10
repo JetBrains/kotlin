@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  PROPERTY[fqName=property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
+  PROPERTY[fqName=property, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     CONTEXT_RECEIVER_LIST
       CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
@@ -29,7 +29,7 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
       MODIFIER_LIST[private final]
-  PROPERTY[fqName=propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
+  PROPERTY[fqName=propertyWithSetter, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     CONTEXT_RECEIVER_LIST
       CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
