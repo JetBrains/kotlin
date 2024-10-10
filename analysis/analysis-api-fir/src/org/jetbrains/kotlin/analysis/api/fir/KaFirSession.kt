@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
@@ -119,6 +120,7 @@ private constructor(
             firResolveSession: LLFirResolveSession,
             token: KaLifetimeToken,
         ): KaFirSession {
+            token.assertIsValid()
             val useSiteModule = firResolveSession.useSiteKtModule
             val useSiteSession = firResolveSession.useSiteFirSession
 

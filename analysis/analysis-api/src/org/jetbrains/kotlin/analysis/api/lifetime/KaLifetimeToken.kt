@@ -18,12 +18,23 @@ public abstract class KaLifetimeToken {
 @Deprecated("Use 'KaLifetimeToken' instead", ReplaceWith("KaLifetimeToken"))
 public typealias KtLifetimeToken = KaLifetimeToken
 
-@OptIn(KaImplementationDetail::class)
 @Suppress("NOTHING_TO_INLINE")
 public inline fun KaLifetimeToken.assertIsValidAndAccessible() {
+    assertIsValid()
+    assertIsAccessible()
+}
+
+@OptIn(KaImplementationDetail::class)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun KaLifetimeToken.assertIsValid() {
     if (!isValid()) {
         throw KaInvalidLifetimeOwnerAccessException("Access to invalid $this: ${getInvalidationReason()}")
     }
+}
+
+@OptIn(KaImplementationDetail::class)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun KaLifetimeToken.assertIsAccessible() {
     if (!isAccessible()) {
         throw KaInaccessibleLifetimeOwnerAccessException("$this is inaccessible: ${getInaccessibilityReason()}")
     }
