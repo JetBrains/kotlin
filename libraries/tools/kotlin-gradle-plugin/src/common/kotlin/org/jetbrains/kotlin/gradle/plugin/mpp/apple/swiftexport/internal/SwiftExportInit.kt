@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.*
@@ -54,17 +54,16 @@ internal val Project.SwiftExportClasspathResolvableConfiguration: Configuration
         extendsFrom(maybeCreateSwiftExportClasspathDependenciesConfiguration())
     }
 
-internal val AbstractNativeLibrary.ExportedSwiftExportApiConfigurationName: String
-    get() = target.disambiguateName(
-        lowerCamelCaseName(buildType.configuration, "exported", "swift", "export", "api", "configuration")
-    )
+internal fun KotlinNativeTarget.exportedSwiftExportApiConfigurationName(buildType: NativeBuildType): String = disambiguateName(
+    lowerCamelCaseName(buildType.configuration, "exported", "swift", "export", "api", "configuration")
+)
 
-internal val AbstractNativeLibrary.ExportedSwiftExportApiConfiguration: Configuration
-    get() = project.configurations.maybeCreateResolvable(ExportedSwiftExportApiConfigurationName) {
-        description = "Swift Export dependencies configuration for ${target.name}"
+internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(buildType: NativeBuildType): Configuration =
+    project.configurations.maybeCreateResolvable(exportedSwiftExportApiConfigurationName(buildType)) {
+        description = "Swift Export dependencies configuration for $name"
         isVisible = false
         isTransitive = false
-        usesPlatformOf(target)
+        usesPlatformOf(this@exportedSwiftExportApiConfiguration)
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     }

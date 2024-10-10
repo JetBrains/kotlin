@@ -18,7 +18,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.ExportedSwiftExportApiConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import javax.inject.Inject
@@ -89,14 +89,15 @@ abstract class SwiftExportExtension @Inject constructor(
         forAllSwiftExportBinaries {
             val swiftExportCompilation = target.compilations.getByName(SwiftExportConstants.SWIFT_EXPORT_COMPILATION)
             val compileDependencyConfiguration = swiftExportCompilation.internal.configurations.compileDependencyConfiguration
+            val exportedSwiftExportApiConfigurationName = target.exportedSwiftExportApiConfigurationName(buildType)
 
-            dependencyHandler.addProvider(ExportedSwiftExportApiConfigurationName, dependencyProvider)
+            dependencyHandler.addProvider(exportedSwiftExportApiConfigurationName, dependencyProvider)
             dependencyHandler.addProvider(
                 compileDependencyConfiguration.name,
                 dependencyProvider
             )
 
-            project.configurations.getByName(ExportedSwiftExportApiConfigurationName).shouldResolveConsistentlyWith(
+            project.configurations.getByName(exportedSwiftExportApiConfigurationName).shouldResolveConsistentlyWith(
                 compileDependencyConfiguration
             )
         }
