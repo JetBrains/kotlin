@@ -42,6 +42,8 @@ val resolveJsTools by tasks.registering {
     description = "Resolves JavaScript tools (for dependency verification or populating caches)."
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+
+    @Suppress("DEPRECATION")
     doLast {
         fun Project.resolveDependencies(
             vararg dependency: String,

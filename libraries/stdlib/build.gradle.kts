@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
+@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -254,7 +254,8 @@ kotlin {
         }
     }
 
-    D8RootPlugin.apply(rootProject).version = v8Version
+    rootProject.plugins.apply(D8RootPlugin::class.java)
+    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension>().version = v8Version
 
     fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
