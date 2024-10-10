@@ -676,6 +676,8 @@ public abstract class org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken
 }
 
 public final class org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeTokenKt {
+	public static final fun assertIsAccessible (Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;)V
+	public static final fun assertIsValid (Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;)V
 	public static final fun assertIsValidAndAccessible (Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;)V
 }
 
