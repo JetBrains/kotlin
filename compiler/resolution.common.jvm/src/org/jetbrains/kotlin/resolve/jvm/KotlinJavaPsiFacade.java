@@ -254,6 +254,19 @@ public class KotlinJavaPsiFacade implements Disposable {
         return null;
     }
 
+    @Nullable
+    public Set<String> slowKnownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
+        if (SearchScope.isEmptyScope(scope)) return Collections.emptySet();
+
+        KotlinPsiElementFinderWrapper[] finders = finders();
+
+        if (canComputeKnownClassNamesInPackage()) {
+            return ((CliFinder) finders[0]).slowKnownClassNamesInPackage(packageFqName);
+        }
+
+        return null;
+    }
+
     public Boolean canComputeKnownClassNamesInPackage() {
         KotlinPsiElementFinderWrapper[] finders = finders();
         return finders.length == 1 && finders[0] instanceof CliFinder;
@@ -546,6 +559,11 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Nullable
         public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
             return javaFileManager.knownClassNamesInPackage(packageFqName);
+        }
+
+        @NotNull
+        public Set<String> slowKnownClassNamesInPackage(@NotNull FqName packageFqName) {
+            return javaFileManager.slowKnownClassNamesInPackage(packageFqName);
         }
 
         @Override

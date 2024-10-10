@@ -54,13 +54,23 @@ abstract class FirSymbolNamesProvider {
     open fun getPackageNamesWithTopLevelClassifiers(): Set<String>? = getPackageNames()
 
     /**
-     * Returns the set of top-level classifier names (classes, interfaces, objects, and type aliases) inside the [packageFqName] package
+     * Returns the set of fast-to-compute top-level classifier names (classes, interfaces, objects, and type aliases) inside the [packageFqName] package
      * within the provider's scope.
+     *
+     * For most symbol providers, all symbols are fast to compute.
+     * Others that differentiate between fast and slow to compute need to implement [getSlowTopLevelClassifierNamesInPackage].
      *
      * All usages must take into account that the result might not include `kotlin.FunctionN` (and others for which a [FunctionTypeKind]
      * exists).
      */
     abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>?
+
+    /**
+     * Returns the set of additional class names that can be contained in the given package but are slower to compute.
+     *
+     * This method is only called when [getTopLevelClassifierNamesInPackage] returned a non-empty set.
+     */
+    open fun getSlowTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 
     /**
      * @see hasSpecificClassifierPackageNamesComputation
@@ -107,12 +117,15 @@ abstract class FirSymbolNamesProvider {
         // worth checking it in uncached situations, since building the package set is as or more expensive as just building the "names in
         // package" set.
         val names = getTopLevelClassifierNamesInPackage(classId.packageFqName) ?: return true
-        if (classId.outerClassId == null) {
-            if (!names.mayContainTopLevelClassifier(classId.shortClassName)) return false
-        } else {
-            if (!names.mayContainTopLevelClassifier(classId.outermostClassId.shortClassName)) return false
+        val className = if (classId.outerClassId == null) classId.shortClassName else classId.outermostClassId.shortClassName
+        if (names.mayContainTopLevelClassifier(className)) return true
+
+        if (names.isNotEmpty()) {
+            val slowNames = getSlowTopLevelClassifierNamesInPackage(classId.packageFqName)
+            if (slowNames.mayContainTopLevelClassifier(className)) return true
         }
-        return true
+
+        return false
     }
 
     /**

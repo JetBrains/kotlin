@@ -72,6 +72,9 @@ open class JavaSymbolProvider(
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
             javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
+
+        override fun getSlowTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+            javaFacade.slowKnownClassNamesInPackage(packageFqName).mapToSetOrEmpty { Name.identifier(it) }
     }
 }
 
