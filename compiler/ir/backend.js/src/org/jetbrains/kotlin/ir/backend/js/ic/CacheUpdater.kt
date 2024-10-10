@@ -733,7 +733,7 @@ class CacheUpdater(
             irFactory = icContext.createIrFactory(),
             stubbedSignatures = stubbedSignatures
         )
-        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports, loadKotlinTest = completeLoadForKotlinTest)
+        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
         var iterations = 0
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports

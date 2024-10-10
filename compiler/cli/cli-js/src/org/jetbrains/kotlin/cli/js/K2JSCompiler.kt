@@ -794,7 +794,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerConfiguration = configurationJs,
                 icContext = icContext,
                 checkForClassStructuralChanges = arguments.wasm,
-                completeLoadForKotlinTest = arguments.wasm
             )
 
             val artifacts = cacheUpdater.actualizeCaches()
