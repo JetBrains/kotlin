@@ -26,28 +26,64 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
+class SingleJavaFileRootsIndex(roots: List<JavaRoot>) {
     init {
         for ((file) in roots) {
             assert(!file.isDirectory) { "Should not be a directory: $file" }
         }
     }
 
-    private val classIdsInRoots = ArrayList<List<ClassId>>(roots.size)
+    private val rootHolders: List<JavaRootHolder> = roots.map { JavaRootHolder(it) }
 
-    fun findJavaSourceClass(classId: ClassId): VirtualFile? =
-        roots.indices
-            .find { index -> classId in getClassIdsForRootAt(index) }
-            ?.let { index -> roots[index].file }
-
-    fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
-        roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
-
-    private fun getClassIdsForRootAt(index: Int): List<ClassId> {
-        for (i in classIdsInRoots.size..index) {
-            classIdsInRoots.add(JavaSourceClassIdReader(roots[i].file).readClassIds())
+    private val rootsByPackage: Map<FqName, List<JavaRootHolder>> by lazy(LazyThreadSafetyMode.NONE) {
+        buildMap<FqName, MutableList<JavaRootHolder>> {
+            for ((dir, holders) in rootHolders.groupBy { root -> root.file.parent }) {
+                val firstClassId = holders.firstNotNullOfOrNull { it.classIds.firstOrNull() } ?: continue
+                getOrPut(firstClassId.packageFqName) { mutableListOf() }.addAll(holders)
+            }
         }
-        return classIdsInRoots[index]
+    }
+
+    private val cacheByPackage = mutableMapOf<FqName, Map<ClassId, VirtualFile>>()
+
+    fun getFilesInPackage(packageFqName: FqName): List<VirtualFile> {
+        return rootsByPackage[packageFqName]?.map { it.file }.orEmpty()
+    }
+
+    fun getSlowNamesInPackage(packageFqName: FqName): Collection<ClassId> {
+        return getFilesByClassId(packageFqName).filter { (classId, file) -> classId.relativeClassName.asString() != file.nameWithoutExtension }.keys
+    }
+
+    fun getFileByClassId(classId: ClassId): VirtualFile? {
+        val packageFqName = classId.packageFqName
+        val className = classId.relativeClassName.asString()
+
+        // Fast-path using file name only
+        rootsByPackage[packageFqName]
+            ?.firstOrNull { it.file.nameWithoutExtension == className }
+            ?.let { return it.file }
+
+        // Slow-path using JavaSourceClassIdReader
+        return getFilesByClassId(packageFqName)[classId]
+    }
+
+    private fun getFilesByClassId(packageFqName: FqName): Map<ClassId, VirtualFile> {
+        val holdersInPackage = rootsByPackage[packageFqName] ?: return emptyMap()
+
+        return cacheByPackage.getOrPut(packageFqName) {
+            buildMap {
+                for (root in holdersInPackage) {
+                    for (classId in root.classIds) {
+                        put(classId, root.file)
+                    }
+                }
+            }
+        }
+    }
+
+    private class JavaRootHolder(private val root: JavaRoot) {
+        val file: VirtualFile get() = root.file
+        val classIds: List<ClassId> by lazy(LazyThreadSafetyMode.NONE) { JavaSourceClassIdReader(root.file).readClassIds() }
     }
 
     /**
