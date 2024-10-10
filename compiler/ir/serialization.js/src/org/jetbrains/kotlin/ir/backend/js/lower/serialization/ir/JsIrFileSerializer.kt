@@ -21,7 +21,7 @@ object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
 
 class JsIrFileSerializer(
     settings: IrSerializationSettings,
-    declarationTable: DeclarationTable,
+    declarationTable: DeclarationTable.Default,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
