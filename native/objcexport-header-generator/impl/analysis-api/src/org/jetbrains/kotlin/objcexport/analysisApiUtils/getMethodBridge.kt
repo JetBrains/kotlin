@@ -39,7 +39,7 @@ internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol)
     }
 
     if (symbol.isSuspend) {
-        valueParameters += MethodBridgeValueParameter.SuspendCompletion(true)
+        valueParameters += MethodBridgeValueParameter.SuspendCompletion(with(analysisSession) { symbol.returnType.isUnitType })
     } else if (symbol.hasThrowsAnnotation) {
         // Add error out parameter before tail block parameters. The convention allows this.
         // Placing it after would trigger https://bugs.swift.org/browse/SR-12201
@@ -151,7 +151,7 @@ private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): Method
         } else {
             return result
         }
-    } else if (with(analysisSession) { sessionReturnType.isSuspendFunctionType }) {
+    } else if (symbol is KaFunctionSymbol && symbol.isSuspend) {
         return MethodBridge.ReturnValue.Suspend
     }
 
