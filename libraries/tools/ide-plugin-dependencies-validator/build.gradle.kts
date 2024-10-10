@@ -19,6 +19,7 @@ dependencies {
     runtimeOnly(libs.intellij.fastutil)
     runtimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    runtimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     // test dependencies
     testImplementation(platform(libs.junit.bom))

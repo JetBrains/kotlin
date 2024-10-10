@@ -49,6 +49,7 @@ kotlin {
                 runtimeOnly(libs.junit.jupiter.engine)
 
 
+                runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(jpsModelImpl())
                 implementation(project(":compiler:backend-common"))

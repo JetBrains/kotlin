@@ -21,6 +21,7 @@ dependencies {
     runtimeOnly(project(":kotlin-script-runtime"))
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
+    runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
     testImplementation(libs.junit4)
     testApi(kotlinTest("junit"))
