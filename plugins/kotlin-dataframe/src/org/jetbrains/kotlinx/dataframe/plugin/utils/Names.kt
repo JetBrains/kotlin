@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.utils
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -53,7 +54,10 @@ object Names {
     val INSTANT_CLASS_ID = kotlinx.datetime.Instant::class.classId()
 
     val PAIR = ClassId(FqName("kotlin"), Name.identifier("Pair"))
+    val PAIR_CONSTRUCTOR = CallableId(FqName("kotlin"), FqName("Pair"), Name.identifier("Pair"))
     val TO = CallableId(FqName("kotlin"), Name.identifier("to"))
+    val TRIM_MARGIN = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimMargin"))
+    val TRIM_INDENT = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimIndent"))
 }
 
 private fun KClass<*>.classId(): ClassId {
