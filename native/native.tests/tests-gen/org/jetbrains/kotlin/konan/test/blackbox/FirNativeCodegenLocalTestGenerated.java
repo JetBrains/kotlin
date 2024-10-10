@@ -983,6 +983,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("inline_property.kt")
+    public void testInline_property() {
+      runTest("native/native.tests/testData/codegen/fileCheck/inline_property.kt");
+    }
+
+    @Test
     @TestMetadata("intrinsics.kt")
     public void testIntrinsics() {
       runTest("native/native.tests/testData/codegen/fileCheck/intrinsics.kt");
