@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
+import org.jetbrains.kotlin.backend.common.serialization.signature.FileLocalIdSignatureComputer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -56,7 +56,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     val mangler = globalDeclarationTable.mangler
     protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
 
-    private val signaturer = IdSignatureFactory(mangler) { declaration, compatibleMode ->
+    private val fileLocalIdSignatureComputer = FileLocalIdSignatureComputer(mangler) { declaration, compatibleMode ->
         signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
     }
 
@@ -72,7 +72,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }
         return if (declaration.shouldHaveLocalSignature(compatibleMode)) {
-            table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
+            table.getOrPut(declaration) { fileLocalIdSignatureComputer.composeFileLocalIdSignature(declaration, compatibleMode) }
         } else {
             globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
         }

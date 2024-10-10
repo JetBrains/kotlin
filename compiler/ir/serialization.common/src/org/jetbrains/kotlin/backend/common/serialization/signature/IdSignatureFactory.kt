@@ -180,7 +180,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
     }
 }
 
-class IdSignatureFactory(
+class FileLocalIdSignatureComputer(
     val mangler: KotlinMangler.IrMangler,
     private val signatureByDeclaration: (declaration: IrDeclaration, compatibleMode: Boolean) -> IdSignature,
 ) {
