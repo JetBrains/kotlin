@@ -70,8 +70,6 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
             10,
             TimeUnit.SECONDS,
         )
-
-        LowMemoryWatcher.register(::handleLowMemoryEvent, project)
     }
 
     private fun performCacheMaintenance() {
