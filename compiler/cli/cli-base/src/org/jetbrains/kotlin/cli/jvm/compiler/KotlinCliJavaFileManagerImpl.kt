@@ -101,7 +101,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
+            singleJavaFileRootsIndex.getFileByClassId(outerMostClassId)?.let { SmartList(it) }
                 ?: SmartList(
                     index.findClasses(outerMostClassId) { dir, type ->
                         findVirtualFileGivenPackage(dir, relativeClassName, type)
@@ -201,7 +201,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Search java sources first. For build tools, it makes sense to build new files passing all the
             // class files for the previous build on the class path.
             result.addIfNotNull(
-                singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                singleJavaFileRootsIndex.getFileByClassId(classId)
                     ?.takeIf { it in scope }
                     ?.findPsiClassInVirtualFile(relativeClassName)
             )
@@ -238,7 +238,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
         if (!found) {
-            found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
+            found = singleJavaFileRootsIndex.getFilesInPackage(packageFqName).isNotEmpty()
         }
 
         if (!found) return null
@@ -301,9 +301,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             true
         })
 
-        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
-            assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
-            result.add(classId.shortClassName.asString())
+        for (file in singleJavaFileRootsIndex.getFilesInPackage(packageFqName)) {
+            result.add(file.nameWithoutExtension)
         }
 
         return result
@@ -327,6 +326,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
             true
         })
+
+        for (classId in singleJavaFileRootsIndex.getSlowNamesInPackage(packageFqName)) {
+            assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
+            result.add(classId.shortClassName.asString())
+        }
+
 
         return result
     }
