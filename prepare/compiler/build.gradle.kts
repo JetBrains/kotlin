@@ -319,6 +319,7 @@ val proguard by task<CacheableProguardTask> {
             !net/sf/cglib/**,
             !META-INF/maven**,
             **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
+            custom-formatters.js,
             META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
             messages/**""".trimIndent()),
         packCompiler.map { it.outputs.files.singleFile }
