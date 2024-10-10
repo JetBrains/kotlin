@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirAnnotationListForType private constructor(
@@ -24,7 +24,7 @@ internal class KaFirAnnotationListForType private constructor(
     private val builder: KaSymbolByFirBuilder,
 ) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations: List<KaAnnotation> by lazy {
-        coneType.customAnnotations.map { firAnnotation ->
+        coneType.typeAnnotations.map { firAnnotation ->
             // Resolve annotation types. Probably this call is redundant as we may have resolved types only after the TYPES phase
             (firAnnotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
@@ -36,11 +36,11 @@ internal class KaFirAnnotationListForType private constructor(
         get() = builder.token
 
     override fun isEmpty(): Boolean = withValidityAssertion {
-        coneType.customAnnotations.isEmpty()
+        coneType.typeAnnotations.isEmpty()
     }
 
     override val size: Int
-        get() = withValidityAssertion { coneType.customAnnotations.size }
+        get() = withValidityAssertion { coneType.typeAnnotations.size }
 
     override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
         backingAnnotations.iterator()
@@ -65,7 +65,7 @@ internal class KaFirAnnotationListForType private constructor(
 
     companion object {
         fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationList {
-            return if (coneType.customAnnotations.isEmpty()) {
+            return if (coneType.typeAnnotations.isEmpty()) {
                 KaBaseEmptyAnnotationList(builder.token)
             } else {
                 KaFirAnnotationListForType(coneType, builder)

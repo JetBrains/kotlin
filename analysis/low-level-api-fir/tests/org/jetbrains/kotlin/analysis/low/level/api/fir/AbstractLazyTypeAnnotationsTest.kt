@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
@@ -96,7 +96,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
     }
 }
 
-private fun ConeKotlinType.annotationContainingSymbols(): List<FirBasedSymbol<*>> = customAnnotations.mapNotNull {
+private fun ConeKotlinType.annotationContainingSymbols(): List<FirBasedSymbol<*>> = typeAnnotations.mapNotNull {
     (it as? FirAnnotationCall)?.containingDeclarationSymbol
 }
 
@@ -162,7 +162,7 @@ private fun FirElementWithResolveState.collectConeTypes(): Collection<ConeTypeWi
             contextStack.withStack(element) {
                 when (element) {
                     is FirResolvedTypeRef -> element.coneType.forEachType {
-                        if (it.customAnnotations.isNotEmpty()) {
+                        if (it.typeAnnotations.isNotEmpty()) {
                             types += ConeTypeWithContext(it, contextStack.dumpContext())
                         }
                     }

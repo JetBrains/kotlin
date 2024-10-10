@@ -79,6 +79,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
         return ConeAttributes.create(predefined)
     }
     val attributes = mutableListOf<ConeAttribute<*>>()
+    var parameterName: ParameterNameTypeAttribute? = null
     attributes += predefined
     val customAnnotations = mutableListOf<FirAnnotation>()
     for (annotation in this) {
@@ -97,7 +98,16 @@ fun List<FirAnnotation>.computeTypeAttributes(
                     CompilerConeAttributes.ContextFunctionTypeParams(
                         annotation.extractContextReceiversCount() ?: 0
                     )
-
+            ParameterNameTypeAttribute.ANNOTATION_CLASS_ID -> {
+                // ConeAttributes.create() will always take the last attribute of a given type,
+                // where ParameterName should prefer the first annotation.
+                if (parameterName == null) {
+                    parameterName = ParameterNameTypeAttribute(annotation)
+                } else {
+                    // Preserve repeated ParameterName annotations to check for repeated errors.
+                    parameterName = ParameterNameTypeAttribute(parameterName.annotation, parameterName.others + annotation)
+                }
+            }
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
             CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.EnhancedNullability
             else -> {
@@ -113,6 +123,9 @@ fun List<FirAnnotation>.computeTypeAttributes(
         }
     }
 
+    if (parameterName != null) {
+        attributes += parameterName
+    }
     if (customAnnotations.isNotEmpty()) {
         attributes += CustomAnnotationTypeAttribute(customAnnotations)
     }

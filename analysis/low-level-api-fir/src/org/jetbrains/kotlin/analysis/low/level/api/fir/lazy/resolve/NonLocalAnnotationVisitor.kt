@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -83,7 +82,7 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
 
     private fun visitTypeAnnotations(resolvedTypeRef: FirResolvedTypeRef, data: T) {
         resolvedTypeRef.coneType.forEachType { coneType ->
-            for (typeArgumentAnnotation in coneType.customAnnotations) {
+            for (typeArgumentAnnotation in coneType.typeAnnotations) {
                 typeArgumentAnnotation.accept(this, data)
             }
         }

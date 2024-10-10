@@ -35,6 +35,34 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : Cone
 
 val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()
 
+/**
+ * Returns type [FirAnnotation]s in [this] [ConeAttributes] which are not covered by other cone attributes.
+ *
+ * Use this property only when the annotation is known to be some third-party annotation.
+ * Otherwise, prefer using [typeAnnotations] to get all possible annotations, or when annotations are being
+ * aggregated separately.
+ */
 val ConeAttributes.customAnnotations: List<FirAnnotation> get() = custom?.annotations.orEmpty()
 
+/**
+ * Returns type [FirAnnotation]s on [this] [ConeKotlinType] which are not covered by other cone attributes.
+ *
+ * Use this property only when the annotation is known to be some third-party annotation.
+ * Otherwise, prefer using [typeAnnotations] to get all possible annotations, or when annotations are being
+ * aggregated separately.
+ */
 val ConeKotlinType.customAnnotations: List<FirAnnotation> get() = attributes.customAnnotations
+
+/**
+ * Returns all type [FirAnnotation]s on [this] [ConeKotlinType].
+ *
+ * This property is an aggregate of all attributes which contain [FirAnnotation]s.
+ */
+val ConeKotlinType.typeAnnotations: List<FirAnnotation>
+    get() = buildList {
+        attributes.parameterNameAttribute?.let {
+            add(it.annotation)
+            addAll(it.others)
+        }
+        addAll(customAnnotations)
+    }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -39,11 +38,11 @@ fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol
     boundSymbol = WeakPair(session, symbol)
 }
 
-fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter, session: FirSession): ConeKotlinType {
+fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter): ConeKotlinType {
     val name = parameter.name
     if (name == null || name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
     // Existing @ParameterName annotation takes precedence
-    if (customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId, session).isNotEmpty()) return this
+    if (attributes.parameterNameAttribute != null) return this
 
     val fakeSource = parameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {
@@ -62,9 +61,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
                 buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }
-    val attributesWithParameterNameAnnotation =
-        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(listOf(parameterNameAnnotationCall))))
-    return withCombinedAttributesFrom(attributesWithParameterNameAnnotation)
+    return withAttributes(attributes.add(ParameterNameTypeAttribute(parameterNameAnnotationCall)))
 }
 
 fun ConeKotlinType.withCombinedAttributesFrom(other: ConeKotlinType): ConeKotlinType =

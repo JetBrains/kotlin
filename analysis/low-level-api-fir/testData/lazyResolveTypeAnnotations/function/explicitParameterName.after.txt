@@ -1,0 +1,11 @@
+@R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> [FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test]
+
+@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> [FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test]
+
+FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

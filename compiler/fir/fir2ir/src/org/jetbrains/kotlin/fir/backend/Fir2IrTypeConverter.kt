@@ -157,7 +157,7 @@ class Fir2IrTypeConverter(
                     }
                 }
 
-                for (attributeAnnotation in customAnnotations) {
+                for (attributeAnnotation in this.typeAnnotations) {
                     val isAlreadyPresentInAnnotations = annotations.any {
                         it.unexpandedConeClassLikeType == attributeAnnotation.unexpandedConeClassLikeType
                     }

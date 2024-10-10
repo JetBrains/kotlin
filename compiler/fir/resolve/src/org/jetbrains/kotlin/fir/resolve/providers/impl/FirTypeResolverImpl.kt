@@ -303,7 +303,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session) } +
+                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
                     listOf(typeRef.returnTypeRef.coneType)
         val functionKinds = session.functionTypeService.extractAllSpecialKindsForFunctionTypeRef(typeRef)
         var diagnostic: ConeDiagnostic? = null

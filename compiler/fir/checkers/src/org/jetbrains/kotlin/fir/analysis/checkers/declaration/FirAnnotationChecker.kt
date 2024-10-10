@@ -366,7 +366,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         val useSiteSource = typeRef.source
 
         typeRef.coneType.forEachExpandedType(context.session) { type ->
-            checkRepeatedAnnotation(null, type.customAnnotations, context, reporter, annotationSources, useSiteSource)
+            checkRepeatedAnnotation(null, type.typeAnnotations, context, reporter, annotationSources, useSiteSource)
         }
     }
 

@@ -494,6 +494,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (compilerAttribute != null) {
             return compilerAttribute in attributes
         }
+        if (fqName == ParameterNameTypeAttribute.ANNOTATION_CLASS_ID.asSingleFqName()) {
+            return ParameterNameTypeAttribute.KEY in attributes
+        }
         return customAnnotations.any {
             it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
         }

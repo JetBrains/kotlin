@@ -1,1 +1,5 @@
-/noValueForParameterOfLambda.kt:(105,107): error: No value passed for parameter 's'.
+/noValueForParameterOfLambda.kt:(103,105): error: No value passed for parameter 'p2'.
+
+/noValueForParameterOfLambda.kt:(165,167): error: No value passed for parameter 's'.
+
+/noValueForParameterOfLambda.kt:(244,246): error: No value passed for parameter 'x'.

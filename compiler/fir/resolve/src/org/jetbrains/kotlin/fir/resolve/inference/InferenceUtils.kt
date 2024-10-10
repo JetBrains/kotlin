@@ -59,7 +59,7 @@ fun extractLambdaInfoFromFunctionType(
         // @ParameterName is assumed to be used for Ctrl+P on the call site of a property with a function type.
         // Propagating it further may affect further inference might work weirdly, and for sure,
         // it's not expected to leak in implicitly typed declarations.
-        it.removeParameterNameAnnotation(session)
+        it.removeParameterNameAnnotation()
     }
 
     var coerceFirstParameterToExtensionReceiver = false

@@ -1074,6 +1074,10 @@ class FirElementSerializer private constructor(
         for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
+                attribute is ParameterNameTypeAttribute -> {
+                    typeAnnotations.addAll(listOf(attribute.annotation).nonSourceAnnotations(session))
+                    typeAnnotations.addAll(attribute.others.nonSourceAnnotations(session))
+                }
                 attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey ->
                     typeAnnotations.addIfNotNull(createAnnotationForCompilerDefinedTypeAttribute(attribute))
                 else -> extensionAttributes += attribute

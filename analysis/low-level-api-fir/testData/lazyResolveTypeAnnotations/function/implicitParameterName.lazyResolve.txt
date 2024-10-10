@@ -1,0 +1,61 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] implicitParameterName.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] action: ( (intParam: Int, String, longParam: Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] action: ( (intParam: Int, String, longParam: Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun test([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] action: ( (intParam: Int, String, longParam: Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun test([ResolvedTo(COMPANION_GENERATION)] action: ( (intParam: Int, String, longParam: Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun test([ResolvedTo(SUPER_TYPES)] action: ( (intParam: Int, String, longParam: Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public? final? [ResolvedTo(TYPES)] fun test([ResolvedTo(TYPES)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(STATUS)] fun test([ResolvedTo(STATUS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] implicitParameterName.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] implicitParameterName.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

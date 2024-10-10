@@ -77,7 +77,7 @@ internal fun JavaType?.toFirResolvedTypeRef(
     return buildResolvedTypeRef {
         coneType = toConeKotlinType(session, javaTypeParameterStack, mode, source)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
-        annotations += coneType.customAnnotations
+        annotations += coneType.typeAnnotations
         this.source = source
     }
 }

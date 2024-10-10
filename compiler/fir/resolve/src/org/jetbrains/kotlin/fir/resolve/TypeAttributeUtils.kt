@@ -5,23 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.filterOutAnnotationsByClassId
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ParameterNameTypeAttribute
+import org.jetbrains.kotlin.fir.types.withAttributes
 
 // See K1 counterpart at org.jetbrains.kotlin.resolve.FunctionDescriptorResolver.removeParameterNameAnnotation
-fun ConeKotlinType.removeParameterNameAnnotation(session: FirSession): ConeKotlinType {
-    // Fast-path
-    val custom = attributes.custom ?: return this
-    if (customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, session) == null) return this
-
-    val newAnnotations = custom.annotations.filterOutAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId, session)
-    return withAttributes(
-        attributes.remove(custom).applyIf(newAnnotations.isNotEmpty()) {
-            add(CustomAnnotationTypeAttribute(newAnnotations))
-        }
-    )
+fun ConeKotlinType.removeParameterNameAnnotation(): ConeKotlinType {
+    return withAttributes(attributes.remove(ParameterNameTypeAttribute.KEY))
 }

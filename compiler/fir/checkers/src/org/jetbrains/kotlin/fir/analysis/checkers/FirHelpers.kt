@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -917,14 +916,4 @@ fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
     }
 
     return exitNode.previousNodes.mapNotNull(::extractReturnedExpression)
-}
-
-fun FirValueParameterSymbol.getParameterNameFromAnnotation(): String? {
-    return resolvedReturnType.getParameterNameFromAnnotation(moduleData.session)
-}
-
-fun ConeKotlinType.getParameterNameFromAnnotation(session: FirSession): String? {
-    val annotation = customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, session) ?: return null
-    val argument = annotation.argumentMapping.mapping[StandardNames.NAME]
-    return (argument as? FirLiteralExpression)?.value as? String
 }

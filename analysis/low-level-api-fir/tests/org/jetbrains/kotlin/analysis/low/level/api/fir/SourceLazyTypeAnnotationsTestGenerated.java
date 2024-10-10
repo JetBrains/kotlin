@@ -336,6 +336,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     }
 
     @Test
+    @TestMetadata("explicitParameterName.kt")
+    public void testExplicitParameterName() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/explicitParameterName.kt");
+    }
+
+    @Test
     @TestMetadata("explicitType.kt")
     public void testExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/explicitType.kt");
@@ -351,6 +357,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     @TestMetadata("generatedCopy.kt")
     public void testGeneratedCopy() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/generatedCopy.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitParameterName.kt")
+    public void testImplicitParameterName() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/implicitParameterName.kt");
     }
 
     @Test
