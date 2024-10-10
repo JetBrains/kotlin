@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>swift-export-standalone</artifactId>
+  <artifactId>swift-export-ide</artifactId>
   <version>ArtifactsTest.version</version>
-  <name>Swift Export Standalone</name>
-  <description>Standalone Runner for Swift Export</description>
+  <name>Swift Export Ide</name>
+  <description>Integrated Swift Export Environment</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -34,12 +34,6 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>sir-compiler-bridge</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>sir-light-classes</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
@@ -53,18 +47,6 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>analysis-api</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>analysis-api-standalone</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>analysis-api-klib-reader</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>

@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-description = "Runner for Swift Export"
+description = "Standalone Runner for Swift Export"
 
 kotlin {
     explicitApi()

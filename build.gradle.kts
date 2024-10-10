@@ -356,6 +356,13 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":native:objcexport-header-generator-k1",
             ) +
             arrayOf(
+                ":native:swift:sir",
+                ":native:swift:sir-light-classes",
+                ":native:swift:sir-printer",
+                ":native:swift:sir-providers",
+                ":native:swift:swift-export-ide",
+            ) +
+            arrayOf(
                 ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
 
@@ -431,6 +438,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-objcexport-header-generator-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-swift-export-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
     ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
