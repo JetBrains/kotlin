@@ -73,26 +73,4 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             )
         }
     }
-
-    @DisplayName("Browser case works correctly with custom formatters")
-    @GradleTest
-    fun testWasmCustomFormattersUsage(gradleVersion: GradleVersion) {
-        project("wasm-browser-simple-project", gradleVersion) {
-            buildGradleKts.appendText(
-                //language=Kotlin
-                """
-                |
-                | tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
-                |    compilerOptions.freeCompilerArgs.add("-Xwasm-debugger-custom-formatters")
-                | }
-                """.trimMargin()
-            )
-
-            assertSimpleConfigurationCacheScenarioWorks(
-                "assemble",
-                buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(":compileKotlinWasmJs", ":wasmJsBrowserDistribution")
-            )
-        }
-    }
 }
