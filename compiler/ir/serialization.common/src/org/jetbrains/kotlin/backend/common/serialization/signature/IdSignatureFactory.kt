@@ -187,10 +187,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 class IdSignatureFactory(
     private val publicSignatureBuilder: PublicIdSignatureComputer,
     private val table: DeclarationTable,
-    startIndex: Int
 ) : IdSignatureComputer {
-
-    constructor(publicSignatureBuilder: PublicIdSignatureComputer, table: DeclarationTable) : this(publicSignatureBuilder, table, 0)
 
     private val mangler: KotlinMangler.IrMangler = publicSignatureBuilder.mangler
 
@@ -204,8 +201,8 @@ class IdSignatureFactory(
         } else composeFileLocalIdSignature(declaration, compatibleMode)
     }
 
-    private var localIndex: Long = startIndex.toLong()
-    private var scopeIndex: Int = startIndex
+    private var localIndex: Long = START_INDEX.toLong()
+    private var scopeIndex: Int = START_INDEX
 
     override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R =
         publicSignatureBuilder.inFile(file, block)
@@ -281,4 +278,8 @@ class IdSignatureFactory(
 
     private val IrSimpleFunction?.hasDispatchReceiver: Boolean
         get() = this?.dispatchReceiverParameter != null
+
+    companion object {
+        private const val START_INDEX = 0
+    }
 }
