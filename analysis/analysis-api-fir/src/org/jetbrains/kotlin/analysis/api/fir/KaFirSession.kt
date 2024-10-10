@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
@@ -24,11 +26,14 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.CheckResult
+import org.jetbrains.kotlin.fir.declarations.OperatorFunctionChecks
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -110,6 +115,14 @@ private constructor(
                 extensionTools.mapTo(this) { it.packageProvider }
             }
         )
+    }
+
+    fun KaFirNamedFunctionSymbol.canBeAnOperator(): Boolean {
+        return OperatorFunctionChecks.isOperator(
+            this.firSymbol.fir,
+            this@KaFirSession.firSession,
+            this@KaFirSession.firSession.getScopeSession()
+        ) == CheckResult.SuccessCheck
     }
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
