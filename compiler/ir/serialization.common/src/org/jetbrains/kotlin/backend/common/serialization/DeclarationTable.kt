@@ -56,7 +56,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     protected val table = hashMapOf<IrDeclaration, IdSignature>()
 
     // TODO: we need to disentangle signature construction with declaration tables.
-    open val signaturer: IdSignatureFactory = IdSignatureFactory(globalDeclarationTable.publicIdSignatureComputer, this)
+    val signaturer: IdSignatureFactory = IdSignatureFactory(globalDeclarationTable.publicIdSignatureComputer, this)
 
     fun <R> inFile(file: IrFile?, block: () -> R): R =
         signaturer.inFile(file?.symbol, block)
