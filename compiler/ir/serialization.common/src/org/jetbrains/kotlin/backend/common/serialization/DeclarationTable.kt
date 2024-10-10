@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
-import org.jetbrains.kotlin.ir.util.render
 
 abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
@@ -83,11 +82,6 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
         } else {
             globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
         }
-    }
-
-    fun assumeDeclarationSignature(declaration: IrDeclaration, signature: IdSignature) {
-        assert(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
-        table[declaration] = signature
     }
 }
 
