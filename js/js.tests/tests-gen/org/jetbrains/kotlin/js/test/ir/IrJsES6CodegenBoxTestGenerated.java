@@ -3130,6 +3130,24 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       }
 
       @Test
+      @TestMetadata("extensionFunctionWithNestedReceiver.kt")
+      public void testExtensionFunctionWithNestedReceiver() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithNestedReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionWithPassedSupertype.kt")
+      public void testExtensionFunctionWithPassedSupertype() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithPassedSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionInSamWithPassedSupertype.kt")
+      public void testExtensionInSamWithPassedSupertype() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionInSamWithPassedSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("extensionParameterToValueParameter.kt")
       public void testExtensionParameterToValueParameter() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionParameterToValueParameter.kt");
@@ -15725,6 +15743,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("extensionFunctionInInnerClass.kt")
+    public void testExtensionFunctionInInnerClass() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInInnerClass.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunctionInNestedClass.kt")
     public void testExtensionFunctionInNestedClass() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInNestedClass.kt");
@@ -15755,9 +15779,33 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("extensionFunctionWithNestedReceiver.kt")
+    public void testExtensionFunctionWithNestedReceiver() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithNestedReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionWithReceiverConflict.kt")
+    public void testExtensionFunctionWithReceiverConflict() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionWithReceiverConflict.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionMemberWithTypeParameter.kt")
+    public void testExtensionMemberWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionMemberWithTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("extensionReceiverIsNotInlined.kt")
     public void testExtensionReceiverIsNotInlined() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionReceiverIsNotInlined.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithTheSameDispatchAndExtensionReceiver.kt")
+    public void testFunctionWithTheSameDispatchAndExtensionReceiver() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/functionWithTheSameDispatchAndExtensionReceiver.kt");
     }
 
     @Test
@@ -15962,6 +16010,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     @Test
     public void testAllFilesPresentInExtensionProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("extensionMemberWithTypeParameter.kt")
+    public void testExtensionMemberWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionMemberWithTypeParameter.kt");
     }
 
     @Test
