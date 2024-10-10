@@ -249,6 +249,11 @@ data class DATA_CLASS(val a: Int)
 
 data class DATA_CLASS_WITH_REF(val o: Any)
 
+data class DATA_CLASS_WITH_MANY_FIELDS(val a: Int, val b: String, val c: Any) {
+    val d get() = 1.0
+    val e get() = "e"
+}
+
 inline class INLINE_CLASS(val a: Int)
 
 inline class INLINE_CLASS_WITH_REF(val i: DATA_CLASS_WITH_REF)

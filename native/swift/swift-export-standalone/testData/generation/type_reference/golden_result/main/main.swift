@@ -51,6 +51,36 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public final class DATA_CLASS : KotlinRuntime.KotlinBase {
+    public var a: Swift.Int32 {
+        get {
+            return DATA_CLASS_a_get(self.__externalRCRef())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+    public init(
+        a: Swift.Int32
+    ) {
+        let __kt = __root___DATA_CLASS_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, a)
+    }
+    public func copy(
+        a: Swift.Int32
+    ) -> main.DATA_CLASS {
+        return main.DATA_CLASS(__externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+    }
+    public func hashCode() -> Swift.Int32 {
+        return DATA_CLASS_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return DATA_CLASS_toString(self.__externalRCRef())
+    }
+}
 public final class Demo : KotlinRuntime.KotlinBase {
     public final class INNER_CLASS : KotlinRuntime.KotlinBase {
         public override init() {
@@ -320,6 +350,9 @@ public func nullable_output_ref() -> main.Class_without_package? {
 public func produce_ABSTRACT_CLASS() -> main.ABSTRACT_CLASS {
     return main.ABSTRACT_CLASS(__externalRCRef: __root___produce_ABSTRACT_CLASS())
 }
+public func produce_DATA_CLASS() -> main.DATA_CLASS {
+    return main.DATA_CLASS(__externalRCRef: __root___produce_DATA_CLASS())
+}
 public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: __root___produce_DATA_OBJECT())
 }
@@ -342,6 +375,11 @@ public func receive_ABSTRACT_CLASS(
     x: main.ABSTRACT_CLASS
 ) -> Swift.Void {
     return __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(x.__externalRCRef())
+}
+public func receive_DATA_CLASS(
+    x: main.DATA_CLASS
+) -> Swift.Void {
+    return __root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__(x.__externalRCRef())
 }
 public func recieve_DATA_OBJECT(
     x: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT
@@ -483,9 +521,6 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public static func produce_DATA_CLASS() -> Swift.Never {
-        fatalError()
-    }
     public static func produce_ENUM() -> Swift.Never {
         fatalError()
     }
@@ -493,11 +528,6 @@ public extension ExportedKotlinPackages.ignored {
         fatalError()
     }
     public static func produce_VALUE_CLASS() -> Swift.Never {
-        fatalError()
-    }
-    public static func receive_DATA_CLASS(
-        x: Swift.Never
-    ) -> Swift.Void {
         fatalError()
     }
     public static func receive_ENUM(

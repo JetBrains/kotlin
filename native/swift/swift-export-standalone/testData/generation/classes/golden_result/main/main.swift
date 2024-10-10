@@ -39,6 +39,120 @@ public final class ClassWithNonPublicConstructor : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public final class DATA_CLASS : KotlinRuntime.KotlinBase {
+    public var a: Swift.Int32 {
+        get {
+            return DATA_CLASS_a_get(self.__externalRCRef())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+    public init(
+        a: Swift.Int32
+    ) {
+        let __kt = __root___DATA_CLASS_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, a)
+    }
+    public func copy(
+        a: Swift.Int32
+    ) -> main.DATA_CLASS {
+        return main.DATA_CLASS(__externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+    }
+    public func hashCode() -> Swift.Int32 {
+        return DATA_CLASS_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return DATA_CLASS_toString(self.__externalRCRef())
+    }
+}
+public final class DATA_CLASS_WITH_MANY_FIELDS : KotlinRuntime.KotlinBase {
+    public var a: Swift.Int32 {
+        get {
+            return DATA_CLASS_WITH_MANY_FIELDS_a_get(self.__externalRCRef())
+        }
+    }
+    public var b: Swift.String {
+        get {
+            return DATA_CLASS_WITH_MANY_FIELDS_b_get(self.__externalRCRef())
+        }
+    }
+    public var c: KotlinRuntime.KotlinBase {
+        get {
+            return KotlinRuntime.KotlinBase(__externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef()))
+        }
+    }
+    public var d: Swift.Double {
+        get {
+            return DATA_CLASS_WITH_MANY_FIELDS_d_get(self.__externalRCRef())
+        }
+    }
+    public var e: Swift.String {
+        get {
+            return DATA_CLASS_WITH_MANY_FIELDS_e_get(self.__externalRCRef())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+    public init(
+        a: Swift.Int32,
+        b: Swift.String,
+        c: KotlinRuntime.KotlinBase
+    ) {
+        let __kt = __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(__kt, a, b, c.__externalRCRef())
+    }
+    public func copy(
+        a: Swift.Int32,
+        b: Swift.String,
+        c: KotlinRuntime.KotlinBase
+    ) -> main.DATA_CLASS_WITH_MANY_FIELDS {
+        return main.DATA_CLASS_WITH_MANY_FIELDS(__externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(self.__externalRCRef(), a, b, c.__externalRCRef()))
+    }
+    public func hashCode() -> Swift.Int32 {
+        return DATA_CLASS_WITH_MANY_FIELDS_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return DATA_CLASS_WITH_MANY_FIELDS_toString(self.__externalRCRef())
+    }
+}
+public final class DATA_CLASS_WITH_REF : KotlinRuntime.KotlinBase {
+    public var o: KotlinRuntime.KotlinBase {
+        get {
+            return KotlinRuntime.KotlinBase(__externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+    public init(
+        o: KotlinRuntime.KotlinBase
+    ) {
+        let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(__kt, o.__externalRCRef())
+    }
+    public func copy(
+        o: KotlinRuntime.KotlinBase
+    ) -> main.DATA_CLASS_WITH_REF {
+        return main.DATA_CLASS_WITH_REF(__externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+    }
+    public func hashCode() -> Swift.Int32 {
+        return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
+    }
+}
 public final class Foo : KotlinRuntime.KotlinBase {
     public final class Companion : KotlinRuntime.KotlinBase {
         public var my_value_inner: Swift.UInt32 {
