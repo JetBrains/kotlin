@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.Assert
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 
 internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 private const val DIST_DIR_JS_PATH = "dist/js/"
@@ -131,13 +132,16 @@ abstract class AbstractJsTestChecker {
 
     protected abstract fun run(files: List<String>, f: ScriptEngine.() -> String): String
 
-    protected val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
-    protected var engineUsageCnt = 0
-    protected inline fun periodicScriptEngineRecreate(doCleanup: () -> Unit) {
-        if (engineUsageCnt++ > SCRIPT_ENGINE_REUSAGE_LIMIT) {
-            engineUsageCnt = 0
+    private var engineUsageCnt = AtomicInteger(0)
+    protected fun periodicScriptEngineRecreate(doCleanup: () -> Unit) {
+        if (engineUsageCnt.getAndIncrement() > SCRIPT_ENGINE_REUSAGE_LIMIT) {
+            engineUsageCnt.set(0)
             doCleanup()
         }
+    }
+
+    companion object {
+        private const val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
     }
 }
 
