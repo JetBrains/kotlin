@@ -56,7 +56,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:iosArm64DebugBuildSPMPackage")
                 assertTasksExecuted(":shared:mergeIosDebugSwiftExportLibraries")
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
-                assertTasksSkipped(":shared:embedSwiftExportForXcode")
+                assertTasksExecuted(":shared:embedSwiftExportForXcode")
 
                 assertDirectoryInProjectExists("shared/build/MergedLibraries/ios/Debug")
                 assertDirectoryInProjectExists("shared/build/SPMBuild/iosArm64/Debug")
