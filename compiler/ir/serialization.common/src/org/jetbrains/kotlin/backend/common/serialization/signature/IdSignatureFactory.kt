@@ -182,27 +182,15 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 }
 
 class IdSignatureFactory(
-    private val publicSignatureBuilder: PublicIdSignatureComputer,
-    private val table: DeclarationTable<*>,
-) : IdSignatureComputer {
-
-    private val mangler: KotlinMangler.IrMangler = publicSignatureBuilder.mangler
-
-    override fun computeSignature(declaration: IrDeclaration): IdSignature {
-        return publicSignatureBuilder.computeSignature(declaration)
-    }
-
-    fun composeSignatureForDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        return if (mangler.run { declaration.isExported(compatibleMode) }) {
-            publicSignatureBuilder.composePublicIdSignature(declaration, compatibleMode)
-        } else composeFileLocalIdSignature(declaration, compatibleMode)
-    }
+    private val table: DeclarationTable<*>
+) {
+    private val mangler: KotlinMangler.IrMangler = table.globalDeclarationTable.mangler
 
     private var localIndex: Long = START_INDEX.toLong()
     private var scopeIndex: Int = START_INDEX
 
-    override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R =
-        publicSignatureBuilder.inFile(file, block)
+    private fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature =
+        table.signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
 
     private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
         when (container) {
@@ -213,7 +201,7 @@ class IdSignatureFactory(
                 mask = 0,
                 description = null,
             )
-            is IrDeclaration -> table.signatureByDeclaration(container, compatibleMode, recordInSignatureClashDetector = false)
+            is IrDeclaration -> signatureByDeclaration(container, compatibleMode)
             else -> error("Unexpected container ${container.render()}")
         }
 
@@ -224,13 +212,13 @@ class IdSignatureFactory(
                 is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
                 is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
                 is IrField -> {
-                    val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner, compatibleMode) }
+                    val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
                         ?: composeContainerIdSignature(declaration.parent, compatibleMode)
                     IdSignature.FileLocalSignature(p, ++localIndex)
                 }
                 is IrSimpleFunction -> {
                     val parent = declaration.parent
-                    val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner, compatibleMode) }
+                    val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
                         ?: composeContainerIdSignature(parent, compatibleMode)
                     IdSignature.FileLocalSignature(
                         p,
