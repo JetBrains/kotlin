@@ -44006,6 +44006,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
+      @Test
+      @TestMetadata("uLongInValueClass.kt")
+      public void testULongInValueClass() {
+        runTest("compiler/testData/codegen/box/valueClasses/uLongInValueClass.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
       @TestDataPath("$PROJECT_ROOT")

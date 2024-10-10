@@ -59686,6 +59686,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("uLongInValueClass.kt")
+    public void testULongInValueClass() {
+      runTest("compiler/testData/codegen/box/valueClasses/uLongInValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("visibility.kt")
     public void testVisibility() {
       runTest("compiler/testData/codegen/box/valueClasses/visibility.kt");
