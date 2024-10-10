@@ -98,7 +98,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     @DisplayName("KT-41378: declaration that is gone - with cache")
     @GradleTest
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Don't run it on Windows. Caches are not supported there yet.")
-//    @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.MAC, OS.LINUX])
     fun shouldBuildIrLinkerWithCache(
         gradleVersion: GradleVersion,
         @TempDir tempDir: Path,

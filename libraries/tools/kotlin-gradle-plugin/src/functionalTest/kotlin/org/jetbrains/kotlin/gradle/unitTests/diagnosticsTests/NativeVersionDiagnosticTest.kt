@@ -39,11 +39,11 @@ class NativeVersionDiagnosticTest {
     @Test
     fun kotlinNativeVersionCheck() {
         val project = setUpProject(CURRENT)
-        project.assertNoDiagnostics()
+        project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
     }
 
     companion object {
-        val CURRENT
+        val CURRENT: String
             get() = System.getProperty("kotlinVersion")
     }
 }

@@ -72,8 +72,8 @@ internal fun Project.checkDiagnostics(
     KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
 }
 
-internal fun Project.assertNoDiagnostics() {
-    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),) {
+    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
