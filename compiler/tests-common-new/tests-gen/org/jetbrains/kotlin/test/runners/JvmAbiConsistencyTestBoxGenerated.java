@@ -57788,6 +57788,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("kt71462.kt")
+    public void testKt71462() {
+      runTest("compiler/testData/codegen/box/typealias/kt71462.kt");
+    }
+
+    @Test
     @TestMetadata("objectLiteralConstructor.kt")
     public void testObjectLiteralConstructor() {
       runTest("compiler/testData/codegen/box/typealias/objectLiteralConstructor.kt");
