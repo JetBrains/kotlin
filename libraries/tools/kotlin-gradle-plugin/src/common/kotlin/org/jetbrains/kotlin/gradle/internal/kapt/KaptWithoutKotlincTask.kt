@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -13,7 +12,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -30,13 +28,17 @@ import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.IOException
 import java.io.Serializable
 import java.net.URL
 import java.net.URLClassLoader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.function.Consumer
 import javax.inject.Inject
+import kotlin.use
 
 @CacheableTask
 abstract class KaptWithoutKotlincTask @Inject constructor(
@@ -93,6 +95,83 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         return result
     }
 
+    private fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
+        val jarDirs: Array<Path>
+        val fileName = home.fileName
+        if (fileName != null && "Home" == fileName.toString() && Files.exists(home.resolve("../Classes/classes.jar"))) {
+            val libDir = home.resolve("lib")
+            val classesDir = home.resolveSibling("Classes")
+            val libExtDir = libDir.resolve("ext")
+            val libEndorsedDir = libDir.resolve("endorsed")
+            jarDirs = arrayOf(libEndorsedDir, libDir, classesDir, libExtDir)
+        } else if (Files.exists(home.resolve("lib/jrt-fs.jar"))) {
+            jarDirs = emptyArray()
+        } else {
+            val libDir = home.resolve(if (isJre) "lib" else "jre/lib")
+            val libExtDir = libDir.resolve("ext")
+            val libEndorsedDir = libDir.resolve("endorsed")
+            jarDirs = arrayOf(libEndorsedDir, libDir, libExtDir)
+        }
+
+        val rootFiles: MutableList<Path> = ArrayList<Path>()
+
+        val pathFilter: MutableSet<String?> = hashSetOf()
+        for (jarDir in jarDirs) {
+            if (Files.isDirectory(jarDir)) {
+                try {
+                    Files.newDirectoryStream(jarDir, "*.jar").use { stream ->
+                        for (jarFile in stream) {
+                            val jarFileName = jarFile.getFileName().toString()
+                            if (jarFileName == "alt-rt.jar" || jarFileName == "alt-string.jar") {
+                                continue  // filter out alternative implementations
+                            }
+                            val canonicalPath = getCanonicalPath(jarFile)
+                            if (canonicalPath == null || !pathFilter.add(canonicalPath)) {
+                                continue  // filter out duplicate (symbolically linked) .jar files commonly found in OS X JDK distributions
+                            }
+                            rootFiles.add(jarFile)
+                        }
+                    }
+                } catch (ignored: IOException) {
+                }
+            }
+        }
+
+        if (rootFiles.any { path -> path.getFileName().toString().startsWith("ibm") }) {
+            // ancient IBM JDKs split JRE classes between `rt.jar` and `vm.jar`, and the latter might be anywhere
+            try {
+                Files.walk(if (isJre) home else home.resolve("jre")).use { paths ->
+                    paths.filter { path: Path? -> path!!.getFileName().toString() == "vm.jar" }
+                        .findFirst()
+                        .ifPresent(Consumer { e -> rootFiles.add(e) })
+                }
+            } catch (ignored: IOException) {
+            }
+        }
+
+        val classesZip = home.resolve("lib/classes.zip")
+        if (Files.isRegularFile(classesZip)) {
+            rootFiles.add(classesZip)
+        }
+
+        if (rootFiles.isEmpty()) {
+            val classesDir = home.resolve("classes")
+            if (Files.isDirectory(classesDir)) {
+                rootFiles.add(classesDir)
+            }
+        }
+
+        return rootFiles.map { it.toFile() }
+    }
+
+    private fun getCanonicalPath(file: Path): String? {
+        try {
+            return file.toRealPath().toString()
+        } catch (e: IOException) {
+            return null
+        }
+    }
+
     @TaskAction
     fun compile(inputChanges: InputChanges) {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
@@ -109,7 +188,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         if (addJdkClassesToClasspath.get()) {
             compileClasspath.addAll(
                 0,
-                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome)
+                getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome.toPath(), false)
             )
         }
 
