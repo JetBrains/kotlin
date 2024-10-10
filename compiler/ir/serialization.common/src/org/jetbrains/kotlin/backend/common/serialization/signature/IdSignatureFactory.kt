@@ -205,51 +205,47 @@ class IdSignatureFactory(
             else -> error("Unexpected container ${container.render()}")
         }
 
-    fun composeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        return table.privateDeclarationSignature(declaration, compatibleMode) {
-            when (declaration) {
-                is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
-                is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
-                is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
-                is IrField -> {
-                    val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
-                        ?: composeContainerIdSignature(declaration.parent, compatibleMode)
-                    IdSignature.FileLocalSignature(p, ++localIndex)
-                }
-                is IrSimpleFunction -> {
-                    val parent = declaration.parent
-                    val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
-                        ?: composeContainerIdSignature(parent, compatibleMode)
-                    IdSignature.FileLocalSignature(
-                        p,
-                        if (declaration.isOverridableFunction()) {
-                            mangler.run { declaration.signatureMangle(compatibleMode) }
-                        } else {
-                            ++localIndex
-                        },
-                        declaration.render()
-                    )
-                }
-                is IrProperty -> {
-                    val parent = declaration.parent
-                    IdSignature.FileLocalSignature(
-                        composeContainerIdSignature(parent, compatibleMode),
-                        if (declaration.isOverridableProperty()) {
-                            mangler.run { declaration.signatureMangle(compatibleMode) }
-                        } else {
-                            ++localIndex
-                        },
-                        declaration.render()
-                    )
-                }
-                else -> {
-                    IdSignature.FileLocalSignature(
-                        composeContainerIdSignature(declaration.parent, compatibleMode),
-                        ++localIndex,
-                        declaration.render()
-                    )
-                }
-            }
+    fun composeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
+        is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
+        is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
+        is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
+        is IrField -> {
+            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
+                ?: composeContainerIdSignature(declaration.parent, compatibleMode)
+            IdSignature.FileLocalSignature(p, ++localIndex)
+        }
+        is IrSimpleFunction -> {
+            val parent = declaration.parent
+            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
+                ?: composeContainerIdSignature(parent, compatibleMode)
+            IdSignature.FileLocalSignature(
+                p,
+                if (declaration.isOverridableFunction()) {
+                    mangler.run { declaration.signatureMangle(compatibleMode) }
+                } else {
+                    ++localIndex
+                },
+                declaration.render()
+            )
+        }
+        is IrProperty -> {
+            val parent = declaration.parent
+            IdSignature.FileLocalSignature(
+                composeContainerIdSignature(parent, compatibleMode),
+                if (declaration.isOverridableProperty()) {
+                    mangler.run { declaration.signatureMangle(compatibleMode) }
+                } else {
+                    ++localIndex
+                },
+                declaration.render()
+            )
+        }
+        else -> {
+            IdSignature.FileLocalSignature(
+                composeContainerIdSignature(declaration.parent, compatibleMode),
+                ++localIndex,
+                declaration.render()
+            )
         }
     }
 
