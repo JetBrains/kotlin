@@ -52,7 +52,7 @@ internal class PreCodegenInliner(
     private val rootSet = callGraph.rootSet
 
     /**
-     * The node color (same as in the tricolor DFS algorithm).
+     * Node color (same as in the tricolor DFS algorithm).
      */
     private enum class NodeColor {
         /**
