@@ -15813,12 +15813,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
-      @TestMetadata("ImportFromRootPackage.kt")
-      public void testImportFromRootPackage() {
-        runTest("compiler/testData/diagnostics/tests/imports/ImportFromRootPackage.kt");
-      }
-
-      @Test
       @TestMetadata("importFunctionWithAllUnderImport.kt")
       public void testImportFunctionWithAllUnderImport() {
         runTest("compiler/testData/diagnostics/tests/imports/importFunctionWithAllUnderImport.kt");
@@ -15969,12 +15963,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
-      @TestMetadata("noImportFromRootPackage.kt")
-      public void testNoImportFromRootPackage() {
-        runTest("compiler/testData/diagnostics/tests/imports/noImportFromRootPackage.kt");
-      }
-
-      @Test
       @TestMetadata("OperatorRenameOnImport.kt")
       public void testOperatorRenameOnImport() {
         runTest("compiler/testData/diagnostics/tests/imports/OperatorRenameOnImport.kt");
@@ -16032,6 +16020,30 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("renamedImportInDifferentFile.kt")
       public void testRenamedImportInDifferentFile() {
         runTest("compiler/testData/diagnostics/tests/imports/renamedImportInDifferentFile.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackage.kt")
+      public void testRootPackage() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackage.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackageImportsA.kt")
+      public void testRootPackageImportsA() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageImportsA.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackageImportsB.kt")
+      public void testRootPackageImportsB() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageImportsB.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackageNoImports.kt")
+      public void testRootPackageNoImports() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports.kt");
       }
 
       @Test
