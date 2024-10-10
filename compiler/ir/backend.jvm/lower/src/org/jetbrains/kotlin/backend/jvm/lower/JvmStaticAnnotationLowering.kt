@@ -64,7 +64,7 @@ private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
 
 private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?): IrExpression {
     val receiver = dispatchReceiver ?: return this
-    dispatchReceiver = null
+    removeDispatchReceiver()
     if (replaceCallee != null) {
         (this as IrCall).symbol = replaceCallee.symbol
     }
