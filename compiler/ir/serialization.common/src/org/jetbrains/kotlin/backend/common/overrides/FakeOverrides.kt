@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -50,10 +48,7 @@ class FakeOverrideGlobalDeclarationTable(
 open class FakeOverrideDeclarationTable(
     mangler: KotlinMangler.IrMangler,
     globalDeclarationTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler),
-    signatureSerializerFactory: (PublicIdSignatureComputer, FakeOverrideDeclarationTable) -> IdSignatureFactory
 ) : DeclarationTable<FakeOverrideGlobalDeclarationTable>(globalDeclarationTable) {
-    override val signaturer: IdSignatureFactory = signatureSerializerFactory(globalDeclarationTable.publicIdSignatureComputer, this)
-
     fun clear() {
         table.clear()
         globalDeclarationTable.clear()
@@ -250,9 +245,7 @@ class IrLinkerFakeOverrideProvider(
     friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
-    private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
-        IdSignatureFactory(builder, table)
-    },
+    private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
 ) {
     private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
