@@ -197,26 +197,27 @@ internal fun Project.registerEmbedSwiftExportTask(
         return
     }
 
-    envBuildType?.let { buildType ->
-        val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
-
-        val swiftExportTask = registerSwiftExportTask(
-            swiftExportExtension,
-            SwiftExportDSLConstants.TASK_GROUP,
-            buildType,
-            target
-        )
-
-        swiftExportTask.dependsOn(sandBoxTask)
-
-        val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
-            task.group = BasePlugin.BUILD_GROUP
-            task.description = "Embed Swift Export artifacts requested by Xcode's environment variables"
-            task.isEnabled = false
-        }
-
-        embedAndSignTask.dependsOn(swiftExportTask)
+    if (envBuildType == null) {
+        error("Missing required environment variable: CONFIGURATION. Please verify that the CONFIGURATION variable is correctly set in your Xcode's environment settings")
     }
+
+    val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+
+    val swiftExportTask = registerSwiftExportTask(
+        swiftExportExtension,
+        SwiftExportDSLConstants.TASK_GROUP,
+        envBuildType,
+        target
+    )
+
+    swiftExportTask.dependsOn(sandBoxTask)
+
+    val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Embed Swift Export artifacts requested by Xcode's environment variables"
+    }
+
+    embedAndSignTask.dependsOn(swiftExportTask)
 }
 
 internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment) {
