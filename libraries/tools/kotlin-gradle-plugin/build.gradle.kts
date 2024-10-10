@@ -103,10 +103,7 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
 )
 
 val intellijRuntimeDependencies = listOf( // TODO: remove in KT-70252
-    intellijUtilRt(), // for kapt (PathUtil.getJdkClassesRoots)
     intellijPlatformUtil(), // for kapt (JavaVersion), KotlinToolRunner (escapeStringCharacters)
-    intellijPlatformUtilBase(), // for kapt (PathUtil.getJdkClassesRoots)
-    libs.intellij.fastutil.get().toString() // for kapt (PathUtil.getJdkClassesRoots)
 )
 
 dependencies {
