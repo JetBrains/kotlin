@@ -43,7 +43,7 @@ object SourceElementPositioningStrategies {
 
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
-        PositioningStrategies.DECLARATION_NAME_K2
+        PositioningStrategies.DECLARATION_NAME
     )
 
     val DECLARATION_NAME_ONLY = SourceElementPositioningStrategy(
@@ -53,7 +53,7 @@ object SourceElementPositioningStrategies {
 
     val DECLARATION_SIGNATURE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE,
-        PositioningStrategies.DECLARATION_SIGNATURE_K2
+        PositioningStrategies.DECLARATION_SIGNATURE
     )
 
     val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS = SourceElementPositioningStrategy(
@@ -63,7 +63,7 @@ object SourceElementPositioningStrategies {
 
     val DECLARATION_SIGNATURE_OR_DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT,
-        PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT_K2
+        PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
     )
 
     val VISIBILITY_MODIFIER = SourceElementPositioningStrategy(

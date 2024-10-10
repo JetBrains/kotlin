@@ -23,7 +23,7 @@ object ClassicPositioningStrategies {
                 val nameIdentifier = element.nameIdentifier
                 return when {
                     nameIdentifier != null -> markElement(nameIdentifier)
-                    element is KtNamedFunction -> PositioningStrategies.DECLARATION_SIGNATURE.mark(element)
+                    element is KtNamedFunction -> PositioningStrategies.DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
                     else -> PositioningStrategies.DEFAULT.mark(element)
                 }
             }

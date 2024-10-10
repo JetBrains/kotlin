@@ -162,9 +162,9 @@ object PositioningStrategies {
             ?: element
 
     @JvmField
-    val DECLARATION_NAME: PositioningStrategy<KtDeclaration> = DeclarationName(true)
+    val DECLARATION_NAME_WITH_VALIDITY_CHECK: PositioningStrategy<KtDeclaration> = DeclarationName(true)
 
-    val DECLARATION_NAME_K2: PositioningStrategy<KtDeclaration> = DeclarationName(false)
+    val DECLARATION_NAME: PositioningStrategy<KtDeclaration> = DeclarationName(false)
 
     private class DeclarationName(checkValidity: Boolean) : DeclarationHeader<KtDeclaration>(checkValidity) {
         override fun mark(element: KtDeclaration): List<TextRange> {
@@ -178,7 +178,7 @@ object PositioningStrategies {
                     return markElement(nameIdentifier)
                 }
                 if (element is KtNamedFunction) {
-                    return DECLARATION_SIGNATURE.mark(element)
+                    return DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
                 }
             } else if (element is KtPropertyAccessor) {
                 return markElement(element.namePlaceholder)
@@ -192,7 +192,7 @@ object PositioningStrategies {
         override fun mark(element: KtDeclaration): List<TextRange> {
             return when (element) {
                 is KtPropertyAccessor -> markElement(element.namePlaceholder)
-                is KtNamedDeclaration -> DECLARATION_NAME.mark(element)
+                is KtNamedDeclaration -> DECLARATION_NAME_WITH_VALIDITY_CHECK.mark(element)
                 else -> super.mark(element)
             }
         }
@@ -206,16 +206,16 @@ object PositioningStrategies {
                 return markElement(nameIdentifier)
             }
             if (element is KtNamedFunction) {
-                return DECLARATION_SIGNATURE.mark(element)
+                return DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
             }
             return DEFAULT.mark(element)
         }
     }
 
     @JvmField
-    val DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = DeclarationSignature(true)
+    val DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK: PositioningStrategy<KtDeclaration> = DeclarationSignature(true)
 
-    val DECLARATION_SIGNATURE_K2: PositioningStrategy<KtDeclaration> = DeclarationSignature(false)
+    val DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = DeclarationSignature(false)
 
     private class DeclarationSignature(checkValidity: Boolean) : DeclarationHeader<KtDeclaration>(checkValidity) {
         override fun mark(element: KtDeclaration): List<TextRange> {
@@ -257,7 +257,7 @@ object PositioningStrategies {
                     return markRange(nameAsDeclaration, primaryConstructorParameterList)
                 }
                 is KtObjectDeclaration -> {
-                    return DECLARATION_NAME.mark(element)
+                    return DECLARATION_NAME_WITH_VALIDITY_CHECK.mark(element)
                 }
                 is KtClassInitializer -> {
                     return markRange(element.initKeyword.textRange)
@@ -294,7 +294,7 @@ object PositioningStrategies {
                 }
             }
             return if (element is KtDeclaration) {
-                DECLARATION_SIGNATURE.mark(element)
+                DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
             } else {
                 DEFAULT.mark(element)
             }
@@ -302,10 +302,10 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val DECLARATION_SIGNATURE_OR_DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return if (element is KtDeclaration)
-                DECLARATION_SIGNATURE.mark(element)
+                DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
             else
                 DEFAULT.mark(element)
         }
@@ -313,16 +313,16 @@ object PositioningStrategies {
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: PsiElement): Boolean {
             return if (element is KtDeclaration)
-                DECLARATION_SIGNATURE.isValid(element)
+                DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.isValid(element)
             else
                 DEFAULT.isValid(element)
         }
     }
 
-    val DECLARATION_SIGNATURE_OR_DEFAULT_K2: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val DECLARATION_SIGNATURE_OR_DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return if (element is KtDeclaration)
-                DECLARATION_SIGNATURE_K2.mark(element)
+                DECLARATION_SIGNATURE.mark(element)
             else
                 DEFAULT.mark(element)
         }
@@ -353,7 +353,7 @@ object PositioningStrategies {
                     return markElement(ktTypeParameterList)
                 }
             }
-            return DECLARATION_SIGNATURE.mark(element)
+            return DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.mark(element)
         }
     }
 
@@ -824,7 +824,7 @@ object PositioningStrategies {
             if (element is KtFunctionLiteral) {
                 return markNode(element.lBrace.node)
             }
-            return DECLARATION_SIGNATURE_OR_DEFAULT.mark(element)
+            return DECLARATION_SIGNATURE_OR_DEFAULT_WITH_VALIDITY_CHECK.mark(element)
         }
     }
 
