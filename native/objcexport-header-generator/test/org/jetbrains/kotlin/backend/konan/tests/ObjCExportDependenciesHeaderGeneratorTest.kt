@@ -273,6 +273,14 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test - suspend handler translated as result and error parameters`() {
+        doTest(
+            root = dependenciesDir.resolve("suspendHandlerTranslatedAsResultAndErrorParameters"),
+            configuration = HeaderGenerator.Configuration(dependencies = listOf(testLibraryKotlinxCoroutines))
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
