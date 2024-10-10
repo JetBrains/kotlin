@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.SyntheticPropertyDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -90,11 +91,30 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             isAdaptedCallableReference(resolvedCall, resolvedDescriptor, callableReferenceType) ->
                 generateAdaptedCallableReference(ktCallableReference, callBuilder, callableReferenceType)
 
-            else ->
+            else -> {
+                // The K1 frontend generates synthetic properties for Java getX/setX-like methods as if they have _extension_ receiver.
+                //
+                // However, in IR we have to assume the following invariant:
+                // the shape of an IrPropertyReference must match the shape of IrPropertyReference#getter.
+                //
+                // In the case of synthetic Java properties, IrPropertyReference#getter is the Java getX method,
+                // which has a _dispatch_ receiver, not extension receiver.
+                //
+                // For this reason, we have to do this hack.
+                val dispatchReceiverValue = if (resolvedDescriptor is SyntheticPropertyDescriptor) {
+                    resolvedCall.extensionReceiver
+                } else {
+                    resolvedCall.dispatchReceiver
+                }
+                val extensionReceiverValue = if (resolvedDescriptor is SyntheticPropertyDescriptor) {
+                    null
+                } else {
+                    resolvedCall.extensionReceiver
+                }
                 statementGenerator.generateCallReceiver(
                     ktCallableReference,
                     resolvedDescriptor,
-                    resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.contextReceivers,
+                    dispatchReceiverValue, extensionReceiverValue, resolvedCall.contextReceivers,
                     isSafe = false
                 ).call { dispatchReceiverValue, extensionReceiverValue, _ ->
                     generateCallableReference(
@@ -107,6 +127,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
                     }
                 }
+            }
         }
     }
 
@@ -617,11 +638,30 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         val originalProperty = propertyDescriptor.original
         val symbols = resolvePropertySymbol(originalProperty, mutable)
 
+        // The K1 frontend generates synthetic properties for Java getX/setX-like methods as if they have _extension_ receiver.
+        //
+        // However, in IR we have to assume the following invariant:
+        // the shape of an IrPropertyReference must match the shape of IrPropertyReference#getter.
+        //
+        // In the case of synthetic Java properties, IrPropertyReference#getter is the Java getX method,
+        // which has a _dispatch_ receiver, not extension receiver.
+        //
+        // For this reason, we have to do this hack.
+        val dispatchReceiver = if (propertyDescriptor is SyntheticPropertyDescriptor)
+            propertyDescriptor.getMethod.dispatchReceiverParameter
+        else
+            propertyDescriptor.dispatchReceiverParameter
+
+        val extensionReceiver = if (propertyDescriptor is SyntheticPropertyDescriptor)
+            propertyDescriptor.getMethod.extensionReceiverParameter
+        else
+            propertyDescriptor.extensionReceiverParameter
+
         return IrPropertyReferenceImplWithShape(
             startOffset, endOffset, type.toIrType(),
             symbols.propertySymbol,
-            propertyDescriptor.dispatchReceiverParameter != null,
-            propertyDescriptor.extensionReceiverParameter != null,
+            dispatchReceiver != null,
+            extensionReceiver != null,
             if (typeArguments != null) propertyDescriptor.typeParametersCount else 0,
             getFieldForPropertyReference(originalProperty),
             symbols.getterSymbol,
