@@ -129,6 +129,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
             }
         }
 
+        override fun computeSlowTopLevelClassifierNames(packageFqName: FqName): Set<Name> = emptySet()
+
         override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
 
         override fun getPackageNamesWithTopLevelCallables(): Set<String> = packageNamesForNonClassDeclarations

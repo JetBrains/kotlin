@@ -68,6 +68,10 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
         return javaFacade.knownClassNamesInPackage(packageFqName, javaSearchScope)
     }
 
+    override fun slowKnownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        return javaFacade.slowKnownClassNamesInPackage(packageFqName, javaSearchScope).orEmpty()
+    }
+
     override fun canComputeKnownClassNamesInPackage(): Boolean {
         return javaFacade.canComputeKnownClassNamesInPackage()
     }

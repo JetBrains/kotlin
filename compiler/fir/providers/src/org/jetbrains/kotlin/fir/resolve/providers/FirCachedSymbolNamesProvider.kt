@@ -29,6 +29,8 @@ abstract class FirCachedSymbolNamesProvider(protected val session: FirSession) :
 
     abstract fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>?
 
+    abstract fun computeSlowTopLevelClassifierNames(packageFqName: FqName): Set<Name>
+
     /**
      * This function is only called if [hasSpecificCallablePackageNamesComputation] is `true`. Otherwise, the callable package set will be
      * taken from the cached general package names to avoid building duplicate sets.
@@ -64,6 +66,9 @@ abstract class FirCachedSymbolNamesProvider(protected val session: FirSession) :
     private val topLevelClassifierNamesByPackage =
         session.firCachesFactory.createCache(::computeTopLevelClassifierNames)
 
+    private val slowTopLevelClassifierNamesByPackage =
+        session.firCachesFactory.createCache(::computeSlowTopLevelClassifierNames)
+
     private val topLevelCallablePackageNames by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // See the comment in `topLevelClassifierPackageNames` above for reasoning about `hasSpecific*PackageNamesComputation`.
         if (hasSpecificCallablePackageNamesComputation) {
@@ -91,6 +96,9 @@ abstract class FirCachedSymbolNamesProvider(protected val session: FirSession) :
     protected fun getTopLevelClassifierNamesInPackageSkippingPackageCheck(packageFqName: FqName): Set<Name>? =
         topLevelClassifierNamesByPackage.getValue(packageFqName)
 
+    override fun getSlowTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+        slowTopLevelClassifierNamesByPackage.getValue(packageFqName)
+
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? = topLevelCallablePackageNames
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? {
@@ -114,6 +122,9 @@ class FirDelegatingCachedSymbolNamesProvider(
 
     override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? =
         delegate.getTopLevelClassifierNamesInPackage(packageFqName)
+
+    override fun computeSlowTopLevelClassifierNames(packageFqName: FqName): Set<Name> =
+        delegate.getSlowTopLevelClassifierNamesInPackage(packageFqName)
 
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = delegate.hasSpecificCallablePackageNamesComputation
 
@@ -142,6 +153,9 @@ open class FirCompositeCachedSymbolNamesProvider(
 
     override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? =
         providers.flatMapToNullableSet { it.getTopLevelClassifierNamesInPackage(packageFqName) }
+
+    override fun computeSlowTopLevelClassifierNames(packageFqName: FqName): Set<Name> =
+        providers.flatMapTo(mutableSetOf()) { it.getSlowTopLevelClassifierNamesInPackage(packageFqName) }
 
     override val hasSpecificCallablePackageNamesComputation: Boolean = providers.any { it.hasSpecificCallablePackageNamesComputation }
 

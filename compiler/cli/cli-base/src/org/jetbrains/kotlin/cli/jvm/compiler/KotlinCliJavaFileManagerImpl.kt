@@ -253,14 +253,19 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private fun findVirtualFileGivenPackage(
         packageDir: VirtualFile,
         classNameWithInnerClasses: String,
-        rootType: JavaRoot.RootType
+        rootType: JavaRoot.RootType,
     ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
         val vFile = when (rootType) {
             JavaRoot.RootType.BINARY -> packageDir.findChild("$topLevelClassName.class")
             JavaRoot.RootType.BINARY_SIG -> packageDir.findChild("$topLevelClassName.sig")
-            JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
+            JavaRoot.RootType.SOURCE -> {
+                packageDir.findChild("$topLevelClassName.java")
+                    ?: classesWithNonMatchingNamesCache.getOrPut(packageDir to topLevelClassName) {
+                        packageDir.children.firstOrNull { child -> child.containsTopLevelClass(topLevelClassName) }
+                    }
+            }
         } ?: return null
 
         if (!vFile.isValid) {
@@ -271,10 +276,18 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return vFile
     }
 
+    private fun VirtualFile.containsTopLevelClass(topLevelClassName: String): Boolean {
+        return !isDirectory && extension == "java" &&
+                SingleJavaFileRootsIndex.JavaSourceClassIdReader(this).readClassIds()
+                    .any { it.shortClassName.asString() == topLevelClassName }
+    }
+
     private fun VirtualFile.findPsiClassInVirtualFile(classNameWithInnerClasses: String): PsiClass? {
         val file = myPsiManager.findFile(this) as? PsiClassOwner ?: return null
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
+
+    private val classesWithNonMatchingNamesCache: MutableMap<Pair<VirtualFile, String>, VirtualFile?> = Object2ObjectOpenHashMap()
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val result = ObjectOpenHashSet<String>()
@@ -292,6 +305,28 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
             result.add(classId.shortClassName.asString())
         }
+
+        return result
+    }
+
+    override fun slowKnownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        val result = ObjectOpenHashSet<String>()
+
+        index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
+            for (child in dir.children) {
+                if (child.extension == "java") {
+                    for (classId in SingleJavaFileRootsIndex.JavaSourceClassIdReader(child).readClassIds()) {
+                        val className = classId.relativeClassName.asString()
+                        if (className != child.nameWithoutExtension) {
+                            result.add(className)
+                            classesWithNonMatchingNamesCache[dir to className] = child
+                        }
+                    }
+                }
+            }
+
+            true
+        })
 
         return result
     }
