@@ -22,5 +22,5 @@ class JsIrModuleSerializer(
     override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(settings, DeclarationTable(globalDeclarationTable), jsIrFileMetadataFactory)
+        JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
 }

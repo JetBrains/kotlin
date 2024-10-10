@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 
 class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : JvmIrSerializer {
 
-    private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
+    private val declarationTable = DeclarationTable.Default(JvmGlobalDeclarationTable())
 
     override fun serializeIrFile(irFile: IrFile): ByteArray? {
         val fileClassFqName = irFile.getFileClassInfo().fileClassFqName

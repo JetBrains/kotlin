@@ -109,7 +109,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 
 open class IrFileSerializer(
     private val settings: IrSerializationSettings,
-    private val declarationTable: DeclarationTable,
+    private val declarationTable: DeclarationTable<*>,
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0

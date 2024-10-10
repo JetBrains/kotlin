@@ -48,9 +48,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
     private var localCounter: Long = 0
     private var scopeCounter: Int = 0
 
-    // TODO: we need to disentangle signature construction with declaration tables.
-    lateinit var table: DeclarationTable
-
     fun reset() {
         localCounter = 0
         scopeCounter = 0
@@ -186,7 +183,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
 class IdSignatureFactory(
     private val publicSignatureBuilder: PublicIdSignatureComputer,
-    private val table: DeclarationTable,
+    private val table: DeclarationTable<*>,
 ) : IdSignatureComputer {
 
     private val mangler: KotlinMangler.IrMangler = publicSignatureBuilder.mangler

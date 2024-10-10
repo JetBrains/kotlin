@@ -49,14 +49,13 @@ class FakeOverrideGlobalDeclarationTable(
 
 open class FakeOverrideDeclarationTable(
     mangler: KotlinMangler.IrMangler,
-    globalTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler),
-    signatureSerializerFactory: (PublicIdSignatureComputer, DeclarationTable) -> IdSignatureFactory
-) : DeclarationTable(globalTable) {
-    override val globalDeclarationTable: FakeOverrideGlobalDeclarationTable = globalTable
-    override val signaturer: IdSignatureFactory = signatureSerializerFactory(globalTable.publicIdSignatureComputer, this)
+    globalDeclarationTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler),
+    signatureSerializerFactory: (PublicIdSignatureComputer, FakeOverrideDeclarationTable) -> IdSignatureFactory
+) : DeclarationTable<FakeOverrideGlobalDeclarationTable>(globalDeclarationTable) {
+    override val signaturer: IdSignatureFactory = signatureSerializerFactory(globalDeclarationTable.publicIdSignatureComputer, this)
 
     fun clear() {
-        this.table.clear()
+        table.clear()
         globalDeclarationTable.clear()
     }
 }
@@ -79,7 +78,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
-    private val fakeOverrideDeclarationTable: DeclarationTable,
+    private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
     friendModules: Map<String, Collection<String>>,
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy,
 ) : FakeOverrideBuilderStrategy(
@@ -251,7 +250,7 @@ class IrLinkerFakeOverrideProvider(
     friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
-    private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
+    private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureFactory(builder, table)
     },
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
