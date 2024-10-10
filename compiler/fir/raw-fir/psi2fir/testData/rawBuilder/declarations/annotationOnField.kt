@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-64898
 import kotlin.reflect.KProperty
 
 annotation class Ann

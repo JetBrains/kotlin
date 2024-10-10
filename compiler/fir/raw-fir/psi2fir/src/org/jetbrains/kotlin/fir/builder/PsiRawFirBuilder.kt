@@ -2194,18 +2194,24 @@ open class PsiRawFirBuilder(
 
                             val psiPropertyDelegate = this@toFirProperty.delegate
                             if (psiPropertyDelegate != null) {
-                                fun extractDelegateExpression(): FirExpression {
-                                    return buildOrLazyExpression(psiPropertyDelegate.expression?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)) {
-                                        psiPropertyDelegate.expression?.toFirExpression("Should have delegate") ?: buildErrorExpression {
-                                            diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
-                                        }
+                                val fakeDelegateSource = psiPropertyDelegate.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+                                fun extractDelegateExpression(): FirExpression = buildOrLazyExpression(fakeDelegateSource) {
+                                    psiPropertyDelegate.expression?.toFirExpression("Should have delegate") ?: buildErrorExpression {
+                                        diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
                                     }
                                 }
 
                                 val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                     val delegateExpression = extractDelegateExpression()
-                                    source = (psiPropertyDelegate.expression ?: psiPropertyDelegate)
-                                        .toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+
+                                    // expression access triggers AST loading, so we shouldn't call it in lazy mode
+                                    source = buildOrLazy(
+                                        build = {
+                                            val element = psiPropertyDelegate.expression ?: psiPropertyDelegate
+                                            element.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
+                                        },
+                                        lazy = { fakeDelegateSource },
+                                    )
 
                                     expression = delegateExpression
                                 }
@@ -2223,7 +2229,8 @@ open class PsiRawFirBuilder(
                                     isExtension = receiverTypeReference != null,
                                     lazyDelegateExpression = lazyDelegateExpression,
                                     lazyBodyForGeneratedAccessors = lazyBody,
-                                    ::bindFunctionTarget,
+                                    bindFunction = ::bindFunctionTarget,
+                                    explicitDelegateSource = fakeDelegateSource,
                                 )
                             }
                         }

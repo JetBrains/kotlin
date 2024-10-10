@@ -1478,6 +1478,7 @@ class LightTreeRawFirDeclarationBuilder(
                             classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                             context,
                             isExtension = receiverType != null,
+                            explicitDelegateSource = delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate),
                         )
                     }
                 }
