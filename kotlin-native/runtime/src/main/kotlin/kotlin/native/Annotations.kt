@@ -80,7 +80,9 @@ public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 public annotation class EagerInitialization
 
 /**
- * Forbids inlining of this function/property with the K/N inliner. It's still could be inlined by the LLVM inliner though.
+ * Forbids inlining of this function/property with the dedicated K/N inliner.
+ * Note: this has nothing to do with the inline keyword, it's a separate inlining phase
+ * meant for optimizations. The function/property still could be inlined by LLVM though.
  */
 @ExperimentalNativeApi
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
