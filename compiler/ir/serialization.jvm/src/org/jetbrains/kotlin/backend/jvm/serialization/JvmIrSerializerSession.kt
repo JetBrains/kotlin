@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
 class JvmIrSerializerSession(
-    declarationTable: DeclarationTable,
+    declarationTable: DeclarationTable.Default,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
