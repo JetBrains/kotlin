@@ -218,8 +218,6 @@ class IdSignatureFactory(
         }
 
     fun composeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        assert(!mangler.run { declaration.isExported(compatibleMode) })
-
         return table.privateDeclarationSignature(declaration, compatibleMode) {
             when (declaration) {
                 is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
