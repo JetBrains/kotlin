@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
-import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeArgumentMetrics
+import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
