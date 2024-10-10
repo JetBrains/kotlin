@@ -1,0 +1,545 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] class MyData : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: String = R|<local>/p1|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): String
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] class MyData : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: String = R|<local>/p1|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): String
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyData : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyData] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: String = R|<local>/p1|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyData] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component1(): String
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(COMPANION_GENERATION)] class MyData : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyData] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: String = R|<local>/p1|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyData] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component1(): String
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(SUPER_TYPES)] class MyData : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyData] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: String = R|<local>/p1|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyData] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(SUPER_TYPES)] fun component1(): String
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final? data [ResolvedTo(TYPES)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=MyData] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: Int = R|<local>/p2|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] get(): Int
+
+        public? final operator [ResolvedTo(TYPES)] fun component1(): R|kotlin/String|
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final data [ResolvedTo(STATUS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyData] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final data [ResolvedTo(CONTRACTS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
+
+    }
+    @R|pack/Anno|[Types](LAZY_EXPRESSION) public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyData] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONSTANT_EVALUATION)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
+
+    }
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](s = String(str)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dataClassComponent1.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
+
+    }
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|pack/PropertyAnno|[Types](s = String(str)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(STATUS)] @R|pack/Anno|[Types](LAZY_EXPRESSION) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] dataClassComponent1.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class PropertyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
+
+    }
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(BODY_RESOLVE)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|pack/PropertyAnno|[Types](s = String(str)) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/String|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+
+    }

@@ -1069,6 +1069,30 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
       }
 
       @Test
+      @TestMetadata("dataClassComponent1.kt")
+      public void testDataClassComponent1() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/dataClassComponent1.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassConstructor.kt")
+      public void testDataClassConstructor() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/dataClassConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopy.kt")
+      public void testDataClassCopy() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/dataClassCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassProperty.kt")
+      public void testDataClassProperty() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/dataClassProperty.kt");
+      }
+
+      @Test
       @TestMetadata("parameterTypeCollision.kt")
       public void testParameterTypeCollision() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollision.kt");
@@ -1702,9 +1726,33 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("dataClassComponent1.kt")
+    public void testDataClassComponent1() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassComponent1.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassConstructor.kt")
+    public void testDataClassConstructor() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassCopy.kt")
+    public void testDataClassCopy() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassCopy.kt");
+    }
+
+    @Test
     @TestMetadata("dataClassCopyAnnotation.kt")
     public void testDataClassCopyAnnotation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassCopyAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassProperty.kt")
+    public void testDataClassProperty() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassProperty.kt");
     }
 
     @Test
