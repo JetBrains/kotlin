@@ -154,6 +154,7 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
+    proguardLibraries(project(":native:kotlin-klib-commonizer"))
 
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))

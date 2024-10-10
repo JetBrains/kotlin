@@ -55,6 +55,7 @@
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn org.xerial.snappy.SnappyBundleActivator
+-dontwarn org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
 
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*
