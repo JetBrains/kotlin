@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -35,15 +35,26 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
-        nativeProject(
-            "klibCrossCompilationWithGradlePropertyEnabled",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
+        val buildOptions =
+            // KT-62761: on Windows machine there are problems with removing tmp directory due to opened files
+            // Thus, the logic of Kotlin Native toolchain provisioning may not be involved here, KT-72068 may not be tested
+            // Consider removing the special handling for Windows after resolution of KT-62761
+            if (HostManager.hostIsMingw)
+                defaultBuildOptions
+            else defaultBuildOptions.copy(
                 // This line is required for the custom konan home location, to check that it is downloaded,
                 // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
                 // but please don't remove while `kotlin.native.enableKlibsCrossCompilation` flag exists.
-                konanDataDir = konanDataDir
+                konanDataDir = konanDataDir,
+                // TODO: remove explicit version selection after resolution of KTI-1928
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                )
             )
+        nativeProject(
+            "klibCrossCompilationWithGradlePropertyEnabled",
+            gradleVersion,
+            buildOptions = buildOptions
         ) {
             build(":compileKotlinIosArm64") {
                 KotlinTestUtils.assertEqualsToFile(
