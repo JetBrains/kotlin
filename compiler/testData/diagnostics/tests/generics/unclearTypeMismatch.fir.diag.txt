@@ -1,0 +1,3 @@
+/unclearTypeMismatch.fir.kt:(83,86): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/unclearTypeMismatch.fir.kt:(87,91): error: Argument type mismatch: actual type is 'kotlin.collections.List<kotlin.Int>', but 'kotlin.collections.List<T>' was expected.

@@ -14893,6 +14893,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("unclearTypeMismatch.kt")
+      public void testUnclearTypeMismatch() {
+        runTest("compiler/testData/diagnostics/tests/generics/unclearTypeMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedClassifierInWhere.kt")
       public void testUnresolvedClassifierInWhere() {
         runTest("compiler/testData/diagnostics/tests/generics/unresolvedClassifierInWhere.kt");
