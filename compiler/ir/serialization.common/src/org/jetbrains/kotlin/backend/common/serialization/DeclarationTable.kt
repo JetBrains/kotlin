@@ -52,23 +52,21 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
 abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarationTable: GDT) {
     class Default(globalTable: GlobalDeclarationTable) : DeclarationTable<GlobalDeclarationTable>(globalTable)
 
+    val mangler = globalDeclarationTable.mangler
     protected val table = hashMapOf<IrDeclaration, IdSignature>()
 
-    // TODO: we need to disentangle signature construction with declaration tables.
-    val signaturer: IdSignatureFactory = IdSignatureFactory(this)
+    private val signaturer = IdSignatureFactory(mangler) { declaration, compatibleMode ->
+        signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
+    }
 
     fun <R> inFile(file: IrFile?, block: () -> R): R =
         globalDeclarationTable.publicIdSignatureComputer.inFile(file?.symbol, block)
 
     private fun IrDeclaration.shouldHaveLocalSignature(compatibleMode: Boolean): Boolean {
-        return with(globalDeclarationTable.mangler) { !this@shouldHaveLocalSignature.isExported(compatibleMode) }
+        return with(mangler) { !this@shouldHaveLocalSignature.isExported(compatibleMode) }
     }
 
     protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
-
-    private fun allocateIndexedSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        return table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
-    }
 
     fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }

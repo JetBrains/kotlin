@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -182,15 +181,11 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 }
 
 class IdSignatureFactory(
-    private val table: DeclarationTable<*>
+    val mangler: KotlinMangler.IrMangler,
+    private val signatureByDeclaration: (declaration: IrDeclaration, compatibleMode: Boolean) -> IdSignature,
 ) {
-    private val mangler: KotlinMangler.IrMangler = table.globalDeclarationTable.mangler
-
     private var localIndex: Long = START_INDEX.toLong()
     private var scopeIndex: Int = START_INDEX
-
-    private fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature =
-        table.signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
 
     private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
         when (container) {
