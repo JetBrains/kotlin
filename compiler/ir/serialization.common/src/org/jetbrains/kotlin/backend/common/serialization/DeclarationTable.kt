@@ -78,7 +78,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }
         return if (declaration.shouldHaveLocalSignature(compatibleMode)) {
-            allocateIndexedSignature(declaration, compatibleMode)
+            table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
         } else {
             globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
         }
