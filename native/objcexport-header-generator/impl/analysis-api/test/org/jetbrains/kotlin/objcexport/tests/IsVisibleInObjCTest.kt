@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.toObjCExportFile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -300,7 +299,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - class with no provided name is invisible`() {
-        "class".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("class") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.classifierSymbols.first()))
             }
@@ -309,7 +308,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - interface with no provided name is invisible`() {
-        "interface".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("interface") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.classifierSymbols.first()))
             }
@@ -318,7 +317,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - object with no provided name is invisible`() {
-        "object".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("object") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.classifierSymbols.first()))
             }
@@ -327,7 +326,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - enum class with no provided name is invisible`() {
-        "object".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("object") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.classifierSymbols.first()))
             }
@@ -336,7 +335,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - fun with no provided name is invisible`() {
-        "fun".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("fun") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.callableSymbols.first()))
             }
@@ -345,7 +344,7 @@ class IsVisibleInObjCTest(
 
     @Test
     fun `test - val with no provided name is invisible`() {
-        "val".toObjCExportFile(inlineSourceCodeAnalysis) { file ->
+        inlineSourceCodeAnalysis.createObjCExportFile("val") { file ->
             with(analysisSession) {
                 assertFalse(isVisibleInObjC(file.callableSymbols.first()))
             }
