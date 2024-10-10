@@ -215,6 +215,10 @@ internal fun Project.registerEmbedSwiftExportTask(
     val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Embed Swift Export artifacts requested by Xcode's environment variables"
+        task.inputs.apply {
+            property("type", envBuildType)
+            property("targets", envTargets)
+        }
     }
 
     embedAndSignTask.dependsOn(swiftExportTask)
