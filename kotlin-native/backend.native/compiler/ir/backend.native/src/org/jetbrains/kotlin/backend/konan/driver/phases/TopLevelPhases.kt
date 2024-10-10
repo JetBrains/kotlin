@@ -415,7 +415,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
-    val enablePreCodegenInliner = context.config.enablePreCodegenInliner && optimize
+    val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.

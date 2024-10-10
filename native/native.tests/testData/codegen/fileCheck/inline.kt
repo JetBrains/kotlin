@@ -1,6 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
-// FREE_COMPILER_ARGS: -Xbinary=enablePreCodegenInliner=true
+// FREE_COMPILER_ARGS: -Xbinary=preCodegenInlineThreshold=40
 // FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.NoInline
 

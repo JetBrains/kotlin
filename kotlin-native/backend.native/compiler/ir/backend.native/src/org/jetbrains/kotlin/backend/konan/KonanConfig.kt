@@ -266,8 +266,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
     }
 
-    val enablePreCodegenInliner: Boolean by lazy {
-        configuration.get(BinaryOptions.enablePreCodegenInliner) ?: false
+    val preCodegenInlineThreshold: UInt by lazy {
+        configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 0U
     }
 
     init {
