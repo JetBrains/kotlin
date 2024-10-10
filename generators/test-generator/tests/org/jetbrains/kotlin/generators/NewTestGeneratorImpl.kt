@@ -201,11 +201,56 @@ class NewTestGeneratorImpl(
                 }
             }
 
-            generateTestClass(p, model, false)
+            generateTestClass(
+                p, model, false,
+                deepEmptyModels = when {
+                    model.innerTestClasses.any { !it.generateEmptyTestClasses } -> model.assessDeepEmptiness()
+                    else -> null
+                },
+            )
             return out.toString()
         }
 
-        private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isNested: Boolean) {
+        private val TestClassModel.generateEmptyTestClasses get() = this !is SimpleTestClassModel || generateEmptyTestClasses
+
+        private fun TestClassModel.assessDeepEmptiness(): MutableSet<TestClassModel> {
+            val result = mutableSetOf<TestClassModel>()
+            val reversedBfsInners = collectThisAndInnerClassesInBfsOrder().asReversed()
+
+            for (model in reversedBfsInners) {
+                val isDeeplyEmpty = model.methods.size == 1 && model.innerTestClasses.all { it in result }
+
+                if (isDeeplyEmpty) {
+                    result.add(model)
+                }
+            }
+
+            return result
+        }
+
+        private fun TestClassModel.collectThisAndInnerClassesInBfsOrder(): List<TestClassModel> {
+            val result = mutableListOf(this)
+            var index = 0
+
+            while (index < result.size) {
+                val testClassModel = result[index]
+
+                for (inner in testClassModel.innerTestClasses) {
+                    result.add(inner)
+                }
+
+                index++
+            }
+
+            return result
+        }
+
+        private fun generateTestClass(
+            p: Printer,
+            testClassModel: TestClassModel,
+            isNested: Boolean,
+            deepEmptyModels: Set<TestClassModel>?,
+        ) {
             p.generateNestedAnnotation(isNested)
             p.generateTags(testClassModel)
             p.generateMetadata(testClassModel)
@@ -247,6 +292,10 @@ class NewTestGeneratorImpl(
             }
 
             for (innerTestClass in innerTestClasses) {
+                if (deepEmptyModels != null && innerTestClass in deepEmptyModels) {
+                    continue
+                }
+
                 if (!innerTestClass.isEmpty) {
                     if (first) {
                         first = false
@@ -254,7 +303,7 @@ class NewTestGeneratorImpl(
                         p.println()
                     }
 
-                    generateTestClass(p, innerTestClass, true)
+                    generateTestClass(p, innerTestClass, true, deepEmptyModels)
                 }
             }
 

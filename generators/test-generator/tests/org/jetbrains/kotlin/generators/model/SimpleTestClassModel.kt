@@ -35,6 +35,7 @@ class SimpleTestClassModel(
     private val additionalMethods: Collection<MethodModel>,
     val skipSpecificFile: (File) -> Boolean,
     val skipTestAllFilesCheck: Boolean,
+    val generateEmptyTestClasses: Boolean,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -72,7 +73,8 @@ class SimpleTestClassModel(
                         extractTagsFromDirectory(file),
                         additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass() },
                         skipSpecificFile,
-                        skipTestAllFilesCheck
+                        skipTestAllFilesCheck,
+                        generateEmptyTestClasses,
                     )
                 )
             }
