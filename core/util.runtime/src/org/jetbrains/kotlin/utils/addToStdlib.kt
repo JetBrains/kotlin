@@ -391,6 +391,12 @@ fun String.countOccurrencesOf(substring: String): Int {
     return result
 }
 
+inline val <reified E : Enum<E>> Enum<E>.next: E
+    get() = E::class.java.enumConstants[ordinal + 1]
+
+inline val <reified E : Enum<E>> Enum<E>.previous: E
+    get() = E::class.java.enumConstants[ordinal - 1]
+
 inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
     this.get() ?: compute().also {
         this.set(it)
