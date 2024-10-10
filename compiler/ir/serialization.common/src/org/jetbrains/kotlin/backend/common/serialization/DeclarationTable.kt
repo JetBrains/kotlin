@@ -90,7 +90,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
 
     fun assumeDeclarationSignature(declaration: IrDeclaration, signature: IdSignature) {
         assert(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
-        table.put(declaration, signature)
+        table[declaration] = signature
     }
 }
 
