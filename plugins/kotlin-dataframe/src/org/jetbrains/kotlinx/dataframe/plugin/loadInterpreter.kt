@@ -62,16 +62,13 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
@@ -91,6 +88,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
@@ -98,18 +96,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimMargin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Update0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
-    if (
-        calleeReference.toResolvedNamedFunctionSymbol()?.callableId == Names.TO &&
-        coneTypeOrNull?.classId == Names.PAIR
-    ) {
-        return PairConstructor()
-    }
+    val interpreter = Stdlib.interpreter(this)
+    if (interpreter != null) return interpreter
     val symbol =
         (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
@@ -120,6 +114,32 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
             name.load<Interpreter<*>>()
         }
 }
+
+private object Stdlib {
+    private val map: MutableMap<Key, Interpreter<*>> = mutableMapOf()
+    init {
+        register(Names.TO, Names.PAIR, PairToConstructor())
+        register(Names.PAIR_CONSTRUCTOR, Names.PAIR, PairConstructor())
+        register(Names.TRIM_MARGIN, StandardClassIds.String, TrimMargin())
+        register(Names.TRIM_INDENT, StandardClassIds.String, TrimMargin())
+    }
+
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    fun interpreter(call: FirFunctionCall): Interpreter<*>? {
+        val id = call.calleeReference.toResolvedFunctionSymbol()?.callableId ?: return null
+        val returnType = call.coneTypeOrNull?.classId ?: return null
+        return map[Key(id, returnType)]
+    }
+
+    fun register(id: CallableId, returnType: ClassId, interpreter: Interpreter<*>) {
+        map[Key(id, returnType)] = interpreter
+    }
+}
+
+private data class Key(
+    val id: CallableId,
+    val returnType: ClassId,
+)
 
 internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
     val symbol =
