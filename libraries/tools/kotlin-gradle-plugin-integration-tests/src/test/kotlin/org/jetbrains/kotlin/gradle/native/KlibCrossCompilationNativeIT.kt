@@ -48,7 +48,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 konanDataDir = konanDataDir,
                 // TODO: remove explicit version selection after resolution of KTI-1928
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                    version = "2.0.20",
                 )
             )
         nativeProject(
