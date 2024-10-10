@@ -209,7 +209,7 @@ class XCFrameworkTaskTest {
                     iosArm64(),
                 ).forEach {
                     it.binaries.framework {
-                        baseName = "bar"
+                        baseName = "Bar"
                         xcframework.add(this)
                     }
                 }
@@ -219,10 +219,10 @@ class XCFrameworkTaskTest {
         assertEquals(
             listOf(
                 "xcodebuild", "-create-xcframework",
-                "-framework", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/bar.framework").path,
-                "-debug-symbols", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/bar.framework.dSYM").path,
-                "-framework", project.buildFile("bin/iosArm64/releaseFramework/bar.framework").path,
-                "-debug-symbols", project.buildFile("bin/iosArm64/releaseFramework/bar.framework.dSYM").path,
+                "-framework", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/Bar.framework").path,
+                "-debug-symbols", project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/Bar.framework.dSYM").path,
+                "-framework", project.buildFile("bin/iosArm64/releaseFramework/Bar.framework").path,
+                "-debug-symbols", project.buildFile("bin/iosArm64/releaseFramework/Bar.framework.dSYM").path,
                 "-output", project.buildFile("XCFrameworks/release/test.xcframework").path,
             ),
             assertIsInstance<XCFrameworkTask>(
