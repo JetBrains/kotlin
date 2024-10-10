@@ -138,6 +138,12 @@ public class DecompiledKnmStubConsistencyK2TestGenerated extends AbstractDecompi
   }
 
   @Test
+  @TestMetadata("DelegatedProperty")
+  public void testDelegatedProperty() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DelegatedProperty/");
+  }
+
+  @Test
   @TestMetadata("Delegation")
   public void testDelegation() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
@@ -279,6 +285,12 @@ public class DecompiledKnmStubConsistencyK2TestGenerated extends AbstractDecompi
   @TestMetadata("TopJvmPackageName")
   public void testTopJvmPackageName() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopJvmPackageName/");
+  }
+
+  @Test
+  @TestMetadata("TopLevelDelegatedPropertyKt")
+  public void testTopLevelDelegatedPropertyKt() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelDelegatedPropertyKt/");
   }
 
   @Test

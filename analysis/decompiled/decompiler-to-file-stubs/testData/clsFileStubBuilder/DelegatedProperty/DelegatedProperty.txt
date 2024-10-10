@@ -1,0 +1,28 @@
+PsiJetFileStubImpl[package=pack]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=pack]
+  IMPORT_LIST
+  CLASS[classId=pack/DelegatedProperty, fqName=pack.DelegatedProperty, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DelegatedProperty, superNames=[]]
+    MODIFIER_LIST[public final]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=DelegatedProperty]
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+    CLASS_BODY
+      PROPERTY[fqName=pack.DelegatedProperty.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=baz]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          MODIFIER_LIST[public final]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
