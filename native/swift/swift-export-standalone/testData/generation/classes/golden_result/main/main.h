@@ -5,6 +5,38 @@ int32_t CLASS_WITH_SAME_NAME_foo(uintptr_t self);
 
 int32_t ClassWithNonPublicConstructor_a_get(uintptr_t self);
 
+int32_t DATA_CLASS_WITH_MANY_FIELDS_a_get(uintptr_t self);
+
+NSString * DATA_CLASS_WITH_MANY_FIELDS_b_get(uintptr_t self);
+
+uintptr_t DATA_CLASS_WITH_MANY_FIELDS_c_get(uintptr_t self);
+
+uintptr_t DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(uintptr_t self, int32_t a, NSString * b, uintptr_t c);
+
+double DATA_CLASS_WITH_MANY_FIELDS_d_get(uintptr_t self);
+
+NSString * DATA_CLASS_WITH_MANY_FIELDS_e_get(uintptr_t self);
+
+int32_t DATA_CLASS_WITH_MANY_FIELDS_hashCode(uintptr_t self);
+
+NSString * DATA_CLASS_WITH_MANY_FIELDS_toString(uintptr_t self);
+
+uintptr_t DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t self, uintptr_t o);
+
+int32_t DATA_CLASS_WITH_REF_hashCode(uintptr_t self);
+
+uintptr_t DATA_CLASS_WITH_REF_o_get(uintptr_t self);
+
+NSString * DATA_CLASS_WITH_REF_toString(uintptr_t self);
+
+int32_t DATA_CLASS_a_get(uintptr_t self);
+
+uintptr_t DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(uintptr_t self, int32_t a);
+
+int32_t DATA_CLASS_hashCode(uintptr_t self);
+
+NSString * DATA_CLASS_toString(uintptr_t self);
+
 uintptr_t Foo_Companion_get();
 
 _Bool Foo_Companion_my_func(uintptr_t self);
@@ -68,6 +100,18 @@ void OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(uintptr_t s
 uintptr_t __root___CLASS_WITH_SAME_NAME_init_allocate();
 
 void __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate();
+
+void __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(uintptr_t __kt, int32_t a, NSString * b, uintptr_t c);
+
+uintptr_t __root___DATA_CLASS_WITH_REF_init_allocate();
+
+void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(uintptr_t __kt, uintptr_t o);
+
+uintptr_t __root___DATA_CLASS_init_allocate();
+
+void __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(uintptr_t __kt, int32_t a);
 
 uintptr_t __root___Foo_init_allocate();
 

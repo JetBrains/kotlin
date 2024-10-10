@@ -7,6 +7,14 @@ void Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_
 
 uintptr_t Class_without_package_INNER_OBJECT_get();
 
+int32_t DATA_CLASS_a_get(uintptr_t self);
+
+uintptr_t DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(uintptr_t self, int32_t a);
+
+int32_t DATA_CLASS_hashCode(uintptr_t self);
+
+NSString * DATA_CLASS_toString(uintptr_t self);
+
 uintptr_t Demo_INNER_CLASS_init_allocate();
 
 void Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
@@ -53,6 +61,10 @@ uintptr_t __root___Class_without_package_init_allocate();
 
 void __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
+uintptr_t __root___DATA_CLASS_init_allocate();
+
+void __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(uintptr_t __kt, int32_t a);
+
 uintptr_t __root___Demo_init_allocate();
 
 void __root___Demo_init_initialize__TypesOfArguments__Swift_UInt_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(uintptr_t __kt, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
@@ -83,6 +95,8 @@ uintptr_t __root___nullable_output_ref();
 
 uintptr_t __root___produce_ABSTRACT_CLASS();
 
+uintptr_t __root___produce_DATA_CLASS();
+
 uintptr_t __root___produce_DATA_OBJECT();
 
 uintptr_t __root___produce_OPEN_CLASS();
@@ -96,6 +110,8 @@ uintptr_t __root___produce_object();
 uintptr_t __root___produce_object_wp();
 
 void __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(uintptr_t x);
+
+void __root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__(uintptr_t x);
 
 void __root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__(uintptr_t x);
 

@@ -29,6 +29,9 @@ object Baz {
 
 fun getBaz() = Baz
 
+// FILE: DataClass.kt
+data class DataClass(val i: Int, val s: String)
+
 // FILE: Foo.kt
 class Foo(var x: Int) {
     constructor(f: Float) : this(f.toInt())

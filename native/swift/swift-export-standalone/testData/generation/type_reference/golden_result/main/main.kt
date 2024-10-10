@@ -9,6 +9,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package::class, "4main21Class_without_packageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_CLASS::class, "4main21Class_without_packageC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_OBJECT::class, "4main21Class_without_packageC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(DATA_CLASS::class, "4main10DATA_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Demo::class, "4main4DemoC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Demo.INNER_CLASS::class, "4main4DemoC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Demo.INNER_OBJECT::class, "4main4DemoC12INNER_OBJECTC")
@@ -36,6 +37,35 @@ public fun Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__
 public fun Class_without_package_INNER_OBJECT_get(): kotlin.native.internal.NativePtr {
     val _result = Class_without_package.INNER_OBJECT
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("DATA_CLASS_a_get")
+public fun DATA_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
+    val _result = __self.a
+    return _result
+}
+
+@ExportedBridge("DATA_CLASS_copy__TypesOfArguments__Swift_Int32__")
+public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, a: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
+    val __a = a
+    val _result = __self.copy(__a)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("DATA_CLASS_hashCode")
+public fun DATA_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
+    val _result = __self.hashCode()
+    return _result
+}
+
+@ExportedBridge("DATA_CLASS_toString")
+public fun DATA_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
+    val _result = __self.toString()
+    return _result.objcPtr()
 }
 
 @ExportedBridge("Demo_INNER_CLASS_init_allocate")
@@ -203,6 +233,19 @@ public fun __root___Class_without_package_init_initialize__TypesOfArguments__Swi
     kotlin.native.internal.initInstance(____kt, Class_without_package())
 }
 
+@ExportedBridge("__root___DATA_CLASS_init_allocate")
+public fun __root___DATA_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
+public fun __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val __a = a
+    kotlin.native.internal.initInstance(____kt, DATA_CLASS(__a))
+}
+
 @ExportedBridge("__root___Demo_init_allocate")
 public fun __root___Demo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Demo>()
@@ -300,6 +343,12 @@ public fun __root___produce_ABSTRACT_CLASS(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produce_DATA_CLASS")
+public fun __root___produce_DATA_CLASS(): kotlin.native.internal.NativePtr {
+    val _result = produce_DATA_CLASS()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_DATA_OBJECT")
 public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
     val _result = produce_DATA_OBJECT()
@@ -340,6 +389,12 @@ public fun __root___produce_object_wp(): kotlin.native.internal.NativePtr {
 public fun __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ABSTRACT_CLASS
     receive_ABSTRACT_CLASS(__x)
+}
+
+@ExportedBridge("__root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__")
+public fun __root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as DATA_CLASS
+    receive_DATA_CLASS(__x)
 }
 
 @ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__")

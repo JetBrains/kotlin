@@ -382,6 +382,18 @@ func overridesShouldWorkAcrossModules() throws {
     try assertEquals(actual: cousin.nullable(), expected: cousin)
 }
 
+func dataClassesShouldWork() throws {
+    let one = DataClass(i: 1, s: "a")
+    let two = DataClass(i: 2, s: "b")
+    let oneCopy = one.copy(i: 2, s: "b")
+
+    try assertEquals(actual: one == two, expected: false)
+    try assertEquals(actual: two == oneCopy, expected: true)
+
+    try assertEquals(actual: "\(one)", expected: "DataClass(i=1, s=a)")
+    try assertEquals(actual: one.hashValue, expected: 128)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -422,6 +434,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "companionObject", method: withAutorelease(companionObject)),
             TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWork)),
             TestCase(name: "overridesShouldWorkAcrossModules", method: withAutorelease(overridesShouldWorkAcrossModules)),
+            TestCase(name: "dataClassesShouldWork", method: withAutorelease(dataClassesShouldWork)),
         ]
     }
 }
