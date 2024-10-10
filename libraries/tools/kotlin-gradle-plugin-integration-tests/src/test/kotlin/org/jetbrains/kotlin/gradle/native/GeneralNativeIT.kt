@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -767,6 +768,7 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     @DisplayName("Checks native arguments with the spaces in it")
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @GradleTest
     fun testNativeArgsWithSpaces(gradleVersion: GradleVersion) {
         nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
