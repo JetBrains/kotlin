@@ -70,11 +70,6 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
         return table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
     }
 
-    fun privateDeclarationSignature(declaration: IrDeclaration, compatibleMode: Boolean, builder: () -> IdSignature): IdSignature {
-        assert(declaration.shouldHaveLocalSignature(compatibleMode))
-        return table.getOrPut(declaration) { builder() }
-    }
-
     fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }
         return if (declaration.shouldHaveLocalSignature(compatibleMode)) {
