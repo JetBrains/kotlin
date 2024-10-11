@@ -14,6 +14,7 @@ private const val KTS = ".kts"
 private const val FIR_PREFIX = ".fir"
 private const val LATEST_LV_PREFIX = ".latestLV"
 private const val LL_FIR_PREFIX = ".ll"
+private const val REVERSED_PREFIX = ".reversed"
 
 const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?\$"
 
@@ -40,6 +41,9 @@ val File.firTestDataFile: File
 
 val File.latestLVTestDataFile: File
     get() = getCustomTestDataFileWithPrefix(LATEST_LV_PREFIX)
+
+val File.reversedTestDataFile: File
+    get() = getCustomTestDataFileWithPrefix(REVERSED_PREFIX)
 
 /**
  * An LL FIR test data file (`.ll.kt`) allows tailoring the expected output of a test to the LL FIR case. In very rare cases, LL FIR may

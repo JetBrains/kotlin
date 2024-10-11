@@ -69,12 +69,16 @@ inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     }
 }
 
-inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<T>> {
+inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<T>> =
+    partitionNotNull { it as? R }
+
+inline fun <T, R> Iterable<T>.partitionNotNull(map: (T) -> R?): Pair<List<R>, List<T>> {
     val first = ArrayList<R>()
     val second = ArrayList<T>()
     for (element in this) {
-        if (element is R) {
-            first.add(element)
+        val result = map(element)
+        if (result != null) {
+            first.add(result)
         } else {
             second.add(element)
         }

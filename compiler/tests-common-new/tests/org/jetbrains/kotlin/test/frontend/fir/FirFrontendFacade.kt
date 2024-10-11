@@ -71,7 +71,7 @@ open class FirFrontendFacade(
     testServices: TestServices,
     private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-    private val testModulesByName by lazy { testServices.moduleStructure.modules.associateBy { it.name } }
+    private val testModulesByName by lazy { testServices.moduleStructure.testModulesByName }
 
     // Separate constructor is needed for creating callable references to it
     constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
@@ -85,14 +85,7 @@ open class FirFrontendFacade(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        if (!super.shouldRunAnalysis(module)) return false
-
-        return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-            testServices.moduleStructure
-                .modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
-        } else {
-            true
-        }
+        return shouldRunFirFrontendFacade(module, testServices.moduleStructure, testModulesByName)
     }
 
     private fun registerExtraComponents(session: FirSession) {
@@ -470,5 +463,23 @@ open class FirFrontendFacade(
                 }
             }
         }
+    }
+}
+
+fun shouldRunFirFrontendFacade(
+    module: TestModule,
+    moduleStructure: TestModuleStructure,
+    testModulesByName: Map<String, TestModule>,
+): Boolean {
+    val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
+
+    if (!shouldRunAnalysis) {
+        return false
+    }
+
+    return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+        moduleStructure.modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
+    } else {
+        true
     }
 }

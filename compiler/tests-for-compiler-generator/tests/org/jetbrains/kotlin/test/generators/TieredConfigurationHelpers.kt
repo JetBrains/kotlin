@@ -1,0 +1,74 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.test.generators
+
+import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.TestTierDirectives
+import org.jetbrains.kotlin.test.runners.TestTierLabel
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import java.io.File
+
+private val TIERED_DIRECTIVE = "// ${TestTierDirectives.RUN_PIPELINE_TILL}:"
+private val TIERED_OVERRIDE_DIRECTIVE = "// ${TestTierDirectives.TARGET_RUNNER_TIER}:"
+
+fun File.shouldBeRunByRunnerOf(vararg tiers: TestTierLabel): Boolean {
+    val lines = readLines()
+    val directiveParts = lines.find { it.startsWith(TIERED_OVERRIDE_DIRECTIVE) }?.split(TIERED_OVERRIDE_DIRECTIVE)
+        ?: lines.find { it.startsWith(TIERED_DIRECTIVE) }?.split(TIERED_DIRECTIVE)
+        ?: return false
+
+    val declaredTier = directiveParts
+        .getOrNull(1)?.trim()?.let(TestTierLabel::valueOf)
+        ?: return false
+
+    val minDeclaredTier = tiers.min()
+    val maxDeclaredTier = tiers.max()
+
+    return declaredTier in minDeclaredTier..maxDeclaredTier
+}
+
+/**
+ * Configures test runners whose generation relies on the values
+ * of [// RUN_PIPELINE_TILL][TestTierDirectives.RUN_PIPELINE_TILL]
+ * in test files
+ */
+fun configureTierModelsForDeclaredAs(
+    vararg tiers: TestTierLabel,
+    relativeRootPaths: List<String>,
+    excludeDirs: List<String>,
+    extension: String? = "kt",
+    pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
+    excludedPattern: String? = null,
+): TestGroup.TestClass.() -> Unit = {
+    for (path in relativeRootPaths) {
+        model(
+            path,
+            excludeDirs = excludeDirs,
+            skipSpecificFile = { !it.shouldBeRunByRunnerOf(*tiers) },
+            skipTestAllFilesCheck = true,
+            generateEmptyTestClasses = false,
+            extension = extension,
+            pattern = pattern,
+            excludedPattern = excludedPattern,
+        )
+    }
+}
+
+/**
+ * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests
+ */
+fun configureTierModelsForDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
+    configureTierModelsForDeclaredAs(
+        *tiers,
+        relativeRootPaths = listOf(
+            "diagnostics/tests",
+            "diagnostics/testsWithStdLib",
+        ),
+        excludeDirs = listOf("declarations/multiplatform/k1"),
+        pattern = "^(.*)\\.kts?$",
+        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+    )
