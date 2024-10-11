@@ -286,6 +286,8 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        getCachedClassLikeSymbol(classId)?.let { return it }
+
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
 
         classId.takeIf(ClassId::isNestedClass)?.outermostClassId?.let { outermostClassId ->
@@ -293,21 +295,26 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             getClassLikeSymbolByClassId(outermostClassId)
 
             // Nested declarations already loaded
-            val computedValue = classCache.getValueIfComputed(classId) ?: typeAliasCache.getValueIfComputed(classId)
-            computedValue?.let { return it }
+            getCachedClassLikeSymbol(classId)?.let { return it }
         }
 
         return getClass(classId) ?: getTypeAlias(classId)
     }
 
+    private fun getCachedClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
+        return classCache.getValueIfComputed(classId) ?: typeAliasCache.getValueIfComputed(classId)
+    }
+
     @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
+        val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
+        cache.getValueIfComputed(classId)?.let { return it }
+
         val topmostClassLikeDeclaration = classLikeDeclaration.takeIf {
             classId.isNestedClass
         }?.getTopmostParentOfType<KtClassLikeDeclaration>()
 
         val outermostClassId = topmostClassLikeDeclaration?.getClassId()
-        val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
         if (outermostClassId != null) {
             // We have to load root declaration to initialize nested classes correctly
             getClassLikeSymbolByClassId(outermostClassId, topmostClassLikeDeclaration)

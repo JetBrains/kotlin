@@ -114,6 +114,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/unsignedConst.kt");
   }
 
+  @Test
+  @TestMetadata("valueClassWithNestedClass.kt")
+  public void testValueClassWithNestedClass() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithNestedClass.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource")
   @TestDataPath("$PROJECT_ROOT")
