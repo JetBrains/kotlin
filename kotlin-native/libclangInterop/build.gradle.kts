@@ -1,9 +1,11 @@
 import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
-import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.libname
+import org.jetbrains.kotlin.tools.obj
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
@@ -13,13 +15,33 @@ plugins {
     id("native-dependencies")
 }
 
-val library = solib("clangstubs")
+val stubsName = "clangstubs"
+val library = solib(stubsName)
+val objFile = obj(stubsName)
+val cFile = "$stubsName.c"
 
-val libclangextProject = project(":kotlin-native:libclangext")
-val libclangextTask = libclangextProject.path + ":build"
-val libclangextDir = libclangextProject.layout.buildDirectory.get().asFile
-val libclangextIsEnabled = libclangextProject.findProperty("isEnabled")!! as Boolean
+val cppImplementation by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
 
+val cppLink by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+dependencies {
+    cppImplementation(project(":kotlin-native:libclangext"))
+    cppLink(project(":kotlin-native:libclangext"))
+}
 
 val libclang = if (HostManager.hostIsMingw) {
     "lib/libclang.lib"
@@ -27,16 +49,21 @@ val libclang = if (HostManager.hostIsMingw) {
     "lib/${System.mapLibraryName("clang")}"
 }
 
-val cflags = mutableListOf(
-    "-I${nativeDependencies.llvmPath}/include",
-    "-I${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
-    *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
-)
+val commonCompilerFlags = buildList {
+    add("-I${nativeDependencies.llvmPath}/include")
+    addAll(cppImplementation.files.map { "-I${it.absolutePath}" })
+    addAll(nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni)
+}
+val cflags = listOf("-std=c99") + commonCompilerFlags
+val cxxflags = listOf("-std=c++11") + commonCompilerFlags
 
-val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
+val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang")
+cppLink.files.forEach {
+    ldflags.add("-L${it.parentFile.absolutePath}")
+    ldflags.add("-l${libname(it)}")
+}
 
-if (libclangextIsEnabled) {
-    assert(HostManager.hostIsMac)
+if (PlatformInfo.isMac()) {
     // Let some symbols be undefined to avoid linking unnecessary parts.
     val unnecessarySymbols = setOf(
             "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
@@ -78,17 +105,8 @@ if (libclangextIsEnabled) {
     ldflags.addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
 }
 
-val solib = when {
-    HostManager.hostIsMingw -> "dll"
-    HostManager.hostIsMac -> "dylib"
-    else -> "so"
-}
-val lib = if (HostManager.hostIsMingw) "lib" else "a"
-
-
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
-    val cxxflags = listOf("-std=c++11", *cflags.toTypedArray())
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
@@ -121,20 +139,23 @@ native {
     }
 }
 
-tasks.named(library).configure {
-    dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
-}
-
 kotlinNativeInterop {
     this.create("clang") {
         defFile("clang.def")
         compilerOpts(cflags)
-        linkerOpts(ldflags)
+        skipNatives()
         genTask.configure {
-            dependsOn(libclangextTask)
-            inputs.dir(libclangextDir)
+            cppImplementation.files.forEach { inputs.dir(it) }
         }
     }
+}
+
+native.sourceSets["main-c"]!!.implicitTasks()
+tasks.named(library).configure {
+    inputs.files(cppLink)
+}
+tasks.named(objFile).configure {
+    cppImplementation.files.forEach { inputs.dir(it) }
 }
 
 dependencies {
@@ -182,8 +203,6 @@ artifacts {
     add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }
 
-// Please note that list of headers should be fixed manually.
-// See KT-46231 for details.
 val updatePrebuilt by tasks.registering(Sync::class) {
     dependsOn("genClangInteropStubs")
 
@@ -195,7 +214,7 @@ val updatePrebuilt by tasks.registering(Sync::class) {
     }
 
     from(layout.buildDirectory.dir("interopTemp")) {
-        include("clangstubs.c")
+        include(cFile)
         into("c")
     }
 }

@@ -128,6 +128,12 @@ class NamedNativeInteropConfig(
         }
     }
 
+    private var skipNatives = false
+
+    fun skipNatives() {
+        skipNatives = true
+    }
+
     init {
         genTask.configure {
             notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
@@ -147,7 +153,9 @@ class NamedNativeInteropConfig(
             environment(mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1"))
 
             outputs.dir(generatedSrcDir)
-            outputs.dir(nativeLibsDir)
+            if (!skipNatives) {
+                outputs.dir(nativeLibsDir)
+            }
             outputs.dir(temporaryFilesDir)
 
             // defer as much as possible
@@ -161,7 +169,9 @@ class NamedNativeInteropConfig(
                 linkerOpts.addAll(linkFiles.files.map { it.absolutePath })
 
                 args("-generated", generatedSrcDir)
-                args("-natives", nativeLibsDir)
+                if (!skipNatives) {
+                    args("-natives", nativeLibsDir)
+                }
                 args("-Xtemporary-files-dir", temporaryFilesDir)
                 args("-flavor", "jvm")
 

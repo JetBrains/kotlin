@@ -25,8 +25,6 @@ plugins {
     id("kotlin.native.build-tools-conventions")
     id("native")
 }
-val libclangextEnabled = org.jetbrains.kotlin.konan.target.HostManager.hostIsMac
-extra["isEnabled"] = libclangextEnabled
 
 val library = lib("clangext")
 
@@ -37,7 +35,7 @@ native {
                           "-Isrc/main/include",
                           "-I$llvmDir/include",
                           "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1")
-    if (libclangextEnabled) {
+    if (PlatformInfo.isMac()) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
     }
     suffixes {

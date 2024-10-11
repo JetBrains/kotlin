@@ -3,6 +3,13 @@
 #include <jni.h>
 #include <clang-c/Index.h>
 #include <clang-c/ext.h>
+#define __DATE__ "__DATE__"
+#define __TIME__ "__TIME__"
+#define __TIMESTAMP__ "__TIMESTAMP__"
+#define __FILE__ "__FILE__"
+#define __FILE_NAME__ "__FILE_NAME__"
+#define __BASE_FILE__ "__BASE_FILE__"
+#define __LINE__ "__LINE__"
 
 // NOTE THIS FILE IS AUTO-GENERATED
 
