@@ -353,6 +353,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("readJsonStr_datarow.kt")
+  public void testReadJsonStr_datarow() {
+    runTest("testData/box/readJsonStr_datarow.kt");
+  }
+
+  @Test
   @TestMetadata("readJsonStr_localProperty.kt")
   public void testReadJsonStr_localProperty() {
     runTest("testData/box/readJsonStr_localProperty.kt");
