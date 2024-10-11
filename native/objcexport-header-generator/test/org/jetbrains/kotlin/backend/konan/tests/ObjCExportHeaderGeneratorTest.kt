@@ -277,10 +277,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("sinceVersionAnnotation"))
     }
 
-    /**
-     * - requires mangling
-     */
-    @TodoAnalysisApi
     @Test
     fun `test - constructors`() {
         doTest(headersTestDataDir.resolve("constructors"))
@@ -571,6 +567,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - subclass parameter type translation without upper bound`() {
         doTest(headersTestDataDir.resolve("subclassParameterTypeTranslationWithoutUpperBound"))
+    }
+
+    @Test
+    fun `test - mangle init constructors`() {
+        doTest(headersTestDataDir.resolve("mangleInitConstructors"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

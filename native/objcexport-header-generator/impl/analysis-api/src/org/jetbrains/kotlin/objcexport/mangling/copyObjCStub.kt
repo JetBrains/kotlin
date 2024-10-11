@@ -29,7 +29,9 @@ internal fun ObjCMethod.copy(selectors: List<String>, parameters: List<String>, 
         returnType = this.returnType,
         selectors = selectors,
         parameters = this.parameters,
-        attributes = listOf(swiftNameAttribute),
+        attributes = this.attributes.map { attr ->
+            if (attr.startsWith("swift_name")) swiftNameAttribute else attr
+        },
         extras = this.extras
     )
 }
