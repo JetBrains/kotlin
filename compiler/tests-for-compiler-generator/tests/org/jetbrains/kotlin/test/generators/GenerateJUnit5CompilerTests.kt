@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RUN_PIPELINE_TILL
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RUN_PIPELINE_TILL_GENERATOR_OVERRIDE
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.test.runners.ir.*
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.jetbrains.kotlin.utils.addToStdlib.next
+import java.io.File
 
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -498,3 +502,66 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
         }
     }
 }
+
+private val TIERED_DIRECTIVE = "// $RUN_PIPELINE_TILL:"
+private val TIERED_OVERRIDE_DIRECTIVE = "// $RUN_PIPELINE_TILL_GENERATOR_OVERRIDE:"
+
+/**
+ * Note that test runner must be capable of running higher tiers
+ * than those declared by the tests they run.
+ */
+fun File.shouldBeRunByRunnerOf(vararg tiers: TestTiers): Boolean {
+    val lines = readLines()
+    val directiveParts = lines.find { it.startsWith(TIERED_OVERRIDE_DIRECTIVE) }?.split(TIERED_OVERRIDE_DIRECTIVE)
+        ?: lines.find { it.startsWith(TIERED_DIRECTIVE) }?.split(TIERED_DIRECTIVE)
+        ?: return false
+
+    val declaredTier = directiveParts
+        .getOrNull(1)?.trim()?.let(TestTiers::valueOf)
+        ?: return false
+
+    val minDeclaredTier = tiers.min()
+    val maxDeclaredTier = tiers.max()
+    val lastTierThisRunnerIsCapableOfRunning = maxDeclaredTier.next
+    val thisRunnerRunsTheWholePipeline = lastTierThisRunnerIsCapableOfRunning == TestTiers.entries.last()
+
+    return when {
+        thisRunnerRunsTheWholePipeline -> minDeclaredTier <= declaredTier
+        else -> declaredTier in minDeclaredTier..maxDeclaredTier
+    }
+}
+
+fun configureTierModelsForDeclaredAs(
+    vararg tiers: TestTiers,
+    relativeRootPaths: List<String>,
+    excludeDirs: List<String>,
+    extension: String? = "kt",
+    pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
+    excludedPattern: String? = null,
+): TestClass.() -> Unit = {
+    for (path in relativeRootPaths) {
+        model(
+            path,
+            excludeDirs = excludeDirs,
+            skipSpecificFile = { !it.shouldBeRunByRunnerOf(*tiers) },
+            skipTestAllFilesCheck = true,
+            generateEmptyTestClasses = false,
+            extension = extension,
+            pattern = pattern,
+            excludedPattern = excludedPattern,
+        )
+    }
+}
+
+fun configureTierModelsForDiagnosticTestsStating(vararg tiers: TestTiers) =
+    configureTierModelsForDeclaredAs(
+        *tiers,
+        relativeRootPaths = listOf(
+            "diagnostics/tests",
+            "diagnostics/testsWithStdLib",
+            "diagnostics/testsWithJvmBackend",
+        ),
+        excludeDirs = listOf("declarations/multiplatform/k1"),
+        pattern = "^(.*)\\.kts?$",
+        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+    )

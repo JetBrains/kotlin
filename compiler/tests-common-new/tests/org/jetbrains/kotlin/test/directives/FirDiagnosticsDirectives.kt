@@ -91,6 +91,17 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enable experimental checkers"
     )
 
+    /**
+     * See: [TestTiers][org.jetbrains.kotlin.test.runners.TestTiers] for the list of values.
+     */
+    val RUN_PIPELINE_TILL by stringDirective(
+        description = "Verify that the test runs successfully until the specified tier (including). See `TestTiers` for the list of tiers"
+    )
+
+    val RUN_PIPELINE_TILL_GENERATOR_OVERRIDE by stringDirective(
+        description = "Exists for debugging tiered runners. Instructs the test generator to dump the test into the specified tier runners (but $RUN_PIPELINE_TILL is still used for the actual checks)"
+    )
+
     val SCOPE_DUMP by stringDirective(
         description = """
             Dump hierarchies of overrides of classes listed in arguments
