@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageStatus
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -70,6 +72,43 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         else -> {
             // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(context.irBuiltIns.anyNType)
+        }
+    }
+
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        if (expression.origin != STATEMENT_ORIGIN_NO_CAST_NEEDED)
+            return super.visitBlock(expression)
+        val irTypeOperatorCall = expression.statements.singleOrNull()
+                ?: error("Expected exactly one statement in IrBlock marked with $STATEMENT_ORIGIN_NO_CAST_NEEDED")
+        check(irTypeOperatorCall is IrTypeOperatorCall) {
+            "Expected a type operator call: ${irTypeOperatorCall::class.java}"
+        }
+        check(irTypeOperatorCall.operator == IrTypeOperator.IMPLICIT_CAST) {
+            "Expected an implicit cast: ${irTypeOperatorCall.operator}"
+        }
+        irTypeOperatorCall.argument = irTypeOperatorCall.argument.transform(this, null)
+
+        val expectedType = irTypeOperatorCall.typeOperand
+        val actualType = irTypeOperatorCall.argument.type
+        val expectedInlineClass = expectedType.getInlinedClassNative()
+        val actualInlineClass = actualType.getInlinedClassNative()
+        return when {
+            expectedInlineClass == actualInlineClass -> {
+                // No cast/box/unbox is needed.
+                if (expectedType == actualType)
+                    irTypeOperatorCall.argument
+                else irBuilders.peek()!!.irCallWithSubstitutedType(symbols.reinterpret.owner, listOf(actualType, expectedType)).apply {
+                    arguments[0] = irTypeOperatorCall.argument
+                }
+            }
+            expectedInlineClass != null && actualInlineClass != null -> {
+                // This will be a ClassCastException at runtime.
+                visitTypeOperator(irTypeOperatorCall)
+            }
+            else -> {
+                // A box/unbox operation is still needed.
+                irTypeOperatorCall.argument.adaptIfNecessary(actualType, expectedType, skipTypeCheck = true)
+            }
         }
     }
 
@@ -160,6 +199,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 actualType.makeNotNull() == expectedType.makeNotNull() -> this
                 expectedType.isUnit() ->
                     irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                erasedExpectedClass.partialLinkageStatus is ClassifierPartialLinkageStatus.Unusable -> {
+                    this
+                }
+                //expectedType.isNothing() -> this // TODO
                 insertSafeCasts && !skipTypeCheck
                         // For type parameters, actualClass is null, and we
                         // conservatively insert type check for them (due to unsafe casts).
