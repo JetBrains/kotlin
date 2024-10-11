@@ -190,6 +190,12 @@ abstract class AbstractFirBuiltinSymbolProvider(
 
 /**
  * A fallback built-in provider ensures that builtin classes will be loaded regardless of stdlib presence in the classpath
+ * It's only actual for JVM and Common platforms.
+ * But probably over time it should be used only for JVM (see KT-72163)
+ * because we can use `KlibBasedSymbolProvider` with a provided `kotlin-stdlib-common.klib`
+ * like other platforms do (for example, see https://github.com/JetBrains/kotlin/tree/master/compiler/testData/cli/js tests).
+ * Currently, we can't drop `FirFallbackBuiltinSymbolProvider` for Common because of backward-compatibility
+ * (to make it possible to compile metadata for projects with LV < 2.1)
  */
 @ThreadSafeMutableState
 class FirFallbackBuiltinSymbolProvider(
@@ -221,7 +227,7 @@ class FirFallbackBuiltinSymbolProvider(
  * Uses classes defined in classpath to load builtins
  */
 @ThreadSafeMutableState
-class FirClasspathBuiltinSymbolProvider(
+private class FirJvmClasspathBuiltinSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
@@ -274,18 +280,24 @@ fun getTopLevelClassifierNamesInPackage(
  * One can find a set of these classes inside libraries/stdlib/jvm/builtins directory.
  * In particular: all primitives, all arrays, collection-like interfaces, Any, Nothing, Unit, etc.
  *
- * For non-JVM platforms, all / almost all built-in classes exist also in the standard library, so this provider works as a fallback.
- * For the JVM platform, some classes are mapped to Java classes and do not exist themselves,
+ * It's used only for the JVM platform because some classes are mapped to Java classes and do not exist themselves,
  * so this provider is mandatory for the JVM compiler to work properly even with the standard library in classpath.
- *
+ * For non-JVM platforms, all / almost all built-in classes exist in the standard library, so this provider is not applicable.
  */
 
 @NoMutableState
-class FirBuiltinsSymbolProvider(
+class FirJvmBuiltinsSymbolProvider(
     session: FirSession,
-    private val classpathBuiltinSymbolProvider: FirClasspathBuiltinSymbolProvider,
     private val fallbackBuiltinSymbolProvider: FirFallbackBuiltinSymbolProvider,
+    findPackagePartData: (FqName) -> InputStream?,
 ) : FirSymbolProvider(session) {
+    private val classpathBuiltinSymbolProvider: FirJvmClasspathBuiltinSymbolProvider = FirJvmClasspathBuiltinSymbolProvider(
+        session,
+        fallbackBuiltinSymbolProvider.moduleData,
+        fallbackBuiltinSymbolProvider.kotlinScopeProvider,
+        findPackagePartData,
+    )
+
     override val symbolNamesProvider: FirSymbolNamesProvider
         get() = FirCompositeSymbolNamesProvider.fromSymbolProviders(listOf(classpathBuiltinSymbolProvider, fallbackBuiltinSymbolProvider))
 

@@ -208,12 +208,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         builtinsModuleData: FirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         kotlinClassFinder: KotlinClassFinder,
-    ): FirBuiltinsSymbolProvider = FirBuiltinsSymbolProvider(
-        session, FirClasspathBuiltinSymbolProvider(
-            session,
-            builtinsModuleData,
-            kotlinScopeProvider
-        ) { kotlinClassFinder.findBuiltInsData(it) },
+    ): FirJvmBuiltinsSymbolProvider = FirJvmBuiltinsSymbolProvider(
+        session,
         FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
-    )
+    ) { kotlinClassFinder.findBuiltInsData(it) }
 }
