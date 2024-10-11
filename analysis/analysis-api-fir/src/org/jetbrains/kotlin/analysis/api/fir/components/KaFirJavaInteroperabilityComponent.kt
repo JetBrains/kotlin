@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -149,7 +151,10 @@ internal class KaFirJavaInteroperabilityComponent(
         if (!allowErrorTypes && (this is ConeErrorType)) return null
 
         if (forceValueClassResolution && !mode.needInlineClassWrapping) {
-            this.classLikeLookupTagIfAny?.toSymbol(rootModuleSession)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+            this.classLikeLookupTagIfAny
+                ?.toSymbol(rootModuleSession)
+                ?.takeIf(FirClassLikeSymbol<*>::isInline)
+                ?.lazyResolveToPhase(FirResolvePhase.STATUS)
         }
 
         val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
