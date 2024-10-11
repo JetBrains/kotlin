@@ -67,6 +67,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("nestedValueClass.kt")
+  public void testNestedValueClass() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/nestedValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("parameter.kt")
   public void testParameter() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameter.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,7 @@ import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
@@ -27,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationCom
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
@@ -36,16 +33,23 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.lang.ref.WeakReference
 
@@ -104,7 +108,7 @@ internal fun deserializeClassToSymbol(
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
     deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
-    initialOrigin: FirDeclarationOrigin
+    initialOrigin: FirDeclarationOrigin,
 ) {
     val kind = when (classOrObject) {
         is KtObjectDeclaration -> ClassKind.OBJECT
@@ -244,7 +248,10 @@ internal fun deserializeClassToSymbol(
 
         contextReceivers.addAll(memberDeserializer.createContextReceiversForClass(classOrObject))
     }.apply {
-        valueClassRepresentation = computeValueClassRepresentation(this, session)
+        if (classOrObject is KtClass && isInline) {
+            val stub = classOrObject.stub as? KotlinClassStubImpl ?: loadStubByElement(classOrObject)
+            valueClassRepresentation = stub?.deserializeValueClassRepresentation(this)
+        }
 
         replaceAnnotations(
             context.annotationDeserializer.loadAnnotations(classOrObject)
@@ -260,6 +267,41 @@ internal fun deserializeClassToSymbol(
             session
         )
     }
+}
+
+private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
+    val representation = valueClassRepresentation ?: return null
+    val constructor = klass.declarations.firstNotNullOfOrNull { declaration ->
+        (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
+    } ?: errorWithAttachment("Value class must have primary constructor") {
+        withFirEntry("class", klass)
+    }
+
+    return when (representation) {
+        KotlinValueClassRepresentation.INLINE_CLASS -> {
+            val parameter = constructor.valueParameters.single()
+            val type = parameter.coneRigidType()
+            InlineClassRepresentation(parameter.name, type)
+        }
+
+        KotlinValueClassRepresentation.MULTI_FIELD_VALUE_CLASS -> {
+            val mapping = constructor.valueParameters.map { parameter ->
+                parameter.name to parameter.coneRigidType()
+            }
+
+            MultiFieldValueClassRepresentation(mapping)
+        }
+    }
+}
+
+private fun FirValueParameter.coneRigidType(): ConeRigidType {
+    val type = returnTypeRef.coneType
+    requireWithAttachment(type is ConeRigidType, { "Underlying type must be rigid type" }) {
+        withConeTypeEntry("type", type)
+        withFirEntry("valueParameter", this@coneRigidType)
+    }
+
+    return type
 }
 
 private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClassOrObject, dispatchReceiver: ConeClassLikeType?) {
