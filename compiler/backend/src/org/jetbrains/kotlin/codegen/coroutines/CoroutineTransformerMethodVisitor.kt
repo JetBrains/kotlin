@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -54,7 +53,7 @@ class CoroutineTransformerMethodVisitor(
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
     private val lineNumber: Int,
     private val sourceFile: String,
-    private val languageVersionSettings: LanguageVersionSettings,
+    private val config: JvmBackendConfig,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -63,7 +62,6 @@ class CoroutineTransformerMethodVisitor(
     private val putContinuationParameterToLvt: Boolean = true,
     // Parameters of suspend lambda are put to the same fields as spilled variables
     private val initialVarsCountByType: Map<Type, Int> = emptyMap(),
-    private val shouldOptimiseUnusedVariables: Boolean = true,
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -112,7 +110,7 @@ class CoroutineTransformerMethodVisitor(
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
-        } else if (nullOutUsingStdlibFunction(languageVersionSettings)) {
+        } else if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
             actualCoroutineStart = methodNode.instructions.findLast { isSuspendLambdaParameterMarker(it) }?.next ?: actualCoroutineStart
         }
 
@@ -212,21 +210,18 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode)
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
-        if (nullOutUsingStdlibFunction(languageVersionSettings)) {
+        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
             methodNode.extendParameterRanges()
             methodNode.extendSuspendLambdaParameterRanges()
         }
         dropSuspendLambdaParameterMarkers(methodNode)
 
-        if (!nullOutUsingStdlibFunction(languageVersionSettings) && shouldOptimiseUnusedVariables) {
+        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
             updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
         }
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
     }
-
-    private fun nullOutUsingStdlibFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
 
     // When suspension point is inlined, it is in range of fake inliner variables.
     // Path from TABLESWITCH into unspilling goes to latter part of the range.
@@ -640,7 +635,7 @@ class CoroutineTransformerMethodVisitor(
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
 
         val suspendLambdaParameters =
-            if (nullOutUsingStdlibFunction(languageVersionSettings)) methodNode.collectSuspendLambdaParameterSlots()
+            if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) methodNode.collectSuspendLambdaParameterSlots()
             else emptyList()
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
@@ -768,8 +763,8 @@ class CoroutineTransformerMethodVisitor(
             insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
                 load(continuationIndex, AsmTypes.OBJECT_TYPE)
 
-                if (shouldOptimiseUnusedVariables && spillableVariable.shouldSpillNull) {
-                    if (nullOutUsingStdlibFunction(languageVersionSettings)) {
+                if (!config.enableDebugMode && spillableVariable.shouldSpillNull) {
+                    if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
                         putOnStack(spillableVariable)
                         invokeNullOutSpilledVariable()
                     } else {
@@ -919,7 +914,7 @@ class CoroutineTransformerMethodVisitor(
                     checkWhetherVariableWillBeVisible(methodNode, slot, suspensionCallBeginIndex)
 
             val needToSpill = livenessFrame.isAlive(slot) ||
-                    (nullOutUsingStdlibFunction(languageVersionSettings) || !shouldOptimiseUnusedVariables) &&
+                    (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction || config.enableDebugMode) &&
                     (visibleByDebugger || willBeVisibleByDebugger)
             if (!needToSpill) continue
 

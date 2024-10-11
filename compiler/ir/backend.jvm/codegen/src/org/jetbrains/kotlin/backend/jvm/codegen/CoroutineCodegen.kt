@@ -66,13 +66,12 @@ internal fun MethodNode.acceptWithStateMachine(
         },
         lineNumber = lineNumber,
         sourceFile = classCodegen.irClass.file.name, // SuspendLambda.invokeSuspend is not suspend
-        languageVersionSettings = context.config.languageVersionSettings,
+        config = context.config,
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
-        shouldOptimiseUnusedVariables = !context.config.enableDebugMode,
     )
     accept(visitor)
 }

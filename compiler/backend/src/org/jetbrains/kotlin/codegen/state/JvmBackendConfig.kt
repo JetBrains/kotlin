@@ -101,4 +101,9 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val useFir: Boolean = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
 
     val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
+
+    // Fixed coroutines debugging uses stdlib function to null out spilled locals.
+    // By default the function returns `null`, the debugger replaces it with implementation, that returns its argument.
+    // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
+    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
 }

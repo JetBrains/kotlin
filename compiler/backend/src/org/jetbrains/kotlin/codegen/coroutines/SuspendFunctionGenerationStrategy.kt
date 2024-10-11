@@ -87,12 +87,11 @@ class SuspendFunctionGenerationStrategy(
             reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(declaration, state, it) },
             lineNumber = CodegenUtil.getLineNumberForElement(declaration, false) ?: 0,
             sourceFile = declaration.containingKtFile.name,
-            languageVersionSettings = state.languageVersionSettings,
+            config = state.config,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
             internalNameForDispatchReceiver = (originalSuspendDescriptor.containingDeclaration as? ClassDescriptor)?.let {
                 if (it.isInlineClass()) state.typeMapper.mapType(it).internalName else null
             } ?: containingClassInternalNameOrNull(),
-            shouldOptimiseUnusedVariables = !state.config.enableDebugMode,
         )
     }
 
