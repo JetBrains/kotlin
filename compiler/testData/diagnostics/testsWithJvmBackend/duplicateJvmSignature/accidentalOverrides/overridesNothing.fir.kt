@@ -1,3 +1,6 @@
+// IGNORE_FIR_DIAGNOSTICS
+// IGNORE_ERRORS
+
 interface B {
     fun getX() = 1
 }

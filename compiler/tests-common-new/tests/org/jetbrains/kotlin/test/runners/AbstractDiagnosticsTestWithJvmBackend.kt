@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -75,6 +77,7 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
             classicFrontendHandlersStep {
                 useHandlers(
                     ::ClassicDiagnosticsHandler,
+                    ::NoCompilationErrorsHandler,
                 )
             }
         } else {
@@ -83,6 +86,7 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
                 useHandlers(
                     ::FirDiagnosticsHandler,
                     ::FirScopeDumpHandler,
+                    ::NoFirCompilationErrorsHandler,
                 )
             }
         }

@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+// IGNORE_ERRORS
 
 class B {
     companion object <!REDECLARATION!>A<!> {
