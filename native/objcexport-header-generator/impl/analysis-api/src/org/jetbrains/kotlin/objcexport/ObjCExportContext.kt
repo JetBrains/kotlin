@@ -31,7 +31,16 @@ data class ObjCExportContext(
      *   initWithReturnA (id<UpperBound>)
      * @end
      * ```
-     *
+     * If there is no upper bound descendant parameter should be translated as id type
+     * ```kotlin
+     * open class Foo<T>(val t: T)
+     * class Bar(data: String): Foo<String>(data)
+     * ```
+     * ```c
+     * @interface Bar<String>
+     *     initWithT(id)t
+     * @end
+     * ```
      * To catch this difference we need to keep currently translated classifier.
      *
      * See more at [org.jetbrains.kotlin.objcexport.TranslateToObjCTypeKt.mapToReferenceTypeIgnoringNullability]

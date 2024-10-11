@@ -167,7 +167,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
                  * 3.2 When type parameter symbol is local
                  */
                 val upperBound = if (definingSymbol != null && classifierContext != null && definingSymbol != classifierContext) {
-                    findUpperBoundMatchingTypeParameter(definingSymbol as KaClassSymbol, fullyExpandedType)
+                    findUpperBoundMatchingTypeParameter(definingSymbol as KaClassSymbol, fullyExpandedType) ?: return ObjCIdType
                 } else if (isLocal) {
                     findUpperBoundMatchingTypeParameter(definingSymbol as KaClassSymbol, fullyExpandedType)
                 } else null
