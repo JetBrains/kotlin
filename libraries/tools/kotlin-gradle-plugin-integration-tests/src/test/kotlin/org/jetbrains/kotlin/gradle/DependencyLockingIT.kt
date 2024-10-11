@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 class DependencyLockingIT : KGPBaseTest() {
@@ -15,6 +16,7 @@ class DependencyLockingIT : KGPBaseTest() {
     @DisplayName("KT-71549: dependency locking does not cause build failure")
     @TestMetadata("jvm-with-dependency-locking")
     @GradleTest
+    @Disabled("It's flaky. See the issue comments, first requires a proper fix. Additionally, on Windows it sometimes fails due to inability to delete the tmp directory.")
     fun testJvmDependencyLocking(gradleVersion: GradleVersion) {
         project("jvm-with-dependency-locking", gradleVersion) {
             build("compileKotlin", "--write-locks")
