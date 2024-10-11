@@ -129,6 +129,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClass.kt");
   }
 
+  @TestMetadata("constructorWithValueClassAsProperty.kt")
+  public void testConstructorWithValueClassAsProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClassAsProperty.kt");
+  }
+
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");

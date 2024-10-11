@@ -145,6 +145,12 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("constructorWithValueClassAsProperty.kt")
+  public void testConstructorWithValueClassAsProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClassAsProperty.kt");
+  }
+
+  @Test
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
