@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasTypeForValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import java.util.*
 
 internal class SymbolLightConstructor(
@@ -66,11 +68,19 @@ internal class SymbolLightConstructor(
         )
     }
 
-    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        return when {
-            modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS -> null
-            (containingClass as? SymbolLightClassForNamedClassLike)?.isSealed == true -> GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
-            else -> GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+    private fun computeModifiers(modifier: String): Map<String, Boolean>? = when {
+        modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS -> null
+        (containingClass as? SymbolLightClassForNamedClassLike)?.isSealed == true ->
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
+
+        else -> withFunctionSymbol { symbol ->
+            val visibility = if (symbol.hasTypeForValueClassInSignature()) {
+                PsiModifier.PRIVATE
+            } else {
+                symbol.toPsiVisibilityForMember()
+            }
+
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
         }
     }
 
