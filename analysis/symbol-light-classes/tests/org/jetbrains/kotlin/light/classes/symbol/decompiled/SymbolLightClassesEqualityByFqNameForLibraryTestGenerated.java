@@ -139,6 +139,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("constructorWithValueClass.kt")
+  public void testConstructorWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
