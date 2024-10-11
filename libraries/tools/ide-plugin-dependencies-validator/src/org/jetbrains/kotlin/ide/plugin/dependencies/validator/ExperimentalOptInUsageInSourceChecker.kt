@@ -5,45 +5,23 @@
 
 package org.jetbrains.kotlin.ide.plugin.dependencies.validator
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtClassLiteralExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
-import kotlin.io.path.extension
-import kotlin.streams.asSequence
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import kotlin.io.path.name
-import kotlin.io.path.readText
 
 object ExperimentalOptInUsageInSourceChecker {
     fun checkExperimentalOptInUsage(srcRoots: List<Path>): List<ExperimentalAnnotationUsage> {
-        val project = createProjectForParsing()
-        try {
-            return srcRoots.filter { it.exists() }
-                .flatMap { srcRoot ->
-                    Files.walk(srcRoot)
-                        .asSequence()
-                        .filter { it.extension == "kt" }
-                        .flatMap { file ->
-                            val ktFile = file.parseAsKtFile(project)
-                            checkExperimentalOptInUsage(ktFile, file)
-                        }
+        return buildList {
+            srcRoots
+                .filter { it.exists() }
+                .forEach { srcRoot ->
+                    forEachKtFileInDirectory(srcRoot) { ktFile, path ->
+                        addAll(checkExperimentalOptInUsage(ktFile, path))
+                    }
                 }
-        } finally {
-            Disposer.dispose(project)
         }
     }
 
@@ -77,17 +55,6 @@ object ExperimentalOptInUsageInSourceChecker {
             }
     }
 
-    private fun Path.parseAsKtFile(project: Project): KtFile {
-        return PsiFileFactoryImpl(project).createFileFromText(name, KotlinLanguage.INSTANCE, readText()) as KtFile
-    }
-
-    private fun createProjectForParsing(): Project {
-        return KotlinCoreEnvironment.createForProduction(
-            Disposer.newDisposable("Disposable for project of ${ExperimentalOptInUsageInSourceChecker::class.simpleName}"),
-            CompilerConfiguration(),
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).project
-    }
 
     private const val OPT_IN_ANNOTATION = "OptIn"
 }
