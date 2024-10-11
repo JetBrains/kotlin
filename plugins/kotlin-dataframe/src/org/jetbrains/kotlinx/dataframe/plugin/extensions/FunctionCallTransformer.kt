@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
-import org.jetbrains.kotlinx.dataframe.plugin.SchemaProperty
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedCallShape
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
@@ -520,7 +521,7 @@ class FunctionCallTransformer(
                                 isNullable = false
                             )
 
-                        SchemaProperty(schema.defaultType(), it.name, dataRowReturnType, columnsContainerReturnType)
+                        SchemaProperty(schema.defaultType(), PropertyName.of(it.name), dataRowReturnType, columnsContainerReturnType)
                     }
 
                     is SimpleFrameColumn -> {
@@ -534,7 +535,7 @@ class FunctionCallTransformer(
 
                         SchemaProperty(
                             marker = schema.defaultType(),
-                            name = it.name,
+                            propertyName = PropertyName.of(it.name),
                             dataRowReturnType = frameColumnReturnType,
                             columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef()
                                 .projectOverDataColumnType()
@@ -543,7 +544,7 @@ class FunctionCallTransformer(
 
                     is SimpleDataColumn -> SchemaProperty(
                         marker = schema.defaultType(),
-                        name = it.name,
+                        propertyName = PropertyName.of(it.name),
                         dataRowReturnType = it.type.type(),
                         columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
                     )

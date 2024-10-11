@@ -8,8 +8,6 @@ package org.jetbrains.kotlinx.dataframe.plugin
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
@@ -63,11 +61,3 @@ data class RefinedArgument(val name: Name, val expression: FirExpression) {
         return "RefinedArgument(name=$name, expression=${expression})"
     }
 }
-
-data class SchemaProperty(
-    val marker: ConeTypeProjection,
-    val name: String,
-    val dataRowReturnType: ConeKotlinType,
-    val columnContainerReturnType: ConeKotlinType,
-    val override: Boolean = false
-)
