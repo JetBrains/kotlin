@@ -106,7 +106,7 @@ class FunctionCallTransformer(
         fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall?
     }
 
-    private val transformers = listOf(GroupByCallTransformer(), DataFrameCallTransformer())
+    private val transformers = listOf(GroupByCallTransformer(), DataFrameCallTransformer(), DataRowCallTransformer())
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
@@ -156,14 +156,14 @@ class FunctionCallTransformer(
             ?: call
     }
 
-    inner class DataFrameCallTransformer : CallTransformer {
+    inner class DataSchemaLikeCallTransformer(val classId: ClassId) : CallTransformer {
         override fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType? {
-            if (symbol.resolvedReturnType.fullyExpandedClassId(session) != Names.DF_CLASS_ID) return null
-            // possibly null if explicit receiver type is AnyFrame
+            if (symbol.resolvedReturnType.fullyExpandedClassId(session) != classId) return null
+            // possibly null if explicit receiver type is typealias
             val argument = (callInfo.explicitReceiver?.resolvedType)?.typeArguments?.getOrNull(0)
             val newDataFrameArgument = buildNewTypeArgument(argument, callInfo.name, hash)
 
-            val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
+            val lookupTag = ConeClassLikeLookupTagImpl(classId)
             val typeRef = buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(
                     lookupTag,
@@ -182,7 +182,7 @@ class FunctionCallTransformer(
 
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
-            val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, Names.DF_CLASS_ID, InterpretationErrorReporter.DEFAULT)
+            val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, classId, InterpretationErrorReporter.DEFAULT)
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
             val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
@@ -194,6 +194,10 @@ class FunctionCallTransformer(
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir))
         }
     }
+
+    inner class DataFrameCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DF_CLASS_ID)
+
+    inner class DataRowCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DATA_ROW_CLASS_ID)
 
     inner class GroupByCallTransformer : CallTransformer {
         override fun interceptOrNull(
