@@ -205,33 +205,24 @@ class FileLocalIdSignatureComputer(
         is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
         is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
         is IrField -> {
-            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
+            val signatureOfContainer = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
                 ?: composeContainerIdSignature(declaration.parent, compatibleMode)
-            IdSignature.FileLocalSignature(p, ++localIndex)
+            IdSignature.FileLocalSignature(signatureOfContainer, ++localIndex)
         }
         is IrSimpleFunction -> {
-            val parent = declaration.parent
-            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
-                ?: composeContainerIdSignature(parent, compatibleMode)
+            val signatureOfContainer = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
+                ?: composeContainerIdSignature(declaration.parent, compatibleMode)
             IdSignature.FileLocalSignature(
-                p,
-                if (declaration.isOverridableFunction()) {
-                    mangler.run { declaration.signatureMangle(compatibleMode) }
-                } else {
-                    ++localIndex
-                },
+                signatureOfContainer,
+                ++localIndex,
                 declaration.render()
             )
         }
         is IrProperty -> {
-            val parent = declaration.parent
+            // TODO: merge it with the 'else' branch, it's the same
             IdSignature.FileLocalSignature(
-                composeContainerIdSignature(parent, compatibleMode),
-                if (declaration.isOverridableProperty()) {
-                    mangler.run { declaration.signatureMangle(compatibleMode) }
-                } else {
-                    ++localIndex
-                },
+                composeContainerIdSignature(declaration.parent, compatibleMode),
+                ++localIndex,
                 declaration.render()
             )
         }
@@ -243,15 +234,6 @@ class FileLocalIdSignatureComputer(
             )
         }
     }
-
-    private fun IrSimpleFunction.isOverridableFunction(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && hasDispatchReceiver
-
-    private fun IrProperty.isOverridableProperty(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
-
-    private val IrSimpleFunction?.hasDispatchReceiver: Boolean
-        get() = this?.dispatchReceiverParameter != null
 
     companion object {
         private const val START_INDEX = 0
