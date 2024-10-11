@@ -1,11 +1,15 @@
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.solib
 
 plugins {
     kotlin("jvm")
     id("native-interop-plugin")
 }
+
+val library = solib("llvmstubs")
 
 kotlinNativeInterop {
     create("llvm") {
@@ -39,17 +43,31 @@ sourceSets {
     }
 }
 
-val nativeLibs by configurations.creating {
+val cppLinkElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
-        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, layout.buildDirectory.dir("nativelibs/${TargetWithSanitizer.host}")) {
+    add(cppLinkElements.name, layout.buildDirectory.file("nativelibs/${TargetWithSanitizer.host}/$library")) {
+        builtBy(kotlinNativeInterop["llvm"].genTask)
+    }
+    add(cppRuntimeElements.name, layout.buildDirectory.file("nativelibs/${TargetWithSanitizer.host}/$library")) {
         builtBy(kotlinNativeInterop["llvm"].genTask)
     }
 }

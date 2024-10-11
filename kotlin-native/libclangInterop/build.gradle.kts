@@ -1,5 +1,8 @@
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 
@@ -145,19 +148,29 @@ sourceSets {
     }
 }
 
-val nativeLibs by configurations.creating {
+val cppLinkElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
-        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, layout.buildDirectory.dir(library)) {
-        builtBy(library)
-    }
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }
 
 // Please note that list of headers should be fixed manually.

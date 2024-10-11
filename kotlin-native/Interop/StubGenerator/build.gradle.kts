@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 
@@ -11,11 +12,12 @@ application {
     mainClass.set("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
 }
 
-val nativeLibsForTest by configurations.creating {
+val testCppRuntime by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
-        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
@@ -31,8 +33,8 @@ dependencies {
     implementation(project(":compiler:ir.serialization.common"))
 
     testImplementation(kotlinTest("junit"))
-    nativeLibsForTest(project(":kotlin-native:libclangInterop", "nativeLibs"))
-    nativeLibsForTest(project(":kotlin-native:Interop:Runtime", "nativeLibs"))
+    testCppRuntime(project(":kotlin-native:libclangInterop"))
+    testCppRuntime(project(":kotlin-native:Interop:Runtime"))
 }
 
 sourceSets {
@@ -58,7 +60,7 @@ tasks {
     withType<Test>().configureEach {
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
-            nativeLibraries.from(nativeLibsForTest)
+            nativeLibraries.from(testCppRuntime)
         })
         val libclangPath = "${nativeDependencies.llvmPath}/" + if (org.jetbrains.kotlin.konan.target.HostManager.hostIsMingw) {
             "bin/libclang.dll"

@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("native")
 }
+
+val library = lib("debugInfo")
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
@@ -45,7 +51,7 @@ native {
     }
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
 
-    target(lib("debugInfo"), objSet) {
+    target(library, objSet) {
         tool(*hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qcv", ruleOut(), *ruleInAll())
     }
@@ -71,4 +77,18 @@ native {
             )
         }
     }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+artifacts {
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }

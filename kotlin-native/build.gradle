@@ -100,6 +100,9 @@ configurations {
     nativeLibs {
         canBeConsumed = false
         canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LIBRARY_RUNTIME))
+        }
     }
 
     trove4j_jar {
@@ -121,11 +124,11 @@ dependencies {
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
-    nativeLibs project(path: ':kotlin-native:common:env', configuration: 'nativeLibs')
-    nativeLibs project(path: ':kotlin-native:common:files', configuration: 'nativeLibs')
-    nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
-    nativeLibs project(path: ':kotlin-native:libclangInterop', configuration: 'nativeLibs')
-    nativeLibs project(path: ':kotlin-native:Interop:Runtime', configuration: 'nativeLibs')
+    nativeLibs project(':kotlin-native:common:env')
+    nativeLibs project(':kotlin-native:common:files')
+    nativeLibs project(':kotlin-native:llvmInterop')
+    nativeLibs project(':kotlin-native:libclangInterop')
+    nativeLibs project(':kotlin-native:Interop:Runtime')
     use(RepoDependencies) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
     }

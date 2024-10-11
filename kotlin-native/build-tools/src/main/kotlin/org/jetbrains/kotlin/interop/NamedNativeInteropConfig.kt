@@ -137,7 +137,7 @@ class NamedNativeInteropConfig(
             mainClass = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs("-ea")
             jvmArgumentProviders.add(project.objects.newInstance<StubGeneratorArgumentProvider>().apply {
-                nativeLibraries.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_NATIVE_LIBS_CONFIGURATION))
+                nativeLibraries.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CPP_RUNTIME_CONFIGURATION))
             })
             systemProperties(mapOf(
                     // Set the konan.home property because we run the cinterop tool not from a distribution jar

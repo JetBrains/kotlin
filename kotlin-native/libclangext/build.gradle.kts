@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("kotlin.native.build-tools-conventions")
@@ -23,6 +27,8 @@ plugins {
 }
 val libclangextEnabled = org.jetbrains.kotlin.konan.target.HostManager.hostIsMac
 extra["isEnabled"] = libclangextEnabled
+
+val library = lib("clangext")
 
 native {
     val isWindows = PlatformInfo.isWindows()
@@ -46,8 +52,22 @@ native {
         }
     }
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
-    target(lib("clangext"), objSet) {
+    target(library, objSet) {
         tool(*hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qcv", ruleOut(), *ruleInAll())
     }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+artifacts {
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }

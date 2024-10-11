@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.*
 
@@ -11,11 +12,12 @@ plugins {
     id("native-dependencies")
 }
 
-val nativeLibsForTest by configurations.creating {
+val testCppRuntime by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
-        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
@@ -28,8 +30,8 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":compiler:util"))
-    nativeLibsForTest(project(":kotlin-native:libclangInterop", "nativeLibs"))
-    nativeLibsForTest(project(":kotlin-native:Interop:Runtime", "nativeLibs"))
+    testCppRuntime(project(":kotlin-native:libclangInterop"))
+    testCppRuntime(project(":kotlin-native:Interop:Runtime"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -66,7 +68,7 @@ open class TestArgumentProvider @Inject constructor(
 tasks.withType<Test>().configureEach {
     dependsOn(nativeDependencies.llvmDependency)
     jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
-        nativeLibraries.from(nativeLibsForTest)
+        nativeLibraries.from(testCppRuntime)
     })
 
     systemProperty("kotlin.native.llvm.libclang", "${nativeDependencies.llvmPath}/" + if (HostManager.hostIsMingw) {
