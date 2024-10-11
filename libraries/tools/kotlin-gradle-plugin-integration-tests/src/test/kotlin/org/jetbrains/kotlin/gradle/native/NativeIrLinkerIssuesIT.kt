@@ -24,6 +24,10 @@ import kotlin.test.assertNotNull
 @NativeGradlePluginTests
 internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        compilerArgumentsLogLevel = "warning"
+    )
+
     @DisplayName("KT-46697: ktor 1_5_4 and coroutines 1_5_0-RC-native-mt")
     @GradleTest
     @Disabled(
@@ -284,7 +288,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         directoryPrefix: String, projectName: String, localRepo: Path, gradleVersion: GradleVersion,
     ) {
         prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind = NativeCacheKind.STATIC, gradleVersion) {
-            build("publish")
+            build("publish", buildOptions = this.buildOptions.copy(logLevel = LogLevel.DEBUG))
         }
     }
 
@@ -301,7 +305,8 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(cacheKind = nativeCacheKind)),
-            localRepoDir = localRepo
+            localRepoDir = localRepo,
+            forceOutput = true
         ) {
             block()
         }
