@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -39,6 +38,32 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 annotation class PrivateConstantEvaluatorAPI
 
 object FirExpressionEvaluator {
+    /**
+     * This property cannot be converted into a non-thread-local as we cannot control the entire stack of the call.
+     * For instance, we may jump through a Java class, so there is no other way to restore the previous stack.
+     * [evaluatedInitializer][org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer]
+     * cannot be used for this purpose as the
+     * [CONSTANT_EVALUATION][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.CONSTANT_EVALUATION]
+     * is non-jumping phase, so it cannot modify unrelated declarations.
+     *
+     * Code example:
+     * ```
+     * // FILE: KotlinClass.kt
+     * class KotlinClass {
+     *   companion object {
+     *     const val foo: Int = JavaClass.javaField + 1
+     *     const val bar: Int = foo + 1
+     *   }
+     * }
+     *
+     * // FILE: JavaClass.java
+     * public class JavaClass {
+     *     public static int javaField = KotlinClass.bar + 1;
+     * }
+     * ```
+     */
+    private val visitedCallables: ThreadLocal<HashSet<FirCallableSymbol<*>>> = ThreadLocal.withInitial(::hashSetOf)
+
     fun evaluatePropertyInitializer(property: FirProperty, session: FirSession): FirEvaluatorResult? {
         if (!property.isConst) {
             return null
@@ -84,22 +109,21 @@ object FirExpressionEvaluator {
         return visitor.evaluate(this)
     }
 
-    private fun <T> FirCallableSymbol<*>.visit(block: () -> T): T {
-        val firProperty = this.fir as? FirProperty ?: return block()
-
-        val oldEvaluatedResult = firProperty.evaluatedInitializer
-        firProperty.evaluatedInitializer = DuringEvaluation
-        try {
-            return block()
+    private inline fun <T> FirCallableSymbol<*>.visit(block: () -> T): T {
+        val visited = visitedCallables.get()
+        visited.add(this)
+        return try {
+            block()
         } finally {
-            firProperty.evaluatedInitializer = oldEvaluatedResult
+            visited.remove(this)
+            if (visited.isEmpty()) {
+                // to avoid keeping large empty collections in memory
+                visitedCallables.remove()
+            }
         }
     }
 
-    private fun FirCallableSymbol<*>.wasVisited(): Boolean {
-        val firProperty = this.fir as? FirProperty ?: return false
-        return firProperty.evaluatedInitializer == DuringEvaluation
-    }
+    private fun FirCallableSymbol<*>.wasVisited(): Boolean = this in visitedCallables.get()
 
     private class EvaluationVisitor(val session: FirSession) : FirVisitor<FirEvaluatorResult, Nothing?>() {
         fun evaluate(expression: FirExpression?): FirEvaluatorResult {
