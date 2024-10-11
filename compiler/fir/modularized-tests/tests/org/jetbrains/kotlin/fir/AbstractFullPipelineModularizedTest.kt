@@ -173,7 +173,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             moduleData.name,
             tmp.toAbsolutePath().toFile().toString(),
             sourceFiles = moduleData.sources,
-            javaSourceRoots = moduleData.javaSourceRoots.map { JvmSourceRoot(it.path, it.packagePrefix) },
+            javaSourceRoots = moduleData.javaSourceRoots.flatMap { it.path.walk().filter { it.extension == "java" } }.map { JvmSourceRoot(it) },
             classpathRoots = moduleData.classpath,
             commonSourceFiles = emptyList(),
             modularJdkRoot = moduleData.modularJdkRoot,
