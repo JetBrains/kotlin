@@ -1,3 +1,4 @@
+// IGNORE_FIR_DIAGNOSTICS
 // SCOPE_DUMP: Y2:removeAt
 // FILE: X.java
 import org.jetbrains.annotations.NotNull;

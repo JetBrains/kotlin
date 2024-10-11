@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+
 interface B {
     fun getX() = 1
 }

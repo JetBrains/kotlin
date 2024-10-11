@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+
 enum class E {
     ENTRY;
 

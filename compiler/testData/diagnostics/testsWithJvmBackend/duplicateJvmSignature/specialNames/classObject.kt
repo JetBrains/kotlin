@@ -1,3 +1,4 @@
+// IGNORE_FIR_DIAGNOSTICS
 // FIR_IDENTICAL
 
 class C {

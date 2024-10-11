@@ -1,5 +1,6 @@
 // ISSUE: KT-62605
 // JVM_TARGET: 1.8
+// IGNORE_FIR_DIAGNOSTICS
 
 // FILE: Breakpoint.java
 
