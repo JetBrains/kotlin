@@ -1,0 +1,33 @@
+KT element: KtClass
+KT element text:
+@kotlin.jvm.JvmInline public final value class Foo<T> public constructor(a: T, b: T) {
+    public final val a: T /* compiled code */
+
+    public final val b: T /* compiled code */
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val b: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] a: R|T|, [ResolvedTo(BODY_RESOLVE)] b: R|T|): R|pack/Foo<T>|
+
+}

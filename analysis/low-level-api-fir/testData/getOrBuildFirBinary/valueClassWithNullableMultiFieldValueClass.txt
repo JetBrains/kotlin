@@ -1,0 +1,28 @@
+KT element: KtClass
+KT element text:
+@kotlin.jvm.JvmInline public final value class MyValueClass public constructor(foo: pack.Foo<kotlin.Int>?) {
+    public final val foo: pack.Foo<kotlin.Int>? /* compiled code */
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>?)] class MyValueClass : R|kotlin/Any| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val foo: R|pack/Foo<kotlin/Int>?|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|pack/Foo<kotlin/Int>?|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(BODY_RESOLVE)] foo: R|pack/Foo<kotlin/Int>?|): R|pack/MyValueClass|
+
+}
