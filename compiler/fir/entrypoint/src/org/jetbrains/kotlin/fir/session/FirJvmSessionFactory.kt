@@ -132,9 +132,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
 
                 listOfNotNull(
                     symbolProvider,
+                    generatedSymbolsProvider,
                     *(incrementalCompilationSymbolProviders?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                     incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
-                    generatedSymbolsProvider,
                     javaSymbolProvider,
                     initializeForStdlibIfNeeded(projectEnvironment, session, kotlinScopeProvider, dependencies),
                     *dependencies.toTypedArray(),
