@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
+import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
@@ -462,6 +463,11 @@ private val constructorsLoweringPhase = createFileLoweringPhase(
     lowering = ::ConstructorsLowering,
 )
 
+private val optimizeCastsPhase = createFileLoweringPhase(
+        name = "OptimizeCasts",
+        lowering = { context: Context -> CastsOptimization(context) },
+)
+
 private val expressionBodyTransformPhase = createFileLoweringPhase(
         ::ExpressionBodyTransformer,
         name = "ExpressionBodyTransformer",
@@ -601,10 +607,11 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         // Either of these could be turned off without losing correctness.
         coroutinesLivenessAnalysisPhase, // This is more optimal
         coroutinesLivenessAnalysisFallbackPhase, // While this is simple
-        typeOperatorPhase,
         expressionBodyTransformPhase,
         objectClassesPhase,
         staticInitializersPhase,
+        optimizeCastsPhase,
+        typeOperatorPhase,
         builtinOperatorPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { this.produce.isCache },
