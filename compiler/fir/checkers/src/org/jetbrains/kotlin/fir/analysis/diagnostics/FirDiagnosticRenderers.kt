@@ -192,14 +192,20 @@ object FirDiagnosticRenderers {
                     val representation = simpleRepresentationsByConstructor.getValue(it)
 
                     val typesWithSameRepresentation = constructorsByRepresentation.getValue(representation)
-                    if (typesWithSameRepresentation.size == 1) return@associateWith representation
+                    if (typesWithSameRepresentation.size == 1 && typesWithSameRepresentation.single() !is ConeTypeParameterLookupTag) {
+                        return@associateWith "$representation^"
+                    }
 
                     val index = typesWithSameRepresentation.indexOf(it) + 1
 
                     buildString {
                         append(representation)
-                        append('#')
-                        append(index)
+                        if (typesWithSameRepresentation.size > 1) {
+                            append('#')
+                            append(index)
+                        }
+                        // Special symbol to be replaced with a nullability marker, like "", "?", "!", or maybe something else in future
+                        append("^")
 
                         if (it is ConeTypeParameterLookupTag) {
                             append(" (type parameter of ")

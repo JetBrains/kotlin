@@ -64,7 +64,10 @@ open class ConeTypeRenderer(
         }
     }
 
-    fun render(type: ConeKotlinType) {
+    fun render(
+        type: ConeKotlinType,
+        nullabilityMarker: String = if (type !is ConeFlexibleType && type !is ConeErrorType && type.isMarkedNullable) "?" else "",
+    ) {
         if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
             // We don't render attributes for flexible/definitely not null types here,
             // because bounds duplicate these attributes often
@@ -98,18 +101,19 @@ open class ConeTypeRenderer(
             is ConeErrorType -> builder.append("ERROR CLASS: ${type.diagnostic.reason}")
 
             is ConeSimpleKotlinType -> {
-                renderConstructor(type.getConstructor())
-                if (type is ConeClassLikeType) {
+                val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
+                renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
+                if (hasTypeArguments) {
                     type.renderTypeArguments()
+                    builder.append(nullabilityMarker)
                 }
+                return
             }
         }
-        if (type !is ConeFlexibleType && type !is ConeErrorType && type.isMarkedNullable) {
-            builder.append("?")
-        }
+        builder.append(nullabilityMarker)
     }
 
-    open fun renderConstructor(constructor: TypeConstructorMarker) {
+    open fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String = "") {
         require(constructor is ConeTypeConstructorMarker)
         when (constructor) {
             is ConeTypeVariableTypeConstructor -> {
@@ -135,6 +139,7 @@ open class ConeTypeRenderer(
                         "Call `render` to simply render the type or filter out intersection types on the call-site."
             )
         }
+        builder.append(nullabilityMarker)
     }
 
     private fun ConeClassLikeType.renderTypeArguments() {
@@ -156,8 +161,7 @@ open class ConeTypeRenderer(
         ) {
             if (lowerBound !is ConeClassLikeType || lowerBound.typeArguments.isEmpty()) {
                 if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {
-                    render(lowerBound)
-                    builder.append("!")
+                    render(lowerBound, nullabilityMarker = "!")
                     return true
                 }
             }

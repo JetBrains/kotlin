@@ -12,7 +12,7 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<@Ann() R>; @Ann() kotlin.Array<CapturedType(in @Ann() kotlin.Int)>")!>a<!>)
+    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<@Ann() R (type parameter of fun <R : @Ann() Any> f3(a: Array<@Ann() R>): Array<@Ann() R?>)>; @Ann() kotlin.Array<CapturedType(in @Ann() kotlin.Int)>")!>a<!>)
 }
 
 
