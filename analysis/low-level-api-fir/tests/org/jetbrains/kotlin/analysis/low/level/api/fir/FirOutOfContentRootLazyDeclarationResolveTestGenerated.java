@@ -976,6 +976,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("multiFieldValueClass.kt")
+    public void testMultiFieldValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiFieldValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("multiFieldValueClassWithTypeAlias.kt")
+    public void testMultiFieldValueClassWithTypeAlias() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiFieldValueClassWithTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("multiLevelClasspathSubstitution.kt")
     public void testMultiLevelClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiLevelClasspathSubstitution.kt");
@@ -1003,6 +1015,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("nonEmptyInterfaceWithSuper.kt")
     public void testNonEmptyInterfaceWithSuper() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nonEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveValueClass.kt")
+    public void testRecursiveValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/recursiveValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveValueClass2.kt")
+    public void testRecursiveValueClass2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/recursiveValueClass2.kt");
     }
 
     @Test
@@ -1045,6 +1069,42 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNestedNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithAnotherValueClass.kt")
+    public void testValueClassWithAnotherValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithAnotherValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithMultiFieldValueClass.kt")
+    public void testValueClassWithMultiFieldValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithMultiFieldValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithNestedClass.kt")
+    public void testValueClassWithNestedClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithNestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithNullableMultiFieldValueClass.kt")
+    public void testValueClassWithNullableMultiFieldValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithNullableMultiFieldValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithParameterizedAlias.kt")
+    public void testValueClassWithParameterizedAlias() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithParameterizedAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithTypeAliasOnAnotherValueClass.kt")
+    public void testValueClassWithTypeAliasOnAnotherValueClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/valueClassWithTypeAliasOnAnotherValueClass.kt");
     }
 
     @Nested
