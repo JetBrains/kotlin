@@ -43,6 +43,15 @@ sourceSets {
     }
 }
 
+val cppApiElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
 val cppLinkElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -64,6 +73,7 @@ val cppRuntimeElements by configurations.creating {
 }
 
 artifacts {
+    add(cppApiElements.name, layout.projectDirectory.dir("src/headers"))
     add(cppLinkElements.name, layout.buildDirectory.file("nativelibs/${TargetWithSanitizer.host}/$library")) {
         builtBy(kotlinNativeInterop["env"].genTask)
     }

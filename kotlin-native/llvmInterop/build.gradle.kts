@@ -43,6 +43,15 @@ sourceSets {
     }
 }
 
+val cppApiElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
 val cppLinkElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
