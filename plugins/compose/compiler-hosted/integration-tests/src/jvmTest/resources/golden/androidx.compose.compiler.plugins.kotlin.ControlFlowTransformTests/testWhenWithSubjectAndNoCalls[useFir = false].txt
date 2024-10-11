@@ -29,12 +29,12 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0_subject = x
+  val subject = x
   when {
-    tmp0_subject == 0 -> {
+    subject == 0 -> {
       8
     }
-    tmp0_subject == 0b0001 -> {
+    subject == 0b0001 -> {
       10
     }
     else -> {

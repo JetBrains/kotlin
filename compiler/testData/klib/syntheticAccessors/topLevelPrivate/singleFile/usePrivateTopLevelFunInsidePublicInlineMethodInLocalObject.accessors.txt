@@ -3,14 +3,14 @@
 /* FILE package=<root> fileName=usePrivateTopLevelFunInsidePublicInlineMethodInLocalObject.kt */
 
 internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
-    val tmp0: <no name provided> =
+    val tmp: <no name provided> =
         local class <no name provided>
             public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
     /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
 /* TARGET declaration */ private fun privateMethod(): String
 public fun box(): String
-    val tmp0: <no name provided> =
+    val tmp: <no name provided> =
         local class <no name provided>
             public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()

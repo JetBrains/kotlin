@@ -90,15 +90,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return Int%class-Ui
     }
-    val tmp0 = State%Int%class-Ui
+    val tmp = State%Int%class-Ui
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("Int%class-Ui", Int%class-Ui)
-        State%Int%class-Ui = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("Int%class-Ui", Int%class-Ui)
+        State%Int%class-Ui = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value
@@ -110,15 +110,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return Boolean%param-isError%fun-UiTextField
     }
-    val tmp0 = State%Boolean%param-isError%fun-UiTextField
+    val tmp = State%Boolean%param-isError%fun-UiTextField
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("Boolean%param-isError%fun-UiTextField", Boolean%param-isError%fun-UiTextField)
-        State%Boolean%param-isError%fun-UiTextField = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("Boolean%param-isError%fun-UiTextField", Boolean%param-isError%fun-UiTextField)
+        State%Boolean%param-isError%fun-UiTextField = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value
@@ -130,15 +130,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return Boolean%param-keyboardActions2%fun-UiTextField
     }
-    val tmp0 = State%Boolean%param-keyboardActions2%fun-UiTextField
+    val tmp = State%Boolean%param-keyboardActions2%fun-UiTextField
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("Boolean%param-keyboardActions2%fun-UiTextField", Boolean%param-keyboardActions2%fun-UiTextField)
-        State%Boolean%param-keyboardActions2%fun-UiTextField = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("Boolean%param-keyboardActions2%fun-UiTextField", Boolean%param-keyboardActions2%fun-UiTextField)
+        State%Boolean%param-keyboardActions2%fun-UiTextField = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value
@@ -150,15 +150,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return String%0%str%arg-0%call-println%fun-UiTextField
     }
-    val tmp0 = State%String%0%str%arg-0%call-println%fun-UiTextField
+    val tmp = State%String%0%str%arg-0%call-println%fun-UiTextField
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("String%0%str%arg-0%call-println%fun-UiTextField", String%0%str%arg-0%call-println%fun-UiTextField)
-        State%String%0%str%arg-0%call-println%fun-UiTextField = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("String%0%str%arg-0%call-println%fun-UiTextField", String%0%str%arg-0%call-println%fun-UiTextField)
+        State%String%0%str%arg-0%call-println%fun-UiTextField = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value
@@ -170,15 +170,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return String%0%str%arg-0%call-println-1%fun-UiTextField
     }
-    val tmp0 = State%String%0%str%arg-0%call-println-1%fun-UiTextField
+    val tmp = State%String%0%str%arg-0%call-println-1%fun-UiTextField
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("String%0%str%arg-0%call-println-1%fun-UiTextField", String%0%str%arg-0%call-println-1%fun-UiTextField)
-        State%String%0%str%arg-0%call-println-1%fun-UiTextField = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("String%0%str%arg-0%call-println-1%fun-UiTextField", String%0%str%arg-0%call-println-1%fun-UiTextField)
+        State%String%0%str%arg-0%call-println-1%fun-UiTextField = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value

@@ -31,15 +31,15 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0_subject = x
+  val subject = x
   when {
-    tmp0_subject == 0 -> {
+    subject == 0 -> {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<A(a)>")
       A(a, %composer, 0)
       %composer.endReplaceGroup()
     }
-    tmp0_subject == 0b0001 -> {
+    subject == 0b0001 -> {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<A(b)>")
       A(b, %composer, 0)

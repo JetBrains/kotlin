@@ -160,9 +160,9 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       traceEventStart(<>, %dirty, -1, <>)
     }
     one(%composer, 0b1110 and %dirty)
-    val tmp0_safe_receiver = two
+    val safe_receiver = two
     when {
-      tmp0_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -170,13 +170,13 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<invoke...>")
-        tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
+        safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
         %composer.endReplaceGroup()
       }
     }
-    val tmp1_safe_receiver = three
+    val safe_receiver = three
     when {
-      tmp1_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -184,15 +184,15 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<it()>")
-        tmp1_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           it(%composer, 0)
         }
         %composer.endReplaceGroup()
       }
     }
-    val tmp2_safe_receiver = four
+    val safe_receiver = four
     when {
-      tmp2_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -200,7 +200,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<four()>")
-        tmp2_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           four(%composer, 0b1110 and %dirty shr 0b1001)
         }
         %composer.endReplaceGroup()
@@ -215,9 +215,9 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       %composer.startReplaceGroup(<>)
       %composer.endReplaceGroup()
     }
-    val tmp3_safe_receiver = six
+    val safe_receiver = six
     when {
-      tmp3_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -225,7 +225,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<Wrappe...>")
-        tmp3_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           Wrapper(it, %composer, 0)
         }
         %composer.endReplaceGroup()

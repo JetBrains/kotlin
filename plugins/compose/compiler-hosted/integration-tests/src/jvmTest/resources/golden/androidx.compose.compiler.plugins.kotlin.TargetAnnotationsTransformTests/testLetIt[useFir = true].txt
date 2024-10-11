@@ -26,9 +26,9 @@ fun Test(content: Function2<Composer, Int, Unit?>, %composer: Composer?, %change
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    val tmp0_safe_receiver = content
+    val safe_receiver = content
     when {
-      tmp0_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -37,7 +37,7 @@ fun Test(content: Function2<Composer, Int, Unit?>, %composer: Composer?, %change
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<it()>")
         val tmp1_group = <block>{
-          val tmp0_group = tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit?> ->
+          val tmp0_group = safe_receiver.let { it: Function2<Composer, Int, Unit?> ->
             val tmp0_return = it(%composer, 0)
             tmp0_return
           }

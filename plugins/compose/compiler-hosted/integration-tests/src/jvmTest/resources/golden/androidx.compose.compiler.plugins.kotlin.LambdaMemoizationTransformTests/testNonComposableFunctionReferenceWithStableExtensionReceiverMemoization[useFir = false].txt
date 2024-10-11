@@ -33,10 +33,10 @@ fun Example(%composer: Composer?, %changed: Int) {
     tmp0_group
   }
   val shouldMemoize = <block>{
-    val tmp0 = x
+    val tmp = x
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(false) {
-      tmp0::foo
+      tmp::foo
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group

@@ -35,9 +35,9 @@ fun Scratch(vm: MyUnstableViewModel, %composer: Composer?, %changed: Int) {
     Dialog(slotIfNotNull(vm.text) { it: String, %composer: Composer?, %changed: Int ->
       %composer.startReplaceGroup(<>)
       Button(<block>{
-        val tmp0 = vm
-        %composer.cache(%composer.changedInstance(tmp0)) {
-          tmp0::onClickyClicky
+        val tmp = vm
+        %composer.cache(%composer.changedInstance(tmp)) {
+          tmp::onClickyClicky
         }
       }, %composer, 0)
       %composer.endReplaceGroup()

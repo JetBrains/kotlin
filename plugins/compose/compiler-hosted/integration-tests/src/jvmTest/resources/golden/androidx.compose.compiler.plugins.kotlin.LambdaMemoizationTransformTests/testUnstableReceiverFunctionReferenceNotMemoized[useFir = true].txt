@@ -22,10 +22,10 @@ fun Something(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val x = <block>{
-      val tmp0 = unstable
+      val tmp = unstable
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
-        tmp0::method
+      val tmp0_group = %composer.cache(%composer.changedInstance(tmp)) {
+        tmp::method
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

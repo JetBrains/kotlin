@@ -34,15 +34,15 @@ internal object LiveLiterals%TestKt {
     if (!isLiveLiteralsEnabled) {
       return Int%fun-bar%class-%no-name-provided%%fun-a
     }
-    val tmp0 = State%Int%fun-bar%class-%no-name-provided%%fun-a
+    val tmp = State%Int%fun-bar%class-%no-name-provided%%fun-a
     return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
-        State%Int%fun-bar%class-%no-name-provided%%fun-a = tmp1
-        tmp1
+      tmp == null -> {
+        val tmp = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
+        State%Int%fun-bar%class-%no-name-provided%%fun-a = tmp
+        tmp
       }
       else -> {
-        tmp0
+        tmp
       }
     }
     .value

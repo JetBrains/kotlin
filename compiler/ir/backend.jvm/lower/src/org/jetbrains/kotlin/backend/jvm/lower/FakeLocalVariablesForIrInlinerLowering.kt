@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.inline.getInlineScopeInfo
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -98,7 +97,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
 
     override fun IrInlinedFunctionBlock.addFakeLocalVariable(name: String) {
         with(context.createIrBuilder(container!!.symbol)) {
-            val tmpVar = scope.createTmpVariable(
+            val tmpVar = scope.createTemporaryVariable(
                 irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
             )
             val position = this@addFakeLocalVariable.getTmpVariablesForArguments().size

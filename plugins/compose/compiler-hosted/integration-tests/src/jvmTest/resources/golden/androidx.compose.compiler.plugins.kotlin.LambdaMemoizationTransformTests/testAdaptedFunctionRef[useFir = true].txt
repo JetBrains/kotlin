@@ -66,15 +66,15 @@ fun rememberFoo(%composer: Composer?, %changed: Int): Int {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = foo(<block>{
-    val tmp0 = scrollState()
+    val tmp = scrollState()
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
+    val tmp1_group = %composer.cache(%composer.changed(tmp)) {
       fun ScrollState.test(p0: Int): Int {
         receiver.test(
           index = p0
         )
       }
-      tmp0::test
+      tmp::test
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group
@@ -105,10 +105,10 @@ fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
     traceEventStart(<>, %changed, -1, <>)
   }
   val tmp0 = foo(<block>{
-    val tmp0 = scrollState()
+    val tmp = scrollState()
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
-      tmp0::testExact
+    val tmp1_group = %composer.cache(%composer.changed(tmp)) {
+      tmp::testExact
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group

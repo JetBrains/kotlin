@@ -49,11 +49,11 @@ function box() {
     // Inline function 'inlineFunction' call
   }
   sep('Call in when');
-  var tmp0_subject = OK;
-  if (!(tmp0_subject == null) ? typeof tmp0_subject === 'string' : false) {
+  var subject = OK;
+  if (!(subject == null) ? typeof subject === 'string' : false) {
     // Inline function 'inlineFunction' call
   } else {
-    if (isNumber(tmp0_subject)) {
+    if (isNumber(subject)) {
       // Inline function 'inlineFunction' call
     } else {
       // Inline function 'inlineFunction' call

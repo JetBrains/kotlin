@@ -28,10 +28,10 @@ fun Icon(param: Int, %composer: Composer?, %changed: Int) {
     }
     val remembered = <block>{
       val tmp1_remember%arg%0 = <block>{
-        val tmp0 = param
+        val tmp = param
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-          tmp0::toString
+          tmp::toString
         }
         sourceInformationMarkerEnd(%composer)
         tmp0_group

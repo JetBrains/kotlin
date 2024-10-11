@@ -35,10 +35,10 @@ fun Something(param: String, rcvr: Int, %composer: Composer?, %changed: Int) {
       println(param)
     }
     val x = <block>{
-      val tmp0 = rcvr
+      val tmp = rcvr
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000) {
-        tmp0::method
+        tmp::method
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

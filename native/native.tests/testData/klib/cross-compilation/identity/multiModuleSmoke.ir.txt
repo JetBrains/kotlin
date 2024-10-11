@@ -175,7 +175,7 @@ MODULE_FRAGMENT name:<lib2>
                   GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in lib2.SealedInterface.Object.equals' type=<unbound IrClassSymbolImpl>? origin=null
                 then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in lib2.SealedInterface.Object'
                   CONST Boolean type=<unbound IrClassSymbolImpl> value=false
-            VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:lib2.SealedInterface.Object [val]
+            VAR IR_TEMPORARY_VARIABLE name:other_with_cast type:lib2.SealedInterface.Object [val]
               TYPE_OP type=lib2.SealedInterface.Object origin=CAST typeOperand=lib2.SealedInterface.Object
                 GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in lib2.SealedInterface.Object.equals' type=<unbound IrClassSymbolImpl>? origin=null
             RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in lib2.SealedInterface.Object'

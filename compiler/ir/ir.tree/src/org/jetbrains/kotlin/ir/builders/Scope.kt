@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -45,9 +46,6 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         return if (nameHint != null) "$prefix${index}_$nameHint" else "$prefix$index"
     }
 
-    private fun getNameForTemporary(nameHint: String?): String =
-        inventNameForTemporary("tmp", nameHint)
-
     fun createTemporaryVariableDeclaration(
         irType: IrType,
         nameHint: String? = null,
@@ -56,7 +54,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         startOffset: Int,
         endOffset: Int
     ): IrVariable {
-        val name = Name.identifier(getNameForTemporary(nameHint))
+        val name = Name.identifier(nameHint ?: "tmp")
         return IrVariableImpl(
             startOffset, endOffset, origin, IrVariableSymbolImpl(), name,
             irType, isMutable, isConst = false, isLateinit = false
@@ -80,6 +78,24 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             origin, startOffset, endOffset
         ).apply {
             initializer = irExpression
+        }
+    }
+
+    fun createTemporaryVariable(
+        irType: IrType,
+        nameHint: String? = null,
+        isMutable: Boolean = false,
+        initializer: IrExpression? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ): IrVariable {
+        return createTemporaryVariableDeclaration(
+            irType,
+            nameHint, isMutable,
+            origin, startOffset, endOffset
+        ).apply {
+            this.initializer = initializer
         }
     }
 }

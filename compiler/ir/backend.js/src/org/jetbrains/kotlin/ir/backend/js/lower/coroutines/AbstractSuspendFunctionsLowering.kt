@@ -328,7 +328,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                             "Not all arguments of <create> are used"
                         }
                     }
-                    val instanceVal = scope.createTmpVariable(instanceCreate, "i")
+                    val instanceVal = scope.createTemporaryVariable(instanceCreate, "i")
                     +instanceVal
 
                     assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)

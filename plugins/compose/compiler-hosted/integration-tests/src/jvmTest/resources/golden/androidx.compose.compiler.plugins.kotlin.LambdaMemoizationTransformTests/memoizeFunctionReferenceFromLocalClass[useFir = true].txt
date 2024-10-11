@@ -39,10 +39,10 @@ class MainActivity {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }
-      val tmp0 = test
+      val tmp = test
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%composer.changed(tmp0)) {
-        tmp0::go
+      val tmp0_group = %composer.cache(%composer.changed(tmp)) {
+        tmp::go
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

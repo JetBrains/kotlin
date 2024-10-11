@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.name.Name
 
 abstract class IrBuilder(
     override val context: IrGeneratorContext,
@@ -206,37 +203,8 @@ fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
     irType: IrType? = null
 ): IrVariable {
-    val variable = scope.createTmpVariable(irExpression, nameHint, isMutable, origin, irType)
+    val variable = scope.createTemporaryVariable(irExpression, nameHint, isMutable, origin, irType)
     +variable
     return variable
 }
 
-fun Scope.createTmpVariable(
-    irType: IrType,
-    nameHint: String? = null,
-    isMutable: Boolean = false,
-    initializer: IrExpression? = null,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET
-): IrVariable =
-    buildVariable(
-        getLocalDeclarationParent(), startOffset, endOffset, origin, Name.identifier(nameHint ?: "tmp"),
-        irType, isMutable
-    ).apply {
-        this.initializer = initializer
-    }
-
-fun Scope.createTmpVariable(
-    irExpression: IrExpression,
-    nameHint: String? = null,
-    isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    irType: IrType? = null
-): IrVariable =
-    buildVariable(
-        getLocalDeclarationParent(), irExpression.startOffset, irExpression.endOffset, origin, Name.identifier(nameHint ?: "tmp"),
-        irType ?: irExpression.type, isMutable
-    ).apply {
-        initializer = irExpression
-    }

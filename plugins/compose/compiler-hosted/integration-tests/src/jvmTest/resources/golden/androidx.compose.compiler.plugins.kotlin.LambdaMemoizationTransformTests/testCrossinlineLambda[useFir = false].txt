@@ -40,9 +40,9 @@ fun Test(%composer: Composer?, %changed: Int) {
         }
       }
     }
-    val tmp0_safe_receiver = lambda
+    val safe_receiver = lambda
     when {
-      tmp0_safe_receiver == null -> {
+      safe_receiver == null -> {
         %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         null
@@ -50,7 +50,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<it()>")
-        tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           it(%composer, 0)
         }
         %composer.endReplaceGroup()
