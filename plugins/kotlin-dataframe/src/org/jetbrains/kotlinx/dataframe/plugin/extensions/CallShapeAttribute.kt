@@ -1,6 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import org.jetbrains.kotlinx.dataframe.plugin.SchemaProperty
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataRowSchemaSupertype
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExpressionAnalysisAdditionalChecker
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExtensionsGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.TopLevelExtensionsGenerator
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FunctionCallTransformer
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
@@ -68,7 +68,7 @@ class FirDataFrameExtensionRegistrar(
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +::ExtensionsGenerator
+        +::TopLevelExtensionsGenerator
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
             FunctionCallTransformer(path, it, jsonCache(it), schemasDirectory, isTest)
