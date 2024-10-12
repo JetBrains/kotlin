@@ -129,7 +129,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                         expression.getValueArgument(expression.valueArgumentsCount - 1)!!
                     )
                 } else {
-                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
+                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField, expression.type)
                 }
             }.unwrapSingleExpressionBlock()
         }
