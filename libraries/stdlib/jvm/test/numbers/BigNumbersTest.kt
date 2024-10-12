@@ -39,6 +39,8 @@ class BigNumbersTest {
         assertEquals(BigInteger("-1"), -a shr 1)
         assertEquals(BigInteger("-1"), -a shr 2)
 
+        assertEquals(BigInteger("5"), 5.toByte().toBigInteger())
+        assertEquals(BigInteger("7"), 7.toShort().toBigInteger())
         assertEquals(BigInteger("2"), 2.toBigInteger())
         assertEquals(BigInteger("-3"), -3L.toBigInteger())
 
