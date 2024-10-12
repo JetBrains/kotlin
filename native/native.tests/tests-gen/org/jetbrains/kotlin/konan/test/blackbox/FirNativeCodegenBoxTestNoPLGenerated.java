@@ -43303,6 +43303,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("kt71119.kt")
+      public void testKt71119() {
+        runTest("compiler/testData/codegen/box/regressions/kt71119.kt");
+      }
+
+      @Test
       @TestMetadata("kt7401.kt")
       public void testKt7401() {
         runTest("compiler/testData/codegen/box/regressions/kt7401.kt");
