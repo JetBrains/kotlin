@@ -15219,6 +15219,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
           }
 
           @Test
+          @TestMetadata("runtimeCrashOnInnerWithImplicitInArgument.kt")
+          public void testRuntimeCrashOnInnerWithImplicitInArgument() {
+            runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/runtimeCrashOnInnerWithImplicitInArgument.kt");
+          }
+
+          @Test
+          @TestMetadata("runtimeCrashOnInnerWithImplicitOutArgument.kt")
+          public void testRuntimeCrashOnInnerWithImplicitOutArgument() {
+            runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/runtimeCrashOnInnerWithImplicitOutArgument.kt");
+          }
+
+          @Test
           @TestMetadata("secondLevelDepth.kt")
           public void testSecondLevelDepth() {
             runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/secondLevelDepth.kt");
