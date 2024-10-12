@@ -21,15 +21,16 @@ public enum class FileWalkDirection {
     /** Depth-first search, directory is visited BEFORE its files */
     TOP_DOWN,
     /** Depth-first search, directory is visited AFTER its files */
-    BOTTOM_UP
-    // Do we want also breadth-first search?
+    BOTTOM_UP,
+    /**Breadth-first search, directory is visited BEFORE its files */
+    BREADTH_FIRST
 }
 
 /**
  * This class is intended to implement different file traversal methods.
  * It allows to iterate through all files inside a given directory.
  *
- * Use [File.walk], [File.walkTopDown] or [File.walkBottomUp] extension functions to instantiate a `FileTreeWalk` instance.
+ * Use [File.walk], [File.walkTopDown], [File.walkBottomUp] or [File.walkBreadthFirst] extension functions to instantiate a `FileTreeWalk` instance.
 
  * If the file path given is just a file, walker iterates only it.
  * If the file path given does not exist, walker iterates nothing, i.e. it's equivalent to an empty sequence.
@@ -63,151 +64,226 @@ public class FileTreeWalk private constructor(
         }
     }
 
-    private inner class FileTreeWalkIterator : AbstractIterator<File>() {
+    private interface FileTreeWalkStrategy {
+        fun gotoNext(): File?
+    }
 
-        // Stack of directory states, beginning from the start directory
-        private val state = ArrayDeque<WalkState>()
+    private inner class SingleFileState(rootFile: File) : WalkState(rootFile) {
+        private var visited: Boolean = false
 
         init {
-            when {
-                start.isDirectory -> state.push(directoryState(start))
-                start.isFile -> state.push(SingleFileState(start))
-                else -> done()
-            }
+            if (_Assertions.ENABLED)
+                assert(rootFile.isFile) { "rootFile must be verified to be file beforehand." }
+        }
+
+        override fun step(): File? {
+            if (visited) return null
+            visited = true
+            return root
+        }
+    }
+
+    private inner class FileTreeWalkIterator : AbstractIterator<File>() {
+
+        private var strategy: FileTreeWalkStrategy = when (direction) {
+            FileWalkDirection.TOP_DOWN, FileWalkDirection.BOTTOM_UP -> DepthFirstFileTreeWalkStrategy()
+            FileWalkDirection.BREADTH_FIRST -> BreadthFirstFileTreeWalkStrategy()
         }
 
         override fun computeNext() {
-            val nextFile = gotoNext()
+            val nextFile = strategy.gotoNext()
             if (nextFile != null)
                 setNext(nextFile)
             else
                 done()
         }
 
+        private inner class DepthFirstFileTreeWalkStrategy : FileTreeWalkStrategy {
+            // Stack of directory states, beginning from the start directory
+            private val state = ArrayDeque<WalkState>()
 
-        private fun directoryState(root: File): DirectoryState {
-            return when (direction) {
-                FileWalkDirection.TOP_DOWN -> TopDownDirectoryState(root)
-                FileWalkDirection.BOTTOM_UP -> BottomUpDirectoryState(root)
+            init {
+                when {
+                    start.isDirectory -> state.push(directoryState(start))
+                    start.isFile -> state.push(SingleFileState(start))
+                    else -> done()
+                }
             }
-        }
 
-        private tailrec fun gotoNext(): File? {
-            // Take next file from the top of the stack or return if there's nothing left
-            val topState = state.peek() ?: return null
-            val file = topState.step()
-            if (file == null) {
-                // There is nothing more on the top of the stack, go back
-                state.pop()
-                return gotoNext()
-            } else {
-                // Check that file/directory matches the filter
-                if (file == topState.root || !file.isDirectory || state.size >= maxDepth) {
-                    // Proceed to a root directory or a simple file
-                    return file
-                } else {
-                    // Proceed to a sub-directory
-                    state.push(directoryState(file))
+            override tailrec fun gotoNext(): File? {
+                // Take next file from the top of the stack or return if there's nothing left
+                val topState = state.peek() ?: return null
+                val file = topState.step()
+                if (file == null) {
+                    // There is nothing more on the top of the stack, go back
+                    state.pop()
                     return gotoNext()
-                }
-            }
-        }
-
-        /** Visiting in bottom-up order */
-        private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
-
-            private var rootVisited = false
-
-            private var fileList: Array<File>? = null
-
-            private var fileIndex = 0
-
-            private var failed = false
-
-            /** First all children, then root directory */
-            override fun step(): File? {
-                if (!failed && fileList == null) {
-                    if (onEnter?.invoke(root) == false) {
-                        return null
-                    }
-
-                    fileList = root.listFiles()
-                    if (fileList == null) {
-                        onFail?.invoke(root, AccessDeniedException(file = root, reason = "Cannot list files in a directory"))
-                        failed = true
-                    }
-                }
-                if (fileList != null && fileIndex < fileList!!.size) {
-                    // First visit all files
-                    return fileList!![fileIndex++]
-                } else if (!rootVisited) {
-                    // Then visit root
-                    rootVisited = true
-                    return root
                 } else {
-                    // That's all
-                    onLeave?.invoke(root)
-                    return null
+                    // Check that file/directory matches the filter
+                    if (file == topState.root || !file.isDirectory || state.size >= maxDepth) {
+                        // Proceed to a root directory or a simple file
+                        return file
+                    } else {
+                        // Proceed to a sub-directory
+                        state.push(directoryState(file))
+                        return gotoNext()
+                    }
                 }
             }
-        }
 
-        /** Visiting in top-down order */
-        private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
-
-            private var rootVisited = false
-
-            private var fileList: Array<File>? = null
-
-            private var fileIndex = 0
-
-            /** First root directory, then all children */
-            override fun step(): File? {
-                if (!rootVisited) {
-                    // First visit root
-                    if (onEnter?.invoke(root) == false) {
-                        return null
+            private fun directoryState(root: File): DirectoryState {
+                return when (direction) {
+                    FileWalkDirection.TOP_DOWN -> TopDownDirectoryState(root)
+                    FileWalkDirection.BOTTOM_UP -> BottomUpDirectoryState(root)
+                    else -> {
+                        throw IllegalArgumentException("Depth first search just supports ${FileWalkDirection.TOP_DOWN} and ${FileWalkDirection.BOTTOM_UP} directions")
                     }
+                }
+            }
 
-                    rootVisited = true
-                    return root
-                } else if (fileList == null || fileIndex < fileList!!.size) {
-                    if (fileList == null) {
-                        // Then read an array of files, if any
+            /** Visiting in bottom-up order */
+            private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
+
+                private var rootVisited = false
+
+                private var fileList: Array<File>? = null
+
+                private var fileIndex = 0
+
+                private var failed = false
+
+                /** First all children, then root directory */
+                override fun step(): File? {
+                    if (!failed && fileList == null) {
+                        if (onEnter?.invoke(root) == false) {
+                            return null
+                        }
+
                         fileList = root.listFiles()
                         if (fileList == null) {
                             onFail?.invoke(root, AccessDeniedException(file = root, reason = "Cannot list files in a directory"))
-                        }
-                        if (fileList == null || fileList!!.size == 0) {
-                            onLeave?.invoke(root)
-                            return null
+                            failed = true
                         }
                     }
-                    // Then visit all files
-                    return fileList!![fileIndex++]
-                } else {
-                    // That's all
-                    onLeave?.invoke(root)
-                    return null
+                    if (fileList != null && fileIndex < fileList!!.size) {
+                        // First visit all files
+                        return fileList!![fileIndex++]
+                    } else if (!rootVisited) {
+                        // Then visit root
+                        rootVisited = true
+                        return root
+                    } else {
+                        // That's all
+                        onLeave?.invoke(root)
+                        return null
+                    }
+                }
+            }
+
+            /** Visiting in top-down order */
+            private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
+
+                private var rootVisited = false
+
+                private var fileList: Array<File>? = null
+
+                private var fileIndex = 0
+
+                /** First root directory, then all children */
+                override fun step(): File? {
+                    if (!rootVisited) {
+                        // First visit root
+                        if (onEnter?.invoke(root) == false) {
+                            return null
+                        }
+
+                        rootVisited = true
+                        return root
+                    } else if (fileList == null || fileIndex < fileList!!.size) {
+                        if (fileList == null) {
+                            // Then read an array of files, if any
+                            fileList = root.listFiles()
+                            if (fileList == null) {
+                                onFail?.invoke(root, AccessDeniedException(file = root, reason = "Cannot list files in a directory"))
+                            }
+                            if (fileList == null || fileList!!.size == 0) {
+                                onLeave?.invoke(root)
+                                return null
+                            }
+                        }
+                        // Then visit all files
+                        return fileList!![fileIndex++]
+                    } else {
+                        // That's all
+                        onLeave?.invoke(root)
+                        return null
+                    }
                 }
             }
         }
 
-        private inner class SingleFileState(rootFile: File) : WalkState(rootFile) {
-            private var visited: Boolean = false
+        private inner class BreadthFirstFileTreeWalkStrategy : FileTreeWalkStrategy {
+
+            private val state = ArrayDeque<BreadthFirstDirectoryState>()
+            private var justFile: SingleFileState? = null
 
             init {
-                if (_Assertions.ENABLED)
-                    assert(rootFile.isFile) { "rootFile must be verified to be file beforehand." }
+                when {
+                    start.isDirectory -> state.push(BreadthFirstDirectoryState(start, 0))
+                    start.isFile -> justFile = SingleFileState(start)
+                    else -> done()
+                }
             }
 
-            override fun step(): File? {
-                if (visited) return null
-                visited = true
-                return root
+            override tailrec fun gotoNext(): File? {
+                if (justFile != null) {
+                    return justFile!!.step()
+                }
+                val topState = state.peek() ?: return null
+                val file = topState.step()
+                return if (file == null) {
+                    state.pop()
+                    gotoNext()
+                } else {
+                    if (file.isDirectory && file != topState.root && topState.depth < maxDepth) {
+                        state.add(BreadthFirstDirectoryState(file, topState.depth + 1, true))
+                    }
+                    file
+                }
+            }
+
+            private inner class BreadthFirstDirectoryState(rootDir: File, val depth: Int, private var visited: Boolean = false) :
+                DirectoryState(rootDir) {
+                private var fileList: Array<File>? = null
+
+                private var fileIndex = 0
+
+                override fun step(): File? {
+                    if (!visited) {
+                        visited = true
+                        return root
+                    } else if (fileList == null || fileIndex < fileList!!.size) {
+                        if (fileList == null) {
+                            if (onEnter?.invoke(root) == false) {
+                                return null
+                            }
+                            fileList = root.listFiles()
+                            if (fileList == null) {
+                                onFail?.invoke(root, AccessDeniedException(file = root, reason = "Cannot list files in a directory"))
+                            }
+                            if (fileList == null || fileList!!.isEmpty()) {
+                                onLeave?.invoke(root)
+                                return null
+                            }
+                        }
+                        return fileList!![fileIndex++]
+                    } else {
+                        onLeave?.invoke(root)
+                        return null
+                    }
+                }
             }
         }
-
     }
 
     /**
@@ -270,3 +346,10 @@ public fun File.walkTopDown(): FileTreeWalk = walk(FileWalkDirection.TOP_DOWN)
  * Depth-first search is used and directories are visited after all their files.
  */
 public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
+
+/**
+ * Gets a sequence for visiting this directory and all its content, visiting all the files at the same depth before continuing
+ * with the ones at the next depth level.
+ * Breadth-first search is used and directories are visited before all their files.
+ */
+public fun File.walkBreadthFirst(): FileTreeWalk = walk(FileWalkDirection.BREADTH_FIRST)
