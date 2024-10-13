@@ -23,6 +23,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation("org.jetbrains.litmuskt:litmuskt-core:0.1")
+                // dependency required to generate verification metadata
+                implementation("org.jetbrains.litmuskt:litmuskt-testsuite:0.1")
             }
         }
     }
