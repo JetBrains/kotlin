@@ -114,7 +114,7 @@ class AddHiddenFromObjCLowering(
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val p = super.visitProperty(declaration) as IrProperty
-        if (p.isLocal || p.visibility != DescriptorVisibilities.PUBLIC) return p
+        if (p.isLocal || p.getter?.isSyntheticFun() == true || p.visibility != DescriptorVisibilities.PUBLIC) return p
 
         val shouldAdd = p.getter?.hasComposableAnnotation() ?: false ||
                 p.getter?.needsComposableRemapping() ?: false ||
