@@ -647,7 +647,7 @@ KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e)
 {
   std::string utf8;
   try {
-    utf8 = kotlin::to_string(s, KStringConversionMode::CHECKED);
+    utf8 = kotlin::to_string<KStringConversionMode::CHECKED>(s);
   } catch (...) {
     /* Illegal string. */
     ThrowNumberFormatException();

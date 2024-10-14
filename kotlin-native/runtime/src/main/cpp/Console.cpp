@@ -38,7 +38,7 @@ std::string kStringToUtf8(KConstRef message) {
     if (message->type_info() != theStringTypeInfo) {
         ThrowClassCastException(message, theStringTypeInfo);
     }
-    return kotlin::to_string(message, KStringConversionMode::REPLACE_INVALID);
+    return kotlin::to_string<KStringConversionMode::REPLACE_INVALID>(message);
 }
 
 } // namespace

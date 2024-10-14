@@ -11,23 +11,19 @@
 #include "Types.h"
 #include "TypeInfo.h"
 
-namespace {
-
 // The encoding of this data is undefined unless it is known how the string was constructed,
 // in which case it can be `reinterpret_cast`ed to the appropriate type.
-inline char* StringRawData(KRef kstring) {
+static inline char* StringRawData(KRef kstring) {
     return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
 }
 
-inline const char* StringRawData(KConstRef kstring) {
+static inline const char* StringRawData(KConstRef kstring) {
     return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
 }
 
-inline size_t StringRawSize(KConstRef kstring) {
+static inline size_t StringRawSize(KConstRef kstring) {
     return kstring->array()->count_ * sizeof(KChar);
 }
-
-} // namespace
 
 extern "C" {
 
@@ -55,7 +51,7 @@ enum class KStringConversionMode { UNCHECKED, CHECKED, REPLACE_INVALID };
 
 namespace kotlin {
 
-std::string to_string(KConstRef kstring, KStringConversionMode mode = KStringConversionMode::UNCHECKED,
-    size_t start = 0, size_t size = std::string::npos);
+template <KStringConversionMode mode>
+std::string to_string(KConstRef kstring, size_t start = 0, size_t size = std::string::npos) noexcept(mode != KStringConversionMode::CHECKED);
 
 }
