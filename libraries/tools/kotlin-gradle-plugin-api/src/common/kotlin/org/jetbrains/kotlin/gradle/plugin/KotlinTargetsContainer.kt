@@ -20,7 +20,7 @@ interface KotlinTargetsContainer {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * @suppress
  */
 @OptIn(InternalKotlinGradlePluginApi::class)
 @DeprecatedTargetPresetApi
