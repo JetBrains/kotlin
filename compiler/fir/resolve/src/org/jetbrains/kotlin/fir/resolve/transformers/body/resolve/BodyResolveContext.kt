@@ -933,7 +933,6 @@ class BodyResolveContext(
                 withTowerDataCleanup {
                     addInaccessibleImplicitReceiverValue(owningClass, holder)
                     addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
-                    constructor.valueParameters.forEach { storeVariable(it, holder.session) }
                     f()
                 }
             }
