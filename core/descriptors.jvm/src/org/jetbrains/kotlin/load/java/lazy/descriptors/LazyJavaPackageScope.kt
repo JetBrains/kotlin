@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
-import org.jetbrains.kotlin.utils.metadataVersionOrDefault
+import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 import java.util.*
 
 class LazyJavaPackageScope(

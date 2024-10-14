@@ -44,3 +44,6 @@ interface DeserializationConfiguration {
 
     object Default : DeserializationConfiguration
 }
+
+fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =
+    binaryVersion ?: MetadataVersion.INSTANCE

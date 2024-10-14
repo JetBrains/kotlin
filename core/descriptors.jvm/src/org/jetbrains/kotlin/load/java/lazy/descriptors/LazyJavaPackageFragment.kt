@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.metadataVersionOrDefault
+import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 
 class LazyJavaPackageFragment(
     outerContext: LazyJavaResolverContext,
