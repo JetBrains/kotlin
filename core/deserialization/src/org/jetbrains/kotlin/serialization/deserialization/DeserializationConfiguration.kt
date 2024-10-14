@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 interface DeserializationConfiguration {
 
-    val binaryVersion: BinaryVersion?
+    val binaryVersion: MetadataVersion?
         get() = null
 
     val skipMetadataVersionCheck: Boolean
