@@ -47,7 +47,7 @@ abstract class KotlinMultiplatformExtension
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
-    @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
+    @Deprecated("Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties")
     override val compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
