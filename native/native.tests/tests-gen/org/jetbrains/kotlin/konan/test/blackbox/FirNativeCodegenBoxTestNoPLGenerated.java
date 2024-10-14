@@ -43397,6 +43397,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       public void testSupertypeDepth() {
         runTest("compiler/testData/codegen/box/regressions/supertypeDepth.kt");
       }
+
+      @Test
+      @TestMetadata("test.kt")
+      public void testTest() {
+        runTest("compiler/testData/codegen/box/regressions/test.kt");
+      }
     }
 
     @Nested

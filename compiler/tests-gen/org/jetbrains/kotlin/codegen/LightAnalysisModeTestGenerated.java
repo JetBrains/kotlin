@@ -43327,6 +43327,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/regressions/supertypeDepth.kt");
     }
 
+    @TestMetadata("test.kt")
+    public void testTest() {
+      runTest("compiler/testData/codegen/box/regressions/test.kt");
+    }
+
     @TestMetadata("typeCastException.kt")
     public void testTypeCastException() {
       runTest("compiler/testData/codegen/box/regressions/typeCastException.kt");

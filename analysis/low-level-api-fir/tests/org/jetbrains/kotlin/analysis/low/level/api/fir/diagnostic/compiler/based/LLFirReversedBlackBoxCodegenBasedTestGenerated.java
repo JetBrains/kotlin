@@ -54917,6 +54917,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("test.kt")
+    public void testTest() {
+      runTest("compiler/testData/codegen/box/regressions/test.kt");
+    }
+
+    @Test
     @TestMetadata("typeCastException.kt")
     public void testTypeCastException() {
       runTest("compiler/testData/codegen/box/regressions/typeCastException.kt");
