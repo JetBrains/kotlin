@@ -1,4 +1,3 @@
-
 import java.lang.Exception
 
 fun <K> id(arg: K): K = arg

@@ -1,4 +1,3 @@
-
 class B
 
 class A {

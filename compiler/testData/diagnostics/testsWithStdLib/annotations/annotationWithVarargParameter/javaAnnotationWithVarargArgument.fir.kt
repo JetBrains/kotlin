@@ -1,4 +1,3 @@
-
 // FILE: A.java
 public @interface A {
     String[] value();

@@ -1,4 +1,3 @@
-
 package a
 
 interface Closeable {
