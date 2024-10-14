@@ -30,15 +30,21 @@ fun <Context : CommonBackendContext> createFilePhases(
 }
 
 fun <Context : CommonBackendContext> createModulePhases(
-    vararg phases: (Context) -> ModuleLoweringPass
+    vararg phases: ((Context) -> ModuleLoweringPass)?
 ): List<SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
     val createdPhases = hashSetOf<Class<out ModuleLoweringPass>>()
-    return phases.map { phase ->
+    return phases.filterNotNull().map { phase ->
         val loweringClass = phase.extractReturnTypeArgument()
         createdPhases.add(loweringClass)
         createModulePhase(loweringClass, createdPhases, phase)
     }
 }
+
+fun <Context : CommonBackendContext> buildModuleLoweringsPhase(
+    vararg phases: ((Context) -> ModuleLoweringPass)?
+): CompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
+    createModulePhases(*phases)
+        .reduce(CompilerPhase<Context, IrModuleFragment, IrModuleFragment>::then)
 
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
         FunctionType.extractReturnTypeArgument(): Class<out ReturnType> {
