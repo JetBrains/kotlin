@@ -17758,6 +17758,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("kt72177.kt")
+        public void testKt72177() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt72177.kt");
+        }
+
+        @Test
         @TestMetadata("memberScopeOfCaptured.kt")
         public void testMemberScopeOfCaptured() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");
