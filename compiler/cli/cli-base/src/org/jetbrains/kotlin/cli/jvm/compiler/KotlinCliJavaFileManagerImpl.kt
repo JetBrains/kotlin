@@ -238,7 +238,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
         if (!found) {
-            found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
+            found = singleJavaFileRootsIndex.hasPackage(packageFqName)
         }
 
         if (!found) return null

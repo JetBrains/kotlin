@@ -1,4 +1,1 @@
-compiler/testData/cli/jvm/fullyQualifiedDeepJava/test.kt:2:5: error: unresolved reference 'foo'.
-    foo.bar.J()
-    ^^^
-COMPILATION_ERROR
+OK
