@@ -1,4 +1,3 @@
-
 inline fun myRun(b: () -> Unit) = b()
 
 fun foo() {

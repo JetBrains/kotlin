@@ -1,4 +1,3 @@
-
 fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(<!ARGUMENT_TYPE_MISMATCH!>mc<!>)
 
