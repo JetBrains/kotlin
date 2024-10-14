@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
-import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 

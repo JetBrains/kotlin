@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 
 class JvmBinaryAnnotationDeserializer(
     val session: FirSession,

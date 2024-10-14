@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
 

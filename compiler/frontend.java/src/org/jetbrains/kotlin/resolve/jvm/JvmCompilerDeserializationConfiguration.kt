@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 
 class JvmCompilerDeserializationConfiguration(
     languageVersionSettings: LanguageVersionSettings
