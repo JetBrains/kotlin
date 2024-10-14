@@ -5,15 +5,17 @@
 
 // MODULE: common
 // FILE: common.kt
-expect fun foo()
+expect fun foo(): String
 
-fun box(): String {
-    foo()
-    return "OK"
-}
+fun box(): String = foo()
 
 // MODULE: native()()(common)
 // FILE: native.kt
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
-actual fun foo() = assert(true)
+actual fun foo(): String = try {
+    assert(false)
+    "FAIL"
+} catch (e: AssertionError) {
+    "OK"
+}
