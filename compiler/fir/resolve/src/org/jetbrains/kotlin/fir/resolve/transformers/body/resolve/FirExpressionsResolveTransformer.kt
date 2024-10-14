@@ -479,7 +479,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
             }
             if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
-            if (calleeReference !is FirSimpleNamedReference) {
+            if (calleeReference !is FirSimpleNamedReference && calleeReference !is FirDotNamedReference) {
                 // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
                 // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
                 if (calleeReference !is FirResolvedNamedReference) {
