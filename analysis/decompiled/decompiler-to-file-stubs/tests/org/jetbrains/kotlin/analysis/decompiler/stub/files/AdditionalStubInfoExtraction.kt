@@ -67,6 +67,9 @@ private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, le
         is KotlinParameterStubImpl -> {
             stub.functionTypeParameterName?.let { builder.append("   paramNameByAnnotation: ").append(it) }
         }
+        is KotlinClassStubImpl -> {
+            stub.valueClassRepresentation?.let { builder.append("   valueClassRepresentation: ").append(it) }
+        }
     }
     for (child in stub.childrenStubs) {
         builder.append("\n").append("  ".repeat(level))

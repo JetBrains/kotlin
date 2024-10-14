@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
@@ -55,7 +56,8 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
                 StringRef.fromString(fqName != null ? fqName.asString() : null), classId,
                 StringRef.fromString(psi.getName()),
                 Utils.INSTANCE.wrapStrings(superNames),
-                psi.isInterface(), isEnumEntry, psi.isLocal(), psi.isTopLevel()
+                psi.isInterface(), isEnumEntry, psi.isLocal(), psi.isTopLevel(),
+                null
         );
     }
 
@@ -78,6 +80,12 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
         for (String name : superNames) {
             dataStream.writeName(name);
         }
+
+        if (stub instanceof KotlinClassStubImpl) {
+            KotlinClassStubImpl stubImpl = (KotlinClassStubImpl) stub;
+            KotlinValueClassRepresentation representation = stubImpl.getValueClassRepresentation();
+            dataStream.writeVarInt(representation == null ? -1 : representation.ordinal());
+        }
     }
 
     @NotNull
@@ -99,9 +107,16 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
             superNames[i] = dataStream.readName();
         }
 
+        int representationOrdinal = dataStream.readVarInt();
+        KotlinValueClassRepresentation representation = CollectionsKt.getOrNull(
+                KotlinValueClassRepresentation.getEntries(),
+                representationOrdinal
+        );
+
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), (StubElement<?>) parentStub, qualifiedName,classId, name, superNames,
-                isTrait, isEnumEntry, isLocal, isTopLevel
+                isTrait, isEnumEntry, isLocal, isTopLevel,
+                representation
         );
     }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 
 class KotlinClassStubImpl(
@@ -25,6 +26,7 @@ class KotlinClassStubImpl(
     private val isEnumEntry: Boolean,
     private val isLocal: Boolean,
     private val isTopLevel: Boolean,
+    val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
 
     override fun getFqName(): FqName? {
