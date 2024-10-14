@@ -889,6 +889,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val allowedTargets: List<KotlinTarget>
     }
 
+    interface JvmSerializableLambdaOnInlinedFunctionLiteralsError : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = JvmSerializableLambdaOnInlinedFunctionLiteralsError::class
+    }
+
+    interface JvmSerializableLambdaOnInlinedFunctionLiteralsWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = JvmSerializableLambdaOnInlinedFunctionLiteralsWarning::class
+    }
+
     interface InapplicableTargetOnProperty : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = InapplicableTargetOnProperty::class
         val useSiteDescription: String

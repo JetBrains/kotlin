@@ -8,4 +8,10 @@ public val good1: () -> kotlin.Unit
 public val good2: () -> kotlin.Unit
 public val good3: kotlin.Any.() -> kotlin.Unit
 public val good4: () -> kotlin.Unit
+public fun bad5(): kotlin.Unit
+public fun bad6(): kotlin.Unit
+public inline fun crossInlineArg(/*0*/ crossinline x: () -> kotlin.Unit): kotlin.Unit
 public fun foo(): () -> kotlin.Unit
+public inline fun inlineArg(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+public inline fun noInlineArg(/*0*/ noinline x: () -> kotlin.Unit): kotlin.Unit
+

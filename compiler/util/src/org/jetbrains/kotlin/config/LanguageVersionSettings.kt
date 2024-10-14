@@ -366,6 +366,7 @@ enum class LanguageFeature(
 
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, kind = BUG_FIX),
     ForbidImplementationByDelegationWithDifferentGenericSignature(KOTLIN_2_3, kind = BUG_FIX), // KT-72140
+    ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, kind = BUG_FIX), // KT-71906
 
     // End of 2.* language features --------------------------------------------------
 

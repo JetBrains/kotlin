@@ -19,12 +19,12 @@ inline fun inlineArg(x: () -> Unit) = Unit
 inline fun crossInlineArg(crossinline x: () -> Unit) = Unit
 <!NOTHING_TO_INLINE!>inline<!> fun noInlineArg(noinline x: () -> Unit) = Unit
 fun bad5() {
-    inlineArg @JvmSerializableLambda {  }
-    crossInlineArg @JvmSerializableLambda {  }
+    inlineArg <!JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS_ERROR!>@JvmSerializableLambda<!> {  }
+    crossInlineArg <!JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS_ERROR!>@JvmSerializableLambda<!> {  }
     noInlineArg @JvmSerializableLambda {  }
 }
 fun bad6() {
-    inlineArg (@JvmSerializableLambda fun () {})
-    crossInlineArg (@JvmSerializableLambda fun () {})
+    inlineArg (<!JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS_ERROR!>@JvmSerializableLambda<!> fun () {})
+    crossInlineArg (<!JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS_ERROR!>@JvmSerializableLambda<!> fun () {})
     noInlineArg (@JvmSerializableLambda fun () {})
 }

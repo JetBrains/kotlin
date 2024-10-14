@@ -1063,6 +1063,16 @@ internal class WrongAnnotationTargetWithUseSiteTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WrongAnnotationTargetWithUseSiteTarget
 
+internal class JvmSerializableLambdaOnInlinedFunctionLiteralsErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.JvmSerializableLambdaOnInlinedFunctionLiteralsError
+
+internal class JvmSerializableLambdaOnInlinedFunctionLiteralsWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.JvmSerializableLambdaOnInlinedFunctionLiteralsWarning
+
 internal class InapplicableTargetOnPropertyImpl(
     override val useSiteDescription: String,
     firDiagnostic: KtPsiDiagnostic,
