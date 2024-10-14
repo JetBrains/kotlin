@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 interface DeserializationConfiguration {
 
-    val binaryVersion: MetadataVersion?
+    val metadataVersion: MetadataVersion?
         get() = null
 
     val skipMetadataVersionCheck: Boolean
@@ -46,4 +46,4 @@ interface DeserializationConfiguration {
 }
 
 fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =
-    binaryVersion ?: MetadataVersion.INSTANCE
+    metadataVersion ?: MetadataVersion.INSTANCE
