@@ -316,11 +316,16 @@ internal class KaFirJavaInteroperabilityComponent(
     override val PsiMember.callableSymbol: KaCallableSymbol?
         get() = withValidityAssertion {
             if (this !is PsiMethod && this !is PsiField) return null
-            val name = name?.let(Name::identifier) ?: return null
             val containingClass = containingClass ?: return null
             val classSymbol = containingClass.namedClassSymbol ?: return null
             return with(analysisSession) {
-                classSymbol.combinedDeclaredMemberScope.callables(name).firstOrNull { it.psi == this@callableSymbol }
+                val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
+                if ((this@callableSymbol as? PsiMethod)?.isConstructor == true) {
+                    combinedMemberScope.constructors.firstOrNull { it.psi == this@callableSymbol }
+                } else {
+                    val name = name?.let(Name::identifier) ?: return null
+                    combinedMemberScope.callables(name).firstOrNull { it.psi == this@callableSymbol }
+                }
             }
         }
 
