@@ -7,30 +7,91 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.*
-import org.gradle.util.GradleVersion
 import java.io.Serializable
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * The Kotlin Gradle Plugin [Attribute] provides the information about Kotlin target compilation platform.
+ *
+ * Usually should be available in [org.gradle.api.artifacts.ConsumableConfiguration]s created by KGP for the given [org.gradle.api.Project].
+ * This attribute is also being published in the project
+ * [Gradle metadata publication](https://docs.gradle.org/current/userguide/publishing_gradle_module_metadata.html).
+ *
+ * To configure default [AttributeCompatibilityRule] and [AttributeDisambiguationRule]
+ * use [KotlinPlatformType.setupAttributesMatchingStrategy] method.
+ *
+ * The instance of this attribute could be accessed via the [KotlinPlatformType.attribute] call.
  */
 enum class KotlinPlatformType : Named, Serializable {
-    common, jvm, js, androidJvm, native, wasm;
 
+    /**
+     * Represents a compilation output compiled for all available Kotlin platforms.
+     */
+    common,
+
+    /**
+     * Represents a compilation output compiled for the JVM Kotlin platform.
+     */
+    jvm,
+
+    /**
+     * Represents a compilation output compiled for the JS Kotlin platform.
+     */
+    js,
+
+    /**
+     * Represents a compilation output compiled for the Android Kotlin platform.
+     *
+     * Note: This attribute value is only used for the Android code compiled with [Android SDK](https://developer.android.com/tools).
+     * Code compiled using [Android NDK](https://developer.android.com/ndk) will have [native] type.
+     */
+    androidJvm,
+
+    /**
+     * Represents a compilation output compiled for the Native Kotlin platform.
+     */
+    native,
+
+    /**
+     * Represents a compilation output compiled for the WASM Kotlin platform.
+     */
+    wasm;
+
+    /**
+     * Returns a string representation of the object - a [getName] value.
+     */
     override fun toString(): String = name
+
+    /**
+     * The object's name.
+     */
     override fun getName(): String = name
 
+    /**
+     * Provides a default [AttributeCompatibilityRule] for this attribute.
+     */
     class CompatibilityRule : AttributeCompatibilityRule<KotlinPlatformType> {
+
+        /**
+         * Executes the compatibility check for Kotlin platform type attribute.
+         */
         override fun execute(details: CompatibilityCheckDetails<KotlinPlatformType>) = with(details) {
             if (producerValue == jvm && consumerValue == androidJvm)
                 compatible()
 
-            // Allow the input metadata configuration consume platform-specific artifacts if no metadata is available, KT-26834
+            // Allow the input metadata configuration to consume platform-specific artifacts if no metadata is available, KT-26834
             if (consumerValue == common)
                 compatible()
         }
     }
 
+    /**
+     * Provides a default [AttributeCompatibilityRule] for this attribute.
+     */
     class DisambiguationRule : AttributeDisambiguationRule<KotlinPlatformType> {
+
+        /**
+         * Executes the attribute disambiguation rule for Kotlin platform type attribute.
+         */
         override fun execute(details: MultipleCandidatesDetails<KotlinPlatformType?>) = with(details) {
             if (consumerValue in candidateValues) {
                 closestMatch(checkNotNull(consumerValue))
@@ -58,12 +119,22 @@ enum class KotlinPlatformType : Named, Serializable {
         }
     }
 
+    /**
+     * Provides additional static properties and constants for [KotlinPlatformType].
+     */
     companion object {
+
+        /**
+         * An instance of this attribute.
+         */
         val attribute = Attribute.of(
             "org.jetbrains.kotlin.platform.type",
             KotlinPlatformType::class.java
         )
 
+        /**
+         * Configures the default Kotlin Gradle Plugin attributes matching strategy for the provided [attributesSchema].
+         */
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(KotlinPlatformType.attribute).run {
                 compatibilityRules.add(CompatibilityRule::class.java)
