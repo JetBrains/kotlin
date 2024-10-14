@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.util.toMetadataVersion
 
 open class CompilerDeserializationConfiguration(
     protected val languageVersionSettings: LanguageVersionSettings
 ) : DeserializationConfiguration {
+    override val binaryVersion: MetadataVersion = languageVersionSettings.languageVersion.toMetadataVersion()
 
     final override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)
 
