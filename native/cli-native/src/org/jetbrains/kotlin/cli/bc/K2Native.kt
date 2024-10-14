@@ -104,6 +104,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
 
+        // Values for user keys for non-nullable arguments below must be also re-initialized
+        // while 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
         configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
@@ -140,7 +142,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
             }
 
-            override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
+            override fun spawn(
+                arguments: List<String>,
+                userSetupConfiguration: CompilerConfiguration.() -> Unit,
+                setupConfiguration: CompilerConfiguration.() -> Unit,
+            ) {
                 val spawnedArguments = K2NativeCompilerArguments()
                 parseCommandLineArguments(arguments, spawnedArguments)
                 val spawnedConfiguration = CompilerConfiguration()
@@ -161,6 +167,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 }
                 spawnedConfiguration.setupConfiguration()
                 val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
+                spawnedConfiguration.userSetupConfiguration()
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             }
         })

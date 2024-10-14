@@ -352,7 +352,7 @@ class CacheBuilder(
             makePerFileCache: Boolean,
             filesToCache: List<String>,
     ) {
-        compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+        compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */, {}) {
             val libraryPath = library.libraryFile.absolutePath
             val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }

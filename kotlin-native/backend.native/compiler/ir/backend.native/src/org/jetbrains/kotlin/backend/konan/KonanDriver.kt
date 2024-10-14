@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
@@ -51,7 +52,11 @@ private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
 interface CompilationSpawner {
     fun spawn(configuration: CompilerConfiguration)
-    fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
+    fun spawn(
+            arguments: List<String>,
+            userSetupConfiguration: CompilerConfiguration.() -> Unit,
+            setupConfiguration: CompilerConfiguration.() -> Unit,
+    )
 }
 
 class KonanDriver(
@@ -73,6 +78,7 @@ class KonanDriver(
         }
 
         if (outputKind != CompilerOutputKind.LIBRARY && hasSourceRoots && !isCompilingFromBitcode) {
+            // TODO KT-72014: Consider raising deprecation error instead of `splitOntoTwoStages()` invocation
             splitOntoTwoStages()
             return
         }
@@ -186,7 +192,19 @@ class KonanDriver(
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
-        compilationSpawner.spawn(emptyList()) {
+        val userSetupConfiguration: CompilerConfiguration.() -> Unit = {
+            fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
+            // KT-71976: Restore user-defined keys, which are reset within `compilationSpawner.spawn(emptyList(),...)`,
+            // during invocation of `K2Native.prepareEnvironment()` with empty arguments.
+            // Please copy here all user keys, which are set up in `K2Native.prepareEnvironment()`
+            copy(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
+            copy(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES)
+            copy(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
+            copy(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            copy(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
+            copy(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
+        }
+        compilationSpawner.spawn(emptyList(), userSetupConfiguration) {
             fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
             fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))
             // For the first stage, use "-p library" produce mode.
