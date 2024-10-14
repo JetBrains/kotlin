@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * @suppress
  */
 @OptIn(InternalKotlinGradlePluginApi::class)
 @DeprecatedTargetPresetApi
