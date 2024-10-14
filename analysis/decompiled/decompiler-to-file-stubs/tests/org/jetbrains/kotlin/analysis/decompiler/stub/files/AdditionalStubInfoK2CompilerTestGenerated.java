@@ -42,6 +42,18 @@ public class AdditionalStubInfoK2CompilerTestGenerated extends AbstractAdditiona
   }
 
   @Test
+  @TestMetadata("MultiFieldValueClassWithTypeAlias")
+  public void testMultiFieldValueClassWithTypeAlias() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/MultiFieldValueClassWithTypeAlias/");
+  }
+
+  @Test
+  @TestMetadata("NestedMultiFieldValueClass")
+  public void testNestedMultiFieldValueClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/NestedMultiFieldValueClass/");
+  }
+
+  @Test
   @TestMetadata("OuterClassesWithFlexibleArgs")
   public void testOuterClassesWithFlexibleArgs() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");
@@ -69,5 +81,35 @@ public class AdditionalStubInfoK2CompilerTestGenerated extends AbstractAdditiona
   @TestMetadata("TypeParametersInFlexibleTypes")
   public void testTypeParametersInFlexibleTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");
+  }
+
+  @Test
+  @TestMetadata("ValueClassWithAnotherValueClass")
+  public void testValueClassWithAnotherValueClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithAnotherValueClass/");
+  }
+
+  @Test
+  @TestMetadata("ValueClassWithMultiFieldValueClass")
+  public void testValueClassWithMultiFieldValueClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithMultiFieldValueClass/");
+  }
+
+  @Test
+  @TestMetadata("ValueClassWithNestedClass")
+  public void testValueClassWithNestedClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNestedClass/");
+  }
+
+  @Test
+  @TestMetadata("ValueClassWithNullableMultiFieldValueClass")
+  public void testValueClassWithNullableMultiFieldValueClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNullableMultiFieldValueClass/");
+  }
+
+  @Test
+  @TestMetadata("ValueClassWithTypeAliasOnAnotherValueClass")
+  public void testValueClassWithTypeAliasOnAnotherValueClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithTypeAliasOnAnotherValueClass/");
   }
 }
