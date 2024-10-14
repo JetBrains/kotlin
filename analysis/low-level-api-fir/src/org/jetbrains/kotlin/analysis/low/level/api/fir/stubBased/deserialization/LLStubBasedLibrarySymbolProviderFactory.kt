@@ -119,7 +119,7 @@ private class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : StubBased
     BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(session.project),
     isFallbackDependenciesProvider = false,
 ) {
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider.initialize(
+    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,
         session.moduleData,
         session.kotlinScopeProvider

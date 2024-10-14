@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -40,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Provides function interfaces for function kinds from compiler plugins
@@ -75,47 +73,29 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
     }
 }
 
-class FirBuiltinSyntheticFunctionInterfaceProviderImpl internal constructor(
-    session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider
-) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
-
-/**
- * This class puts generated classes into a list.
- * The list is used later on FIR2IR stage for creating regular IR classes instead of lazy ones.
- * It allows avoiding problems related to lazy classes actualization and fake-overrides building
- * because FIR2IR treats those declarations as declarations in a virtual file despite the fact they are generated ones.
- * The provider is only used for the first common source-set with enabled `stdlibCompilation` mode.
- */
-class FirStdlibBuiltinSyntheticFunctionInterfaceProvider internal constructor(
-    session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider,
-) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider) {
-    private val generatedClassesList = mutableListOf<FirRegularClass>()
-    val generatedClasses: List<FirRegularClass>
-        get() = generatedClassesList
-
-    override fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
-        return super.createSyntheticFunctionInterface(classId, kind)?.also { generatedClassesList.add(it.fir) }
-    }
-}
-
 /*
  * Provides kotlin.FunctionN, kotlin.coroutines.SuspendFunctionN, kotlin.reflect.KFunctionN and kotlin.reflect.KSuspendFunctionN
  */
-abstract class FirBuiltinSyntheticFunctionInterfaceProvider(
+class FirBuiltinSyntheticFunctionInterfaceProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
     originateFromFallbackBuiltIns: Boolean = false
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider, originateFromFallbackBuiltIns) {
-    companion object {
-        fun initialize(
-            session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider
-        ): FirBuiltinSyntheticFunctionInterfaceProvider {
-            return if (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                FirStdlibBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
-            } else {
-                FirBuiltinSyntheticFunctionInterfaceProviderImpl(session, moduleData, kotlinScopeProvider)
-            }
+    /** The set is used on FIR2IR stage during stdlib compilation for creating regular IR classes instead of lazy ones.
+     * It allows avoiding problems related to lazy classes actualization and fake-overrides building
+     * because FIR2IR treats those declarations as declarations in a virtual file despite the fact they are generated ones.
+     * The [FirSyntheticFunctionInterfaceProviderBase.cache] can't be used because it doesn't have `values` API.
+     * Make sure the set is thread-safe, because LL providers might access the set from multiple threads.
+     * */
+    private val generatedClassIdSet = ConcurrentHashMap<ClassId, Unit>()
+
+    val generatedClassIds: Set<ClassId>
+        get() = generatedClassIdSet.keys
+
+    override fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
+        return super.createSyntheticFunctionInterface(classId, kind)?.also {
+            generatedClassIdSet[classId] = Unit
         }
     }
 

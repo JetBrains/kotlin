@@ -144,7 +144,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         val kotlinScopeProvider = session.kotlinScopeProvider
         return listOf(
             FirFallbackBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider),
-            FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, moduleData, kotlinScopeProvider)
+            FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
         )
     }
 

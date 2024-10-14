@@ -62,7 +62,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
                         session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries,
                         flexibleTypeFactory = JsFlexibleTypeFactory(session),
                     ),
-                    FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
+                    FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider
                 )
             }
