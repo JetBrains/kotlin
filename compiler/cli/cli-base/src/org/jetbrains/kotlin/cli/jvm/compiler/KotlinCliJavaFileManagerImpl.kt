@@ -101,7 +101,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
+            singleJavaFileRootsIndex.getFileByClassId(outerMostClassId)?.let { SmartList(it) }
                 ?: SmartList(
                     index.findClasses(outerMostClassId) { dir, type ->
                         findVirtualFileGivenPackage(dir, relativeClassName, type)
@@ -201,7 +201,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Search java sources first. For build tools, it makes sense to build new files passing all the
             // class files for the previous build on the class path.
             result.addIfNotNull(
-                singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                singleJavaFileRootsIndex.getFileByClassId(classId)
                     ?.takeIf { it in scope }
                     ?.findPsiClassInVirtualFile(relativeClassName)
             )
@@ -288,7 +288,17 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             true
         })
 
-        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
+        for (file in singleJavaFileRootsIndex.getFilesInPackage(packageFqName)) {
+            result.add(file.nameWithoutExtension)
+        }
+
+        return result
+    }
+
+    override fun slowKnownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        val result = ObjectOpenHashSet<String>()
+
+        for (classId in singleJavaFileRootsIndex.getSlowNamesInPackage(packageFqName)) {
             assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
             result.add(classId.shortClassName.asString())
         }

@@ -22,45 +22,79 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiKeyword
 import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.tree.IElementType
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
+class SingleJavaFileRootsIndex(roots: List<JavaRoot>) {
     init {
         for ((file) in roots) {
             assert(!file.isDirectory) { "Should not be a directory: $file" }
         }
     }
 
-    private val classIdsInRoots = ArrayList<List<ClassId>>(roots.size)
+    private val rootHolders: List<JavaRootHolder> = roots.map { JavaRootHolder(it) }
 
-    fun findJavaSourceClass(classId: ClassId): VirtualFile? =
-        roots.indices
-            .find { index -> classId in getClassIdsForRootAt(index) }
-            ?.let { index -> roots[index].file }
-
-    fun hasPackage(packageFqName: FqName): Boolean {
-        for (i in roots.indices) {
-            if (getClassIdsForRootAt(i).any { it.packageFqName.startsWith(packageFqName) }) return true
+    private val rootsByPackage: Object2ObjectOpenHashMap<FqName, out List<JavaRootHolder>> by lazy(LazyThreadSafetyMode.NONE) {
+        Object2ObjectOpenHashMap<FqName, MutableList<JavaRootHolder>>().apply {
+            for ((_, holders) in rootHolders.groupBy { root -> root.file.parent }) {
+                val firstClassId = holders.firstNotNullOfOrNull { it.classIds.firstOrNull() } ?: continue
+                getOrPut(firstClassId.packageFqName) { mutableListOf() }.addAll(holders)
+            }
         }
-        return false
     }
 
-    fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
-        roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
+    private val cacheByPackage = Object2ObjectOpenHashMap<FqName, Map<ClassId, VirtualFile>>()
 
-    private fun getClassIdsForRootAt(index: Int): List<ClassId> {
-        for (i in classIdsInRoots.size..index) {
-            classIdsInRoots.add(JavaSourceClassIdReader(roots[i].file).readClassIds())
+    fun hasPackage(packageFqName: FqName): Boolean {
+        return rootsByPackage.keys.any { it.startsWith(packageFqName) }
+    }
+
+    fun getFilesInPackage(packageFqName: FqName): List<VirtualFile> {
+        return rootsByPackage[packageFqName]?.map { it.file }.orEmpty()
+    }
+
+    fun getSlowNamesInPackage(packageFqName: FqName): Collection<ClassId> {
+        return getFilesByClassId(packageFqName).filter { (classId, file) -> classId.relativeClassName.asString() != file.nameWithoutExtension }.keys
+    }
+
+    fun getFileByClassId(classId: ClassId): VirtualFile? {
+        val packageFqName = classId.packageFqName
+        val className = classId.relativeClassName.asString()
+
+        // Fast-path using file name only
+        rootsByPackage[packageFqName]
+            ?.firstOrNull { it.file.nameWithoutExtension == className }
+            ?.let { return it.file }
+
+        // Slow-path using JavaSourceClassIdReader
+        return getFilesByClassId(packageFqName)[classId]
+    }
+
+    private fun getFilesByClassId(packageFqName: FqName): Map<ClassId, VirtualFile> {
+        val holdersInPackage = rootsByPackage[packageFqName] ?: return emptyMap()
+
+        return cacheByPackage.getOrPut(packageFqName) {
+            Object2ObjectOpenHashMap<ClassId, VirtualFile>().apply {
+                for (root in holdersInPackage) {
+                    for (classId in root.classIds) {
+                        put(classId, root.file)
+                    }
+                }
+            }
         }
-        return classIdsInRoots[index]
+    }
+
+    private class JavaRootHolder(private val root: JavaRoot) {
+        val file: VirtualFile get() = root.file
+        val classIds: List<ClassId> by lazy(LazyThreadSafetyMode.NONE) { JavaSourceClassIdReader(root.file).readClassIds() }
     }
 
     /**
      * Given a .java file, [readClassIds] uses lexer to determine which classes are declared in that file
      */
-    private class JavaSourceClassIdReader(file: VirtualFile) {
+    internal class JavaSourceClassIdReader(file: VirtualFile) {
         private val lexer = JavaLexer(LanguageLevel.HIGHEST).apply {
             start(String(file.contentsToByteArray()))
         }

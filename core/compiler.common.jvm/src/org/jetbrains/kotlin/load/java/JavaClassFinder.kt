@@ -37,6 +37,8 @@ interface JavaClassFinder {
 
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
 
+    fun slowKnownClassNamesInPackage(packageFqName: FqName): Set<String> = emptySet()
+
     /**
      * Whether [knownClassNamesInPackage] can be computed. When [canComputeKnownClassNamesInPackage] is `false`, [knownClassNamesInPackage]
      * will always return `null`.

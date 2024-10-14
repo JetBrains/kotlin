@@ -65,6 +65,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     }
 
     private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
+    private val slowKnownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::slowKnownClassNamesInPackage)
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))?.takeUnless(JavaClass::hasMetadataAnnotation)
@@ -73,14 +74,20 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         packageCache.getValue(fqName)?.fqName
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
-        val knownNames = knownClassNamesInPackage(classId.packageFqName) ?: return true
-        return classId.relativeClassName.topLevelName() in knownNames
+        val packageFqName = classId.packageFqName
+        val knownNames = knownClassNamesInPackage(packageFqName) ?: return true
+        val topLevelName = classId.relativeClassName.topLevelName()
+        return topLevelName in knownNames || (knownNames.isNotEmpty() && topLevelName in slowKnownClassNamesInPackage(packageFqName))
     }
 
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
         // Avoid filling the cache with `null`s and accessing the cache if `knownClassNamesInPackage` cannot be calculated anyway.
         if (!classFinder.canComputeKnownClassNamesInPackage()) return null
         return knownClassNamesInPackage.getValue(packageFqName)
+    }
+
+    fun slowKnownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        return slowKnownClassNamesInPackage.getValue(packageFqName)
     }
 
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
