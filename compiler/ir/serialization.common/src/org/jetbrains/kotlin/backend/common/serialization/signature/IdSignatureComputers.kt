@@ -24,7 +24,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         return publicSignatureBuilder.buildSignature(declaration)
     }
 
-    fun composePublicIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+    fun computePublicIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         assert(mangler.run { declaration.isExported(compatibleMode) }) {
             "${declaration.render()} expected to be exported"
         }
