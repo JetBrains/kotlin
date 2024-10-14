@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -187,8 +188,15 @@ class FileLocalIdSignatureComputer(
     private var localIndex: Long = START_INDEX.toLong()
     private var scopeIndex: Int = START_INDEX
 
-    private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
-        when (container) {
+    private fun composeContainerIdSignature(
+        correspondingPropertySymbol: IrPropertySymbol?,
+        container: IrDeclarationParent,
+        compatibleMode: Boolean,
+    ): IdSignature {
+        if (correspondingPropertySymbol != null)
+            return signatureByDeclaration(correspondingPropertySymbol.owner, compatibleMode)
+
+        return when (container) {
             is IrPackageFragment -> IdSignature.CommonSignature(
                 packageFqName = container.packageFqName.asString(),
                 declarationFqName = "",
@@ -199,49 +207,60 @@ class FileLocalIdSignatureComputer(
             is IrDeclaration -> signatureByDeclaration(container, compatibleMode)
             else -> error("Unexpected container ${container.render()}")
         }
+    }
 
     fun composeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
         is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
         is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
         is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
-        is IrField -> {
-            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
-                ?: composeContainerIdSignature(declaration.parent, compatibleMode)
-            IdSignature.FileLocalSignature(p, ++localIndex)
-        }
-        is IrSimpleFunction -> {
-            val parent = declaration.parent
-            val p = declaration.correspondingPropertySymbol?.let { signatureByDeclaration(it.owner, compatibleMode) }
-                ?: composeContainerIdSignature(parent, compatibleMode)
-            IdSignature.FileLocalSignature(
-                p,
-                if (declaration.isOverridableFunction()) {
-                    mangler.run { declaration.signatureMangle(compatibleMode) }
-                } else {
-                    ++localIndex
-                },
-                declaration.render()
-            )
-        }
-        is IrProperty -> {
-            val parent = declaration.parent
-            IdSignature.FileLocalSignature(
-                composeContainerIdSignature(parent, compatibleMode),
-                if (declaration.isOverridableProperty()) {
-                    mangler.run { declaration.signatureMangle(compatibleMode) }
-                } else {
-                    ++localIndex
-                },
-                declaration.render()
-            )
-        }
-        else -> {
-            IdSignature.FileLocalSignature(
-                composeContainerIdSignature(declaration.parent, compatibleMode),
-                ++localIndex,
-                declaration.render()
-            )
-        }
+
+        is IrField -> IdSignature.FileLocalSignature(
+            container = composeContainerIdSignature(
+                correspondingPropertySymbol = declaration.correspondingPropertySymbol,
+                container = declaration.parent,
+                compatibleMode = compatibleMode
+            ),
+            id = ++localIndex,
+            description = null
+        )
+
+        is IrSimpleFunction -> IdSignature.FileLocalSignature(
+            container = composeContainerIdSignature(
+                correspondingPropertySymbol = declaration.correspondingPropertySymbol,
+                container = declaration.parent,
+                compatibleMode = compatibleMode
+            ),
+            id = if (declaration.isOverridableFunction()) {
+                declaration.stableIndexForOverridableDeclaration(compatibleMode)
+            } else {
+                ++localIndex
+            },
+            description = declaration.render()
+        )
+
+        is IrProperty -> IdSignature.FileLocalSignature(
+            container = composeContainerIdSignature(
+                correspondingPropertySymbol = null,
+                container = declaration.parent,
+                compatibleMode = compatibleMode
+            ),
+            id = if (declaration.isOverridableProperty()) {
+                declaration.stableIndexForOverridableDeclaration(compatibleMode)
+            } else {
+                ++localIndex
+            },
+            description = declaration.render()
+        )
+
+        else -> IdSignature.FileLocalSignature(
+            container = composeContainerIdSignature(
+                correspondingPropertySymbol = null,
+                container = declaration.parent,
+                compatibleMode = compatibleMode
+            ),
+            id = ++localIndex,
+            description = declaration.render()
+        )
     }
 
     private fun IrSimpleFunction.isOverridableFunction(): Boolean =
@@ -252,6 +271,15 @@ class FileLocalIdSignatureComputer(
 
     private val IrSimpleFunction?.hasDispatchReceiver: Boolean
         get() = this?.dispatchReceiverParameter != null
+
+    /**
+     * We shall have stable indices for overridable functions/properties in private containers to
+     * always be able to match the deserialized function/property with the fake override (and substitute
+     * the fake override with the real declaration) -- independently of the order in which other
+     * private declarations are serialized (and in which their signatures are computed).
+     */
+    private fun IrOverridableDeclaration<*>.stableIndexForOverridableDeclaration(compatibleMode: Boolean): Long =
+        mangler.run { this@stableIndexForOverridableDeclaration.signatureMangle(compatibleMode) }
 
     companion object {
         private const val START_INDEX = 0
