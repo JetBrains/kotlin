@@ -104,6 +104,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
 
+        // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
         configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
@@ -161,6 +162,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 }
                 spawnedConfiguration.setupConfiguration()
                 val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
+                // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
+                // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
+                // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
+                // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
+                spawnedConfiguration.setupConfiguration()
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             }
         })

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
@@ -73,6 +74,7 @@ class KonanDriver(
         }
 
         if (outputKind != CompilerOutputKind.LIBRARY && hasSourceRoots && !isCompilingFromBitcode) {
+            // TODO KT-72014: Consider raising deprecation error instead of `splitOntoTwoStages()` invocation
             splitOntoTwoStages()
             return
         }
@@ -204,6 +206,15 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
+
+            // KT-71976: Restore keys, which are reset within `compilationSpawner.spawn(emptyList())`,
+            // during invocation of `prepareEnvironment()` with empty arguments.
+            copy(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
+            copy(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES)
+            copy(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
+            copy(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            copy(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
+            copy(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
         }
 
         // For the second stage, remove already compiled source files from the configuration.
