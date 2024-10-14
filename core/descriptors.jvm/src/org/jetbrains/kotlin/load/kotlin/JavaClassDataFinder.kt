@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.utils.metadataVersionOrDefault
+import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 
 class JavaClassDataFinder(
     internal val kotlinClassFinder: KotlinClassFinder,

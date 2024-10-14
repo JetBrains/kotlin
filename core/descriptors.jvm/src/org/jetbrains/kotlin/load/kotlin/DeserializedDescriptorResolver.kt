@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.utils.metadataVersionOrDefault
+import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
