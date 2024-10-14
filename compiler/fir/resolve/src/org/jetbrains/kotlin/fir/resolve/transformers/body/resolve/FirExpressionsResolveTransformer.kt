@@ -105,14 +105,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
     ): FirExpression {
-        if (qualifiedAccessExpression.isResolved && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
+        val callee = qualifiedAccessExpression.calleeReference
+        if (qualifiedAccessExpression.isResolved && callee !is FirSimpleNamedReference && callee !is FirDotNamedReference) {
             return qualifiedAccessExpression
         }
+
+        if (callee is FirDotNamedReference && data == ResolutionMode.ContextDependent) return qualifiedAccessExpression
 
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
 
-        var result = when (val callee = qualifiedAccessExpression.calleeReference) {
+        var result = when (callee) {
             is FirThisReference -> {
                 val labelName = callee.labelName
                 val allMatchingImplicitReceivers = implicitReceiverStack[labelName]
@@ -479,6 +482,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
             }
             if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
+            if (calleeReference is FirDotNamedReference && data == ResolutionMode.ContextDependent) return functionCall
             if (calleeReference !is FirSimpleNamedReference && calleeReference !is FirDotNamedReference) {
                 // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
                 // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.

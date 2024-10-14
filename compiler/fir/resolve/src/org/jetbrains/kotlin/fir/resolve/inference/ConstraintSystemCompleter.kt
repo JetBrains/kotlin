@@ -352,6 +352,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                             postponedAtom.collectNotFixedVariables()
                         }
                     }
+                    is ConeResolvedDotReferenceAtom -> {
+                        postponedAtom.collectNotFixedVariables()
+                    }
                 }
             }
         }

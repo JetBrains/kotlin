@@ -52,6 +52,11 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
             processCandidatesAndPostponedAtoms(atom.subAtom)
         }
 
+        // dot references
+        is ConeResolvedDotReferenceAtom -> {
+            postponedAtomsProcessor(atom)
+        }
+
         // candidates
         is ConeAtomWithCandidate -> {
             val candidate = atom.candidate
