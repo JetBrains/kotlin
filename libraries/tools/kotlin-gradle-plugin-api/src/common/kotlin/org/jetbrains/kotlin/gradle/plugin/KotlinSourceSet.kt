@@ -58,7 +58,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     /**
      * Provides the DSL to configure a subset of Kotlin compilation language settings for this [KotlinSourceSet].
      *
-     * **Note**: This interface is soft-deprecated.
+     * **Note**: The [LanguageSettingsBuilder] interface will be deprecated in the future.
      * Instead, it is better to use the existing `compilerOptions` DSL.
      */
     val languageSettings: LanguageSettingsBuilder
@@ -66,7 +66,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     /**
      * Configures the [LanguageSettingsBuilder] source set with the provided configuration.
      *
-     * **Note**: This interface is soft-deprecated.
+     * **Note**: The [LanguageSettingsBuilder] interface will be deprecated in the future.
      * Instead, it is better to use the existing `compilerOptions` DSL.
      */
     fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder
@@ -74,7 +74,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     /**
      * Configures the [LanguageSettingsBuilder] in the source set with the provided configuration.
      *
-     * **Note**: This interface is soft-deprecated.
+     * **Note**: The [LanguageSettingsBuilder] interface will be deprecated in the future.
      * Instead, it is better to use the existing `compilerOptions` DSL.
      */
     fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder
