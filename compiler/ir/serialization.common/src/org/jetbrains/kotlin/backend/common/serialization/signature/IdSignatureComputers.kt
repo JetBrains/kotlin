@@ -189,14 +189,19 @@ class FileLocalIdSignatureComputer(
     private var scopeIndex: Int = START_INDEX
 
     private fun computeContainerIdSignature(
-        correspondingPropertySymbol: IrPropertySymbol?,
-        container: IrDeclarationParent,
+        declaration: IrDeclaration,
         compatibleMode: Boolean,
     ): IdSignature {
+        val correspondingPropertySymbol: IrPropertySymbol? = when (declaration) {
+            is IrSimpleFunction -> declaration.correspondingPropertySymbol
+            is IrField -> declaration.correspondingPropertySymbol
+            else -> null
+        }
+
         if (correspondingPropertySymbol != null)
             return signatureByDeclaration(correspondingPropertySymbol.owner, compatibleMode)
 
-        return when (container) {
+        return when (val container = declaration.parent) {
             is IrPackageFragment -> IdSignature.CommonSignature(
                 packageFqName = container.packageFqName.asString(),
                 declarationFqName = "",
@@ -215,21 +220,13 @@ class FileLocalIdSignatureComputer(
         is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
 
         is IrField -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(
-                correspondingPropertySymbol = declaration.correspondingPropertySymbol,
-                container = declaration.parent,
-                compatibleMode = compatibleMode
-            ),
+            container = computeContainerIdSignature(declaration, compatibleMode),
             id = ++localIndex,
             description = null
         )
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(
-                correspondingPropertySymbol = declaration.correspondingPropertySymbol,
-                container = declaration.parent,
-                compatibleMode = compatibleMode
-            ),
+            container = computeContainerIdSignature(declaration, compatibleMode),
             id = if (declaration.isOverridableFunction()) {
                 declaration.stableIndexForOverridableDeclaration(compatibleMode)
             } else {
@@ -239,11 +236,7 @@ class FileLocalIdSignatureComputer(
         )
 
         is IrProperty -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(
-                correspondingPropertySymbol = null,
-                container = declaration.parent,
-                compatibleMode = compatibleMode
-            ),
+            container = computeContainerIdSignature(declaration, compatibleMode),
             id = if (declaration.isOverridableProperty()) {
                 declaration.stableIndexForOverridableDeclaration(compatibleMode)
             } else {
@@ -253,11 +246,7 @@ class FileLocalIdSignatureComputer(
         )
 
         else -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(
-                correspondingPropertySymbol = null,
-                container = declaration.parent,
-                compatibleMode = compatibleMode
-            ),
+            container = computeContainerIdSignature(declaration, compatibleMode),
             id = ++localIndex,
             description = declaration.render()
         )
