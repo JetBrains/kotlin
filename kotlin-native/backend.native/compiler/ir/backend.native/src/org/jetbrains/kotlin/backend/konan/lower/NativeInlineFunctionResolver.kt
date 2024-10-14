@@ -50,8 +50,8 @@ internal class NativeInlineFunctionResolver(
 
         function.loweredInlineFunction?.let { return it }
 
-        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
-        val functionIsCached = moduleDeserializer != null && function.body == null
+        val moduleDeserializer = if (function.body == null) context.irLinker.getCachedDeclarationModuleDeserializer(function) else null
+        val functionIsCached = moduleDeserializer != null
         if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
             moduleDeserializer.deserializeInlineFunction(function)
