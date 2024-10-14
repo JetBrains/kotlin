@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
@@ -121,11 +123,16 @@ class KlibAssignableParamTransformer(
                                 if (expression.symbol.owner in assignableParams) {
                                     val paramIndex =
                                         assignableParams.indexOf(expression.symbol.owner)
-                                    return super.visitGetValue(
+                                    return IrTypeOperatorCallImpl(
+                                        expression.startOffset,
+                                        expression.endOffset,
+                                        expression.type,
+                                        IrTypeOperator.IMPLICIT_CAST,
+                                        expression.type,
                                         IrGetValueImpl(
                                             expression.startOffset,
                                             expression.endOffset,
-                                            expression.type,
+                                            expression.type.defaultParameterType(),
                                             variables[paramIndex].symbol,
                                             expression.origin
                                         )
@@ -142,7 +149,7 @@ class KlibAssignableParamTransformer(
                                         IrSetValueImpl(
                                             expression.startOffset,
                                             expression.endOffset,
-                                            expression.type,
+                                            expression.type, // TODO defaultParameterType?
                                             variables[paramIndex].symbol,
                                             expression.value,
                                             expression.origin

@@ -59,7 +59,7 @@ class ComposerParamTransformer(
      * Used to identify module fragment in case of incremental compilation
      * see [externallyTransformed]
      */
-    private var currentModule: IrModuleFragment? = null
+    private var currentModule: IrModuleFragment? = null // TODO obsolete?
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
@@ -503,24 +503,22 @@ class ComposerParamTransformer(
 
             // update parameter types so they are ready to accept the default values
             fn.valueParameters.fastForEach { param ->
-                val newType = defaultParameterType(
-                    param,
-                    fn.hasDefaultExpressionDefinedForValueParameter(param.index)
-                )
-                param.type = newType
+                if (fn.hasDefaultExpressionDefinedForValueParameter(param.index)) {
+                    param.type = param.type.defaultParameterType()
+                }
             }
 
             inlineLambdaInfo.scan(fn)
 
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {
                 var isNestedScope = false
-                override fun visitGetValue(expression: IrGetValue): IrGetValue {
+                override fun visitGetValue(expression: IrGetValue): IrGetValue { // TODO useless code and valueParametersMapping?
                     val newParam = valueParametersMapping[expression.symbol.owner]
                     return if (newParam != null) {
                         IrGetValueImpl(
                             expression.startOffset,
                             expression.endOffset,
-                            expression.type,
+                            newParam.type,
                             newParam.symbol,
                             expression.origin
                         )
@@ -566,32 +564,6 @@ class ComposerParamTransformer(
                     return super.visitCall(expr)
                 }
             })
-        }
-    }
-
-    private fun defaultParameterType(
-        param: IrValueParameter,
-        hasDefaultValue: Boolean,
-    ): IrType {
-        val type = param.type
-        if (!hasDefaultValue) return type
-        val constructorAccessible = !type.isPrimitiveType() &&
-                type.classOrNull?.owner?.primaryConstructor != null
-        return when {
-            type.isPrimitiveType() -> type
-            type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
-                if (type.unboxInlineClass().isPrimitiveType()) {
-                    type
-                } else {
-                    type.makeNullable()
-                }
-            } else {
-                // k/js and k/native: private constructors of value classes can be not accessible.
-                // Therefore it won't be possible to create a "fake" default argument for calls.
-                // Making it nullable allows to pass null.
-                type.makeNullable()
-            }
-            else -> type.makeNullable()
         }
     }
 
