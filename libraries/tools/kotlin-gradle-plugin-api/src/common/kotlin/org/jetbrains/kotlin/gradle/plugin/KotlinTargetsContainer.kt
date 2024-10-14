@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * * Represents a Kotlin DSL entity containing a collection of [Kotlin targets][KotlinTarget].
  */
 @KotlinTargetsDsl
 interface KotlinTargetsContainer {
+
+    /**
+     * A [NamedDomainObjectContainer] containing all registered Kotlin [targets][KotlinTarget] in this project.
+     */
     val targets: NamedDomainObjectCollection<KotlinTarget>
 }
 
