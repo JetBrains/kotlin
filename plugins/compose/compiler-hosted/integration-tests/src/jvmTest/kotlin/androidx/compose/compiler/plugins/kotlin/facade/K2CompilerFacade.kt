@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -83,6 +85,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         moduleData: FirModuleData,
         projectSessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
+        librarySession: FirSession,
     ): FirSession {
         return FirJvmSessionFactory.createModuleBasedSession(
             moduleData,
@@ -102,7 +105,12 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
-            init = {}
+            init = {
+                registerComponent(
+                    FirBuiltinSyntheticFunctionInterfaceProvider::class,
+                    librarySession.syntheticFunctionInterfacesSymbolProvider
+                )
+            }
         )
     }
 
@@ -125,7 +133,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         )
         val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 
-        FirJvmSessionFactory.createLibrarySession(
+        val librarySession = FirJvmSessionFactory.createLibrarySession(
             Name.identifier(rootModuleName),
             projectSessionProvider,
             dependencyList.moduleDataProvider,
@@ -156,12 +164,14 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val commonSession = createSourceSession(
             commonModuleData,
             projectSessionProvider,
-            projectEnvironment
+            projectEnvironment,
+            librarySession,
         )
         val platformSession = createSourceSession(
             platformModuleData,
             projectSessionProvider,
-            projectEnvironment
+            projectEnvironment,
+            librarySession,
         )
 
         val commonKtFiles = commonFiles.map { it.toKtFile(project) }

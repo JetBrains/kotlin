@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.extensions.*
+import kotlin.reflect.KClass
 
 class FirSessionConfigurator(private val session: FirSession) {
     private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = mutableListOf(BunchOfRegisteredExtensions.empty())
@@ -40,6 +42,11 @@ class FirSessionConfigurator(private val session: FirSession) {
     @OptIn(SessionConfiguration::class)
     fun useCheckers(checkers: LanguageVersionSettingsCheckers) {
         session.checkersComponent.register(checkers)
+    }
+
+    @OptIn(SessionConfiguration::class)
+    fun registerComponent(componentKey: KClass<out FirSessionComponent>, componentValue: FirSessionComponent) {
+        session.register(componentKey, componentValue)
     }
 
     @OptIn(PluginServicesInitialization::class)

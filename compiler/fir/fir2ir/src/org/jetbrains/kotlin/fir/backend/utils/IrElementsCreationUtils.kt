@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -153,9 +151,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     ) {
         return emptyList()
     }
-    val symbolProvider =
-        (symbolProvider as FirCachingCompositeSymbolProvider).providers.filterIsInstance<FirBuiltinSyntheticFunctionInterfaceProvider>()
-            .single()
+    val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
     return createSyntheticFiles(
         this@createFilesWithBuiltinsSyntheticDeclarationsIfNeeded.moduleData,

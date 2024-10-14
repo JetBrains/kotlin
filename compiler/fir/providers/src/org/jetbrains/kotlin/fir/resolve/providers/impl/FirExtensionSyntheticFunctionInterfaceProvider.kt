@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -82,6 +83,11 @@ class FirBuiltinSyntheticFunctionInterfaceProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     originateFromFallbackBuiltIns: Boolean = false
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider, originateFromFallbackBuiltIns) {
+    init {
+        @OptIn(SessionConfiguration::class)
+        session.register(FirBuiltinSyntheticFunctionInterfaceProvider::class, this)
+    }
+
     /** The set is used on FIR2IR stage during stdlib compilation for creating regular IR classes instead of lazy ones.
      * It allows avoiding problems related to lazy classes actualization and fake-overrides building
      * because FIR2IR treats those declarations as declarations in a virtual file despite the fact they are generated ones.
@@ -103,6 +109,10 @@ class FirBuiltinSyntheticFunctionInterfaceProvider(
         return this.isBuiltin
     }
 }
+
+// It's not nullable because it's initialized in a library session and passed to dependent source sessions
+// If it's accessed but not initialized, then it's a bug
+val FirSession.syntheticFunctionInterfacesSymbolProvider: FirBuiltinSyntheticFunctionInterfaceProvider by FirSession.sessionComponentAccessor()
 
 abstract class FirSyntheticFunctionInterfaceProviderBase(
     session: FirSession,
