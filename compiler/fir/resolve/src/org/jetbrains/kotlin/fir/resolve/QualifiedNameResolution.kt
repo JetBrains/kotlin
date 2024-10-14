@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordNameLookup
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
@@ -37,7 +38,7 @@ data class QualifierResolutionResult(
 )
 
 fun BodyResolveComponents.resolveRootPartOfQualifier(
-    namedReference: FirSimpleNamedReference,
+    namedReference: FirNamedReference,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     isUsedAsReceiver: Boolean,
@@ -91,7 +92,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 }
 
 fun FirResolvedQualifier.continueQualifier(
-    namedReference: FirSimpleNamedReference,
+    namedReference: FirNamedReference,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>,
     session: FirSession,

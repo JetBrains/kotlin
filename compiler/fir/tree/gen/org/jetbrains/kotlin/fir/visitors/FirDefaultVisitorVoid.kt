@@ -306,6 +306,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitTypeRefWithNullability(userTypeRef)
     }
 
+    override fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef) {
+        visitTypeRefWithNullability(userDotTypeRef)
+    }
+
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
         visitTypeRefWithNullability(functionTypeRef)
     }

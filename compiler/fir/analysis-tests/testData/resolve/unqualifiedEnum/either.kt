@@ -7,7 +7,7 @@ sealed interface Either {
 
 fun test(x: Either) {
     when {
-        x is Left -> 1
-        x is Right -> 2
+        x is .Left -> 1
+        x is .Right -> 2
     }
 }

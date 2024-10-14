@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildDotNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -1014,6 +1015,7 @@ private class ElementsToShortenCollector(
     private fun resolveUnqualifiedAccess(
         fullyQualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
+        dotSyntax: Boolean,
         expressionInScope: KtExpression,
     ): List<OverloadCandidate> {
         val fakeCalleeReference = buildSimpleNamedReference { this.name = name }
@@ -1052,7 +1054,7 @@ private class ElementsToShortenCollector(
             }
         }
         val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
-            firResolveSession, fakeFirQualifiedAccess, name, expressionInScope, ResolutionMode.ContextIndependent,
+            firResolveSession, fakeFirQualifiedAccess, name, dotSyntax, expressionInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
             when (overloadCandidate.candidate.lowestApplicability) {
@@ -1076,7 +1078,7 @@ private class ElementsToShortenCollector(
             calleeReference = fakeCalleeReference
         }
         val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
-            firResolveSession, fakeFirQualifiedAccess, name, elementInScope, ResolutionMode.ContextIndependent,
+            firResolveSession, fakeFirQualifiedAccess, name, dotSyntax = false, elementInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
             overloadCandidate.candidate.lowestApplicability == CandidateApplicability.RESOLVED
@@ -1143,7 +1145,7 @@ private class ElementsToShortenCollector(
          */
         if (expressionInScope.isCompanionMemberUsedForEnumEntryInit(calledSymbol)) return false
 
-        val candidates = resolveUnqualifiedAccess(firQualifiedAccess, calledSymbol.name, expressionInScope)
+        val candidates = resolveUnqualifiedAccess(firQualifiedAccess, calledSymbol.name, dotSyntax = false, expressionInScope)
 
         val scopeForQualifiedAccess = candidates.findScopeForSymbol(calledSymbol) ?: return false
         if (candidates.mapNotNull { it.candidate.originScope }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildDotNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -274,6 +275,26 @@ fun generateAccessExpression(
     buildPropertyAccessExpression {
         this.source = qualifiedSource
         calleeReference = buildSimpleNamedReference {
+            this.source = if (calleeReferenceSource == qualifiedSource)
+                calleeReferenceSource?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+            else
+                calleeReferenceSource
+            this.name = name
+        }
+        if (diagnostic != null) {
+            this.nonFatalDiagnostics.add(diagnostic)
+        }
+    }
+
+fun generateDotAccessExpression(
+    qualifiedSource: KtSourceElement?,
+    calleeReferenceSource: KtSourceElement?,
+    name: Name,
+    diagnostic: ConeDiagnostic? = null
+): FirQualifiedAccessExpression =
+    buildPropertyAccessExpression {
+        this.source = qualifiedSource
+        calleeReference = buildDotNamedReference {
             this.source = if (calleeReferenceSource == qualifiedSource)
                 calleeReferenceSource?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
             else

@@ -208,6 +208,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitReferenceExpression(expression, data);
     }
 
+    public R visitDotNameReferenceExpression(@NotNull KtDotNameReferenceExpression expression, D data) {
+        return visitSimpleNameExpression(expression, data);
+    }
+
     public R visitReferenceExpression(@NotNull KtReferenceExpression expression, D data) {
         return visitExpression(expression, data);
     }
@@ -389,6 +393,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitUserType(@NotNull KtUserType type, D data) {
+        return visitTypeElement(type, data);
+    }
+
+    public R visitDotUserType(@NotNull KtDotUserType type, D data) {
         return visitTypeElement(type, data);
     }
 

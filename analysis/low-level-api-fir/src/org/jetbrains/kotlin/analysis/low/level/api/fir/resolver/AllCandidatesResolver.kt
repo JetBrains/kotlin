@@ -74,6 +74,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         firResolveSession: LLFirResolveSession,
         qualifiedAccess: FirQualifiedAccessExpression,
         calleeName: Name,
+        dotSyntax: Boolean,
         element: KtElement,
         resolutionMode: ResolutionMode,
     ): List<OverloadCandidate> {
@@ -84,6 +85,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
                 .collectAllCandidates(
                     qualifiedAccess,
                     calleeName,
+                    dotSyntax,
                     bodyResolveComponents.context.containers,
                     resolutionContext,
                     resolutionMode,

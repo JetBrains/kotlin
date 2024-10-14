@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class AbstractCallInfo {
     abstract val callSite: FirElement
     abstract val name: Name
+    abstract val dotSyntax: Boolean
     abstract val containingFile: FirFile
     abstract val isImplicitInvoke: Boolean
     abstract val explicitReceiver: FirExpression?

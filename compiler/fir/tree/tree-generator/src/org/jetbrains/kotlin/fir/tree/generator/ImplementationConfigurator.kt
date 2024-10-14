@@ -484,6 +484,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
+        impl(namedReference, "FirDotNamedReference") {
+            publicImplementation()
+        }
+
         noImpl(namedReferenceWithCandidateBase)
 
         impl(delegateFieldReference) {

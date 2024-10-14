@@ -1091,6 +1091,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformUserTypeRef(userTypeRef, data)
     }
 
+    open fun transformUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: D): FirTypeRef {
+        return transformElement(userDotTypeRef, data)
+    }
+
+    final override fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: D): FirTypeRef {
+        return transformUserDotTypeRef(userDotTypeRef, data)
+    }
+
     open fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): FirTypeRef {
         return transformElement(functionTypeRef, data)
     }

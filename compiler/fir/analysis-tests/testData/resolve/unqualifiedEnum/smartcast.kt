@@ -18,7 +18,7 @@ fun <T> foo(output: Inv<T>): Int {
 
 fun bar(v: Any): Int {
     return when {
-        v is Duration && v == 1.seconds -> 0
+        v is Duration && v == 1.<!UNRESOLVED_REFERENCE!>seconds<!> -> 0
         else -> 1
     }
 }

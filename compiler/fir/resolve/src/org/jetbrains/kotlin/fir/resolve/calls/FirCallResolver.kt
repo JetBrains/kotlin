@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirDotNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -79,13 +80,15 @@ class FirCallResolver(
 
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, resolutionMode: ResolutionMode): FirFunctionCall {
         val name = functionCall.calleeReference.name
-        val result = collectCandidates(functionCall, name, origin = functionCall.origin, resolutionMode = resolutionMode)
+        val dotSyntax = functionCall.calleeReference is FirDotNamedReference
+        val result = collectCandidates(functionCall, name, dotSyntax, origin = functionCall.origin, resolutionMode = resolutionMode)
 
         var forceCandidates: Collection<Candidate>? = null
         if (result.candidates.isEmpty()) {
             val newResult = collectCandidates(
                 functionCall,
                 name,
+                dotSyntax,
                 CallKind.VariableAccess,
                 origin = functionCall.origin,
                 resolutionMode = resolutionMode
@@ -143,6 +146,7 @@ class FirCallResolver(
     fun collectAllCandidates(
         qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
+        dotSyntax: Boolean,
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
         resolutionMode: ResolutionMode,
@@ -152,6 +156,7 @@ class FirCallResolver(
         fun collectCandidates(forceCallKind: CallKind?): ResolutionResult = collectCandidates(
             qualifiedAccess = qualifiedAccess,
             name = name,
+            dotSyntax = dotSyntax,
             origin = origin,
             containingDeclarations = containingDeclarations,
             resolutionContext = resolutionContext,
@@ -176,6 +181,7 @@ class FirCallResolver(
     private fun collectCandidates(
         qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
+        dotSyntax: Boolean,
         forceCallKind: CallKind? = null,
         isUsedAsGetClassReceiver: Boolean = false,
         origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
@@ -195,6 +201,7 @@ class FirCallResolver(
             callSite,
             forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
             name,
+            dotSyntax,
             explicitReceiver,
             argumentList,
             isImplicitInvoke = qualifiedAccess is FirImplicitInvokeCall,
@@ -274,16 +281,19 @@ class FirCallResolver(
         callSite: FirElement = qualifiedAccess,
         acceptCandidates: (Collection<Candidate>) -> Boolean,
     ): FirExpression {
-        val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
+        val callee = qualifiedAccess.calleeReference as? FirNamedReference ?: return qualifiedAccess
+        if (callee !is FirSimpleNamedReference && callee !is FirDotNamedReference) return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiverOf)
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics.orEmpty()
+        val dotSyntax = callee is FirDotNamedReference
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
             collectCandidates(
                 qualifiedAccess,
                 callee.name,
+                dotSyntax,
                 isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
                 callSite = callSite,
                 resolutionMode = resolutionMode
@@ -337,7 +347,7 @@ class FirCallResolver(
 
         var functionCallExpected = false
         if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
+            val newResult = collectCandidates(qualifiedAccess, callee.name, dotSyntax, CallKind.Function, resolutionMode = resolutionMode)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = true
@@ -534,6 +544,7 @@ class FirCallResolver(
             delegatedConstructorCall,
             CallKind.DelegatingConstructorCall,
             name,
+            dotSyntax = false,
             explicitReceiver = null,
             delegatedConstructorCall.argumentList,
             isImplicitInvoke = false,
@@ -660,10 +671,11 @@ class FirCallResolver(
         return constructorSymbol
     }
 
-    private fun toCallInfo(annotation: FirAnnotationCall, reference: FirSimpleNamedReference): CallInfo = CallInfo(
+    private fun toCallInfo(annotation: FirAnnotationCall, reference: FirNamedReference): CallInfo = CallInfo(
         annotation,
         CallKind.Function,
         name = reference.name,
+        dotSyntax = reference is FirDotNamedReference,
         explicitReceiver = null,
         annotation.argumentList,
         isImplicitInvoke = false,
@@ -725,6 +737,7 @@ class FirCallResolver(
             callableReferenceAccess,
             CallKind.CallableReference,
             callableReferenceAccess.calleeReference.name,
+            dotSyntax = false,
             callableReferenceAccess.explicitReceiver,
             FirEmptyArgumentList,
             isImplicitInvoke = false,

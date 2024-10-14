@@ -196,6 +196,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/DocCommentsBinding.kt");
     }
 
+    @TestMetadata("DotValue.kt")
+    public void testDotValue() {
+      runTest("compiler/testData/psi/DotValue.kt");
+    }
+
     @TestMetadata("DoubleColon.kt")
     public void testDoubleColon() {
       runTest("compiler/testData/psi/DoubleColon.kt");

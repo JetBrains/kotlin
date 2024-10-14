@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildDotNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
@@ -122,6 +123,7 @@ class LightTreeRawFirExpressionBuilder(
             STRING_TEMPLATE -> convertStringTemplate(expression)
             is KtConstantExpressionElementType -> convertConstantExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
+            DOT_REFERENCE_EXPRESSION -> convertDotNameReferenceExpression(expression)
             DO_WHILE -> convertDoWhile(expression)
             WHILE -> convertWhile(expression)
             FOR -> convertFor(expression)
@@ -641,6 +643,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertCallExpression(callSuffix: LighterASTNode): FirExpression {
         var name: String? = null
+        var isDotReference: Boolean = false
         val firTypeArguments = mutableListOf<FirTypeProjection>()
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
@@ -651,6 +654,11 @@ class LightTreeRawFirExpressionBuilder(
                 when (node.tokenType) {
                     REFERENCE_EXPRESSION -> {
                         name = node.asText
+                        isDotReference = false
+                    }
+                    DOT_REFERENCE_EXPRESSION -> {
+                        name = node.asText
+                        isDotReference = true
                     }
                     SUPER_EXPRESSION -> {
                         superNode = node
@@ -677,8 +685,15 @@ class LightTreeRawFirExpressionBuilder(
         val source = callSuffix.toFirSourceElement()
 
         val (calleeReference, receiverForInvoke) = when {
-            name != null -> CalleeAndReceiver(
+            name != null && !isDotReference -> CalleeAndReceiver(
                 buildSimpleNamedReference {
+                    this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
+                    this.name = name.nameAsSafeName()
+                }
+            )
+
+            name != null && isDotReference -> CalleeAndReceiver(
+                buildDotNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
                     this.name = name.nameAsSafeName()
                 }
@@ -1092,6 +1107,37 @@ class LightTreeRawFirExpressionBuilder(
         referenceExpression: LighterASTNode,
     ): FirNamedReference {
         return buildSimpleNamedReference {
+            source = sourceElement
+            name = referenceExpression.asText.nameAsSafeName()
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseDotNameExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDotNameReferenceExpression
+     */
+    private fun convertDotNameReferenceExpression(referenceExpression: LighterASTNode): FirQualifiedAccessExpression {
+        val nameSource = referenceExpression.toFirSourceElement()
+        val referenceSourceElement = if (nameSource.kind is KtFakeSourceElementKind) {
+            nameSource
+        } else {
+            nameSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+        }
+        return buildPropertyAccessExpression {
+            val rawText = referenceExpression.asText
+            if (rawText.isUnderscore) {
+                nonFatalDiagnostics.add(ConeUnderscoreUsageWithoutBackticks(nameSource))
+            }
+            source = nameSource
+            calleeReference = createDotNamedReference(referenceSourceElement, referenceExpression)
+        }
+    }
+
+    private fun createDotNamedReference(
+        sourceElement: KtSourceElement,
+        referenceExpression: LighterASTNode,
+    ): FirNamedReference {
+        return buildDotNamedReference {
             source = sourceElement
             name = referenceExpression.asText.nameAsSafeName()
         }

@@ -8,6 +8,6 @@ enum class Some {
 typealias Other = Some
 
 fun foo(o: Other) = when (o) {
-    FIRST -> 1
-    SECOND -> 2
+    .FIRST -> 1 ;
+    .SECOND -> 2 ;
 }

@@ -8,17 +8,17 @@ enum class Sample {
 
 fun trivial(s: Sample): Int {
     return when (s) {
-        FIRST -> 1
-        SECOND -> 2
-        THIRD -> 3
+        .FIRST -> 1 ;
+        .SECOND -> 2 ;
+        .THIRD -> 3 ;
     }
 }
 
 fun equalities(s: Sample): Int {
     return when {
-        s == FIRST -> 1
-        s == SECOND -> 2
-        s == THIRD -> 3
+        s == .FIRST -> 1
+        s == .SECOND -> 2
+        s == .THIRD -> 3
         else -> 0
     }
 }

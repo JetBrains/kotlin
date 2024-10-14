@@ -15,6 +15,6 @@ public enum JavaEnum {
 // FILE: test.kt
 
 fun foo(javaEnum: JavaEnum) = <!NO_ELSE_IN_WHEN!>when<!> (javaEnum) {
-    first() -> 1
-    second -> 2
+    .first() -> 1 ;
+    .second -> 2 ;
 }

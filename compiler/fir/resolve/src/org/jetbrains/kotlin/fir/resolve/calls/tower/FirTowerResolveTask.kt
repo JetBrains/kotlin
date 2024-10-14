@@ -162,6 +162,16 @@ internal abstract class FirBaseTowerResolveTask(
 
     protected inline fun enumerateTowerLevels(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,
+        contextSensitive: Boolean,
+        onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
+        onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
+        onContextReceiverGroup: (ContextReceiverGroup, TowerGroup) -> Unit,
+    ) =
+        if (contextSensitive) enumerateTowerLevelsForContextSensitiveResolution(onScope, onImplicitReceiver)
+        else enumerateTowerLevelsRegularResolution(parentGroup, onScope, onImplicitReceiver, onContextReceiverGroup)
+
+    protected inline fun enumerateTowerLevelsRegularResolution(
+        parentGroup: TowerGroup = TowerGroup.EmptyRoot,
         onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
         onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
         onContextReceiverGroup: (ContextReceiverGroup, TowerGroup) -> Unit,
@@ -188,6 +198,15 @@ internal abstract class FirBaseTowerResolveTask(
             }
         }
 
+        for ((depth, contextReceiverGroup) in towerDataElementsForName.contextReceiverGroups) {
+            onContextReceiverGroup(contextReceiverGroup, parentGroup.ContextReceiverGroup(depth))
+        }
+    }
+
+    protected inline fun enumerateTowerLevelsForContextSensitiveResolution(
+        onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
+        onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
+    ) {
         if (session.languageVersionSettings.supportsContextSensitiveResolution) {
             val contextClass = resolutionMode?.fullyExpandedClassFromContext(components, session)
             if (contextClass != null) {
@@ -197,10 +216,6 @@ internal abstract class FirBaseTowerResolveTask(
                     onImplicitReceiver(receiver, TowerGroup.Last)
                 }
             }
-        }
-
-        for ((depth, contextReceiverGroup) in towerDataElementsForName.contextReceiverGroups) {
-            onContextReceiverGroup(contextReceiverGroup, parentGroup.ContextReceiverGroup(depth))
         }
     }
 
@@ -326,6 +341,7 @@ internal open class FirTowerResolveTask(
 
         enumerateTowerLevels(
             parentGroup = parentGroup,
+            contextSensitive = info.dotSyntax,
             onScope = { scope, _, group ->
                 processScopeForExplicitReceiver(
                     scope,
@@ -358,6 +374,7 @@ internal open class FirTowerResolveTask(
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 
         enumerateTowerLevels(
+            contextSensitive = info.dotSyntax,
             onScope = l@{ scope, staticScopeOwnerSymbol, group ->
                 // NB: this check does not work for variables
                 // because we do not search for objects if we have extension receiver
@@ -456,6 +473,7 @@ internal open class FirTowerResolveTask(
 
         enumerateTowerLevels(
             parentGroup,
+            contextSensitive = info.dotSyntax,
             onScope = l@{ scope, _, group ->
                 if (scope in emptyScopes) return@l
 
@@ -495,6 +513,7 @@ internal open class FirTowerResolveTask(
 
         enumerateTowerLevels(
             parentGroup,
+            contextSensitive = info.dotSyntax,
             onScope = { scope, _, towerGroup ->
                 processLevel(
                     scope.toScopeTowerLevel(contextReceiverGroup = contextReceiverGroup),

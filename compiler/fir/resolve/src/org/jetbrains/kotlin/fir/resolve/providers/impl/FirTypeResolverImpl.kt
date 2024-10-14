@@ -102,8 +102,29 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        if (collector.applicability != CandidateApplicability.RESOLVED && scopeClassDeclaration.contextScope != null) {
-            scopeClassDeclaration.contextScope()?.processClassifiersByNameWithSubstitution(name, processor)
+        return collector.getResult()
+    }
+
+    private fun resolveDotUserTypeToSymbol(
+        typeRef: FirUserDotTypeRef,
+        scopeClassDeclaration: ScopeClassDeclaration,
+        useSiteFile: FirFile?,
+        supertypeSupplier: SupertypeSupplier,
+        resolveDeprecations: Boolean
+    ): TypeResolutionResult {
+        val collector = FirTypeCandidateCollector(
+            session,
+            useSiteFile,
+            scopeClassDeclaration.containingDeclarations,
+            supertypeSupplier,
+            resolveDeprecations
+        )
+
+        if (scopeClassDeclaration.contextScope != null) {
+            scopeClassDeclaration.contextScope()
+                ?.processClassifiersByNameWithSubstitution(typeRef.name) { resolvedSymbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
+                    collector.processCandidate(resolvedSymbol, substitutorFromScope)
+                }
         }
 
         return collector.getResult()
@@ -207,6 +228,78 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                         typeArguments = resultingArguments
                     )
                 }
+            }
+        }
+
+        return symbol.constructType(
+            resultingArguments,
+            typeRef.isMarkedNullable,
+            typeRef.annotations.computeTypeAttributes(
+                session,
+                shouldExpandTypeAliases = true,
+                allowExtensionFunctionType = (symbol.toLookupTag() as? ConeClassLikeLookupTag)?.isSomeFunctionType(session) == true,
+            )
+        ).also {
+            val lookupTag = it.lookupTag
+            if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
+                @OptIn(LookupTagInternals::class)
+                lookupTag.bindSymbolToLookupTag(session, symbol)
+            }
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun resolveDotUserType(
+        typeRef: FirUserDotTypeRef,
+        result: TypeResolutionResult,
+        areBareTypesAllowed: Boolean,
+        topContainer: FirDeclaration?,
+        isOperandOfIsOperator: Boolean
+    ): ConeKotlinType {
+        val (symbol, substitutor) = when (result) {
+            is TypeResolutionResult.Resolved -> {
+                result.typeCandidate.symbol to result.typeCandidate.substitutor
+            }
+            is TypeResolutionResult.Ambiguity -> null to null
+            TypeResolutionResult.Unresolved -> null to null
+        }
+
+        val allTypeArguments = typeRef.typeArguments.map { it.toConeTypeProjection() }.toMutableList()
+        if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType(areBareTypesAllowed, allTypeArguments)) {
+            allTypeArguments.addImplicitTypeArgumentsOrReturnError(symbol, topContainer, substitutor)?.let { return ConeErrorType(it) }
+        }
+
+        val resultingArguments = allTypeArguments.toTypedArray()
+
+        if (symbol == null || symbol !is FirClassifierSymbol<*>) {
+            val diagnostic = when {
+                symbol?.fir is FirEnumEntry -> {
+                    if (isOperandOfIsOperator) {
+                        ConeSimpleDiagnostic("'is' operator can not be applied to an enum entry.", DiagnosticKind.IsEnumEntry)
+                    } else {
+                        ConeSimpleDiagnostic("An enum entry should not be used as a type.", DiagnosticKind.EnumEntryAsType)
+                    }
+                }
+                result is TypeResolutionResult.Ambiguity -> {
+                    ConeAmbiguityError(typeRef.name, result.typeCandidates.first().applicability, result.typeCandidates)
+                }
+                else -> {
+                    ConeUnresolvedNameError(typeRef.name)
+                }
+            }
+            return ConeErrorType(
+                diagnostic,
+                typeArguments = resultingArguments,
+                attributes = typeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true)
+            )
+        }
+
+        if (symbol is FirTypeParameterSymbol) {
+            if (typeRef.typeArguments.isNotEmpty()) {
+                return ConeErrorType(
+                    ConeUnexpectedTypeArgumentsError("Type arguments not allowed for type parameters", typeRef.source),
+                    typeArguments = resultingArguments
+                )
             }
         }
 
@@ -347,6 +440,29 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
     }
 
+    private fun buildFirTypeResolutionResult(
+        result: FirTypeCandidateCollector.TypeResolutionResult,
+        resolvedType: ConeKotlinType,
+        expandTypeAliases: Boolean
+    ): FirTypeResolutionResult {
+        val resolvedTypeSymbol = resolvedType.toSymbol(session)
+        // We can expand typealiases from dependencies right away, as it won't depend on us back,
+        // so there will be no problems with recursion.
+        // In the ideal world, this should also work with some source dependencies as the only case
+        // where it does not is when we are a platform module, and we look at the common module
+        // from our dependencies.
+        // Those are guaranteed to have source sessions, though.
+        val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
+        val resolvedExpandedType = when {
+            aliasedTypeExpansionGloballyDisabled -> resolvedType
+            (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
+            }
+            else -> resolvedType
+        }
+        return FirTypeResolutionResult(resolvedExpandedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
+    }
+
     override fun resolveType(
         typeRef: FirTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
@@ -368,22 +484,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = resolvedType.toSymbol(session)
-                // We can expand typealiases from dependencies right away, as it won't depend on us back,
-                // so there will be no problems with recursion.
-                // In the ideal world, this should also work with some source dependencies as the only case
-                // where it does not is when we are a platform module, and we look at the common module
-                // from our dependencies.
-                // Those are guaranteed to have source sessions, though.
-                val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
-                val resolvedExpandedType = when {
-                    aliasedTypeExpansionGloballyDisabled -> resolvedType
-                    (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
-                        resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
-                    }
-                    else -> resolvedType
-                }
-                FirTypeResolutionResult(resolvedExpandedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
+                buildFirTypeResolutionResult(result, resolvedType, expandTypeAliases)
+            }
+            is FirUserDotTypeRef -> {
+                val result = resolveDotUserTypeToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier, resolveDeprecations)
+                val resolvedType = resolveDotUserType(
+                    typeRef,
+                    result,
+                    areBareTypesAllowed,
+                    scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
+                    isOperandOfIsOperator,
+                )
+                buildFirTypeResolutionResult(result, resolvedType, expandTypeAliases)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {

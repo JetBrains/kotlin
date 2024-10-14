@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.impl.FirDotNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
@@ -1234,10 +1235,12 @@ internal class KaFirResolver(
         }
 
         val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
+        val dotSyntax = originalFunctionCall.calleeReference is FirDotNamedReference
         val candidates = AllCandidatesResolver(analysisSession.firSession).getAllCandidates(
             analysisSession.firResolveSession,
             originalFunctionCall,
             calleeName,
+            dotSyntax,
             psi,
             ResolutionMode.ContextIndependent,
         )

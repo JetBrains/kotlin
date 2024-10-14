@@ -2165,22 +2165,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef(TokenSet.EMPTY);
     }
 
+    void parseTypeRefWithDotTypes() {
+        parseTypeRef(TokenSet.EMPTY, true, true);
+    }
+
     void parseTypeRefWithoutIntersections() {
-        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false);
+        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false,  /* allowDotTypes */ false);
+    }
+
+    void parseTypeRefWithoutIntersectionsWithDotTypes() {
+        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false,  /* allowDotTypes */ true);
     }
 
     void parseTypeRef(TokenSet extraRecoverySet) {
-        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true,  /* allowDotTypes */ false);
     }
 
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes);
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowDotTypes) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes, allowDotTypes);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowDotType) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2205,6 +2213,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
             advance(); // DYNAMIC_KEYWORD
             dynamicType.done(DYNAMIC_TYPE);
         }
+        else if (at(DOT) && allowDotType) {
+            parseDotUserType();
+        }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
         }
@@ -2213,7 +2224,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true, false).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR) && lookahead(1) != ARROW) {
                 // It's a parenthesized type
@@ -2255,7 +2266,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             leftTypeRef.done(TYPE_REFERENCE);
 
             advance(); // &
-            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true, /* allowDotType */ allowDotType);
 
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
@@ -2365,6 +2376,20 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         userType.done(USER_TYPE);
+    }
+
+    private void parseDotUserType() {
+        assert _at(DOT);
+        PsiBuilder.Marker userType = mark();
+
+        PsiBuilder.Marker reference = mark();
+        advance();
+        expect(IDENTIFIER, "Expecting type name");
+        reference.done(DOT_REFERENCE_EXPRESSION);
+
+        parseTypeArgumentList();
+
+        userType.done(DOT_USER_TYPE);
     }
 
     private boolean atParenthesizedMutableForPlatformTypes(int offset) {

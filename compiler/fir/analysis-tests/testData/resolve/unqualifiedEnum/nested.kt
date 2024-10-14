@@ -10,22 +10,22 @@ enum class Inner {
 
 fun foo(o: Outer, i: Inner): Int {
     return when (o) {
-        FIRST -> 1
-        SECOND -> when (i) {
-            SECOND -> 2
-            THIRD -> 3
+        .FIRST -> 1 ;
+        .SECOND -> when (i) {
+            .SECOND -> 2 ;
+            .THIRD -> 3 ;
         }
     }
 }
 
 fun bar(o: Outer, i: Inner): Int {
     return when (o) {
-        FIRST -> 1
-        SECOND -> {
+        .FIRST -> 1 ;
+        .SECOND -> {
             fun baz(): Int {
                 return when (i) {
-                    SECOND -> 2
-                    THIRD -> 3
+                    .SECOND -> 2 ;
+                    .THIRD -> 3 ;
                 }
             }
             baz()

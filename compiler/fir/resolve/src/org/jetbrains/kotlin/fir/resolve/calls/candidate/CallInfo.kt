@@ -24,6 +24,7 @@ data class CallInfo(
     override val callSite: FirElement,
     val callKind: CallKind,
     override val name: Name,
+    override val dotSyntax: Boolean,
 
     override val explicitReceiver: FirExpression?,
     override val argumentList: FirArgumentList,

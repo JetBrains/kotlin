@@ -47,7 +47,7 @@ FILE: smartcast.kt
     }
     public final fun bar(v: R|kotlin/Any|): R|kotlin/Int| {
         ^bar when () {
-            (R|<local>/v| is R|Duration|) && ==(R|<local>/v|, (this@R|/Duration.Companion|, Int(1)).R|/Duration.Companion.seconds|) ->  {
+            (R|<local>/v| is R|Duration|) && ==(R|<local>/v|, IntegerLiteral(1).<Unresolved name: seconds>#) ->  {
                 Int(0)
             }
             else ->  {

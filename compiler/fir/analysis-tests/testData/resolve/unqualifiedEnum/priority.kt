@@ -22,13 +22,13 @@ enum class Second {
 
 val ONE = Second.THREE
 
-fun foo(f: First) = <!NO_ELSE_IN_WHEN!>when<!> (f) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>ONE<!> -> 1
-    TWO -> 2
+fun foo(f: First) = when (f) {
+    .ONE -> 1 ;
+    .TWO -> 2 ;
 }
 
-fun bar(s: Second) = <!NO_ELSE_IN_WHEN!>when<!> (s) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
-    FOUR -> 4
+fun bar(s: Second) = when (s) {
+    .THREE -> 3 ;
+    .FOUR -> 4 ;
 }
 

@@ -7,4 +7,4 @@ data class Duration(val milliseconds: Int) {
     }
 }
 
-val d: Duration = 1.seconds
+val d: Duration = 1.<!UNRESOLVED_REFERENCE!>seconds<!>

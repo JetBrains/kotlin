@@ -1091,6 +1091,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(userTypeRef)
     }
 
+    final override fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: Nothing?) {
+        visitUserDotTypeRef(userDotTypeRef)
+    }
+
+    open fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef) {
+        visitElement(userDotTypeRef)
+    }
+
     final override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: Nothing?) {
         visitFunctionTypeRef(functionTypeRef)
     }

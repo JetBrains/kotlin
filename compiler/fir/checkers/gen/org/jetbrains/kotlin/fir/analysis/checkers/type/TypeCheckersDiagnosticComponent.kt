@@ -71,6 +71,10 @@ class TypeCheckersDiagnosticComponent(
         checkers.allTypeRefCheckers.check(userTypeRef, data)
     }
 
+    override fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: CheckerContext) {
+        checkers.allTypeRefCheckers.check(userDotTypeRef, data)
+    }
+
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(dynamicTypeRef, data)
     }

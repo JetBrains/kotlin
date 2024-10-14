@@ -174,6 +174,10 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitSimpleNameExpression(expression, data);
     }
 
+    public void visitDotNameReferenceExpressionVoid(@NotNull KtDotNameReferenceExpression expression, P data) {
+        super.visitDotNameReferenceExpression(expression, data);
+    }
+
     public void visitReferenceExpressionVoid(@NotNull KtReferenceExpression expression, P data) {
         super.visitReferenceExpression(expression, data);
     }
@@ -336,6 +340,10 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     public void visitUserTypeVoid(@NotNull KtUserType type, P data) {
         super.visitUserType(type, data);
+    }
+
+    public void visitDotUserTypeVoid(@NotNull KtDotUserType type, P data) {
+        super.visitDotUserType(type, data);
     }
 
     public void visitDynamicTypeVoid(@NotNull KtDynamicType type, P data) {

@@ -2274,6 +2274,7 @@ class LightTreeRawFirDeclarationBuilder(
                 TYPE_REFERENCE -> firType = convertType(it)
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it)
+                DOT_USER_TYPE -> firType = convertDotUserType(typeRefSource, it)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
@@ -2353,6 +2354,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
+                DOT_USER_TYPE -> firType = convertDotUserType(typeRefSource, it, isNullable)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
@@ -2422,6 +2424,39 @@ class LightTreeRawFirDeclarationBuilder(
             isMarkedNullable = isNullable
             qualifier.add(qualifierPart)
             simpleFirUserType?.qualifier?.let { this.qualifier.addAll(0, it) }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseUserType
+     */
+    private fun convertDotUserType(
+        typeRefSource: KtSourceElement,
+        userType: LighterASTNode,
+        isNullable: Boolean = false
+    ): FirTypeRef {
+        var identifier: String? = null
+        var identifierSource: KtSourceElement? = null
+        val firTypeArguments = mutableListOf<FirTypeProjection>()
+        var typeArgumentsSource: KtSourceElement? = null
+        userType.forEachChildren {
+            when (it.tokenType) {
+                DOT_REFERENCE_EXPRESSION -> {
+                    identifierSource = it.toFirSourceElement()
+                    identifier = it.asText
+                }
+                TYPE_ARGUMENT_LIST -> {
+                    typeArgumentsSource = it.toFirSourceElement()
+                    firTypeArguments += convertTypeArguments(it, allowedUnderscoredTypeArgument = false)
+                }
+            }
+        }
+
+        return buildUserDotTypeRef {
+            source = typeRefSource
+            isMarkedNullable = isNullable
+            name = identifier!!.nameAsSafeName()
+            typeArguments += firTypeArguments
         }
     }
 

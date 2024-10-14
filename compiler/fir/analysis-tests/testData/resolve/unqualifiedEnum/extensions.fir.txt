@@ -29,5 +29,5 @@ FILE: extensions.kt
         public final fun copy(milliseconds: R|kotlin/Int| = this@R|/Duration|.R|/Duration.milliseconds|): R|Duration|
 
     }
-    public final val d: R|Duration| = (this@R|/Duration.Companion|, Int(1)).R|/Duration.Companion.seconds|
+    public final val d: R|Duration| = IntegerLiteral(1).<Unresolved name: seconds>#
         public get(): R|Duration|

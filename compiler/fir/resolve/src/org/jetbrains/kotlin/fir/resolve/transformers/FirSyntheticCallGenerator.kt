@@ -412,6 +412,7 @@ class FirSyntheticCallGenerator(
         callSite = callSite,
         callKind = callKind,
         name = name,
+        dotSyntax = false,
         explicitReceiver = null,
         argumentList = argumentList,
         isImplicitInvoke = false,

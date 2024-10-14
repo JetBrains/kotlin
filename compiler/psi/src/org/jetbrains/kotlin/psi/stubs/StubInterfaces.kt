@@ -112,6 +112,10 @@ interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpress
     fun getReferencedName(): String
 }
 
+interface KotlinDotNameReferenceExpressionStub : StubElement<KtDotNameReferenceExpression> {
+    fun getReferencedName(): String
+}
+
 interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
     fun getReferencedName(): String
 }
@@ -171,6 +175,8 @@ interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
 }
 
 interface KotlinUserTypeStub : StubElement<KtUserType>
+
+interface KotlinDotUserTypeStub : StubElement<KtDotUserType>
 
 interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
 

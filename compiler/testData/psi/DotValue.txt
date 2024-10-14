@@ -1,0 +1,374 @@
+KtFile: DotValue.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Color')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace(' ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('BLUE')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('RED')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('color')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Color')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_REFERENCE_EXPRESSION
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('RED')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('isBlue')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('color')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Color')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('color')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(EQEQ)('==')
+      PsiWhiteSpace(' ')
+      DOT_REFERENCE_EXPRESSION
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('BLUE')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('isRed')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('color')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Color')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      DOT_REFERENCE_EXPRESSION
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('RED')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(EQEQ)('==')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('color')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('noSemicolon')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('with')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            BLOCK
+              PROPERTY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                DOT_QUALIFIED_EXPRESSION
+                  STRING_TEMPLATE
+                    PsiElement(OPEN_QUOTE)('"')
+                    LITERAL_STRING_TEMPLATE_ENTRY
+                      PsiElement(REGULAR_STRING_PART)('hello')
+                    PsiElement(CLOSING_QUOTE)('"')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('RED')
+            PsiWhiteSpace('\n')
+            PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('withSemicolon')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('with')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            BLOCK
+              PROPERTY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('hello')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiWhiteSpace(' ')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n    ')
+              DOT_REFERENCE_EXPRESSION
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('RED')
+            PsiWhiteSpace('\n')
+            PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('whenExample')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('color')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Color')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    WHEN
+      PsiElement(when)('when')
+      PsiWhiteSpace(' ')
+      PsiElement(LPAR)('(')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('color')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_WITH_EXPRESSION
+          DOT_REFERENCE_EXPRESSION
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('RED')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_WITH_EXPRESSION
+          DOT_REFERENCE_EXPRESSION
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('BLUE')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace(' ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('whenExampleSubject')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('color')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Color')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    WHEN
+      PsiElement(when)('when')
+      PsiWhiteSpace(' ')
+      PsiElement(LPAR)('(')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('color')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_IS_PATTERN
+          PsiElement(is)('is')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            DOT_USER_TYPE
+              DOT_REFERENCE_EXPRESSION
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('RED')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_IS_PATTERN
+          PsiElement(is)('is')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            DOT_USER_TYPE
+              DOT_REFERENCE_EXPRESSION
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('BLUE')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('whenExampleIs')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('color')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Color')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    WHEN
+      PsiElement(when)('when')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_WITH_EXPRESSION
+          IS_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('color')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              DOT_USER_TYPE
+                DOT_REFERENCE_EXPRESSION
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('RED')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      WHEN_ENTRY
+        WHEN_CONDITION_WITH_EXPRESSION
+          IS_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('color')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              DOT_USER_TYPE
+                DOT_REFERENCE_EXPRESSION
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('BLUE')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

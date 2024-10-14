@@ -236,6 +236,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R =
         visitTypeRefWithNullability(userTypeRef, data)
 
+    override fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: D): R =
+        visitTypeRefWithNullability(userDotTypeRef, data)
+
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R =
         visitTypeRefWithNullability(functionTypeRef, data)
 

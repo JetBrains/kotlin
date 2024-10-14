@@ -12,6 +12,6 @@ class Duration(val milliseconds: Int) {
 }
 
 fun foo(duration: Duration): Int = when (duration) {
-    four -> 1
+    .four -> 1
     else -> 0
 }

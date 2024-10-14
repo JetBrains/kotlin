@@ -1145,6 +1145,15 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("customRenderer", boolean)
     }
 
+    val userDotTypeRef: Element by element(TypeRefElement) {
+        parent(typeRefWithNullability)
+
+        +field("name", nameType)
+        +typeArguments {
+            withTransform = true
+        }
+    }
+
     val functionTypeRef: Element by element(TypeRefElement) {
         parent(typeRefWithNullability)
 

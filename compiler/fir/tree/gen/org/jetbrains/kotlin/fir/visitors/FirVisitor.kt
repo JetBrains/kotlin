@@ -422,6 +422,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R =
         visitElement(userTypeRef, data)
 
+    open fun visitUserDotTypeRef(userDotTypeRef: FirUserDotTypeRef, data: D): R =
+        visitElement(userDotTypeRef, data)
+
     open fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R =
         visitElement(functionTypeRef, data)
 
