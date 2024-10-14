@@ -25,6 +25,11 @@ The tool checks on all projects defined in `projectsUsedInIntelliJKotlinPlugin`.
   performed. This is not a hundred percent reliable, but it usually works unless there is a name conflict with experimental opt-in
   annotations
   from stdlib. The code for those checks can be found at `org.jetbrains.Kotlin.ide.plugin.dependencies.validator` package.
+* Here’s a revised version for clarity and grammatical correctness:
+* A check ensures that the list of experimental annotations from
+  `libraries/tools/ide-plugin-dependencies-validator/ExperimentalAnnotations.txt` is up to date.
+  When an experimental annotation is added to or removed from the stdlib, the `ExperimentalAnnotations.txt` file should be updated
+  accordingly.
 * The Kotlin API version used is the same as the version of Kotlin stdlib used inside the IntelliJ Platform. This is defined
   by `kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin` property.
 * No opt-ins for experimental stdlib annotations are used inside the build definition files. The check works by

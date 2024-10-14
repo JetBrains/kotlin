@@ -10,21 +10,30 @@ import java.nio.file.Paths
 import kotlin.io.path.absolute
 import kotlin.io.path.relativeTo
 
+/**
+ * The first argument is a path to the stdlib sources,
+ * other arguments are paths to sourcesets which are bundled into the Kotlin IntelliJ IDEA plugin.
+ */
 fun main(args: Array<String>) {
     check(args.isNotEmpty())
 
+    ExperimentalAnnotationListChecker.checkNoMissingAnnotations(args.first())
+    checkExperimentalAnnotationUsage(args.drop(1).toList())
+}
+
+fun checkExperimentalAnnotationUsage(intellijModulePaths: List<String>) {
     val experimentalAnnotationUsages =
-        ExperimentalOptInUsageInSourceChecker.checkExperimentalOptInUsage(args.map { Paths.get(it) })
+        ExperimentalOptInUsageInSourceChecker.checkExperimentalOptInUsage(intellijModulePaths.map { Paths.get(it) })
             .filterNot { usage -> allowedUsages.any { it.isAllowed(usage) } }
 
     if (experimentalAnnotationUsages.isNotEmpty()) {
         val errorMessage = buildString {
             appendLine(
                 """
-                Experimental Kotlin StdLib API cannot be used in the modules that are used in the IDE. 
-                See KT-62510 for more details.
-                The following files use deprecated APIs:
-                """.trimIndent()
+                    Experimental Kotlin StdLib API cannot be used in the modules that are used in the IDE. 
+                    See KT-62510 for more details.
+                    The following files use deprecated APIs:
+                    """.trimIndent()
             )
             for (annotationUsage in experimentalAnnotationUsages) {
                 appendLine(

@@ -40,15 +40,20 @@ val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
 val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
 
 tasks.withType<JavaExec> {
+    notCompatibleWithConfigurationCache("Uses project in task action")
     workingDir = rootProject.projectDir
 
     doFirst {
-        args = projectsUsedInIntelliJKotlinPlugin.flatMap {
+        val srcDirsOfProjectsUsedInIntelliJKotlinPlugin = projectsUsedInIntelliJKotlinPlugin.flatMap {
             project(it).extensions
                 .findByType(JavaPluginExtension::class.java)
                 ?.sourceSets?.flatMap { sourceSet ->
                     sourceSet.allSource.srcDirs.map { it.path }
                 }.orEmpty()
+        }
+        args = buildList {
+            add(project(":kotlin-stdlib").projectDir.path)
+            addAll(srcDirsOfProjectsUsedInIntelliJKotlinPlugin)
         }
     }
 }

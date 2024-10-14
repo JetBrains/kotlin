@@ -4,7 +4,22 @@
 # See KT-62510 for details.
 # The list should be updated as new experimental annotations are added or removed from the stdlib.
 kotlin.ExperimentalStdlibApi
-kotlin.io.path.ExperimentalPathApi
-kotlin.io.encoding.ExperimentalEncodingApi
-kotlin.time.ExperimentalTime
+kotlin.ExperimentalMultiplatform
+kotlin.ExperimentalSubclassOptIn
 kotlin.ExperimentalUnsignedTypes
+kotlin.experimental.ExperimentalNativeApi
+kotlin.experimental.ExperimentalObjCName
+kotlin.experimental.ExperimentalObjCRefinement
+kotlin.experimental.ExperimentalTypeInference
+kotlin.io.encoding.ExperimentalEncodingApi
+kotlin.io.path.ExperimentalPathApi
+kotlin.js.ExperimentalJsCollectionsApi
+kotlin.js.ExperimentalJsExport
+kotlin.js.ExperimentalJsFileName
+kotlin.js.ExperimentalJsReflectionCreateInstance
+kotlin.js.ExperimentalJsStatic
+kotlin.js.JsIntrinsic
+kotlin.native.FreezingIsDeprecated
+kotlin.reflect.ExperimentalAssociatedObjects
+kotlin.time.ExperimentalTime
+kotlin.uuid.ExperimentalUuidApi
