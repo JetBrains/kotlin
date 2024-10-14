@@ -40,6 +40,13 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
             .find { index -> classId in getClassIdsForRootAt(index) }
             ?.let { index -> roots[index].file }
 
+    fun hasPackage(packageFqName: FqName): Boolean {
+        for (i in roots.indices) {
+            if (getClassIdsForRootAt(i).any { it.packageFqName.startsWith(packageFqName) }) return true
+        }
+        return false
+    }
+
     fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
         roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
 
