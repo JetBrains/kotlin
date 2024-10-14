@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.render
     description = "JVM-specific implementations of some built-ins"
 )
 internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
+    fun f(): Unit = f()
     override fun lower(irFile: IrFile) {
         val transformer = object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
