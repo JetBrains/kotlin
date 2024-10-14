@@ -219,7 +219,7 @@ sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNo
 
     val leaves: List<LeafMfvcNode> = subnodes.leaves
 
-    val fields: List<IrField>? = subnodes.fields
+    val fields: List<IrField?> = subnodes.fields
 
     val allInnerUnboxMethods: List<IrSimpleFunction> = subnodes.flatMap { subnode ->
         when (subnode) {
@@ -270,14 +270,7 @@ private fun List<Any>.allEqual() = all { it == first() }
 val List<NameableMfvcNode>.leaves get() = this.mapLeaves { it }
 
 val List<NameableMfvcNode>.fields
-    get() = mapLeaves { it.field }.run {
-        @Suppress("UNCHECKED_CAST")
-        when {
-            all { it == null } -> null
-            all { it != null } -> this as List<IrField>
-            else -> error("IrFields can either exist all or none for MFVC property")
-        }
-    }
+    get() = mapLeaves { it.field }
 
 val List<NameableMfvcNode>.subnodeIndices: Map<NameableMfvcNode, IntRange>
     get() = buildMap {
@@ -363,16 +356,16 @@ class LeafMfvcNode(
         accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ) = ReceiverBasedMfvcNodeInstance(
-        scope, this, typeArguments, receiver, field?.let(::listOf), unboxMethod, accessType, saveVariable
+        scope, this, typeArguments, receiver, listOf(field), unboxMethod, accessType, saveVariable
     )
 
     override fun toString(): String = "$fullFieldName: ${type.render()}"
 }
 
-val MfvcNode.fields
+val MfvcNode.fields: List<IrField?>
     get() = when (this) {
         is MfvcNodeWithSubnodes -> this.fields
-        is LeafMfvcNode -> field?.let(::listOf)
+        is LeafMfvcNode -> listOf(field)
     }
 
 /**

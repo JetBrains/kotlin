@@ -48132,6 +48132,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/valueClasses/kt59079.kt");
     }
 
+    @TestMetadata("kt62455.kt")
+    public void testKt62455() {
+      runTest("compiler/testData/codegen/box/valueClasses/kt62455.kt");
+    }
+
     @TestMetadata("mfvcAndIcInsideConstructorsOfEachOther.kt")
     public void testMfvcAndIcInsideConstructorsOfEachOther() {
       runTest("compiler/testData/codegen/box/valueClasses/mfvcAndIcInsideConstructorsOfEachOther.kt");

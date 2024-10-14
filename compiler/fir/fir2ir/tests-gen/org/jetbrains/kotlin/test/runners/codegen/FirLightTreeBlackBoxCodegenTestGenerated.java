@@ -59888,6 +59888,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("kt62455.kt")
+    public void testKt62455() {
+      runTest("compiler/testData/codegen/box/valueClasses/kt62455.kt");
+    }
+
+    @Test
     @TestMetadata("mfvcAndIcInsideConstructorsOfEachOther.kt")
     public void testMfvcAndIcInsideConstructorsOfEachOther() {
       runTest("compiler/testData/codegen/box/valueClasses/mfvcAndIcInsideConstructorsOfEachOther.kt");

@@ -177,7 +177,7 @@ class ReceiverBasedMfvcNodeInstance(
     override val node: MfvcNode,
     override val typeArguments: TypeArguments,
     receiver: IrExpression?,
-    val fields: List<IrField>?,
+    val fields: List<IrField?>,
     val unboxMethod: IrSimpleFunction?,
     val accessType: AccessType,
     private val saveVariable: (IrVariable) -> Unit,
@@ -189,7 +189,7 @@ class ReceiverBasedMfvcNodeInstance(
     private fun makeReceiverCopy() = receiverCopier.makeCopy()
 
     init {
-        require(fields == null || fields.isNotEmpty()) { "Empty list of fields" }
+        require(fields.isNotEmpty()) { "Empty list of fields" }
         require(node is RootMfvcNode == (unboxMethod == null)) { "Only root node has node getter" }
     }
 
@@ -229,17 +229,13 @@ class ReceiverBasedMfvcNodeInstance(
         fun makeFieldRead(field: IrField) = irGetField(if (field.isStatic) null else makeReceiverCopy(), field)
         when {
             node is RootMfvcNode -> makeReceiverCopy()!!
-            node is LeafMfvcNode && node.hasPureUnboxMethod && canUsePrivateAccess(node, currentClass) && fields != null ->
-                makeFieldRead(fields.single())
-            node is LeafMfvcNode && accessType == AccessType.UseFields -> {
-                require(fields != null) { "Invalid getter to $node" }
-                makeFieldRead(fields.single())
-            }
+            node is LeafMfvcNode && node.hasPureUnboxMethod && canUsePrivateAccess(node, currentClass) && fields.single() != null ->
+                makeFieldRead(fields.single()!!)
+            node is LeafMfvcNode && accessType == AccessType.UseFields ->
+                makeFieldRead(fields.single() ?: error("Invalid getter to $node"))
             node is IntermediateMfvcNode && accessType == AccessType.UseFields -> {
-                require(fields != null) { "Invalid getter to $node" }
-                node.makeBoxedExpression(
-                    this, typeArguments, fields.map(::makeFieldRead), registerPossibleExtraBoxCreation
-                )
+                val valueArguments = fields.map { makeFieldRead(it ?: error("Invalid getter to $node")) }
+                node.makeBoxedExpression(this, typeArguments, valueArguments, registerPossibleExtraBoxCreation)
             }
             unboxMethod != null -> irCall(unboxMethod).apply {
                 val dispatchReceiverParameter = unboxMethod.dispatchReceiverParameter
@@ -267,8 +263,10 @@ class ReceiverBasedMfvcNodeInstance(
 
     override fun makeSetterStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
         checkValuesCount(values)
-        require(fields != null) { "$node is immutable as it has custom getter and so no backing fields" }
-        return fields.zip(values) { field, expr -> scope.irSetField(makeReceiverCopy(), field, expr) }
+        return fields.zip(values) { field, expr ->
+            if (field == null) error("$node is immutable as it has custom getter and so no backing fields")
+            scope.irSetField(makeReceiverCopy(), field, expr)
+        }
     }
 }
 

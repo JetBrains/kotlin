@@ -46,6 +46,8 @@ public final class B {
     private final @org.jetbrains.annotations.NotNull field a$delegate: kotlin.Lazy
     private final field b$delegate-x: int
     private final field b$delegate-y: int
+    private final field d$delegate-x: int
+    private final field d$delegate-y: int
     private field x-x: int
     private field x-y: int
     private @org.jetbrains.annotations.Nullable field y: A
@@ -61,6 +63,9 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getC(): A
     public synthetic final method getC-x(): int
     public synthetic final method getC-y(): int
+    public final @org.jetbrains.annotations.NotNull method getD(): A
+    public synthetic final method getD-x(): int
+    public synthetic final method getD-y(): int
     public final @org.jetbrains.annotations.NotNull method getX(): A
     public synthetic final method getX-x(): int
     public synthetic final method getX-y(): int
@@ -77,6 +82,29 @@ public final class C {
     private method <init>(p0: int, p1: int): void
     public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public method getX(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class D {
+    // source: 'delegating.kt'
+    private final field x: int
+    private final field y: int
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): D
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static @org.jetbrains.annotations.NotNull method getValue-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object, @org.jetbrains.annotations.NotNull p3: kotlin.reflect.KProperty): A
+    public method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
 }
 
 @kotlin.Metadata

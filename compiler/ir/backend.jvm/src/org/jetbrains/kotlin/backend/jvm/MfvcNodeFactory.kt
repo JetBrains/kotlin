@@ -291,8 +291,8 @@ fun createIntermediateMfvcNode(
         unboxMethod = makeUnboxMethod(
             context, fullMethodName, type, parent, overriddenNode, static, unboxFunctionImplementation, oldGetter, modality
         ) { receiver ->
-            val valueArguments = subnodes.flatMap { it.fields!! }
-                .map { field -> irGetField(if (field.isStatic) null else irGet(receiver!!), field) }
+            val valueArguments = subnodes.flatMap { it.fields }
+                .map { field -> irGetField(if (field!!.isStatic) null else irGet(receiver!!), field) }
             rootNode.makeBoxedExpression(this, typeArguments, valueArguments, registerPossibleExtraBoxCreation = {})
         }
     }
@@ -492,7 +492,7 @@ private fun makeMfvcPrimaryConstructor(
     oldPrimaryConstructor: IrConstructor,
     mfvc: IrClass,
     leaves: List<LeafMfvcNode>,
-    fields: List<IrField>?
+    fields: List<IrField?>
 ) = context.irFactory.buildConstructor {
     updateFrom(oldPrimaryConstructor)
     visibility = DescriptorVisibilities.PRIVATE
@@ -506,8 +506,8 @@ private fun makeMfvcPrimaryConstructor(
     if (!mfvc.isKotlinExternalStub()) {
         body = context.createIrBuilder(irConstructor.symbol).irBlockBody(irConstructor) {
             +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-            for ((field, parameter) in fields!! zip parameters) {
-                +irSetField(irGet(mfvc.thisReceiver!!), field, irGet(parameter))
+            for ((field, parameter) in fields zip parameters) {
+                +irSetField(irGet(mfvc.thisReceiver!!), field!!, irGet(parameter))
             }
         }
     }
@@ -518,13 +518,15 @@ private fun makeRootMfvcNodeSubnodes(
     properties: Map<Pair<Boolean, Name>, IrProperty>,
     context: JvmBackendContext,
     mfvc: IrClass
-) = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
+): List<NameableMfvcNode> = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
     val typeArguments = makeTypeArgumentsFromType(type)
-    val oldProperty = properties[false to name]!!
-    val oldBackingField = oldProperty.backingFieldIfNotDelegate
-    val oldGetter = oldProperty.getterIfDeclared(mfvc)
+    val oldProperty = properties[false to name]
+    val oldBackingField = oldProperty?.backingFieldIfNotDelegate
+    val oldGetter = oldProperty?.getterIfDeclared(mfvc)
     val overriddenNode = oldGetter?.let { getOverriddenNode(context.multiFieldValueClassReplacements, it) as IntermediateMfvcNode? }
-    val static = oldProperty.isStatic(mfvc)
+    val static = oldProperty?.isStatic(mfvc) ?: false
+    // ^ the only way to get oldProperty == null is access to the primary constructor property from a different module,
+    //   otherwise the property will be accessible from field or getter. So, it safe to assume static to be `false` in this case.
     createNameableMfvcNodes(
         mfvc,
         context,
@@ -540,7 +542,9 @@ private fun makeRootMfvcNodeSubnodes(
         Modality.FINAL,
         oldBackingField,
     ).also {
-        updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
+        if (oldProperty != null) {
+            updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
+        }
         it.unboxMethod.overriddenSymbols = listOf() // the getter is saved so it overrides itself
     }
 }

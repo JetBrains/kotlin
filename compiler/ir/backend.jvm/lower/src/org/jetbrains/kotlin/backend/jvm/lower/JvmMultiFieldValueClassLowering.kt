@@ -27,11 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -384,13 +380,15 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         fieldsToRemove: Set<IrField>,
         propertiesOrFieldsReplacement: Map<IrPropertyOrIrField, IntermediateMfvcNode>,
         irClass: IrClass,
-    ) = buildList {
+    ): List<IrDeclaration> = buildList {
         for (element in irClass.declarations) {
             when (element) {
                 !is IrField, !in fieldsToRemove -> add(element)
                 else -> {
-                    val fields = element.property?.let { propertiesOrFieldsReplacement[IrPropertyOrIrField.Property(it)] }?.fields
-                        ?: propertiesOrFieldsReplacement[IrPropertyOrIrField.Field(element)]?.fields
+                    val fieldsFromProperty =
+                        element.property?.let { propertiesOrFieldsReplacement[IrPropertyOrIrField.Property(it)] }?.fields?.filterNotNull()
+                    val standaloneFields = propertiesOrFieldsReplacement[IrPropertyOrIrField.Field(element)]?.fields?.filterNotNull()
+                    val fields = fieldsFromProperty?.takeIf { it.isNotEmpty() } ?: standaloneFields?.takeIf { it.isNotEmpty() }
                     if (fields != null) {
                         addAll(fields)
                         element.initializer?.let { initializer -> add(makeInitializerReplacement(irClass, element, initializer)) }
@@ -403,7 +401,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
 
         for ((propertyOrField, node) in propertiesOrFieldsReplacement.entries) {
             if (propertyOrField is IrPropertyOrIrField.Property) { // they are not used, only boxes are used for them
-                addAll(node.allInnerUnboxMethods.filter { it.parent == irClass })
+                addAll(node.allInnerUnboxMethods.filter { it.parent == irClass }) // filter out Companion's methods
             }
         }
     }
@@ -443,7 +441,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val staticFieldMapping: Map<IrField, List<IrDeclaration>> = buildMap {
             for (staticField in declaration.fields.filter { it.isStatic }) {
                 val node = replacements.getMfvcFieldNode(staticField) ?: continue
-                val fields = node.fields ?: listOf()
+                val fields = node.fields.filterNotNull()
                 val initializer = staticField.initializer?.let { makeInitializerReplacement(declaration, staticField, it) }
                 staticField.correspondingPropertySymbol?.owner?.backingField = null
                 put(staticField, fields + listOfNotNull(initializer))
@@ -517,7 +515,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             field.correspondingPropertySymbol?.owner?.backingField = null
         }
         mfvc.declarations.removeAll(fieldsToRemove)
-        mfvc.declarations += fields ?: emptyList()
+        mfvc.declarations += fields.filterNotNull()
     }
 
     override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
