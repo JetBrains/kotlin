@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.caches.StubsForCollectionClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.overridesWithoutStubs
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
@@ -48,7 +52,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private data class NameAndArity(
         val name: Name,
         val typeParametersCount: Int,
-        val valueParametersCount: Int
+        val valueParametersCount: Int,
     )
 
     private val IrSimpleFunction.nameAndArity
@@ -107,6 +111,12 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     //          java.util.Collection<E>#remove(Object): boolean
                     //          java.util.Map<K, V>#remove(K): V
                     //      This corresponds to replacing value parameter types with 'Any?'.
+                    if (context.config.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+                        && irClass.classId == StandardClassIds.AbstractMap
+                        && stub.valueParameters.size == 2
+                    ) {
+                        continue
+                    }
                     irClass.declarations.add(stub.apply {
                         valueParameters = valueParameters.map {
                             it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
@@ -140,7 +150,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun createRemoveAtStub(
         removeAtStub: IrSimpleFunction,
         stubReturnType: IrType,
-        stubOrigin: IrDeclarationOrigin
+        stubOrigin: IrDeclarationOrigin,
     ): IrSimpleFunction {
         return context.irFactory.buildFun {
             name = Name.identifier("remove")
@@ -166,7 +176,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun createStubMethod(
         function: IrSimpleFunction,
         irClass: IrClass,
-        substitutionMap: Map<IrTypeParameterSymbol, IrType>
+        substitutionMap: Map<IrTypeParameterSymbol, IrType>,
     ): IrSimpleFunction {
         return context.irFactory.buildFun {
             name = function.name
@@ -236,7 +246,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun areTypeParametersEquivalent(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: TypeCheckerState
+        typeChecker: TypeCheckerState,
     ): Boolean =
         overrideFun.typeParameters.zip(parentFun.typeParameters)
             .all { (typeParameter1, typeParameter2) ->
@@ -249,7 +259,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun areValueParametersEquivalent(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: TypeCheckerState
+        typeChecker: TypeCheckerState,
     ): Boolean =
         overrideFun.valueParameters.zip(parentFun.valueParameters)
             .all { (valueParameter1, valueParameter2) ->
@@ -259,20 +269,20 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     internal fun isReturnTypeOverrideCompliant(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: TypeCheckerState
+        typeChecker: TypeCheckerState,
     ): Boolean =
         AbstractTypeChecker.isSubtypeOf(typeChecker, overrideFun.returnType, parentFun.returnType)
 
     // Copy value parameter with type substitution
     private fun IrValueParameter.copyWithSubstitution(
         target: IrSimpleFunction,
-        substitutionMap: Map<IrTypeParameterSymbol, IrType>
+        substitutionMap: Map<IrTypeParameterSymbol, IrType>,
     ): IrValueParameter =
         copyWithCustomTypeSubstitution(target) { it.substitute(substitutionMap) }
 
     private fun IrValueParameter.copyWithCustomTypeSubstitution(
         target: IrSimpleFunction,
-        substituteType: (IrType) -> IrType
+        substituteType: (IrType) -> IrType,
     ): IrValueParameter {
         val parameter = this
         return buildValueParameter(target) {
@@ -335,7 +345,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private class FilteredStubsForCollectionClass(
         override val readOnlyClass: IrClassSymbol,
         override val mutableClass: IrClassSymbol,
-        override val candidatesForStubs: Collection<IrSimpleFunction>
+        override val candidatesForStubs: Collection<IrSimpleFunction>,
     ) : StubsForCollectionClass
 
     private fun computeStubsForSuperClass(superClass: IrClass): List<StubsForCollectionClass> {
