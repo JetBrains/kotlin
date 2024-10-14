@@ -794,7 +794,7 @@ private class ScriptToClassTransformer(
                 is IrProperty -> callee.getter?.dispatchReceiverParameter?.type
                 else -> null
             }
-            expression.dispatchReceiver =
+            val dispatchReceiver =
                 if (memberAccessTargetReceiverType != null && memberAccessTargetReceiverType != scriptClassReceiver.type)
                     getAccessCallForImplicitReceiver(
                         data, expression, memberAccessTargetReceiverType, expression.origin, originalReceiverParameter = null
@@ -803,6 +803,7 @@ private class ScriptToClassTransformer(
                     getAccessCallForScriptInstance(
                         data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
                     )
+            expression.insertDispatchReceiver(dispatchReceiver)
         }
         return super.visitMemberAccess(expression, data) as IrExpression
     }
@@ -826,7 +827,7 @@ private class ScriptToClassTransformer(
                 ?: if (capturingClassesConstructors.keys.any { it.symbol == expression.symbol }) scriptClassReceiver.type else null
             if (ctorDispatchReceiverType != null) {
                 getDispatchReceiverExpression(data, expression, ctorDispatchReceiverType, expression.origin, null)?.let {
-                    expression.dispatchReceiver = it
+                    expression.insertDispatchReceiver(it)
                 }
             }
         }
