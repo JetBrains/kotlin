@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
@@ -15,32 +16,30 @@ import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctio
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
-import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
-import org.jetbrains.kotlin.ir.inline.InlineMode
-import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.originalFunction
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
  * This is the cache of the inline functions that have already been lowered.
  * It is helpful to avoid re-lowering the same function multiple times.
  */
-private var IrFunction.loweredInlineFunction: IrFunction? by irAttribute(followAttributeOwner = false)
+ var IrFunction.loweredInlineFunction: IrFunction? by irAttribute(followAttributeOwner = false)
 
 internal fun IrFunction.getOrSaveLoweredInlineFunction(): IrFunction =
         this::loweredInlineFunction.getOrSetIfNull { this.deepCopyWithSymbols(this.parent) }
 
-// TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(
         private val generationState: NativeGenerationState,
         inlineMode: InlineMode,
@@ -48,9 +47,10 @@ internal class NativeInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
+        if (function.body != null) return function
         function.loweredInlineFunction?.let { return it }
 
-        val moduleDeserializer = if (function.body == null) context.irLinker.getCachedDeclarationModuleDeserializer(function) else null
+        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val functionIsCached = moduleDeserializer != null
         if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
