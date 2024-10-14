@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (9,11-14)
+    ARGUMENT_TYPE_MISMATCH      text ranges: [(179,182)]
+      PSI: KtNameReferenceExpression at (9,11-14)

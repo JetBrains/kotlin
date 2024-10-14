@@ -95,6 +95,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("externalAnnotations.kt")
+  public void testExternalAnnotations() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/externalAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("genericsOnOuterClass.kt")
   public void testGenericsOnOuterClass() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/genericsOnOuterClass.kt");
