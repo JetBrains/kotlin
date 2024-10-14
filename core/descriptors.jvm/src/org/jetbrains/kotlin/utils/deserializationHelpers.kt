@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
 fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =
-    binaryVersion as? MetadataVersion ?: MetadataVersion.INSTANCE
+    binaryVersion ?: MetadataVersion.INSTANCE
