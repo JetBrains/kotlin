@@ -733,6 +733,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/forbidKotlinPackageK2.args");
     }
 
+    @TestMetadata("fullyQualifiedDeepJavaIndividual.args")
+    public void testFullyQualifiedDeepJavaIndividual() {
+      runTest("compiler/testData/cli/jvm/fullyQualifiedDeepJavaIndividual.args");
+    }
+
+    @TestMetadata("fullyQualifiedDeepJavaWholeRoot.args")
+    public void testFullyQualifiedDeepJavaWholeRoot() {
+      runTest("compiler/testData/cli/jvm/fullyQualifiedDeepJavaWholeRoot.args");
+    }
+
     @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args")
     public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference() {
       runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args");
