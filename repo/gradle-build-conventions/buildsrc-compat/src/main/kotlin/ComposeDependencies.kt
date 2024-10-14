@@ -14,7 +14,6 @@ private val Project.composeSnapshotVersionCatalog: VersionCatalog
 private val Project.libsVersionCatalog: VersionCatalog
     get() = project.extensions.getByType(VersionCatalogsExtension::class.java).find("libs").get()
 private fun Project.composeStableVersion() = libsVersionCatalog.findVersion("compose.stable").get().requiredVersion
-private fun Project.composeMaterial3StableVersion() = libsVersionCatalog.findVersion("compose-material3-stable").get().requiredVersion
 private fun Project.composeSnapshotVersion() = composeSnapshotVersionCatalog.findVersion("snapshot.version").get().requiredVersion
 
 val Project.androidXMavenLocalPath: String?
@@ -38,7 +37,7 @@ fun RepositoryHandler.androidxSnapshotRepo(composeSnapshotId: String) {
     }
 }
 
-fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String, composeMaterial3Version: String? = null) {
+fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     google {
         content {
             includeGroup("androidx.collection")
@@ -56,11 +55,6 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String, composeMa
             includeVersion("androidx.compose.ui", "ui-text-desktop", composeStableVersion)
             includeVersion("androidx.compose.ui", "ui-unit", composeStableVersion)
             includeVersion("androidx.compose.ui", "ui-unit-desktop", composeStableVersion)
-
-            if (composeMaterial3Version != null) {
-                includeVersion("androidx.compose.material3", "material3", composeMaterial3Version)
-                includeVersion("androidx.compose.material3", "material3-desktop", composeMaterial3Version)
-            }
         }
     }
 }
@@ -69,5 +63,3 @@ fun Project.composeRuntime() = compose("runtime", "runtime", composeSnapshotVers
 fun Project.composeRuntimeTestUtils() = compose("runtime", "runtime-test-utils", composeSnapshotVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
     "androidx.compose.$group:$module:$version"
-
-fun Project.composeMaterial3(version: String = composeMaterial3StableVersion()) = "androidx.compose.material3:material3:$version"

@@ -7,7 +7,7 @@ repositories {
         androidXMavenLocal(androidXMavenLocalPath)
     }
     androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
-    composeGoogleMaven(libs.versions.compose.stable.get(), libs.versions.compose.material3.stable.get())
+    composeGoogleMaven(libs.versions.compose.stable.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
@@ -57,7 +57,6 @@ dependencies {
     testImplementationArtifactOnly(compose("ui", "ui-graphics"))
     testImplementationArtifactOnly(compose("ui", "ui-text"))
     testImplementationArtifactOnly(compose("ui", "ui-unit"))
-    testImplementationArtifactOnly(composeMaterial3())
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())

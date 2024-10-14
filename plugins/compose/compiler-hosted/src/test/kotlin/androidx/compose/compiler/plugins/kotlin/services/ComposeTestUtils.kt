@@ -26,12 +26,7 @@ class ComposePluginAnnotationsProvider(testServices: TestServices) : Environment
         val platform = module.targetPlatform
         when {
             platform.isJvm() -> {
-                /**
-                 * Add all compose UI libraries specified in `RepositoryHandler.composeGoogleMaven()` of
-                 * `repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/ComposeDependencies.kt`
-                 * and `kotlinx` libraries e.g., `kotlinx.coroutines` to JVM class path.
-                 */
-                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") || it.absolutePath.contains("kotlinx") }.forEach {
+                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }.forEach {
                     configuration.addJvmClasspathRoot(it)
                 }
             }
