@@ -588,7 +588,6 @@ fun getWasmLowerings(
     propertiesLoweringPhase,
     primaryConstructorLoweringPhase,
     delegateToPrimaryConstructorLoweringPhase,
-    // Common prefix ends
 
     wasmStringSwitchOptimizerLowering,
 

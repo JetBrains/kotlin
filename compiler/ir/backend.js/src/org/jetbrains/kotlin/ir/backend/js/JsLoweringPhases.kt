@@ -842,7 +842,6 @@ fun getJsLowerings(
     initializersCleanupLoweringPhase,
     kotlinNothingValueExceptionPhase,
     collectClassDefaultConstructorsPhase,
-    // Common prefix ends
     enumWhenPhase,
     enumEntryInstancesLoweringPhase,
     enumEntryInstancesBodyLoweringPhase,
