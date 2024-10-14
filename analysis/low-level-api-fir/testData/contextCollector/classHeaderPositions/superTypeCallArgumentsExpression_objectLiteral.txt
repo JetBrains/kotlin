@@ -16,6 +16,8 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final class Nested : R|kotlin/Any|
         Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpression_objectLiteral.kt
     public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {

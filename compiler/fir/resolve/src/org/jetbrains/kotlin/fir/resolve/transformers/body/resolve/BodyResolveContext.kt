@@ -289,7 +289,7 @@ class BodyResolveContext(
         return FirMemberTypeParameterScope(this)
     }
 
-    fun buildSecondaryConstructorParametersScope(constructor: FirConstructor, session: FirSession): FirLocalScope =
+    fun buildConstructorParametersScope(constructor: FirConstructor, session: FirSession): FirLocalScope =
         constructor.valueParameters.fold(FirLocalScope(session)) { acc, param -> acc.storeVariable(param, session) }
 
     @PrivateForInline
@@ -316,10 +316,21 @@ class BodyResolveContext(
 
     // ANALYSIS PUBLIC API
 
+    /**
+     * Pure parameters are those that are not properties.
+     * For example, in code `constructor(p1: Int, val p2: Int)` only `p1` is a pure parameter.
+     *
+     * To be used in contexts, where pure primary constructor parameters are accessible, e.g., property initializers.
+     * In primary constructor itself create new scope using [buildConstructorParametersScope].
+     */
     @OptIn(PrivateForInline::class)
     fun getPrimaryConstructorPureParametersScope(): FirLocalScope? =
         regularTowerDataContexts.primaryConstructorPureParametersScope
 
+    /**
+     * To be used in contexts, where primary constructor parameters are accessible, e.g., supertype delegate expression.
+     * In primary constructor itself create new scope using [buildConstructorParametersScope].
+     */
     @OptIn(PrivateForInline::class)
     fun getPrimaryConstructorAllParametersScope(): FirLocalScope? =
         regularTowerDataContexts.primaryConstructorAllParametersScope
@@ -732,13 +743,13 @@ class BodyResolveContext(
              */
             withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                 withTowerDataCleanup {
-                    getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
+                    addLocalScope(buildConstructorParametersScope(constructor, session))
                     f()
                 }
             }
         } else {
             withTowerDataCleanup {
-                addLocalScope(buildSecondaryConstructorParametersScope(constructor, session))
+                addLocalScope(buildConstructorParametersScope(constructor, session))
                 f()
             }
         }
@@ -922,19 +933,12 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-            if (constructor.isPrimary) {
-                getPrimaryConstructorAllParametersScope()?.let {
-                    withTowerDataCleanup {
-                        addLocalScope(it)
-                        f()
-                    }
-                } ?: f()
-            } else {
-                withTowerDataCleanup {
+            withTowerDataCleanup {
+                if (!constructor.isPrimary) {
                     addInaccessibleImplicitReceiverValue(owningClass, holder)
-                    addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
-                    f()
                 }
+                addLocalScope(buildConstructorParametersScope(constructor, holder.session))
+                f()
             }
         }
     }
