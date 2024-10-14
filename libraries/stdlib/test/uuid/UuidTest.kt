@@ -83,6 +83,20 @@ class UuidTest {
         assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(0)) }
         assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(15)) }
         assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(17)) }
+
+        // Truncating the illegal ByteArray
+        val byteArray = ByteArray(32) { it.toByte() }
+        val byteArrayContent = byteArray.joinToString()
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.fromByteArray(byteArray)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was [$byteArrayContent] of size 32")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.fromByteArray(byteArray + 32)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was [$byteArrayContent, ...] of size 33")
+        }
     }
 
     private fun String.mixedcase(): String = map {
@@ -129,6 +143,19 @@ class UuidTest {
                 }
             }
         }
+
+        // Truncating the illegal String
+        val longString = uuidString.repeat(2).take(64)
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parse(longString)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString\" of length 64")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parse(longString + "0")
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
+        }
     }
 
     @Test
@@ -155,6 +182,19 @@ class UuidTest {
         assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.replace("d", "g")) }
         assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.drop(1)) }
         assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.dropLast(1)) }
+
+        // Truncating the illegal String
+        val longString = uuidHexString.repeat(2) // length = 64
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parse(longString)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString\" of length 64")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parse(longString + "0")
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
+        }
     }
 
     @Test
