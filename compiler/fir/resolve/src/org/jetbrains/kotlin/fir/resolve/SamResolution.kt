@@ -289,6 +289,15 @@ class FirSamResolver(
 /**
  * This function creates a substitutor for SAM class/SAM constructor based on the expected SAM type.
  * If there is a typeless projection in some argument of the expected type then the upper bound of the corresponding type parameters is used
+ *
+ * If type 'samType' contains no projection, then it's non-projection parametrization is 'samType' itself
+ * Else each projection type argument 'out/in A_i' (but star projections) is replaced with it's bound 'A_i'
+ * Star projections are treated specially:
+ * - If first upper bound of corresponding type parameter does not contain any type parameter of 'samType' class,
+ *   then use this upper bound instead of star projection
+ * - Otherwise no non-projection parametrization exists for such 'samType'
+ *
+ * See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
  */
 private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
     if (typeParameters.isEmpty()) return null
