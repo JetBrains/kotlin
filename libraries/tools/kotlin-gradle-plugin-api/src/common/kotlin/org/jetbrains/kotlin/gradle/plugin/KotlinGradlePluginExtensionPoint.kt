@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * @suppress This API is not usable for external users as they could not access an instance of [KotlinGradlePluginExtensionPoint]
  * ### Extension Point for the Kotlin Gradle Plugin
  *
  * Note: Not stable for implementation: Custom implementations of this interface will not be supported by the Kotlin Gradle Plugin!
