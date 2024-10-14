@@ -188,7 +188,7 @@ class FileLocalIdSignatureComputer(
     private var localIndex: Long = START_INDEX.toLong()
     private var scopeIndex: Int = START_INDEX
 
-    private fun composeContainerIdSignature(
+    private fun computeContainerIdSignature(
         correspondingPropertySymbol: IrPropertySymbol?,
         container: IrDeclarationParent,
         compatibleMode: Boolean,
@@ -209,13 +209,13 @@ class FileLocalIdSignatureComputer(
         }
     }
 
-    fun composeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
+    fun computeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
         is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
         is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
         is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
 
         is IrField -> IdSignature.FileLocalSignature(
-            container = composeContainerIdSignature(
+            container = computeContainerIdSignature(
                 correspondingPropertySymbol = declaration.correspondingPropertySymbol,
                 container = declaration.parent,
                 compatibleMode = compatibleMode
@@ -225,7 +225,7 @@ class FileLocalIdSignatureComputer(
         )
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
-            container = composeContainerIdSignature(
+            container = computeContainerIdSignature(
                 correspondingPropertySymbol = declaration.correspondingPropertySymbol,
                 container = declaration.parent,
                 compatibleMode = compatibleMode
@@ -239,7 +239,7 @@ class FileLocalIdSignatureComputer(
         )
 
         is IrProperty -> IdSignature.FileLocalSignature(
-            container = composeContainerIdSignature(
+            container = computeContainerIdSignature(
                 correspondingPropertySymbol = null,
                 container = declaration.parent,
                 compatibleMode = compatibleMode
@@ -253,7 +253,7 @@ class FileLocalIdSignatureComputer(
         )
 
         else -> IdSignature.FileLocalSignature(
-            container = composeContainerIdSignature(
+            container = computeContainerIdSignature(
                 correspondingPropertySymbol = null,
                 container = declaration.parent,
                 compatibleMode = compatibleMode
