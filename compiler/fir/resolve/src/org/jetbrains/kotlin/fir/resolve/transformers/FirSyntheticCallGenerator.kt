@@ -72,6 +72,9 @@ class FirSyntheticCallGenerator(
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
+    private val listOfSymbol = session.symbolProvider
+        .getTopLevelFunctionSymbols(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf"))
+        .single { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -190,45 +193,49 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    fun generateSyntheticListOfCall( // copy-pasted from generateSyntheticArrayOfCall
+    fun generateCollectionCall(
         arrayLiteral: FirArrayLiteral,
         expectedTypeRef: FirTypeRef,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
-        val argumentList = arrayLiteral.argumentList
-        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
-        return buildFunctionCall {
-            this.argumentList = argumentList
-            calleeReference = arrayOfSymbol?.let {
-                generateCalleeReferenceWithCandidate(
-                    arrayLiteral,
-                    it.fir,
-                    argumentList,
-                    ArrayFqNames.ARRAY_OF_FUNCTION,
-                    callKind = CallKind.Function,
-                    context = context,
-                    resolutionMode,
-                )
-            } ?: buildErrorNamedReference {
-                diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
-            }
-            source = arrayLiteral.source
-        }.also {
-            if (arrayOfSymbol == null) {
-                it.resultType = components.typeFromCallee(it).coneType
-            }
+        val expectedTypeConeType = expectedTypeRef.coneType
+        return when {
+            expectedTypeConeType.isList -> generateListOfCall(arrayLiteral, context, resolutionMode)
+            expectedTypeConeType.isArrayType -> generateArrayOfCall(arrayLiteral, expectedTypeConeType, context, resolutionMode)
+            else -> TODO("nested static of is not yet supported")
         }
     }
 
-    fun generateSyntheticArrayOfCall(
+    fun generateListOfCall(
         arrayLiteral: FirArrayLiteral,
-        expectedType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
         val argumentList = arrayLiteral.argumentList
-        val arrayOfSymbol = calculateArrayOfSymbol(expectedType)
+        return buildFunctionCall {
+            this.argumentList = argumentList
+            calleeReference = generateCalleeReferenceWithCandidate(
+                arrayLiteral,
+                listOfSymbol.fir,
+                argumentList,
+                Name.identifier("listOf"),
+                callKind = CallKind.Function,
+                context = context,
+                resolutionMode,
+            )
+            source = arrayLiteral.source
+        }
+    }
+
+    fun generateArrayOfCall(
+        arrayLiteral: FirArrayLiteral,
+        expectedTypeConeType: ConeKotlinType,
+        context: ResolutionContext,
+        resolutionMode: ResolutionMode,
+    ): FirFunctionCall {
+        val argumentList = arrayLiteral.argumentList
+        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeConeType)
         return buildFunctionCall {
             this.argumentList = argumentList
             calleeReference = arrayOfSymbol?.let {
@@ -252,8 +259,8 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
-        val coneType = expectedType.fullyExpandedType(session)
+    private fun calculateArrayOfSymbol(expectedTypeConeType: ConeKotlinType,): FirNamedFunctionSymbol? {
+        val coneType = expectedTypeConeType.fullyExpandedType(session)
         val arrayCallName = when {
             coneType.isPrimitiveArray -> {
                 val arrayElementClassId = coneType.arrayElementType()!!.classId

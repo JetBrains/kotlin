@@ -26,7 +26,7 @@ sealed class ResolutionMode(
     @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
     class WithExpectedType( // Variable with explicit expected type
         @property:ExpectedTypeRefAccess
-        val expectedTypeRef: FirResolvedTypeRef, // todo. Right now, it looks like inner expected type. I need to change it to outer expected type
+        val expectedTypeRef: FirResolvedTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,

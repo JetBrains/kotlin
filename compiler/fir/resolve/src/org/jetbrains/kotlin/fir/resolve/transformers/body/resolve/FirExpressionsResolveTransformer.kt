@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ContextIndependent
@@ -1832,39 +1831,44 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
-            println("--- ${FirRenderer().renderElementAsString(arrayLiteral)} $data")
             when (data) {
                 is ResolutionMode.ContextIndependent -> {
-                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    TODO()
+                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextIndependent)
+                    val call = components.syntheticCallGenerator.generateListOfCall(arrayLiteral, resolutionContext, data)
+                    callCompleter.completeCall(call, data)
+                    call
                 }
                 is ResolutionMode.WithExpectedType -> {
                     // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
                     arrayLiteral.transformChildren(
                         transformer,
                         data.expectedType.arrayElementType()?.let { withExpectedType(it) }
-                            ?: ResolutionMode.ContextDependent, // todo why ContextDependent?
+                            ?: ResolutionMode.ContextDependent,
                     )
 
-                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
+                    val call = components.syntheticCallGenerator.generateCollectionCall(
                         arrayLiteral,
                         data.expectedType,
                         resolutionContext,
                         data,
                     )
                     callCompleter.completeCall(call, data)
+                    // transform back to literal to avoid ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
                     arrayOfCallTransformer.transformFunctionCall(call, session)
                 }
+                // is ResolutionMode.ContextDependent -> {
+                //     TODO()
+                // }
                 else -> {
                     // Other unsupported usage.
-                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent) // todo why ContextDependent?
+                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     // We set the arrayLiteral's type to the expect type or Array<Any>
                     // because arguments need to have a type during resolution of the synthetic call.
                     // We remove the type so that it will be set during completion to the CST (common super type) of the arguments.
                     arrayLiteral.replaceConeTypeOrNull(
                         StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                     )
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall( // todo nahuya i pochemu?
+                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
                         arrayLiteral,
                         resolutionContext,
                         data,

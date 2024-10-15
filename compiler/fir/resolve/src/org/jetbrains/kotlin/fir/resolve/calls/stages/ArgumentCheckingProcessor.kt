@@ -101,10 +101,13 @@ internal object ArgumentCheckingProcessor {
     // -------------------------------------------- Real implementation --------------------------------------------
 
     private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
-        when (atom) {
+        when (atom) { // todo
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
+                is FirArrayLiteral -> {
+                    TODO("mozhet nahui?")
+                }
             }
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
@@ -202,6 +205,7 @@ internal object ArgumentCheckingProcessor {
     ) {
         if (expectedType == null) return
 
+        // todo. Fix behavior. argumentTypeBeforeCapturing is Array<Int>
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
         val expression = atom.expression
 
