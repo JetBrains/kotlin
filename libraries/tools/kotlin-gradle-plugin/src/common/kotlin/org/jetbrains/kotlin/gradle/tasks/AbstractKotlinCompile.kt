@@ -313,6 +313,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         )
     }
 
+    @JvmOverloads
     protected fun getChangedFiles(
         inputChanges: InputChanges,
         incrementalProps: List<FileCollection>,
