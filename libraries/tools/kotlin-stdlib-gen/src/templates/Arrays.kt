@@ -244,21 +244,8 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JVM) {
             inlineOnly()
             annotation("""@JvmName("contentDeepEqualsNullable")""")
-            body {
-                """
-                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-                    return contentDeepEqualsImpl(other)
-                else
-                    return java.util.Arrays.deepEquals(this, other)
-                """
-            }
         }
-        on(Platform.JS) {
-            body { "return contentDeepEqualsImpl(other)" }
-        }
-        on(Platform.Native) {
-            body { "return contentDeepEqualsImpl(other)" }
-        }
+        body { "return contentDeepEqualsImpl(other)" }
     }
 
     val f_contentToString = fn("contentToString()") {
@@ -351,21 +338,8 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JVM) {
             inlineOnly()
             annotation("""@JvmName("contentDeepToStringNullable")""")
-            body {
-                """
-                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-                    return contentDeepToStringImpl()
-                else
-                    return java.util.Arrays.deepToString(this)
-                """
-            }
         }
-        on(Platform.JS) {
-            body { "return contentDeepToStringImpl()" }
-        }
-        on(Platform.Native) {
-            body { "return contentDeepToStringImpl()" }
-        }
+        body { "return contentDeepToStringImpl()" }
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
@@ -456,20 +430,11 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.JVM) {
             inlineOnly()
             annotation("""@JvmName("contentDeepHashCodeNullable")""")
-            body {
-                """
-                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-                    return contentDeepHashCodeImpl()
-                else
-                    return java.util.Arrays.deepHashCode(this)
-                """
-            }
         }
+
+        body { "return contentDeepHashCodeImpl()" }
         on(Platform.JS) {
             body { "return contentDeepHashCodeInternal()" }
-        }
-        on(Platform.Native) {
-            body { "return contentDeepHashCodeImpl()" }
         }
     }
 
@@ -1005,16 +970,7 @@ object ArrayOps : TemplateGroupBase() {
                 on(Platform.JVM) {
                     annotation("""@JvmName("copyOfRangeInline")""")
                     inlineOnly()
-                    body {
-                        """
-                        return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-                            copyOfRangeImpl(fromIndex, toIndex)
-                        } else {
-                            if (toIndex > size) throw IndexOutOfBoundsException("toIndex: ${'$'}toIndex, size: ${'$'}size")
-                            java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-                        }
-                        """
-                    }
+                    body { "return copyOfRangeImpl(fromIndex, toIndex)" }
                 }
                 on(Platform.Native) {
                     body {

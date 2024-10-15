@@ -106,7 +106,6 @@ public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { 
 @InlineOnly
 internal actual inline fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
-        // TODO: api version check?
         throwIndexOverflow()
     }
     return index
@@ -117,7 +116,6 @@ internal actual inline fun checkIndexOverflow(index: Int): Int {
 @InlineOnly
 internal actual inline fun checkCountOverflow(count: Int): Int {
     if (count < 0) {
-        // TODO: api version check?
         throwCountOverflow()
     }
     return count

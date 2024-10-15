@@ -488,10 +488,7 @@ public actual inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<o
 @JvmName("contentDeepEqualsNullable")
 @kotlin.internal.InlineOnly
 public actual inline infix fun <T> Array<out T>?.contentDeepEquals(other: Array<out T>?): Boolean {
-    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-        return contentDeepEqualsImpl(other)
-    else
-        return java.util.Arrays.deepEquals(this, other)
+    return contentDeepEqualsImpl(other)
 }
 
 /**
@@ -518,10 +515,7 @@ public actual inline fun <T> Array<out T>.contentDeepHashCode(): Int {
 @JvmName("contentDeepHashCodeNullable")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>?.contentDeepHashCode(): Int {
-    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-        return contentDeepHashCodeImpl()
-    else
-        return java.util.Arrays.deepHashCode(this)
+    return contentDeepHashCodeImpl()
 }
 
 /**
@@ -554,10 +548,7 @@ public actual inline fun <T> Array<out T>.contentDeepToString(): String {
 @JvmName("contentDeepToStringNullable")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>?.contentDeepToString(): String {
-    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
-        return contentDeepToStringImpl()
-    else
-        return java.util.Arrays.deepToString(this)
+    return contentDeepToStringImpl()
 }
 
 /**
@@ -1345,12 +1336,7 @@ public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1365,12 +1351,7 @@ public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int):
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1385,12 +1366,7 @@ public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): By
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1405,12 +1381,7 @@ public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): S
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1425,12 +1396,7 @@ public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): Int
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1445,12 +1411,7 @@ public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): Lo
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1465,12 +1426,7 @@ public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): F
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1485,12 +1441,7 @@ public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): 
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 /**
@@ -1505,12 +1456,7 @@ public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int):
 @JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
-    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
-        copyOfRangeImpl(fromIndex, toIndex)
-    } else {
-        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
-        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-    }
+    return copyOfRangeImpl(fromIndex, toIndex)
 }
 
 @SinceKotlin("1.3")

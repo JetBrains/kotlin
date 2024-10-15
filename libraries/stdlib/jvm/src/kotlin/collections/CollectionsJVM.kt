@@ -10,7 +10,6 @@ package kotlin.collections
 
 import kotlin.collections.builders.ListBuilder
 import kotlin.internal.InlineOnly
-import kotlin.internal.apiVersionIsAtLeast
 
 /**
  * Returns a new read-only list containing only the specified object [element].
@@ -108,10 +107,7 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
 @InlineOnly
 internal actual inline fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
-        if (apiVersionIsAtLeast(1, 3, 0))
-            throwIndexOverflow()
-        else
-            throw ArithmeticException("Index overflow has happened.")
+        throwIndexOverflow()
     }
     return index
 }
@@ -121,10 +117,7 @@ internal actual inline fun checkIndexOverflow(index: Int): Int {
 @InlineOnly
 internal actual inline fun checkCountOverflow(count: Int): Int {
     if (count < 0) {
-        if (apiVersionIsAtLeast(1, 3, 0))
-            throwCountOverflow()
-        else
-            throw ArithmeticException("Count overflow has happened.")
+        throwCountOverflow()
     }
     return count
 }
