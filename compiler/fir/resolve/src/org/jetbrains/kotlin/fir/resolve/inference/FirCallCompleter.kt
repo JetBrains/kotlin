@@ -168,7 +168,14 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType) return
+<<<<<<< HEAD
         val expectedType = resolutionMode.expectedType.fullyExpandedType(session)
+||||||| parent of dc6c7186024b (todos)
+        val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
+=======
+        // todo check this commit c4f547d97cfa8845dcddd357552c42fa7f7b743f and the logic beneath
+        val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
+>>>>>>> dc6c7186024b (todos)
 
         val system = candidate.system
         when {
