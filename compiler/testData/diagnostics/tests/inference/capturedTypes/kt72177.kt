@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface EventResult
 
 interface EventData<ER : EventResult>
