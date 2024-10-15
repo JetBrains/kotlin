@@ -105,7 +105,11 @@ object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 // ------------------------------------------------ Errors ------------------------------------------------
 
-sealed class ConstraintSystemError(val applicability: CandidateApplicability)
+sealed class ConstraintSystemError(val applicability: CandidateApplicability) {
+    init {
+        println()
+    }
+}
 
 sealed interface NewConstraintMismatch {
     val lowerType: KotlinTypeMarker

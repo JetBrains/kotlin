@@ -80,6 +80,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
             return when (expression) {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
+                is FirArrayLiteral -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirCallableReferenceAccess -> when {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
