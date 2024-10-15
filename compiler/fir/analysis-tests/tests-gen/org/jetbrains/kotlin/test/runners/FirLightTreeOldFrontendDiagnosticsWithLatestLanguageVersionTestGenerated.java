@@ -47012,6 +47012,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("isBoxButLimitedToKlib.kt")
+        public void testIsBoxButLimitedToKlib() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isBoxButLimitedToKlib.kt");
+        }
+
+        @Test
         @TestMetadata("isFir2IrButBackendFails.kt")
         public void testIsFir2IrButBackendFails() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButBackendFails.kt");
@@ -47043,6 +47049,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         @Test
         public void testAllFilesPresentInGood() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("isBackendButBoxFails.kt")
+        public void testIsBackendButBoxFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isBackendButBoxFails.kt");
+        }
+
+        @Test
+        @TestMetadata("isBoxGreen.kt")
+        public void testIsBoxGreen() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isBoxGreen.kt");
         }
 
         @Test

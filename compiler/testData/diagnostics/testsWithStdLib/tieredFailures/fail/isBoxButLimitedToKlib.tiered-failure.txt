@@ -1,0 +1,1 @@
+The test declares the tier BOX, but is configured to only run up to KLIB. Please set `// RUN_PIPELINE_TILL: KLIB` and regenerate tests as we can't check later tiers for it

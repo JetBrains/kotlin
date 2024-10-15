@@ -198,3 +198,9 @@ abstract class AbstractTieredBackendJvmTest(
 }
 
 open class AbstractTieredBackendJvmLightTreeTest : AbstractTieredBackendJvmTest(TestTiers.BACKEND, FirParser.LightTree)
+
+abstract class AbstractTieredBoxJvmTest(parser: FirParser) : AbstractTieredBackendJvmTest(TestTiers.BOX, parser) {
+    override val enableBoxHandler get() = true
+}
+
+open class AbstractTieredBoxJvmLightTreeTest : AbstractTieredBoxJvmTest(FirParser.LightTree)

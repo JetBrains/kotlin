@@ -329,6 +329,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 init = configureTierModelsForDiagnosticTestsStating(TestTiers.FIR2IR, TestTiers.KLIB),
             )
 
+            testClass<AbstractTieredBoxJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTiers.BACKEND),
+            )
+
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
                 model("codegen/box")
             }
