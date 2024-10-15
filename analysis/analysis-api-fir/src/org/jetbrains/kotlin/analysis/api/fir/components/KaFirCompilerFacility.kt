@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
@@ -174,14 +176,11 @@ internal class KaFirCompilerFacility(
         val jvmIrDeserializer = JvmIrDeserializerImpl()
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
 
-        val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
-
         val inlineFunDependencyBytecode = mutableMapOf<String, ByteArray>()
-
         for (dependencyFile in dependencyFiles) {
             var compileResult: KaCompilationResult? = null
             runFir2IrForDependency(
-                listOf(dependencyFile), configuration, jvmIrDeserializer, diagnosticReporter, irGeneratorExtensions
+                dependencyFile, configuration, jvmIrDeserializer, diagnosticReporter
             ) { fir2IrResult, ktFiles, dependencyConfiguration ->
                 val codegenFactory = createJvmIrCodegenFactory(
                     configuration = dependencyConfiguration,
@@ -256,7 +255,7 @@ internal class KaFirCompilerFacility(
         targetFir2IrResult.pluginContext.applyIrGenerationExtensions(
             targetFir2IrResult.components.configuration,
             targetFir2IrResult.irModuleFragment,
-            irGeneratorExtensions,
+            getIrGenerationExtensions(targetModules),
         )
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)
 
@@ -349,6 +348,15 @@ internal class KaFirCompilerFacility(
         }
     }
 
+    private fun getIrGenerationExtensions(modules: List<KaModule>): List<IrGenerationExtension> = buildList {
+        modules.forEach { module ->
+            val sourceModule = module as? KaSourceModule ?: return@forEach
+            KotlinCompilerPluginsProvider.getInstance(project)?.getRegisteredExtensions(sourceModule, IrGenerationExtension)
+                ?.let { addAll(it) }
+        }
+        addAll(IrGenerationExtension.getInstances(project))
+    }
+
     private fun computeTargetModules(module: KaModule): List<KaModule> {
         return when (module) {
             is KaDanglingFileModule -> listOf(module.contextModule, module)
@@ -357,36 +365,32 @@ internal class KaFirCompilerFacility(
     }
 
     private fun runFir2IrForDependency(
-        dependencyFiles: List<KtFile>,
+        dependencyFile: KtFile,
         configuration: CompilerConfiguration,
         jvmIrDeserializer: JvmIrDeserializerImpl,
         diagnosticReporter: PendingDiagnosticsCollectorWithSuppress,
-        irGeneratorExtensions: List<IrGenerationExtension>,
         handleFir2IrResult: ((Fir2IrActualizedResult, List<KtFile>, CompilerConfiguration) -> Unit)? = null,
     ) {
-        dependencyFiles
-            .map { Pair(it, getFullyResolvedFirFile(it)) }
-            .groupBy { it.second.llFirSession }
-            .forEach { (dependencySession, dependencyFileMapping) ->
-                val dependencyConfiguration = configuration.copy().apply {
-                    put(CommonConfigurationKeys.USE_FIR, true)
-                    put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
-                }
+        val dependencyFirFile = getFullyResolvedFirFile(dependencyFile)
+        val dependencySession = dependencyFirFile.llFirSession
+        val dependencyConfiguration = configuration.copy().apply {
+            put(CommonConfigurationKeys.USE_FIR, true)
+            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
+        }
 
-                val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer)
-                val fir2IrResult = runFir2Ir(
-                    dependencySession,
-                    dependencyFileMapping.map { it.second },
-                    dependencyFir2IrExtensions,
-                    diagnosticReporter,
-                    dependencyConfiguration,
-                    irGeneratorExtensions
-                )
+        val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer)
+        val fir2IrResult = runFir2Ir(
+            dependencySession,
+            listOf(dependencyFirFile),
+            dependencyFir2IrExtensions,
+            diagnosticReporter,
+            dependencyConfiguration,
+            getIrGenerationExtensions(listOf(dependencyFirFile.llFirModuleData.ktModule))
+        )
 
-                if (handleFir2IrResult != null) {
-                    handleFir2IrResult(fir2IrResult, dependencyFileMapping.map { it.first }, dependencyConfiguration)
-                }
-            }
+        if (handleFir2IrResult != null) {
+            handleFir2IrResult(fir2IrResult, listOf(dependencyFile), dependencyConfiguration)
+        }
     }
 
     private fun runFir2Ir(
