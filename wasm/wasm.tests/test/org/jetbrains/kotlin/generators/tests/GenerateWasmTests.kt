@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
     val k2BoxTestDir = "multiplatform/k2"
 
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
-    val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?)\\.kt$"
+    val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
     val jsTranslatorEsModulesExcludedDirs = listOf(
         // JsExport is not supported for classes
         "jsExport", "native", "export",

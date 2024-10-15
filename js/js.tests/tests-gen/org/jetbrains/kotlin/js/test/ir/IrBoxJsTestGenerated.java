@@ -10447,6 +10447,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("findAssociatedObjectAndDCE.kt")
+    public void testFindAssociatedObjectAndDCE() {
+      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
+    }
+
+    @Test
     @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
     public void testFindAssociatedObjectInSeparatedFile() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
