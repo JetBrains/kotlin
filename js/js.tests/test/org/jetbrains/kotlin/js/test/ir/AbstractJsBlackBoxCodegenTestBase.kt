@@ -72,7 +72,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
+        forTestsNotMatching(
+            "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                    "compiler/testData/diagnostics/*"
+        ) {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
             }

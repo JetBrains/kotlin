@@ -103,7 +103,10 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForWasmBlackBoxCodegenTest()
 
-        forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
+        forTestsNotMatching(
+            "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                    "compiler/testData/diagnostics/*"
+        ) {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
             }
