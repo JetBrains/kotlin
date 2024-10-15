@@ -16,5 +16,5 @@ sealed interface SirDeclaration : SirElement {
     val visibility: SirVisibility
     val documentation: String?
     var parent: SirDeclarationParent
-    val attributes: MutableList<SirAttribute>
+    val attributes: List<SirAttribute>
 }

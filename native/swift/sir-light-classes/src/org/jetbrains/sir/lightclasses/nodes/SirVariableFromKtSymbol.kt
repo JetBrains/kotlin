@@ -64,7 +64,7 @@ internal class SirVariableFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: MutableList<SirAttribute> = this.translatedAttributes.toMutableList()
+    override val attributes: List<SirAttribute> = this.translatedAttributes
 
     override val isOverride: Boolean
         get() = isInstance && overridableCandidates.any {
