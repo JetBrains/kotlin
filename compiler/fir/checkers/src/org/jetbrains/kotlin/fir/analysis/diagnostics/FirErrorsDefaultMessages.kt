@@ -1194,7 +1194,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(OPT_IN_OVERRIDE, "{1}", CLASS_ID, STRING)
         map.put(OPT_IN_OVERRIDE_ERROR, "{1}", CLASS_ID, STRING)
 
-        map.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'.")
+        map.put(OPT_IN_IS_NOT_ENABLED, "This annotation must be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'.")
         map.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation.")
         map.put(
             OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN,
@@ -1420,17 +1420,17 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INCORRECT_LEFT_COMPONENT_OF_INTERSECTION,
-            "Intersection types are supported only for definitely non-nullable types: left part should be a type parameter with nullable bounds."
+            "Intersection types are supported only for definitely non-nullable types: left part must be a type parameter with nullable bounds."
         )
         map.put(
             INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION,
-            "Intersection types are supported only for definitely non-nullable types: right part should be non-nullable 'Any'."
+            "Intersection types are supported only for definitely non-nullable types: right part must be non-nullable 'Any'."
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
-            "Type inference failed. The value of the type parameter ''{0}'' should be mentioned in input types (argument types, receiver type, or expected type). Try to specify it explicitly.",
+            "Type inference failed. The value of the type parameter ''{0}'' must be mentioned in input types (argument types, receiver type, or expected type). Try to specify it explicitly.",
             SYMBOL
         )
         map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is ''{0}''.", RENDER_TYPE, NOT_RENDERED)
@@ -1518,14 +1518,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions calls.")
         map.put(
             UPPER_BOUND_VIOLATED,
-            "Type argument is not within its bounds: should be subtype of ''{0}''.{2}",
+            "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE
         )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
-            "Type argument is not within its bounds: should be subtype of ''{0}''.",
+            "Type argument is not within its bounds: must be subtype of ''{0}''.",
             RENDER_TYPE,
             RENDER_TYPE
         )
@@ -1547,7 +1547,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OUTER_CLASS_ARGUMENTS_REQUIRED,
-            "Type arguments should be specified for outer {0}. Use the full class name to specify them.",
+            "Type arguments must be specified for outer {0}. Use the full class name to specify them.",
             RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
         map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are prohibited for objects.")
@@ -2286,7 +2286,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' cannot have a delegate.")
         map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitive types and ''String'' are allowed.", RENDER_TYPE)
         map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' must have an initializer.")
-        map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value.")
+        map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer must be a constant value.")
         map.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions.")
         map.put(CYCLE_IN_ANNOTATION_PARAMETER, "Cycle formed by one or more annotations and their parameter types.")
 
@@ -2304,10 +2304,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EXPECTED_TAILREC_FUNCTION, "Expected function cannot have 'tailrec' modifier.")
         map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes.")
         map.put(IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, "Implementation by delegation in expected classes is prohibited.")
-        map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias should be a class, not another type alias.")
+        map.put(ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of actual type alias must be a class, not another type alias.")
         map.put(
             ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE,
-            "Aliased class should not have type parameters with declaration-site variance."
+            "Aliased class cannot have type parameters with declaration-site variance."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE,
@@ -2315,7 +2315,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION,
-            "Type arguments in the right-hand side of actual type alias should be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'."
+            "Type arguments on the right-hand side of actual type alias must be its type parameters in the same order, e.g. 'actual typealias Foo<A, B> = Bar<A, B>'."
         )
         map.put(
             ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE,
@@ -2327,7 +2327,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS,
-            "Actual function cannot have default argument values. They should be declared in the expected function."
+            "Actual function cannot have default argument values. They must be declared in the expected function."
         )
         map.put(
             DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
@@ -2536,7 +2536,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DUPLICATE_BRANCH_CONDITION_IN_WHEN, "Duplicate branch condition in 'when'.")
         map.put(
             ILLEGAL_DECLARATION_IN_WHEN_SUBJECT,
-            "Illegal variable declaration in ''when'' subject: {0}. Should be a simple ''val'' with an initializer.",
+            "Illegal variable declaration in ''when'' subject: {0}. Must be a simple ''val'' with an initializer.",
             STRING
         )
         map.put(
@@ -2675,7 +2675,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
             RENDER_TYPE
         )
-        map.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions 'inc()', 'dec()' shouldn't return 'Unit' to be used by operators ++, --.")
+        map.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions 'inc()' and 'dec()' cannot be used by the operators '++' and '--' when they return 'Unit'.")
         map.put(
             ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,
             "Function ''{0}'' must return ''Unit'' to be used by corresponding operator ''{1}''.",
@@ -2835,12 +2835,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Suspend
         map.put(
             ILLEGAL_SUSPEND_FUNCTION_CALL,
-            "Suspend function ''{0}'' should be called only from a coroutine or another suspend function.",
+            "Suspend function ''{0}'' can only be called from a coroutine or another suspend function.",
             SYMBOL
         )
         map.put(
             ILLEGAL_SUSPEND_PROPERTY_ACCESS,
-            "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function.",
+            "Suspend property ''{0}'' can only be accessed from a coroutine or suspend function.",
             SYMBOL
         )
         map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can only be called within coroutine body.")

@@ -14,6 +14,6 @@ Output:
 compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/jvm.kt:3:1: error: right-hand side of actual type alias cannot be a nullable type.
 actual typealias E01 = String?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/jvm.kt:4:1: error: right-hand side of actual type alias should be a class, not another type alias.
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/jvm.kt:4:1: error: right-hand side of actual type alias must be a class, not another type alias.
 actual typealias E02 = MyNullable
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

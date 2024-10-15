@@ -86,7 +86,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@RefinesInSwift' annotation is only applicable to annotations with targets FUNCTION and/or PROPERTY."
         )
         map.put(INAPPLICABLE_OBJC_NAME, "'@ObjCName' is not applicable to overrides.")
-        map.put(INVALID_OBJC_NAME, "'@ObjCName' should have a name and/or swiftName.")
+        map.put(INVALID_OBJC_NAME, "'@ObjCName' must have a 'name' and/or 'swiftName'.")
         map.put(EMPTY_OBJC_NAME, "Empty '@ObjCName' names aren't supported.")
         map.put(INVALID_OBJC_NAME_CHARS, "''@ObjCName'' contains illegal characters ''{0}''.", TO_STRING)
         map.put(INVALID_OBJC_NAME_FIRST_CHAR, "''@ObjCName'' contains illegal first characters ''{0}''.", TO_STRING)

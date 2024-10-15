@@ -83,7 +83,7 @@ The following declaration is incompatible because some type parameter is reified
 
 actual inline fun <reified X> f14() {}
                               ^^^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values. They should be declared in the expected function.
+compiler/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values. They must be declared in the expected function.
 actual fun f16(s: String = "") {}
                ^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:28:12: error: 'actual fun f17(s: Array<out String>): Unit' has no corresponding expected declaration

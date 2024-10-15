@@ -132,14 +132,14 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER,
-            "Native {0}''s first parameter type should be ''kotlin.String'' or a subtype of ''kotlin.Number''.",
+            "Native {0}''s first parameter type must be ''kotlin.String'' or a subtype of ''kotlin.Number''.",
             CommonRenderers.STRING
         )
         map.put(NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS, "Native {0}''s parameter cannot have default value.", CommonRenderers.STRING)
-        map.put(NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, "Native getter's return type should be nullable.")
+        map.put(NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, "Native getter's return type must be nullable.")
         map.put(
             NATIVE_SETTER_WRONG_RETURN_TYPE,
-            "Native setter's return type should be 'Unit' or a supertype of the second parameter's type."
+            "Native setter's return type must be 'Unit' or a supertype of the second parameter's type."
         )
         map.put(
             NATIVE_INDEXER_WRONG_PARAMETER_COUNT, "Expected {0} parameters for native {1}.",
@@ -183,7 +183,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
         )
 
-        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "'@JsName' should be on all the property accessors.")
+        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "All property accessors must be annotated with '@JsName'.")
         map.put(JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "'@JsName' is prohibited for external declaration with explicit name.")
         map.put(JS_NAME_PROHIBITED_FOR_OVERRIDE, "'@JsName' is prohibited for overridden members.")
         map.put(JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "'@JsName' annotation is prohibited for primary constructors.")
