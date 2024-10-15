@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
@@ -56,14 +55,10 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             declaration.isLateInit -> LATEINIT
             declaration.isConst -> CONST
             containingClassSymbol != null && containingClassSymbol.isInsideCompanionObjectOfInterface(session) -> {
-                if (!session.languageVersionSettings.supportsFeature(LanguageFeature.JvmFieldInInterface)) {
-                    INSIDE_COMPANION_OF_INTERFACE
+                if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol, session)) {
+                    NOT_PUBLIC_VAL_WITH_JVMFIELD
                 } else {
-                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol, session)) {
-                        NOT_PUBLIC_VAL_WITH_JVMFIELD
-                    } else {
-                        return
-                    }
+                    return
                 }
             }
             containingClassSymbol == null && isInsideJvmMultifileClassFile(context) ->

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
@@ -23,7 +21,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -69,7 +66,6 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         val container = context.getContainerAt(0) ?: return
-        val supportsJvmStaticInInterface = context.supports(LanguageFeature.JvmStaticInInterface)
         val containerIsAnonymous = container is FirClassSymbol && container.classId.shortClassName == SpecialNames.ANONYMOUS
 
         if (
@@ -77,35 +73,16 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             container.classKind != ClassKind.OBJECT ||
             !container.isCompanion() && containerIsAnonymous
         ) {
-            reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION, context)
         } else if (
             container.isCompanion() &&
             context.containerIsInterface(1)
         ) {
-            if (supportsJvmStaticInInterface) {
-                checkForInterface(declaration, context, reporter, targetSource)
-            } else {
-                reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
-            }
+            checkForInterface(declaration, context, reporter, targetSource)
         }
 
         checkOverrideCannotBeStatic(declaration, context, reporter, targetSource, outerProperty)
         checkStaticOnConstOrJvmField(declaration, context, reporter, targetSource)
-    }
-
-    private fun reportStaticNotInProperObject(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        supportsJvmStaticInInterface: Boolean,
-        targetSource: KtSourceElement?,
-    ) {
-        val properDiagnostic = if (supportsJvmStaticInInterface) {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
-        } else {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
-        }
-
-        reporter.reportOn(targetSource, properDiagnostic, context)
     }
 
     private fun checkForInterface(
@@ -222,8 +199,6 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val last = this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
         return last?.symbol
     }
-
-    private fun CheckerContext.supports(feature: LanguageFeature) = session.languageVersionSettings.supportsFeature(feature)
 
     private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
 

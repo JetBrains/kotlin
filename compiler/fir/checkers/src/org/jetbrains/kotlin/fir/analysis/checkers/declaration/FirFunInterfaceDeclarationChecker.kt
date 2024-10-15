@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,11 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -84,22 +81,12 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
 
         val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol() === classSymbol
 
-        when {
-            abstractFunctionSymbol.typeParameterSymbols.isNotEmpty() ->
-                reporter.reportOn(
-                    if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
-                    context
-                )
-
-            abstractFunctionSymbol.isSuspend ->
-                if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionsInFunInterfaces)) {
-                    reporter.reportOn(
-                        if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                        FUN_INTERFACE_WITH_SUSPEND_FUNCTION,
-                        context
-                    )
-                }
+        if (abstractFunctionSymbol.typeParameterSymbols.isNotEmpty()) {
+            reporter.reportOn(
+                if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
+                FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
+                context
+            )
         }
 
         abstractFunctionSymbol.valueParameterSymbols.forEach {

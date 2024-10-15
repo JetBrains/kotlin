@@ -338,7 +338,7 @@ object ConeTypeCompatibilityChecker {
             // the semantic of type parameter in Enum and KClass are fixed: values of types with incompatible type parameters are always
             // incompatible.
             val compatibilityUpperBoundForTypeArg =
-                if ((ctx.prohibitComparisonOfIncompatibleEnums && typeParameterOwner.classId == StandardClassIds.Enum) ||
+                if (typeParameterOwner.classId == StandardClassIds.Enum ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && typeParameterOwner.classId == StandardClassIds.KClass)
                 ) {
                     compatibilityUpperBound
@@ -436,7 +436,7 @@ object ConeTypeCompatibilityChecker {
          *   - kotlin.Unit
          */
         fun getHasPredefinedEqualityContract(ctx: ConeInferenceContext): Boolean {
-            return (ctx.prohibitComparisonOfIncompatibleEnums && (firClass.isEnumClass || firClass.classId == StandardClassIds.Enum)) ||
+            return (firClass.isEnumClass || firClass.classId == StandardClassIds.Enum) ||
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
@@ -451,9 +451,6 @@ object ConeTypeCompatibilityChecker {
                 }
             }
     }
-
-    private val ConeInferenceContext.prohibitComparisonOfIncompatibleEnums: Boolean
-        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleEnums)
 
     private val ConeInferenceContext.prohibitComparisonOfIncompatibleClasses: Boolean
         get() = session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleClasses)
