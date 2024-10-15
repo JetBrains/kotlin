@@ -227,9 +227,9 @@ internal class LLFirProviderHelper(
         }
     }
 
-    fun getPackage(fqName: FqName): FqName? {
-        if (!allowKotlinPackage && fqName.isKotlinPackage()) return null
-        return fqName.takeIf(packageProvider::doesKotlinOnlyPackageExist)
+    fun hasPackage(fqName: FqName): Boolean {
+        if (!allowKotlinPackage && fqName.isKotlinPackage()) return false
+        return packageProvider.doesKotlinOnlyPackageExist(fqName)
     }
 }
 

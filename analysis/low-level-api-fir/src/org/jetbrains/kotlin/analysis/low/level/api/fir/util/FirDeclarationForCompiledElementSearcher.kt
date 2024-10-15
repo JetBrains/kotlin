@@ -209,7 +209,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
 private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
     get() {
         val moduleData = this.session.moduleData
-        if (getPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE) != null
+        if (hasPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE)
             || moduleData is LLFirModuleData && moduleData.ktModule is KaBuiltinsModule
         ) {
             return dependencyProvider.providers.find { it.session is LLFirBuiltinsAndCloneableSession }

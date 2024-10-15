@@ -90,8 +90,8 @@ class MetadataSymbolProvider(
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean = false
 
-    override fun getPackage(fqName: FqName): FqName? =
-        runIf(metadataTopLevelClassesInPackageCache.getValue(fqName)?.isNotEmpty() == true) { fqName }
+    override fun hasPackage(fqName: FqName): Boolean =
+        metadataTopLevelClassesInPackageCache.getValue(fqName)?.isNotEmpty() == true
 
     private fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>? =
         kotlinClassFinder.findMetadataTopLevelClassesInPackage(packageFqName)

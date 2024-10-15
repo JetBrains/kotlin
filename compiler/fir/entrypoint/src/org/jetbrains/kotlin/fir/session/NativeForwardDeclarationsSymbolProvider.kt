@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -106,11 +105,8 @@ class NativeForwardDeclarationsSymbolProvider(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        if (fqName in includedForwardDeclarationsByPackage) {
-            return fqName
-        }
-        return null
+    override fun hasPackage(fqName: FqName): Boolean {
+        return fqName in includedForwardDeclarationsByPackage
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {

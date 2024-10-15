@@ -43,8 +43,8 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
         destination += delegate.getTopLevelPropertySymbols(packageFqName, name).let(::filterSymbols)
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return delegate.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean {
+        return delegate.hasPackage(fqName)
     }
 
     // In complex projects, there might be several library copies (with the same or different versions).

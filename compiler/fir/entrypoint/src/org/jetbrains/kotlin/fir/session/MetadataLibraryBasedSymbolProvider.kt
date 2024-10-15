@@ -205,11 +205,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean = false
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return if (fqName in knownPackagesInLibraries) {
-            fqName
-        } else {
-            null
-        }
+    override fun hasPackage(fqName: FqName): Boolean {
+        return fqName in knownPackagesInLibraries
     }
 }

@@ -80,9 +80,9 @@ open class FirSwitchableExtensionDeclarationsSymbolProvider protected constructo
         delegate.getTopLevelPropertySymbolsTo(destination, packageFqName, name)
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        if (disabled) return null
-        return delegate.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean {
+        if (disabled) return false
+        return delegate.hasPackage(fqName)
     }
 
     @FirSymbolProviderInternals

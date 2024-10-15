@@ -81,8 +81,8 @@ class FirJvmBuiltinsSymbolProvider(
         }
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return classpathBuiltinSymbolProvider.getPackage(fqName) ?: fallbackBuiltinSymbolProvider.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean {
+        return classpathBuiltinSymbolProvider.hasPackage(fqName) || fallbackBuiltinSymbolProvider.hasPackage(fqName)
     }
 }
 

@@ -124,12 +124,12 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         providers.forEach { it.getTopLevelPropertySymbolsTo(destination, packageFqName, name) }
     }
 
-    override fun getPackage(fqName: FqName): FqName? =
-        getPackageWithoutDependencies(fqName)
-            ?: dependencyProvider.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean =
+        hasPackageWithoutDependencies(fqName)
+                || dependencyProvider.hasPackage(fqName)
 
-    fun getPackageWithoutDependencies(fqName: FqName): FqName? =
-        providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+    fun hasPackageWithoutDependencies(fqName: FqName): Boolean =
+        providers.any { it.hasPackage(fqName) }
 }
 
 internal class LLFirDependenciesSymbolProvider(
@@ -188,7 +188,7 @@ internal class LLFirDependenciesSymbolProvider(
         }
     }
 
-    override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+    override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
     private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,

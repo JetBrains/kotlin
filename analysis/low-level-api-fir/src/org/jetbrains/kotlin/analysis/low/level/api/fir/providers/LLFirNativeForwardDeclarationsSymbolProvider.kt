@@ -65,7 +65,7 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
             }
         )
 
-    override fun getPackage(fqName: FqName): FqName? = fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
+    override fun hasPackage(fqName: FqName): Boolean = packageProvider.doesKotlinOnlyPackageExist(fqName)
 
     @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(

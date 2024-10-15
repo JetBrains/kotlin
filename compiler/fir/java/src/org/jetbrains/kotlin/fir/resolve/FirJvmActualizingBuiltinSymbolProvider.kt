@@ -69,5 +69,5 @@ class FirJvmActualizingBuiltinSymbolProvider(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun getPackage(fqName: FqName): FqName? = builtinsSymbolProvider.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean = builtinsSymbolProvider.hasPackage(fqName)
 }

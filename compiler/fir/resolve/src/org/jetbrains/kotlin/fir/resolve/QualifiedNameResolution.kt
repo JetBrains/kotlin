@@ -156,7 +156,7 @@ private fun FqName.continueQualifierInPackage(
     components: BodyResolveComponents,
 ): QualifierResolutionResult? {
     val childFqName = this.child(name)
-    if (components.symbolProvider.getPackage(childFqName) != null) {
+    if (components.symbolProvider.hasPackage(childFqName)) {
         return components.buildResolvedQualifierResult(
             qualifiedAccess = qualifiedAccess,
             packageFqName = childFqName,

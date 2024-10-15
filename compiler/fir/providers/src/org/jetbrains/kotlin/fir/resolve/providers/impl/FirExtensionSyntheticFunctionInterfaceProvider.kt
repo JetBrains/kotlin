@@ -173,8 +173,8 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     @FirSymbolProviderInternals
     fun getFunctionKindPackageNames(): Set<FqName> = session.functionTypeService.getFunctionKindPackageNames()
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return fqName.takeIf { session.functionTypeService.hasKindWithSpecificPackage(it) }
+    override fun hasPackage(fqName: FqName): Boolean {
+        return session.functionTypeService.hasKindWithSpecificPackage(fqName)
     }
 
     private val cache = moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionInterface)
