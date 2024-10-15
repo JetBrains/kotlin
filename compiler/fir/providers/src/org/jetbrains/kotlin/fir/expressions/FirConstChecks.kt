@@ -159,7 +159,7 @@ private class FirConstCheckVisitor(
             return ConstantArgumentKind.NOT_CONST
         }
 
-        return ConstantArgumentKind.VALID_CONST
+        return typeOperatorCall.argument.accept(this, data)
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
