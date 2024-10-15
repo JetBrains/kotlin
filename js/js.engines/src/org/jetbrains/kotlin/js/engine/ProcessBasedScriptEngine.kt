@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.js.engine
 
 import com.intellij.openapi.util.text.StringUtil
+import java.util.concurrent.atomic.AtomicInteger
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
 private val END_MARKER = "<END>$LINE_SEPARATOR"
 private val ESM_EXTENSION = ".mjs"
 
+private val counter = AtomicInteger(0)
+
 abstract class ProcessBasedScriptEngine(
-    private val executablePath: String
+    private val executablePath: String,
+    private val doTrace: Boolean
 ) : ScriptEngine {
 
     private var process: Process? = null
@@ -78,6 +82,8 @@ abstract class ProcessBasedScriptEngine(
     override fun release() {
         process?.destroy()
         process = null
+        if (doTrace)
+            println("Release repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")
     }
 
     private fun getOrCreateProcess(): Process {
@@ -87,6 +93,8 @@ abstract class ProcessBasedScriptEngine(
 
         process = null
 
+        if (doTrace)
+            println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
         val builder = ProcessBuilder(
             executablePath,
             "js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js",
