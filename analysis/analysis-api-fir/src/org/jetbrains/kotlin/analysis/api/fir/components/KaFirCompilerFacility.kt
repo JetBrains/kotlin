@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
@@ -173,14 +175,12 @@ internal class KaFirCompilerFacility(
         val jvmIrDeserializer = JvmIrDeserializerImpl()
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
 
-        val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
-
         val inlineFunDependencyBytecode = mutableMapOf<String, ByteArray>()
-
-        for (dependencyFile in dependencyFiles) {
+        dependencyFiles.forEach { dependencyFile ->
             var compileResult: KaCompilationResult? = null
+            val dependencyIrGeneratorExtensions = getIrGenerationExtensionsForKtFile(dependencyFile)
             runFir2IrForDependency(
-                listOf(dependencyFile), configuration, jvmIrDeserializer, diagnosticReporter, irGeneratorExtensions
+                listOf(dependencyFile), configuration, jvmIrDeserializer, diagnosticReporter, dependencyIrGeneratorExtensions
             ) { fir2IrResult, ktFiles, dependencyConfiguration ->
                 val codegenFactory = createJvmIrCodegenFactory(
                     configuration = dependencyConfiguration,
@@ -222,7 +222,7 @@ internal class KaFirCompilerFacility(
                     }
                 }
                 is KaCompilationResult.Failure -> return compileResult!!
-                null -> continue
+                null -> return@forEach
             }
         }
 
@@ -255,7 +255,7 @@ internal class KaFirCompilerFacility(
         targetFir2IrResult.pluginContext.applyIrGenerationExtensions(
             targetFir2IrResult.components.configuration,
             targetFir2IrResult.irModuleFragment,
-            irGeneratorExtensions,
+            getIrGenerationExtensions(targetModules),
         )
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)
 
@@ -345,6 +345,17 @@ internal class KaFirCompilerFacility(
             return KaCompilationResult.Success(outputFiles, capturedValues)
         } finally {
             generationState.destroy()
+        }
+    }
+
+    private fun getIrGenerationExtensionsForKtFile(ktFile: KtFile) =
+        getIrGenerationExtensions(listOf(ktFile.getOrBuildFirFile(firResolveSession).llFirModuleData.ktModule))
+
+    private fun getIrGenerationExtensions(modules: List<KaModule>): List<IrGenerationExtension> = buildList {
+        modules.forEach { module ->
+            val sourceModule = module as? KaSourceModule ?: return@forEach
+            KotlinCompilerPluginsProvider.getInstance(project)?.getRegisteredExtensions(sourceModule, IrGenerationExtension)
+                ?.forEach { extension -> add(extension) }
         }
     }
 
