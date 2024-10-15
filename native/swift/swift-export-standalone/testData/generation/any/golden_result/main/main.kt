@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyObject::class, "4main8MyObjectC")
 
 import kotlin.native.internal.ExportedBridge

@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AbstractBase::class, "9overrides12AbstractBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AbstractDerived2::class, "9overrides16AbstractDerived2C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Child::class, "9overrides5ChildC")

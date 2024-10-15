@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Cousin::class, "24overrides_across_modules6CousinC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(FinalDerived3::class, "24overrides_across_modules13FinalDerived3C")
 

@@ -1040,6 +1040,16 @@ class SirAsSwiftSourcesPrinterTests {
                 }
             }
             addChild {
+                buildTypealias {
+                    name = "myVariable"
+                    type = SirNominalType(SirSwiftModule.bool)
+                    documentation = """
+                            /// Example docstring
+                        """.trimIndent()
+                    attributes += SirAttribute.Available(message = "Unavailable typealias", unavailable = true)
+                }
+            }
+            addChild {
                 clazz
             }
         }.attachDeclarations()

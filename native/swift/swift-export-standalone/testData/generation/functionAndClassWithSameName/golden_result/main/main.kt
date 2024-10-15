@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.ClassWithFactoryInAPackage::class, "22ExportedKotlinPackages4testO7factoryO4mainE26ClassWithFactoryInAPackageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.Outer::class, "22ExportedKotlinPackages4testO7factoryO4mainE5OuterC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.Outer.Nested::class, "22ExportedKotlinPackages4testO7factoryO4mainE5OuterC6NestedC")

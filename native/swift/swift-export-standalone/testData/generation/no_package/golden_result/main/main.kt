@@ -1,3 +1,5 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
