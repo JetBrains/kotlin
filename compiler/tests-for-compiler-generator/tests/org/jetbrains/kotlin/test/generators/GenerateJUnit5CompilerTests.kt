@@ -481,6 +481,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
+            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTiers.FIR),
+            )
+
             testClass<AbstractFirPsiJvmIrTextTest> {
                 model(
                     "ir/irText",

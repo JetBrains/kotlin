@@ -14,16 +14,20 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            globalDefaults {
-                val targetBackendFromMarker = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
-                if (targetBackend == null) {
-                    targetBackend = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
-                } else {
-                    require(targetBackend == targetBackendFromMarker) {
-                        """Target backend in configuration specified to $targetBackend but in 
+            configureKotlinCompilerWIthTargetBackendTest(targetBackend)
+        }
+    }
+}
+
+fun TestConfigurationBuilder.configureKotlinCompilerWIthTargetBackendTest(targetBackend: TargetBackend) {
+    globalDefaults {
+        val targetBackendFromMarker = targetBackend
+        if (this.targetBackend == null) {
+            this.targetBackend = targetBackend
+        } else {
+            require(this.targetBackend == targetBackendFromMarker) {
+                """Target backend in configuration specified to ${this.targetBackend} but in 
                           |AbstractKotlinCompilerWithTargetBackendTest parent it is set to $targetBackendFromMarker""".trimMargin()
-                    }
-                }
             }
         }
     }

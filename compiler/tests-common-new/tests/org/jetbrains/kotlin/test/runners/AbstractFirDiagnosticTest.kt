@@ -147,17 +147,21 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         baseFirDiagnosticTestConfiguration()
 
         facadeStep(::Fir2IrResultsConverter)
-        irHandlersStep {
-            useHandlers(
-                ::IrDiagnosticsHandler
-            )
-        }
-
-        useAdditionalService(::LibraryProvider)
-
-        @OptIn(TestInfrastructureInternals::class)
-        useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
+        configureIrActualizerDiagnosticsTest()
     }
+}
+
+fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
+    irHandlersStep {
+        useHandlers(
+            ::IrDiagnosticsHandler
+        )
+    }
+
+    useAdditionalService(::LibraryProvider)
+
+    @OptIn(TestInfrastructureInternals::class)
+    useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
 }
 
 open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)

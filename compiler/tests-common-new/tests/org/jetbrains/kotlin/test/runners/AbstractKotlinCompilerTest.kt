@@ -63,7 +63,7 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     abstract fun TestConfigurationBuilder.configuration()
-    private lateinit var testInfo: KotlinTestInfo
+    lateinit var testInfo: KotlinTestInfo
 
     open fun createApplicationDisposableProvider(): ApplicationDisposableProvider {
         return ExecutionListenerBasedDisposableProvider()

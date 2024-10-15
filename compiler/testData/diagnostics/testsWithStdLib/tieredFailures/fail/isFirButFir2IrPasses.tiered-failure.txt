@@ -1,0 +1,1 @@
+Looks like some tiers above FIR pass with no exceptions. Please update the tier directive to `// RUN_PIPELINE_TILL: FIR2IR` and regenerate tests.

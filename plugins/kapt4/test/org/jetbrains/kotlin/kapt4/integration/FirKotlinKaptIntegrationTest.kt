@@ -28,7 +28,7 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.util.ElementFilter
 import javax.tools.Diagnostic
 
-class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
+class FirKotlinKaptIntegrationTest(private val theTestInfo: TestInfo) {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
     }
@@ -48,7 +48,7 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
             additionalPluginExtension,
             process
         ).apply {
-            initTestInfo(testInfo)
+            initTestInfo(theTestInfo)
             try {
                 runTest(file.absolutePath)
                 if (expectFailure) throw AssertionError("Expected compilation to fail, but it didn't.")

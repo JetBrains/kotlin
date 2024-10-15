@@ -49920,6 +49920,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("isFir2IrButFir2IrPasses.kt")
+        public void testIsFir2IrButFir2IrPasses() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButFir2IrPasses.kt");
+        }
+
+        @Test
+        @TestMetadata("isFirButFir2IrPasses.kt")
+        public void testIsFirButFir2IrPasses() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFirButFir2IrPasses.kt");
+        }
+
+        @Test
         @TestMetadata("isSourceButFirPasses.kt")
         public void testIsSourceButFirPasses() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isSourceButFirPasses.kt");
@@ -49933,6 +49945,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @Test
         public void testAllFilesPresentInGood() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("isFirButFir2IrFails.kt")
+        public void testIsFirButFir2IrFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFirButFir2IrFails.kt");
         }
 
         @Test
