@@ -82,8 +82,8 @@ class OptionalAnnotationClassesProvider(
         return JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
     }
 
-    override fun getPackage(fqName: FqName): FqName? =
-        if (optionalAnnotationClassesAndPackages.second.contains(fqName.asString())) fqName else null
+    override fun hasPackage(fqName: FqName): Boolean =
+        optionalAnnotationClassesAndPackages.second.contains(fqName.asString())
 
     companion object {
         /**

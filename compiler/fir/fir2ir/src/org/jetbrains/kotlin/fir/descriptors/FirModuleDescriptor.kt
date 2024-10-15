@@ -49,7 +49,7 @@ class FirModuleDescriptor private constructor(
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = session.symbolProvider
-        if (symbolProvider.getPackage(fqName) != null) {
+        if (symbolProvider.hasPackage(fqName)) {
             return FirPackageViewDescriptor(fqName, this)
         }
         error("Module $moduleData doesn't contain package $fqName")

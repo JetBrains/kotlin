@@ -173,7 +173,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             return
         }
 
-        if (symbolProvider.getPackage(importedFqName) != null) {
+        if (symbolProvider.hasPackage(importedFqName)) {
             reporter.reportOn(import.source, FirErrors.PACKAGE_CANNOT_BE_IMPORTED, context)
         } else {
             reporter.reportOn(import.source, FirErrors.UNRESOLVED_IMPORT, importedName.asString(), context)

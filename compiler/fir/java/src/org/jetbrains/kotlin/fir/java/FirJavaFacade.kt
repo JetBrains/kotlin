@@ -68,8 +68,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))?.takeUnless(JavaClass::hasMetadataAnnotation)
 
-    fun getPackage(fqName: FqName): FqName? =
-        packageCache.getValue(fqName)?.fqName
+    fun hasPackage(fqName: FqName): Boolean =
+        packageCache.getValue(fqName) != null
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
         val knownNames = knownClassNamesInPackage(classId.packageFqName) ?: return true

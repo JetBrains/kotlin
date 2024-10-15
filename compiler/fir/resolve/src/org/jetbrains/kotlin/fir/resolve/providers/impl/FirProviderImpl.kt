@@ -77,9 +77,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             destination += (state.propertyMap[CallableId(packageFqName, name)] ?: emptyList())
         }
 
-        override fun getPackage(fqName: FqName): FqName? {
-            if (fqName in state.allSubPackages) return fqName
-            return null
+        override fun hasPackage(fqName: FqName): Boolean {
+            return fqName in state.allSubPackages
         }
 
         override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {

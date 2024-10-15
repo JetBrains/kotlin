@@ -38,7 +38,7 @@ internal class LLEmptySymbolProvider(session: FirSession) : FirSymbolProvider(se
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return null
+    override fun hasPackage(fqName: FqName): Boolean {
+        return false
     }
 }

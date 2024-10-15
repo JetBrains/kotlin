@@ -63,7 +63,7 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun getPackage(fqName: FqName): FqName? = fqName.takeIf { it in combinedPackageNames }
+    override fun hasPackage(fqName: FqName): Boolean = fqName in combinedPackageNames
 
     companion object {
         fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =

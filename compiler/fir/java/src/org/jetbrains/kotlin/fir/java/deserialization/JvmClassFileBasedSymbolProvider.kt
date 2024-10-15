@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDynamicUnsupported
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -202,8 +201,8 @@ class JvmClassFileBasedSymbolProvider(
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
         JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
-    override fun getPackage(fqName: FqName): FqName? =
-        javaFacade.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean =
+        javaFacade.hasPackage(fqName)
 
     private fun loadAnnotationsFromClassFile(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,

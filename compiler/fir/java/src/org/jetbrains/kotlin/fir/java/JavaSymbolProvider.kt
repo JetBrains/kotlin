@@ -67,7 +67,7 @@ open class JavaSymbolProvider(
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 
-    override fun getPackage(fqName: FqName): FqName? = javaFacade.getPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackage(fqName)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false

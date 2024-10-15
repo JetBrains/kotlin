@@ -27,7 +27,7 @@ fun findLongestExistingPackage(symbolProvider: FirSymbolProvider, fqName: FqName
     val pathSegments = fqName.pathSegments()
     var prefixSize = pathSegments.size
     while (!currentPackage.isRoot && prefixSize > 0) {
-        if (symbolProvider.getPackage(currentPackage) != null) {
+        if (symbolProvider.hasPackage(currentPackage)) {
             break
         }
         currentPackage = currentPackage.parent()

@@ -75,7 +75,8 @@ class FirJavaElementFinder(
         }
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
-        if (firProviders.none { it.symbolProvider.getPackage(FqName(qualifiedName)) != null }) return null
+        val fqName = FqName(qualifiedName)
+        if (firProviders.none { it.symbolProvider.hasPackage(fqName) }) return null
         return FirPsiPackage(psiManager, qualifiedName)
     }
 

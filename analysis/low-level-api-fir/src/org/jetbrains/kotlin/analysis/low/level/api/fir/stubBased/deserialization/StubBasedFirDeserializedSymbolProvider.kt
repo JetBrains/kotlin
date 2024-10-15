@@ -282,8 +282,8 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         destination += propertyCache.getValue(callableId, properties)
     }
 
-    override fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
+    override fun hasPackage(fqName: FqName): Boolean =
+        packageProvider.doesKotlinOnlyPackageExist(fqName)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         getCachedClassLikeSymbol(classId)?.let { return it }

@@ -53,7 +53,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     }
 
     private val packageCache: FirCache<FqName, Boolean, Nothing?> = cachesFactory.createCache { packageFqName, _ ->
-        hasPackage(packageFqName)
+        extensions.any { it.hasPackage(packageFqName) }
     }
 
     private val callableNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>> =
@@ -143,10 +143,6 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             .onEach { it.fir.validate() }
     }
 
-    private fun hasPackage(packageFqName: FqName): Boolean {
-        return extensions.any { it.hasPackage(packageFqName) }
-    }
-
     // ------------------------------------------ provider methods ------------------------------------------
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
@@ -199,7 +195,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return fqName.takeIf { packageCache.getValue(fqName, null) }
+    override fun hasPackage(fqName: FqName): Boolean {
+        return packageCache.getValue(fqName, null)
     }
 }

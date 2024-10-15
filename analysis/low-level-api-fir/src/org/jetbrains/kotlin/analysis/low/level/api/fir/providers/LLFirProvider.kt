@@ -186,7 +186,7 @@ internal class LLFirProvider(
             destination += providerHelper.getTopLevelPropertySymbols(callableId, properties.mapTo(mutableSetOf()) { it.containingKtFile })
         }
 
-        override fun getPackage(fqName: FqName): FqName? =
-            providerHelper.getPackage(fqName)
+        override fun hasPackage(fqName: FqName): Boolean =
+            providerHelper.hasPackage(fqName)
     }
 }

@@ -88,7 +88,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+    override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
     companion object {
         fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =

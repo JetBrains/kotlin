@@ -116,7 +116,7 @@ class FirCachingCompositeSymbolProvider(
         destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
+    override fun hasPackage(fqName: FqName): Boolean {
         return packageCache.getValue(fqName)
     }
 
@@ -140,8 +140,8 @@ class FirCachingCompositeSymbolProvider(
         providers.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    private fun computePackage(it: FqName): FqName? =
-        providers.firstNotNullOfOrNull { provider -> provider.getPackage(it) }
+    private fun computePackage(it: FqName): Boolean =
+        providers.any { provider -> provider.hasPackage(it) }
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }

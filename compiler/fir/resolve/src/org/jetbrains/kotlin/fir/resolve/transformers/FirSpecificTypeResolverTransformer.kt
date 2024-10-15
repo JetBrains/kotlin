@@ -301,7 +301,7 @@ class FirSpecificTypeResolverTransformer(
 
         while (packageSegmentsToTry.size > 1) {
             packageSegmentsToTry.removeLast()
-            if (session.symbolProvider.getPackage(FqName.fromSegments(packageSegmentsToTry)) != null) {
+            if (session.symbolProvider.hasPackage(FqName.fromSegments(packageSegmentsToTry))) {
                 return packageSegmentsToTry.size
             }
         }

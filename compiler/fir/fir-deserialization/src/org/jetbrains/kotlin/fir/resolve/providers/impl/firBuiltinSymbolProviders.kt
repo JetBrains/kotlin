@@ -53,9 +53,8 @@ abstract class AbstractFirBuiltinSymbolProvider(
         }
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        if (allPackageFragments.containsKey(fqName)) return fqName
-        return null
+    override fun hasPackage(fqName: FqName): Boolean {
+        return allPackageFragments.containsKey(fqName)
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {

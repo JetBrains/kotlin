@@ -119,7 +119,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
             }
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
+    override fun hasPackage(fqName: FqName): Boolean {
         val hasPackage = if (fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) {
             // If a package is a `kotlin` package, `packageProvider` might find it via the scope of an individual symbol provider that
             // disallows `kotlin` packages. Hence, the combined `getPackage` would erroneously find a package it shouldn't be able to find,
@@ -133,7 +133,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
 
         // Regarding caching `hasPackage`: The static (standalone) package provider precomputes its packages, while the IDE package provider
         // caches the results itself. Hence, it's currently unnecessary to provide another layer of caching here.
-        return fqName.takeIf { hasPackage }
+        return hasPackage
     }
 
     companion object {
