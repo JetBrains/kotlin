@@ -62,7 +62,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
      * able to find its own correct version of the globally ambiguous class. But since [topLevelClassesCache] is global as well and not tied
      * to a specific module or scope, we need to cache that global view.
      */
-    private val topLevelClassesCache: MutableMap<FqName, SmartList<VirtualFile>> = Object2ObjectOpenHashMap()
+    private val topLevelClassesCache: MutableMap<FqName, SmartList<VirtualFile>?> = Object2ObjectOpenHashMap()
 
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
     private var usePsiClassFilesReading = false
@@ -106,8 +106,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                     index.findClasses(outerMostClassId) { dir, type ->
                         findVirtualFileGivenPackage(dir, relativeClassName, type)
                     }
-                )
-        }.firstOrNull { it in searchScope }
+                ).takeIf { it.isNotEmpty() }
+        }?.firstOrNull { it in searchScope }
     }
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = Object2ObjectOpenHashMap()
