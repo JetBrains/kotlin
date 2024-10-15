@@ -374,11 +374,6 @@ public:
     RegularWeakReferenceImpl() noexcept : Object(theRegularWeakReferenceImplTypeInfo) {}
 
     OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
-
-    ObjHeader* get() noexcept {
-        ObjHeader* result;
-        return get(&result);
-    }
 };
 
 } // namespace test_support

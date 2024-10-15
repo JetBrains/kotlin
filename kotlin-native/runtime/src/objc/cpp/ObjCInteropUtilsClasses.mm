@@ -90,7 +90,7 @@ static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
   id objcReferred = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_loadWeakRetained, &objcRef->referred);
 
   // Kotlin_Interop_refFromObjC creates Kotlin objects, so it needs Runnable state:
-  KRef result = Kotlin_Interop_refFromObjC(objcReferred, OBJ_RESULT);
+  ObjHolder resultHolder(Kotlin_Interop_refFromObjC(objcReferred));
 
   // objc_release can call arbitrary user code, so it needs Native state:
   kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_release, objcReferred);
@@ -104,7 +104,7 @@ static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
   //     But we could use the other weak implementation for such classes, and assume no one else overrides these methods
   //     (in a dangerous way).
 
-  return result;
+  return resultHolder.obj();
 }
 
 static void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {

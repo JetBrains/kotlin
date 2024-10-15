@@ -57,7 +57,7 @@ OBJ_GETTER(convertToUTF16, const char* rawString, size_t rawStringLength, CharCo
     if (rawStringLength == 0) RETURN_RESULT_OF0(TheEmptyString);
 
     auto rawStringEnd = rawString + rawStringLength;
-    auto result = CreateUninitializedUtf16String(countChars(rawString, rawStringEnd), OBJ_RESULT);
+    auto result = CreateUninitializedUtf16String(countChars(rawString, rawStringEnd));
     convert(rawString, rawStringEnd, StringUtf16Data(result));
     RETURN_OBJ(result);
 }
@@ -73,7 +73,7 @@ OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KInt start, KInt size) {
         ThrowCharacterCodingException();
     }
 
-    ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
+    ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size())->array();
     ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.data(), utf8.size());
     RETURN_OBJ(result->obj());
 }
@@ -155,7 +155,7 @@ extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length
     if (utf16 == nullptr) RETURN_OBJ(nullptr);
     if (lengthChars == 0) RETURN_RESULT_OF0(TheEmptyString);
 
-    auto result = CreateUninitializedUtf16String(lengthChars, OBJ_RESULT);
+    auto result = CreateUninitializedUtf16String(lengthChars);
     memcpy(StringRawData(result), utf16, StringRawSize(result));
     RETURN_OBJ(result);
 }
@@ -203,7 +203,8 @@ extern "C" KInt Kotlin_String_getStringLength(KConstRef thiz) {
 
 extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thiz, KChar oldChar, KChar newChar) {
     auto count = StringUtf16Length(thiz);
-    auto result = CreateUninitializedUtf16String(count, OBJ_RESULT);
+    ObjHolder holder(CreateUninitializedUtf16String(count));
+    auto result = holder.obj();
     auto resultRaw = StringUtf16Data(result);
     for (auto it = StringUtf16Data(thiz), end = it + count; it != end; it++) {
         KChar thizChar = *it;
@@ -227,7 +228,8 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
         ThrowOutOfMemoryError();
     }
 
-    auto result = CreateUninitializedUtf16String(resultLength, OBJ_RESULT);
+    ObjHolder holder(CreateUninitializedUtf16String(resultLength));
+    auto result = holder.obj();
     auto resultRaw = StringUtf16Data(result);
     memcpy(resultRaw, StringUtf16Data(thiz), StringRawSize(thiz));
     memcpy(resultRaw + thizLength, StringUtf16Data(other), StringRawSize(other));
@@ -241,7 +243,7 @@ extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, K
         RETURN_RESULT_OF0(TheEmptyString);
     }
 
-    auto result = CreateUninitializedUtf16String(size, OBJ_RESULT);
+    auto result = CreateUninitializedUtf16String(size);
     memcpy(StringRawData(result), CharArrayAddressOfElementAt(thiz->array(), start), size * sizeof(KChar));
     RETURN_OBJ(result);
 }
@@ -263,7 +265,7 @@ extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex
     }
 
     KInt length = endIndex - startIndex;
-    auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+    auto result = CreateUninitializedUtf16String(length);
     memcpy(StringUtf16Data(result), StringUtf16Data(thiz) + startIndex, length * sizeof(KChar));
     RETURN_OBJ(result);
 }

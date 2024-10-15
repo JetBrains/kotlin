@@ -31,20 +31,18 @@ using namespace kotlin;
 
 OBJ_GETTER(setupArgs, int argc, const char** argv) {
   // The count is one less, because we skip argv[0] which is the binary name.
-  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
-  ArrayHeader* array = result->array();
+  ObjHolder resultHolder(AllocArrayInstance(theArrayTypeInfo, argc - 1));
+  ArrayHeader* array = resultHolder.obj()->array();
   for (int index = 1; index < argc; index++) {
-    ObjHolder result;
-    CreateStringFromCString(argv[index], result.slot());
+    ObjHolder result(CreateStringFromCString(argv[index]));
     UpdateHeapRef(ArrayAddressOfElementAt(array, index - 1), result.obj());
   }
-  return result;
+  return resultHolder.obj();
 }
 
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_run_start(int argc, const char** argv) {
-    ObjHolder args;
-    setupArgs(argc, argv, args.slot());
+    ObjHolder args(setupArgs(argc, argv));
     return Konan_start(args.obj());
 }
 

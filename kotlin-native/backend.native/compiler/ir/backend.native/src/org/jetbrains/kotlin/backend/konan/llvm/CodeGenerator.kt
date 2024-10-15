@@ -594,8 +594,6 @@ internal abstract class FunctionGenerationContext(
     }
 
     var returnType: LLVMTypeRef? = function.returnType
-    var returnSlot: LLVMValueRef? = null
-        private set
     private var slotsPhi: LLVMValueRef? = null
     private val frameOverlaySlotCount =
             (LLVMStoreSizeOfType(llvmTargetData, runtime.frameOverlayType) / runtime.pointerSize).toInt()
@@ -716,7 +714,6 @@ internal abstract class FunctionGenerationContext(
             isObjectType: Boolean,
             address: LLVMValueRef,
             isVar: Boolean,
-            resultSlot: LLVMValueRef? = null,
             name: String = "",
             memoryOrder: LLVMAtomicOrdering? = null,
             alignment: Int? = null
@@ -725,7 +722,7 @@ internal abstract class FunctionGenerationContext(
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
         if (isObjectType && isVar) {
-            val slot = resultSlot ?: alloca(type, isObjectType, variableLocation = null)
+            val slot = alloca(type, isObjectType, variableLocation = null)
             storeStackRef(value, slot)
         }
         return value
@@ -794,35 +791,25 @@ internal abstract class FunctionGenerationContext(
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
              exceptionHandler: ExceptionHandler = ExceptionHandler.None,
              verbatim: Boolean = false,
-             resultSlot: LLVMValueRef? = null,
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
-            args
-        } else {
-            // If function returns an object - create slot for the returned value or give local arena.
-            // This allows appropriate rootset accounting by just looking at the stack slots,
-            // along with ability to allocate in appropriate arena.
-            val realResultSlot = resultSlot ?: when (resultLifetime.slotType) {
+        val result = callRaw(llvmCallable, args, exceptionHandler)
+        if (llvmCallable.returnsObjectType && !verbatim) {
+            val resultSlot = when (resultLifetime.slotType) {
                 SlotType.STACK -> {
                     localAllocs++
                     // Case of local call. Use memory allocated on stack.
                     val type = llvmCallable.returnType
                     val stackPointer = alloca(type, llvmCallable.returnsObjectType)
-                    //val objectHeader = structGep(stackPointer, 0)
-                    //setTypeInfoForLocalObject(objectHeader)
                     stackPointer
-                    //arenaSlot!!
                 }
-
-                SlotType.RETURN -> returnSlot!!
 
                 SlotType.ANONYMOUS -> vars.createAnonymousSlot(llvmCallable.returnsObjectType)
 
                 else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
             }
-            args + realResultSlot
+            updateReturnRef(result, resultSlot)
         }
-        return callRaw(llvmCallable, callArgs, exceptionHandler)
+        return result
     }
 
     private fun callRaw(llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
@@ -881,27 +868,26 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime, resultSlot: LLVMValueRef?) : LLVMValueRef =
-            call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime, resultSlot = resultSlot)
+    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime) : LLVMValueRef =
+            call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
 
-    fun allocInstance(irClass: IrClass, lifetime: Lifetime, resultSlot: LLVMValueRef?) =
+    fun allocInstance(irClass: IrClass, lifetime: Lifetime) =
         if (lifetime == Lifetime.STACK)
             stackLocalsManager.alloc(irClass)
         else
-            allocInstance(codegen.typeInfoForAllocation(irClass), lifetime, resultSlot)
+            allocInstance(codegen.typeInfoForAllocation(irClass), lifetime)
 
     fun allocArray(
         irClass: IrClass,
         count: LLVMValueRef,
         lifetime: Lifetime,
         exceptionHandler: ExceptionHandler,
-        resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
         return if (lifetime == Lifetime.STACK) {
             stackLocalsManager.allocArray(irClass, count)
         } else {
-            call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+            call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler)
         }
     }
 
@@ -1333,15 +1319,8 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
-        if (function.returnsObjectType) {
-            returnSlot = function.param( function.numParams - 1)
-        }
-
         positionAtEnd(localsInitBb)
         slotsPhi = phi(kObjHeaderPtrPtr)
-        // Is removed by DCE trivially, if not needed.
-        /*arenaSlot = intToPtr(
-                or(ptrToInt(slotsPhi, codegen.intPtrType), codegen.immOneIntPtrType), kObjHeaderPtrPtr)*/
         positionAtEnd(entryBb)
     }
 
@@ -1437,16 +1416,12 @@ internal abstract class FunctionGenerationContext(
         }
 
         vars.clear()
-        returnSlot = null
         slotsPhi = null
     }
 
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
-        if (returnSlot != null) {
-            updateReturnRef(value, returnSlot!!)
-        }
         onReturn()
         return rawRet(value)
     }
@@ -1456,7 +1431,6 @@ internal abstract class FunctionGenerationContext(
     }
 
     protected fun retVoid(): LLVMValueRef {
-        check(returnSlot == null)
         onReturn()
         return LLVMBuildRetVoid(builder)!!.also {
             currentPositionHolder.setAfterTerminator()

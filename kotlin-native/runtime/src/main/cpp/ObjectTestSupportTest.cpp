@@ -121,8 +121,8 @@ TYPED_TEST(ObjectTestSupportObjectTest, Heap) {
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
 
     RunInNewThread([&type]() {
-        ObjHolder resultHolder;
-        ObjHeader* result = AllocInstance(type.typeInfo(), resultHolder.slot());
+        ObjHolder resultHolder(AllocInstance(type.typeInfo()));
+        ObjHeader* result = resultHolder.obj();
         ASSERT_THAT(result, testing::Ne(nullptr));
 
         auto& object = test_support::Object<Payload>::FromObjHeader(result);
@@ -352,8 +352,8 @@ TYPED_TEST(ObjectTestSupportArrayTest, Heap) {
     constexpr auto size = TypeParam::size;
 
     RunInNewThread([typeInfo]() {
-        ObjHolder resultHolder;
-        ObjHeader* result = AllocArrayInstance(typeInfo, size, resultHolder.slot());
+        ObjHolder resultHolder(AllocArrayInstance(typeInfo, size));
+        ObjHeader* result = resultHolder.obj();
         ASSERT_THAT(result, testing::Ne(nullptr));
 
         auto& array = Array::FromArrayHeader(result->array());

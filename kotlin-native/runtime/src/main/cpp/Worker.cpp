@@ -90,7 +90,7 @@ struct Job {
   enum JobKind kind;
   union {
     struct {
-      KRef (*function)(KRef, ObjHeader**);
+      KRef (*function)(KRef);
       KNativePtr argument;
       Future* future;
       KInt transferMode;
@@ -298,7 +298,7 @@ class Future {
     // TODO: maybe use message from exception?
     if (state_ == THROWN)
         ThrowIllegalStateException();
-    auto result = AdoptStablePointer(result_, OBJ_RESULT);
+    auto result = AdoptStablePointer(result_);
     result_ = nullptr;
     return result;
   }
@@ -403,7 +403,7 @@ class State {
       job.terminationRequest.waitDelayed = !toFront;
     } else {
       job.kind = JOB_REGULAR;
-      job.regularJob.function = reinterpret_cast<KRef (*)(KRef, ObjHeader**)>(jobFunction);
+      job.regularJob.function = reinterpret_cast<KRef (*)(KRef)>(jobFunction);
       job.regularJob.argument = jobArgument;
       job.regularJob.future = future;
       job.regularJob.transferMode = transferMode;
@@ -488,7 +488,8 @@ class State {
       future = it->second;
     }
 
-    KRef result = future->consumeResultUnlocked(OBJ_RESULT);
+    ObjHolder holder(future->consumeResultUnlocked());
+    KRef result = holder.obj();
 
     {
        Locker locker(&lock_);
@@ -510,7 +511,7 @@ class State {
         if (it == workers_.end()) {
             ThrowWorkerAlreadyTerminated();
         }
-        DerefStablePointer(it->second->name(), nameHolder.slot());
+        *nameHolder.slot() = DerefStablePointer(it->second->name());
     }
     RETURN_OBJ(nameHolder.obj());
   }
@@ -632,8 +633,7 @@ class State {
               workers.push_back(id);
           }
       }
-      ObjHolder arrayHolder;
-      AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
+      ObjHolder arrayHolder(AllocArrayInstance(theIntArrayTypeInfo, workers.size()));
       std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(arrayHolder.obj()->array(), 0));
       RETURN_OBJ(arrayHolder.obj());
   }
@@ -708,8 +708,7 @@ KInt currentWorker() {
 }
 
 KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
-  ObjHolder holder;
-  WorkerLaunchpad(producer, holder.slot());
+  ObjHolder holder(WorkerLaunchpad(producer));
   KNativePtr jobArgument = transfer(&holder, transferMode);
   Future* future = theState()->addJobToWorkerUnlocked(id, jobFunction, jobArgument, false, transferMode);
   if (future == nullptr) ThrowWorkerAlreadyTerminated();
@@ -761,8 +760,7 @@ OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
 }
 
 KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
-   ObjHolder result;
-   WorkerLaunchpad(producer, result.slot());
+   ObjHolder result(WorkerLaunchpad(producer));
    if (result.obj() != nullptr) {
      return transfer(&result, transferMode);
    } else {
@@ -1016,11 +1014,11 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_EXECUTE_AFTER: {
-      ObjHolder operationHolder, dummyHolder;
-      KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
+      ObjHolder operationHolder(DerefStablePointer(job.executeAfter.operation));
+      KRef obj = operationHolder.obj();
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          WorkerLaunchpad(obj, dummyHolder.slot());
+          WorkerLaunchpad(obj);
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
           case WorkerExceptionHandling::kIgnore: break;
@@ -1036,14 +1034,14 @@ JobKind Worker::processQueueElement(bool blocking) {
     case JOB_REGULAR: {
       KNativePtr result = nullptr;
       bool ok = true;
-      ObjHolder argumentHolder;
+      ObjHolder argumentHolder(AdoptStablePointer(job.regularJob.argument));
       ObjHolder resultHolder;
-      KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
+      KRef argument = argumentHolder.obj();
       try {
           objc_support::AutoreleasePool autoreleasePool;
           {
               CurrentFrameGuard guard;
-              job.regularJob.function(argument, resultHolder.slot());
+              *resultHolder.slot() = job.regularJob.function(argument);
           }
           argumentHolder.clear();
           // Transfer the result.

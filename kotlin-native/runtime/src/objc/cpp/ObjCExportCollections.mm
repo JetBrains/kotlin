@@ -85,7 +85,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation NSArray (NSArrayToKotlin)
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, objc_retain(self));
 }
 
@@ -98,7 +98,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation NSMutableArray (NSArrayToKotlin)
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, objc_retain(self));
 }
 
@@ -112,7 +112,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation NSSet (NSSetToKotlin)
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, objc_retain(self));
 }
 
@@ -126,7 +126,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation NSDictionary (NSDictionaryToKotlin)
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, objc_retain(self));
 }
 
@@ -158,8 +158,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   kotlin::CalledFromNativeGuard guard;
   KRef iterator = iteratorHolder.ref();
   if (Kotlin_Iterator_hasNext(iterator)) {
-    ObjHolder holder;
-    return refToObjCOrNSNull(Kotlin_Iterator_next(iterator, holder.slot()));
+    ObjHolder holder(Kotlin_Iterator_next(iterator));
+    return refToObjCOrNSNull(holder.obj());
   } else {
     return nullptr;
   }
@@ -184,14 +184,14 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   return result;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
+  ObjHolder holder(Kotlin_List_get(listHolder.ref(), index));
+  KRef kotlinValue = holder.obj();
   return refToObjCOrNSNull(kotlinValue);
 }
 
@@ -220,15 +220,14 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   return result;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
-  return refToObjCOrNSNull(kotlinValue);
+  ObjHolder kotlinValueHolder(Kotlin_List_get(listHolder.ref(), index));
+  return refToObjCOrNSNull(kotlinValueHolder.obj());
 }
 
 -(NSUInteger)count {
@@ -238,9 +237,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_addObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  ObjHolder holder(refFromObjCOrNSNull(anObject));
+  Kotlin_MutableList_addObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index), holder.obj());
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
@@ -250,8 +248,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 - (void)addObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  Kotlin_MutableCollection_addObject(listHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  ObjHolder holder(refFromObjCOrNSNull(anObject));
+  Kotlin_MutableCollection_addObject(listHolder.ref(), holder.obj());
 }
 
 - (void)removeLastObject {
@@ -261,9 +259,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_setObject(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  ObjHolder holder(refFromObjCOrNSNull(anObject));
+  Kotlin_MutableList_setObject(listHolder.ref(), objCIndexToKotlinOrThrow(index), holder.obj());
 }
 
 @end
@@ -275,9 +272,11 @@ static inline id KSet_getElement(KRef set, id object) {
   if (object == NSNull.null) {
     return Kotlin_Set_contains(set, nullptr) ? object : nullptr;
   } else {
-    ObjHolder requestHolder, resultHolder;
-    KRef request = Kotlin_ObjCExport_refFromObjC(object, requestHolder.slot());
-    KRef result = Kotlin_Set_getElement(set, request, resultHolder.slot());
+    ObjHolder holder(Kotlin_ObjCExport_refFromObjC(object));
+    KRef request = holder.obj();
+    // Reusing holder, to save a stack frame; the request is no longer live after function returns
+    *holder.slot() = Kotlin_Set_getElement(set, request);
+    KRef result = holder.obj();
 
     // Note: if result is nullptr, then it can't be a null element of the set, because request != nullptr;
     // so map nullptr to nullptr:
@@ -300,7 +299,7 @@ static inline id KSet_getElement(KRef set, id object) {
   return result;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(setHolder.ref());
 }
 
@@ -317,14 +316,14 @@ static inline id KSet_getElement(KRef set, id object) {
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  ObjHolder holder(refFromObjCOrNSNull(anObject));
+  return Kotlin_Set_contains(setHolder.ref(), holder.obj());
 }
 
 - (NSEnumerator*)objectEnumerator {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
+  ObjHolder holder(Kotlin_Set_iterator(setHolder.ref()));
+  return [KIteratorAsNSEnumerator createWithKIterator:holder.obj()];
 }
 @end
 
@@ -339,9 +338,8 @@ static inline id KSet_getElement(KRef set, id object) {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder holder;
-    KRef set = Kotlin_MutableSet_createWithCapacity(8, holder.slot());
-    self->setHolder.init(set);
+    ObjHolder holder(Kotlin_MutableSet_createWithCapacity(8));
+    self->setHolder.init(holder.obj());
   }
 
   return self;
@@ -351,9 +349,8 @@ static inline id KSet_getElement(KRef set, id object) {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder holder;
-    KRef set = Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
-    self->setHolder.init(set);
+    ObjHolder holder(Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems)));
+    self->setHolder.init(holder.obj());
   }
 
   return self;
@@ -390,7 +387,7 @@ static inline id KSet_getElement(KRef set, id object) {
   return self;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(setHolder.ref());
 }
 
@@ -407,26 +404,26 @@ static inline id KSet_getElement(KRef set, id object) {
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  ObjHolder holder(refFromObjCOrNSNull(anObject));
+  return Kotlin_Set_contains(setHolder.ref(), holder.obj());
 }
 
 - (NSEnumerator*)objectEnumerator {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
+  ObjHolder holder(Kotlin_Set_iterator(setHolder.ref()));
+  return [KIteratorAsNSEnumerator createWithKIterator:holder.obj()];
 }
 
 - (void)addObject:(id)object {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  Kotlin_MutableCollection_addObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
+  ObjHolder holder(refFromObjCOrNSNull(object));
+  Kotlin_MutableCollection_addObject(setHolder.ref(), holder.obj());
 }
 
 - (void)removeObject:(id)object {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  Kotlin_MutableCollection_removeObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
+  ObjHolder holder(refFromObjCOrNSNull(object));
+  Kotlin_MutableCollection_removeObject(setHolder.ref(), holder.obj());
 }
 @end
 
@@ -434,10 +431,11 @@ static inline id KSet_getElement(KRef set, id object) {
 @end
 
 static inline id KMap_get(KRef map, id aKey) {
-  ObjHolder keyHolder, valueHolder;
+  ObjHolder keyHolder(refFromObjCOrNSNull(aKey));
+  KRef kotlinKey = keyHolder.obj();
 
-  KRef kotlinKey = refFromObjCOrNSNull(aKey, keyHolder.slot());
-  KRef kotlinValue = Kotlin_Map_get(map, kotlinKey, valueHolder.slot());
+  ObjHolder valueHolder(Kotlin_Map_get(map, kotlinKey));
+  KRef kotlinValue = valueHolder.obj();
 
   if (kotlinValue == nullptr) {
     // Either null or not found.
@@ -462,7 +460,7 @@ static inline id KMap_get(KRef map, id aKey) {
   return result;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(mapHolder.ref());
 }
 
@@ -481,8 +479,8 @@ static inline id KMap_get(KRef map, id aKey) {
 
 - (NSEnumerator *)keyEnumerator {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
+  ObjHolder holder(Kotlin_Map_keyIterator(mapHolder.ref()));
+  return [KIteratorAsNSEnumerator createWithKIterator:holder.obj()];
 }
 
 @end
@@ -506,9 +504,8 @@ static inline id KMap_get(KRef map, id aKey) {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder holder;
-    KRef map = Kotlin_MutableMap_createWithCapacity(8, holder.slot());
-    self->mapHolder.init(map);
+    ObjHolder holder(Kotlin_MutableMap_createWithCapacity(8));
+    self->mapHolder.init(holder.obj());
   }
   return self;
 }
@@ -523,9 +520,8 @@ static inline id KMap_get(KRef map, id aKey) {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder holder;
-    KRef map = Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
-    self->mapHolder.init(map);
+    ObjHolder holder(Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems)));
+    self->mapHolder.init(holder.obj());
   }
   return self;
 }
@@ -538,7 +534,7 @@ static inline id KMap_get(KRef map, id aKey) {
   return self;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   RETURN_OBJ(mapHolder.ref());
 }
 
@@ -554,31 +550,29 @@ static inline id KMap_get(KRef map, id aKey) {
 
 - (NSEnumerator *)keyEnumerator {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
+  ObjHolder holder(Kotlin_Map_keyIterator(mapHolder.ref()));
+  return [KIteratorAsNSEnumerator createWithKIterator:holder.obj()];
 }
 
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
   id keyCopy = [aKey copyWithZone:nullptr]; // Correspond to the expected NSMutableDictionary behaviour.
   {
     kotlin::CalledFromNativeGuard guard;
-    ObjHolder keyHolder, valueHolder;
 
-    KRef kotlinKey = refFromObjCOrNSNull(keyCopy, keyHolder.slot());
+    ObjHolder keyHolder(refFromObjCOrNSNull(keyCopy));
 
-    KRef kotlinValue = refFromObjCOrNSNull(anObject, valueHolder.slot());
+    ObjHolder valueHolder(refFromObjCOrNSNull(anObject));
 
-    Kotlin_MutableMap_set(mapHolder.ref(), kotlinKey, kotlinValue);
+    Kotlin_MutableMap_set(mapHolder.ref(), keyHolder.obj(), valueHolder.obj());
   }
   objc_release(keyCopy);
 }
 
 - (void)removeObjectForKey:(id)aKey {
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  KRef kotlinKey = refFromObjCOrNSNull(aKey, holder.slot());
+  ObjHolder keyHolder(refFromObjCOrNSNull(aKey));
 
-  Kotlin_MutableMap_remove(mapHolder.ref(), kotlinKey);
+  Kotlin_MutableMap_remove(mapHolder.ref(), keyHolder.obj());
 }
 
 @end

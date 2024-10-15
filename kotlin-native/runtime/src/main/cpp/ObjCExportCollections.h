@@ -45,11 +45,11 @@ static inline OBJ_GETTER(refFromObjCOrNSNull, id obj) {
   }
 }
 
-static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj) {
+static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(), id obj) {
   // TODO: this probably can't be called in uninitialized state in the new MM.
   Kotlin_initRuntimeIfNeeded();
 
-  KRef kotlinObj = func(OBJ_RESULT);
+  KRef kotlinObj = func();
 
   SetAssociatedObject(kotlinObj, obj);
 

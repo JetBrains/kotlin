@@ -19,13 +19,13 @@ internal fun IrElement.needDebugInfo(context: Context) = context.shouldContainDe
 
 internal class VariableManager(val functionGenerationContext: FunctionGenerationContext) {
     internal interface Record {
-        fun load(resultSlot: LLVMValueRef?) : LLVMValueRef
+        fun load() : LLVMValueRef
         fun store(value: LLVMValueRef)
         fun address() : LLVMValueRef
     }
 
     inner class SlotRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isVar: Boolean, val isObjectType: Boolean) : Record {
-        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, isVar, resultSlot)
+        override fun load() : LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, isVar)
         override fun store(value: LLVMValueRef) {
             functionGenerationContext.storeAny(value, address, isObjectType, true)
         }
@@ -34,14 +34,14 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     inner class ParameterRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isObjectType: Boolean) : Record {
-        override fun load(resultSlot: LLVMValueRef?): LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, false, resultSlot)
+        override fun load(): LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, false)
         override fun store(value: LLVMValueRef) = functionGenerationContext.store(value, address)
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (isObjectType) "refslot" else "slot") + " for ${address}"
     }
 
     class ValueRecord(val value: LLVMValueRef, val name: Name) : Record {
-        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = value
+        override fun load() : LLVMValueRef = value
         override fun store(value: LLVMValueRef) = throw Error("writing to immutable: ${name}")
         override fun address() : LLVMValueRef = throw Error("no address for: ${name}")
         override fun toString() = "value of ${value} from ${name}"
@@ -138,8 +138,8 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         return variables[index].address()
     }
 
-    fun load(index: Int, resultSlot: LLVMValueRef?): LLVMValueRef {
-        return variables[index].load(resultSlot)
+    fun load(index: Int): LLVMValueRef {
+        return variables[index].load()
     }
 
     fun store(value: LLVMValueRef, index: Int) {

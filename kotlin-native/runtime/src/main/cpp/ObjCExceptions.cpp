@@ -14,8 +14,8 @@ extern "C" OBJ_GETTER(Kotlin_Throwable_getStackTrace, KRef throwable);
 static void writeStackTraceToBuffer(KRef throwable, char* buffer, unsigned long bufferSize) {
   if (bufferSize < 2) return;
 
-  ObjHolder stackTraceHolder;
-  ArrayHeader* stackTrace = Kotlin_Throwable_getStackTrace(throwable, stackTraceHolder.slot())->array();
+  ObjHolder stackTraceHolder(Kotlin_Throwable_getStackTrace(throwable));
+  ArrayHeader* stackTrace = stackTraceHolder.obj()->array();
 
   char* bufferPointer = buffer;
   unsigned long remainingBytes = bufferSize;

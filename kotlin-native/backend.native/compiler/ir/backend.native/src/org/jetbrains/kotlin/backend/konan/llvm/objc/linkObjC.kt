@@ -94,7 +94,7 @@ private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
 private fun PatchBuilder.addObjCPatches() {
     addProtocolImport("NSCopying")
 
-    addPrivateSelector("toKotlin:")
+    addPrivateSelector("toKotlin")
     addPrivateSelector("releaseAsAssociatedObject")
 
     addPrivateClass("KIteratorAsNSEnumerator", "iteratorHolder")

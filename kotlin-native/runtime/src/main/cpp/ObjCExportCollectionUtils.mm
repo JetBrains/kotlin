@@ -84,7 +84,8 @@ NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_removeAt, KRef thiz, KInt index) {
   NSMutableArray* mutableArray = (NSMutableArray*) GetAssociatedObject(thiz);
 
-  KRef res = refFromObjCOrNSNull([mutableArray objectAtIndex:index], OBJ_RESULT);
+  ObjHolder holder(refFromObjCOrNSNull([mutableArray objectAtIndex:index]));
+  KRef res = holder.obj();
   [mutableArray removeObjectAtIndex:index];
 
   return res;
@@ -94,7 +95,8 @@ NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_set, KRef thiz, KInt index, KRef element) {
   NSMutableArray* mutableArray = (NSMutableArray*) GetAssociatedObject(thiz);
 
-  KRef res = refFromObjCOrNSNull([mutableArray objectAtIndex:index], OBJ_RESULT);
+  ObjHolder holder(refFromObjCOrNSNull([mutableArray objectAtIndex:index]));
+  KRef res = holder.obj();
   [mutableArray replaceObjectAtIndex:index withObject:refToObjCOrNSNull(element)];
 
   return res;
@@ -107,8 +109,7 @@ extern "C" void Kotlin_NSEnumeratorAsKIterator_computeNext(KRef thiz) {
   if (next == nullptr) {
     Kotlin_NSEnumeratorAsKIterator_done(thiz);
   } else {
-    ObjHolder holder;
-    Kotlin_NSEnumeratorAsKIterator_setNext(thiz, refFromObjCOrNSNull(next, holder.slot()));
+    Kotlin_NSEnumeratorAsKIterator_setNext(thiz, refFromObjCOrNSNull(next));
   }
 }
 

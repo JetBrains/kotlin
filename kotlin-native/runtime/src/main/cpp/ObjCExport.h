@@ -90,7 +90,7 @@ inline static id AtomicCompareAndSwapAssociatedObject(ObjHeader* obj, id expecte
 }
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {
-  ObjHeader* result = AllocInstance(typeInfo, OBJ_RESULT);
+  ObjHeader* result = AllocInstance(typeInfo);
   SetAssociatedObject(result, associatedObject);
   return result;
 }

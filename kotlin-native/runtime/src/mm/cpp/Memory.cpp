@@ -407,7 +407,6 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
     AssertThreadState(ThreadState::kRunnable);
     mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
     auto* obj = *stableRef;
-    UpdateStackRef(OBJ_RESULT, obj);
     std::move(stableRef).dispose();
     return obj;
 }

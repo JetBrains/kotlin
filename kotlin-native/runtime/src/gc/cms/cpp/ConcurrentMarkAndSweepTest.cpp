@@ -48,8 +48,7 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionAtMarkTermination) {
 
                     auto& weakReferee = AllocateObject(threadData);
                     auto& weakRef = [&threadData, &weakReferee]() -> test_support::RegularWeakReferenceImpl& {
-                        ObjHolder holder;
-                        return test_support::InstallWeakReference(threadData, weakReferee.header(), holder.slot());
+                        return test_support::InstallWeakReference(threadData, weakReferee.header());
                     }();
                     EXPECT_NE(weakRef.get(), nullptr);
                     weaks[i] = &weakRef;

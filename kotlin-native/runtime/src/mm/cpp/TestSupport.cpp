@@ -66,10 +66,10 @@ std::ostream& kotlin::operator<<(std::ostream& stream, ThreadState state) {
 }
 
 test_support::RegularWeakReferenceImpl& test_support::InstallWeakReference(
-        mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location)
+        mm::ThreadData& threadData, ObjHeader* objHeader)
 {
-    mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
-    auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
+    ObjHeader* ref = mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo);
+    auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(ref);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
     weakReference->weakRef = static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(objHeader));
     weakReference->referred = objHeader;

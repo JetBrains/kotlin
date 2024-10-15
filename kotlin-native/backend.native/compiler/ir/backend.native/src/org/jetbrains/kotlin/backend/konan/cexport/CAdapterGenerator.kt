@@ -201,9 +201,6 @@ internal class ExportedElement(
                 .map {
                     typeTranslator.translateTypeBridge(it.type)
                 })
-        if (typeTranslator.isMappedToReference(returnedType) || typeTranslator.isMappedToString(returnedType)) {
-            params += "KObjHeader**"
-        }
         return listOf(typeTranslator.translateTypeBridge(returnedType)) + params
     }
 
@@ -240,12 +237,12 @@ internal class ExportedElement(
             val objectClassC = typeTranslator.translateType((declaration as ClassDescriptor).defaultType)
             """
             |
-            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
+            |extern "C" KObjHeader* ${cname}_instance();
             |static $objectClassC ${cname}_instance_impl(void) {
             |  Kotlin_initRuntimeIfNeeded();
             |  ScopedRunnableState stateGuard;
-            |  KObjHolder result_holder;
-            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
+            |  KObjHolder result_holder(${cname}_instance());
+            |  KObjHeader* result = result_holder.obj();
             |  return $objectClassC { .pinned = CreateStablePointer(result)};
             |}
             """.trimMargin()
@@ -259,12 +256,12 @@ internal class ExportedElement(
         val enumClassC = typeTranslator.translateType(enumClass.defaultType)
 
         return """
-              |extern "C" KObjHeader* $cname(KObjHeader**);
+              |extern "C" KObjHeader* $cname();
               |static $enumClassC ${cname}_impl(void) {
               |  Kotlin_initRuntimeIfNeeded();
               |  ScopedRunnableState stateGuard;
-              |  KObjHolder result_holder;
-              |  KObjHeader* result = $cname(result_holder.slot());
+              |  KObjHolder result_holder($cname());
+              |  KObjHeader* result = result_holder.obj();
               |  return $enumClassC { .pinned = CreateStablePointer(result)};
               |}
               """.trimMargin()
@@ -275,15 +272,15 @@ internal class ExportedElement(
         return when {
             typeTranslator.isMappedToString(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder;\n")
-                    "CreateStringFromCString($name, ${name}_holder.slot())"
+                    builder.append("  KObjHolder ${name}_holder(CreateStringFromCString($name));\n")
+                    "${name}_holder.obj()"
                 } else {
                     "CreateCStringFromString($name)"
                 }
             typeTranslator.isMappedToReference(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder2;\n")
-                    "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
+                    builder.append("  KObjHolder ${name}_holder2(DerefStablePointer(${name}.pinned));\n")
+                    "${name}_holder2.obj()"
                 } else {
                     "((${typeTranslator.translateType(signatureElement.type)}){ .pinned = CreateStablePointer(${name})})"
                 }
@@ -319,24 +316,26 @@ internal class ExportedElement(
         val isObjectReturned = !isConstructor && typeTranslator.isMappedToReference(cfunction[0].type)
         val isStringReturned = typeTranslator.isMappedToString(cfunction[0].type)
         builder.append("   try {\n")
-        if (isObjectReturned || isStringReturned) {
-            builder.append("  KObjHolder result_holder;\n")
-            args += "result_holder.slot()"
+        when {
+            isObjectReturned || isStringReturned -> {
+                builder.append("  KObjHolder result_holder($cname(${args.joinToString(", ")}));\n")
+                builder.append("  KObjHeader* result = result_holder.obj();\n")
+            }
+            isConstructor -> {
+                val clazz = scope.elements[0]
+                assert(clazz.kind == ElementKind.TYPE)
+                builder.append("  KObjHolder result_holder(AllocInstance((const KTypeInfo*)${clazz.cname}_type()));\n")
+                builder.append("  KObjHeader* result = result_holder.obj();\n")
+                args.add(0, "result")
+                builder.append("  $cname(${args.joinToString(", ")});\n")
+            }
+            !isVoidReturned -> {
+                builder.append("  auto result = $cname(${args.joinToString(", ")});\n")
+            }
+            else -> {
+                builder.append("  $cname(${args.joinToString(", ")});\n")
+            }
         }
-        if (isConstructor) {
-            builder.append("  KObjHolder result_holder;\n")
-            val clazz = scope.elements[0]
-            assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
-            args.add(0, "result")
-        }
-        if (!isVoidReturned && !isConstructor) {
-            builder.append("  auto result = ")
-        }
-        builder.append("  $cname(")
-        builder.append(args.joinToString(", "))
-        builder.append(");\n")
-
         if (!isVoidReturned) {
             val result = translateArgument(
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)

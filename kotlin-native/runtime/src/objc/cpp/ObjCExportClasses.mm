@@ -45,7 +45,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   bool permanent;
 }
 
--(KRef)toKotlin:(KRef*)OBJ_RESULT {
+-(KRef)toKotlin {
   if (permanent) {
     RETURN_OBJ(refHolder.refPermanent());
   } else {
@@ -93,8 +93,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
           format:@"%s must be allocated and initialized with a factory method",
           class_getName(object_getClass(self))];
   }
-  ObjHolder holder;
-  AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+  ObjHolder holder(AllocInstanceWithAssociatedObject(typeInfo, result));
   result->refHolder.initAndAddRef(holder.obj());
   RuntimeAssert(!holder.obj()->permanent(), "dynamically allocated object is permanent");
   result->permanent = false;
@@ -235,15 +234,13 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
 - (NSString *)description {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder h1;
-    ObjHolder h2;
-    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString([self toKotlin:h1.slot()], h2.slot()));
+    ObjHolder h1([self toKotlin]);
+    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString(h1.obj()));
 }
 
 - (NSUInteger)hash {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder holder;
-    return (NSUInteger)Kotlin_hashCode([self toKotlin:holder.slot()]);
+    return (NSUInteger)Kotlin_hashCode([self toKotlin]);
 }
 
 - (BOOL)isEqual:(id)other {
@@ -255,7 +252,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         return NO;
     }
 
-    // All `NSObject`'s, `__SwiftObject`'s and `NSProxy`-ies wrapping them should respond well to `toKotlin:`.
+    // All `NSObject`'s, `__SwiftObject`'s and `NSProxy`-ies wrapping them should respond well to `toKotlin`.
     // However, other system- or user- defined root classes may not.
     // But, at the very least, we expect them to conform to NSObject protocol. There's no test for that.
     if (![other respondsToSelector:Kotlin_ObjCExport_toKotlinSelector]) {
@@ -263,11 +260,9 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     }
 
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
-    ObjHolder lhsHolder;
-    ObjHolder rhsHolder;
-    KRef lhs = [self toKotlin:lhsHolder.slot()];
-    KRef rhs = [other toKotlin:rhsHolder.slot()];
-    return Kotlin_equals(lhs, rhs);
+    ObjHolder lhsHolder([self toKotlin]);
+    ObjHolder rhsHolder([other toKotlin]);
+    return Kotlin_equals(lhsHolder.obj(), rhsHolder.obj());
 }
 
 @end
@@ -276,7 +271,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 @end
 
 @implementation NSObject (NSObjectToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
@@ -289,7 +284,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 @end
 
 @implementation NSString (NSStringToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, self);
 }
 @end
@@ -313,7 +308,7 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 @end
 
 @implementation NSNumber (NSNumberToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   const char* type = self.objCType;
 
   {
@@ -343,8 +338,8 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 @end
 
 @implementation NSDecimalNumber (NSDecimalNumberToKotlin)
-// Overrides [NSNumber toKotlin:] implementation.
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+// Overrides [NSNumber toKotlin] implementation.
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 @end
@@ -354,7 +349,7 @@ static void injectToRuntimeImpl() {
   constexpr const char* errorMessage = "runtime injected twice; https://youtrack.jetbrains.com/issue/KT-42254 might be related";
 
   RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector == nullptr, errorMessage);
-  Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);
+  Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin);
 
   RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, errorMessage);
   Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);

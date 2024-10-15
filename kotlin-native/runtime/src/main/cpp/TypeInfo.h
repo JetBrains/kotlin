@@ -21,7 +21,7 @@ struct TypeInfo;
 
 struct AssociatedObjectTableRecord {
   const TypeInfo* key;
-  ObjHeader* (*getAssociatedObjectInstance)(ObjHeader**);
+  ObjHeader* (*getAssociatedObjectInstance)();
 };
 
 // Type for runtime representation of Konan object.

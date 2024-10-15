@@ -22,7 +22,7 @@ extern "C" OBJ_GETTER0(Konan_create_testSuite);
  */
 + (id)defaultTestSuite {
     kotlin::CalledFromNativeGuard guard;
-    ObjHolder holder;
-    return Kotlin_ObjCExport_refToObjC(Konan_create_testSuite(holder.slot()));
+    ObjHolder holder(Konan_create_testSuite());
+    return Kotlin_ObjCExport_refToObjC(holder.obj());
 }
 @end

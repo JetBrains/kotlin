@@ -593,7 +593,7 @@ OBJ_GETTER(Kotlin_text_regex_getDecompositionInternal, KInt ch) {
   if (decomposition == nullptr) {
     return nullptr;
   }
-  ArrayHeader* result = AllocArrayInstance(theIntArrayTypeInfo, decomposition->length, OBJ_RESULT)->array();
+  ArrayHeader* result = AllocArrayInstance(theIntArrayTypeInfo, decomposition->length)->array();
   KInt* resultRaw = IntArrayAddressOfElementAt(result, 0);
   for (int i = 0; i < decomposition->length; i++) {
     *resultRaw++ = decomposition->array[i];

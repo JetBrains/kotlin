@@ -58,8 +58,8 @@ static bool isExceptionOfType(KRef exception, const TypeInfo** types) {
 }
 
 extern "C" id Kotlin_ObjCExport_ExceptionAsNSError(KRef exception, const TypeInfo** types) {
-  ObjHolder errorHolder;
-  KRef error = Kotlin_ObjCExport_getWrappedError(exception, errorHolder.slot());
+  ObjHolder errorHolder(Kotlin_ObjCExport_getWrappedError(exception));
+  KRef error = errorHolder.obj();
   if (error != nullptr) {
     // Thrown originally by Swift/Objective-C.
     // Not actually a Kotlin exception, so don't check if it matches [types].
@@ -79,8 +79,8 @@ extern "C" id Kotlin_ObjCExport_ExceptionAsNSError(KRef exception, const TypeInf
 }
 
 extern "C" id Kotlin_ObjCExport_WrapExceptionToNSError(KRef exception) {
-  ObjHolder messageHolder;
-  KRef message = Kotlin_Throwable_getMessage(exception, messageHolder.slot());
+  ObjHolder messageHolder(Kotlin_Throwable_getMessage(exception));
+  KRef message = messageHolder.obj();
   NSString* description = Kotlin_Interop_CreateNSStringFromKString(message);
 
   id exceptionObjCRef = Kotlin_ObjCExport_refToLocalObjC(exception);
@@ -132,9 +132,10 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
     RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, wrappedKotlinException);
   }
 
-  ObjHolder messageHolder, errorHolder;
-  KRef message = Kotlin_Interop_CreateKStringFromNSString(description, messageHolder.slot());
-  KRef kotlinError = Kotlin_ObjCExport_refFromObjC(error, errorHolder.slot()); // TODO: a simple opaque wrapper would be enough.
+  ObjHolder messageHolder(Kotlin_Interop_CreateKStringFromNSString(description));
+  KRef message = messageHolder.obj();
+  ObjHolder errorHolder(Kotlin_ObjCExport_refFromObjC(error));
+  KRef kotlinError = errorHolder.obj();
 
   RETURN_RESULT_OF(Kotlin_ObjCExport_NSErrorAsExceptionImpl, message, kotlinError);
 }

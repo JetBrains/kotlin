@@ -294,13 +294,13 @@ fun refArr_atomicSet() = refArr.atomicSet(0, null)
 
 // CHECK-LABEL: define ptr @"kfun:#refArr_getAndSet(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
-// CHECK: call ptr @GetAndSetVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null, ptr noundef %{{[0-9]+}})
+// CHECK: call ptr @GetAndSetVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_getAndSet() = refArr.getAndSet(0, null)
 
 // CHECK-LABEL: define ptr @"kfun:#refArr_compareAndExchange(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
-// CHECK: call ptr @CompareAndSwapVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null, ptr noundef null, ptr noundef %{{[0-9]+}})
+// CHECK: call ptr @CompareAndSwapVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null, ptr noundef null)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_compareAndExchange() = refArr.compareAndExchange(0, null, null)
 

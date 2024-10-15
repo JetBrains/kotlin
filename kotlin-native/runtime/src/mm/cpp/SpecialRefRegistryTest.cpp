@@ -76,8 +76,7 @@ public:
     }
 
     ObjHeader* tryRef(mm::WeakRef& weakRef) noexcept {
-        ObjHeader* result;
-        return weakRef.tryRef(&result);
+        return weakRef.tryRef();
     }
 };
 

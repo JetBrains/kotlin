@@ -100,8 +100,8 @@ public:
 
 private:
     bool tryRetainIgnoreState() noexcept {
-        ObjHolder holder;
-        if (auto* obj = node_->tryRef(holder.slot())) {
+        ObjHolder holder(node_->tryRef());
+        if (auto* obj = holder.obj()) {
             node_->retainRef();
             return true;
         }

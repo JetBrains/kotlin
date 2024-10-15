@@ -272,8 +272,8 @@ internal class CAdapterApiExporter(
     |
     |extern "C" {
     |void UpdateStackRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
-    |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
-    |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
+    |KObjHeader* AllocInstance(const KTypeInfo*) RUNTIME_NOTHROW;
+    |KObjHeader* DerefStablePointer(void*) RUNTIME_NOTHROW;
     |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
     |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
     |${prefix}_KBoolean IsInstanceInternal(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
@@ -286,7 +286,7 @@ internal class CAdapterApiExporter(
     |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
     |void HandleCurrentExceptionWhenLeavingKotlinCode();
     |
-    |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
+    |KObjHeader* CreateStringFromCString(const char*);
     |char* CreateCStringFromString(const KObjHeader*);
     |void DisposeCString(char* cstring);
     |}  // extern "C"
@@ -339,23 +339,22 @@ internal class CAdapterApiExporter(
     |static ${prefix}_KBoolean IsInstanceImpl(${prefix}_KNativePtr ref, const ${prefix}_KType* type) {
     |  Kotlin_initRuntimeIfNeeded();
     |  ScopedRunnableState stateGuard;
-    |  KObjHolder holder;
-    |  return IsInstanceInternal(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
+    |  return IsInstanceInternal(DerefStablePointer(ref), (const KTypeInfo*)type);
     |}
     """.trimMargin())
         predefinedTypes.forEach {
             assert(!it.isNothing())
             val nullableIt = it.makeNullable()
             val needArgument = !it.isUnit()
-            val (parameter, maybeComma) = if (needArgument)
-                ("${typeTranslator.translateType(it)} value" to ",") else ("" to "")
-            val argument = if (needArgument) "value, " else ""
-            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
+            val parameter = if (needArgument)
+                "${typeTranslator.translateType(it)} value" else ""
+            val argument = if (needArgument) "value" else ""
+            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter);")
             output("static ${typeTranslator.translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
             output("Kotlin_initRuntimeIfNeeded();", 1)
             output("ScopedRunnableState stateGuard;", 1)
-            output("KObjHolder result_holder;", 1)
-            output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
+            output("KObjHolder result_holder(Kotlin_box${it.shortNameForPredefinedType}($argument));", 1)
+            output("KObjHeader* result = result_holder.obj();", 1)
             output("return ${typeTranslator.translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
             output("}")
 
@@ -364,8 +363,8 @@ internal class CAdapterApiExporter(
                 output("static ${typeTranslator.translateType(it)} ${it.createGetNonNullValueOfPredefinedType}Impl(${typeTranslator.translateType(nullableIt)} value) {")
                 output("Kotlin_initRuntimeIfNeeded();", 1)
                 output("ScopedRunnableState stateGuard;", 1)
-                output("KObjHolder value_holder;", 1)
-                output("return Kotlin_unbox${it.shortNameForPredefinedType}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
+                output("KObjHolder value_holder(DerefStablePointer(value.pinned));", 1)
+                output("return Kotlin_unbox${it.shortNameForPredefinedType}(value_holder.obj());", 1)
                 output("}")
             }
         }

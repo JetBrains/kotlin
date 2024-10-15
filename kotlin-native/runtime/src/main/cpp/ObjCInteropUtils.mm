@@ -62,7 +62,8 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
 
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+  ObjHolder holder(CreateUninitializedUtf16String(length));
+  auto result = holder.obj();
   CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
   result->SetAssociatedObject((void*)immutableCopyOrSameStr);
   RETURN_OBJ(result);

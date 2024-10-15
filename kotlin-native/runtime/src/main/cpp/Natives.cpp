@@ -56,8 +56,8 @@ NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
         stackTrace = kotlin::StackTrace<>::current(2);
     }
 
-    ObjHolder resultHolder;
-    ObjHeader* result = AllocArrayInstance(theNativePtrArrayTypeInfo, stackTrace.size(), resultHolder.slot());
+    ObjHolder resultHolder(AllocArrayInstance(theNativePtrArrayTypeInfo, stackTrace.size()));
+    ObjHeader* result = resultHolder.obj();
     for (size_t index = 0; index < stackTrace.size(); ++index) {
         Kotlin_NativePtrArray_set(result, index, stackTrace[index]);
     }
@@ -68,12 +68,11 @@ OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
     const KNativePtr* array = PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0);
     size_t size = stackTrace->array()->count_;
     auto stackTraceStrings = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(kotlin::GetStackTraceStrings, kotlin::std_support::span<void* const>(array, size));
-    ObjHolder resultHolder;
-    ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, stackTraceStrings.size(), resultHolder.slot());
+    ObjHolder resultHolder(AllocArrayInstance(theArrayTypeInfo, stackTraceStrings.size()));
+    ObjHeader* strings = resultHolder.obj();
 
     for (size_t index = 0; index < stackTraceStrings.size(); ++index) {
-        ObjHolder holder;
-        CreateStringFromCString(stackTraceStrings[index].c_str(), holder.slot());
+        ObjHolder holder(CreateStringFromCString(stackTraceStrings[index].c_str()));
         UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
     }
 

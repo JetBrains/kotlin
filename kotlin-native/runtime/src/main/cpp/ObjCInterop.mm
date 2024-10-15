@@ -78,8 +78,8 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
   auto* typeInfo = classData->typeInfo;
 
   kotlin::CalledFromNativeGuard guard;
-  ObjHolder holder;
-  auto kotlinObj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+  ObjHolder holder(AllocInstanceWithAssociatedObject(typeInfo, result));
+  auto kotlinObj = holder.obj();
 
   getBackRef(result, classData)->initAndAddRef(kotlinObj);
 

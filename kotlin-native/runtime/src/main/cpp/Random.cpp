@@ -35,8 +35,7 @@ void throwReadingRandomBytesFailed(const char* format, ...) {
     span = kotlin::VFormatToSpan(span, format, args);
     va_end(args);
 
-    ObjHolder holder;
-    CreateStringFromUtf8(buffer.data(), buffer.size() - span.size(), holder.slot());
+    ObjHolder holder(CreateStringFromUtf8(buffer.data(), buffer.size() - span.size()));
     ThrowIllegalStateExceptionWithMessage(holder.obj());
 }
 #endif

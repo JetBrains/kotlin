@@ -481,7 +481,7 @@ OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
   if (newSize < 0) {
     ThrowIllegalArgumentException();
   }
-  ArrayHeader* result = AllocArrayInstance(array->type_info(), newSize, OBJ_RESULT)->array();
+  ArrayHeader* result = AllocArrayInstance(array->type_info(), newSize)->array();
   KInt toCopy = array->count_ < static_cast<uint32_t>(newSize) ?  array->count_ : newSize;
   memcpy(
       PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
@@ -720,7 +720,7 @@ OBJ_GETTER(Kotlin_ImmutableBlob_toByteArray, KConstRef thiz, KInt startIndex, KI
     ThrowArrayIndexOutOfBoundsException();
   }
   KInt count = endIndex - startIndex;
-  ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, count, OBJ_RESULT)->array();
+  ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, count)->array();
   memcpy(PrimitiveArrayAddressOfElementAt<KByte>(result, 0),
          PrimitiveArrayAddressOfElementAt<KByte>(array, startIndex),
          count);

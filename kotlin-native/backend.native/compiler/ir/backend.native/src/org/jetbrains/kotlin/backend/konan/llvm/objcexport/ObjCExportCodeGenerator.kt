@@ -575,7 +575,7 @@ private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignat
     )
 
 private val ObjCExportCodeGeneratorBase.objCToKotlinFunctionType: LLVMTypeRef
-    get() = functionType(codegen.kObjHeaderPtr, false, llvm.int8PtrType, codegen.kObjHeaderPtrPtr)
+    get() = functionType(codegen.kObjHeaderPtr, false, llvm.int8PtrType)
 
 private fun ObjCExportCodeGenerator.emitBoxConverters() {
     val irBuiltIns = context.irBuiltIns

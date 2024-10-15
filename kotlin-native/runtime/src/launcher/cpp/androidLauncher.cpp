@@ -80,8 +80,7 @@ void launchMain() {
   Kotlin_mm_switchThreadStateRunnable();
 
   {
-    ObjHolder args;
-    AllocArrayInstance(theArrayTypeInfo, 0, args.slot());
+    ObjHolder args(AllocArrayInstance(theArrayTypeInfo, 0));
     Konan_start(args.obj());
   }
 

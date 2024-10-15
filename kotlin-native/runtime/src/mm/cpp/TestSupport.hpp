@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& stream, ThreadState state);
 
 namespace test_support {
 
-RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location);
+RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader);
 
 } // namespace test_support
 

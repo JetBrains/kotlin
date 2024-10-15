@@ -130,21 +130,21 @@ fun checkInlineClasses() {
     id(CharWrapper('c'))
 }
 
-// CHECK-LABEL: define ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr %0, ptr %1)
+// CHECK-LABEL: define ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr %0)
 fun nullableId(arg: Byte?): Byte? {
     return arg
 }
 
-// CHECK-LABEL: define ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr %0, ptr %1)
+// CHECK-LABEL: define ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr %0)
 fun nullableId(arg: CharWrapper?): CharWrapper? {
     return arg
 }
 
 // Check that we don't pass primitive-specific attributes to their boxes
 fun checkBoxes() {
-    // CHECK: call ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK: call ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr {{.*}})
     nullableId(1.toByte())
-    // CHECK: call ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK: call ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr {{.*}})
     nullableId(CharWrapper('a'))
 }
 

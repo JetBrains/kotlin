@@ -215,7 +215,7 @@ func objectsHashProperly() throws {
     try assertFalse(one == two)
     try assertFalse(ein == two)
 
-    // NSNumber isn't a `KotlinObject`, but conforms to our `toKotlin:` informal protocol on `NSObject`
+    // NSNumber isn't a `KotlinObject`, but conforms to our `toKotlin` informal protocol on `NSObject`
     try assertTrue(ein == NSNumber(value: CInt(1)))
     try assertFalse(ein == NSNumber(value: CInt(2)))
 
@@ -226,7 +226,7 @@ func objectsHashProperly() throws {
 
     // On apple platforms, swift classes with no objc inheritance implicitly inherit
     // `Swift._SwiftObject` – a separate from `NSObject` root class that we expect to
-    // also conform to our informal `toKotlin:` protocol
+    // also conform to our informal `toKotlin` protocol
     class MyRoot {}
     try assertFalse(ein.isEqual(MyRoot()))
 

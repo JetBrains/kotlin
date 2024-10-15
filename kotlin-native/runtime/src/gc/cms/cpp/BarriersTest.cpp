@@ -37,8 +37,7 @@ struct Payload {
 test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
 
 test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
-    ObjHolder holder;
-    mm::AllocateObject(&threadData, typeHolder.typeInfo(), holder.slot());
+    ObjHolder holder(mm::AllocateObject(&threadData, typeHolder.typeInfo()));
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 

@@ -147,17 +147,16 @@ extern "C" {
 #endif
 
 #define OBJ_RESULT __result__
-#define OBJ_GETTER0(name) ObjHeader* name(ObjHeader** OBJ_RESULT)
-#define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__, ObjHeader** OBJ_RESULT)
+#define OBJ_GETTER0(name) ObjHeader* name()
+#define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__)
 #define RETURN_OBJ(value) { ObjHeader* __obj = value; \
-    UpdateReturnRef(OBJ_RESULT, __obj);               \
     return __obj; }
 #define RETURN_RESULT_OF0(name) {       \
-    ObjHeader* __obj = name(OBJ_RESULT);  \
+    ObjHeader* __obj = name();  \
     return __obj;                         \
   }
 #define RETURN_RESULT_OF(name, ...) {                   \
-    ObjHeader* __result = name(__VA_ARGS__, OBJ_RESULT);  \
+    ObjHeader* __result = name(__VA_ARGS__);  \
     return __result;                                      \
   }
 

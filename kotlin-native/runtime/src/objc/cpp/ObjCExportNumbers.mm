@@ -147,7 +147,7 @@ private fun genBoolean(): String = """
   return "c";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxBoolean, value_);
 }
 
@@ -199,7 +199,7 @@ private fun genInteger(
   return "$encoding";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_box$name, value_);
 }
 
@@ -261,7 +261,7 @@ ${if (cType != "double") """
   return "$encoding";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_box$name, value_);
 }
 
@@ -307,7 +307,7 @@ ${if (cType != "double") """
   return "c";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxBoolean, value_);
 }
 
@@ -351,7 +351,7 @@ ${if (cType != "double") """
   return "c";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxByte, value_);
 }
 
@@ -395,7 +395,7 @@ ${if (cType != "double") """
   return "s";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxShort, value_);
 }
 
@@ -439,7 +439,7 @@ ${if (cType != "double") """
   return "i";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxInt, value_);
 }
 
@@ -483,7 +483,7 @@ ${if (cType != "double") """
   return "q";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxLong, value_);
 }
 
@@ -527,7 +527,7 @@ ${if (cType != "double") """
   return "C";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxUByte, value_);
 }
 
@@ -571,7 +571,7 @@ ${if (cType != "double") """
   return "S";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxUShort, value_);
 }
 
@@ -615,7 +615,7 @@ ${if (cType != "double") """
   return "I";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxUInt, value_);
 }
 
@@ -659,7 +659,7 @@ ${if (cType != "double") """
   return "Q";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxULong, value_);
 }
 
@@ -710,7 +710,7 @@ ${if (cType != "double") """
   return "f";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxFloat, value_);
 }
 
@@ -754,7 +754,7 @@ ${if (cType != "double") """
   return "d";
 }
 
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+-(ObjHeader*)toKotlin {
   RETURN_RESULT_OF(Kotlin_boxDouble, value_);
 }
 

@@ -40,9 +40,8 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
     [NSException raise:NSGenericException
         format:@"Calling Kotlin suspend functions from Swift/Objective-C is currently supported only on main thread"];
   }
-  ObjHolder slot;
-  KRef completionHolder = AllocInstanceWithAssociatedObject(theForeignObjCObjectTypeInfo,
-      objc_retainBlock(completion), slot.slot());
+  ObjHolder slot(AllocInstanceWithAssociatedObject(theForeignObjCObjectTypeInfo, objc_retainBlock(completion)));
+  KRef completionHolder = slot.obj();
 
   RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgumentImpl, completionHolder, exceptionTypes);
 }
@@ -69,9 +68,9 @@ extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, KRef res
           result, error];
     }
 
-    ObjHolder holder;
+    ObjHolder holder(Kotlin_ObjCExport_NSErrorAsException(error));
 
-    KRef exception = Kotlin_ObjCExport_NSErrorAsException(error, holder.slot());
+    KRef exception = holder.obj();
     Kotlin_ObjCExport_resumeContinuationFailure(continuation, exception);
   } else {
     Kotlin_ObjCExport_resumeContinuationSuccess(continuation, result);
