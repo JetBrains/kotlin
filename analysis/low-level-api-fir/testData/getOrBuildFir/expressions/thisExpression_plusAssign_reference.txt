@@ -1,9 +1,9 @@
 KT element: KtNameReferenceExpression
-FIR element: null
-FIR source kind: null
+FIR element: FirThisReceiverExpressionImpl
+FIR source kind: DesugaredPlusAssign
 
 FIR element rendered:
-null
+this@R|special/anonymous|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] thisExpression_plusAssign_reference.kt

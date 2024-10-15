@@ -1,2 +1,2 @@
 expression: this
-type: null
+type: A
