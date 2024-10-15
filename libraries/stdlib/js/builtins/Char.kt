@@ -17,7 +17,6 @@ public actual class Char
 @kotlin.internal.LowPriorityInOverloadResolution
 internal constructor(private val value: Int) : Comparable<Char> {
     @SinceKotlin("1.5")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public constructor(code: UShort) : this(code.toInt())
 
     /**

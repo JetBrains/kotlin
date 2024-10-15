@@ -22,7 +22,6 @@ object Elements : TemplateGroupBase() {
             specialFor(RangesOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
                     sinceAtLeast("1.5")
-                    wasExperimental("ExperimentalUnsignedTypes")
                     sourceFile(SourceFile.URanges)
                 }
             }
@@ -30,9 +29,6 @@ object Elements : TemplateGroupBase() {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
                     sourceFile(SourceFile.URanges)
                 }
-            }
-            if (since?.let { it <= "1.4" } == true) {
-                wasExperimentalAnnotations.clear()
             }
         }
     }
@@ -1010,7 +1006,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inlineOnly()
         returns("T?")
         doc {
@@ -1072,7 +1067,6 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         returns("T?")
         doc {
             """

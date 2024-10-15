@@ -133,7 +133,6 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
@@ -164,7 +163,6 @@ internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {

@@ -153,7 +153,6 @@ public actual fun Int.takeLowestOneBit(): Int =
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateLeft(bitCount: Int): Int =
     shl(bitCount) or ushr(Int.SIZE_BITS - bitCount)
 
@@ -169,7 +168,6 @@ public actual fun Int.rotateLeft(bitCount: Int): Int =
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateRight(bitCount: Int): Int =
     shl(Int.SIZE_BITS - bitCount) or ushr(bitCount)
 
@@ -234,7 +232,6 @@ public actual fun Long.takeLowestOneBit(): Long =
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.rotateLeft(bitCount: Int): Long {
     if ((bitCount and 31) != 0) {
         val low = this.low
@@ -259,6 +256,5 @@ public actual fun Long.rotateLeft(bitCount: Int): Long {
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.rotateRight(bitCount: Int): Long = rotateLeft(-bitCount)

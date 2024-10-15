@@ -16,7 +16,6 @@ import kotlin.internal.*
  * A range of values of type `ULong`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(start, endInclusive, 1), ClosedRange<ULong>, OpenEndRange<ULong> {
     override val start: ULong get() = first
     override val endInclusive: ULong get() = last
@@ -57,7 +56,6 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
  * A progression of values of type `ULong`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public open class ULongProgression
 internal constructor(
     start: ULong,

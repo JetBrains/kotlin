@@ -276,7 +276,6 @@ object Aggregates : TemplateGroupBase() {
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
             if (selectorType.startsWith("U")) {
                 since("1.5")
-                wasExperimental("ExperimentalUnsignedTypes")
             }
 
             doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }

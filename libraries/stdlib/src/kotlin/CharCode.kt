@@ -16,7 +16,6 @@ package kotlin
  * @sample samples.text.Chars.charFromCode
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
@@ -31,7 +30,6 @@ public inline fun Char(code: Int): Char {
  * @sample samples.text.Chars.charFromCode
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char(code: UShort): Char
 
 /**
@@ -42,7 +40,6 @@ public expect fun Char(code: UShort): Char
  * @sample samples.text.Chars.code
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("DEPRECATION")
 @kotlin.internal.IntrinsicConstEvaluation

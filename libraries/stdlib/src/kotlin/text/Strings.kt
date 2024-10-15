@@ -28,7 +28,6 @@ public expect fun String.toUpperCase(): String
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.uppercase(): String
 
 /**
@@ -47,7 +46,6 @@ public expect fun String.toLowerCase(): String
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.lowercase(): String
 
 /**
@@ -810,7 +808,6 @@ public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): 
  * @sample samples.text.Strings.replaceFirstChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @JvmName("replaceFirstCharWithChar")
@@ -828,7 +825,6 @@ public inline fun String.replaceFirstChar(transform: (Char) -> Char): String {
  * @sample samples.text.Strings.replaceFirstChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @JvmName("replaceFirstCharWithCharSequence")
@@ -1474,7 +1470,6 @@ public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String>
  * @sample samples.text.Strings.splitToSequence
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Sequence<String> = regex.splitToSequence(this, limit)
 

@@ -52,7 +52,6 @@ object Numeric : TemplateGroupBase() {
                 specialFor(ArraysOfObjects) { sourceFile(SourceFile.UArrays) }
 
                 since("1.5")
-                wasExperimental("ExperimentalUnsignedTypes")
             }
 
             body {

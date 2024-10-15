@@ -181,7 +181,6 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
  * @sample samples.collections.Builders.Lists.buildListSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
@@ -210,7 +209,6 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  * @sample samples.collections.Builders.Lists.buildListSampleWithCapacity
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {

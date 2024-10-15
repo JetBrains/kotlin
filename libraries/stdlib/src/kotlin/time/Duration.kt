@@ -30,7 +30,6 @@ import kotlin.math.*
  * or the properties [inWholeHours], [inWholeMinutes], [inWholeSeconds], [inWholeNanoseconds], and so on.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 @JvmInline
 public value class Duration internal constructor(private val rawValue: Long) : Comparable<Duration> {
 
@@ -845,7 +844,6 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
 /** Returns a [Duration] equal to this [Int] number of the specified [unit]. */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 public fun Int.toDuration(unit: DurationUnit): Duration {
     return if (unit <= DurationUnit.SECONDS) {
         durationOfNanos(convertDurationUnitOverflow(this.toLong(), unit, DurationUnit.NANOSECONDS))
@@ -855,7 +853,6 @@ public fun Int.toDuration(unit: DurationUnit): Duration {
 
 /** Returns a [Duration] equal to this [Long] number of the specified [unit]. */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 public fun Long.toDuration(unit: DurationUnit): Duration {
     val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
     if (this in -maxNsInUnit..maxNsInUnit) {
@@ -874,7 +871,6 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
  * @throws IllegalArgumentException if this `Double` value is `NaN`.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 public fun Double.toDuration(unit: DurationUnit): Duration {
     val valueInNs = convertDurationUnit(this, unit, DurationUnit.NANOSECONDS)
     require(!valueInNs.isNaN()) { "Duration value cannot be NaN." }
@@ -890,7 +886,6 @@ public fun Double.toDuration(unit: DurationUnit): Duration {
 
 /** Returns a duration whose value is the specified [duration] value multiplied by this number. */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Int.times(duration: Duration): Duration = duration * this
 
@@ -902,7 +897,6 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
  * @throws IllegalArgumentException if the operation results in a `NaN` value.
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 

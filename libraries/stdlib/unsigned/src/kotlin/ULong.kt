@@ -8,11 +8,9 @@
 
 package kotlin
 
-import kotlin.experimental.*
 import kotlin.jvm.*
 
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
 public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
 
@@ -389,7 +387,6 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
  * whereas the most significant 56 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toULong(): ULong = ULong(this.toLong())
 /**
@@ -401,7 +398,6 @@ public inline fun Byte.toULong(): ULong = ULong(this.toLong())
  * whereas the most significant 48 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toULong(): ULong = ULong(this.toLong())
 /**
@@ -413,7 +409,6 @@ public inline fun Short.toULong(): ULong = ULong(this.toLong())
  * whereas the most significant 32 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toULong(): ULong = ULong(this.toLong())
 /**
@@ -424,7 +419,6 @@ public inline fun Int.toULong(): ULong = ULong(this.toLong())
  * The resulting `ULong` value has the same binary representation as this `Long` value.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toULong(): ULong = ULong(this)
 
@@ -435,7 +429,6 @@ public inline fun Long.toULong(): ULong = ULong(this)
  * Returns zero if this `Float` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Float.toULong(): ULong = floatToULong(this)
 /**
@@ -445,6 +438,5 @@ public inline fun Float.toULong(): ULong = floatToULong(this)
  * Returns zero if this `Double` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Double.toULong(): ULong = doubleToULong(this)

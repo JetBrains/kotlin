@@ -9,7 +9,6 @@ package kotlin.math
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun min(a: UInt, b: UInt): UInt {
     return minOf(a, b)
@@ -19,7 +18,6 @@ public inline fun min(a: UInt, b: UInt): UInt {
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun min(a: ULong, b: ULong): ULong {
     return minOf(a, b)
@@ -29,7 +27,6 @@ public inline fun min(a: ULong, b: ULong): ULong {
  * Returns the greater of two values.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun max(a: UInt, b: UInt): UInt {
     return maxOf(a, b)
@@ -39,7 +36,6 @@ public inline fun max(a: UInt, b: UInt): UInt {
  * Returns the greater of two values.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun max(a: ULong, b: ULong): ULong {
     return maxOf(a, b)
