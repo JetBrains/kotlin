@@ -1859,7 +1859,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     arrayLiteral.replaceConeTypeOrNull(
                         StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                     )
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
+                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall( // todo nahuya i pochemu?
                         arrayLiteral,
                         resolutionContext,
                         data,
