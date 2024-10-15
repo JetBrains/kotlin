@@ -14893,6 +14893,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("unclearTypeMismatchWithCapturedTypes.kt")
+      public void testUnclearTypeMismatchWithCapturedTypes() {
+        runTest("compiler/testData/diagnostics/tests/generics/unclearTypeMismatchWithCapturedTypes.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedClassifierInWhere.kt")
       public void testUnresolvedClassifierInWhere() {
         runTest("compiler/testData/diagnostics/tests/generics/unresolvedClassifierInWhere.kt");

@@ -1,0 +1,12 @@
+/unclearTypeMismatchWithCapturedTypes.kt:14:22: error: type mismatch: inferred type is Number but Number was expected
+    numberBoxHandler(inNumberBox, number)
+                     ^^^^^^^^^^^
+/unclearTypeMismatchWithCapturedTypes.kt:14:35: error: type mismatch: inferred type is Number but Number was expected
+    numberBoxHandler(inNumberBox, number)
+                                  ^^^^^^
+/unclearTypeMismatchWithCapturedTypes.kt:15:25: error: type mismatch: inferred type is Number but Number was expected
+    outNumberBoxHandler(inNumberBox, number)
+                        ^^^^^^^^^^^
+/unclearTypeMismatchWithCapturedTypes.kt:15:38: error: type mismatch: inferred type is Number but Number was expected
+    outNumberBoxHandler(inNumberBox, number)
+                                     ^^^^^^
