@@ -125,7 +125,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
     ) {
         for (annotation in superTypeRef.annotations) {
             if (annotation.useSiteTarget != null) {
-                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, context)
+                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR, context)
             }
         }
     }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,11 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID
@@ -36,17 +33,6 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         }
 
         val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID, context.session)?.source ?: return
-
-        val languageVersionSettings = context.session.languageVersionSettings
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)) {
-            reporter.reportOn(
-                annotationSource,
-                FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.JvmRecordSupport to languageVersionSettings,
-                context
-            )
-            return
-        }
 
         if (declaration.isLocal) {
             reporter.reportOn(annotationSource, FirJvmErrors.LOCAL_JVM_RECORD, context)

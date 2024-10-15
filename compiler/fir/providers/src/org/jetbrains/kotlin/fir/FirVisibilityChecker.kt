@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
@@ -410,10 +409,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         if (isSyntheticProperty) {
-            return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass))
-                containingUseSiteClass.classId.packageFqName == ownerLookupTag.classId.packageFqName
-            else
-                true
+            return containingUseSiteClass.classId.packageFqName == ownerLookupTag.classId.packageFqName
         }
 
         return false
@@ -467,10 +463,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     )
                 ) return true
             } else if (containingDeclaration is FirFile) {
-                if (isSyntheticProperty &&
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass) &&
-                    containingDeclaration.packageFqName == ownerLookupTag.classId.packageFqName
-                ) {
+                if (isSyntheticProperty && containingDeclaration.packageFqName == ownerLookupTag.classId.packageFqName) {
                     return true
                 }
             }

@@ -119,7 +119,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             if (!symbol.isReified) {
                 reporter.reportOn(
                     source,
-                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context) else FirErrors.TYPE_PARAMETER_AS_REIFIED,
+                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR else FirErrors.TYPE_PARAMETER_AS_REIFIED,
                     symbol,
                     context
                 )

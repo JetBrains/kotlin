@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -18,12 +17,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineValueClasses)
-            && declaration.isInline
-            && declaration.hasModifier(KtTokens.INLINE_KEYWORD)
-        ) {
+        if (declaration.isInline && declaration.hasModifier(KtTokens.INLINE_KEYWORD)) {
             reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED, context)
         }
     }
-
 }

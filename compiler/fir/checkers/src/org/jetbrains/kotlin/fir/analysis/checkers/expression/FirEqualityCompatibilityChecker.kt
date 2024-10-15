@@ -172,13 +172,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         forceWarning: Boolean,
         context: CheckerContext,
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
-        // Preserving the behavior on the old test data
-        // simplifies detecting fir-differences,
-        // which is crucial for this checker
-        val isOldTestData = !context.languageVersionSettings.supportsFeature(
-            LanguageFeature.ProhibitComparisonOfIncompatibleEnums,
-        )
-
         // In this corner case K1 reports nothing
         val bothNullableEnums = l.isNullableEnum && r.isNullableEnum
         // When comparing enums, for type parameters K1
@@ -192,7 +185,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val shouldRelaxDiagnostic = (bothNullableEnums || areIntersectionsInvolved) && !shouldProperlyReportError
 
         return when {
-            forceWarning || isOldTestData || shouldRelaxDiagnostic -> FirErrors.INCOMPATIBLE_ENUM_COMPARISON
+            forceWarning || shouldRelaxDiagnostic -> FirErrors.INCOMPATIBLE_ENUM_COMPARISON
             else -> FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
         }
     }

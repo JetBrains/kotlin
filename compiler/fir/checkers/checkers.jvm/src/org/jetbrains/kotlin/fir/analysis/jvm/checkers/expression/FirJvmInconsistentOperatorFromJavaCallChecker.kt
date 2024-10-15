@@ -56,7 +56,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(Mp
     private fun FirNamedFunctionSymbol.check(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         // Unwrap SubstitutionOverride origin if necessary
         if (originalOrSelf().callableId == CONCURRENT_HASH_MAP_CALLABLE_ID) {
-            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, context)
+            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, context)
             return true
         }
 
