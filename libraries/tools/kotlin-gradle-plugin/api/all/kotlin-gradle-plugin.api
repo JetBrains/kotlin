@@ -6471,6 +6471,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	public final fun execute (Lorg/gradle/work/InputChanges;)V
 	public final fun getAbiSnapshotFile ()Lorg/gradle/api/provider/Provider;
 	public final fun getAbiSnapshotRelativePath ()Lorg/gradle/api/provider/Property;
+	protected final fun getChangedFiles (Lorg/gradle/work/InputChanges;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
 	protected final fun getChangedFiles (Lorg/gradle/work/InputChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
 	public static synthetic fun getChangedFiles$default (Lorg/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile;Lorg/gradle/work/InputChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
