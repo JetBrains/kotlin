@@ -163,7 +163,7 @@ class FirCallCompleter(
         }
     }
 
-    private fun addConstraintFromExpectedType(
+    private fun addConstraintFromExpectedType( // Looks interesting!
         candidate: Candidate,
         initialType: ConeKotlinType,
         resolutionMode: ResolutionMode,
