@@ -13,7 +13,7 @@ plugins {
     base
 }
 
-extensions.create<DokkaBuildProperties>(
+val dokkaBuild = extensions.create<DokkaBuildProperties>(
     DokkaBuildProperties.EXTENSION_NAME,
     provider { project.version.toString() },
 )
@@ -22,4 +22,11 @@ tasks.withType<AbstractArchiveTask>().configureEach {
     // https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
+}
+
+tasks.withType<Test>().configureEach {
+    develocity.testRetry {
+        maxRetries = dokkaBuild.isCI.map { isCI -> if (isCI) 3 else 0 }
+        failOnPassedAfterRetry = true
+    }
 }
