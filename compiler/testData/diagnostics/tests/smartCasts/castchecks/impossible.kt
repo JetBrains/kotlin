@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: +SafeCastCheckBoundSmartCasts
 // See KT-20752

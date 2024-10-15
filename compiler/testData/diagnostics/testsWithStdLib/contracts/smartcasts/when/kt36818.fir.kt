@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main(x1: Double?, range: ClosedRange<Double>) {
     when (x1) {
         null -> throw Exception()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56520 (case 7, enum entry vs companion member, one companion in scope)
 // FIR_DUMP
 

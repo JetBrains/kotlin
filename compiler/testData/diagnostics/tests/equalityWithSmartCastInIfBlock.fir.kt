@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-46383
 
 fun test(a: Any, b: Any, s: String, i: Int) {

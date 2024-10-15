@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class A<T>
 class AIn<in T>
 class AOut<out T>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-25668
 suspend fun SequenceScope<Int>.bar() = yield(1)
 

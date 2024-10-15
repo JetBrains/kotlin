@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-61694
 
 // FILE: a.kt

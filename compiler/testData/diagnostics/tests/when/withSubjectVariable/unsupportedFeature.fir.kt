@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -VariableDeclarationInWhenSubject
 // DIAGNOSTICS: -UNUSED_VARIABLE
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -MultiplatformRestrictions
 // FIR_IDENTICAL
 // MODULE: m1-common

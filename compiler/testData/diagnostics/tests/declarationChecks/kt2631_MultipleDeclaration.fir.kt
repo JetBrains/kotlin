@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 
 //KT-2631 Check multiple assignment

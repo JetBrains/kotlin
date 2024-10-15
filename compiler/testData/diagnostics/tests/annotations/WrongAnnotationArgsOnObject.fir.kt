@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package test
 
 @BadAnnotation(<!ARGUMENT_TYPE_MISMATCH!>1<!>)

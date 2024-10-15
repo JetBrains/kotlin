@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // FILE: a/b/c.java
 package a.b;

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: main.kt
 interface A {
     suspend fun foo()

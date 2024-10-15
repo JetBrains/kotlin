@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: ExceptionTracker.kt
 
 interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {

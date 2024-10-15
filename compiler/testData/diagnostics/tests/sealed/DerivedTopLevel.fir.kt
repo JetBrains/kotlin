@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 sealed class Base
 
 class Derived: Base() {

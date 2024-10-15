@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: MapObjectManager.java
 abstract class MapObjectManager<C extends MapObjectManager.Collection> {

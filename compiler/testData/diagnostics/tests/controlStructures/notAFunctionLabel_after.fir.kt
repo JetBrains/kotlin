@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +RestrictReturnStatementTarget
 
 @Target(AnnotationTarget.EXPRESSION)

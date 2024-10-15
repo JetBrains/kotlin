@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-56744
 // LANGUAGE: +SafeCastCheckBoundSmartCasts
 interface SomeClass {

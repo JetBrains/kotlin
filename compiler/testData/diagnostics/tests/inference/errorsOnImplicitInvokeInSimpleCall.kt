@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 inline operator fun <reified T> Int.invoke() = this
 
 val a2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>1<!>()

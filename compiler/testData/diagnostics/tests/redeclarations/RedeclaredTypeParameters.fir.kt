@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun <<!REDECLARATION!>T<!>, <!REDECLARATION!>T<!>> Pair() {}
 
 class P<<!REDECLARATION!>T<!>, <!REDECLARATION!>T<!>> {}

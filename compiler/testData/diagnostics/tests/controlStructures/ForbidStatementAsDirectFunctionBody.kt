@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-54894
 class Foo<out T>(val baz: Baz<T>)

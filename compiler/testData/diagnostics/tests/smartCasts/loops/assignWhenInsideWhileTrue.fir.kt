@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 
 public fun foo(x: String?): Int {

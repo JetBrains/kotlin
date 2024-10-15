@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface X {
     fun foo(a : Int = 1)
 }

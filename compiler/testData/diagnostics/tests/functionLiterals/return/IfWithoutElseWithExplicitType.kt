@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val flag = true
 
 val a: () -> Int = l@ {

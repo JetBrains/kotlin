@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 fun <T> select(vararg x: T) = x[0]

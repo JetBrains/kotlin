@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ProhibitIllegalValueParameterUsageInDefaultArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB

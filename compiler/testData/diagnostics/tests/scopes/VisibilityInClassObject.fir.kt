@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun devNull(obj: Any?) {}
 
 open class A {

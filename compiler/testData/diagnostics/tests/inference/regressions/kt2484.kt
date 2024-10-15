@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2484 Type inferred for function literal is (...) -> Int instead of (...) -> Unit, when function literal parameter is explicit 
 

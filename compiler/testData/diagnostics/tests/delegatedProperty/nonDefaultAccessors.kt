@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // KT-11809 Assertion error when delegated property has getter
 

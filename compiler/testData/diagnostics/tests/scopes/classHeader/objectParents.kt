@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface I<F, G>
 
 val aImpl: A.Interface

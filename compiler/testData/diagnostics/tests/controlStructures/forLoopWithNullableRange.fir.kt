@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Coll {
   operator fun iterator(): It = It()
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-4827 UOE at PackageType.throwException()
 // EA-53605
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: JavaBaseClass.java
 public class JavaBaseClass {
     public String getMissingField() {

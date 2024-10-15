@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun testPrefix() {
     operator fun Any.not() {}
     <!UNREACHABLE_CODE!>!<!>todo()

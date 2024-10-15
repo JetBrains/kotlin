@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-2960 Perform control flow checks for package property initializers
 
 package b

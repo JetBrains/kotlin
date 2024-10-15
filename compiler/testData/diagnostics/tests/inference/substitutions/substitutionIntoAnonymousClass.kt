@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Test {
     private fun <T : Any> T.self() = object {
         fun bar(): T {

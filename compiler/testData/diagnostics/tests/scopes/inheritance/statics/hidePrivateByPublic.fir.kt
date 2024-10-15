@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: A.java
 
 class A {

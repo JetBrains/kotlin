@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 // SKIP_TXT

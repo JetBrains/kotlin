@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: Container.java
 
 public class Container<E> {

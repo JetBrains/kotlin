@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // see https://youtrack.jetbrains.com/issue/KT-21515
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // NI_EXPECTED_FILE
 
 open class MyClass private constructor(val x: Int) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ModifierNonBuiltinSuspendFunError
 // FIR_IDENTICAL
 // SKIP_TXT

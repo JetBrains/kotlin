@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> toDefNotNull(s: T): T & Any = s!!

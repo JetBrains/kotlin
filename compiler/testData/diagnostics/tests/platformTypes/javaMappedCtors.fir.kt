@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // TARGET_BACKEND: JVM_IR
 
 typealias ABoolean = Boolean

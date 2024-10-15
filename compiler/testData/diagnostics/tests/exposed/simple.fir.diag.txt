@@ -1,25 +1,25 @@
-/simple.fir.kt:(126,128): error: 'public' sub-interface exposes its 'private-in-file' supertype 'My'.
+/simple.fir.kt:(155,157): error: 'public' sub-interface exposes its 'private-in-file' supertype 'My'.
 
-/simple.fir.kt:(143,147): warning: 'public' generic exposes its 'private-in-file' parameter bound type 'Base'. This will be prohibited in the future.
+/simple.fir.kt:(172,176): warning: 'public' generic exposes its 'private-in-file' parameter bound type 'Base'. This will be prohibited in the future.
 
-/simple.fir.kt:(185,187): error: 'public' generic exposes its 'private-in-file' parameter bound type 'My'.
+/simple.fir.kt:(214,216): error: 'public' generic exposes its 'private-in-file' parameter bound type 'My'.
 
-/simple.fir.kt:(189,198): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
+/simple.fir.kt:(218,227): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
 
-/simple.fir.kt:(201,205): error: 'public' subclass exposes its 'private-in-file' supertype 'Base'.
+/simple.fir.kt:(230,234): error: 'public' subclass exposes its 'private-in-file' supertype 'Base'.
 
-/simple.fir.kt:(227,234): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
+/simple.fir.kt:(256,263): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
 
-/simple.fir.kt:(236,241): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
+/simple.fir.kt:(265,270): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
 
-/simple.fir.kt:(267,268): error: 'public' property exposes its 'private-in-file' type 'Base'.
+/simple.fir.kt:(296,297): error: 'public' property exposes its 'private-in-file' type 'Base'.
 
-/simple.fir.kt:(292,294): error: 'public' member exposes its 'private-in-file' receiver type 'My'.
+/simple.fir.kt:(321,323): error: 'public' member exposes its 'private-in-file' receiver type 'My'.
 
-/simple.fir.kt:(330,333): error: 'public' function exposes its 'private-in-file' return type 'My'.
+/simple.fir.kt:(359,362): error: 'public' function exposes its 'private-in-file' return type 'My'.
 
-/simple.fir.kt:(334,339): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
+/simple.fir.kt:(363,368): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
 
-/simple.fir.kt:(358,360): error: 'public' member exposes its 'private-in-file' receiver type 'My'.
+/simple.fir.kt:(387,389): error: 'public' member exposes its 'private-in-file' receiver type 'My'.
 
-/simple.fir.kt:(361,364): error: 'public' function exposes its 'private-in-file' return type 'My'.
+/simple.fir.kt:(390,393): error: 'public' function exposes its 'private-in-file' return type 'My'.

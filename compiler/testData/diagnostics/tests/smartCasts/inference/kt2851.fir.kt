@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2851 Type inference failed passing in not-null after smart-cast value in Pair
 package a
 

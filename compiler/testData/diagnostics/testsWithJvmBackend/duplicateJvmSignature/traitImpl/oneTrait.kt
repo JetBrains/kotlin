@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 interface T {
     fun getX() = 1
 }

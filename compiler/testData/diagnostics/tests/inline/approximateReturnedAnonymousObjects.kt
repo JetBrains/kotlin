@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
 
 private inline fun foo1(crossinline f: () -> Int) = object {

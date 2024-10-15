@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 

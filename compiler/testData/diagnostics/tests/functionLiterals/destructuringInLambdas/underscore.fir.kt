@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)

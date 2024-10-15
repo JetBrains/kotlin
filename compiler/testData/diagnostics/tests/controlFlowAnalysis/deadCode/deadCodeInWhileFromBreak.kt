@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(<!UNUSED_PARAMETER!>a<!>: Any) {}
 fun bar(<!UNUSED_PARAMETER!>a<!>: Any, <!UNUSED_PARAMETER!>b<!>: Any) {}
 

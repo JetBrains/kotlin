@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun checkJump(x: Int?, y: Int?) {
     while (true) {
         if (x ?: break == 0) {

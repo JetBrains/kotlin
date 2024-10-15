@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: Foo.java
 public class Foo {
     public String getBar() { return ""; }

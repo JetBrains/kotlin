@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-23873
 // WITH_STDLIB
 data class Holder<T>(val data: T)

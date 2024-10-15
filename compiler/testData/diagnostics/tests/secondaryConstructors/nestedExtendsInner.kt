@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class A {
     open inner class Inner
 

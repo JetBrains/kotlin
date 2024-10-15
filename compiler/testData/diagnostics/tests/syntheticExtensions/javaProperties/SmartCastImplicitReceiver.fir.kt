@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun Any.foo(): Int {
     if (this is JavaClass) {

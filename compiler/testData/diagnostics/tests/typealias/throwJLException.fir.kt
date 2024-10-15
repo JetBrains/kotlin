@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // +JDK
 
 typealias Exn = java.lang.Exception

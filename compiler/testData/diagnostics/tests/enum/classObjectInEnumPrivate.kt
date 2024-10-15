@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class E {
     ENTRY;
 

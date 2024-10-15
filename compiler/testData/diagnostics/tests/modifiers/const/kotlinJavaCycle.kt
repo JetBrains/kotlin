@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR
 // FIR_IDENTICAL
 // FILE: Bar.java
 

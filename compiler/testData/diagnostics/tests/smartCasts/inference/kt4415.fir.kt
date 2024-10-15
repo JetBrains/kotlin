@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-4415 Class Auto-Cast Bug
 
 interface SelfJson

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Foo<out T>
 interface Bar1 : Foo<Bar1>
 interface Bar2 : Foo<Bar2>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-19455

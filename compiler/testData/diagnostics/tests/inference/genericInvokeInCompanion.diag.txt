@@ -1,97 +1,97 @@
-/genericInvokeInCompanion.kt:12:17: error: not enough information to infer type variable T
+/genericInvokeInCompanion.kt:13:17: error: not enough information to infer type variable T
     C.Companion.invoke("")
                 ^^^^^^
-/genericInvokeInCompanion.kt:13:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:14:5: error: function invocation 'C<Int>()' expected
     C<Int>.Companion.invoke("")
     ^^^^^^
-/genericInvokeInCompanion.kt:13:12: error: nested companion object 'Companion' accessed via instance reference
+/genericInvokeInCompanion.kt:14:12: error: nested companion object 'Companion' accessed via instance reference
     C<Int>.Companion.invoke("")
            ^^^^^^^^^
-/genericInvokeInCompanion.kt:13:22: error: not enough information to infer type variable T
+/genericInvokeInCompanion.kt:14:22: error: not enough information to infer type variable T
     C<Int>.Companion.invoke("")
                      ^^^^^^
-/genericInvokeInCompanion.kt:14:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:15:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.Companion.invoke("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:14:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:15:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.Companion.invoke("")
      ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:16:7: error: not enough information to infer type variable T
+/genericInvokeInCompanion.kt:17:7: error: not enough information to infer type variable T
     C.invoke("")
       ^^^^^^
-/genericInvokeInCompanion.kt:17:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:18:5: error: function invocation 'C<Int>()' expected
     C<Int>.invoke("")
     ^^^^^^
-/genericInvokeInCompanion.kt:17:12: error: unresolved reference: invoke
+/genericInvokeInCompanion.kt:18:12: error: unresolved reference: invoke
     C<Int>.invoke("")
            ^^^^^^
-/genericInvokeInCompanion.kt:18:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:19:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.invoke("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:18:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:19:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.invoke("")
      ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:21:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:22:5: error: function invocation 'C<Int>()' expected
     C<Int>.Companion.invoke<Int>("")
     ^^^^^^
-/genericInvokeInCompanion.kt:21:12: error: nested companion object 'Companion' accessed via instance reference
+/genericInvokeInCompanion.kt:22:12: error: nested companion object 'Companion' accessed via instance reference
     C<Int>.Companion.invoke<Int>("")
            ^^^^^^^^^
-/genericInvokeInCompanion.kt:22:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:23:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.Companion.invoke<Int>("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:22:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:23:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.Companion.invoke<Int>("")
      ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:25:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:26:5: error: function invocation 'C<Int>()' expected
     C<Int>.invoke<Int>("")
     ^^^^^^
-/genericInvokeInCompanion.kt:25:12: error: unresolved reference: invoke
+/genericInvokeInCompanion.kt:26:12: error: unresolved reference: invoke
     C<Int>.invoke<Int>("")
            ^^^^^^
-/genericInvokeInCompanion.kt:26:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:27:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.invoke<Int>("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:26:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:27:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.invoke<Int>("")
      ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:28:5: error: not enough information to infer type variable T
+/genericInvokeInCompanion.kt:29:5: error: not enough information to infer type variable T
     C("")
     ^
-/genericInvokeInCompanion.kt:30:5: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
+/genericInvokeInCompanion.kt:31:5: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
     C<Int, Int, Int>("")
     ^
-/genericInvokeInCompanion.kt:32:23: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
+/genericInvokeInCompanion.kt:33:23: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
     C.Companion.invoke<Int, Int, Int>("")
                       ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:33:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:34:5: error: function invocation 'C<Int>()' expected
     C<Int>.Companion.invoke<Int, Int, Int>("")
     ^^^^^^
-/genericInvokeInCompanion.kt:33:12: error: nested companion object 'Companion' accessed via instance reference
+/genericInvokeInCompanion.kt:34:12: error: nested companion object 'Companion' accessed via instance reference
     C<Int>.Companion.invoke<Int, Int, Int>("")
            ^^^^^^^^^
-/genericInvokeInCompanion.kt:33:28: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
+/genericInvokeInCompanion.kt:34:28: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
     C<Int>.Companion.invoke<Int, Int, Int>("")
                            ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:34:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:35:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.Companion.invoke<Int, Int>("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:34:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:35:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.Companion.invoke<Int, Int>("")
      ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:36:13: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
+/genericInvokeInCompanion.kt:37:13: error: one type argument expected for operator fun <T> invoke(name: String): C<T>
     C.invoke<Int, Int, Int>("")
             ^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:37:5: error: function invocation 'C<Int>()' expected
+/genericInvokeInCompanion.kt:38:5: error: function invocation 'C<Int>()' expected
     C<Int>.invoke<Int, Int, Int>("")
     ^^^^^^
-/genericInvokeInCompanion.kt:37:12: error: unresolved reference: invoke
+/genericInvokeInCompanion.kt:38:12: error: unresolved reference: invoke
     C<Int>.invoke<Int, Int, Int>("")
            ^^^^^^
-/genericInvokeInCompanion.kt:38:5: error: function invocation 'C<Int, Int, Int>(...)' expected
+/genericInvokeInCompanion.kt:39:5: error: function invocation 'C<Int, Int, Int>(...)' expected
     C<Int, Int, Int>.invoke<Int, Int>("")
     ^^^^^^^^^^^^^^^^
-/genericInvokeInCompanion.kt:38:6: error: one type argument expected for constructor C<T>()
+/genericInvokeInCompanion.kt:39:6: error: one type argument expected for constructor C<T>()
     C<Int, Int, Int>.invoke<Int, Int>("")
      ^^^^^^^^^^^^^^^
 

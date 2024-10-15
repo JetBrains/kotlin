@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-742 Stack overflow in type inference
 package a
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-174 Nullability info for extension function receivers
 interface Tree {}
 

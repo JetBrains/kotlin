@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a.kt
 //KT-1642 kotlin subpackages hide Java's toplevel packages

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun ubyte(vararg a: <!OPT_IN_USAGE!>UByte<!>) {}

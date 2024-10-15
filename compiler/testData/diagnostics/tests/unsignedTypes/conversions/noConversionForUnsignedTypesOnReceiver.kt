@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun UInt.fUInt() {}
 fun UByte.fUByte() {}
 fun UShort.fUShort() {}

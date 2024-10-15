@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +InferMoreImplicationsFromBooleanExpressions
 
 fun main(x: Any?) {

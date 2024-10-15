@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo(xx: Any): Int {
     var x = xx
     do {

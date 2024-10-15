@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FIR_IDENTICAL
 // FILE: foo/a/b.java
 package foo.a;

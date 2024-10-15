@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 //KT-1248 Control visibility of overrides needed
 package kt1248

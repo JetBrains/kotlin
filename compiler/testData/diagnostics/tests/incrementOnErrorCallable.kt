@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val a: Int
     get() = 10
 

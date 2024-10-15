@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(d: Any?) {
     if (d is String?) {
         d!!

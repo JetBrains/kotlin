@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class TestOk(val x: String = "OK") {
     TEST1,
     TEST2(),

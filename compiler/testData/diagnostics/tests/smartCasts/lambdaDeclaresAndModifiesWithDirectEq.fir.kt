@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 fun foo(arg: Int?) = run {
     var x = arg

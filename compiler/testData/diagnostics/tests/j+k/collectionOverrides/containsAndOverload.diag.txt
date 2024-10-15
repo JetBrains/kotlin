@@ -1,12 +1,13 @@
-/main.kt:18:16: error: the integer literal does not conform to the expected type String!
+/main.kt:19:16: error: the integer literal does not conform to the expected type String!
     a.contains(1)
                ^
-/main.kt:20:5: error: the integer literal does not conform to the expected type String!
+/main.kt:21:5: error: the integer literal does not conform to the expected type String!
     1 in a
     ^
-/main.kt:23:17: error: the integer literal does not conform to the expected type String
+/main.kt:24:17: error: the integer literal does not conform to the expected type String
     ka.contains(1)
                 ^
-/main.kt:25:5: error: the integer literal does not conform to the expected type String
+/main.kt:26:5: error: the integer literal does not conform to the expected type String
     1 in ka
     ^
+

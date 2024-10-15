@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: a.kt
 package boundsWithSubstitutors
     open class A<T>

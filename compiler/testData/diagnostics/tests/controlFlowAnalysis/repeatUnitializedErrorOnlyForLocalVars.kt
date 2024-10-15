@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package aa
 
 val a : Int = <!UNINITIALIZED_VARIABLE!>b<!>

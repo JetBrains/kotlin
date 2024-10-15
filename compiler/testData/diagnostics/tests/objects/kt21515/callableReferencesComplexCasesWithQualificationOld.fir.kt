@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 // ===== Case 1: LHS is a class

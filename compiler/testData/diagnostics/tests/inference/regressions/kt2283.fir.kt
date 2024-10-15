@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-2283 Bad diagnostics of failed type inference
 package a
 

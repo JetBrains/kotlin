@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 interface Comp<T> {
     fun foo(t: T)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?): String {
     if (s == null) return ""
     // if explicit type String is given for t, problem disappears

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun testArray(b: Boolean) {
     Array(5) { i ->

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-10869, KT-56682
 
 import kotlin.reflect.KProperty

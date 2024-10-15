@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base {
     init {
         register(<!DEBUG_INFO_LEAKING_THIS!>this<!>)

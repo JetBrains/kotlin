@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-2014 Better diagnostic when using property syntax to call a method
 package c
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 
 fun <A : Comparable<A>> arrayData(vararg values: A): A = null!!

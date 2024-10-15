@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: JavaBaseClassGetter.java
 
 public class JavaBaseClassGetter {

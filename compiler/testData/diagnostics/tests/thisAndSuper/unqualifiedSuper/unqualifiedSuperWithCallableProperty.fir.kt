@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Ambiguity between fun and callable property
 
 open class BaseWithCallableProp {

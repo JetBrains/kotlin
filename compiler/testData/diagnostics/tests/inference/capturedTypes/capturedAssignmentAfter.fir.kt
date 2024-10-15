@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-67221
 // LANGUAGE: +ImprovedCapturedTypeApproximationInInference
 // FILE: simple.kt

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 open class Outer {
     private class PrivateNested
     private inner class PrivateInner

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun baz(x: Int): Int = x + 1
 
 class A {

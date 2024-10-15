@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // FILE: a.kt
 val <!REDECLARATION!>a<!> : Int = 1

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(arg: Int?) {
     val x = arg
     if (x != null) {

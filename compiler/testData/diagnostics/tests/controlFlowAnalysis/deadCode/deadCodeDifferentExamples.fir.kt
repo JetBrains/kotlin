@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 

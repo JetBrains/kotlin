@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-9152
 
 abstract class A {

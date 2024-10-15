@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +BareArrayClassLiteral
 
 import kotlin.reflect.KClass

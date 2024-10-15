@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test(a: Any?, flag: Boolean, x: Any?) {
     if (a !is String) return
     a.length

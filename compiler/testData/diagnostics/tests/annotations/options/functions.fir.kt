@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @Target(AnnotationTarget.FUNCTION)
 annotation class FunAnn
 

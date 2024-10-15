@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface C {
     fun foo(a : Int)
 }

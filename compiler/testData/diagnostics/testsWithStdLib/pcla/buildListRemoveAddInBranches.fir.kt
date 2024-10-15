@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-55168
 fun foo(arg: Boolean) = buildList {
     if (arg) {

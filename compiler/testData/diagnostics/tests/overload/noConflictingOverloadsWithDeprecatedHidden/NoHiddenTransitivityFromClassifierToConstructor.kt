@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN)

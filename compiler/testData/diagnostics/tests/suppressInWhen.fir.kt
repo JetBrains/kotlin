@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-61065
 // FILE: PrivateObjekt.kt
 

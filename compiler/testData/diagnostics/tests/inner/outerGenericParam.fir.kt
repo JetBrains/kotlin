@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Outer<T> {
     class Nested {
         fun foo(t: <!UNRESOLVED_REFERENCE!>T<!>) = t

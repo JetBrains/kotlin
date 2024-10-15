@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package test
 

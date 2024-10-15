@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // WITH_STDLIB
 // FILE: First.java
 

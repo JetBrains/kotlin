@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package qualified_expressions
 
 fun test(s: IntRange?) {

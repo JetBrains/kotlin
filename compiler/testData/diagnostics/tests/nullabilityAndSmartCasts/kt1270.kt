@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
 //KT-1270 Poor highlighting when trying to dereference a nullable reference

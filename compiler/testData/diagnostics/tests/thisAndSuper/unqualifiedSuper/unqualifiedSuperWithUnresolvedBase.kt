@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Check that unresolved super type doesn't interfere with unqualified super resolution.
 
 open class Base() {

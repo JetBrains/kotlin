@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class Some {
     A {
         override fun foo(s: () -> String): String {

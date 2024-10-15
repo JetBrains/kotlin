@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-1822 Error 'cannot infer visibility' required
 package kt1822
 

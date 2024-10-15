@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import java.io.Serializable
 
 interface Test1 {

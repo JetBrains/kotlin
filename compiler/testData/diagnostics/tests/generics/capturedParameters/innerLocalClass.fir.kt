@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 // NI_EXPECTED_FILE
 private class Outer<E> {

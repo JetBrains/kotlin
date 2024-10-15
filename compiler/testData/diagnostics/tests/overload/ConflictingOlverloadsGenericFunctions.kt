@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 <!CONFLICTING_OVERLOADS!>fun <T1> test1(x: List<T1>)<!> = x
 <!CONFLICTING_OVERLOADS!>fun <T2> test1(x: List<T2>)<!> = x

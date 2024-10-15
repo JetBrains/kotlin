@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 fun <T, R : Any> foo(body: (R?) -> T): T = fail()

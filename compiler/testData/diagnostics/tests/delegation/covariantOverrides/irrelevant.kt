@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface IBase1 {
     fun foo(): Any
 }

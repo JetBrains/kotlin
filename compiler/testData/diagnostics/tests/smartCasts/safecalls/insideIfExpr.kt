@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // See KT-11007: Wrong smart cast to not-null type after safe calls in if / when expression
 

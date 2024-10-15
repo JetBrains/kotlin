@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-455 Do not repeat errors in definite assignment checks
 
 package kt455

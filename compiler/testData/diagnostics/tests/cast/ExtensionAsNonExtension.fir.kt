@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun f(a: (Int) -> Unit) {
     a <!USELESS_CAST!>as Int.() -> Unit<!>
 

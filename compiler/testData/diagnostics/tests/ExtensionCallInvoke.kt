@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun bar(doIt: Int.() -> Int) {
     1.doIt()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>doIt()

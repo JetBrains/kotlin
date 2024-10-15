@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 
 fun simpleWhile(x: Int?, y0: Int) {

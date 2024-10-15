@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Bar {
     fun next(): Bar? {
         if (2 == 4)

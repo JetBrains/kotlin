@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // KT-3563 Compiler requiring java.io.File, and it's unclear why
 

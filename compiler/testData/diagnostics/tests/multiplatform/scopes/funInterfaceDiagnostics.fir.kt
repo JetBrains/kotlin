@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58845
 

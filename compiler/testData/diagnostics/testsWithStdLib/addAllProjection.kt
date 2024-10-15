@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(<!TYPE_MISMATCH!>mc<!>)
 

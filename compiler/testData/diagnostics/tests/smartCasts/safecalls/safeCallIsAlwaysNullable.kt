@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +SafeCallsAreAlwaysNullable
 // ISSUE: KT-46860
 

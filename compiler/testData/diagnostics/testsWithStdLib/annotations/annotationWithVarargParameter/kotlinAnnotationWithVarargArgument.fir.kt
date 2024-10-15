@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class B(vararg val args: String)
 
 @B(*<!ARGUMENT_TYPE_MISMATCH!>arrayOf(1, "b")<!>)

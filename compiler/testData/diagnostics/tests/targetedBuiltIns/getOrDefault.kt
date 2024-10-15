@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FULL_JDK
 
 abstract class A : Map<Int, String>

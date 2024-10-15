@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 open class C : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>() {
     open class CC

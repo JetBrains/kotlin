@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @Target(AnnotationTarget.FIELD)
 annotation class Field
 

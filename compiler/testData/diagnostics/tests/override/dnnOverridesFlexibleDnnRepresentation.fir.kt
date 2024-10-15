@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-58933
 // FILE: J.java

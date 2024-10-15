@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-20
 

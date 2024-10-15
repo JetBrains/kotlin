@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: Test.java
 public class Test {
     public static final String FOO = "test";

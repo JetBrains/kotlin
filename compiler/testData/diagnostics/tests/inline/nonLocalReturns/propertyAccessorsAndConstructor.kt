@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 inline fun <R> doCall(p: () -> R) {
     p()

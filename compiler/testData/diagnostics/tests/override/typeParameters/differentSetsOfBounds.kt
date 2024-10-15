@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 interface A {
     fun <T> foo() where T : Any, T : Cloneable?

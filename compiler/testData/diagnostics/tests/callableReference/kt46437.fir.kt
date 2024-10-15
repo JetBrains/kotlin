@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun box(): String {
     if (true) X::<!INVISIBLE_REFERENCE!>y<!> else null
     return "OK"

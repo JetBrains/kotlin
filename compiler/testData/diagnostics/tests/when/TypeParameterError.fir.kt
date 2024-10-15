@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
 // FILE: ObjectNode.java
 

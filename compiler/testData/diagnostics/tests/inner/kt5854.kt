@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 //KT-5854 Incorrect 'Nested class should be qualified'
 

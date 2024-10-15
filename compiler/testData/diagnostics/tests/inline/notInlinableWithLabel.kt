@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-65319
 
 fun noInline(x: () -> Unit) {

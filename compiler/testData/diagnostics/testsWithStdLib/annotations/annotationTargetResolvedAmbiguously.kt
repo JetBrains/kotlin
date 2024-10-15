@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import kotlin.annotation.AnnotationTarget.FIELD
 
 object Some {

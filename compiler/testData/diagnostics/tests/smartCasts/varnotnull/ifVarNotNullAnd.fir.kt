@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-5737
 fun get(): String? {
     return "abc"

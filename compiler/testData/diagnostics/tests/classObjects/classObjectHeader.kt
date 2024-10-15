@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package test
 
 open class ToResolve<SomeClass>(f : (Int) -> Int)

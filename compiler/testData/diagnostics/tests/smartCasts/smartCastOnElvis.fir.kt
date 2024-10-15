@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(s: String) = s.length
 
 fun baz(s: String?, r: String?): Int {

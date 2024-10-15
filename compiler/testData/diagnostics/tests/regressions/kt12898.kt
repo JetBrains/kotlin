@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 
 interface B<T : S?, S : Any> {
     val t: T

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: test/AnnotationTargets.java
 
 package test;

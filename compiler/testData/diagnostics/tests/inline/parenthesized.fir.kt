@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {

@@ -1,29 +1,29 @@
-/b.kt:(96,97): error: Cannot access 'class B : Any': it is private in file.
+/b.kt:(97,98): error: Cannot access 'class B : Any': it is private in file.
 
-/b.kt:(107,108): error: Cannot access 'class B : Any': it is private in file.
+/b.kt:(108,109): error: Cannot access 'class B : Any': it is private in file.
 
-/b.kt:(145,154): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
+/b.kt:(146,155): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
 
-/b.kt:(168,169): error: Cannot access 'class D : Any': it is private in file.
+/b.kt:(169,170): error: Cannot access 'class D : Any': it is private in file.
 
-/b.kt:(179,180): error: Cannot access 'class D : Any': it is private in file.
+/b.kt:(180,181): error: Cannot access 'class D : Any': it is private in file.
 
-/b.kt:(181,190): error: Cannot access 'companion object Companion : Any': it is private in 'a/D'.
+/b.kt:(182,191): error: Cannot access 'companion object Companion : Any': it is private in 'a/D'.
 
-/b.kt:(225,226): error: Cannot access 'class B : Any': it is private in file.
+/b.kt:(226,227): error: Cannot access 'class B : Any': it is private in file.
 
-/b.kt:(234,235): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
+/b.kt:(235,236): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
 
-/b.kt:(243,244): error: Cannot access 'class D : Any': it is private in file.
+/b.kt:(244,245): error: Cannot access 'class D : Any': it is private in file.
 
-/b.kt:(263,264): error: Cannot access 'class B : Any': it is private in file.
+/b.kt:(264,265): error: Cannot access 'class B : Any': it is private in file.
 
-/b.kt:(265,268): error: Cannot access 'class B : Any': it is private in file.
+/b.kt:(266,269): error: Cannot access 'class B : Any': it is private in file.
 
-/b.kt:(277,280): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
+/b.kt:(278,281): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
 
-/b.kt:(287,288): error: Cannot access 'class D : Any': it is private in file.
+/b.kt:(288,289): error: Cannot access 'class D : Any': it is private in file.
 
-/b.kt:(289,293): error: Cannot access 'companion object Companion : Any': it is private in 'a/D'.
+/b.kt:(290,294): error: Cannot access 'companion object Companion : Any': it is private in 'a/D'.
 
-/b.kt:(319,322): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.
+/b.kt:(320,323): error: Cannot access 'companion object Companion : Any': it is private in 'a/C'.

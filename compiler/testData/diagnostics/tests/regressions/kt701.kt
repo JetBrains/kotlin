@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-702 Type inference failed
 fun <T> getJavaClass() : java.lang.Class<T> { return "" <!CAST_NEVER_SUCCEEDS!>as<!> Class<T> }

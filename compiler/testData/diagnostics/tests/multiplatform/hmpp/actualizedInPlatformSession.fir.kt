@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // TARGET_PLATFORM: Common
 expect class Foo() {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Xyz {
     fun x(): String? {
         return try {

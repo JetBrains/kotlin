@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>> f1() {}
 fun <T, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out T><!>> f2() {}

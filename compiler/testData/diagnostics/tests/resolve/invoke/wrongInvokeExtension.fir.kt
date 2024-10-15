@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class B
 
 class A {

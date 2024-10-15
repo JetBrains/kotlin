@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface IFoo
 
 typealias Test = IFoo

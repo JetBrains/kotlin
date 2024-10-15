@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 interface A {
     <!WRONG_MODIFIER_TARGET!>sealed<!> fun foo()

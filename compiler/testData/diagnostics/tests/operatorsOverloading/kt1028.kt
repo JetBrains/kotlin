@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 //KT-1028 Wrong type checking for plusAssign
 package kt1028

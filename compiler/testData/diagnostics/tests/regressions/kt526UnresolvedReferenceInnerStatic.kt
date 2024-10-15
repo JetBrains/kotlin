@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-526
 // KT-526 Unresolved reference for inner static class

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package a
 
 fun <T, R, S> foo(block: (T)-> R, second: (T)-> S) = block

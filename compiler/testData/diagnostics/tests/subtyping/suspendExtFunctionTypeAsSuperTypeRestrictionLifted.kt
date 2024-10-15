@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
 class A : suspend Double.() -> Unit {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package kt1075
 
 //KT-1075 No type check for 'in range' condition in 'when' expression

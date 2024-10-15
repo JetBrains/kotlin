@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
 fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = null!!

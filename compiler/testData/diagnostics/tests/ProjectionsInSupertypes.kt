@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_EXTRA_CHECKERS
 interface A<T> {}
 interface B<T> {}

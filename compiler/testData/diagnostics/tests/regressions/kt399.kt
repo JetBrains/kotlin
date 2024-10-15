@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // KT-399 Type argument inference not implemented for CALL_EXPRESSION
 

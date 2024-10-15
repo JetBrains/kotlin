@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface Order<T>
 
 typealias Ord<T> = Order<T>

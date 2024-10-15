@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +JvmRecordSupport
 // API_VERSION: 1.5
 // SKIP_TXT

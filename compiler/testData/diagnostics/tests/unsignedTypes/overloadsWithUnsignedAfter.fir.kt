@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CorrectSpecificityCheckForSignedAndUnsigned
 fun doStuff(value: Any) = "Any"
 fun doStuff(value: UByte) = "UByte"

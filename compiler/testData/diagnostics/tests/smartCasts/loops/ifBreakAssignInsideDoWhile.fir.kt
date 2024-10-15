@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun bar(): Boolean { return true }
 
 public fun foo(x: String?): Int {

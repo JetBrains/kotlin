@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package c
 
 import java.util.ArrayList

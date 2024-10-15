@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // MODULE: m1
 // FILE: J.java
 public class J {

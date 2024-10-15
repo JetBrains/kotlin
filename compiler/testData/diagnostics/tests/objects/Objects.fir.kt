@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package toplevelObjectDeclarations
 
 open class Foo(y: Int) {

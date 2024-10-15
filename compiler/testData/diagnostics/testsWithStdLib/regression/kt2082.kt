@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(c : Collection<String>) = {
     c.filter{
         val s : String? = bar()

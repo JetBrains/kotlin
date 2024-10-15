@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // LANGUAGE: -CorrectSpecificityCheckForSignedAndUnsigned
 fun doStuff(value: Any) = "Any"

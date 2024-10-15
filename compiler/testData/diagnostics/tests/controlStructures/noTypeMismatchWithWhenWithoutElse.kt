@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-62069
 
 enum class ExhaustiveEnum { ONE, TWO }

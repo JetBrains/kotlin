@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo() {
     var v: String? = null
     v<!UNSAFE_CALL!>.<!>length

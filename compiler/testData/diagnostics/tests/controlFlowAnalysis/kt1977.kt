@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package kt1977
 
 //KT-1977 Wrong 'unused expression' in catch

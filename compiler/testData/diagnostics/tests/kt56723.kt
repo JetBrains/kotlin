@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import kotlin.reflect.KProperty
 
 fun foo(f: () -> Unit) {

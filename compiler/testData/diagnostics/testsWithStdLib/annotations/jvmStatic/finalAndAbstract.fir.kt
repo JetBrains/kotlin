@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 abstract class A {
 

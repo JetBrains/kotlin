@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test(condition: Boolean) {

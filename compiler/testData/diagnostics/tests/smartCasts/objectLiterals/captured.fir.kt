@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 abstract class Runnable {
     abstract fun run()
 }

@@ -1,1 +1,2 @@
+// RUN_PIPELINE_TILL: SOURCE
 val a: String = <!NO_COMPANION_OBJECT!>Nothing<!>

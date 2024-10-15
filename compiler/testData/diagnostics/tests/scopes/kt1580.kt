@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //FILE:a.kt
 //KT-1580 Can't access nested class/interface from other package

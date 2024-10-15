@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 //KT-1141 No check that object in 'object expression' implements all abstract members of supertype
 

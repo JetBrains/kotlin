@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class A {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // MODULE: common
 // FILE: common.kt
 expect interface I

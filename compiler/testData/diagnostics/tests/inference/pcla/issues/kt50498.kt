@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun <T, R> baz(body: (List<R>) -> T): T = TODO()
 
 fun test3() {

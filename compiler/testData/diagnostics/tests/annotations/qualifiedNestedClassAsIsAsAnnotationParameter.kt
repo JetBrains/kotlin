@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.TYPE)

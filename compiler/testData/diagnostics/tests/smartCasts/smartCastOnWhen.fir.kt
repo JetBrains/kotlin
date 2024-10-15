@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Smart casts on complex expressions
 fun baz(s: String?): Int {
     if (s == null) return 0

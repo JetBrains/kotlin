@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(y: String?) {
     var x: String? = ""
     if (x != null) {

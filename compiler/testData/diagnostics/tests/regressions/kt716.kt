@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // WITH_EXTRA_CHECKERS
 // KT-716 Type inference failed

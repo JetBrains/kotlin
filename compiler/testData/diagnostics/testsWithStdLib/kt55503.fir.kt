@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo() = withIntList {
     withStringSequence {
         forEach { line ->

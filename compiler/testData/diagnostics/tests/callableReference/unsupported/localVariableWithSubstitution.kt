@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Issue: KT-41729
 
 import kotlin.reflect.KProperty

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS:-UNUSED_PARAMETER
 
 // KT-9883 prohibit using spread operator for nullable value

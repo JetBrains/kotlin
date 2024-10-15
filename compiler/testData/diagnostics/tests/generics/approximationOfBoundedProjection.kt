@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-21463
 
 interface BoxWrapper<T, B : Box<T>> {

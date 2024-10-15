@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // COMPARE_WITH_LIGHT_TREE
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

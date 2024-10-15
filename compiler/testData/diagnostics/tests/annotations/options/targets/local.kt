@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 @Target(AnnotationTarget.LOCAL_VARIABLE) annotation class base
 

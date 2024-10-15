@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 class Foo {
     fun foo(a: Foo): Foo = a

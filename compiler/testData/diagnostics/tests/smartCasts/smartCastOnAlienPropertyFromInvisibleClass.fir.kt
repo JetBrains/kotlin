@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1

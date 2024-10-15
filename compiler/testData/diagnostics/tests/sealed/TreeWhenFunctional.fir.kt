@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 sealed class Tree {
     object Empty: Tree()
     class Leaf(val x: Int): Tree()

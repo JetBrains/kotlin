@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testEquals(x: Int) {
     if (<!SENSELESS_COMPARISON!>x == null<!>) {}
     if (<!SENSELESS_COMPARISON!>x == (null)<!>) {}

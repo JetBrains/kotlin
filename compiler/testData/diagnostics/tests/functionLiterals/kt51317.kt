@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BOX
 val f: (String.() -> String)? = null
 
 fun box(): String {

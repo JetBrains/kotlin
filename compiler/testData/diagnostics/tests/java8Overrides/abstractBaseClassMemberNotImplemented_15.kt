@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 
 abstract class ALeft {

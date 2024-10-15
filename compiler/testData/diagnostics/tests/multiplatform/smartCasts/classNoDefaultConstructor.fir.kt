@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-61506
 // MODULE: m1-common
 // FILE: common.kt

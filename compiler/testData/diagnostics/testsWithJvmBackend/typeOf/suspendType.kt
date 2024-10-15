@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FIR_IDENTICAL
 // WITH_STDLIB
 // USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi

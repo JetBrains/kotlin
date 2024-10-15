@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 public fun foo(x: String?): Int {
     var y: Any
     while (true) {

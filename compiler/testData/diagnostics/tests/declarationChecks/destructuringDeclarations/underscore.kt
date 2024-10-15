@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 
 class A {
     operator fun component1() = 1

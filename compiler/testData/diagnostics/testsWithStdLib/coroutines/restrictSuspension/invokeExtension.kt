@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // SKIP_TXT
 import kotlin.coroutines.RestrictsSuspension

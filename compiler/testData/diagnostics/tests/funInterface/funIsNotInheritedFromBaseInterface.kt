@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

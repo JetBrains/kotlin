@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE:+ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor, +ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class Foo {

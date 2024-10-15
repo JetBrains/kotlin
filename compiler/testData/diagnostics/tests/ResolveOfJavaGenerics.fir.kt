@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_EXTRA_CHECKERS
 // Fixpoint generic in Java: Enum<T extends Enum<T>>

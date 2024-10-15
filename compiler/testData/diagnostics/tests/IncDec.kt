@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 class IncDec() {
   operator fun inc() : IncDec = this

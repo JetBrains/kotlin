@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Properties can be recursively annotated
 annotation class ann(val x: Int)
 class My {

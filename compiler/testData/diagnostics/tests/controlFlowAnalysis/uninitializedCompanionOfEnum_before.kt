@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitAccessToEnumCompanionMembersInEnumConstructorCall
 // ISSUE: KT-49110, KT-54055
 

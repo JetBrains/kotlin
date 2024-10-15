@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-65789, KT-58920
 // LANGUAGE: +PrioritizedEnumEntries
 // FIR_DUMP

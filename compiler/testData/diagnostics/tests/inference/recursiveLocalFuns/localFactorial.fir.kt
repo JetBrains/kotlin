@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // See KT-6271
 fun foo() {
     fun fact(n: Int) = {

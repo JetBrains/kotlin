@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Class CAN be recursively annotated
 @RecursivelyAnnotated(1)

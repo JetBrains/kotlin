@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FULL_JDK
 
 import java.util.concurrent.*

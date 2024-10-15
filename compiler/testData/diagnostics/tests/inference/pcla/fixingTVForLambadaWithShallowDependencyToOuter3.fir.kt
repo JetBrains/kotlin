@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Controller<T> {
     fun yield(t: T): Boolean = true
     fun get(): T = TODO()

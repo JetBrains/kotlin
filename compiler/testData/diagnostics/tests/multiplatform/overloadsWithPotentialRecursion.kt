@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-24047
 

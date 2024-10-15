@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.LowPriorityInOverloadResolution

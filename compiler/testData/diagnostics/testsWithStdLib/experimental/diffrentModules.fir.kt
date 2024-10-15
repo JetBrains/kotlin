@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // OPT_IN: kotlin.RequiresOptIn
 
 // MODULE: A

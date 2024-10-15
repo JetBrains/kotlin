@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: J.java
 public interface J {
     @Deprecated

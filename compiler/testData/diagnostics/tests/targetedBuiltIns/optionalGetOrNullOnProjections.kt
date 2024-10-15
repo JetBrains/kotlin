@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_STDLIB
 // FULL_JDK
 // ISSUE: KT-66784 (similar cases)

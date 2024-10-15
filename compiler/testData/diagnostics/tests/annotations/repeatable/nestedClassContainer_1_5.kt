@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FIR_IDENTICAL
 // LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
 // FULL_JDK

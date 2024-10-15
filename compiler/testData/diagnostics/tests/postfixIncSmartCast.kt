@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 open class I {
     operator fun inc(): ST = ST()
 }

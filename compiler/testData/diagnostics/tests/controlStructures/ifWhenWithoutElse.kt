@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun idAny(x: Any) = x
 fun <T> id(x: T) = x
 fun idUnit(x: Unit) = x

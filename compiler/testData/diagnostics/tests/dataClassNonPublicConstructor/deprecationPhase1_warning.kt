@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 data class Data private constructor(val x: Int) {
     fun member() {

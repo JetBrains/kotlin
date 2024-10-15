@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion

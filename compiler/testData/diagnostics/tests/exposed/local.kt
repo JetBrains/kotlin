@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // invalid, depends on local class
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {

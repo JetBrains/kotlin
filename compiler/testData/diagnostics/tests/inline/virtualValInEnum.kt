@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class B2() {
     A {
         override val foo: String

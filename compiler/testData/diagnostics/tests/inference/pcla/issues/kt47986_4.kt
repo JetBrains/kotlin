@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Foo<K>
 
 fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()

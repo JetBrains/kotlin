@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_KOTLIN_JVM_ANNOTATIONS
 
 import kotlin.annotations.jvm.KotlinActual

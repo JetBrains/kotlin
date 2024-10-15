@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 object A {
     <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>

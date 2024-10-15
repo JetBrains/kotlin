@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-24807
 
 fun testNullableAnyToBoolean(x: Any?) {

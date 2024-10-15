@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.com/issue/KT-1996
 

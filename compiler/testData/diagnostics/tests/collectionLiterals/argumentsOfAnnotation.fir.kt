@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)
 
 @Foo([1], ["/"], [1f])

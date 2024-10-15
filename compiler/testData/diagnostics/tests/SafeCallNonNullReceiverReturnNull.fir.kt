@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun Int.gg() = null
 
 fun ff() {

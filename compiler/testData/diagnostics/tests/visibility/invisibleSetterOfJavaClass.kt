@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
 
 // FILE: abc/Foo.java

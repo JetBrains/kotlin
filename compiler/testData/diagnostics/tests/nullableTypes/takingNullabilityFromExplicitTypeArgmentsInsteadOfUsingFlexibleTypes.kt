@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 
 // It's relevant only for Java constructor calls
 

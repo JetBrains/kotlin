@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class MyClass(var p: String?)
 
 fun bar(s: String): Int {

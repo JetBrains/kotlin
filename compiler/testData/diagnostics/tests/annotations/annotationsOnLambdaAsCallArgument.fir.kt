@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable

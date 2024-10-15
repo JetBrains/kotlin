@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package unresolved
 
 class Pair<A, B>(val a: A, val b: B)

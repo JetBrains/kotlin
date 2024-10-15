@@ -1,1 +1,2 @@
+// RUN_PIPELINE_TILL: SOURCE
 val foo = <!INVISIBLE_REFERENCE!>UInt<!>()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test() {
     acceptMyRecursive(inferType<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>MyRecursive?<!>>())
 }

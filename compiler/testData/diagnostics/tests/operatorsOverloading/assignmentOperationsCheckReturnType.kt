@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun intBinEq() {
     var x = 0
     x <!NONE_APPLICABLE!>+=<!> 'a'

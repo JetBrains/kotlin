@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-49200
 // FILE: first/KtNodeTypes.java
 

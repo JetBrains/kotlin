@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 <!STRICTFP_ON_CLASS!>@kotlin.jvm.Strictfp<!> class A {
 

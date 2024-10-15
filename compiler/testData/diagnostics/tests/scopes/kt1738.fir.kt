@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-1738 Make it possible to define visibility for constructor parameters which become properties
 
 package kt1738

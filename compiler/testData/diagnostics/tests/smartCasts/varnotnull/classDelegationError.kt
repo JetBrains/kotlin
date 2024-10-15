@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-57417
 // LANGUAGE: +UnstableSmartcastOnDelegatedProperties
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-49992
 
 import kotlin.reflect.KFunction0

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +BreakContinueInInlineLambdas
 
 inline fun <T> foo(block: () -> T): T  = block()

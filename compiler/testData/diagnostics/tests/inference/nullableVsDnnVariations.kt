@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +InferenceEnhancementsIn21
 // ISSUE: KT-61227
 // FIR_DUMP

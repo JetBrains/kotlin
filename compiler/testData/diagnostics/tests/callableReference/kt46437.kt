@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun box(): String {
     if (true) <!INVISIBLE_MEMBER!>X::y<!> else null
     return "OK"

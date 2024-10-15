@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FIR_IDENTICAL
 
 // ISSUE: KT-56520 (case 2, Space subcase)

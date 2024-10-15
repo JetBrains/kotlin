@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-5455 Need warning about redundant type cast
 fun foo(o: Any): Int {

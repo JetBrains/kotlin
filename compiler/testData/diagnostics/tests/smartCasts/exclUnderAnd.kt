@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class D(val a: String, val b: Boolean)
 
 fun foo(p: Boolean, v: D?): String {

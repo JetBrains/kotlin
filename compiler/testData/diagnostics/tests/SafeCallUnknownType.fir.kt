@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import <!UNRESOLVED_IMPORT!>com<!>.unknown
 
 fun ff() {

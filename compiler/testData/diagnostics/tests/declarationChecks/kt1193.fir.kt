@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 //KT-1193 Check enum entry supertype / initialization
 

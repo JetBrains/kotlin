@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // DIAGNOSTICS: -USELESS_CAST
 // ISSUE: KT-46173

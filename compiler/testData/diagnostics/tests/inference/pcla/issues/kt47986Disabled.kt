@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 class Foo<K>

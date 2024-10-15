@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun v(x : Int, y : String, vararg f : Long) {}
 fun v1(vararg f :  (Int) -> Unit) {}
 

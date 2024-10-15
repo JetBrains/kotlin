@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-15792 and related
 
 fun foo() {

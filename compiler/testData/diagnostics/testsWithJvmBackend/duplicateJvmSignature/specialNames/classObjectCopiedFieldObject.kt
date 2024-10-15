@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: KLIB
 
 class B {
     companion object <!REDECLARATION!>A<!> {

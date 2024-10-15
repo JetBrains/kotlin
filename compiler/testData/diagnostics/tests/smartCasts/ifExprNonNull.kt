@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?): String {
     // If String type is given explicitly, problem disappears
     val t = if (s == null) {

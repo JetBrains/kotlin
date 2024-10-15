@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_STDLIB
 import A.B.D
 import A.B.C

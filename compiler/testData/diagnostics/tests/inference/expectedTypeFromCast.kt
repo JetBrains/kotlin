@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ExpectedTypeFromCast
 
 fun <T> foo(): T = TODO()

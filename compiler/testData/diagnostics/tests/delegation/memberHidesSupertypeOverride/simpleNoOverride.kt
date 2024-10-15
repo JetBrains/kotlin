@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BOX
 // FIR_IDENTICAL
 interface Base {
     fun test() = "OK"

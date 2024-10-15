@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Inv<T>
 class Some
 class MyPair<A, B>

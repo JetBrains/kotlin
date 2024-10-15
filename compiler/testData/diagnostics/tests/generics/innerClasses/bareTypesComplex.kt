@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 open class SuperOuter<E> {
     inner open class SuperInner<F>

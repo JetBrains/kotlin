@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Container<A> {
     fun consume(arg: A) {}
 }

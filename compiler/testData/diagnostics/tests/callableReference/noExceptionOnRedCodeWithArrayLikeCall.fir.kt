@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 
 class DTO {
     val q: Int = 0

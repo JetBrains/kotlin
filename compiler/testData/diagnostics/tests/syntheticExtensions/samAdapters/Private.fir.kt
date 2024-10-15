@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.<!INVISIBLE_REFERENCE!>doSomething<!> { }

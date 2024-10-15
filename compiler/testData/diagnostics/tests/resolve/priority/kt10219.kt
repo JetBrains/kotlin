@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: Calendar.java
 public class Calendar {
     public void setTimeInMillis(long millis) {}

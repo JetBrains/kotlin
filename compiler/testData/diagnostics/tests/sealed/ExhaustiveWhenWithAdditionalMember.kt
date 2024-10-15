@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     data class Tuple(val x: Int, val y: Int)

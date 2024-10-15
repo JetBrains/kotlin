@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-68489
 
 // FILE: BadA.java

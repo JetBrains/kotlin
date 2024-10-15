@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: lib
 
 // FILE: test/Foo.java

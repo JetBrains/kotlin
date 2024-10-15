@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-353 Generic type argument inference sometimes doesn't work
 
 interface A {

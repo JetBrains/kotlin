@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-61077
 
 val test: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> materializeDelegate()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Parent {
     override fun equals(other: Any?): Boolean =
         super.equals(other)

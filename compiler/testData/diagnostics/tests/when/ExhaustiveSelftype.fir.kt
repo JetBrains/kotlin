@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-54920
 
 fun testCharSequence(x: CharSequence): Int {

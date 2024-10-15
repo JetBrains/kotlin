@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // COMPARE_WITH_LIGHT_TREE
 fun foo(@<!UNRESOLVED_REFERENCE!>varargs<!> f : Int) {}
 

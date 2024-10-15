@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 
 @Target(AnnotationTarget.VALUE_PARAMETER)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Base(x: String, y: Int)
 
 fun test(x: Any, y: Int?) {

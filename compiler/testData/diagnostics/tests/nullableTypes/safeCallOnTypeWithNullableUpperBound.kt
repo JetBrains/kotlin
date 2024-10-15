@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 fun <T> test(t: T): String? {
     if (t != null) {
         return t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()

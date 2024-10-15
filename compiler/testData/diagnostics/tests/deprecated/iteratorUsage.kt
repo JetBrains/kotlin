@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Iter {
     @Deprecated("text")
     operator fun iterator() : IterIterator = throw Exception()

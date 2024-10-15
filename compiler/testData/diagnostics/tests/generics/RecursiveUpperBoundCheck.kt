@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 open class C<T : C<T>>
 class TestOK : C<TestOK>()

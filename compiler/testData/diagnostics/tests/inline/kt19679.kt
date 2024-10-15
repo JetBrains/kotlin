@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 inline fun test(s: () -> Unit, <!NULLABLE_INLINE_PARAMETER!>p: (() -> Unit)?<!>) {
     s()

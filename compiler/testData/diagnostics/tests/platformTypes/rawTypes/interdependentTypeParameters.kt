@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FILE: Boo.java
 public class Boo<N> {}
 

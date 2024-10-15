@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

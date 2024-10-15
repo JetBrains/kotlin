@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: KotlinFile.kt
 class KotlinClass {
     public fun getSomething(): Int = 1

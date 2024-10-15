@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface N { fun foo() = 1 }
 
 class WithClassObject {

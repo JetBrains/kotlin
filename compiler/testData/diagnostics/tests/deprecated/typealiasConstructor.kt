@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 @Deprecated("Deprecated class")
 open class DeprecatedClass

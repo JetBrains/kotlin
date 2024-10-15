@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(y: Int): Int {
     return y + 1
 }

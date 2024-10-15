@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: A.kt
 open class A {
     open fun String.foo(y: String?): Int = 1

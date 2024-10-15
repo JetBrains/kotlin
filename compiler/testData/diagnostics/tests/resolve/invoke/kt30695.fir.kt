@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     val lambda: () -> Unit = TODO()
     val memberInvoke: B = TODO()

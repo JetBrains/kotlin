@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Test {
     val booleanValue: Boolean = false
     val booleanNullableValue: Boolean = false

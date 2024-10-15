@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +NestedClassesInAnnotations
 // OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER

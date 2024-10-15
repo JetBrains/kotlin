@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 private const val dateRangeStart: String = "2020-01-01"
 private const val dateRangeEnd: String = "2020-05-01"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // NB: should work after KT-5907 / KT-4450 fix
 
 val currentTimeMillis = 1234L

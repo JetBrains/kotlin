@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-59138
 // SKIP_TXT

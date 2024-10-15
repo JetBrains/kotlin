@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-235 Illegal assignment return type
 
 package kt235

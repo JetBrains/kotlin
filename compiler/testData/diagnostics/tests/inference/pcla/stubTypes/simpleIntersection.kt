@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <R1> build(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 interface TestInterface<R> {

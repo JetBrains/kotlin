@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(x: Int, f: () -> Unit, y: Int) {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: f.kt
 class A() {
   fun foo() : Unit {

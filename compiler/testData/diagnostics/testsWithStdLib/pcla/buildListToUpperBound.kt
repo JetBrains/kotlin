@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_STDLIB
 // LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-50520

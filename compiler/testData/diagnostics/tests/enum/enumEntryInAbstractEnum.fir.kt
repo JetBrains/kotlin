@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class EnumClass {
     E1 {
         override fun foo() = 1

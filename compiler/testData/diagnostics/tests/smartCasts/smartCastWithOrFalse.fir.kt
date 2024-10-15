@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun main(x: Any?) {
     if (x is String || false) {
         x.length

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)

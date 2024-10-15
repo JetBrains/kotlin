@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-62814
 
 class K2DuplicatesOkayBug {

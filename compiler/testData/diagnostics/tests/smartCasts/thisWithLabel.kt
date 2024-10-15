@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package foo
 
 class A(val i: Int?) {

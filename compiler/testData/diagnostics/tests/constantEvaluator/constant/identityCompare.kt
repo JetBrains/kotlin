@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_STDLIB
 const val int = 456
 const val uint = 456U

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-743 Wrong type inference
 class List<T>(val head: T, val tail: List<T>? = null)

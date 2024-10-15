@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-56942
 // FILE: Base.java
 public sealed class Base permits A, B {

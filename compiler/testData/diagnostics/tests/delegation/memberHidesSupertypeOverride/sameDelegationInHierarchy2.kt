@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BOX
 public interface Base {
     fun test() = "Base"
 }

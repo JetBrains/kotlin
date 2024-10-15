@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // SKIP_TXT
 
 // FILE: J.java

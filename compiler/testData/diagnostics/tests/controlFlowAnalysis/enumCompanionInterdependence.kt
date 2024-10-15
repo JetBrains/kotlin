@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class B(val x: Int) {
     B1(1),
     B2(2);

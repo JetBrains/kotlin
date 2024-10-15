@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-1293 Compiler doesn't show error when element of Array<Int?> is assigned to Int
 
 package kt1293

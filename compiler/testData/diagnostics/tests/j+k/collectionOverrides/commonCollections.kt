@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import java.util.*
 fun foo() {
     val al = ArrayList<String>()

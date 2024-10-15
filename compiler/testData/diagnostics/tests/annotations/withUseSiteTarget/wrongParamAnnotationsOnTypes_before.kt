@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

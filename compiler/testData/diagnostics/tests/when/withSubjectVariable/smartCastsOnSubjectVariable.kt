@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +VariableDeclarationInWhenSubject
 
 fun test1(x: Any?) =

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
 val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!UNRESOLVED_REFERENCE!>a<!>)<!> <!SYNTAX!>-><!> }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun test() {
     <!WRONG_ANNOTATION_TARGET!>@ann<!>

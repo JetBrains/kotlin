@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: Callable.java
 
 public interface Callable<V> {

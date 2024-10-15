@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test(a: Any?) {
     if (a == null) return
     a.hashCode()

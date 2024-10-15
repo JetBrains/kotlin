@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +TypeAliases
 // API_VERSION: 1.0
 // FILE: test.kt

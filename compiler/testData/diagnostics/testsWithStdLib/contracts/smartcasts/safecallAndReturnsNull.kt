@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // OPT_IN: kotlin.contracts.ExperimentalContracts

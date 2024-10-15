@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: A.java
 public interface A {
     public class A_S { // static

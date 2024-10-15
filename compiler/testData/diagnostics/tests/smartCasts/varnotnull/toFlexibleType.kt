@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FILE: J.java
 import org.jetbrains.annotations.*;
 import java.util.List;

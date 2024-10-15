@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 abstract class My(val v: Int) {
     // Ok: variable is just abstract
     abstract var x: Int

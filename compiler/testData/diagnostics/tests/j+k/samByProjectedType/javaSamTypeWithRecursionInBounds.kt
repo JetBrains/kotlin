@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_DUMP
 // FILE: Function1.java
 public interface Function1<A extends B, B extends A> {

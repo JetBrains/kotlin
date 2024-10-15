@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 class Pair<out A, out B>(val first: A, val second: B)
 

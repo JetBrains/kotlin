@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 object Scope1 {
     val someVar: Any = Any()
 

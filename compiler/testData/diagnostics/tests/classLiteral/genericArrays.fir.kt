@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import kotlin.reflect.KClass
 
 fun <T> f1(): KClass<Array<T>> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<T>::class<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int): Int = x + 1
 

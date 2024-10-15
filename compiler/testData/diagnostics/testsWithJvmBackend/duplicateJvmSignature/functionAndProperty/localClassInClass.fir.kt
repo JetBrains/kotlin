@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 class Outer {
     fun foo() {
         class C {

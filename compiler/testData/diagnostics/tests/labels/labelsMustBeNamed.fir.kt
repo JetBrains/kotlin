@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(a: Any?): Int {
     <!SYNTAX!>@<!>{ ->
         return<!SYNTAX!>@<!>

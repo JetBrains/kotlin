@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR
 // MODULE: common
 // TARGET_PLATFORM: Common
 <!AMBIGUOUS_ACTUALS{JVM}!>expect<!> fun foo()

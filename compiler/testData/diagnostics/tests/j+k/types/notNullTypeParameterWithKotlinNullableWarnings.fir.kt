@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // SKIP_JAVAC
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // RENDER_DIAGNOSTICS_FULL_TEXT

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // JAVAC_EXPECTED_FILE
 // FILE: foo/A.java
 package foo;

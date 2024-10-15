@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun box() : String {
     test {
         <!RETURN_NOT_ALLOWED!>return@box<!> "123"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 suspend fun foo1(q: suspend () -> Unit) = q()
 suspend fun foo2(x: suspend (Int) -> String) = x(1)

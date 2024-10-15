@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface Inv<T>
 interface Out<out T>
 interface In<in T>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNSUPPORTED
 // MODULE: m1-common
 // FILE: common.kt

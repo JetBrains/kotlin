@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_COROUTINES

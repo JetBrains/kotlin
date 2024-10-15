@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-70808
 
 fun nonTerminating(): Nothing = throw RuntimeException()

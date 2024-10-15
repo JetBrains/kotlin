@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Item(val link: String?)

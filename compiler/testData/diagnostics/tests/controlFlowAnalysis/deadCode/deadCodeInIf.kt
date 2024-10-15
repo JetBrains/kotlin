@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testIf() {
     if (todo()) <!UNREACHABLE_CODE!>1<!> else <!UNREACHABLE_CODE!>2<!>
 }

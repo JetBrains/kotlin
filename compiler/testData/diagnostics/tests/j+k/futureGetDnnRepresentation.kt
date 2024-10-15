@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // JVM_TARGET: 1.8

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My {
     // No initialization needed because no backing field
     val two: Int

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-2146 Nullability casts in when.
 package kt2146
 

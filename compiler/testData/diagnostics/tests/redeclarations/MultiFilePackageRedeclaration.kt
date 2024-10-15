@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: a.kt
 package a
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!> {}

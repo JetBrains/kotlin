@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // ISSUE: KT-39883
 

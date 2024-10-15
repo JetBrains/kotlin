@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class Ann
 
 val a: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String? = ""

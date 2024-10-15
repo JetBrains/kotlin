@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test1() {
     fun bar() {
         var i : Int

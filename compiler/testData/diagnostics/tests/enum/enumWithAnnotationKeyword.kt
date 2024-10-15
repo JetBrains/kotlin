@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>annotation<!> enum class E {
     D

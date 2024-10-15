@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-66453
 // WITH_STDLIB
 import kotlin.reflect.KProperty

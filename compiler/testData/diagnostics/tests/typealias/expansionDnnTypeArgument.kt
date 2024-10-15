@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-68383
 interface Inv2<K, V> {
     fun get(k: K): V

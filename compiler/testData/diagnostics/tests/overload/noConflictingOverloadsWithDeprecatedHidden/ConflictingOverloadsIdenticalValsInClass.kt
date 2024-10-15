@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 class Aaa() {
     val <!REDECLARATION!>a<!> = 1
     @Deprecated("a", level = DeprecationLevel.HIDDEN)

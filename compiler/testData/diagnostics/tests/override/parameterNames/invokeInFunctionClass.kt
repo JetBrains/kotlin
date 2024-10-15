@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Function1Impl : (String) -> Unit {
     override fun invoke(myParamName: String) {}
 }

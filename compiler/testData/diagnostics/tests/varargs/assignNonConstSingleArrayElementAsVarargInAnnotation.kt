@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 val nonConstArray = longArrayOf(0)

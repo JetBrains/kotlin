@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 fun <T> array(vararg x: T): Array<T> = null!!

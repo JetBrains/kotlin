@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test0(f: (String, String) -> Unit) {
     f("", "")
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: JavaInterfaceDefaultGetter.java
 
 public interface JavaInterfaceDefaultGetter {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //EA-35646
 package a
 

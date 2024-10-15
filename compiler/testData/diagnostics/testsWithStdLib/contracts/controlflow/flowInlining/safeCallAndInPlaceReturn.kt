@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // KT-41 Make functions with errors in returning statement return ERROR type and not Nothing
 

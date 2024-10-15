@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // Reproduces exception in TypeResolver.kt: EA-66870
 

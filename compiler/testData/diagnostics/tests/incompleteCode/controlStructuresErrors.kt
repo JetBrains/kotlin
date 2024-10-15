@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test1() {
     if (<!UNRESOLVED_REFERENCE!>rr<!>) {
         if (<!UNRESOLVED_REFERENCE!>l<!>) {

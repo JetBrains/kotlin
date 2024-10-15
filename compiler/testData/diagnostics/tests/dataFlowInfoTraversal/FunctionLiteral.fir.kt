@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun bar(x: Int) = x + 1
 
 fun foo() {

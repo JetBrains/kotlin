@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
     var r: Any?
 

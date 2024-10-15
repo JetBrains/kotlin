@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // FIR_IDENTICAL
 package test

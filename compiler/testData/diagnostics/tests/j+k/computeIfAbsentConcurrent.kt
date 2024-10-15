@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FIR_IDENTICAL
 // FILE: MyFunc.java
 public interface MyFunc<K, V> {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // SKIP_JAVAC
 // FILE: JavaClass.java
 public class JavaClass {

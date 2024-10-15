@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {

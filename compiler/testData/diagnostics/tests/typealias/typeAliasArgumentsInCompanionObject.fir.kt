@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class C<T1, T2> {
     companion object {
         val OK = "OK"

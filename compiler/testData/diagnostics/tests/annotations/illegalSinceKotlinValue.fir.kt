@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @SinceKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>)
 fun f01() {}
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // ISSUE: KT-50020
 import kotlin.reflect.KFunction0

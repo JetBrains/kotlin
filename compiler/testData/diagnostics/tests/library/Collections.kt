@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package collections
 
 fun <T> testCollection(c: Collection<T>, t: T) {

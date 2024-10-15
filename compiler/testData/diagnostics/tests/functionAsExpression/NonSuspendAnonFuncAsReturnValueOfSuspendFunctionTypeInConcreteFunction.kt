@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun produceConcreteA(func: () -> (suspend () -> Unit)): suspend () -> Unit = func()
 fun (() -> (suspend () -> Unit)).produceConcreteB(): suspend () -> Unit = this()
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val instance = My()
 
 class My {

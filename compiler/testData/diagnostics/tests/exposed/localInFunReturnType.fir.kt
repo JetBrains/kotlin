@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class My<T>(val value: T)
 
 open class Base

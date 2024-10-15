@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BOX
 // FIR_IDENTICAL
 public interface Base {
     val test: String

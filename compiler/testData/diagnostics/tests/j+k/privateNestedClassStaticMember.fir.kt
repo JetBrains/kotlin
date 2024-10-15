@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // KT-4149 static members of Java private nested class are accessible from Kotlin
 
 // FILE: javaPackage/Foo.java

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 //KT-1821 Write test for ITERATOR_AMBIGUITY diagnostic
 

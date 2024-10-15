@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface ClassData
 
 fun f() = object : ClassData {

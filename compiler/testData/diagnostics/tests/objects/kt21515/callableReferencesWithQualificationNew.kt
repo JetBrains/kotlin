@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // See KT-21515 for a class diagram and details

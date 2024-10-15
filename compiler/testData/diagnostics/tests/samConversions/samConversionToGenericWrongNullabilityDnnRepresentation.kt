@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-57014
 // FULL_JDK

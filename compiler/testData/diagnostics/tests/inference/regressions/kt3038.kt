@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-3038 Wrong type inference for enum entry
 package a
 

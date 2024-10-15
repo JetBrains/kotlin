@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 public fun foo(x: String?): Int {
     do {
         // After the check, smart cast should work

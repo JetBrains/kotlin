@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public class X {
     public val x : String? = null
     public fun fn(): Int {

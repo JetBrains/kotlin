@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // WITH_STDLIB
 import kotlin.annotation.AnnotationTarget.*

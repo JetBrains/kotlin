@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 typealias TString = String
 fun f1() = TString::class
 

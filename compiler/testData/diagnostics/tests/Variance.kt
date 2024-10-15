@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package variance
 
 abstract class Consumer<in T> {}

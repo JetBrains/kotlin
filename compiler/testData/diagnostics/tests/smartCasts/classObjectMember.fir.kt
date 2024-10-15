@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 open class T {
     val x : Int? = null
 }

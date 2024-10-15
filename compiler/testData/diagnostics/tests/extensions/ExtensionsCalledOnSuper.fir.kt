@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface T {
     fun foo() {}
     fun buzz() {}

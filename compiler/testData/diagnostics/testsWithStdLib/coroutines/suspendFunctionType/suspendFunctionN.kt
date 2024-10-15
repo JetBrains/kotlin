@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // SKIP_JAVAC
 typealias Test1 = <!UNRESOLVED_REFERENCE!>SuspendFunction0<!><Unit>

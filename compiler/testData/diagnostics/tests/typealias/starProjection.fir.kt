@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 typealias A<T> = Map<T, T>
 typealias B = A<*>
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ProperUninitializedEnumEntryAccessAnalysis
 // ISSUE: KT-68451
 // WITH_STDLIB

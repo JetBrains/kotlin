@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
 // SKIP_TXT

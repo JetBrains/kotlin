@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.*

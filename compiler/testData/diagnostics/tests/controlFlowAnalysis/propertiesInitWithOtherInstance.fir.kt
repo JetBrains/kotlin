@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class A(val next: A? = null) {
     val x: String
     init {

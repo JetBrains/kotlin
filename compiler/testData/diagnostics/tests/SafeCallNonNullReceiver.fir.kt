@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -SafeCallsAreAlwaysNullable
 // http://youtrack.jetbrains.net/issue/KT-418
 

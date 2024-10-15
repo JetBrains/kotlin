@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test5() {
     var a: Int
     try {

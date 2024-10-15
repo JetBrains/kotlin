@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test(<!REDECLARATION, REDECLARATION!>a<!>: Int, <!REDECLARATION, REDECLARATION!>a<!>: String) {}
 
 fun test2(block: (Int, String) -> Unit) { }

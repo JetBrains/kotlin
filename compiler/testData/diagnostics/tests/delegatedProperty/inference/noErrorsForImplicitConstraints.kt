@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package foo
 
 import kotlin.reflect.KProperty

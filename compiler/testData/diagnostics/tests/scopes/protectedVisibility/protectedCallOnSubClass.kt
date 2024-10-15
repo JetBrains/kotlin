@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 open class A {
     open protected fun foo() { }
     open protected fun foobaz() { }

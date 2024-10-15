@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface I1
 interface I2
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 inline fun foo(f: () -> Unit) {
     val ff = { <!NAME_SHADOWING!>f<!>: () -> Unit ->
         f.invoke()

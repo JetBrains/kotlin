@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-50850
 // FILE: Base.java
 public interface Base {

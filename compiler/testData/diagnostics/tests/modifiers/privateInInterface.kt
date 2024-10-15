@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 interface My {
     <!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> val x: Int

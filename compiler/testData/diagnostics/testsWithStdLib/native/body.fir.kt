@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 import kotlin.jvm.*
 
 <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external<!> fun foo() {}

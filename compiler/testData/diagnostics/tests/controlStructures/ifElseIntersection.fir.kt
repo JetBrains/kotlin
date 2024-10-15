@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // CHECK_TYPE
 // See also KT-10896: Wrong inference of if / else result type
 

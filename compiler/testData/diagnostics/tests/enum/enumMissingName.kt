@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // Error: name should present
 enum class<!SYNTAX!><!>(val rgb : Int) {

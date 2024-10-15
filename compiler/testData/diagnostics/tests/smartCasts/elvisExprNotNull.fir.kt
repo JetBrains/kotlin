@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(s: Any?): String {
     val t = when {
         // To resolve: String U Nothing? = String?

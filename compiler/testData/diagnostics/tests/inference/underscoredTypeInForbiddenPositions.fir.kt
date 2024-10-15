@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +PartiallySpecifiedTypeArguments
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB

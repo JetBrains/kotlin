@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 enum class <!REDECLARATION, REDECLARATION!>A<!> {
     <!REDECLARATION!>name<!>,
     <!REDECLARATION!>ordinal<!>,

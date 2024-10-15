@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 open class MyClass<T> {
     object MyObject : MyClass<Boolean>() { }
 }

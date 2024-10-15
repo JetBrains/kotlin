@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-7800
 
 fun foo(): Int {

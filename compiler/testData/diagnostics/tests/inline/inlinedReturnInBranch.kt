@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // https://youtrack.jetbrains.com/issue/KT-49289
 

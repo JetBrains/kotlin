@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-22004
 
 class A() {

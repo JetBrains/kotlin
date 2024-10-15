@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Foo<T : Any> {
     fun doSmthng(arg: T) {}
     var a: T? = null

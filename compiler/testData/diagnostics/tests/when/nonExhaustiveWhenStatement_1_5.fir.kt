@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -WarnAboutNonExhaustiveWhenOnAlgebraicTypes -ProhibitNonExhaustiveWhenOnAlgebraicTypes
 
 enum class SomeEnum {

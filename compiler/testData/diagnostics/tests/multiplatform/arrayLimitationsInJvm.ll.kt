@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +NullableNothingInReifiedPosition
 // MODULE: m1-common
 // FILE: common.kt

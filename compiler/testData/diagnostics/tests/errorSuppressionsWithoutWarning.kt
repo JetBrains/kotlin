@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 @Deprecated("", level = DeprecationLevel.ERROR)
 class DeprecatedClass

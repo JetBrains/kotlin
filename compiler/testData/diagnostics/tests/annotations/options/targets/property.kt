@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.PROPERTY) annotation class base

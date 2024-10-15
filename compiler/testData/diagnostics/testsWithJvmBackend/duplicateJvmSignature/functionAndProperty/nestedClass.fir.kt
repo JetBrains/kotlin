@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 class B {
     class C {
         <!CONFLICTING_JVM_DECLARATIONS!>val x<!> = 1

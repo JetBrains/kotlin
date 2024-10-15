@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T : <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Comparable<T & Any><!>> sort1() {}

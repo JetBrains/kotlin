@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package n
 
 fun <T> foo(t: T, t1: T) {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Outer {
     class Nested {
         class NestedNested

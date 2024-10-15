@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun <E> List<*>.toArray(ar: Array<E>): Array<E> = ar
 

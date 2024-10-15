@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun <T : Any?> foo(x: T) {
     if (x is String?) {
         x<!UNSAFE_CALL!>.<!>length

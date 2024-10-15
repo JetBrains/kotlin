@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-4403 Wrong "type mismatch" on smart cast with inference
 
 interface A

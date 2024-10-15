@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-657 Semantic checks for when without condition
 package kt657
 

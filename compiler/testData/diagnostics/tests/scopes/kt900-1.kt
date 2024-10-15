@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // import all members from companion object
 package c
 

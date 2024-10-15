@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // SKIP_TXT
 class Outer {
     inner class Inner1 {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class My
 
 fun foo(arg: Int): Int {

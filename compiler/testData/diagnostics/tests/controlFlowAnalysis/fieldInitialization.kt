@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 // OPT_IN: kotlin.internal.ContractsDsl
 

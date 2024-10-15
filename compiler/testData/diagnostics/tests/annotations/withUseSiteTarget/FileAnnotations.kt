@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // FILE: annotations.kt
 @Target(AnnotationTarget.CLASS)

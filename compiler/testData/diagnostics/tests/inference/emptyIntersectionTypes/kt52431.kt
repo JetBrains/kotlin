@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface Expression<K>
 
 interface ExpressionWithColumnType<K> : Expression<K>

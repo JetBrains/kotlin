@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-25747
 fun test1() {
     val nullableString: String? = ""

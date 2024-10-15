@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // NI_EXPECTED_FILE
 // See KT-13401: SOE in VarianceChecker
 

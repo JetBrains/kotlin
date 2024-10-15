@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // See KT-12809
 open class A(val a: Any) {
     override fun toString() = a.toString()

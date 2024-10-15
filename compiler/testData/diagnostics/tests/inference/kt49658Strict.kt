@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +DontLoseDiagnosticsDuringOverloadResolutionByReturnType
 // WITH_STDLIB
 

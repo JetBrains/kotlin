@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-32754
 
 import java.lang.invoke.MethodHandles

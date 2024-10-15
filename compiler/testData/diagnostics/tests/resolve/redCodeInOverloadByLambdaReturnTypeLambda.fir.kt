@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // WITH_STDLIB
 private fun foo(seq: Sequence<String>) {
     // flatMap should not be unresolved

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun Foo() = 42
 
 object Foo {

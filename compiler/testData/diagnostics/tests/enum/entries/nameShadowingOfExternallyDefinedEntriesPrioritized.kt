@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // API_VERSION: 1.5
 
 import kotlin.time.Duration

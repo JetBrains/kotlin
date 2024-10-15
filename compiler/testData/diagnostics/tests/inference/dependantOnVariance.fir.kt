@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package a
 
 class MyList<T>(t: T) {}

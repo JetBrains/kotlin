@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Breaking change in K2, see KT-57178
 
 open class I {

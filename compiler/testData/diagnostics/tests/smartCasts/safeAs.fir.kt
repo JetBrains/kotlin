@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-10992: we should have no errors for all unsafe hashCode() calls
 
 fun foo(arg: Any?) {

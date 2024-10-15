@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun text() {
     "direct:a" to "mock:a"
     "direct:a" on {it.body == "<hello/>"} to "mock:a"

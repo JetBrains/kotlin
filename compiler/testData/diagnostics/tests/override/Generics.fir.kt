@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package override.generics
 
 interface MyTrait<T> {

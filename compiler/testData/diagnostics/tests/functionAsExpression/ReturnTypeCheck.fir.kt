@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val foo = fun(a: Int): String {
     if (a == 1) return "4"
     when (a) {

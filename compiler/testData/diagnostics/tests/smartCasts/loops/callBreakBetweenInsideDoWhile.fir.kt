@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun bar(): Boolean { return true }
 
 fun gav(w: String, arg: Any, z: String): String 

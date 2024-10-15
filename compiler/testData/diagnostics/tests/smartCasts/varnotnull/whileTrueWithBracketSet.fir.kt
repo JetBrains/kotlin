@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun x(): Boolean { return true }
 
 public fun foo(pp: String?): Int {

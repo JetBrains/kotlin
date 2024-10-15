@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class A(foo: Int.() -> Unit) {
     init {
         4.foo()

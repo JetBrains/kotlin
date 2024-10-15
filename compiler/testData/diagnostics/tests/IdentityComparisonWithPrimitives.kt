@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val z: Boolean = true
 val b: Byte = 0
 val s: Short = 0

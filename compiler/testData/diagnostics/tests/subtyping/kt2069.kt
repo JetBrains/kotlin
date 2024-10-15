@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2069 Cannot call super method when superclass has type parameters
 package kt2069

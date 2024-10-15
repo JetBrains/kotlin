@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package b
 
 open class A {

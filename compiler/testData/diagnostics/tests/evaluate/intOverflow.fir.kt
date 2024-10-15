@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 val intMaxValue: Int = 0x7fffffff

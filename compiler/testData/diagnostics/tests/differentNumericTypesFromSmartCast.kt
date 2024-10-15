@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-22499
 
 fun test(x: Any, y: Any) =

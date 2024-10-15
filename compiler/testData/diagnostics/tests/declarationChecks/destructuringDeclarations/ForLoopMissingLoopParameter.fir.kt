@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun useDeclaredVariables() {
     <!ITERATOR_MISSING!>for ((a, b)<!SYNTAX!><!>) {
         a

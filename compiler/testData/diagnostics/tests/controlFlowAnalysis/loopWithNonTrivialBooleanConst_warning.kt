@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // DIAGNOSTICS: -UNUSED_VARIABLE
 

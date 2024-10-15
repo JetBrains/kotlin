@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 // OPT_IN: kotlin.contracts.ExperimentalContracts

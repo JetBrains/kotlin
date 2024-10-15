@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface IA {
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "IA"
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ALLOW_KOTLIN_PACKAGE
 package kotlin
 

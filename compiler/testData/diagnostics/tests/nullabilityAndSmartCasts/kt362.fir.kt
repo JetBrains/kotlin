@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: this.kt
 
 // KT-362 Don't allow.smartcasts on vals that are not internal

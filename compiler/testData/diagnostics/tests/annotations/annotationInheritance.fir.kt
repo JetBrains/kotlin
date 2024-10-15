@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 val a = object: T {}
 open class C
 interface T

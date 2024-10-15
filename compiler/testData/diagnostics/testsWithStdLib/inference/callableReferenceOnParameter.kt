@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // Issue: KT-37736
 
 internal class Z<K> {

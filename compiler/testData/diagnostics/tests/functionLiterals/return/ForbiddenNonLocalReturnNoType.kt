@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun test() {
     run {<!RETURN_NOT_ALLOWED!>return<!>}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ValueClassesSecondaryConstructorWithBody
 // WITH_STDLIB
 

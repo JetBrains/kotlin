@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-56520 (cases 1, 5, 6)
 // FIR_DUMP
 // FULL_JDK

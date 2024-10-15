@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test() {
     val a = <!NONE_APPLICABLE!>-<!>false
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Bar(val gav: String)
 
 class Foo(val bar: Bar, val nbar: Bar?) {

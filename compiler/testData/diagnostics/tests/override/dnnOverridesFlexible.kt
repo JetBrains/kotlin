@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-58933

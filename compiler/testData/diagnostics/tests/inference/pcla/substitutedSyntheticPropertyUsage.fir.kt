@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // FILE: GenericJava.java
 public class GenericJava<F> {
     public java.util.List<F> getFoo() {}

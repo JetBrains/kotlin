@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // ISSUE: KT-63067
 // FILE: KotlinFile.kt
 open class KotlinClass {

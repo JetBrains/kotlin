@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun test(bal: Array<Int>) {
     var bar = 4
 

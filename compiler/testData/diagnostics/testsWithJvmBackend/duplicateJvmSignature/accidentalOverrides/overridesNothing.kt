@@ -1,4 +1,5 @@
 // IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: KLIB
 
 interface B {
     fun getX() = 1

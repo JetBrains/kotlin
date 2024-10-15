@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // KT-2667 Support multi-declarations in for-loops in control flow analysis
 package d

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 // SKIP_TXT
 // FIR_IDENTICAL
 // FILE: Generic.java

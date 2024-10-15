@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class Anno(val position: String)
 
 fun foo() {

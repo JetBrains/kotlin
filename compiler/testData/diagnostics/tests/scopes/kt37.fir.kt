@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 //KT-37 Typechecker doesn't complain about accessing non-public property
 package kt37
 

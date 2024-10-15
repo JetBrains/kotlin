@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ### INVALID
 
 // FILE: invalid_noargs.kt

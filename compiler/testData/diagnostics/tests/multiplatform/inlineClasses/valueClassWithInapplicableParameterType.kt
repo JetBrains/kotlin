@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 

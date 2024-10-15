@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-57655
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE

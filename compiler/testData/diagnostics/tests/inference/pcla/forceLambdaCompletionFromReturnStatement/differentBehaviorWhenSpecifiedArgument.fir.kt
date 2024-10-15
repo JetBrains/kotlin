@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Container<T> {
     fun produce(): T = null!!
 }

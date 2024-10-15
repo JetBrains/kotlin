@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // ISSUE: KT-40851
 
 fun error(): Nothing = throw Exception()

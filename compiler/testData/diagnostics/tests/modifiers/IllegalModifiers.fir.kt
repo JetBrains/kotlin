@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 @<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
 package illegal_modifiers
 

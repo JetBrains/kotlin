@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun <T: <!UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE!>Int.() -> String<!>> foo() {}
 

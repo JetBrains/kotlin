@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 annotation class base
 
 @Target(AnnotationTarget.EXPRESSION)

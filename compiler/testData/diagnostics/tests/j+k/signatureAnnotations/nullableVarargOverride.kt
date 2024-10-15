@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: BaseClass.java
 import org.jetbrains.annotations.Nullable;

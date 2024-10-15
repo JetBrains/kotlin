@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +InlineClasses, +InlineClassImplementationByDelegation
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_TXT

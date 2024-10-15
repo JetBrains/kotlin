@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // DIAGNOSTICS: -UNCHECKED_CAST
 
 fun <T> Collection<T>.toArray(): Array<T> = this as Array<T>

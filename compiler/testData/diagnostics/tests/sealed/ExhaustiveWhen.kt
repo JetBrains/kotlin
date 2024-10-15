@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)

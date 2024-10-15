@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +CapturedInClosureSmartCasts
 
 fun run(f: () -> Unit) = f()

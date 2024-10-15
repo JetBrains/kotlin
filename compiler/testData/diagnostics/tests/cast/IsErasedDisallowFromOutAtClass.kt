@@ -1,2 +1,3 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun f(a: List<Any>) = a is <!CANNOT_CHECK_FOR_ERASED!>List<Number><!>

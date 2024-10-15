@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // SKIP_TXT
 // WITH_STDLIB
 import kotlin.experimental.ExperimentalTypeInference

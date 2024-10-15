@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 val foo: <!UNSUPPORTED!>dynamic<!> = 1
 

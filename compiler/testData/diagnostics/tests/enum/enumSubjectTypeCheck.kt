@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-14705
 
 enum class En { A, B, С }

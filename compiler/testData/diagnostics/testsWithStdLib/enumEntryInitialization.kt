@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 enum class JvmTarget(val description: String) {
     JVM_1_6("1.6"),

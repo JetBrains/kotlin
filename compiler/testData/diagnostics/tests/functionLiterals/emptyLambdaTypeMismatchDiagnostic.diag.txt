@@ -1,6 +1,7 @@
-/emptyLambdaTypeMismatchDiagnostic.kt:3:9: error: type mismatch: inferred type is Unit but String was expected
+/emptyLambdaTypeMismatchDiagnostic.kt:4:9: error: type mismatch: inferred type is Unit but String was expected
     foo {}
         ^^
-/emptyLambdaTypeMismatchDiagnostic.kt:3:10: error: type mismatch: inferred type is Unit but String was expected
+/emptyLambdaTypeMismatchDiagnostic.kt:4:10: error: type mismatch: inferred type is Unit but String was expected
     foo {}
          ^
+

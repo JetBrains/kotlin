@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // No supertype at all
 
 fun Any.extension(arg: Any?) {}

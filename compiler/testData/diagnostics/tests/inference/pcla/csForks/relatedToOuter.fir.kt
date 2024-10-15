@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Controller<T> {
     fun yield(t: T): Boolean = true
 }

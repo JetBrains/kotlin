@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1
 // FILE: a.kt
 package p

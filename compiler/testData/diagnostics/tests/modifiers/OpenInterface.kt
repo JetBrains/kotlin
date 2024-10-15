@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // FIR_DUMP
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-47772

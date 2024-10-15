@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // See KT-6665: unresolved reference (v.bar) should not produce "unreachable code" after it
 
 fun foo(): Int {

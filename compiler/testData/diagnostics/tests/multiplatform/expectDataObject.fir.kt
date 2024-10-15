@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +DataObjects
 // MODULE: m1-common
 // FILE: common.kt

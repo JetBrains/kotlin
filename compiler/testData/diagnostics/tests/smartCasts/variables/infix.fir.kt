@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-774
 fun box() : Int {
     var a : Any = 1

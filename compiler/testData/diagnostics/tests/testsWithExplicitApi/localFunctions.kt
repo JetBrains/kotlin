@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun run<!>(b: () -> Unit) {}
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1

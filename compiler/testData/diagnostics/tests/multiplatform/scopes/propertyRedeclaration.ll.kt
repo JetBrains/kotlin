@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

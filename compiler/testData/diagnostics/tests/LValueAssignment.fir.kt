@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package lvalue_assignment
 
 open class B() {

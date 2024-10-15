@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package d
 
 //import from objects before properties resolve

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 package test
 
 annotation class Ann(val c1: Char)

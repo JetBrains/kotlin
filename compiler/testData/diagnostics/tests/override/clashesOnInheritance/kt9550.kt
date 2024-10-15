@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 interface A {
     fun <T> foo()
     fun <T> bar()

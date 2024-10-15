@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 interface Test<in I, out O> {
     val internal_val: <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>

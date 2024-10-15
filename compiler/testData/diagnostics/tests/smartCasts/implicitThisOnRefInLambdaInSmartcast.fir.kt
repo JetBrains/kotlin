@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun Any.test() {
     val x: () -> Int = when (this) {
         is String -> { { length  } }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: I.kt
 
 open class I : <!CYCLIC_INHERITANCE_HIERARCHY!>K<!>() {

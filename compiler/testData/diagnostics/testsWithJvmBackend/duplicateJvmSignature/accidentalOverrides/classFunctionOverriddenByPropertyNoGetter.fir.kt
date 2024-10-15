@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: KLIB
 open class B {
     fun getX() = 1
 }

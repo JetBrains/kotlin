@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 internal interface InternalInterface {
     val x: Any
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main() {
     val b: Boolean? = null
     if (b != null) {

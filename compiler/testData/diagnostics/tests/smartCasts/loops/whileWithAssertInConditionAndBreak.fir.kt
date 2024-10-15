@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo() {
     var x: String? = "123"
     while (x!!.length < 42) {

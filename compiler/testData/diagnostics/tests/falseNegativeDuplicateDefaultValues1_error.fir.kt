@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +ProhibitAllMultipleDefaultsInheritedFromSupertypes
 // ISSUE: KT-36188
 

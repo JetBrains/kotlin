@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT

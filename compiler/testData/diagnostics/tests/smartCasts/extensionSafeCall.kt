@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 class Your
 
 fun Your.foo() = Any()

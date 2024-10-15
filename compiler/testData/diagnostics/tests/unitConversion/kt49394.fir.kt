@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun interface Run {
     fun run()
 }

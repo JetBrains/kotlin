@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(u : Unit) : Int = 1
 
 fun test() : Int {

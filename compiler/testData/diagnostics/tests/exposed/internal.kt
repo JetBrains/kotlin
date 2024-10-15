@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 internal open class My
 
 // valid, internal from internal

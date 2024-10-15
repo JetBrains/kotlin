@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun <T> getT() {}
 fun <A, B> getTT() {}
 fun <A, B, C> getTTT(x : Any) {}

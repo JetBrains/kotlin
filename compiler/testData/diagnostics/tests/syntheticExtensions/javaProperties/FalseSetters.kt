@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     <!VAL_REASSIGNMENT!>javaClass.something1<!>++

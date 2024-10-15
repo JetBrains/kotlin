@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ResolveSession.resolveToDescriptor used to crash on such code, so we just check that it's ok now
 import kotlin.Double

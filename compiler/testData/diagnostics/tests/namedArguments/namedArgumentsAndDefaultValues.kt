@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 fun foo(a : Int = 1, b : String = "abc") {
 }
 

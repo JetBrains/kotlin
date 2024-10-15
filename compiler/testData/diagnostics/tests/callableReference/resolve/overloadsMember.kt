@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // KT-9601 Chose maximally specific function in callable reference

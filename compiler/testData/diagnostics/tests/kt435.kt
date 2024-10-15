@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 fun Any.foo1() : (i : Int) -> Unit {
     return {}

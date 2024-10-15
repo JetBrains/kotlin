@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: SOURCE
 // FIR_IDENTICAL
 // LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
 // CHECK_TYPE
