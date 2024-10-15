@@ -190,6 +190,37 @@ class FirSyntheticCallGenerator(
         }
     }
 
+    fun generateSyntheticListOfCall( // copy-pasted from generateSyntheticArrayOfCall
+        arrayLiteral: FirArrayLiteral,
+        expectedTypeRef: FirTypeRef,
+        context: ResolutionContext,
+        resolutionMode: ResolutionMode,
+    ): FirFunctionCall {
+        val argumentList = arrayLiteral.argumentList
+        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
+        return buildFunctionCall {
+            this.argumentList = argumentList
+            calleeReference = arrayOfSymbol?.let {
+                generateCalleeReferenceWithCandidate(
+                    arrayLiteral,
+                    it.fir,
+                    argumentList,
+                    ArrayFqNames.ARRAY_OF_FUNCTION,
+                    callKind = CallKind.Function,
+                    context = context,
+                    resolutionMode,
+                )
+            } ?: buildErrorNamedReference {
+                diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
+            }
+            source = arrayLiteral.source
+        }.also {
+            if (arrayOfSymbol == null) {
+                it.resultType = components.typeFromCallee(it).coneType
+            }
+        }
+    }
+
     fun generateSyntheticArrayOfCall(
         arrayLiteral: FirArrayLiteral,
         expectedType: ConeKotlinType,
