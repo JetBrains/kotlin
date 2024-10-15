@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedAttributes
-    get(): MutableList<SirAttribute> = withSessions {
+    get(): List<SirAttribute> {
         val availability = ktSymbol.deprecatedAnnotation?.takeIf { it.level != DeprecationLevel.HIDDEN }?.let {
             SirAttribute.Available(
                 message = it.message,
@@ -22,5 +21,5 @@ internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.transla
             )
         }
 
-        listOfNotNull(availability).toMutableList()
+        return listOfNotNull(availability)
     }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.sir.SirAttribute
 
 public fun KaSymbolModality.isAbstract(): Boolean = when (this) {
     KaSymbolModality.FINAL, KaSymbolModality.OPEN -> false
