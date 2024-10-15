@@ -19,7 +19,8 @@ class Foo(
     val cl: Class<*> = Foo::class.java,
     val clarr: Array<Class<*>> = arrayOf(Foo::class.java),
     val em: Em = Em.BAR,
-    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR)
+    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR),
+    val typeOperator: String = (s + "!") as String,
 ) {
     fun foo(a: Int = 5) {}
 }
