@@ -227,8 +227,8 @@ class FileLocalIdSignatureComputer(
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isOverridableFunction()) {
-                declaration.stableIndexForOverridableDeclaration(compatibleMode)
+            id = if (declaration.isFakeOverride) {
+                declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
             },
@@ -237,8 +237,8 @@ class FileLocalIdSignatureComputer(
 
         is IrProperty -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isOverridableProperty()) {
-                declaration.stableIndexForOverridableDeclaration(compatibleMode)
+            id = if (declaration.isFakeOverride) {
+                declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
             },
@@ -252,23 +252,16 @@ class FileLocalIdSignatureComputer(
         )
     }
 
-    private fun IrSimpleFunction.isOverridableFunction(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && hasDispatchReceiver
-
-    private fun IrProperty.isOverridableProperty(): Boolean =
-        !DescriptorVisibilities.isPrivate(visibility) && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
-
-    private val IrSimpleFunction?.hasDispatchReceiver: Boolean
-        get() = this?.dispatchReceiverParameter != null
-
     /**
-     * We shall have stable indices for overridable functions/properties in private containers to
-     * always be able to match the deserialized function/property with the fake override (and substitute
-     * the fake override with the real declaration) -- independently of the order in which other
-     * private declarations are serialized (and in which their signatures are computed).
+     * We shall have stable indices for local fake override functions/properties.
+     * This is necessary to be able to match the signature at the fake override call site
+     * with the fake override declaration constructed by the fake override builder component
+     * (which does not know anything about indices in the IR file).
+     *
+     * TODO: Consider using specialized signatures for local fake overrides, KT-72296
      */
-    private fun IrOverridableDeclaration<*>.stableIndexForOverridableDeclaration(compatibleMode: Boolean): Long =
-        mangler.run { this@stableIndexForOverridableDeclaration.signatureMangle(compatibleMode) }
+    private fun IrOverridableDeclaration<*>.stableIndexForFakeOverride(compatibleMode: Boolean): Long =
+        mangler.run { this@stableIndexForFakeOverride.signatureMangle(compatibleMode) }
 
     companion object {
         private const val START_INDEX = 0

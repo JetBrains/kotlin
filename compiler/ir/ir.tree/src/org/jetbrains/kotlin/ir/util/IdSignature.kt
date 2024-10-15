@@ -551,12 +551,13 @@ sealed class IdSignature {
     }
 
     /**
-     * A deprecated signature used for local classes and their members to make it possible to build fake overridden declarations for such
-     * local classes.
+     * A signature used for local declarations such as functions, properties, classes with their members, etc.
      *
      * This signature is not navigatable through files.
      *
-     * @property id A hash of the member’s signature, not an ordered index, because it has to be stable.
+     * @property id An ordered index of the declaration inside the file.
+     *   **Important**: For fake overrides, this is the hash of the mangle name.
+     *   TODO: Consider using specialized signatures for local fake overrides, KT-72296
      */
     class FileLocalSignature(val container: IdSignature, val id: Long, val description: String? = null) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false
