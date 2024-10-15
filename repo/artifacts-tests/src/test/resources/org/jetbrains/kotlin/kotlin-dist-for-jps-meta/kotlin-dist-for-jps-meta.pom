@@ -140,6 +140,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-power-assert</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>kotlin-maven-sam-with-receiver</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -348,6 +348,7 @@
 /libraries/tools/kotlin-maven-noarg/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-plugin/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-plugin-test/ "Kotlin Build Tools"
+/libraries/tools/kotlin-maven-power-assert/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-sam-with-receiver/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-serialization/ "Kotlin Build Tools"
 /libraries/tools/kotlin-osgi-bundle/ "Kotlin Build Tools"

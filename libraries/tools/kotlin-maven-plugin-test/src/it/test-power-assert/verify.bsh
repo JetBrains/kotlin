@@ -1,0 +1,4 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLineThatContains("Applied plugin: 'power-assert'");
+assertFileExists("target/test-power-assert-1.0-SNAPSHOT.jar");

@@ -49,6 +49,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-maven-noarg",
         "libraries/tools/kotlin-maven-plugin",
         "libraries/tools/kotlin-maven-plugin-test",
+        "libraries/tools/kotlin-maven-power-assert",
         "libraries/tools/kotlin-maven-sam-with-receiver",
         "libraries/tools/kotlin-maven-serialization",
         "libraries/tools/kotlin-noarg",
