@@ -1029,12 +1029,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
-      @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_before.kt")
-      public void testRetentionsOfAnnotationWithExpressionTarget_before() {
-        runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_before.kt");
-      }
-
-      @Test
       @TestMetadata("typeArgumentsInAnnotation.kt")
       public void testTypeArgumentsInAnnotation() {
         runTest("compiler/testData/diagnostics/tests/annotations/typeArgumentsInAnnotation.kt");
@@ -3063,12 +3057,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       @TestMetadata("assignedInIfElse.kt")
       public void testAssignedInIfElse() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInIfElse.kt");
-      }
-
-      @Test
-      @TestMetadata("backingFieldInsideGetter_before.kt")
-      public void testBackingFieldInsideGetter_before() {
-        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_before.kt");
       }
 
       @Test

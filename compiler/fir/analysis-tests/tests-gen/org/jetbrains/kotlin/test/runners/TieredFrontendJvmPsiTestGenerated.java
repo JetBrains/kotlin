@@ -1965,9 +1965,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
-      @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_after.kt")
-      public void testRetentionsOfAnnotationWithExpressionTarget_after() {
-        runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_after.kt");
+      @TestMetadata("RetentionsOfAnnotationWithExpressionTarget.kt")
+      public void testRetentionsOfAnnotationWithExpressionTarget() {
+        runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget.kt");
       }
 
       @Test
@@ -2758,9 +2758,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
-      @TestMetadata("FieldReassignment_after.kt")
-      public void testFieldReassignment_after() {
-        runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_after.kt");
+      @TestMetadata("FieldReassignment.kt")
+      public void testFieldReassignment() {
+        runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment.kt");
       }
 
       @Test
@@ -4575,9 +4575,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
-      @TestMetadata("backingFieldInsideGetter_after.kt")
-      public void testBackingFieldInsideGetter_after() {
-        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_after.kt");
+      @TestMetadata("backingFieldInsideGetter.kt")
+      public void testBackingFieldInsideGetter() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
       }
 
       @Test
@@ -24179,9 +24179,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
-      @TestMetadata("assignArrayToVararagInNamedForm_1_4.kt")
-      public void testAssignArrayToVararagInNamedForm_1_4() {
-        runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedForm_1_4.kt");
+      @TestMetadata("assignArrayToVararagInNamedForm.kt")
+      public void testAssignArrayToVararagInNamedForm() {
+        runTest("compiler/testData/diagnostics/tests/varargs/assignArrayToVararagInNamedForm.kt");
       }
 
       @Test
@@ -24203,21 +24203,15 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
-      @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_after.kt")
-      public void testAssigningSingleElementsInNamedFormAnnDeprecation_after() {
-        runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_after.kt");
+      @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation.kt")
+      public void testAssigningSingleElementsInNamedFormAnnDeprecation() {
+        runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation.kt");
       }
 
       @Test
-      @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_before.kt")
-      public void testAssigningSingleElementsInNamedFormAnnDeprecation_before() {
-        runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_before.kt");
-      }
-
-      @Test
-      @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation_after.kt")
-      public void testAssigningSingleElementsInNamedFormFunDeprecation_after() {
-        runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_after.kt");
+      @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation.kt")
+      public void testAssigningSingleElementsInNamedFormFunDeprecation() {
+        runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation.kt");
       }
 
       @Test
@@ -25485,9 +25479,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("jvmOverloadsOnAnnotationClassConstructor_1_4.kt")
-        public void testJvmOverloadsOnAnnotationClassConstructor_1_4() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAnnotationClassConstructor_1_4.kt");
+        @TestMetadata("jvmOverloadsOnAnnotationClassConstructor.kt")
+        public void testJvmOverloadsOnAnnotationClassConstructor() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAnnotationClassConstructor.kt");
         }
 
         @Test
@@ -25525,12 +25519,6 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("constructorProperty_LL13.kt")
-        public void testConstructorProperty_LL13() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/constructorProperty_LL13.kt");
-        }
-
-        @Test
         @TestMetadata("constructors.kt")
         public void testConstructors() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/constructors.kt");
@@ -25549,21 +25537,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("functions_LL13.kt")
-        public void testFunctions_LL13() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/functions_LL13.kt");
-        }
-
-        @Test
-        @TestMetadata("interfaceCompanion_LL12.kt")
-        public void testInterfaceCompanion_LL12() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL12.kt");
-        }
-
-        @Test
-        @TestMetadata("interfaceCompanion_LL13_18.kt")
-        public void testInterfaceCompanion_LL13_18() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL13_18.kt");
+        @TestMetadata("interfaceCompanion.kt")
+        public void testInterfaceCompanion() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion.kt");
         }
 
         @Test
@@ -25573,21 +25549,9 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("localFun_LL13.kt")
-        public void testLocalFun_LL13() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/localFun_LL13.kt");
-        }
-
-        @Test
         @TestMetadata("property.kt")
         public void testProperty() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/property.kt");
-        }
-
-        @Test
-        @TestMetadata("property_LL13.kt")
-        public void testProperty_LL13() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/property_LL13.kt");
         }
       }
 

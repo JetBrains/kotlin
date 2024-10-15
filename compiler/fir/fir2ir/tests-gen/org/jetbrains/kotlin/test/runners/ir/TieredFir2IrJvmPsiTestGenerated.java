@@ -45,17 +45,6 @@ public class TieredFir2IrJvmPsiTestGenerated extends AbstractTieredFir2IrJvmPsiT
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/backingField")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BackingField {
-      @Test
-      @TestMetadata("FieldReassignment_before.kt")
-      public void testFieldReassignment_before() {
-        runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_before.kt");
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {
