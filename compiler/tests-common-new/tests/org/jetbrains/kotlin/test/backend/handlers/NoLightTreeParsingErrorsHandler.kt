@@ -5,24 +5,21 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
-import org.jetbrains.kotlin.test.frontend.fir.handlers.KmpCompilationMode
-import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.diagnosticsService
 import org.jetbrains.kotlin.test.services.service
 
-class NoFirCompilationErrorsHandler(
+class NoLightTreeParsingErrorsHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = true,
 ) : FirAnalysisHandler(testServices, failureDisablesNextSteps) {
@@ -34,30 +31,18 @@ class NoFirCompilationErrorsHandler(
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
-            var hasError = false
+            val diagnosticsPerFile = testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter?.diagnosticsByFilePath ?: continue
+            val diagnosticsService = testServices.diagnosticsService
 
-            val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in part.module.directives
-
-            val diagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
-            for ((firFile, diagnostics) in diagnosticsPerFile) {
-                for ((diagnostic, mode) in diagnostics) {
-                    if (mode == KmpCompilationMode.METADATA) continue
+            for ((_, ktDiagnostics) in diagnosticsPerFile.entries) {
+                for (diagnostic in ktDiagnostics) {
                     if (diagnostic.severity == Severity.ERROR) {
-                        hasError = true
-                        if (!ignoreErrors) {
+                        if (diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)) {
                             val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
-                            val range = diagnostic.textRanges.first()
-                            val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
-                                PsiDiagnosticUtils.atLocation(psiFile, range)
-                            } ?: "${firFile.name}:$range"
-                            error("${diagnostic.factory.name}: $diagnosticText at $locationText")
+                            error("${diagnostic.factory.name}: $diagnosticText")
                         }
                     }
                 }
-            }
-
-            if (!hasError && ignoreErrors) {
-                assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
             }
         }
     }

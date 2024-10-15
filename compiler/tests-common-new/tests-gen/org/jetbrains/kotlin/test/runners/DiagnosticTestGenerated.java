@@ -49902,6 +49902,48 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TieredFailures {
+      @Test
+      public void testAllFilesPresentInTieredFailures() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Fail {
+        @Test
+        public void testAllFilesPresentInFail() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("isSourceButFirPasses.kt")
+        public void testIsSourceButFirPasses() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isSourceButFirPasses.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Good {
+        @Test
+        public void testAllFilesPresentInGood() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("isSourceButFirFails.kt")
+        public void testIsSourceButFirFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isSourceButFirFails.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/trailingComma")
     @TestDataPath("$PROJECT_ROOT")
     public class TrailingComma {
