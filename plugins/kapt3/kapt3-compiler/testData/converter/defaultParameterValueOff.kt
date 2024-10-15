@@ -15,13 +15,12 @@ class Foo(
     val larr: LongArray = longArrayOf(-1L, 0L, 1L),
     val darr: DoubleArray = doubleArrayOf(7.3),
     val sarr: Array<String> = arrayOf("a", "bc"),
-
     // Sic! Unresolved reference not being reported because of partial resolve
     val cl: Class<*> = User::class.java,
     val clarr: Array<Class<*>> = arrayOf(User::class.java),
-
     val em: Em = Em.BAR,
-    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR)
+    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR),
+    val typeOperator: String = (s + "!") as String,
 ) {
     fun foo(a: Int = 5) {}
 }
