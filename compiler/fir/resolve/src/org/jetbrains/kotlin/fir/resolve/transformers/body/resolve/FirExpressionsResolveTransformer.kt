@@ -1832,13 +1832,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
+            println("--- ${FirRenderer().renderElementAsString(arrayLiteral)} $data")
             when (data) {
+                is ResolutionMode.ContextIndependent -> {
+                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
+                    TODO()
+                }
                 is ResolutionMode.WithExpectedType -> {
                     // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
                     arrayLiteral.transformChildren(
                         transformer,
                         data.expectedType.arrayElementType()?.let { withExpectedType(it) }
-                            ?: ResolutionMode.ContextDependent,
+                            ?: ResolutionMode.ContextDependent, // todo why ContextDependent?
                     )
 
                     val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
@@ -1852,7 +1857,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
                 else -> {
                     // Other unsupported usage.
-                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
+                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent) // todo why ContextDependent?
                     // We set the arrayLiteral's type to the expect type or Array<Any>
                     // because arguments need to have a type during resolution of the synthetic call.
                     // We remove the type so that it will be set during completion to the CST (common super type) of the arguments.
