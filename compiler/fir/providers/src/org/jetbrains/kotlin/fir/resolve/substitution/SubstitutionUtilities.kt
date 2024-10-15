@@ -12,6 +12,8 @@ inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): 
     // TODO(KT-64024): This early return looks suspicious.
     //  In fact, if the inner type wasn't substituted we will ignore potential substitution in
     //  super types
+    // TODO When the above is resolved, org.jetbrains.kotlin.fir.types.TypeUtilsKt#captureCapturedType can be changed to use
+    //  this method again.
     val substitutedInnerType = innerType?.let(f) ?: return null
     if (substitutedInnerType is ConeCapturedType) return substitutedInnerType
     val substitutedSuperTypes =

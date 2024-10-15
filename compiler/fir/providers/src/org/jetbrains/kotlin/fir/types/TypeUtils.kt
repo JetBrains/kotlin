@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.substitute
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -488,7 +488,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
     }
 
     return when (type) {
-        is ConeCapturedType -> type.substitute { captureFromExpressionInternal(it) }
+        is ConeCapturedType -> captureCapturedType(type)
         is ConeDefinitelyNotNullType -> captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
         is ConeFlexibleType -> {
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
@@ -518,6 +518,27 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
         }
     }
+}
+
+private fun ConeTypeContext.captureCapturedType(type: ConeCapturedType): ConeCapturedType? {
+    val capturedProjection = type.constructor.projection.type
+        ?.let { captureFromExpressionInternal(it) }
+        ?.let { wrapProjection(type.constructor.projection, it) }
+    val capturedSuperTypes = type.constructor.supertypes?.map { captureFromExpressionInternal(it) ?: it }
+    val capturedLowerType = type.lowerType?.let { captureFromExpressionInternal(it) }
+
+    if (capturedProjection == null && capturedLowerType == null && capturedSuperTypes == type.constructor.supertypes) {
+        return null
+    }
+
+    return type.copy(
+        constructor = ConeCapturedTypeConstructor(
+            projection = capturedProjection ?: type.constructor.projection,
+            supertypes = capturedSuperTypes,
+            typeParameterMarker = type.constructor.typeParameterMarker
+        ),
+        lowerType = capturedLowerType ?: type.lowerType,
+    )
 }
 
 private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlinType): List<CapturedArguments>? {
