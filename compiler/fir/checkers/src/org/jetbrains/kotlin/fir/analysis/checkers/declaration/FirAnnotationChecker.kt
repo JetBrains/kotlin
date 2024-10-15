@@ -411,16 +411,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             SETTER_PARAMETER to property.setter?.valueParameters?.single().getAnnotationTypes()
         )
 
-        val isError = context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)
-
         for (annotation in property.annotations) {
             val useSiteTarget = annotation.useSiteTarget ?: property.getDefaultUseSiteTarget(annotation, context)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
 
             if (annotation.annotationTypeRef.coneType in existingAnnotations && !annotation.isRepeatable(context.session)) {
-                val factory = if (isError) FirErrors.REPEATED_ANNOTATION else FirErrors.REPEATED_ANNOTATION_WARNING
                 if (annotation.source?.kind !is KtFakeSourceElementKind) {
-                    reporter.reportOn(annotation.source, factory)
+                    reporter.reportOn(annotation.source, FirErrors.REPEATED_ANNOTATION)
                 }
             }
         }

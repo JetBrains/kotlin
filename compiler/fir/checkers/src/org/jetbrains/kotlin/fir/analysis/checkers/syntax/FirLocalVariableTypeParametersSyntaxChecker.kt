@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -29,10 +28,7 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
         reporter: DiagnosticReporter
     ) {
         if (psi is KtProperty && psi.typeParameterList != null) {
-            val diagnostic =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
-                    FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
-            reporter.reportOn(source, diagnostic, context)
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
         }
     }
 
@@ -45,11 +41,7 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
         val node = source.lighterASTNode
         if (node.tokenType != KtNodeTypes.PROPERTY) return
         source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
-            val diagnostic =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
-                    FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
-            reporter.reportOn(source, diagnostic, context)
-
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
         }
     }
 }

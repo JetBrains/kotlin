@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -116,9 +115,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         when (this) {
             is ConeClassLikeType -> {
                 val isPlatformThatAllowsNonPrimitiveArrays = context.session.firGenericArrayClassLiteralSupport.isEnabled
-                val isOldVersionThatAllowsNonPrimitiveArrays =
-                    !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitGenericArrayClassLiteral)
-                if (isNonPrimitiveArray && (isPlatformThatAllowsNonPrimitiveArrays || isOldVersionThatAllowsNonPrimitiveArrays)) {
+                if (isNonPrimitiveArray && isPlatformThatAllowsNonPrimitiveArrays) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true

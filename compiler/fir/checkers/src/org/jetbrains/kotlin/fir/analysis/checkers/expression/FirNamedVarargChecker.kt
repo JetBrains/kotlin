@@ -10,15 +10,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.types.*
@@ -37,11 +34,6 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             if (isAnnotation) FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
             else FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION
 
-        val allowAssignArray = context.session.languageVersionSettings.supportsFeature(
-            if (isAnnotation) LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations
-            else LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-        )
-
         fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType) {
             if (!isNamedSpread(argument)) return
             if (!argument.isFakeSpread && argument.isNamed) {
@@ -54,7 +46,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
-            if (allowAssignArray && type.isArrayType) return
+            if (type.isArrayType) return
 
             if (isAnnotation) {
                 reporter.reportOn(

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 
@@ -26,7 +24,6 @@ object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker(MppChecker
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature)) return
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
         if (callableSymbol.getAnnotationByClassId(polymorphicSignatureClassId, context.session) == null) return
 
