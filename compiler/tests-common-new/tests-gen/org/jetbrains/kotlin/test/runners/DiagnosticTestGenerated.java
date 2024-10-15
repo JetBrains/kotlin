@@ -49920,6 +49920,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("isFir2IrButBackendFails.kt")
+        public void testIsFir2IrButBackendFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButBackendFails.kt");
+        }
+
+        @Test
         @TestMetadata("isFir2IrButFir2IrPasses.kt")
         public void testIsFir2IrButFir2IrPasses() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButFir2IrPasses.kt");
@@ -49951,6 +49957,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("isFirButFir2IrFails.kt")
         public void testIsFirButFir2IrFails() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFirButFir2IrFails.kt");
+        }
+
+        @Test
+        @TestMetadata("isKlibButBackendFails.kt")
+        public void testIsKlibButBackendFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isKlibButBackendFails.kt");
+        }
+
+        @Test
+        @TestMetadata("isKlibButLimitedToKlib.kt")
+        public void testIsKlibButLimitedToKlib() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isKlibButLimitedToKlib.kt");
         }
 
         @Test

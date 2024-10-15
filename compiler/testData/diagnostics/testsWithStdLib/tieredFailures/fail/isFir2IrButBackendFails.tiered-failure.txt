@@ -1,0 +1,1 @@
+Looks like some tiers above FIR2IR pass with no exceptions. Please update the tier directive to `// RUN_PIPELINE_TILL: KLIB` and regenerate tests.

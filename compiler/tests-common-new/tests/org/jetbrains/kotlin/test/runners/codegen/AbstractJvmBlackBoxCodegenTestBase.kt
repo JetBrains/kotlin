@@ -54,50 +54,61 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 
         configureCommonHandlersForBoxTest()
 
-        configureJvmArtifactsHandlersStep {
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor,
+        )
+
+        configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)
+        enableMetaInfoHandler()
+    }
+}
+
+fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandlers: Boolean) {
+    configureJvmArtifactsHandlersStep {
+        if (includeAllDumpHandlers) {
             useHandlers(
                 ::BytecodeListingHandler,
-                ::BytecodeTextHandler.bind(true)
             )
         }
 
-        useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor,
-            ::BlackBoxInlinerCodegenSuppressor,
+        useHandlers(
+            ::BytecodeTextHandler.bind(true)
         )
+    }
 
+    useAfterAnalysisCheckers(
+        ::BlackBoxInlinerCodegenSuppressor,
+    )
+
+    defaultDirectives {
+        +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+    }
+
+    forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
         defaultDirectives {
-            +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+            DIAGNOSTICS with "-warnings"
         }
+    }
 
-        forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
-            defaultDirectives {
-                DIAGNOSTICS with "-warnings"
-            }
+    configureModernJavaWhenNeeded()
+
+    forTestsMatching("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/*") {
+        defaultDirectives {
+            +ENABLE_DEBUG_MODE
         }
+    }
 
-        configureModernJavaWhenNeeded()
-
-        forTestsMatching("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/*") {
-            defaultDirectives {
-                +ENABLE_DEBUG_MODE
-            }
+    forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
+        defaultDirectives {
+            +ENABLE_FOREIGN_ANNOTATIONS
+            ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
         }
+    }
 
-        forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
-            defaultDirectives {
-                +ENABLE_FOREIGN_ANNOTATIONS
-                ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
-            }
+    forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        configureJvmArtifactsHandlersStep {
+            useHandlers(::JvmIrInterpreterDumpHandler)
         }
-
-        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
-            configureJvmArtifactsHandlersStep {
-                useHandlers(::JvmIrInterpreterDumpHandler)
-            }
-        }
-
-        enableMetaInfoHandler()
     }
 }
 
