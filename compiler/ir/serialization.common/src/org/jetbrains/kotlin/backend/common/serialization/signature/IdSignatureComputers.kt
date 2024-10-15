@@ -219,12 +219,6 @@ class FileLocalIdSignatureComputer(
         is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
         is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
 
-        is IrField -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
-            id = ++localIndex,
-            description = null
-        )
-
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
             id = if (declaration.isFakeOverride) {
