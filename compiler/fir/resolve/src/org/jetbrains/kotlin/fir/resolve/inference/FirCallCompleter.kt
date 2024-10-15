@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -168,7 +167,7 @@ class FirCallCompleter(
         initialType: ConeKotlinType,
         resolutionMode: ResolutionMode,
     ) {
-        if (resolutionMode !is ResolutionMode.WithExpectedType || resolutionMode.arrayLiteralPosition == ArrayLiteralPosition.AnnotationArgument) return
+        if (resolutionMode !is ResolutionMode.WithExpectedType) return
         val expectedType = resolutionMode.expectedType.fullyExpandedType(session)
 
         val system = candidate.system

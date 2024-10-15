@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -31,13 +30,6 @@ sealed class ResolutionMode(
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,
-        /**
-         * Expected type is used for inferring array literal types in places where array literal syntax is supported
-         * Currently, it's an argument of annotation call or a default value of parameter in annotation class constructor
-         * `ArrayLiteralPosition.AnnotationArgument` does not produce a constraint during completion because
-         * it can contain type parameter types which aren't substituted to type variable types.
-         */
-        val arrayLiteralPosition: ArrayLiteralPosition? = null,
         /**
          * It might be ok if the types turn out to be incompatible.
          * Consider the following examples with properties and their backing fields:
@@ -73,7 +65,6 @@ sealed class ResolutionMode(
             mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
             expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
             fromCast = fromCast,
-            arrayLiteralPosition = arrayLiteralPosition,
             shouldBeStrictlyEnforced = shouldBeStrictlyEnforced,
             forceFullCompletion = forceFullCompletion
         )
@@ -83,15 +74,9 @@ sealed class ResolutionMode(
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
-                    "arrayLiteralPosition=${arrayLiteralPosition}, " +
                     "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
                     "forceFullCompletion=${forceFullCompletion}, "
         }
-    }
-
-    enum class ArrayLiteralPosition {
-        AnnotationArgument,
-        AnnotationParameter,
     }
 
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode(forceFullCompletion = false) {
@@ -139,12 +124,10 @@ val ResolutionMode.expectedType: ConeKotlinType?
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,
     expectedTypeMismatchIsReportedInChecker: Boolean = false,
-    arrayLiteralPosition: ArrayLiteralPosition? = null,
 ): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
         expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
-        arrayLiteralPosition = arrayLiteralPosition,
     )
     else -> ResolutionMode.ContextIndependent
 }
