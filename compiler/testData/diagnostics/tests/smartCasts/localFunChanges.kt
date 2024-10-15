@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun trans(n: Int, f: () -> Boolean) = if (f()) n else null
 

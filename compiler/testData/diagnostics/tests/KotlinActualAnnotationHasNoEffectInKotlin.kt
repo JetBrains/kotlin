@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_KOTLIN_JVM_ANNOTATIONS
 
 import kotlin.annotations.jvm.KotlinActual

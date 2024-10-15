@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // False-positive reports in K1, because fixed only in K2
 // MODULE: m1-common
 // FILE: common.kt

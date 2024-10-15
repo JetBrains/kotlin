@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T : Number> materializeNumber(): T = TODO()
 
 fun a(): Unit = run {

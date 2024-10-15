@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-2825  DataFlowInfo is not retained after assignment
 
 interface A

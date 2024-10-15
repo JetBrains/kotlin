@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
 fun foo(vararg t : String) = ""

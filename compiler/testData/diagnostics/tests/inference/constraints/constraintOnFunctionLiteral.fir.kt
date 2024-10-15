@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package c
 
 import java.util.ArrayList

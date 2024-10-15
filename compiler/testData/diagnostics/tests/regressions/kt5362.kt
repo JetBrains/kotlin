@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {

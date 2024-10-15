@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error
 // FIR_IDENTICAL
 // LANGUAGE: -RestrictionOfValReassignmentViaBackingField
 

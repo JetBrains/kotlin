@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNSUPPORTED
 // MODULE: m1-common
 // FILE: common.kt

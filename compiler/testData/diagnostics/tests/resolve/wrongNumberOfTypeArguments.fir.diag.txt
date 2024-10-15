@@ -1,3 +1,3 @@
-/wrongNumberOfTypeArguments.kt:(128,141): error: One type argument expected for fun <T> foo(t: T): T.
+/wrongNumberOfTypeArguments.kt:(159,172): error: One type argument expected for fun <T> foo(t: T): T.
 
-/wrongNumberOfTypeArguments.kt:(201,206): error: 2 type arguments expected for fun <T, R> bar(t: T, r: R): Unit.
+/wrongNumberOfTypeArguments.kt:(232,237): error: 2 type arguments expected for fun <T, R> bar(t: T, r: R): Unit.

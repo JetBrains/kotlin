@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitTypeParametersInAnonymousObjects
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-28999

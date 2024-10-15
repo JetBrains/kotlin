@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun main(x: Any?) {
     if (x is String || false) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length

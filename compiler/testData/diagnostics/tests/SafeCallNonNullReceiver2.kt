@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-418
 

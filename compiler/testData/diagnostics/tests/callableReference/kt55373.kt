@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class One
 fun one() = Unit
 class Two

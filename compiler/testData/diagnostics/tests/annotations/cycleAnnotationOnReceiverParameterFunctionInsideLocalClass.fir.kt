@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package myPack
 
 annotation class Anno(val number: Int)

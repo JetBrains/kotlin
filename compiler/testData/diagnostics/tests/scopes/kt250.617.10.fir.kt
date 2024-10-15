@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt_250_617_10
 
 import java.util.ArrayList

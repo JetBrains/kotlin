@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun <T> foo(a1: Array<T>, a2: Array<out T>): T = null!!

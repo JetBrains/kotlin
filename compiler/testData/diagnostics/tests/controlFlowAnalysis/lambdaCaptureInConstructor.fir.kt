@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUES: KT-70133, KT-70724

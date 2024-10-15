@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: file1.kt
 private class <!CLASSIFIER_REDECLARATION!>C<!> {
     companion object

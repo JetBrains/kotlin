@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-50520

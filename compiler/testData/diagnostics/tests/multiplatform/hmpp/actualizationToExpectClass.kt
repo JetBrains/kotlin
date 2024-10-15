@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-69632
 // MODULE: common
 expect class <!NO_ACTUAL_FOR_EXPECT!>Common<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class My {
     abstract var x: Int
         <!REDUNDANT_MODIFIER_IN_GETTER!>public<!> get

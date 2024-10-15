@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66005
 
 inline fun <reified T> foo(v: T) {

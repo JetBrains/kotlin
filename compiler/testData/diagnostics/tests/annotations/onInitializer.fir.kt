@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     <!WRONG_ANNOTATION_TARGET!>@ann<!> init {}
     @<!UNRESOLVED_REFERENCE!>aaa<!> init {}

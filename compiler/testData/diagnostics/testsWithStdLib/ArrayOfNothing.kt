@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
 // LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments +NullableNothingInReifiedPosition
 class A<T>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 internal open class My
 
 // valid, internal from internal

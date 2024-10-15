@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val test: Int = listOf<Any>().map {
     when (it) {
         is Int -> <!DEBUG_INFO_SMARTCAST!>it<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())

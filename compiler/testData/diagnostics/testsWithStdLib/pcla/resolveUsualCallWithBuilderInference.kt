@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
 // LANGUAGE: +UnrestrictedBuilderInference

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 open class ToResolve<SomeClass>(f : (Int) -> Int)

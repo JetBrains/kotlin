@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     <!CONFLICTING_OVERLOADS!>fun test1()<!> {}
     @Deprecated("test1", level = DeprecationLevel.HIDDEN)

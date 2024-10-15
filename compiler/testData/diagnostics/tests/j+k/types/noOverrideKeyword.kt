@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // SKIP_TXT
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated

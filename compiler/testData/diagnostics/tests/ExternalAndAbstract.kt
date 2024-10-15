@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A {
     <!EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT!>abstract<!> val x : Int
         external get

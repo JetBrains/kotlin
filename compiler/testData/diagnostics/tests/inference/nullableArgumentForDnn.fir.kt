@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-58665
 
 fun <R, T : Any> use(x: String?, r: R, t: T) {

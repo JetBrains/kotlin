@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.lang.Exception
 
 fun <K> id(arg: K): K = arg

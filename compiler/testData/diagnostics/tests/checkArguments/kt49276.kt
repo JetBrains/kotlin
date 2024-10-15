@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // LANGUAGE: -ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
 // This test is not K1/K2 identical due to KT-58789 not implemented yet

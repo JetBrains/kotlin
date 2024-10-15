@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 enum class A {
     W(1), X(1, 2), Y(3.0), Z(""), E();

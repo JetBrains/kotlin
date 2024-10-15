@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-11306 ABSTRACT_MEMBER_NOT_IMPLEMENTED for data class should inheriting interfaces requiring equals(), hashCode(), or toString()
 

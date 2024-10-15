@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-5696 Prohibit type parameters for enum classes
 
 package bug

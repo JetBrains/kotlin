@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_REFLECT
 // LANGUAGE: -PrioritizedEnumEntries
 // ISSUE: KT-58922

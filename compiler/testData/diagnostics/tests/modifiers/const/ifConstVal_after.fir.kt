@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +IntrinsicConstEvaluation
 
 const val flag = true

@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: J.java
 import org.jetbrains.annotations.*;
 import java.util.List;

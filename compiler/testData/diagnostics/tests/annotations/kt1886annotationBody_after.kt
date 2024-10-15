@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +NestedClassesInAnnotations
 
 annotation class Annotation2() {

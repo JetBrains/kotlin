@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // ISSUES: KT-51357, KT-67146, KT-67335

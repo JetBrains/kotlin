@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {

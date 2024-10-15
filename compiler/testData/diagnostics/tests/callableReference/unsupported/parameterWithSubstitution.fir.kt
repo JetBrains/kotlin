@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Issue: KT-41729
 
 import kotlin.reflect.KProperty

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class BaseClass() {
     protected class Nested(val x: Int, protected val y: Int)
 

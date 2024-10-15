@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class X
 
 operator fun <T> X.iterator(): Iterable<T> = TODO()

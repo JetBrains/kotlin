@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @RequiresOptIn
 @Target(AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION)
 annotation class Marker

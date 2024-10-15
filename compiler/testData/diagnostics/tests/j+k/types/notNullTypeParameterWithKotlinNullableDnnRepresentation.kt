@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +JavaTypeParameterDefaultRepresentationWithDNN
 // FILE: SLRUMap.java

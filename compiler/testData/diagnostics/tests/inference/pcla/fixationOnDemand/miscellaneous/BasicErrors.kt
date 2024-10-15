@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     pcla { otvOwner ->
         <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.fix()

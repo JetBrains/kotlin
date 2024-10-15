@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FIR_DUMP
 // OPT_IN: kotlin.RequiresOptIn

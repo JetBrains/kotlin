@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 annotation class Ann(val x: Int = 1)
 class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 
 // FILE: Base.kt

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun assignedInTry() {
     val a: Int
     try {

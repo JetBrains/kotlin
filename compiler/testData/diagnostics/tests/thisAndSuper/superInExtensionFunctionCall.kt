@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // No supertype at all
 
 fun Any.extension(arg: Any?) {}

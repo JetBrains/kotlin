@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ReportErrorsOnRecursiveTypeInsidePlusAssignment
 // WITH_STDLIB
 // FIR: KT-51648

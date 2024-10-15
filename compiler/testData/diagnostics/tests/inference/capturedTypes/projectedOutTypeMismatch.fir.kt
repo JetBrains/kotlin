@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun test(c: C<out Number>, list: MutableList<out Number>, consumer: Consumer<*>) {

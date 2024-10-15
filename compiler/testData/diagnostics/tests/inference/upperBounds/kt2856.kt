@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2856 Fix the getOrElse signature to be able to return any supertype of V
 package d

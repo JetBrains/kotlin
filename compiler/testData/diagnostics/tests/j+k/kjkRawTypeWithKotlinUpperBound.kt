@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66158
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }

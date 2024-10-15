@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // IGNORE_BACKEND: WASM
 // LANGUAGE: -UseBuilderInferenceWithoutAnnotation

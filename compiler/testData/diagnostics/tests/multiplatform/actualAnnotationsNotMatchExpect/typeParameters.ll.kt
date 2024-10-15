@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// IGNORE_FIR_DIAGNOSTICS
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.TYPE_PARAMETER)

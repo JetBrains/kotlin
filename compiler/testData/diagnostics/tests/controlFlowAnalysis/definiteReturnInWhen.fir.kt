@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return a

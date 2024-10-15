@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     // ISSUE: KT-72030
     val resultA = pcla { otvOwner ->

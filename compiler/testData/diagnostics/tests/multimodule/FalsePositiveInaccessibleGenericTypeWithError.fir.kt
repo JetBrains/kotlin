@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent
 // ISSUE: KT-66690
 // MODULE: base

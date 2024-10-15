@@ -1,15 +1,16 @@
-/projectedOutTypeMismatch.kt:4:14: error: the integer literal does not conform to the expected type Nothing
+/projectedOutTypeMismatch.kt:5:14: error: the integer literal does not conform to the expected type Nothing
     list.add(42)
              ^^
-/projectedOutTypeMismatch.kt:5:14: error: the integer literal does not conform to the expected type CapturedType(out Number)
+/projectedOutTypeMismatch.kt:6:14: error: the integer literal does not conform to the expected type CapturedType(out Number)
     list.bar(42)
              ^^
-/projectedOutTypeMismatch.kt:8:18: error: the integer literal does not conform to the expected type CapturedType(out Number)
+/projectedOutTypeMismatch.kt:9:18: error: the integer literal does not conform to the expected type CapturedType(out Number)
         list.foo(42)
                  ^^
-/projectedOutTypeMismatch.kt:11:22: error: the integer literal does not conform to the expected type Nothing
+/projectedOutTypeMismatch.kt:12:22: error: the integer literal does not conform to the expected type Nothing
     consumer.consume(42)
                      ^^
-/projectedOutTypeMismatch.kt:21:11: error: the integer literal does not conform to the expected type Nothing
+/projectedOutTypeMismatch.kt:22:11: error: the integer literal does not conform to the expected type Nothing
     t.add(42)
           ^^
+

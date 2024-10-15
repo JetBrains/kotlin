@@ -1,4 +1,5 @@
 // LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 class Controller<T> {
     fun yield(t: T): Boolean = true
 }

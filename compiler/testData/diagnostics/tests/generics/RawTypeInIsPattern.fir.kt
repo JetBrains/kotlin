@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(a: Any, b: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) {
     when (a) {
         is Map<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> -> {}

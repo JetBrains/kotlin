@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(y: String?) {
     var x: String? = ""
     if (x != null) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-71662
 fun reproduce() {
     val x = pcla { otvOwner ->

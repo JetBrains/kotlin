@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-70756
 
 operator fun <T> String.invoke(t: T) {}

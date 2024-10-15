@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class my
 annotation class my1(val i : Int)
 annotation class my2(val i : Int = 0)

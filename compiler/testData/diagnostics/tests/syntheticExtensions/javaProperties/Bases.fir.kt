@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 open class KotlinClass1 : JavaClass1() {
     public fun getSomethingKotlin1(): Int = 1

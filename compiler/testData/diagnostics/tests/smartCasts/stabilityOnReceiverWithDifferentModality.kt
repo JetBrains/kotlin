@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class AbstractOpenDefault {
     open val a: String? = ""
 }

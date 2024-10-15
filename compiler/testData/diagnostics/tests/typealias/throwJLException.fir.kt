@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // +JDK
 
 typealias Exn = java.lang.Exception

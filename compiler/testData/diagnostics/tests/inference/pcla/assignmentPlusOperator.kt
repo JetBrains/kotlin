@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun reproduce() {
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())

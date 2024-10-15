@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitInnerClassesOfGenericClassExtendingThrowable
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 fun <T : Any> foo(items: List<T>, handler: (T) -> Unit) {}

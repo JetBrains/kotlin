@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 object Foo {
     tailrec fun foo1() {
         foo1()

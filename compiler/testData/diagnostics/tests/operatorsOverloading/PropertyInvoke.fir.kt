@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class I { }
 
 operator fun I.invoke(): E = E()

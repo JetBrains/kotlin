@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `VarargData VarargData.copy(int[])` because it has multiple definitions
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {
     fun member() {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class GenericBaseClass<T> {
     open fun foo(x: T): T = x
     open fun ambiguous(x: T): T = x

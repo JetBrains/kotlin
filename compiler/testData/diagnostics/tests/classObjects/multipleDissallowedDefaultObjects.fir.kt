@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     inner class I {
         companion <!NESTED_CLASS_NOT_ALLOWED!>object A<!>

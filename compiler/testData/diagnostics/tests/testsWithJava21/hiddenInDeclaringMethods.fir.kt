@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.lang.invoke.MethodHandles
 
 fun test(short: Short, long: Long, float: Float,

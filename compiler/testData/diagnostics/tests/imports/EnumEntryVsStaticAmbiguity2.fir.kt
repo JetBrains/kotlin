@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-49200
 // FILE: first/KtNodeTypes.java
 

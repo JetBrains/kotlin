@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun main() {
     "".run {
         <!UNUSED_EXPRESSION!>""<!>

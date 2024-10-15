@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
 annotation class A
 

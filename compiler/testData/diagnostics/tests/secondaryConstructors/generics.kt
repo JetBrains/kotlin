@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 open class B<T>(x: T, y: T) {
     constructor(x: T): this(x, x)

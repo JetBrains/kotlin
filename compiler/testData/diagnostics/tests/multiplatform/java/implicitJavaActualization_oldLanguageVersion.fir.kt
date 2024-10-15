@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt

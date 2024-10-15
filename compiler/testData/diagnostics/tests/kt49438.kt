@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <K> foo(x: K) {}
 val x1 = foo<(<!UNRESOLVED_REFERENCE!>unresolved<!>) -> Float> { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>toFloat<!>() }
 val x2 = foo<(<!UNRESOLVED_REFERENCE!>unresolved<!>) -> Float> { <!CANNOT_INFER_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>toFloat<!>() }

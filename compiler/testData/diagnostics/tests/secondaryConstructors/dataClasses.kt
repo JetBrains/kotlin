@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 data class A1(val x: String) {

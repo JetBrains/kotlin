@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun Foo() = 42
 
 object Foo {

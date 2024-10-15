@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // See also: KT-6611 (cast can never succeed: Class<T> -> Class<Any>)
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo(array: Array<Array<T>>): Array<Array<T>> = array

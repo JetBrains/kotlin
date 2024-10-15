@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -KeepNullabilityWhenApproximatingLocalType
 // ISSUE: KT-53982
 

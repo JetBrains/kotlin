@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57477
 
 fun f(block: (Int) -> Unit) {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-2902 Check for null should be required when match nullable enum element
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)

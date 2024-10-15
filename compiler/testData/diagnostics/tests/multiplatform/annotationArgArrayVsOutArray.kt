@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
 // MODULE: m1-common
 // FILE: common.kt

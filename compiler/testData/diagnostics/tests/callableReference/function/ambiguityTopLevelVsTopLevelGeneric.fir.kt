@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: Int, y: Any): Int = x
 
 fun <T> bar(x: T, y: Any): T = x

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val x = ""
 
 fun bar(x : Int = <!INITIALIZER_TYPE_MISMATCH!>""<!>, y : Int = x, z : String = <!INITIALIZER_TYPE_MISMATCH!>y<!>) {

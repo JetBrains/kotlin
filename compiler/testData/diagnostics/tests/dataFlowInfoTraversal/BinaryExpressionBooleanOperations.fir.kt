@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 
 fun foo1(x: Number, cond: Boolean): Boolean {

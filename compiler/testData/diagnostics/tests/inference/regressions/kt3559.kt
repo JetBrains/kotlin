@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-3559 Strange inference failure error message
 
 public inline fun <T:Any, R> let(subj: T?, body: (T) -> R): R? {

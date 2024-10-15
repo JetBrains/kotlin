@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitNonConstValuesAsVarargsInAnnotations
 
 annotation class AnnE(val i: MyEnum)

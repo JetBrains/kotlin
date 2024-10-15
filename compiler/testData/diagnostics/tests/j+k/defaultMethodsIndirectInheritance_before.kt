@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -AllowSuperCallToJavaInterface
 // FIR_IDENTICAL
 // FILE: JavaInterfaceBase.java

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
         else when (c) {

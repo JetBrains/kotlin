@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Num<T: Number>(val x: T)
 
 typealias N<T> = Num<T>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // The type checker used to think that T is not null no matter what the upper bound
 

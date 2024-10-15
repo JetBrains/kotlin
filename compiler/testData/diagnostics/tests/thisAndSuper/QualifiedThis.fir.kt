@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: f.kt
 class A() {
   fun foo() : Unit {

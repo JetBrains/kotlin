@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class MyClass
 
 // Correct at compile time but wrong at run-time

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_KOTLIN_JVM_ANNOTATIONS
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common

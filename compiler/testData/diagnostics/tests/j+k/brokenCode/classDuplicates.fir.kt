@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Hello.kt
 private class <!CLASSIFIER_REDECLARATION!>Hello<!>()
 {

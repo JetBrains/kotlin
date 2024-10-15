@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testAssignment() {
     var <!UNUSED_VARIABLE!>a<!> = 1
     <!UNREACHABLE_CODE!>a =<!> todo()

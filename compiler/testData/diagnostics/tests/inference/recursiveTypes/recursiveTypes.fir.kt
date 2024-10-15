@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 interface RecursiveGeneric<T : RecursiveGeneric<T, U>, U>

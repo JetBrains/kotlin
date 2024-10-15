@@ -1,3 +1,5 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 annotation class Ann
@@ -14,5 +16,5 @@ expect class CompatibleOverrides {
 actual class CompatibleOverrides {
     actual fun foo() {}
 
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun foo(withArg: Any) {}
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun foo(withArg: Any) {}
 }

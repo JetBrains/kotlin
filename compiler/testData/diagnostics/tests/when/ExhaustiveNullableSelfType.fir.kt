@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-70672, KT-70673
 fun testNullableBoolean(arg: Boolean?) = when (arg) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
 
 class Pair<T1, T2>(val x1: T1, val x2: T2)

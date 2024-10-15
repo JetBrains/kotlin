@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.util.LinkedList
 
 class A<T> : ArrayList<T>() {

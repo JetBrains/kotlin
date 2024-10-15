@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-1027 Strange selection of unreachable code
 
 package kt1027

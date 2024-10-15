@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LAMBDAS: INDY
 // WITH_STDLIB
 // LANGUAGE: +ForbidJvmSerializableLambdaOnInlinedFunctionLiterals

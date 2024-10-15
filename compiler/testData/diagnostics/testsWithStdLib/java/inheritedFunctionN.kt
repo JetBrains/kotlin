@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A1.java
 
 import kotlin.jvm.functions.FunctionN;

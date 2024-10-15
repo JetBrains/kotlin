@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
 // accidentally reported (K1 only) on x.addFirst/addLast/removeFirst/removeLast
 // FULL_JDK

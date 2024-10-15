@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class User(val login : Boolean) {}
 
 fun currentAccess(user: User?): Int {

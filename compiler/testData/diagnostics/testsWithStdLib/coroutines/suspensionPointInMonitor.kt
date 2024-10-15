@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
 // SKIP_TXT
 import kotlin.concurrent.withLock

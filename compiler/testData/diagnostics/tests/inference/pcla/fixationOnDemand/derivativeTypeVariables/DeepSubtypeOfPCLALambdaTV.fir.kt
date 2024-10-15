@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     val resultA = pcla { otvOwner ->
         // ContravariantContainer<OTv> <: ContravariantContainer<PNTv>  =>  PNTv <: OTv

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +AllowAccessToProtectedFieldFromSuperCompanion
 // WITH_STDLIB
 // FILE: A.kt

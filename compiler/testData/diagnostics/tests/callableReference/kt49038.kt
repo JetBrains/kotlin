@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun take(arg: Any) {}
 
 fun <T> foo(a: A, t: T) {} // 1

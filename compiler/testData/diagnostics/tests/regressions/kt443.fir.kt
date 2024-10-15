@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-443 Write allowed to super.val
 
 open class M() {

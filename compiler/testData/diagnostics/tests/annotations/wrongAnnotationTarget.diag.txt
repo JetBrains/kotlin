@@ -1,9 +1,10 @@
-/wrongAnnotationTarget.kt:9:1: error: this annotation is not applicable to target 'top level property with backing field' and use site target '@property'
+/wrongAnnotationTarget.kt:10:1: error: this annotation is not applicable to target 'top level property with backing field' and use site target '@property'
 @property:Ann2
 ^^^^^^^^^^^^^^
-/wrongAnnotationTarget.kt:10:10: error: this annotation is not applicable to target 'type usage'
+/wrongAnnotationTarget.kt:11:10: error: this annotation is not applicable to target 'type usage'
 val foo: @Ann1 @Ann2 String = ""
          ^^^^^
-/wrongAnnotationTarget.kt:10:16: error: this annotation is not applicable to target 'type usage'
+/wrongAnnotationTarget.kt:11:16: error: this annotation is not applicable to target 'type usage'
 val foo: @Ann1 @Ann2 String = ""
                ^^^^^
+

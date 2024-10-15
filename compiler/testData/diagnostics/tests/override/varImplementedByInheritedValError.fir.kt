@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitImplementingVarByInheritedVal
 // RENDER_DIAGNOSTICS_FULL_TEXT
 

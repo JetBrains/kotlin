@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 annotation class Other
 
 @RequiresOptIn(message = "This is a test.")

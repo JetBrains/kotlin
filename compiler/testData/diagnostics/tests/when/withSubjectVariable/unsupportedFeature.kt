@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -VariableDeclarationInWhenSubject
 // DIAGNOSTICS: -UNUSED_VARIABLE
 

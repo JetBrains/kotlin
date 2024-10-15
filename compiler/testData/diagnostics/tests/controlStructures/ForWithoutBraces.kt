@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-552
 // KT-552 For variable unresolved if loop body is not block

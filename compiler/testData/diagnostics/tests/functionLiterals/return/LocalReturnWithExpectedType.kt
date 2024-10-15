@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <T> listOf(): List<T> = null!!
 fun <T> listOf(vararg values: T): List<T> = null!!

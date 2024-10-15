@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class Foo(val name: String)
 
 fun main() {

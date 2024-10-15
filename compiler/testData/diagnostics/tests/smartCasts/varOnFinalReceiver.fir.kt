@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun invokeLater(body: () -> Unit) {}
 
 class Stable(val x: String? = "...")

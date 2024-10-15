@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Tail calls are not allowed to be Nothing typed. See KT-15051
 import kotlin.coroutines.*

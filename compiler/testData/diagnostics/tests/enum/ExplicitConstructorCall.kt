@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // KT-7753: attempt to call enum constructor explicitly
 enum class A(val c: Int) {

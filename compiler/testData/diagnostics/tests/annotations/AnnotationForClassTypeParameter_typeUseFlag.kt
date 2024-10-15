@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions -ClassTypeParameterAnnotations
 
 annotation class A1

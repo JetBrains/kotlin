@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-2225 Object expression delegation parameter should be checked with data flow info
 
 interface A {

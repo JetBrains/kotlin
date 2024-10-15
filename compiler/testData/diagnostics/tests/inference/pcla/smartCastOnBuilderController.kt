@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Controller<T2>
 
 fun <T1> generate(

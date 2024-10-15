@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-54663
 // FILE: JavaAction.java
 import org.jetbrains.annotations.NotNull;

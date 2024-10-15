@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class SomeClass<T>
 class TestSome<P> {
     object Some : SomeClass<<!UNRESOLVED_REFERENCE!>P<!>>() {

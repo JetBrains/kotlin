@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitQualifiedAccessToUninitializedEnumEntry
 // ISSUE: KT-41124
 

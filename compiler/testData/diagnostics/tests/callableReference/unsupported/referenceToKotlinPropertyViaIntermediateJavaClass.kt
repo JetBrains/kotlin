@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ReferencesToSyntheticJavaProperties
 // FIR_IDENTICAL
 

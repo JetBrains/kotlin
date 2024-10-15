@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // ISSUE: KT-39883
 

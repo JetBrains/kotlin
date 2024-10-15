@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -MultiplatformRestrictions
 // WITH_STDLIB
 // MODULE: m1-common

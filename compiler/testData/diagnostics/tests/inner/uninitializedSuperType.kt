@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import Outer.Inner
 
 open class Outer {

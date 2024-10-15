@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun testA() {
     fun <SOT> nestedPCLA(shallowAnchor: SOT, lambda: (TypeVariableOwner<SOT>) -> Any?): SOT = null!!
 

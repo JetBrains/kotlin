@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 
 fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {

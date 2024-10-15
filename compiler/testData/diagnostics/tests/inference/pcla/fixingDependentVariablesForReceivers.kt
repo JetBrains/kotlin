@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <E> generate(c: Controller<E>.() -> Unit): E = TODO()
 
 interface In<in T1> {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
 
 // FILE: test/Internal.java

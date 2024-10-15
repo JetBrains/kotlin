@@ -1,67 +1,67 @@
-/KC.kt:(79,87): error: Class 'KC' is not abstract and does not implement abstract members:
+/KC.kt:(80,88): error: Class 'KC' is not abstract and does not implement abstract members:
 fun <C> foo(): List<C>
 fun <D> baz(): D
 fun <E, F> bar(): List<F>
 
-/KC.kt:(99,107): error: 'foo' overrides nothing. Potential signatures for overriding:
+/KC.kt:(100,108): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun <C> foo(): List<C>
 
-/KC.kt:(108,131): error: Conflicting overloads:
+/KC.kt:(109,132): error: Conflicting overloads:
 fun foo(): List<String>
 fun <C> foo(): List<C>
 
-/KC.kt:(151,159): error: 'baz' overrides nothing. Potential signatures for overriding:
+/KC.kt:(152,160): error: 'baz' overrides nothing. Potential signatures for overriding:
 fun <D> baz(): D
 
-/KC.kt:(160,174): error: Conflicting overloads:
+/KC.kt:(161,175): error: Conflicting overloads:
 fun baz(): Any
 fun <D> baz(): D
 
-/KC.kt:(185,193): error: 'bar' overrides nothing. Potential signatures for overriding:
+/KC.kt:(186,194): error: 'bar' overrides nothing. Potential signatures for overriding:
 fun <E, F> bar(): List<F>
 
-/KC.kt:(194,214): error: Conflicting overloads:
+/KC.kt:(195,215): error: Conflicting overloads:
 fun bar(): List<Int>
 fun <E, F> bar(): List<F>
-/KJC.kt:(90,99): error: Class 'KJC' is not abstract and does not implement abstract members:
+/KJC.kt:(91,100): error: Class 'KJC' is not abstract and does not implement abstract members:
 fun <C : Any!> foo(): (Mutable)List<C!>!
 fun <D : Any!> baz(): D!
 fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
 
-/KJC.kt:(111,119): error: 'foo' overrides nothing. Potential signatures for overriding:
+/KJC.kt:(112,120): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun <C : Any!> foo(): (Mutable)List<C!>!
 
-/KJC.kt:(120,143): error: Conflicting overloads:
+/KJC.kt:(121,144): error: Conflicting overloads:
 fun foo(): List<String>
 fun <C : Any!> foo(): (Mutable)List<C!>!
 
-/KJC.kt:(163,171): error: 'baz' overrides nothing. Potential signatures for overriding:
+/KJC.kt:(164,172): error: 'baz' overrides nothing. Potential signatures for overriding:
 fun <D : Any!> baz(): D!
 
-/KJC.kt:(172,186): error: Conflicting overloads:
+/KJC.kt:(173,187): error: Conflicting overloads:
 fun baz(): Any
 fun <D : Any!> baz(): D!
 
-/KJC.kt:(197,205): error: 'bar' overrides nothing. Potential signatures for overriding:
+/KJC.kt:(198,206): error: 'bar' overrides nothing. Potential signatures for overriding:
 fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
 
-/KJC.kt:(206,226): error: Conflicting overloads:
+/KJC.kt:(207,227): error: Conflicting overloads:
 fun bar(): List<Int>
 fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
-/test.kt:(124,126): error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in '/JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in '/JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in '/JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(124,126): error: The function 'fun <D : Any!> baz(): D!' defined in '/JI' from an interface is generic, but the function 'fun baz(): Any!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <D : Any!> baz(): D!' defined in '/JI' from an interface is generic, but the function 'fun baz(): Any!' defined in '/JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(124,126): error: The function 'fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!' defined in '/JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<Int!>!' defined in '/JC' from a delegate is not.
+/test.kt:(125,127): error: The function 'fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!' defined in '/JI' from an interface is generic, but the function 'fun bar(): (Mutable)List<Int!>!' defined in '/JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(237,239): error: The function 'fun <C> foo(): List<C>' defined in '/KI' from an interface is generic, but the function 'fun foo(): List<String!>' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <C> foo(): List<C>' defined in '/KI' from an interface is generic, but the function 'fun foo(): List<String!>' defined in '/JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(237,239): error: The function 'fun <D> baz(): D' defined in '/KI' from an interface is generic, but the function 'fun baz(): Any' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <D> baz(): D' defined in '/KI' from an interface is generic, but the function 'fun baz(): Any' defined in '/JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 
-/test.kt:(237,239): error: The function 'fun <E, F> bar(): List<F>' defined in '/KI' from an interface is generic, but the function 'fun bar(): List<Int!>' defined in '/JKC' from a delegate is not.
+/test.kt:(238,240): error: The function 'fun <E, F> bar(): List<F>' defined in '/KI' from an interface is generic, but the function 'fun bar(): List<Int!>' defined in '/JKC' from a delegate is not.
 Such an implementation can provoke runtime errors.

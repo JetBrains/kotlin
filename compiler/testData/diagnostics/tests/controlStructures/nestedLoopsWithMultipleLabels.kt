@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // K2: See KT-65342
 
 fun test() {

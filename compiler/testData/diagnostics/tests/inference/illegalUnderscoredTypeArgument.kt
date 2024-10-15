@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 fun <K, T> foo(x: (K) -> T): Pair<K, T> = TODO()

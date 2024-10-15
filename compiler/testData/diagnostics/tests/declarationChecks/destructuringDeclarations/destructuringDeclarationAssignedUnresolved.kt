@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun useDeclaredVariables() {
     val (a, b) = <!UNRESOLVED_REFERENCE!>unresolved<!>
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <E> foo(x: Any, y: Any) : Any {
     class C
     // without E?

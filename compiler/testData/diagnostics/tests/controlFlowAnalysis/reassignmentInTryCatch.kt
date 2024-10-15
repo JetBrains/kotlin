@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-13612 related tests (reassignment in try-catch-finally)
 
 fun f1() {

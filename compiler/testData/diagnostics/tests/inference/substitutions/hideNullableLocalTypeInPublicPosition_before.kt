@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-30054
 // LANGUAGE: -KeepNullabilityWhenApproximatingLocalType
 interface I {

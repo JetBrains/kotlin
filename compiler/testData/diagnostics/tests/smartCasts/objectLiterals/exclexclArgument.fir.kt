@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Runnable(val arg: Int) {
     abstract fun run(): Int
 }

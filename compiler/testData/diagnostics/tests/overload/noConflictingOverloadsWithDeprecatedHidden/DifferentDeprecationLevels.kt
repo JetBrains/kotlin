@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.WARNING) fun TestWarning()<!> {}
 <!CONFLICTING_OVERLOADS!>fun TestWarning()<!> {}
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: lib1
 
 // FILE: DemoClassInternal1.kt

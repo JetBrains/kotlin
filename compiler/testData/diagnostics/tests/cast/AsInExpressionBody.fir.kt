@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> id(x: T): T = x
 
 fun foo() = 1 as Any

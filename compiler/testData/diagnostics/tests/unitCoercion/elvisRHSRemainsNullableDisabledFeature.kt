@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ElvisInferenceImprovementsIn21
 // ISSUE: KT-71751
 

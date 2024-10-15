@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `boolean TestKt.isNull(java.lang.Integer)` because it has multiple definitions
 // ISSUE: KT-49710
 // WITH_STDLIB
 

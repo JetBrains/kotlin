@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1806 accessing private member in object class/anonymous object is not highlighted as error
 package kt1806
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun foo(numbers: Collection<Int>) {
     for (i in numbers) {

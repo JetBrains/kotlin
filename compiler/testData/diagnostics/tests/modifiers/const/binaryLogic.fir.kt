@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val nonConstBool = true
 const val constBool = false
 

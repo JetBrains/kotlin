@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface IBase1 {
     fun foo(): Any
 }

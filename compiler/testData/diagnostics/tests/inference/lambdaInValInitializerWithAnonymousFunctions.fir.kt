@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 typealias SuspendFn = suspend () -> Unit
 
 val test1f: suspend () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun () {}<!>

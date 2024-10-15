@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DISABLE_NEXT_TIER_SUGGESTION: FIR2IR reports "Const field is not containing const expression", and FIR must result in a diagnostic, but does not...
 // FIR_IDENTICAL
 // FILE: Bar.java
 

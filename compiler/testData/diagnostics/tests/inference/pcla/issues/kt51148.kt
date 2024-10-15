@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun box(): String {
     return <!TYPE_MISMATCH!>someFunction<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><SomeEnum><!>()
 }

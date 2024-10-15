@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun main(args: Array<String>) {
     return
         <!UNREACHABLE_CODE!>.

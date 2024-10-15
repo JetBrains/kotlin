@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class I {
     operator fun inc(): ST = ST()
 }

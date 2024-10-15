@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val x = arrayListOf<(A<<!SYNTAX!><!>>) -> Unit>()
 

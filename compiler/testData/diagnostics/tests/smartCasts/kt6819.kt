@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun test(o: String?): Boolean {
     return when {
         // Data flow info should propagate from o == null to o.length

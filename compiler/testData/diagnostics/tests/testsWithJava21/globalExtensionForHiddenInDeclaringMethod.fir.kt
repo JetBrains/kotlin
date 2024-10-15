@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A : List<Any> {
     override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): Any {
         return super.<!DEPRECATION!>getFirst<!>()

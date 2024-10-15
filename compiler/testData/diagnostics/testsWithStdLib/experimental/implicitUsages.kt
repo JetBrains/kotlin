@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.RequiresOptIn
 // LANGUAGE: +OptInContagiousSignatures
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-64702
 class Box<T : CharSequence>(var value: T)
 

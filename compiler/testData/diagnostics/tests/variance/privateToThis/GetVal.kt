@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> getT(): T = null!!
 
 class Test<in I, out O> {

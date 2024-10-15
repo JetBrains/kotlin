@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-607 Val reassignment is not marked as an error
 
 package kt607

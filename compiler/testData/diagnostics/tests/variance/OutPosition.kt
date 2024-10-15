@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface In<in T>
 interface Out<out T>
 interface Inv<T>

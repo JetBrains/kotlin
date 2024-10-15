@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65319
 
 fun noInline(x: () -> Unit) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-61781
 
 fun TODO(): Nothing = null!!

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!ILLEGAL_JVM_NAME!>@JvmName<!NO_VALUE_FOR_PARAMETER!>()<!><!>
 fun foo() {}
 

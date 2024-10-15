@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
     fun foo(a1: Int, a2: Double)
     fun bar(a1: Int, a2: Double, a3: String)

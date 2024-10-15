@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // SKIP_TXT
 fun <From, To> InputWrapper<From>.doMapping(

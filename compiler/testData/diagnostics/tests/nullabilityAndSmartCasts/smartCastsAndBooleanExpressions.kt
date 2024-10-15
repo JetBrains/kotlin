@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(b: Boolean?, c: Boolean) {
     if (b != null && <!DEBUG_INFO_SMARTCAST!>b<!>) {}
     if (b == null || <!DEBUG_INFO_SMARTCAST!>b<!>) {}

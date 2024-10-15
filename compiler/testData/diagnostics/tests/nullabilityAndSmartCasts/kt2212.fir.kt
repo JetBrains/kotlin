@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2212 Incomplete nullability information
 package kt2212
 

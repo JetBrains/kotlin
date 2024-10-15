@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ReportErrorsForComparisonOperators
 
 fun nullableNothingIdentity(a: Int, b: Nothing?) {

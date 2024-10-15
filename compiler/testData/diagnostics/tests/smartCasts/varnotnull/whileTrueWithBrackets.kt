@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 
 fun x(): Boolean { return true }

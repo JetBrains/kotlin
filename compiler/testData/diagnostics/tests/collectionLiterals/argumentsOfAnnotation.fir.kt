@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)
 
 @Foo([1], ["/"], [1f])

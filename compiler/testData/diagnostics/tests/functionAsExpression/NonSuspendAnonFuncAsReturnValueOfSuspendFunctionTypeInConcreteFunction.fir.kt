@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun produceConcreteA(func: () -> (suspend () -> Unit)): suspend () -> Unit = func()
 fun (() -> (suspend () -> Unit)).produceConcreteB(): suspend () -> Unit = this()
 

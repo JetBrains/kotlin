@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUE: KT-43260
 

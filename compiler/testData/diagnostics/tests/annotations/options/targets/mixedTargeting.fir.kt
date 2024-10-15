@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-69058
 
 // FILE: test/AnnotationTargets.java

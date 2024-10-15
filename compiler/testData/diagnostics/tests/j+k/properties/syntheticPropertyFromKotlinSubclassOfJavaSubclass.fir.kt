@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaBaseClass.java
 
 public class JavaBaseClass {

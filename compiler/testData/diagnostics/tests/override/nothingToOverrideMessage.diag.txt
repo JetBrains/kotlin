@@ -1,54 +1,55 @@
-/nothingToOverrideMessage.kt:13:1: error: class 'Simple' is not abstract and does not implement abstract member public abstract fun foo(s: String): Unit defined in I
+/nothingToOverrideMessage.kt:14:1: error: class 'Simple' is not abstract and does not implement abstract member public abstract fun foo(s: String): Unit defined in I
 class Simple : I {
 ^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:14:5: error: 'foo' overrides nothing
+/nothingToOverrideMessage.kt:15:5: error: 'foo' overrides nothing
     override fun foo() {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:18:5: error: 'foo' overrides nothing
+/nothingToOverrideMessage.kt:19:5: error: 'foo' overrides nothing
     override fun foo() {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:22:1: error: class 'OverloadedMethods' is not abstract and does not implement abstract member public abstract fun bar(a: String): Unit defined in I
+/nothingToOverrideMessage.kt:23:1: error: class 'OverloadedMethods' is not abstract and does not implement abstract member public abstract fun bar(a: String): Unit defined in I
 class OverloadedMethods : I {
 ^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:23:5: error: 'bar' overrides nothing
+/nothingToOverrideMessage.kt:24:5: error: 'bar' overrides nothing
     override fun bar(a: Int) {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:26:1: error: class 'DefaultParameters' is not abstract and does not implement abstract member public abstract fun baz(a: Int = ...): Unit defined in I
+/nothingToOverrideMessage.kt:27:1: error: class 'DefaultParameters' is not abstract and does not implement abstract member public abstract fun baz(a: Int = ...): Unit defined in I
 class DefaultParameters : I {
 ^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:27:5: error: 'baz' overrides nothing
+/nothingToOverrideMessage.kt:28:5: error: 'baz' overrides nothing
     override fun baz(a: String) {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:30:1: error: class 'VarargParameters' is not abstract and does not implement abstract member public abstract fun qux(vararg a: String): Unit defined in I
+/nothingToOverrideMessage.kt:31:1: error: class 'VarargParameters' is not abstract and does not implement abstract member public abstract fun qux(vararg a: String): Unit defined in I
 class VarargParameters : I {
 ^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:31:5: error: 'qux' overrides nothing
+/nothingToOverrideMessage.kt:32:5: error: 'qux' overrides nothing
     override fun qux(a: String){}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:34:1: error: class 'FunctionalType' is not abstract and does not implement abstract member public abstract fun quux(a: (s: String) -> Unit): Unit defined in I
+/nothingToOverrideMessage.kt:35:1: error: class 'FunctionalType' is not abstract and does not implement abstract member public abstract fun quux(a: (s: String) -> Unit): Unit defined in I
 class FunctionalType : I {
 ^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:35:5: error: 'quux' overrides nothing
+/nothingToOverrideMessage.kt:36:5: error: 'quux' overrides nothing
     override fun quux(a: ()->Any){}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:38:1: error: class 'ExtensionFunction' is not abstract and does not implement abstract member public abstract fun String.corge(): Unit defined in I
+/nothingToOverrideMessage.kt:39:1: error: class 'ExtensionFunction' is not abstract and does not implement abstract member public abstract fun String.corge(): Unit defined in I
 class ExtensionFunction: I {
 ^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:39:5: error: 'corge' overrides nothing
+/nothingToOverrideMessage.kt:40:5: error: 'corge' overrides nothing
     override fun Any.corge(){}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:46:1: error: class 'GenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: R): Unit defined in Generic
+/nothingToOverrideMessage.kt:47:1: error: class 'GenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: R): Unit defined in Generic
 class GenericOverride<R> : Generic<R> {
 ^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:47:5: error: 'foo' overrides nothing
+/nothingToOverrideMessage.kt:48:5: error: 'foo' overrides nothing
     override fun foo() {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:50:1: error: class 'NonGenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: String): Unit defined in Generic
+/nothingToOverrideMessage.kt:51:1: error: class 'NonGenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: String): Unit defined in Generic
 class NonGenericOverride : Generic<String> {
 ^^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:51:5: error: 'foo' overrides nothing
+/nothingToOverrideMessage.kt:52:5: error: 'foo' overrides nothing
     override fun foo() {}
     ^^^^^^^^
-/nothingToOverrideMessage.kt:59:5: error: 'foo' overrides nothing
+/nothingToOverrideMessage.kt:60:5: error: 'foo' overrides nothing
     override fun foo() {}
     ^^^^^^^^
+

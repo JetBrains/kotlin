@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.<!UNRESOLVED_REFERENCE!>INIT<!>) annotation class incorrect

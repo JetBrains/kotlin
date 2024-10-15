@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Foo.kt
 private typealias Attribute = PlatformAttr
 internal class PlatformAttr

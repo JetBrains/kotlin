@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352

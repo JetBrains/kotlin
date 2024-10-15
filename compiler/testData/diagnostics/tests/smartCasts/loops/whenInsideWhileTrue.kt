@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(x: String?): Int {
     loop@ while (true) {
         when (x) {

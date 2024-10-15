@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Breaking change in K2, see KT-57178
 
 open class I {

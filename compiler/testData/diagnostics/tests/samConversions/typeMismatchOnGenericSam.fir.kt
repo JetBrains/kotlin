@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun interface MySam<T> {
     fun execute(p0: T)
 

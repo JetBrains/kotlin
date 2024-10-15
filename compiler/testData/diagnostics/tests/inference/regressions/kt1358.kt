@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-1358 Overload resolution ambiguity with smartcast and generic function
 package d

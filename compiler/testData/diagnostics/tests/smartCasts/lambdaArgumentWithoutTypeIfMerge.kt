@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See also KT-7817
 
 fun <R> synchronized(lock: Any, block: () -> R): R = block()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-59138

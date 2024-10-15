@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Outer {
     class Nested {
         class NestedNested

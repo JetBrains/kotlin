@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T, S : T> test(x: T?, y: S, z: T) {
     x is <!CANNOT_CHECK_FOR_ERASED!>T<!>
     <!USELESS_IS_CHECK!>x is T?<!>

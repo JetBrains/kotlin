@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-53792, KT-66369
 
 class MyBoxInv<T : String?>(val value: T)

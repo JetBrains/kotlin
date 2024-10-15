@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +BreakContinueInInlineLambdas
 // ISSUE: KT-1436
 

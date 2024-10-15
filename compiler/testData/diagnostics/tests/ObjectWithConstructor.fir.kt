@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A1<!CONSTRUCTOR_IN_OBJECT!>()<!> {
     <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = <!INITIALIZER_TYPE_MISMATCH!>""<!>, y: Int)<!> : <!UNRESOLVED_REFERENCE!>this<!>() {
         x + y

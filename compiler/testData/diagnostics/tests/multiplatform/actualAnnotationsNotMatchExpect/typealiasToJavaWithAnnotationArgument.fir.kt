@@ -1,3 +1,5 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // This test is for the case when expect annotation is FirAnnotationCall and actual annotation is not FirAnnotationCall
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -11,7 +13,7 @@ expect class Foo
 // FILE: Foo.kt
 actual annotation class Ann actual constructor(actual val p: Int)
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias Foo = FooImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias Foo = FooImpl
 
 // FILE: FooImpl.java
 @Ann(p = 2)

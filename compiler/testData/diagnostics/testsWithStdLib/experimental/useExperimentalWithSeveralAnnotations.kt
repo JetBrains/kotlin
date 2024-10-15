@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt

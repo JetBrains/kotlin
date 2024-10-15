@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2330 Check visibility of getters and setters correspondingly
 package a
 

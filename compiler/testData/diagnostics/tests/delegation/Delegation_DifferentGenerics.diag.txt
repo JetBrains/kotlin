@@ -1,36 +1,37 @@
-/KC.kt:67:5: error: 'foo' overrides nothing
+/KC.kt:68:5: error: 'foo' overrides nothing
     override fun foo(): List<String> = emptyList()
     ^^^^^^^^
-/KC.kt:67:5: error: conflicting overloads: public open fun foo(): List<String> defined in KC, public abstract fun <C> foo(): List<C> defined in KI
-    override fun foo(): List<String> = emptyList()
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/KC.kt:69:5: error: 'baz' overrides nothing
-    override fun baz(): Any = 42
-    ^^^^^^^^
-/KC.kt:69:5: error: conflicting overloads: public open fun baz(): Any defined in KC, public abstract fun <D> baz(): D defined in KI
-    override fun baz(): Any = 42
-    ^^^^^^^^^^^^^^^^^^^^^^^
-/KC.kt:71:5: error: 'bar' overrides nothing
-    override fun bar(): List<Int> = listOf(0)
-    ^^^^^^^^
-/KC.kt:71:5: error: conflicting overloads: public open fun bar(): List<Int> defined in KC, public abstract fun <E, F> bar(): List<F> defined in KI
-    override fun bar(): List<Int> = listOf(0)
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/KJC.kt:77:5: error: 'foo' overrides nothing
-    override fun foo(): List<String> = emptyList()
-    ^^^^^^^^
-/KJC.kt:77:5: error: conflicting overloads: public open fun foo(): List<String> defined in KJC, public abstract fun <C : Any!> foo(): (Mutable)List<C!>! defined in JI
+/KC.kt:68:5: error: conflicting overloads: public open fun foo(): List<String> defined in KC, public abstract fun <C> foo(): List<C> defined in KI
     override fun foo(): List<String> = emptyList()
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/KJC.kt:79:5: error: 'baz' overrides nothing
+/KC.kt:70:5: error: 'baz' overrides nothing
     override fun baz(): Any = 42
     ^^^^^^^^
-/KJC.kt:79:5: error: conflicting overloads: public open fun baz(): Any defined in KJC, public abstract fun <D : Any!> baz(): D! defined in JI
+/KC.kt:70:5: error: conflicting overloads: public open fun baz(): Any defined in KC, public abstract fun <D> baz(): D defined in KI
     override fun baz(): Any = 42
     ^^^^^^^^^^^^^^^^^^^^^^^
-/KJC.kt:81:5: error: 'bar' overrides nothing
+/KC.kt:72:5: error: 'bar' overrides nothing
     override fun bar(): List<Int> = listOf(0)
     ^^^^^^^^
-/KJC.kt:81:5: error: conflicting overloads: public open fun bar(): List<Int> defined in KJC, public abstract fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>! defined in JI
+/KC.kt:72:5: error: conflicting overloads: public open fun bar(): List<Int> defined in KC, public abstract fun <E, F> bar(): List<F> defined in KI
     override fun bar(): List<Int> = listOf(0)
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/KJC.kt:78:5: error: 'foo' overrides nothing
+    override fun foo(): List<String> = emptyList()
+    ^^^^^^^^
+/KJC.kt:78:5: error: conflicting overloads: public open fun foo(): List<String> defined in KJC, public abstract fun <C : Any!> foo(): (Mutable)List<C!>! defined in JI
+    override fun foo(): List<String> = emptyList()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/KJC.kt:80:5: error: 'baz' overrides nothing
+    override fun baz(): Any = 42
+    ^^^^^^^^
+/KJC.kt:80:5: error: conflicting overloads: public open fun baz(): Any defined in KJC, public abstract fun <D : Any!> baz(): D! defined in JI
+    override fun baz(): Any = 42
+    ^^^^^^^^^^^^^^^^^^^^^^^
+/KJC.kt:82:5: error: 'bar' overrides nothing
+    override fun bar(): List<Int> = listOf(0)
+    ^^^^^^^^
+/KJC.kt:82:5: error: conflicting overloads: public open fun bar(): List<Int> defined in KJC, public abstract fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>! defined in JI
+    override fun bar(): List<Int> = listOf(0)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 enum class E(val x: Int, val y: Int) {
     A(1, 2),

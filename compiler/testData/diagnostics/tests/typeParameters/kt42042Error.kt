@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 sealed class Subtype<A1, B1> {

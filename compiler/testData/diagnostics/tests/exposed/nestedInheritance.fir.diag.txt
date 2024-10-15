@@ -1,1 +1,1 @@
-/nestedInheritance.fir.kt:(158,162): error: 'public' sub-interface exposes its 'internal' supertype containing declaration 'Outer'.
+/nestedInheritance.fir.kt:(189,193): error: 'public' sub-interface exposes its 'internal' supertype containing declaration 'Outer'.

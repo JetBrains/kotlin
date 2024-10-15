@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-4113
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 class Test1(val lambda: (() -> String)?) {

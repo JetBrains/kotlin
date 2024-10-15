@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 class Builder<B : Builder<B>> {

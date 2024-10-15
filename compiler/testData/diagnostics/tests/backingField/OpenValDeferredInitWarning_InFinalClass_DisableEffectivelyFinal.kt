@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // LANGUAGE:-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck

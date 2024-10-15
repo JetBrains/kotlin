@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Expression<K>
 
 interface ExpressionWithColumnType<K> : Expression<K>

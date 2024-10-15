@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -MultiplatformRestrictions
 // FIR_IDENTICAL
 // WITH_STDLIB

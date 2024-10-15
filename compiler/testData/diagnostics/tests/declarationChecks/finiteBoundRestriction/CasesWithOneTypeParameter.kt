@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface A0<T : A0<T>>
 interface A1<<!FINITE_BOUNDS_VIOLATION!>T : A1<*><!>>

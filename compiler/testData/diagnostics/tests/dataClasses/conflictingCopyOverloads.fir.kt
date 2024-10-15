@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 data class <!CONFLICTING_OVERLOADS!>A(val x: Int, val y: String)<!> {

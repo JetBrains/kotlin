@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo<!>() = throw Exception()
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!

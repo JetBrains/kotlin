@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface B
 
 fun equalityNotApplicable(a: Int, b: B) {

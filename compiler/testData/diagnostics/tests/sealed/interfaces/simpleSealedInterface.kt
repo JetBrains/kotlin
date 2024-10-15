@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-20423
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces

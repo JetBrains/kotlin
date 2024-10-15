@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // KT-5068 Add special error for scala-like syntax 'fun foo(): Int = { 1 }'
 

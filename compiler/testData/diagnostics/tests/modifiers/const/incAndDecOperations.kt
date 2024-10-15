@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val a = 1
 
 const val increment1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!><!VARIABLE_EXPECTED!>1<!>++<!>

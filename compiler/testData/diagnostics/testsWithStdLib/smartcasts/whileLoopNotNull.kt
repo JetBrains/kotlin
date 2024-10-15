@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 
 fun Int?.swap(): Int = 1

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>

@@ -1,3 +1,4 @@
-/OverridingVarByVal.kt:12:12: error: var-property public open val v: Int defined in Val cannot be overridden by val-property public open var v: Int defined in Var
+/OverridingVarByVal.kt:13:12: error: var-property public open val v: Int defined in Val cannot be overridden by val-property public open var v: Int defined in Var
   override val v : Int = 1
            ^^^
+

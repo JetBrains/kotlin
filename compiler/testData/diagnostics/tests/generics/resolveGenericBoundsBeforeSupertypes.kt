@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Tests that generic bounds in the object supertype are resolved prior to the supertype itself
 

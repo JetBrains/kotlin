@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A<!>
 
 fun foo(a: A) {

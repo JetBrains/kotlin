@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +SafeCallsAreAlwaysNullable
 // ISSUE: KT-46860
 

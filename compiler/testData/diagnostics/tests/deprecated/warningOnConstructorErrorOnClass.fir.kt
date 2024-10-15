@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-15245 Report deprecation on associated declarations if level is greater than the deprecation on the declaration itself
 
 @Deprecated("error", level = DeprecationLevel.ERROR)

@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // The compiler doesn't guarantee exhaustiveness in reporting of inheritance cycles, so the compiler and LL FIR results are equally valid.
 // LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: I.kt
 
 open class I : <!CYCLIC_INHERITANCE_HIERARCHY!>K<!>() {

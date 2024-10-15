@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62118
 // FILE: test.kt
 class MyMutableEntry<K, V>(

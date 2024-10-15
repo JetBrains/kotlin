@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C {
 
     fun f (a : Boolean, b : Boolean) {

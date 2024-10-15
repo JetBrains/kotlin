@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun test(): Any? {
     <!WRONG_ANNOTATION_TARGET!>@ann<!> val (a, b) = P(1, 1)

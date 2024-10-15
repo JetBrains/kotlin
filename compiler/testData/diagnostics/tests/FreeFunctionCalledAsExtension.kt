@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun foo(a: (String) -> Unit) {
     "".<!UNRESOLVED_REFERENCE!>a<!>()

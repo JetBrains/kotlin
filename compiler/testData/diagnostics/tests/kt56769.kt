@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun main(args: Array<<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Anno<!> String>) {}
 
 annotation class Anno

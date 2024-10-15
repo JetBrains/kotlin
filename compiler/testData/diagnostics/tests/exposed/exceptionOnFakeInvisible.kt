@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-14469: SOE during effective visibility evaluation
 
 abstract class Base(private val v: String)

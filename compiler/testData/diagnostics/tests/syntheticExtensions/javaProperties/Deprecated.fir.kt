@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.<!DEPRECATION!>something1<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitArrayLiteralsInCompanionOfAnnotation
 // ISSUE: KT-39041
 

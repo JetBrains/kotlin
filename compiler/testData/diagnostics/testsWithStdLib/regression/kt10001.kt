@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun foo1(p: Pair<Int?, Int>): Int {
     if (p.first != null) return p.first!!

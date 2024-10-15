@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65408
 
 data object CreateBuilder : Builder<CreateBuilder> {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun <T, U> T.map(f: (T) -> U) = f(this)
 

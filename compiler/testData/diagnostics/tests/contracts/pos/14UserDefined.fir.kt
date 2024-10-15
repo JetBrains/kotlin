@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-60004: Ensure diagnostics for `kotlin.contracts.contract()` are not raised for user-defined fun `contract()`
 
 // DIAGNOSTICS: -UNUSED_VARIABLE

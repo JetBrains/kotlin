@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class C {
     val v1: String
         @Deprecated("", level = DeprecationLevel.HIDDEN)

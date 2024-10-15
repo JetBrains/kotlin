@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59550
 // FILE: Base.kt
 abstract class Base(private val foo: String) {

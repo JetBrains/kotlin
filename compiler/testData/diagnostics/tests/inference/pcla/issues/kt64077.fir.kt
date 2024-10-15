@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-64077
 fun <R1> build(block: InvBuilder<R1>.() -> Unit): R1 = TODO()
 fun <R2> build2(block: InvBuilder<R2>.() -> Unit): R2 = TODO()

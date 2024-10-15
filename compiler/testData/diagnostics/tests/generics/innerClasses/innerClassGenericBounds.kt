@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-61068, KT-35566
 // FILE: generic.kt
 package generic

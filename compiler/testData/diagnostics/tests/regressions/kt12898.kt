@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 interface B<T : S?, S : Any> {
     val t: T

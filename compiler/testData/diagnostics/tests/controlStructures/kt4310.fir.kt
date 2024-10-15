@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package f
 
 fun test(a: Boolean, b: Boolean): Int {

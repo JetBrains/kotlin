@@ -1,6 +1,7 @@
-/wrongNumberOfTypeArguments.kt:8:8: error: one type argument expected for fun <T> foo(t: T): T
+/wrongNumberOfTypeArguments.kt:9:8: error: one type argument expected for fun <T> foo(t: T): T
     foo<Int, String>(0)
        ^^^^^^^^^^^^^
-/wrongNumberOfTypeArguments.kt:15:8: error: 2 type arguments expected for fun <T, R> bar(t: T, r: R): Unit
+/wrongNumberOfTypeArguments.kt:16:8: error: 2 type arguments expected for fun <T, R> bar(t: T, r: R): Unit
     bar<Int>(0, "")
        ^^^^^
+

@@ -1,24 +1,25 @@
-/test.kt:29:5: error: 'test1' overrides nothing
+/test.kt:30:5: error: 'test1' overrides nothing
     override fun test1(a: Int) {}
     ^^^^^^^^
-/test.kt:30:5: error: 'test2' overrides nothing
+/test.kt:31:5: error: 'test2' overrides nothing
     override fun test2(a: List<Double>): List<Double> { return null!! }
     ^^^^^^^^
-/test.kt:31:5: error: 'test3' overrides nothing
+/test.kt:32:5: error: 'test3' overrides nothing
     override fun test3(a: Array<CharSequence>): Array<CharSequence> { return null!! }
     ^^^^^^^^
-/test.kt:32:5: error: 'test4' overrides nothing
+/test.kt:33:5: error: 'test4' overrides nothing
     override fun test4(indices: String) {}
     ^^^^^^^^
-/test.kt:33:5: error: 'test5' overrides nothing
+/test.kt:34:5: error: 'test5' overrides nothing
     override fun test5(a: Number): Number {return null!!}
     ^^^^^^^^
-/test.kt:34:5: error: 'test6' overrides nothing
+/test.kt:35:5: error: 'test6' overrides nothing
     override fun test6(a: String): Int { return 1 }
     ^^^^^^^^
-/test.kt:35:5: error: 'test7' overrides nothing
+/test.kt:36:5: error: 'test7' overrides nothing
     override fun test7(a: Nothing): Any { return 1 }
     ^^^^^^^^
-/test.kt:36:5: error: 'test8' overrides nothing
+/test.kt:37:5: error: 'test8' overrides nothing
     override fun test8(a: JavaBase) {}
     ^^^^^^^^
+

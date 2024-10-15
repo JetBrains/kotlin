@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50850
 // FILE: JavaBase.java
 public interface JavaBase {

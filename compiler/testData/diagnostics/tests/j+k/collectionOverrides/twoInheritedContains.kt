@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SCOPE_DUMP: KB:contains
 // SCOPE_DUMP: B:contains
 
 // FILE: I.java
 public interface I {
-    public boolean contains(String x) {return false;}
+    public boolean contains(String x);
 }
 
 // FILE: A.java

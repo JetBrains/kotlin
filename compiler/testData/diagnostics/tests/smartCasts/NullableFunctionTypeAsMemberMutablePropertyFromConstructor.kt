@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun box(): String {
     Klass({})
     return "OK"

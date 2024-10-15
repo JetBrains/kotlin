@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt1805
 //KT-1805 Better diagnostic for access to private field of parent class
 

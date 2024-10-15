@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public class A() {
     public val <!REDECLARATION!>FOO<!>: String = "test"

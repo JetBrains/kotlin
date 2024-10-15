@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface I0<T : <!UNRESOLVED_REFERENCE!>Unresolved0<!><String>>
 interface I1<T> where T : <!UNRESOLVED_REFERENCE!>Unresolved1<!><String>

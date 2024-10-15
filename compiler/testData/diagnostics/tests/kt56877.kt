@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.*

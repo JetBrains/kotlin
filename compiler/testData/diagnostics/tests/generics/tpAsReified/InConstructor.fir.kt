@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C<<!REIFIED_TYPE_PARAMETER_NO_INLINE!>reified<!> T>
 
 fun <T> id(p: T): T = p

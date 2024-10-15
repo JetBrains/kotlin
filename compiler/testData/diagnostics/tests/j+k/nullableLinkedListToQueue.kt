@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-65184

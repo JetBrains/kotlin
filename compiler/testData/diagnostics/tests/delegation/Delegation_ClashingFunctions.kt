@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 interface One {
     public fun foo(): Any?

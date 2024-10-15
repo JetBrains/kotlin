@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class Foo {

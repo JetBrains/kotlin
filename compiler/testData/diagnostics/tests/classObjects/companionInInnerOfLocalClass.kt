@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ForbidCompanionInLocalInnerClass
 
 fun run(block: () -> Unit) {

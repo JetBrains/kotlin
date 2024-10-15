@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65881, KT-65760
 
 class I: Iterator<Int> {

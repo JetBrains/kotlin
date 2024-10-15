@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.kt
 
 import B.<!INVISIBLE_REFERENCE!>foo<!>

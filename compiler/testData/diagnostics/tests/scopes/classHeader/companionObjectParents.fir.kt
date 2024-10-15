@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I<F, G>
 
 val aImpl: A.Companion.Interface

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // FILE: common.kt
 expect interface Base1 {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // invalid, depends on local class
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {

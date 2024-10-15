@@ -1,23 +1,23 @@
-/test.kt:(95,103): error: 'test1' overrides nothing. Potential signatures for overriding:
+/test.kt:(96,104): error: 'test1' overrides nothing. Potential signatures for overriding:
 fun test1(a: String!): Unit
 
-/test.kt:(129,137): error: 'test2' overrides nothing. Potential signatures for overriding:
+/test.kt:(130,138): error: 'test2' overrides nothing. Potential signatures for overriding:
 fun test2(a: (Mutable)List<Int!>!): (Mutable)List<Int!>!
 
-/test.kt:(201,209): error: 'test3' overrides nothing. Potential signatures for overriding:
+/test.kt:(202,210): error: 'test3' overrides nothing. Potential signatures for overriding:
 fun test3(a: Array<(out) String!>!): Array<(out) String!>!
 
-/test.kt:(287,295): error: 'test4' overrides nothing. Potential signatures for overriding:
+/test.kt:(288,296): error: 'test4' overrides nothing. Potential signatures for overriding:
 fun test4(vararg indices: String!): Unit
 
-/test.kt:(330,338): error: 'test5' overrides nothing. Potential signatures for overriding:
+/test.kt:(331,339): error: 'test5' overrides nothing. Potential signatures for overriding:
 fun test5(a: Int): Int
 
-/test.kt:(388,396): error: 'test6' overrides nothing. Potential signatures for overriding:
+/test.kt:(389,397): error: 'test6' overrides nothing. Potential signatures for overriding:
 fun test6(a: Int!): Int!
 
-/test.kt:(440,448): error: 'test7' overrides nothing. Potential signatures for overriding:
+/test.kt:(441,449): error: 'test7' overrides nothing. Potential signatures for overriding:
 fun test7(a: Any!): Any!
 
-/test.kt:(493,501): error: 'test8' overrides nothing. Potential signatures for overriding:
+/test.kt:(494,502): error: 'test8' overrides nothing. Potential signatures for overriding:
 fun test8(): Unit

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: MODIFIED_MOCK_JDK
 
 fun foo(jalw: java.util.ListWithSomethingOverridden<String>, jal: java.util.ArrayList<String>, l: List<String>) {

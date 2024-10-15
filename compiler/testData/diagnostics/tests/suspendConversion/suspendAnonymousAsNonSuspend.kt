@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-58055
 
 fun <T> produce(arg: () -> T): T = arg()

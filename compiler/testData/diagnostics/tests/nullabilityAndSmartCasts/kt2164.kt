@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2164 !! does not propagate nullability information
 package kt2164
 

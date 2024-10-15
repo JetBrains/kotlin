@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 inline public fun reg(converter: (Any) -> Any) {
     converter("")

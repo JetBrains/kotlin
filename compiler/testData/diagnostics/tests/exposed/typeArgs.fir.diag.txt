@@ -1,14 +1,14 @@
 // -- Module: <a> --
-/module_a_typeArgs.fir.kt:(168,172): error: 'public' function exposes its 'internal' return type argument 'My'.
+/module_a_typeArgs.fir.kt:(199,203): error: 'public' function exposes its 'internal' return type argument 'My'.
 
-/module_a_typeArgs.fir.kt:(248,256): error: 'public' sub-interface exposes its 'internal' supertype argument 'My'.
+/module_a_typeArgs.fir.kt:(279,287): error: 'public' sub-interface exposes its 'internal' supertype argument 'My'.
 
-/module_a_typeArgs.fir.kt:(306,308): error: 'public' generic exposes its 'internal' parameter bound type 'My'.
+/module_a_typeArgs.fir.kt:(337,339): error: 'public' generic exposes its 'internal' parameter bound type 'My'.
 
-/module_a_typeArgs.fir.kt:(387,390): error: 'public' function exposes its 'internal' return type argument 'My'.
+/module_a_typeArgs.fir.kt:(418,421): error: 'public' function exposes its 'internal' return type argument 'My'.
 
-/module_a_typeArgs.fir.kt:(508,514): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+/module_a_typeArgs.fir.kt:(539,545): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
 
-/module_a_typeArgs.fir.kt:(553,558): error: 'public' function exposes its 'internal' return type argument 'Inter'.
+/module_a_typeArgs.fir.kt:(584,589): error: 'public' function exposes its 'internal' return type argument 'Inter'.
 // -- Module: <b> --
-/module_b_typeArgs.fir.kt:(77,80): error: Cannot access 'interface Inter : Any': it is internal in file.
+/module_b_typeArgs.fir.kt:(78,81): error: Cannot access 'interface Inter : Any': it is internal in file.

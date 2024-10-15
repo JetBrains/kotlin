@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitIllegalValueParameterUsageInDefaultArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB

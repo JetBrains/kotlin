@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun useDeclaredVariables() {
     <!INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION!>val (a, b)<!>
     a

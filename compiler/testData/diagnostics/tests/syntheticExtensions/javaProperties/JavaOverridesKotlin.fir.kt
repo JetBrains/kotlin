@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-63067
 // FILE: KotlinFile.kt
 open class KotlinClass {

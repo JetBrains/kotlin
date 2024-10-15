@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package uninitialized_reassigned_variables
 
 fun doSmth(s: String) {}

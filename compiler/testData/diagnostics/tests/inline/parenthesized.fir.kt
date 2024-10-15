@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {

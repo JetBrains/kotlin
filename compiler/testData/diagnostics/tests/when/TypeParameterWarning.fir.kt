@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // FILE: ObjectNode.java
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: +ForbidExtensionFunctionTypeOnNonFunctionTypes
 // This test checks that annotations on extension function types are preserved. See the corresponding .txt file

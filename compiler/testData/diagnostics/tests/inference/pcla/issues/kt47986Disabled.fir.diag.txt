@@ -1,7 +1,7 @@
-/kt47986Disabled.fir.kt:(247,255): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt47986Disabled.fir.kt:(278,286): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/kt47986Disabled.fir.kt:(247,255): error: Not enough information to infer type argument for 'K'.
+/kt47986Disabled.fir.kt:(278,286): error: Not enough information to infer type argument for 'K'.
 
-/kt47986Disabled.fir.kt:(266,269): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt47986Disabled.fir.kt:(297,300): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/kt47986Disabled.fir.kt:(266,269): error: Not enough information to infer type argument for 'K'.
+/kt47986Disabled.fir.kt:(297,300): error: Not enough information to infer type argument for 'K'.

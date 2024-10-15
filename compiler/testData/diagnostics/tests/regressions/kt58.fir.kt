@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-58 Allow finally around definite returns
 
 package kt58

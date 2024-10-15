@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -JvmStaticInInterface
 // DIAGNOSTICS: -UNUSED_VARIABLE
 fun main() {

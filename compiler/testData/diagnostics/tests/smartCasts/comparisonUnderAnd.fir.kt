@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x : String?, y : String?) {
     if (y != null && x == y) {
         // Both not null

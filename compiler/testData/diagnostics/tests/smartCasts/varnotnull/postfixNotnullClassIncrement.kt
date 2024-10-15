@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class MyClass
 
 operator fun MyClass.inc(): MyClass { return null!! }

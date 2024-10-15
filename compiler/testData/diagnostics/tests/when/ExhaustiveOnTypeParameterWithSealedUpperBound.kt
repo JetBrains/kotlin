@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ImprovedExhaustivenessChecksIn21
 sealed class Bird
 

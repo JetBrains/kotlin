@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +TypeAliases
 // API_VERSION: 1.0
 // FILE: test.kt

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE:-TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck
 open class Base {
     open var x: String = ""

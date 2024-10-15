@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface IA {
     <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "IA"<!>
 

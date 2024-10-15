@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val p1: Int = 1 - 1
 val p2: Long = 1 - 1
 val p3: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 - 1<!>

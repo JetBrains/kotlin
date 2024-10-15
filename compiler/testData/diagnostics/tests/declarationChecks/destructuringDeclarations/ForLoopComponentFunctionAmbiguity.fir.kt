@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     operator <!CONFLICTING_OVERLOADS!>fun component1()<!> = 1
     operator <!CONFLICTING_OVERLOADS!>fun component1()<!> = 1

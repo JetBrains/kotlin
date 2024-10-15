@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 fun baz(options: String = ""): String = ""
 fun bar(normalizeNames: Boolean = false): String = ""

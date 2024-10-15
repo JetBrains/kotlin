@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun calc(x: List<String>?): Int {
     // After KT-5840 fix !! assertion should become unnecessary here

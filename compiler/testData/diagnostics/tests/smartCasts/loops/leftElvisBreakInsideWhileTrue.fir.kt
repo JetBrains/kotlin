@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(x: String?, y: String?): Int {
     while (true) {
         val z = (if (y == null) break else x) ?: y

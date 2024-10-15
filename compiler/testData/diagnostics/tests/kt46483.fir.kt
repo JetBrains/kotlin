@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Repeatable
 @Target( AnnotationTarget.TYPE_PARAMETER)
 annotation class TypeParameterAnn(val name: String)

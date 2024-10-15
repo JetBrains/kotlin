@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-201 Allow to call extension with nullable receiver with a '.'
 
 fun <T : Any> T?.npe() : T = if (this == null) throw NullPointerException() else this

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: Int, y: Any?, z: Int) {}
 
 fun myRun(block: () -> Unit): Any? {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FIR2IR
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt

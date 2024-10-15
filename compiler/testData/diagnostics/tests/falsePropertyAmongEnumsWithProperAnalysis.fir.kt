@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperUninitializedEnumEntryAccessAnalysis
 // ISSUE: KT-72743
 

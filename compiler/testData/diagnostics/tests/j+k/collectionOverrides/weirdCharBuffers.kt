@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SCOPE_DUMP: CharBuffer:get;charAt, CharBufferX:get;charAt, NonCharSequenceBuffer:get;charAt, NonCharBuffer:get;charAt, CharBufferXAllInherited:get;charAt, CharBufferXYAllInherited:get;charAt, CharBufferXYCharAt:get;charAt
 

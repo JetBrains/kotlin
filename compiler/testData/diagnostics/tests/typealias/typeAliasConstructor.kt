@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C(val x: String) {
     constructor(): this("")
 }

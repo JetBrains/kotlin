@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65812
 class Controller<T> {
     fun yield(t: T): Boolean = true

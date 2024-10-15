@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -PCLAEnhancementsIn21
 
 class Container<T> {

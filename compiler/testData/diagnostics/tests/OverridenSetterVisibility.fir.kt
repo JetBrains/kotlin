@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public interface ITest {
     public var prop : Int
         get() = 12

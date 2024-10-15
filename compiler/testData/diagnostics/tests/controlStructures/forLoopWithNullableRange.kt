@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Coll {
   operator fun iterator(): It = It()
 }

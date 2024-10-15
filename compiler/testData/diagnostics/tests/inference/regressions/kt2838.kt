@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNREACHABLE_CODE
 //KT-2838 Type inference failed on passing null as a nullable argument

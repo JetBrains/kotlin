@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class My
 
 fun foo(arg: Int): Int {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1571 Frontend fails to check val reassigment for operator overloading.
 package kt1571
 

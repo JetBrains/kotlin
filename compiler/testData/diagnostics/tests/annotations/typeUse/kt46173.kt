@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // DIAGNOSTICS: -USELESS_CAST
 // ISSUE: KT-46173

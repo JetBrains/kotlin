@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR status: KT-65249 K2: False positive modality is different for native compilation
 
 // WITH_STDLIB

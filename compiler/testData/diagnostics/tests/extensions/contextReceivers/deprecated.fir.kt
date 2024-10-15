@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
 // LANGUAGE: +ContextReceivers
 
 class A

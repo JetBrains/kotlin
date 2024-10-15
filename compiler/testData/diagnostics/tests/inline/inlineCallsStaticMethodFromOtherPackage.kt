@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // The non-IR backend attempts to call a non-existent accessor in class Test.

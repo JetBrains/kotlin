@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // KT-860 ConcurrentModificationException in frontend

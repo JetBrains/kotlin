@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-54764
 
 interface A<out T : B<F, E>, F, out E : B<T, F>> {

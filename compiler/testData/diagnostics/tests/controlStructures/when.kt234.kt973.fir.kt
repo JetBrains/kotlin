@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-234 Force when() expressions to have an 'else' branch
 //KT-973 Unreachable code
 

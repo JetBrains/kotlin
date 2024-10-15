@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-63068
 fun Int.f() {
     this<!UNRESOLVED_REFERENCE!>@Int<!>

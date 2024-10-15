@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 data class SomeObject(val n: SomeObject?) {
     fun doSomething(): Boolean = true

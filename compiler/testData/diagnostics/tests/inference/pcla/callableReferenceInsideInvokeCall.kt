@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <X> mySuspendable(block: (MyContinuation<X>) -> Unit): X = TODO()
 

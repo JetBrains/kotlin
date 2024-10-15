@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-56520 (case 7, object vs static member, no companions in scope)
 // FIR_DUMP
 

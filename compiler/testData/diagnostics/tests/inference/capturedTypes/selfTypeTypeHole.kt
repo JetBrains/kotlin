@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62956
 
 abstract class Builder<S, B : Builder<S, B>>(var s: S) {

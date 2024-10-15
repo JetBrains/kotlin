@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import <!UNRESOLVED_REFERENCE!>com<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unknown<!>
 
 fun ff() {

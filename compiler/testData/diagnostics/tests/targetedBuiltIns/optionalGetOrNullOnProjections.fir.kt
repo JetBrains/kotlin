@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 // ISSUE: KT-66784 (similar cases)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51759
 
 fun testBreak(b: Boolean, s: String?) {

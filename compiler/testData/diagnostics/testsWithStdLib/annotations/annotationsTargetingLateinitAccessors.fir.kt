@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Please make sure that this test is consistent with the blackbox test "annotationsOnLateinitAccessors.kt"
 
 import kotlin.reflect.KProperty

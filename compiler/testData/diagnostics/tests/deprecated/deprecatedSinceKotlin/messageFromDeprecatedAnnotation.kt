@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin

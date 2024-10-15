@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-4149 static members of Java private nested class are accessible from Kotlin
 
 // FILE: javaPackage/Foo.java

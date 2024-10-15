@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-4640 "Trace is erased after resolution completion" exception
 
 class ValueWrapper()

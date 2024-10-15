@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    

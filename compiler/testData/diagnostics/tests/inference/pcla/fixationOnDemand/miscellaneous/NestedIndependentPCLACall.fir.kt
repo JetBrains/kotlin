@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     val resultA = pcla { otv1Owner ->
         val nestedResultA = pcla { otv2Owner ->

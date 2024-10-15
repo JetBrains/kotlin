@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 
 val <!REDECLARATION!>Test1<!> = null

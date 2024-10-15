@@ -1,4 +1,4 @@
-/nothingToOverrideMessage.kt:(248,260): error: Class 'Simple' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(279,291): error: Class 'Simple' is not abstract and does not implement abstract members:
 fun foo(s: String): Unit
 fun bar(a: String): Unit
 fun bar(a: Boolean): Unit
@@ -7,12 +7,12 @@ fun qux(vararg a: String): Unit
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(271,279): error: 'foo' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(302,310): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun foo(s: String): Unit
 
-/nothingToOverrideMessage.kt:(318,326): error: 'foo' overrides nothing.
+/nothingToOverrideMessage.kt:(349,357): error: 'foo' overrides nothing.
 
-/nothingToOverrideMessage.kt:(369,392): error: Class 'OverloadedMethods' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(400,423): error: Class 'OverloadedMethods' is not abstract and does not implement abstract members:
 fun bar(a: String): Unit
 fun bar(a: Boolean): Unit
 fun foo(s: String): Unit
@@ -21,11 +21,11 @@ fun qux(vararg a: String): Unit
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(403,411): error: 'bar' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(434,442): error: 'bar' overrides nothing. Potential signatures for overriding:
 fun bar(a: String): Unit
 fun bar(a: Boolean): Unit
 
-/nothingToOverrideMessage.kt:(434,457): error: Class 'DefaultParameters' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(465,488): error: Class 'DefaultParameters' is not abstract and does not implement abstract members:
 fun baz(a: Int = ...): Unit
 fun foo(s: String): Unit
 fun bar(a: String): Unit
@@ -34,10 +34,10 @@ fun qux(vararg a: String): Unit
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(468,476): error: 'baz' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(499,507): error: 'baz' overrides nothing. Potential signatures for overriding:
 fun baz(a: Int = ...): Unit
 
-/nothingToOverrideMessage.kt:(502,524): error: Class 'VarargParameters' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(533,555): error: Class 'VarargParameters' is not abstract and does not implement abstract members:
 fun qux(vararg a: String): Unit
 fun foo(s: String): Unit
 fun bar(a: String): Unit
@@ -46,10 +46,10 @@ fun baz(a: Int = ...): Unit
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(535,543): error: 'qux' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(566,574): error: 'qux' overrides nothing. Potential signatures for overriding:
 fun qux(vararg a: String): Unit
 
-/nothingToOverrideMessage.kt:(568,588): error: Class 'FunctionalType' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(599,619): error: Class 'FunctionalType' is not abstract and does not implement abstract members:
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 fun foo(s: String): Unit
 fun bar(a: String): Unit
@@ -58,10 +58,10 @@ fun baz(a: Int = ...): Unit
 fun qux(vararg a: String): Unit
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(599,607): error: 'quux' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(630,638): error: 'quux' overrides nothing. Potential signatures for overriding:
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 
-/nothingToOverrideMessage.kt:(634,657): error: Class 'ExtensionFunction' is not abstract and does not implement abstract members:
+/nothingToOverrideMessage.kt:(665,688): error: Class 'ExtensionFunction' is not abstract and does not implement abstract members:
 fun String.corge(): Unit
 fun foo(s: String): Unit
 fun bar(a: String): Unit
@@ -70,19 +70,19 @@ fun baz(a: Int = ...): Unit
 fun qux(vararg a: String): Unit
 fun quux(a: (@ParameterName(...) String) -> Unit): Unit
 
-/nothingToOverrideMessage.kt:(667,675): error: 'corge' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(698,706): error: 'corge' overrides nothing. Potential signatures for overriding:
 fun String.corge(): Unit
 
-/nothingToOverrideMessage.kt:(741,762): error: Class 'GenericOverride' is not abstract and does not implement abstract member:
+/nothingToOverrideMessage.kt:(772,793): error: Class 'GenericOverride' is not abstract and does not implement abstract member:
 fun foo(t: T): Unit
 
-/nothingToOverrideMessage.kt:(785,793): error: 'foo' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(816,824): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun foo(t: R): Unit
 
-/nothingToOverrideMessage.kt:(810,834): error: Class 'NonGenericOverride' is not abstract and does not implement abstract member:
+/nothingToOverrideMessage.kt:(841,865): error: Class 'NonGenericOverride' is not abstract and does not implement abstract member:
 fun foo(t: T): Unit
 
-/nothingToOverrideMessage.kt:(859,867): error: 'foo' overrides nothing. Potential signatures for overriding:
+/nothingToOverrideMessage.kt:(890,898): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun foo(t: String): Unit
 
-/nothingToOverrideMessage.kt:(963,971): error: 'foo' overrides nothing.
+/nothingToOverrideMessage.kt:(994,1002): error: 'foo' overrides nothing.

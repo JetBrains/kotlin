@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Boo.java
 public class Boo<P2, P3, P4> {
     static Foo test1() { return null; }

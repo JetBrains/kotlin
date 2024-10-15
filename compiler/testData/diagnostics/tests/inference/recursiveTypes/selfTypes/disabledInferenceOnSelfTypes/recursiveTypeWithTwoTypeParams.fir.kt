@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 interface BodySpec<B, S : BodySpec<B, S>> {

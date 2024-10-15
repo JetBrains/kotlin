@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun testRegularNavigation() {
     fun <OT> pcla(lambda: (TypeVariableOwner<OT>) -> Unit): OT = null!!
 

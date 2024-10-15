@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +VariableDeclarationInWhenSubject
 
 fun test1(x: Any?) =

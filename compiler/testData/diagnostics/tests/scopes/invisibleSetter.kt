@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A<T> {
     public var x: Int = 0
         private set

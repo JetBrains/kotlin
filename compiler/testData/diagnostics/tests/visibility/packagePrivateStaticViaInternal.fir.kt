@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 package javapackage;
 

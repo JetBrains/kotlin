@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Test {
     val booleanValue: Boolean = false
     val booleanNullableValue: Boolean = false

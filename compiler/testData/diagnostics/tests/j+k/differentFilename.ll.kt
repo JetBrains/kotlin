@@ -3,7 +3,7 @@
 // 1) LL FIR doesn't suffer from KT-4455 like standard Kotlin compiler does
 // 2) LL FIR tests pass Java content roots to Kotlin compiler file-by-file instead of by a single folder
 // LL_FIR_DIVERGENCE
-
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-4455
 // SKIP_JAVAC
 

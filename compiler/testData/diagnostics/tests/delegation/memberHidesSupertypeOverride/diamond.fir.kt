@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public interface Base {
     fun test() = "Base"
 }

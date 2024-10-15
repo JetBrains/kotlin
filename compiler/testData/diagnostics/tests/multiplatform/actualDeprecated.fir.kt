@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-67652
 // LANGUAGE: +MultiPlatformProjects
 // FIR_DUMP

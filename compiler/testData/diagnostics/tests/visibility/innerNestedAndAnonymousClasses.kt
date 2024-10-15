@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-49992
 
 import kotlin.reflect.KFunction0

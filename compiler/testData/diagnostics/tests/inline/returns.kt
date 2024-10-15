@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 inline fun inlineFun(s: (p: Int) -> Unit) : (p: Int) -> Unit {
     return <!USAGE_IS_NOT_INLINABLE!>s<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51827
 abstract class A {
     abstract protected val a: Any?

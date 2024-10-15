@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo() {
     var s: String? = ""
     fun closure(): Int {

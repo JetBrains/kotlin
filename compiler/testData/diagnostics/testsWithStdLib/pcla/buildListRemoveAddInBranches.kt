@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55168
 fun foo(arg: Boolean) = buildList {
     if (arg) <!TYPE_MISMATCH!>{

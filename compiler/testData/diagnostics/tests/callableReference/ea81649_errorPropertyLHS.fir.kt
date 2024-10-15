@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Different modules are important for this test because otherwise everything is analyzed at once and some errors
 // already exist in the binding context when we're analyzing "User::surname".
 // (The assertion at DoubleColonExpressionResolver.checkNoExpressionOnLHS is only performed when there are no errors in the binding context)

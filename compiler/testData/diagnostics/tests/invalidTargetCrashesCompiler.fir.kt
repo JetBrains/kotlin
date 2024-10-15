@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59110
 // IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 

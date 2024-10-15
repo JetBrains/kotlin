@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class P
 
 fun foo(p: P): Any {

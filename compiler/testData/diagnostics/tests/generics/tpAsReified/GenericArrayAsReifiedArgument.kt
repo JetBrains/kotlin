@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER

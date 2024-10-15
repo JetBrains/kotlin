@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1

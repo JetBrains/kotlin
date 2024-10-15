@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66442
 // FILE: 1.kt
 package singlePrivateObject

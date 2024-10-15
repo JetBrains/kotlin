@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-61717
 interface Foo<B : Foo<B>> {
     fun <T : B> bar(t: T)

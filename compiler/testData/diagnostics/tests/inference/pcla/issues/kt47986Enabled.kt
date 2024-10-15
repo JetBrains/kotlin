@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 class Foo<K>
 

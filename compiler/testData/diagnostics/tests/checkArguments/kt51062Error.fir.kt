@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
 // LANGUAGE: +ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve

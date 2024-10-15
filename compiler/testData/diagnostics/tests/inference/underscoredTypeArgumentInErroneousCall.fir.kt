@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-69739
 
 import <!UNRESOLVED_IMPORT!>some<!>.convTo

@@ -1,3 +1,5 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: GenericJava.java
 public class GenericJava<F> {
     public java.util.List<F> getFoo() {}

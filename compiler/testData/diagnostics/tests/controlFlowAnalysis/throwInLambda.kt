@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -SafeCallsAreAlwaysNullable
 // See KT-10913 Bogus unreachable code warning
 

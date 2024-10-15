@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // CHECK_TYPE
 //KT-4420 Type inference with type projections

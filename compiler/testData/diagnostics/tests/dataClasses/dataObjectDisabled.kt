@@ -1,2 +1,3 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -DataObjects
 <!UNSUPPORTED_FEATURE!>data<!> object Object

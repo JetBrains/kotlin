@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-4711 Error type with no error reported from type inference
 
 fun main() {

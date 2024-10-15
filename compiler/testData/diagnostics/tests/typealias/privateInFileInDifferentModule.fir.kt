@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62537
 // MODULE: m1
 // FILE: file1.kt

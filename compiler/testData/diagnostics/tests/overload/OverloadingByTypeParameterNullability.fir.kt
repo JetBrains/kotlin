@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-49420
 
 <!CONFLICTING_OVERLOADS!>fun <A> topLevelFoo(arg: A?)<!> {}

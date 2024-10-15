@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-72197
 // WITH_EXPERIMENTAL_CHECKERS
@@ -6,7 +7,7 @@
 public class Foo {
     // Only happens with synthetic properties
     public void setIntegerProp(int value) {}
-    public int getIntegerProp() { return 0 }
+    public int getIntegerProp() { return 0; }
 }
 
 // FILE: Main.kt

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Base
 class Derived : Base()
 

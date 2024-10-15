@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
    get() : Int = 1
    set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {

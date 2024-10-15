@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-68618
 
 val Int.fooA: Int get() = this@fooA

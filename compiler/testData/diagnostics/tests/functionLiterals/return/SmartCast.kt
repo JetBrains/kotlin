@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // NI_EXPECTED_FILE
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda
 

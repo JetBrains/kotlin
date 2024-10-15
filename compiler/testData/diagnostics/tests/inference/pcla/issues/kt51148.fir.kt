@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun box(): String {
     return someFunction<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><SomeEnum><!>()
 }

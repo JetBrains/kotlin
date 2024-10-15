@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: +ProhibitConstructorCallOnFunctionalSupertype
 // ISSUE: KT-46344

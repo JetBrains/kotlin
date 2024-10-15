@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66717
 
 // Cases: {from class, from interface} x {val, var} x {abstract, with implementation}

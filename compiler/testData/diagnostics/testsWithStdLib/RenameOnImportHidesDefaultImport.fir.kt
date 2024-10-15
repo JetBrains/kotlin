@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.collections.map as map1
 import kotlin.Array as KotlinArray
 

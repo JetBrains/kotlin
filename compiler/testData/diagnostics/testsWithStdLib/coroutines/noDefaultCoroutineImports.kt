@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: 1.kt
 fun test(c: <!UNRESOLVED_REFERENCE!>Continuation<!><Unit>) {}

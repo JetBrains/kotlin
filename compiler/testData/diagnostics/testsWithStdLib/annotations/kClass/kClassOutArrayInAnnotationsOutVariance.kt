@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 import kotlin.reflect.KClass
 

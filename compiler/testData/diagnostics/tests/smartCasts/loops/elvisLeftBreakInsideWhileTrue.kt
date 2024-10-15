@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public fun foo(x: String?, y: String?): Int {
     while (true) {

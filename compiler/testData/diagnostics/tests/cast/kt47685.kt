@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-47685
 interface KtFunction {
     fun foo() {}

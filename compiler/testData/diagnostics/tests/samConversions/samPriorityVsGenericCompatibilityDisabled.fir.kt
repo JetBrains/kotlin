@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +DisableCompatibilityModeForNewInference
 // SKIP_TXT
 // FULL_JDK

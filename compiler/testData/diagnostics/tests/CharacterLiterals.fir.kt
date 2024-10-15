@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(c : Char) {
   test(<!EMPTY_CHARACTER_LITERAL!>''<!>)
   test('a')

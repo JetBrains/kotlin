@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 
 fun arrayAccessRHS(a: Int?, b: Array<Int>) {

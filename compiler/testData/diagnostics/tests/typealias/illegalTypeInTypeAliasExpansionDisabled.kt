@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -NullableNothingInReifiedPosition
 
 typealias A<T> = Array<T>

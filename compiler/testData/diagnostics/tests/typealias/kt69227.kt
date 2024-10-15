@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 interface IModel<T1>
 data class ModelWithId<T2 : IModel<T3>, T3>(val id: T3)

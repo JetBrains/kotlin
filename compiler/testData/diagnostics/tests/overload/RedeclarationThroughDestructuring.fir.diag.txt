@@ -1,7 +1,7 @@
-/RedeclarationThroughDestructuring.fir.kt:(133,134): error: Conflicting declarations:
+/RedeclarationThroughDestructuring.fir.kt:(164,165): error: Conflicting declarations:
 local val b: String
 local val b: Int
 
-/RedeclarationThroughDestructuring.fir.kt:(136,137): error: Conflicting declarations:
+/RedeclarationThroughDestructuring.fir.kt:(167,168): error: Conflicting declarations:
 local val b: String
 local val b: Int

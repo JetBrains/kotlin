@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun error(): Nothing = null!!
 
 fun test0(): String {

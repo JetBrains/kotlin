@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A() {
     var x: Int = 0
         get() = <!RETURN_TYPE_MISMATCH!>"s"<!>

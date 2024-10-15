@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE
 fun foo(x: Int, y: Any) = x
 fun foo(x: Any, y: Int) = y

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 // WITH_REFLECT

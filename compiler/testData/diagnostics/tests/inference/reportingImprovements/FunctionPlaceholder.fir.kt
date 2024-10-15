@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //For testing error messages text see DiagnosticMessageTest.testFunctionPlaceholder
 package a
 

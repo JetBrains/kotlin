@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //kt-411 Wrong type expected when returning from a function literal
 
 package kt411

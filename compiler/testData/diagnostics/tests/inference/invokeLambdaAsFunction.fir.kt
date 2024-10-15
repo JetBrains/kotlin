@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1(i: Int) = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> ->
     i
 }(i)

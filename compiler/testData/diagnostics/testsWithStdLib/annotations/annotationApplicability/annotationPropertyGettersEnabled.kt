@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters +ForbidFieldAnnotationsOnAnnotationParameters
 // ISSUE: KT-70169
 

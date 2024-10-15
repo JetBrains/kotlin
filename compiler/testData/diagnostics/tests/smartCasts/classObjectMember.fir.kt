@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class T {
     val x : Int? = null
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Promise<T>
 
 fun <T> materializePromise(): Promise<T> = TODO()
