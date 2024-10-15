@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 
 internal typealias LoweringList = List<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
+internal typealias ModuleLowering = SimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: LoweringList, modules: List<IrModuleFragment>) {
     for (module in modules) {
@@ -54,7 +56,7 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: Lowering
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
-        lowering: SimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>,
+        lowering: ModuleLowering,
         modules: List<IrModuleFragment>
 ) {
     for (module in modules) {
@@ -575,7 +577,7 @@ private val constEvaluationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
-internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
+internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
     assertionWrapperPhase,
     lateinitPhase,
     sharedVariablesPhase,
@@ -584,13 +586,13 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    cacheOnlyPrivateFunctionsPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
-    inlineOnlyPrivateFunctionsPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
-    syntheticAccessorGenerationPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    cacheOnlyPrivateFunctionsPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineOnlyPrivateFunctionsPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    syntheticAccessorGenerationPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     cacheAllFunctionsPhase,
 )
 
-internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
@@ -599,14 +601,14 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         inventNamesForLocalClasses,
         functionReferencePhase,
         postInlinePhase,
-        testProcessorPhase.takeIf { context.config.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
+        testProcessorPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,
         forLoopsPhase,
         flattenStringConcatenationPhase,
         stringConcatenationPhase,
-        stringConcatenationTypeNarrowingPhase.takeIf { context.config.optimizationsEnabled },
+        stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
         localFunctionsPhase,
@@ -637,7 +639,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         staticInitializersPhase,
         builtinOperatorPhase,
         bridgesPhase,
-        exportInternalAbiPhase.takeIf { context.config.produce.isCache },
+        exportInternalAbiPhase.takeIf { this.produce.isCache },
         useInternalAbiPhase,
         autoboxPhase,
         constructorsLoweringPhase,
