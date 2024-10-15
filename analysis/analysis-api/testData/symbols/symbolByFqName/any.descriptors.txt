@@ -16,12 +16,7 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Any
   origin: LIBRARY
-  superTypes: [
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Any
-  ]
+  superTypes: []
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null

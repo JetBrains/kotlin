@@ -642,7 +642,12 @@ internal val ClassifierDescriptor.classId: ClassId?
 internal val ClassifierDescriptor.maybeLocalClassId: ClassId
     get() = classId ?: ClassId(containingPackage() ?: FqName.ROOT, FqName.topLevel(this.name), isLocal = true)
 
-internal fun ClassDescriptor.getSupertypesWithAny(): Collection<KotlinType> {
+internal fun ClassDescriptor.computeSymbolSupertypes(): Collection<KotlinType> {
+    val classId = this.classId
+    if (classId == StandardClassIds.Any || classId == StandardClassIds.Nothing) {
+        return emptyList()
+    }
+
     val supertypes = typeConstructor.supertypes
     if (isInterfaceLike) {
         return supertypes

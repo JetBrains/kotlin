@@ -100,7 +100,7 @@ internal class KaFe10PsiNamedClassSymbol(
 
     override val superTypes: List<KaType>
         get() = withValidityAssertion {
-            descriptor?.getSupertypesWithAny()?.map { it.toKtType(analysisContext) } ?: emptyList()
+            descriptor?.computeSymbolSupertypes()?.map { it.toKtType(analysisContext) } ?: emptyList()
         }
 
     override val classId: ClassId?
