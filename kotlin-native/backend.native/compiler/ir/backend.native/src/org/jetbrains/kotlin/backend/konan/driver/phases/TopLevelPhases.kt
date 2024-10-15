@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
@@ -70,7 +71,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
 
-        fun createGenerationStateAndRunLowerings(fragment: BackendJobFragment): NativeGenerationState {
+        fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
             val outputFiles = OutputFiles(outputPath, config.target, config.produce)
             val generationState = NativeGenerationState(context.config, backendContext,
@@ -87,15 +88,89 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
                     }
-                    rootPerformanceManager.trackIRLowering {
-                        generationStateEngine.lowerModuleWithDependencies(module)
-                    }
                 }
                 return generationState
             } catch (t: Throwable) {
                 generationState.dispose()
                 throw t
             }
+        }
+
+        fun NativeGenerationState.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.() -> Unit) {
+            try {
+                newEngine(this) { generationStateEngine ->
+                    rootPerformanceManager.trackIRLowering {
+                        generationStateEngine.block()
+                    }
+                }
+            } catch (t: Throwable) {
+                this.dispose()
+                throw t
+            }
+        }
+
+        fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, loweringsToLaunch: LoweringList) {
+            runEngineForLowerings {
+                val module = fragment.irModule
+                partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
+            }
+        }
+
+        fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, moduleLowering: ModuleLowering) {
+            runEngineForLowerings {
+                val module = fragment.irModule
+                partiallyLowerModuleWithDependencies(module, moduleLowering)
+            }
+        }
+
+        fun NativeGenerationState.finalizeLowerings(fragment: BackendJobFragment) {
+            runEngineForLowerings {
+                val module = fragment.irModule
+                val dependenciesToCompile = findDependenciesToCompile()
+                mergeDependencies(module, dependenciesToCompile)
+            }
+        }
+
+        fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
+            val generationStates = this.map { fragment -> createGenerationState(fragment) }
+            val fragmentWithState = this.zip(generationStates)
+
+            // In Kotlin/Native, lowerings are run not over modules, but over individual files.
+            // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
+            // and vice versa.
+            // However, in order to validate IR after inlining, we have to make sure that all the modules being compiled are lowered to the same
+            // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
+            // (like IR visibility checks).
+            // This is what we call a 'lowering synchronization point'.
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrBeforeLowering) }
+
+            run {
+                // This is a so-called "KLIB Common Lowerings Prefix".
+                //
+                // Note: All lowerings up to but excluding "InlineAllFunctions" are supposed to modify only the lowered file.
+                // By contrast, "InlineAllFunctions" may mutate multiple files at the same time, and some files can be even
+                // mutated several times by little pieces. Which is a completely different behavior as compared to other lowerings.
+                // "InlineAllFunctions" expects that for an inlined function all preceding lowerings (including generation of
+                // synthetic accessors) have been already applied.
+                // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
+                // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
+                fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsUpToAndIncludingSyntheticAccessors()) }
+                if (!context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)) {
+                    fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningOnlyPrivateFunctions) }
+                    if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
+                        fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, dumpSyntheticAccessorsPhase) }
+                    }
+                }
+                fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
+            }
+
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsAfterInlining()) }
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterLowering) }
+
+            fragmentWithState.forEach { (fragment, state) -> state.finalizeLowerings(fragment) }
+
+            return generationStates
         }
 
         fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState) {
@@ -142,21 +217,20 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         val threadsCount = context.config.threadsCount
         if (threadsCount == 1) {
             val fragmentsList = fragments.toList()
-            val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+            val generationStates = fragmentsList.runAllLowerings()
             fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
                 runAfterLowerings(fragment, generationState)
             }
         } else {
             val fragmentsList = fragments.toList()
             if (fragmentsList.size == 1) {
-                val fragment = fragmentsList[0]
-                runAfterLowerings(fragment, createGenerationStateAndRunLowerings(fragment))
+                runAfterLowerings(fragmentsList.first(), fragmentsList.runAllLowerings().first())
             } else {
                 // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
                 // which need cross-file access all the time and it's not easy to overcome this). So, for now,
                 // we split the pipeline into two parts - everything before lowerings (including them)
                 // which is run sequentially, and everything else which is run in parallel.
-                val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+                val generationStates = fragmentsList.runAllLowerings()
                 val executor = Executors.newFixedThreadPool(threadsCount)
                 val thrownFromThread = AtomicReference<Throwable?>(null)
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
@@ -339,44 +413,22 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, loweringList: LoweringList) {
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    // In Kotlin/Native, lowerings are run not over modules, but over individual files.
-    // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
-    // and vice versa.
-    // However, in order to validate IR after inlining, we have to make sure that all the modules being compiled are lowered to the same
-    // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
-    // (like IR visibility checks).
-    // This is what we call a 'lowering synchronization point'.
-    runModuleWisePhase(validateIrBeforeLowering, allModulesToLower)
-    run {
-        // This is a so-called "KLIB Common Lowerings Prefix".
-        //
-        // Note: All lowerings up to but excluding "InlineAllFunctions" are supposed to modify only the lowered file.
-        // By contrast, "InlineAllFunctions" may mutate multiple files at the same time, and some files can be even
-        // mutated several times by little pieces. Which is a completely different behavior as compared to other lowerings.
-        // "InlineAllFunctions" expects that for an inlined function all preceding lowerings (including generation of
-        // synthetic accessors) have been already applied.
-        // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
-        // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
-        runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
-        if (!context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)) {
-            runModuleWisePhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
-            if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
-                runModuleWisePhase(dumpSyntheticAccessorsPhase, allModulesToLower)
-            }
-        }
-        runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
-    }
-    runModuleWisePhase(validateIrAfterInliningAllFunctions, allModulesToLower)
-    runLowerings(getLoweringsAfterInlining(), allModulesToLower)
-    runModuleWisePhase(validateIrAfterLowering, allModulesToLower)
+    runLowerings(loweringList, allModulesToLower)
+}
 
-    mergeDependencies(module, dependenciesToCompile)
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, lowering: ModuleLowering) {
+    val dependenciesToCompile = findDependenciesToCompile()
+    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+    // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
+    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
+
+    runModuleWisePhase(lowering, allModulesToLower)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
