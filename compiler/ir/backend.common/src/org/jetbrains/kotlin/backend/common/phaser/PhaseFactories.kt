@@ -44,7 +44,12 @@ fun <Context : CommonBackendContext> buildModuleLoweringsPhase(
     vararg phases: ((Context) -> ModuleLoweringPass)?
 ): CompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
     createModulePhases(*phases)
-        .reduce(CompilerPhase<Context, IrModuleFragment, IrModuleFragment>::then)
+        .fold(noopPhase(), CompilerPhase<Context, IrModuleFragment, IrModuleFragment>::then)
+
+private fun <Context : CommonBackendContext, T> noopPhase(): CompilerPhase<Context, T, T> =
+    object : CompilerPhase<Context, T, T> {
+        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<T>, context: Context, input: T): T = input
+    }
 
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
         FunctionType.extractReturnTypeArgument(): Class<out ReturnType> {
