@@ -112,7 +112,7 @@ private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): Str
     propertyAccessorRenderer = null,
     resolvePhaseRenderer = null,
     typeRenderer = ConeTypeRenderer(attributeRenderer = MinimalConeTypeAttributeRenderer),
-    valueParameterRenderer = null,
+    callableSignatureRenderer = null,
     errorExpressionRenderer = null,
 ).renderElementAsString(this)
 

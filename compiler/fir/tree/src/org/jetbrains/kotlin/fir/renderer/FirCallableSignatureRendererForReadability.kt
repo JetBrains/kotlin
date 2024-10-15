@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
 
-class FirValueParameterRendererForReadability : FirValueParameterRenderer() {
-    override fun renderParameterType(valueParameter: FirValueParameter) {
-        val returnTypeRef = valueParameter.returnTypeRef
+class FirCallableSignatureRendererForReadability : FirCallableSignatureRenderer() {
+    override fun renderCallableType(callableDeclaration: FirCallableDeclaration) {
+        val returnTypeRef = callableDeclaration.returnTypeRef
 
-        if (valueParameter.isVararg && returnTypeRef is FirResolvedTypeRef) {
+        if (callableDeclaration is FirValueParameter && callableDeclaration.isVararg && returnTypeRef is FirResolvedTypeRef) {
             val arrayElementType = returnTypeRef.coneType.arrayElementType()
             if (arrayElementType != null) {
                 typeRenderer.render(arrayElementType)
@@ -21,7 +22,7 @@ class FirValueParameterRendererForReadability : FirValueParameterRenderer() {
             }
         }
 
-        super.renderParameterType(valueParameter)
+        super.renderCallableType(callableDeclaration)
     }
 
     override fun renderDefaultValue(valueParameter: FirValueParameter) {

@@ -23,7 +23,7 @@ internal interface FirRendererComponents {
     val resolvePhaseRenderer: FirResolvePhaseRenderer?
     val typeRenderer: ConeTypeRenderer
     val referencedSymbolRenderer: FirSymbolRenderer
-    val valueParameterRenderer: FirValueParameterRenderer?
+    val callableSignatureRenderer: FirCallableSignatureRenderer?
     val errorExpressionRenderer: FirErrorExpressionRenderer?
     val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer
     val resolvedQualifierRenderer: FirResolvedQualifierRenderer

@@ -1,15 +1,15 @@
-/main.kt:(98,103): error: Argument type mismatch: actual type is 'V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit)', but 'V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit) & Any' was expected.
+/main.kt:(98,103): error: Argument type mismatch: actual type is 'V (type parameter of fun <V> SLRUMap<V>.getOrPut)', but 'V (type parameter of fun <V> SLRUMap<V>.getOrPut) & Any' was expected.
 
-/main.kt:(119,120): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit)>', but 'kotlin.collections.(Mutable)List<@NotNull() V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit) & Any>' was expected.
+/main.kt:(119,120): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (type parameter of fun <V> SLRUMap<V>.getOrPut)>', but 'kotlin.collections.(Mutable)List<@NotNull() V (type parameter of fun <V> SLRUMap<V>.getOrPut) & Any>' was expected.
 
 /main.kt:(127,132): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/main.kt:(133,138): error: Argument type mismatch: actual type is 'V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit)', but 'E (type parameter of fun <E : Any!> takeE(value: E & Any): Unit) & Any' was expected.
+/main.kt:(133,138): error: Argument type mismatch: actual type is 'V (type parameter of fun <V> SLRUMap<V>.getOrPut)', but 'E (type parameter of fun <E : Any!> takeE) & Any' was expected.
 
 /main.kt:(144,153): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/main.kt:(154,155): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit)>', but 'kotlin.collections.(Mutable)List<@NotNull() E (type parameter of fun <E : Any!> takeEList(value: (Mutable)List<@NotNull() E & Any>): Unit) & Any>' was expected.
+/main.kt:(154,155): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (type parameter of fun <V> SLRUMap<V>.getOrPut)>', but 'kotlin.collections.(Mutable)List<@NotNull() E (type parameter of fun <E : Any!> takeEList) & Any>' was expected.
 
 /main.kt:(161,166): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/main.kt:(167,176): error: Argument type mismatch: actual type is 'V! (type parameter of fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>): Unit)', but 'E (type parameter of fun <E : Any!> takeE(value: E & Any): Unit) & Any' was expected.
+/main.kt:(167,176): error: Argument type mismatch: actual type is 'V! (type parameter of fun <V> SLRUMap<V>.getOrPut)', but 'E (type parameter of fun <E : Any!> takeE) & Any' was expected.

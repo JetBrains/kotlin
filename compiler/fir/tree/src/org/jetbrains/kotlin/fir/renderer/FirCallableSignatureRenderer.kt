@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 
-open class FirValueParameterRenderer {
+open class FirCallableSignatureRenderer {
     internal lateinit var components: FirRendererComponents
     protected val printer: FirPrinter get() = components.printer
     protected val visitor: FirRenderer.Visitor get() = components.visitor
@@ -33,15 +34,20 @@ open class FirValueParameterRenderer {
         annotationRenderer?.render(valueParameter)
         modifierRenderer?.renderModifiers(valueParameter)
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
-            printer.print(valueParameter.name.toString() + ": ")
+            printer.print(valueParameter.name.toString())
+            renderReturnTypePrefix()
         }
 
-        renderParameterType(valueParameter)
+        renderCallableType(valueParameter)
         renderDefaultValue(valueParameter)
     }
 
-    protected open fun renderParameterType(valueParameter: FirValueParameter) {
-        valueParameter.returnTypeRef.accept(visitor)
+    open fun renderCallableType(callableDeclaration: FirCallableDeclaration) {
+        callableDeclaration.returnTypeRef.accept(visitor)
+    }
+
+    open fun renderReturnTypePrefix() {
+        printer.print(": ")
     }
 
     protected open fun renderDefaultValue(valueParameter: FirValueParameter) {

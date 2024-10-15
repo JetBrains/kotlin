@@ -46,9 +46,32 @@ object FirDiagnosticRenderers {
                 propertyAccessorRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
                 modifierRenderer = FirPartialModifierRenderer(),
-                valueParameterRenderer = FirValueParameterRendererForReadability(),
+                callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 annotationRenderer = null,
+                lineBreakAfterContextReceivers = false,
+                renderFieldAnnotationSeparately = false,
+            ).renderElementAsString(symbol.fir, trim = true)
+            is FirTypeParameterSymbol -> symbol.name.asString()
+            else -> "???"
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    val TYPE_PARAMETER_OWNER_SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
+                typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
+                idRenderer = ConeIdShortRenderer(),
+                classMemberRenderer = FirNoClassMemberRenderer(),
+                bodyRenderer = null,
+                propertyAccessorRenderer = null,
+                callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+                modifierRenderer = null,
+                callableSignatureRenderer = null,
+                declarationRenderer = FirDeclarationRenderer("local "),
+                annotationRenderer = null,
+                contractRenderer = null,
                 lineBreakAfterContextReceivers = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
@@ -209,7 +232,7 @@ object FirDiagnosticRenderers {
 
                         if (it is ConeTypeParameterLookupTag) {
                             append(" (type parameter of ")
-                            append(SYMBOL.render(it.typeParameterSymbol.containingDeclarationSymbol))
+                            append(TYPE_PARAMETER_OWNER_SYMBOL.render(it.typeParameterSymbol.containingDeclarationSymbol))
                             append(')')
                         }
                     }
