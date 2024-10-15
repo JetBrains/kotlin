@@ -1,0 +1,27 @@
+KT element: KtThisExpression
+FIR element: FirThisReceiverExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+this@R|special/anonymous|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] thisExpression_arrayAccessConvention_reference.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|MyMap<kotlin/String, kotlin/Int>.() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<MyMap<kotlin/String, kotlin/Int>, kotlin/Unit>] foo@fun R|MyMap<kotlin/String, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                [ResolvedTo(BODY_RESOLVE)] lval <array>: R|MyMap<kotlin/String, kotlin/Int>| = this@R|special/anonymous|
+                [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/String| = String(a)
+                R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
+            }
+
+            Unit
+        }
+        )
+    }
+    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
+
+        public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|
+
+    }

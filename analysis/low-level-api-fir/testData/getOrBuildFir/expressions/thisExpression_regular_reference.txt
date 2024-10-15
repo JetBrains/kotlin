@@ -1,0 +1,12 @@
+KT element: KtNameReferenceExpression
+FIR element: FirThisReceiverExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+this@R|/foo|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] thisExpression_regular_reference.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Int|.foo(): R|kotlin/Unit| {
+        this@R|/foo|
+    }
