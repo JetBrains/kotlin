@@ -514,13 +514,19 @@ public class K1WasmJsTranslatorTestGenerated extends AbstractK1WasmJsTranslatorT
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
     @Test
     @TestMetadata("findAssociatedObject.kt")
     public void testFindAssociatedObject() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectAndDCE.kt")
+    public void testFindAssociatedObjectAndDCE() {
+      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
     }
 
     @Test

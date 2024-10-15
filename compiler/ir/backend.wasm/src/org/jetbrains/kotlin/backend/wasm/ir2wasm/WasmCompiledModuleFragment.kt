@@ -381,7 +381,7 @@ class WasmCompiledModuleFragment(
         with(WasmExpressionBuilder(tryGetAssociatedObject.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
-                    val klassId = typeIds[klass]!!
+                    val klassId = typeIds[klass] ?: continue // Can be removed by dce so no reflection for this
                     buildGetLocal(WasmLocal(0, "classId", WasmI32, true), serviceCodeLocation)
                     buildConstI32(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
