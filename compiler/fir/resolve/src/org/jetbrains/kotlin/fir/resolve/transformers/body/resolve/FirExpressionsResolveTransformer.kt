@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument.VarargArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -608,7 +608,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         ResolutionMode.WithExpectedType(
                             it.toFirResolvedTypeRef(),
                             forceFullCompletion = false,
-                            arrayLiteralPosition = ArrayLiteralPosition.AnnotationArgument,
                         )
                     } ?: ResolutionMode.ContextDependent
 
@@ -1801,7 +1800,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
             when (data) {
-                is ResolutionMode.WithExpectedType if data.arrayLiteralPosition != null -> {
+                is ResolutionMode.WithExpectedType -> {
                     // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
                     arrayLiteral.transformChildren(
                         transformer,
@@ -1823,10 +1822,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     // We set the arrayLiteral's type to the expect type or Array<Any>
                     // because arguments need to have a type during resolution of the synthetic call.
-                    // We remove the type so that it will be set during completion to the CST of the arguments.
+                    // We remove the type so that it will be set during completion to the CST (common super type) of the arguments.
                     arrayLiteral.replaceConeTypeOrNull(
-                        (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.coneType
-                            ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
+                        StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                     )
                     val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
                         arrayLiteral,
