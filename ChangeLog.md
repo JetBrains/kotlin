@@ -1,3 +1,92 @@
+## 2.0.21
+
+### Apple Ecosystem
+
+- [`KT-69093`](https://youtrack.jetbrains.com/issue/KT-69093) Xcode 16 support in Kotlin
+
+### Backend. Native. Debug
+
+- [`KT-71374`](https://youtrack.jetbrains.com/issue/KT-71374) lldb: step out breaks breaking in Xcode 16
+
+### Compiler
+
+#### Fixes
+
+- [`KT-69735`](https://youtrack.jetbrains.com/issue/KT-69735) K2: Static fields are missing from the declaration list of corresponding IrClass for java class
+- [`KT-71122`](https://youtrack.jetbrains.com/issue/KT-71122) Regression in Kotlin Compiler 2.0 causing NPE in the runtime
+- [`KT-70931`](https://youtrack.jetbrains.com/issue/KT-70931) K2 / Scripts: "cannot convert IrExpression to ConstantValue" when using function annotation
+- [`KT-70584`](https://youtrack.jetbrains.com/issue/KT-70584) K2: "IllegalStateException: flow for PostponedLambdaExitNode not initialized - traversing nodes in wrong order?"
+- [`KT-70808`](https://youtrack.jetbrains.com/issue/KT-70808) K2: "node has already been visited" with anonymous object in dead code
+- [`KT-69985`](https://youtrack.jetbrains.com/issue/KT-69985) K2: Classifier declarations from root package are resolved without imports in non-root packages
+- [`KT-70683`](https://youtrack.jetbrains.com/issue/KT-70683) K2: Internal compiler error in IrFakeOverrideSymbolBase.getOwner
+- [`KT-70901`](https://youtrack.jetbrains.com/issue/KT-70901) False positive Public-API inline function cannot access non-public-API property accessor
+- [`KT-70930`](https://youtrack.jetbrains.com/issue/KT-70930) K2: Java annotations not present on ENUM_ENTRY IR elements
+- [`KT-70194`](https://youtrack.jetbrains.com/issue/KT-70194) K2 IDE: exception on a very red file
+- [`KT-69399`](https://youtrack.jetbrains.com/issue/KT-69399) Native: IllegalStateException: "Failed to build cache"
+
+### Compose compiler
+
+#### Fixes
+- [`b/329477544`](https://issuetracker.google.com/issues/329477544) Force open / overridden Composable functions to be non-restartable.
+- [`b/361652128`](https://issuetracker.google.com/issues/361652128) Disable live literal transform if the corresponding flag is disabled
+
+### IR. Actualizer
+
+- [`KT-70894`](https://youtrack.jetbrains.com/issue/KT-70894) IR crash. Unprocessed `IrFunctionFakeOverrideSymbol` when actualize to Java
+
+### IR. Tree
+
+- [`KT-71191`](https://youtrack.jetbrains.com/issue/KT-71191) SymbolTable: Check if the provided signature is public before adding a symbol to the SymbolTable
+
+### Native. Build Infrastructure
+
+- [`KT-71485`](https://youtrack.jetbrains.com/issue/KT-71485) K/N runtime parts don't build due to _Float16 issues on x86_64 macOS
+
+### Native. C Export
+
+- [`KT-69507`](https://youtrack.jetbrains.com/issue/KT-69507) LLVM 11 clang with Xcode 16 headers: standard c++ headers
+
+### Native. C and ObjC Import
+
+- [`KT-71029`](https://youtrack.jetbrains.com/issue/KT-71029) Investigate why stdarg.h declarations leak into testModuleA
+
+### Native. Platform Libraries
+
+- [`KT-70566`](https://youtrack.jetbrains.com/issue/KT-70566) LLVM 11 clang with Xcode 16 headers: 'sys/cdefs.h' file not found
+- [`KT-71624`](https://youtrack.jetbrains.com/issue/KT-71624) Eliminate remaining UIKit/AppKit removed signatures
+- [`KT-70031`](https://youtrack.jetbrains.com/issue/KT-70031) Rebuild platform libraries in 2.0.21 with Xcode 16
+
+### Native. Testing
+
+- [`KT-70603`](https://youtrack.jetbrains.com/issue/KT-70603) C++ with -fmodules: cyclic dependency in module 'std': std -> _wctype -> __wctype -> std in dev llvm toolchains
+
+### Tools. CLI. Native
+
+- [`KT-71262`](https://youtrack.jetbrains.com/issue/KT-71262) KotlinNativeLink tasks fetching from network despite -Xoverride-konan-properties=dependenciesUrl= being set
+
+### Tools. Compiler Plugins
+
+- [`KT-71038`](https://youtrack.jetbrains.com/issue/KT-71038) PowerAssert: Constant on RHS of elvis operator leads to compiler crash
+
+### Tools. Daemon
+
+- [`KT-35381`](https://youtrack.jetbrains.com/issue/KT-35381) Get rid of the native-platform usage in kotlin compiler
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-71444`](https://youtrack.jetbrains.com/issue/KT-71444) Certain POMs produced by Kotlin 2.0.20 cannot be consumed by KMP projects with Android targets
+- [`KT-70700`](https://youtrack.jetbrains.com/issue/KT-70700) Gradle 8.10: The value for task ':commonizeNativeDistribution' property 'kotlinNativeBundleBuildService' cannot be changed any further
+- [`KT-71396`](https://youtrack.jetbrains.com/issue/KT-71396) Gradle client side JVM explodes with OOM due to xcodebuild logs
+
+### Tools. Gradle. Native
+
+- [`KT-71419`](https://youtrack.jetbrains.com/issue/KT-71419) Light bundle KGP IT run against a stable K/N version
+
+### Tools. JPS
+
+- [`KT-71450`](https://youtrack.jetbrains.com/issue/KT-71450) Constant build failure: com.intellij.util.io.ClosedStorageException: storage is already closed
+
+
 ## 2.0.20
 
 ### Analysis. API
