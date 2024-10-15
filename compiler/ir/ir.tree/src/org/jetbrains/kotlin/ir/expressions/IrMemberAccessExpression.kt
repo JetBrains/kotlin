@@ -37,6 +37,74 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     val typeArgumentsCount: Int
         get() = typeArguments.size
 
+
+    /**
+     * Methods below should be used to add/remove a receiver argument in correspondence to target function/property,
+     * whose parameters changed _after_ this [IrMemberAccessExpression] was created.
+     *
+     * It can happen, e.g., in a lowering phase that modifies an existing function in-place by adding a `dispatchReceiverParameter`,
+     * then adjusts all calls to that function by setting the corresponding `dispatchReceiver` argument.
+     * In that case, you need to call [insertDispatchReceiver] method rather setting the argument directly via `dispatchReceiver` property.
+     *
+     * In practice, it is expected to be a very rare situation.
+     *
+     * #### Reasoning
+     *
+     * [KT-70054](https://youtrack.jetbrains.com/issue/KT-70054) introduces a single [arguments] list, that also
+     * includes dispatch and extension receivers.
+     * The existing (old) API will be implemented on top of that list for the period of migration. Then:
+     * - `dispatchReceiver = ...` means `arguments[0] = ...`
+     * - `insertDispatchReceiver(...)` means `arguments.add(0, ...)`
+     * - `removeDispatchReceiver(...)` means `arguments.removeAt(0)`
+     *
+     * We need a way to distinguish those two cases so that [arguments] list stays intact with the corresponding [IrFunction.parameters] list
+     * (i.e., so that they have the same sizes).
+     *
+     * Note: before the migration is finished you still need to use those methods, rather than `arguments.add()` / `arguments.removeAt()`
+     * directly, in order for the old API to continue working.
+     */
+
+    /**
+     * Adds a dispatch receiver to [IrMemberAccessExpression], whose target function/property has gotten
+     * the corresponding dispatch receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
+     *
+     * For details see the comments above.
+     */
+    fun insertDispatchReceiver(value: IrExpression?) {
+        dispatchReceiver = value
+    }
+
+    /**
+     * Removes a dispatch receiver from [IrMemberAccessExpression], whose target function/property has lost
+     * the corresponding dispatch receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
+     *
+     * For details see the comments above.
+     */
+    fun removeDispatchReceiver() {
+        dispatchReceiver = null
+    }
+
+    /**
+     * Adds an extension receiver to [IrMemberAccessExpression], whose target function/property has gotten
+     * the corresponding extension receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
+     *
+     * For details see the comments above.
+     */
+    fun insertExtensionReceiver(value: IrExpression?) {
+        extensionReceiver = value
+    }
+
+    /**
+     * Removes an extension receiver from [IrMemberAccessExpression], whose target function/property has lost
+     * the corresponding extension receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
+     *
+     * For details see the comments above.
+     */
+    fun removeExtensionReceiver() {
+        extensionReceiver = null
+    }
+
+
     fun getValueArgument(index: Int): IrExpression? {
         checkArgumentSlotAccess("value", index, valueArguments.size)
         return valueArguments[index]
