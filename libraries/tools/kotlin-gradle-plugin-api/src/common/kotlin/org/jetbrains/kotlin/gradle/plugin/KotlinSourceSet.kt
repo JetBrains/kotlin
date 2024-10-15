@@ -86,8 +86,11 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * - `A` observes the API from `B`, including internal declarations.
      * - `A` can provide actual implementations for expected declarations from `B`. This is a necessary and sufficient condition,
      * as `A` can provide actuals for `B` if and only if `A.dependsOn(B)` either directly or transitive `dependsOn` relation.
-     * - `B` can compile to all the targets that `A` compiles to, in addition to its own targets.
-     * - `A` inherits all the regular dependencies of `B`.
+     * - Source code from `A` will always compile together with source code from `B`. The opposite is not true!
+     * - `A` [extends][org.gradle.api.artifacts.DependencyScopeConfiguration.extendsFrom] dependencies from all
+     * [dependency configurations](https://docs.gradle.org/current/userguide/dependency_configurations.html#dependency-configurations)
+     * of `B`.
+     * - `A` inherits all [KotlinSourceSets][KotlinSourceSet] which `B` has [dependsOn] relationship.
      *
      * For more information, see [`dependsOn` and source set hierarchies](https://kotlinlang.org/docs/multiplatform-advanced-project-structure.html#dependson-and-source-set-hierarchies).
      */
