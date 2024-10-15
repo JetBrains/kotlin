@@ -386,8 +386,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         throw IllegalStateException("Should not be called")
     }
 
-    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): IrSimpleType =
-        irBuiltIns.intType as IrSimpleType
+    // There are no ILTs in IR type system
+    override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): IrSimpleType? = null
 
     override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker = this
 
