@@ -14,17 +14,17 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
 ) {
-    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
+    data object ContextDependent : ResolutionMode(forceFullCompletion = false) // function argument
     data object Delegate : ResolutionMode(forceFullCompletion = false)
-    data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
+    data object ContextIndependent : ResolutionMode(forceFullCompletion = true) // expression in the air
 
     sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {
         data object ForCallableReference : ReceiverResolution(forCallableReference = true)
         companion object : ReceiverResolution(forCallableReference = false)
     }
 
-    class WithExpectedType(
-        val expectedTypeRef: FirResolvedTypeRef,
+    class WithExpectedType( // Variable with explicit expected type
+        val expectedTypeRef: FirResolvedTypeRef, // todo. Right now, it looks like inner expected type. I need to change it to outer expected type
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,

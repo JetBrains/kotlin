@@ -168,6 +168,7 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType) return
+        // todo check this commit c4f547d97cfa8845dcddd357552c42fa7f7b743f and the logic beneath
         val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
 
         val system = candidate.system
