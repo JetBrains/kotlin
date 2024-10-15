@@ -249,7 +249,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export exported modules`() {
         val projects = multiModuleSwiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
             binaries {
                 linkTaskProvider.configure {
@@ -272,10 +272,10 @@ class SwiftExportUnitTests {
         assertEquals(arm64SimLib.freeCompilerArgs.single(), "-opt-in=some.value")
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
-            add(SwiftExportModuleForAssertion("Subproject", "subproject"))
+            add(SwiftExportModuleForAssertion("Subproject", "subproject-iosSimulatorArm64Main.klib"))
             add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib"))
         }
 
@@ -304,7 +304,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
             add(SwiftExportModuleForAssertion("Decompose", "decompose.klib"))
@@ -330,7 +330,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
             add(SwiftExportModuleForAssertion("Decompose", "decompose.klib"))
@@ -356,14 +356,14 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
         )
 
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
             add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib"))
@@ -375,7 +375,7 @@ class SwiftExportUnitTests {
         )
 
         val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0-RC/", kotlinXCoroutines.artifact.path)
+        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
         assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
     }
 
@@ -386,7 +386,7 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
             },
             swiftExport = {
@@ -409,7 +409,7 @@ class SwiftExportUnitTests {
         )
 
         val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0-RC/", kotlinXCoroutines.artifact.path)
+        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
         assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
     }
 
@@ -420,7 +420,7 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
             },
             swiftExport = {
@@ -443,7 +443,7 @@ class SwiftExportUnitTests {
         )
 
         val kotlinXCoroutines = actualModules.single()
-        assertContains("/1.9.0-RC/", kotlinXCoroutines.artifact.path)
+        assertContains("/1.9.0/", kotlinXCoroutines.artifact.path)
     }
 
     @Test
