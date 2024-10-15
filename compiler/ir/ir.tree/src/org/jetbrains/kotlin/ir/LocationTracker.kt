@@ -49,9 +49,8 @@ object LocationTracker {
                 .skip((framesToSkip + 1).toLong())
                 //.limit(20)
                 .takeWhile { frame ->
-                    countAbove == 0 && (
-                            frame.className.startsWith("org.jetbrains.kotlin.ir")
-                                    && !frame.className.startsWith("org.jetbrains.kotlin.ir.backend")
+                    countAbove == 0 && !(
+                            frame.className.startsWith("org.gradle")
                             ) || countAbove++ < 1
                 }
                 .collect(Collectors.toList())
