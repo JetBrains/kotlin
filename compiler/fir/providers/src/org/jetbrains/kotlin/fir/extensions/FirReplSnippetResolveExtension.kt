@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import kotlin.reflect.KClass
 
 abstract class FirReplSnippetResolveExtension(
@@ -24,7 +26,17 @@ abstract class FirReplSnippetResolveExtension(
 
     fun interface Factory : FirExtension.Factory<FirReplSnippetResolveExtension>
 
-    abstract fun getSnippetScope(snippet: FirReplSnippet): FirScope?
+    abstract fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope?
+
+    abstract fun updateResolved(snippet: FirReplSnippet)
 }
 
 val FirExtensionService.replSnippetResolveExtensions: List<FirReplSnippetResolveExtension> by FirExtensionService.registeredExtensions()
+
+abstract class FirReplHistoryProvider : FirSessionComponent {
+    abstract fun getSnippets(): Iterable<FirReplSnippetSymbol>
+    abstract fun putSnippet(symbol: FirReplSnippetSymbol)
+}
+
+val FirSession.replHistoryProvider: FirReplHistoryProvider by FirSession.sessionComponentAccessor()
+

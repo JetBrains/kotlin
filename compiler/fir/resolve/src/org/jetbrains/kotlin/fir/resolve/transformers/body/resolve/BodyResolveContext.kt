@@ -613,8 +613,8 @@ class BodyResolveContext(
             withTowerDataCleanup {
 
                 // TODO: robuster matching and error reporting on no extension (KT-72969)
-                for (resolver in holder.session.extensionService.replSnippetResolveExtensions) {
-                    val scope = resolver.getSnippetScope(replSnippet)
+                for (resolveExt in holder.session.extensionService.replSnippetResolveExtensions) {
+                    val scope = resolveExt.getSnippetScope(replSnippet, holder.session)
                     if (scope != null) {
                         addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
                         break

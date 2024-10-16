@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -95,6 +97,7 @@ open class FirReplFrontendFacade(
         val libraryList: DependencyListForCliModule
     )
 
+    @OptIn(org.jetbrains.kotlin.fir.SessionConfiguration::class)
     private val replCompilationEnvironment: ReplCompilationEnvironment by lazy {
         val firstSnippetModule = testServices.moduleStructure.modules.first()
         val project = this.testServices.compilerConfigurationProvider.getProject(firstSnippetModule)
@@ -105,7 +108,7 @@ open class FirReplFrontendFacade(
         val predefinedJavaComponents = runIf(targetPlatform.isJvm()) {
             FirSharableJavaComponents(firCachesFactoryForCliMode)
         }
-        val projectEnvironment = createLibrarySession(
+        val (librarySession, projectEnvironment) = createLibrarySessionAndProjectEnvironment(
             firstSnippetModule,
             project,
             special("<${firstSnippetModule.name}>"),
@@ -115,6 +118,7 @@ open class FirReplFrontendFacade(
             extensionRegistrars,
             predefinedJavaComponents
         )
+        librarySession.register(FirReplHistoryProvider::class, FirReplHistoryProviderImpl())
         ReplCompilationEnvironment(
             targetPlatform,
             extensionRegistrars,
@@ -141,7 +145,7 @@ open class FirReplFrontendFacade(
         val moduleDataMap = mutableMapOf<TestModule, FirModuleData>()
 
         for (module in modules) {
-            with (replCompilationEnvironment) {
+            with(replCompilationEnvironment) {
                 val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
                 // TODO: collect instead of recursive traversal on each new snippet
                 val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module)
@@ -165,7 +169,7 @@ open class FirReplFrontendFacade(
         return moduleDataMap
     }
 
-    private fun createLibrarySession(
+    private fun createLibrarySessionAndProjectEnvironment(
         module: TestModule,
         project: Project,
         moduleName: Name,
@@ -174,12 +178,12 @@ open class FirReplFrontendFacade(
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
         predefinedJavaComponents: FirSharableJavaComponents?
-    ): AbstractProjectEnvironment? {
+    ): Pair<FirSession, VfsBasedProjectEnvironment?> {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
         val isCommon = module.targetPlatform.isCommon()
-        when {
+        val session = when {
             isCommon || module.targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
@@ -263,7 +267,7 @@ open class FirReplFrontendFacade(
             }
             else -> error("Unsupported")
         }
-        return projectEnvironment
+        return session to projectEnvironment
     }
 
     private fun analyze(
@@ -412,6 +416,17 @@ open class FirReplFrontendFacade(
             }
             else -> error("Unsupported")
         }
+    }
+
+    private class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
+        private val history = LinkedHashSet<FirReplSnippetSymbol>()
+
+        override fun getSnippets(): Iterable<FirReplSnippetSymbol> = history.asIterable()
+
+        override fun putSnippet(symbol: FirReplSnippetSymbol) {
+            history.add(symbol)
+        }
+
     }
 
     companion object {
