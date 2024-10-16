@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -59,6 +62,19 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xverify-ir-visibility-after-inlining",
+        description = """Check for visibility violations in IR when validating it after the function inlining phase.
+Only has effect if '-Xverify-ir' is not 'none'.
+This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+""",
+    )
+    var verifyIrVisibilityAfterInlining: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xklib-no-double-inlining",
         description = "Turn off double-inlining mode."
     )
@@ -88,6 +104,8 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
+
+
 
     override fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {
         super.configureExtraLanguageFeatures(map)
