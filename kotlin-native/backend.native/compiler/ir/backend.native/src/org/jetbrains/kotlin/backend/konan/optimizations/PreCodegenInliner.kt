@@ -130,7 +130,8 @@ internal class PreCodegenInliner(
                         }
 
                         val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
-                        val shouldInline = !isALoop && calleeSize <= inlineThreshold
+                        val shouldInline = !isALoop // As FunctionInlining doesn't work with recursive functions.
+                                && calleeSize <= inlineThreshold
                                 && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
                                 && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)
