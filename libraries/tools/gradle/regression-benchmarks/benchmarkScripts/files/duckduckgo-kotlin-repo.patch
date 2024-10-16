@@ -1,20 +1,22 @@
 diff --git a/build.gradle b/build.gradle
-index 19853373b..1daba3dc1 100644
---- a/build.gradle
-+++ b/build.gradle
-@@ -3,10 +3,9 @@
- buildscript {
+--- a/build.gradle	(revision 5bec6f290634f1e9eb8f7956099de5384c604423)
++++ b/build.gradle	(date 1729077970642)
+@@ -1,12 +1,11 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+ buildscript {
+-
      ext {
 -        kotlin_version = '1.9.24'
++        kotlin_version = '2.1.255-SNAPSHOT'
          spotless = '6.1.2'
          anvil_version = '2.5.0-beta11'
 -        ksp_version = '1.9.24-1.0.20'
-+        ksp_version = '2.0.20-1.0.24'
++        ksp_version = '2.0.21-1.0.25'
          gradle_plugin = '8.5.1'
          min_sdk = 26
          target_sdk = 34
-@@ -21,6 +20,7 @@ buildscript {
+@@ -21,9 +20,11 @@
      }
 
      repositories {
@@ -22,56 +24,57 @@ index 19853373b..1daba3dc1 100644
          google()
          mavenCentral()
          maven { url "https://plugins.gradle.org/m2/" }
-@@ -29,7 +29,7 @@ buildscript {
++        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+     }
+     dependencies {
          classpath "com.android.tools.build:gradle:$gradle_plugin"
-         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
-         classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
--        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
-         // NOTE: Do not place your application dependencies here; they belong
-         // in the individual module build.gradle files
-@@ -44,6 +44,7 @@ plugins {
+@@ -44,8 +45,10 @@
 
  allprojects {
      repositories {
 +        mavenLocal()
          google()
          mavenCentral()
++        maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
      }
-@@ -189,4 +190,4 @@ fladle {
-     }
- }
-
--apply plugin: 'android-reporting'
-\ No newline at end of file
-+apply plugin: 'android-reporting'
-diff --git a/gradle.properties b/gradle.properties
-index 530c09b94..41d0f8048 100644
---- a/gradle.properties
-+++ b/gradle.properties
-@@ -23,3 +23,4 @@ org.gradle.configureondemand=true
- android.defaults.buildfeatures.buildconfig=true
- android.nonFinalResIds=false
-
-+kotlinVersion=<kotlin_version>
+     configurations.all {
+         resolutionStrategy.force 'org.objenesis:objenesis:2.6'
+Index: versions.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
 diff --git a/versions.properties b/versions.properties
-index e92796a4e..f0f5042bd 100644
---- a/versions.properties
-+++ b/versions.properties
-@@ -81,14 +81,12 @@ version.com.nhaarman.mockitokotlin2..mockito-kotlin=2.2.0
+--- a/versions.properties	(revision 5bec6f290634f1e9eb8f7956099de5384c604423)
++++ b/versions.properties	(date 1729077970647)
+@@ -81,13 +81,13 @@
 
  version.google.android.material=1.7.0
 
 -version.google.dagger=2.51.1
-+version.google.dagger=2.52
++version.google.dagger=HEAD-SNAPSHOT
 
  version.jakewharton.rxrelay2=2.0.0
 
  version.jakewharton.timber=5.0.1
 
 -version.kotlin=1.9.24
--
++version.kotlin=2.1.255-SNAPSHOT
+
  version.kotlinx.coroutines=1.7.3
 
- version.leakcanary=2.10
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision 5bec6f290634f1e9eb8f7956099de5384c604423)
++++ b/gradle.properties	(date 1729013111145)
+@@ -23,3 +23,5 @@
+ android.defaults.buildfeatures.buildconfig=true
+ android.nonFinalResIds=false
+
++kotlinVersion=2.1.255-SNAPSHOT
++kapt.verbose=true
+\ No newline at end of file
