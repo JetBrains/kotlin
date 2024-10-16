@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.*
+import org.jetbrains.kotlin.objcexport.mangling.mangleClassForwards
 import org.jetbrains.kotlin.objcexport.mangling.mangleObjCStubs
 
 
@@ -260,8 +261,8 @@ private class KtObjCExportHeaderGenerator(
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
-            stubs = stubs.mangleObjCStubs().sortedWith(ObjCInterfaceOrder),
-            classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
+            stubs = mangleObjCStubs(stubs).sortedWith(ObjCInterfaceOrder),
+            classForwardDeclarations = mangleClassForwards(classForwardDeclarations).sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()
         )

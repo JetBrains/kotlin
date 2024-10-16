@@ -1,5 +1,10 @@
 # ObjC Export mangling
 After stubs are generated we mangle classifiers and members at [mangleObjCStubs](mangleObjCStubs.kt)
+
+- [Protocols and interfaces](#protocols-and-interfaces)
+- [Properties](#properties)
+- [Methods](#methods)
+- [Generics](#generics)
 ## Protocols and interfaces
 Since we merge all interfaces and protocols into single header we needs to rename interfaces and classes with similar names from different packages. See implementation at [mangleObjCInterface](mangleObjCInterface.kt) and [mangleObjCProtocol](mangleObjCProtocol.kt) 
 ```kotlin
@@ -59,5 +64,21 @@ class Foo {
     (void) barValue:(Int) value1 (String) value2 (Boolean) value3 __attribute__((swift_name("bar(value1:value2:value3:)")));
     (void) barValue:(Boolean) value1 (Int) value2 (String) value3_ __attribute__((swift_name("bar(value1:value2:value3_:)")));
     (void) barValue:(String) value1 (Boolean) value2 (Int) value3__ __attribute__((swift_name("bar(value1:value2:value3__:)")));
+@end
+```
+
+## Generics
+
+Two groups of type parameters needs to be mangled:
+
+- Predefined Kotlin types: `MutableSet`, `MutableMap`, `Base`
+- Predefined Objective-C types: `id`, `NSObject`, `int16_t` and others. See [isReservedTypeParameterName.kt](isReservedTypeParameterName.kt)
+
+```kotlin
+class Foo<Base>
+```
+
+```chatinput
+@interface Foo<Base_>
 @end
 ```

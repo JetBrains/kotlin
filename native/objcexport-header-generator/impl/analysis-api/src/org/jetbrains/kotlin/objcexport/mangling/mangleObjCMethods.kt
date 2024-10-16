@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.objcexport.mangling
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
+import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
 /**
  * ObjC method consists of 3 parts, each part needs to be mangled
@@ -10,10 +11,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
  * - parameters [buildMangledParameters]
  * - swift_name attribute [buildMangledSwiftNameAttribute]
  */
-internal fun List<ObjCExportStub>.mangleObjCMethods(): List<ObjCExportStub> {
-    if (!hasMethodConflicts()) return this
+internal fun ObjCExportContext.mangleObjCMethods(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
+    if (!stubs.hasMethodConflicts()) return stubs
     val membersDetails = mutableMapOf<String, ObjCMemberDetails>()
-    return map { member ->
+    return stubs.map { member ->
         if (member is ObjCMethod && member.isSwiftNameMethod()) {
             val memberKey = getMemberKey(member)
             val attribute = membersDetails[memberKey]
@@ -32,7 +33,7 @@ internal fun List<ObjCExportStub>.mangleObjCMethods(): List<ObjCExportStub> {
                 member
             }
         } else member
-    }
+    }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
 internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {

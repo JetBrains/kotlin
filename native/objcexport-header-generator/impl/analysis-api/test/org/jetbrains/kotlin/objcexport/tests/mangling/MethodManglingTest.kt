@@ -30,7 +30,7 @@ class MethodManglingTest(
         """.trimMargin()
         ) { foo ->
             val methods = translateToObjCExportStub(foo)?.members ?: error("no translated members")
-            val mangledMethods = methods.mangleObjCMethods().filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
+            val mangledMethods = mangleObjCMethods(methods).filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
 
             assertEquals("barValue:", mangledMethods[0].name)
             assertEquals("barValue_:", mangledMethods[1].name)
@@ -49,7 +49,7 @@ class MethodManglingTest(
         """.trimMargin()
         ) { foo ->
             val methods = translateToObjCExportStub(foo)?.members ?: error("no translated members")
-            val mangledMethods = methods.mangleObjCMethods().filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
+            val mangledMethods = mangleObjCMethods(methods).filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
 
             assertEquals("barValue:value:", mangledMethods[0].name)
             assertEquals("barValue:value_:", mangledMethods[1].name)
