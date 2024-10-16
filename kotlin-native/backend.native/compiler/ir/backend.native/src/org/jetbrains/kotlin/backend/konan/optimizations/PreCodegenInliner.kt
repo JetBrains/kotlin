@@ -159,6 +159,7 @@ internal class PreCodegenInliner(
                         )
                         inliner.lower(irBody, irFunction)
 
+                        // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
                                 .forEach { (irElement, liveVariables) ->
                                     generationState.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
