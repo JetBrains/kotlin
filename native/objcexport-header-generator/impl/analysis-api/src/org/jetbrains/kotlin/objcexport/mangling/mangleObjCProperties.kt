@@ -3,11 +3,12 @@ package org.jetbrains.kotlin.objcexport.mangling
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
+import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
-internal fun List<ObjCExportStub>.mangleObjCProperties(): List<ObjCExportStub> {
-    if (!hasPropertiesConflicts()) return this
+internal fun ObjCExportContext.mangleObjCProperties(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
+    if (!stubs.hasPropertiesConflicts()) return stubs
     val swiftNameAttributes = hashSetOf<String>()
-    return map { member ->
+    return stubs.map { member ->
         if (member is ObjCProperty) {
             val attr = getSwiftNameAttribute(member)
             if (swiftNameAttributes.contains(attr)) {
@@ -17,7 +18,7 @@ internal fun List<ObjCExportStub>.mangleObjCProperties(): List<ObjCExportStub> {
             swiftNameAttributes.add(getSwiftNameAttribute(member).replace("()", ""))
             member
         } else member
-    }
+    }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
 internal fun getSwiftNameAttribute(property: ObjCProperty) =
