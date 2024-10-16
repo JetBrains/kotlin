@@ -995,10 +995,18 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
 
 
 private fun parseOverLongIsoComponent(value: String): Long {
+    require(
+        value.isNotEmpty()
+        && (value[0] in "+-" || value[0] in '0'..'9')
+        && (1..value.lastIndex).all { value[it] in '0'..'9' }
+    ) {
+        "Invalid number '$value'"
+    }
     val length = value.length
     var startIndex = 0
-    if (length > 0 && value[0] in "+-") startIndex++
-    if ((length - startIndex) > 16 && (startIndex..value.lastIndex).all { value[it] in '0'..'9' }) {
+    // skipping leading zeroes and signs to calculate how many digits there are in the number
+    while (startIndex < length && value[startIndex] in "+-0") startIndex++
+    if ((length - startIndex) > 16) {
         // all chars are digits, but more than ceiling(log10(MAX_MILLIS / 1000)) of them
         return if (value[0] == '-') Long.MIN_VALUE else Long.MAX_VALUE
     }
