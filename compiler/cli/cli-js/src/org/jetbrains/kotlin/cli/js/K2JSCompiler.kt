@@ -846,6 +846,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         arguments: K2JSCompilerArguments,
         services: Services,
     ) {
+        configuration.setupCommonKlibArguments(arguments)
+
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         @Suppress("DEPRECATION")

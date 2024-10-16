@@ -18,6 +18,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
     to.relativePathBases = from.relativePathBases?.copyOf()
+    to.verifyIrVisibilityAfterInlining = from.verifyIrVisibilityAfterInlining
 
     return to
 }

@@ -190,6 +190,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             arguments: K2NativeCompilerArguments,
             services: Services
     ) {
+        configuration.setupCommonKlibArguments(arguments)
         configuration.setupFromArguments(arguments)
     }
 
