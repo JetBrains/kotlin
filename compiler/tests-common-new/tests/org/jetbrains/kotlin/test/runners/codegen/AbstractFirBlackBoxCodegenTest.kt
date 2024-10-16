@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -161,6 +162,19 @@ fun TestConfigurationBuilder.configureTieredBackendJvmTest(
     // to make sure we always set a `LibraryProvider` and don't have duplicates.
     forTestsNotMatching("diagnostics/tests/multiplatform/*") {
         useAdditionalService(::LibraryProvider)
+    }
+
+    /**
+     * For example, see `compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt`
+     * which yields `CONFLICTING_INHERITED_JVM_DECLARATIONS` in JVM backend.
+     */
+    forTestsMatching(
+        "compiler/testData/diagnostics/tests/*" or
+                "compiler/testData/diagnostics/testsWithStdLib/*"
+    ) {
+        defaultDirectives {
+            +IGNORE_BACKEND_DIAGNOSTICS
+        }
     }
 }
 
