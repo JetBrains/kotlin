@@ -17,6 +17,11 @@ FILE: smartcast.kt
                     ^ R|/Duration.Duration|(this@R|/Duration.Companion.seconds|)
                 }
 
+            public final val ZERO: R|Duration|
+                public get(): R|Duration| {
+                    ^ R|/Duration.Duration|(Int(0))
+                }
+
         }
 
     }
@@ -48,6 +53,29 @@ FILE: smartcast.kt
     public final fun bar(v: R|kotlin/Any|): R|kotlin/Int| {
         ^bar when () {
             (R|<local>/v| is R|Duration|) && ==(R|<local>/v|, IntegerLiteral(1).<Unresolved name: seconds>#) ->  {
+                Int(0)
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+
+    }
+    public final fun <T> fooZero(output: R|Inv<T>|): R|kotlin/Int| {
+        lval v: R|T| = R|<local>/output|.R|SubstitutionOverride</Inv.value: R|T|>|
+        ^fooZero when () {
+            (R|<local>/v| is R|Duration|) && ==(R|<local>/v|, <Unresolved name: ZERO>#) ->  {
+                Int(0)
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+
+    }
+    public final fun barZero(v: R|kotlin/Any|): R|kotlin/Int| {
+        ^barZero when () {
+            (R|<local>/v| is R|Duration|) && ==(R|<local>/v|, this@R|/Duration.Companion|.R|/Duration.Companion.ZERO|) ->  {
                 Int(0)
             }
             else ->  {

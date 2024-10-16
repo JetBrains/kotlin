@@ -324,6 +324,7 @@ LONELY_BACKTICK=`
 \!in{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 
+"_."         { return KtTokens.CONTEXT_DOT; }
 "..."        { return KtTokens.RESERVED  ; }
 "==="        { return KtTokens.EQEQEQ    ; }
 "!=="        { return KtTokens.EXCLEQEQEQ; }

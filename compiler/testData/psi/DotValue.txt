@@ -38,7 +38,7 @@ KtFile: DotValue.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     DOT_REFERENCE_EXPRESSION
-      PsiElement(DOT)('.')
+      PsiElement(CONTEXT_DOT)('_.')
       PsiElement(IDENTIFIER)('RED')
   PsiWhiteSpace('\n\n')
   FUN
@@ -67,7 +67,7 @@ KtFile: DotValue.kt
         PsiElement(EQEQ)('==')
       PsiWhiteSpace(' ')
       DOT_REFERENCE_EXPRESSION
-        PsiElement(DOT)('.')
+        PsiElement(CONTEXT_DOT)('_.')
         PsiElement(IDENTIFIER)('BLUE')
   PsiWhiteSpace('\n')
   FUN
@@ -90,7 +90,7 @@ KtFile: DotValue.kt
     PsiWhiteSpace(' ')
     BINARY_EXPRESSION
       DOT_REFERENCE_EXPRESSION
-        PsiElement(DOT)('.')
+        PsiElement(CONTEXT_DOT)('_.')
         PsiElement(IDENTIFIER)('RED')
       PsiWhiteSpace(' ')
       OPERATION_REFERENCE
@@ -132,16 +132,15 @@ KtFile: DotValue.kt
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
-                DOT_QUALIFIED_EXPRESSION
-                  STRING_TEMPLATE
-                    PsiElement(OPEN_QUOTE)('"')
-                    LITERAL_STRING_TEMPLATE_ENTRY
-                      PsiElement(REGULAR_STRING_PART)('hello')
-                    PsiElement(CLOSING_QUOTE)('"')
-                  PsiWhiteSpace('\n    ')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('RED')
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('hello')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiWhiteSpace('\n    ')
+              DOT_REFERENCE_EXPRESSION
+                PsiElement(CONTEXT_DOT)('_.')
+                PsiElement(IDENTIFIER)('RED')
             PsiWhiteSpace('\n')
             PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -187,7 +186,7 @@ KtFile: DotValue.kt
               PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n    ')
               DOT_REFERENCE_EXPRESSION
-                PsiElement(DOT)('.')
+                PsiElement(CONTEXT_DOT)('_.')
                 PsiElement(IDENTIFIER)('RED')
             PsiWhiteSpace('\n')
             PsiElement(RBRACE)('}')
@@ -223,28 +222,24 @@ KtFile: DotValue.kt
       WHEN_ENTRY
         WHEN_CONDITION_WITH_EXPRESSION
           DOT_REFERENCE_EXPRESSION
-            PsiElement(DOT)('.')
+            PsiElement(CONTEXT_DOT)('_.')
             PsiElement(IDENTIFIER)('RED')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
       WHEN_ENTRY
         WHEN_CONDITION_WITH_EXPRESSION
           DOT_REFERENCE_EXPRESSION
-            PsiElement(DOT)('.')
+            PsiElement(CONTEXT_DOT)('_.')
             PsiElement(IDENTIFIER)('BLUE')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('2')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -283,7 +278,7 @@ KtFile: DotValue.kt
           TYPE_REFERENCE
             DOT_USER_TYPE
               DOT_REFERENCE_EXPRESSION
-                PsiElement(DOT)('.')
+                PsiElement(CONTEXT_DOT)('_.')
                 PsiElement(IDENTIFIER)('RED')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -298,7 +293,7 @@ KtFile: DotValue.kt
           TYPE_REFERENCE
             DOT_USER_TYPE
               DOT_REFERENCE_EXPRESSION
-                PsiElement(DOT)('.')
+                PsiElement(CONTEXT_DOT)('_.')
                 PsiElement(IDENTIFIER)('BLUE')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -343,7 +338,7 @@ KtFile: DotValue.kt
             TYPE_REFERENCE
               DOT_USER_TYPE
                 DOT_REFERENCE_EXPRESSION
-                  PsiElement(DOT)('.')
+                  PsiElement(CONTEXT_DOT)('_.')
                   PsiElement(IDENTIFIER)('RED')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -363,7 +358,7 @@ KtFile: DotValue.kt
             TYPE_REFERENCE
               DOT_USER_TYPE
                 DOT_REFERENCE_EXPRESSION
-                  PsiElement(DOT)('.')
+                  PsiElement(CONTEXT_DOT)('_.')
                   PsiElement(IDENTIFIER)('BLUE')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')

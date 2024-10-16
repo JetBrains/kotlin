@@ -25,7 +25,7 @@ FILE: lambas.kt
 
         public get(): R|() -> test/Sample|
     public final fun bar(n: R|kotlin/Int|): R|test/Sample| {
-        ^bar R|<local>/n|.R|kotlin/let<Inapplicable(INAPPLICABLE): kotlin/let>#|<R|kotlin/Int|, R|test/Sample|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|test/Sample| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^bar R|<local>/n|.R|kotlin/let|<R|kotlin/Int|, R|test/Sample|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|test/Sample| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ <Unresolved name: FIRST>#
         }
         )

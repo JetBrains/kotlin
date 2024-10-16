@@ -9,6 +9,6 @@ public enum JavaEnum {
 // FILE: test.kt
 
 fun foo(javaEnum: JavaEnum) = when (javaEnum) {
-    .FIRST -> 1 ;
-    .SECOND -> 2 ;
+    _.FIRST -> 1
+    _.SECOND -> 2
 }

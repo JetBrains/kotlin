@@ -174,6 +174,7 @@ public interface KtTokens {
     int EXPECT_KEYWORD_Id = 145;
     int ACTUAL_KEYWORD_Id = 146;
     int INTERPOLATION_PREFIX_Id = 147;
+    int CONTEXT_DOT_Id = 148;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -244,6 +245,7 @@ public interface KtTokens {
     KtSingleValueToken LPAR        = new KtSingleValueToken("LPAR", "(", LPAR_Id);
     KtSingleValueToken RPAR        = new KtSingleValueToken("RPAR", ")", RPAR_Id);
     KtSingleValueToken DOT         = new KtSingleValueToken("DOT", ".", DOT_Id);
+    KtSingleValueToken CONTEXT_DOT = new KtSingleValueToken("CONTEXT_DOT", "_.", CONTEXT_DOT_Id);
     KtSingleValueToken PLUSPLUS    = new KtSingleValueToken("PLUSPLUS", "++", PLUSPLUS_Id);
     KtSingleValueToken MINUSMINUS  = new KtSingleValueToken("MINUSMINUS", "--", MINUSMINUS_Id);
     KtSingleValueToken MUL         = new KtSingleValueToken("MUL", "*", MUL_Id);

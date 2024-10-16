@@ -23,12 +23,12 @@ enum class Second {
 val ONE = Second.THREE
 
 fun foo(f: First) = when (f) {
-    .ONE -> 1 ;
-    .TWO -> 2 ;
+    _.ONE -> 1
+    _.TWO -> 2
 }
 
 fun bar(s: Second) = when (s) {
-    .THREE -> 3 ;
-    .FOUR -> 4 ;
+    _.THREE -> 3
+    _.FOUR -> 4
 }
 

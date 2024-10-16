@@ -7,4 +7,4 @@ enum class Sample {
 
 fun sample(s: Sample): Int = 1
 
-fun foo() = sample(.FIRST)
+fun foo() = sample(_.FIRST)

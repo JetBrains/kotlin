@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
+import org.jetbrains.kotlin.fir.types.FirUserDotTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import java.io.File
 
@@ -112,6 +113,7 @@ fun main(args: Array<String>) {
                 visitAlso<FirImplicitTypeRef>(it)
                 visitAlso<FirTypeRefWithNullability>(it)
                 visitAlso<FirUserTypeRef>(it)
+                visitAlso<FirUserDotTypeRef>(it)
                 visitAlso<FirDynamicTypeRef>(it)
             }
             alias<FirResolvedTypeRef>("ResolvedTypeRefChecker").let {

@@ -2181,14 +2181,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true,  /* allowDotTypes */ false);
     }
 
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowDotTypes) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes, allowDotTypes);
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowContextuallyScoped) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes, allowContextuallyScoped);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowDotType) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowContextuallyScoped) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2213,8 +2213,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             advance(); // DYNAMIC_KEYWORD
             dynamicType.done(DYNAMIC_TYPE);
         }
-        else if (at(DOT) && allowDotType) {
-            parseDotUserType();
+        else if (at(CONTEXT_DOT) && allowContextuallyScoped) {
+            parseContextuallyScopedType();
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
@@ -2266,7 +2266,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             leftTypeRef.done(TYPE_REFERENCE);
 
             advance(); // &
-            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true, /* allowDotType */ allowDotType);
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true, /* allowDotType */ allowContextuallyScoped);
 
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
@@ -2378,8 +2378,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
         userType.done(USER_TYPE);
     }
 
-    private void parseDotUserType() {
-        assert _at(DOT);
+    private void parseContextuallyScopedType() {
+        assert _at(CONTEXT_DOT);
         PsiBuilder.Marker userType = mark();
 
         PsiBuilder.Marker reference = mark();

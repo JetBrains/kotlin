@@ -43,7 +43,7 @@ import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
     private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
     private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA = TokenSet.create(ARROW, COMMA, COLON);
@@ -91,7 +91,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             // Atomic
 
             COLONCOLON, // callable reference
-            DOT, // dot-value syntax
+            CONTEXT_DOT, // contextually-scoped expressions
 
             LPAR, // parenthesized
 
@@ -685,8 +685,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             case IDENTIFIER_Id:
                 parseSimpleNameExpression();
                 break;
-            case DOT_Id:
-                parseDotNameExpression();
+            case CONTEXT_DOT_Id:
+                parseContextuallyScopedExpression();
                 break;
             case LBRACE_Id:
                 parseFunctionLiteral();
@@ -1152,8 +1152,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * '.' Identifier
      */
-    public void parseDotNameExpression() {
-        assert _at(DOT);
+    public void parseContextuallyScopedExpression() {
+        assert _at(CONTEXT_DOT);
         PsiBuilder.Marker simpleName = mark();
         advance();
         expect(IDENTIFIER, "Expecting an identifier");
