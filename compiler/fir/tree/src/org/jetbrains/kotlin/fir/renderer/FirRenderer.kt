@@ -51,6 +51,7 @@ class FirRenderer(
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
     override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
+    override val supertypeRenderer: FirSupertypeRenderer? = FirSupertypeRenderer(),
     private val lineBreakAfterContextReceivers: Boolean = true,
     private val renderFieldAnnotationSeparately: Boolean = true,
     private val renderVarargTypes: Boolean = false,
@@ -108,6 +109,7 @@ class FirRenderer(
         resolvedNamedReferenceRenderer.components = this
         resolvedQualifierRenderer.components = this
         getClassCallRenderer.components = this
+        supertypeRenderer?.components = this
     }
 
     fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
@@ -132,13 +134,6 @@ class FirRenderer(
 
     fun renderAnnotations(annotationContainer: FirAnnotationContainer) {
         annotationRenderer?.render(annotationContainer)
-    }
-
-    fun renderSupertypes(regularClass: FirRegularClass) {
-        if (regularClass.superTypeRefs.isNotEmpty()) {
-            print(" : ")
-            renderSeparated(regularClass.superTypeRefs, visitor)
-        }
     }
 
     private fun Variance.renderVariance() {
@@ -346,7 +341,7 @@ class FirRenderer(
             renderContexts(regularClass.contextReceivers)
             annotationRenderer?.render(regularClass)
             visitMemberDeclaration(regularClass)
-            renderSupertypes(regularClass)
+            supertypeRenderer?.renderSupertypes(regularClass)
             classMemberRenderer?.render(regularClass)
         }
 
@@ -500,8 +495,7 @@ class FirRenderer(
         override fun visitTypeAlias(typeAlias: FirTypeAlias) {
             annotationRenderer?.render(typeAlias)
             visitMemberDeclaration(typeAlias)
-            print(" = ")
-            typeAlias.expandedTypeRef.accept(this)
+            supertypeRenderer?.renderTypeAliasExpansion(typeAlias)
             printer.newLine()
         }
 

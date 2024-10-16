@@ -2,4 +2,4 @@
 
 /kt48765.kt:(344,350): warning: Type 'kotlin.String' is final, so the value of the type parameter is predetermined.
 
-/kt48765.kt:(378,382): warning: Unchecked cast of 'kotlin.String' to 'T (type parameter of fun <T : String> foo)'.
+/kt48765.kt:(378,382): warning: Unchecked cast of 'kotlin.String' to 'T (of fun <T : String> foo)'.

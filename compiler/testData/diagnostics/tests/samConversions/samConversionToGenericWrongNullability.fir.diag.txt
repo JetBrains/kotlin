@@ -53,8 +53,8 @@
 
 /edge-cases.kt:(570,634): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String!' was expected.
 
-/edge-cases.kt:(700,707): warning: Argument type mismatch: actual type is 'T? (type parameter of fun <T : Number> test1)', but 'T (type parameter of fun <T : Number> test1)' was expected. This will become an error in Kotlin 2.1.
+/edge-cases.kt:(700,707): warning: Argument type mismatch: actual type is 'T? (of fun <T : Number> test1)', but 'T (of fun <T : Number> test1)' was expected. This will become an error in Kotlin 2.1.
 
-/edge-cases.kt:(797,804): warning: Argument type mismatch: actual type is 'T? (type parameter of fun <T : Comparable<T>> test2)', but 'T (type parameter of fun <T : Comparable<T>> test2)' was expected. This will become an error in Kotlin 2.1.
+/edge-cases.kt:(797,804): warning: Argument type mismatch: actual type is 'T? (of fun <T : Comparable<T>> test2)', but 'T (of fun <T : Comparable<T>> test2)' was expected. This will become an error in Kotlin 2.1.
 
 /edge-cases.kt:(920,949): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.

@@ -7,7 +7,7 @@ fun test() {
         val callable = otvOwner.provide()::memberFunction
         callable(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
@@ -19,7 +19,7 @@ fun test() {
         val callable = otvOwner.provide()::extensionFunction
         callable(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT> & ScopeOwner<SOTB>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTB (of fun <SOTB, B> ScopeOwner<SOTB>.extensionFunction)>); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultB<!>
@@ -30,7 +30,7 @@ fun test() {
         val callable = otvOwner.provide()::InnerKlass
         callable(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultC<!>
@@ -40,7 +40,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::fix
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultD<!>
@@ -50,7 +50,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::accessorBackedReadableProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultE<!>
@@ -60,7 +60,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::accessorBackedWriteableProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultF<!>
@@ -70,7 +70,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::delegatedReadableProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultG<!>
@@ -80,7 +80,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::delegatedWriteableProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultH<!>

@@ -106,16 +106,16 @@ class Foo7Kept(@Serializable(with = NullableBazSerializer::class) val i: <!SERIA
 // It is OK to report, because subclasses can't generally be deserialized (as `deserialize()` signature returns base class)
 @Serializable
 @Suppress("FINAL_UPPER_BOUND")
-class Foo8<Br: Bar>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("Br; BarSerializer; Bar")!>Br<!>)
+class Foo8<Br: Bar>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("Br (of class Foo8<Br : Bar>); BarSerializer; Bar")!>Br<!>)
 
 @Serializable(Foo8KeptSerializer::class)
 @KeepGeneratedSerializer
 @Suppress("FINAL_UPPER_BOUND")
-class Foo8Kept<Br: Bar>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("Br; BarSerializer; Bar")!>Br<!>)
+class Foo8Kept<Br: Bar>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("Br (of class Foo8Kept<Br : Bar>); BarSerializer; Bar")!>Br<!>)
 
 @Serializable
-class Foo9<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("T; BarSerializer; Bar")!>T<!>)
+class Foo9<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("T (of class Foo9<T>); BarSerializer; Bar")!>T<!>)
 
 @Serializable(Foo9KeptSerializer::class)
 @KeepGeneratedSerializer
-class Foo9Kept<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("T; BarSerializer; Bar")!>T<!>)
+class Foo9Kept<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("T (of class Foo9Kept<T>); BarSerializer; Bar")!>T<!>)

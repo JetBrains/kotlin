@@ -27,7 +27,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
 
     renderer.renderAnnotations(javaClass)
     renderer.renderMemberDeclarationClass(javaClass)
-    renderer.renderSupertypes(javaClass)
+    renderer.supertypeRenderer?.renderSupertypes(javaClass)
     renderer.printer.renderInBraces {
         val renderedDeclarations = mutableListOf<FirDeclaration>()
 

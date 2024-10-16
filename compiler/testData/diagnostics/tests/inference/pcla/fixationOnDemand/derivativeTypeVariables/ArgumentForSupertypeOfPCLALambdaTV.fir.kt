@@ -15,7 +15,7 @@ fun test() {
         otvOwner.provide().unbox().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(Box<PNT> & Box<ScopeOwner>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(Box<PNT (of fun <PNT> createDerivativeTypeVariable)> & Box<ScopeOwner>); Interloper")!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultA<!>
@@ -34,7 +34,7 @@ fun test() {
         pntvOwner.provide().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(Box<PNT> & Box<ScopeOwner>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(Box<PNT (of fun <PNT> createDerivativeTypeVariable)> & Box<ScopeOwner>); Interloper")!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultB<!>

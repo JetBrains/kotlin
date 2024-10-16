@@ -26,7 +26,7 @@ interface Test<in I, out O, P> {
     fun neOk5(): Inv<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
     fun neOk6(): Pair<In<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>, <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>
     fun neOk7(): Inv<in <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
-    fun neOk8(): Out<<!CONFLICTING_PROJECTION("Out<in I (type parameter of interface Test<in I, out O, P> : Any)>")!>in<!> I>
+    fun neOk8(): Out<<!CONFLICTING_PROJECTION("Out<in I (of interface Test<in I, out O, P>)>")!>in<!> I>
 
     fun neOk10(): Inv<in <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
     fun neOk11(): Inv<out <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>

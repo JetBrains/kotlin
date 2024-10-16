@@ -28,4 +28,5 @@ internal interface FirRendererComponents {
     val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer
     val resolvedQualifierRenderer: FirResolvedQualifierRenderer
     val getClassCallRenderer: FirGetClassCallRenderer
+    val supertypeRenderer: FirSupertypeRenderer?
 }

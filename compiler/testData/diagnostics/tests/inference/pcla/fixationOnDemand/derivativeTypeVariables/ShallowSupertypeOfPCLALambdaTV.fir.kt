@@ -34,7 +34,7 @@ fun test() {
         pntvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT & Any & ScopeOwner); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT (of fun <PNT> createDerivativeTypeVariable) & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>

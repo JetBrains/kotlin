@@ -43,7 +43,7 @@ fun testC() {
         // should fix OTv := ScopeOwner for scope navigation
         sotvOwner.provide().function()
         // expected: Interloper </: ScopeOwner
-        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT & Any & TOT & Any & ScopeOwner); Interloper")!>Interloper<!>)
+        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & TOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & ScopeOwner); Interloper")!>Interloper<!>)
     }
     // expected: kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>")!>resultCA<!>

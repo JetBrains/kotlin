@@ -10,7 +10,7 @@ typealias A14<in K> = In<in K>
 compiler/testData/cli/jvm/conflictingProjection.kt:19:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
 typealias A15<in K> = In<out K>
               ^^
-compiler/testData/cli/jvm/conflictingProjection.kt:19:26: error: projection is conflicting with variance of the corresponding type parameter of 'In<out K>'. Remove the projection or replace it with '*'.
+compiler/testData/cli/jvm/conflictingProjection.kt:19:26: error: projection is conflicting with variance of the corresponding type parameter of 'In<out K (of typealias A15<in K>)>'. Remove the projection or replace it with '*'.
 typealias A15<in K> = In<out K>
                          ^^^
 COMPILATION_ERROR

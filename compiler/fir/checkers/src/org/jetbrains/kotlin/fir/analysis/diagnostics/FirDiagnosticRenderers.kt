@@ -72,6 +72,7 @@ object FirDiagnosticRenderers {
                 declarationRenderer = FirDeclarationRenderer("local "),
                 annotationRenderer = null,
                 contractRenderer = null,
+                supertypeRenderer = null,
                 lineBreakAfterContextReceivers = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
@@ -231,7 +232,7 @@ object FirDiagnosticRenderers {
                         append("^")
 
                         if (it is ConeTypeParameterLookupTag) {
-                            append(" (type parameter of ")
+                            append(" (of ")
                             append(TYPE_PARAMETER_OWNER_SYMBOL.render(it.typeParameterSymbol.containingDeclarationSymbol))
                             append(')')
                         }

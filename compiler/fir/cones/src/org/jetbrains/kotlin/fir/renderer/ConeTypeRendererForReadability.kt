@@ -53,8 +53,11 @@ open class ConeTypeRendererForReadability(
     }
 
     private fun renderFlexibleTypeCompact(lowerRendered: String, upperRendered: String): String? {
-        if (typeStringsDifferOnlyInNullability(lowerRendered, upperRendered)) {
-            return upperRendered.replace("?", "!")
+        // More precise handling of different cases inside typeStringsDifferOnlyInNullability
+        when {
+            lowerRendered == upperRendered.replace("?", "") -> return upperRendered.replace("?", "!")
+            upperRendered.endsWith("?") && ("$lowerRendered?") == upperRendered -> return "$lowerRendered!"
+            "($lowerRendered)?" == upperRendered -> return "($lowerRendered)!"
         }
 
         val kotlinCollectionsPrefix = (StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: ""
