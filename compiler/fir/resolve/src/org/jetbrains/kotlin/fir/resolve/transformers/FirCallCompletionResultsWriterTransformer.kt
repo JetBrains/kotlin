@@ -444,7 +444,9 @@ class FirCallCompletionResultsWriterTransformer(
             val baseTypeArgument = baseSubstitutor.substituteOrNull(freshVariable.defaultType) ?: continue
             if (baseTypeArgument !is ConeFlexibleType) continue
 
-            val explicitArgument = typeArgumentMapping[index].toConeTypeProjection().type ?: continue
+            val typeArgument = typeArgumentMapping[index]
+            if (typeArgument is FirPlaceholderProjection) continue
+            val explicitArgument = typeArgument.toConeTypeProjection().type ?: continue
 
             overridingMap[freshVariable.typeConstructor] =
                 baseTypeArgument.withNullabilityOf(explicitArgument, session.typeContext)
