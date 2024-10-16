@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
@@ -25,6 +27,9 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
     failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = false
 ) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(KlibIrInlinerTestDirectives)
+
     final override fun processModule(module: TestModule, info: A) = Unit
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -91,8 +91,8 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         val nativeTestInstances = computeKlibSyntheticAccessorTestInstances()
         val settings = createTestRunSettings(nativeTestInstances) {
             with(RegisteredDirectivesBuilder()) {
-                +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
-                +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+                +KlibIrInlinerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+                +KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 
                 TestDirectives.FREE_COMPILER_ARGS with listOfNotNull(
                     // Don't run LLVM, stop after the last IR lowering.

@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
@@ -27,6 +25,9 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -37,7 +38,7 @@ import java.io.File
 
 class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JsEnvironmentConfigurationDirectives)
+        get() = listOf(JsEnvironmentConfigurationDirectives, KlibIrInlinerTestDirectives)
 
     companion object : KlibBasedEnvironmentConfiguratorUtils {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
