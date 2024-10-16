@@ -44,10 +44,6 @@ private fun ConeKotlinType.enhanceConeKotlinType(
 ): ConeKotlinType? {
     return when (this) {
         is ConeFlexibleType -> {
-            // We reproduce the K1 behavior: if head type qualifier is for warnings, we totally ignore
-            // enhancement on its arguments, too (see JavaTypeEnhancement.enhancePossiblyFlexible).
-            // It's not totally correct, but tolerable since we would like to avoid excessive breaking changes and the warnings should be
-            // anyway reported.
             val lowerResult = lowerBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes,
                 isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
