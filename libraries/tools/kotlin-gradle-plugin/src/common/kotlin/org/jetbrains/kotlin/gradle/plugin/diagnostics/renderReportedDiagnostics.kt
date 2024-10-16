@@ -25,9 +25,9 @@ internal fun renderReportedDiagnostic(
     renderingOptions: ToolingDiagnosticRenderingOptions
 ) {
     when (diagnostic.severity) {
-        WARNING -> logger.warn("w: ${diagnostic.render(renderingOptions.useParsableFormat, renderingOptions.showStacktrace)}\n")
+        WARNING -> logger.warn("w: ${diagnostic.render(renderingOptions)}\n")
 
-        ERROR -> logger.error("e: ${diagnostic.render(renderingOptions.useParsableFormat, renderingOptions.showStacktrace)}\n")
+        ERROR -> logger.error("e: ${diagnostic.render(renderingOptions)}\n")
 
         FATAL -> throw diagnostic.createAnExceptionForFatalDiagnostic(renderingOptions)
     }
@@ -37,22 +37,34 @@ internal fun ToolingDiagnostic.createAnExceptionForFatalDiagnostic(
     renderingOptions: ToolingDiagnosticRenderingOptions
 ): InvalidUserCodeException {
     // NB: override showStacktrace to false, because it will be shown as 'cause' anyways
-    val message = render(renderingOptions.useParsableFormat, showStacktrace = false)
+    val message = render(renderingOptions, showStacktrace = false)
     if (throwable != null)
         throw InvalidUserCodeException(message, throwable)
     else
         throw InvalidUserCodeException(message)
 }
 
-private fun ToolingDiagnostic.render(useParsableFormatting: Boolean, showStacktrace: Boolean): String = buildString {
-    // Main message
-    if (useParsableFormatting) appendLine(this@render) else append(message)
+private fun ToolingDiagnostic.render(
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+    showStacktrace: Boolean = renderingOptions.showStacktrace,
+): String = buildString {
+    with(renderingOptions) {
+        if (!useParsableFormat && showSeverityEmoji) {
+            when (severity) {
+                WARNING -> append("""⚠️ """)
+                ERROR, FATAL -> append("""❌ """)
+            }
+        }
 
-    // Additional stacktrace, if requested
-    if (showStacktrace) renderStacktrace(this@render.throwable, useParsableFormatting)
+        // Main message
+        if (useParsableFormat) appendLine(this@render) else append(message)
 
-    // Separator, if in verbose mode
-    if (useParsableFormatting) appendLine(DIAGNOSTIC_SEPARATOR)
+        // Additional stacktrace, if requested
+        if (showStacktrace) renderStacktrace(this@render.throwable, useParsableFormat)
+
+        // Separator, if in verbose mode
+        if (useParsableFormat) appendLine(DIAGNOSTIC_SEPARATOR)
+    }
 }
 
 private fun StringBuilder.renderStacktrace(throwable: Throwable?, useParsableFormatting: Boolean) {
