@@ -128,7 +128,7 @@ class NativeAtomicfuIrBuilder(
         }
 
     private fun addAndGetField(propertyRef: IrExpression, valueType: IrType, delta: IrExpression?): IrCall =
-        getAndAddField(propertyRef, valueType, delta).plus(delta)
+        getAndAddField(propertyRef, valueType, delta).plus(delta?.deepCopyWithoutPatchingParents())
 
     private fun getAndIncrementField(propertyRef: IrExpression, valueType: IrType): IrCall {
         val delta = if (valueType.isInt()) irInt(1) else irLong(1)
