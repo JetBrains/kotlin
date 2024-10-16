@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -314,26 +313,11 @@ internal class KonanPartialModuleDeserializer(
         }
     }
 
-    private val deserializedInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-
-    fun deserializeInlineFunction(function: IrFunction): DeserializedInlineFunction {
-        deserializedInlineFunctions[function]?.let { return DeserializedInlineFunction(firstAccess = false, it) }
-        val result = deserializeInlineFunctionInternal(function)
-        deserializedInlineFunctions[function] = result
-        return DeserializedInlineFunction(firstAccess = true, result)
-    }
-
-    private fun deserializeInlineFunctionInternal(function: IrFunction): InlineFunctionOriginInfo {
+    fun deserializeInlineFunction(function: IrFunction) {
         val packageFragment = function.getPackageFragment()
         if (function.parents.any { (it as? IrFunction)?.isInline == true }) {
             // Already deserialized by the top-most inline function.
-            return InlineFunctionOriginInfo(
-                    function,
-                    packageFragment as? IrFile
-                            ?: inlineFunctionFiles[packageFragment as IrExternalPackageFragment]
-                            ?: error("${function.render()} should've been deserialized along with its parent"),
-                    function.startOffset, function.endOffset
-            )
+            return
         }
 
         val signature = function.symbol.signature
@@ -413,13 +397,6 @@ internal class KonanPartialModuleDeserializer(
         linker.checkNoUnboundSymbols(
                 linker.symbolTable,
                 "after deserializing lazy-IR function ${function.name.asString()} in inline functions lowering"
-        )
-
-        return InlineFunctionOriginInfo(
-                function,
-                fileDeserializationState.file,
-                inlineFunctionReference.startOffset,
-                inlineFunctionReference.endOffset
         )
     }
 

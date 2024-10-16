@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
-import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -255,8 +254,6 @@ internal object EagerInitializedPropertySerializer {
         }
     }
 }
-
-internal data class DeserializedInlineFunction(val firstAccess: Boolean, val function: InlineFunctionOriginInfo)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class KonanIrLinker(
