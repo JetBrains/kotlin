@@ -1,6 +1,5 @@
-// KT-68395: [K/JS] RangeError is thrown instead of kotlin.ConcurrentModificationException
-// RangeError: Invalid array length
-//    at Array.push (<anonymous>)
+// KT-68395: [K/JS] kotlin.ConcurrentModificationException is not thrown
+// REASON: FAIL testMutableListCME(): kotlin.ConcurrentModificationException should have been thrown. sb=OKc
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 // WITH_STDLIB
@@ -12,23 +11,18 @@ import kotlin.test.*
 // CHECK: iterator
 // CHECK-LABEL: epilogue:
 fun testMutableListCME(): String {
-    val xs = mutableListOf("a", "b", "c", "d")
+    val xs = mutableListOf("OK", "b", "c", "d")
     val sb = StringBuilder()
-    var cmeThrown = false
     try {
         for (elem in xs) {
             sb.append(elem)
-            xs.add(elem)
+            xs.remove(elem)
         }
     } catch (e: kotlin.ConcurrentModificationException) {
-        cmeThrown = true
+        return sb.toString()
     }
-    if (!cmeThrown) return "FAIL testMutableListCME(): kotlin.ConcurrentModificationException should have been thrown. sb=$sb"
-    return sb.toString()
+    return "FAIL testMutableListCME(): kotlin.ConcurrentModificationException should have been thrown. sb=$sb"
 }
 
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
-fun box(): String {
-    assertEquals("a", testMutableListCME())
-    return "OK"
-}
+fun box() = testMutableListCME()
