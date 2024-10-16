@@ -1,3 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.data
 
-data class ColumnPathApproximation(val path: List<String>)
+import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
+
+typealias ColumnPathApproximation = ColumnPath

@@ -28,7 +28,7 @@ class Flatten0 : AbstractSchemaModificationInterpreter() {
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = columns.resolve(receiver).map { pathOf(*it.path.path.toTypedArray()) }
+        val columns = columns.resolve(receiver).map { it.path }
         return receiver
             .asDataFrame()
             .flatten(keepParentNameForColumns, separator) { columns.toColumnSet() }
