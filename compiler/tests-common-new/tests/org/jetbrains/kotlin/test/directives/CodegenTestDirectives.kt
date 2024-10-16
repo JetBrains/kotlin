@@ -128,6 +128,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Don't compare diagnostics in testdata for FIR codegen tests"
     )
 
+    val IGNORE_BACKEND_DIAGNOSTICS by directive(
+        description = "Prevent adding backend diagnostics to GlobalMetadataInfoHandler. This is needed when the backend is executed for tests that originally were not designed for it."
+    )
+
     val DUMP_IR by directive(
         description = "Dumps generated backend IR (enables ${IrTextDumpHandler::class})"
     )

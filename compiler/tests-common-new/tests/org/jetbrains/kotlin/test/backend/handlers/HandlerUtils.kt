@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -31,6 +32,10 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosticReporter: BaseDiagnosticsCollector) {
+    if (IGNORE_BACKEND_DIAGNOSTICS in module.directives) {
+        return
+    }
+
     val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
     val firParser = module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)
     val lightTreeComparingModeEnabled = firParser != null && FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
