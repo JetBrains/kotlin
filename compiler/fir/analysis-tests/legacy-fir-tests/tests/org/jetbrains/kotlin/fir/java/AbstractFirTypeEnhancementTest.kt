@@ -144,7 +144,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val scope = GlobalSearchScope.filesScope(project, virtualFiles)
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
             val session = FirTestSessionFactoryHelper.createSessionForTests(
-                environment.toAbstractProjectEnvironment(),
+                environment.toVfsBasedProjectEnvironment(),
                 scope.toAbstractProjectFileSearchScope()
             )
 

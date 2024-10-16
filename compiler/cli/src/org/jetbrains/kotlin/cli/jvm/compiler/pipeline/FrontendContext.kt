@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -57,14 +56,14 @@ internal fun createFrontendContextForMultiChunkMode(
 )
 
 internal class MinimizedFrontendContext(
-    override val projectEnvironment: AbstractProjectEnvironment,
+    override val projectEnvironment: VfsBasedProjectEnvironment,
     override val messageCollector: MessageCollector,
     override val extensionRegistrars: List<FirExtensionRegistrar>,
     override val configuration: CompilerConfiguration
 ) : FrontendContext
 
 internal interface FrontendContext {
-    val projectEnvironment: AbstractProjectEnvironment
+    val projectEnvironment: VfsBasedProjectEnvironment
     val messageCollector: MessageCollector
     val extensionRegistrars: List<FirExtensionRegistrar>
     val configuration: CompilerConfiguration

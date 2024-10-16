@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -184,9 +183,9 @@ open class FirFrontendFacade(
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
         predefinedJavaComponents: FirSharableJavaComponents?
-    ): AbstractProjectEnvironment? {
+    ): VfsBasedProjectEnvironment? {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val projectEnvironment: AbstractProjectEnvironment?
+        val projectEnvironment: VfsBasedProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
         val isCommon = module.targetPlatform.isCommon()
         when {
@@ -280,7 +279,7 @@ open class FirFrontendFacade(
         module: TestModule,
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
-        projectEnvironment: AbstractProjectEnvironment?,
+        projectEnvironment: VfsBasedProjectEnvironment?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         predefinedJavaComponents: FirSharableJavaComponents?,
     ): FirOutputPartForDependsOnModule {
@@ -351,7 +350,7 @@ open class FirFrontendFacade(
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
-        projectEnvironment: AbstractProjectEnvironment?,
+        projectEnvironment: VfsBasedProjectEnvironment?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         predefinedJavaComponents: FirSharableJavaComponents?,

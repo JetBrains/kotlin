@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
@@ -26,7 +26,7 @@ object FirSessionFactoryHelper {
         moduleName: Name,
         platform: TargetPlatform,
         externalSessionProvider: FirProjectSessionProvider?,
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: VfsBasedProjectEnvironment,
         languageVersionSettings: LanguageVersionSettings,
         javaSourcesScope: AbstractProjectFileSearchScope,
         librariesScope: AbstractProjectFileSearchScope,

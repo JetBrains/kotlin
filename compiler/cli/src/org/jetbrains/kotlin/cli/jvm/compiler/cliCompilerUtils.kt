@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
@@ -195,7 +194,7 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
 }
 
 fun createContextForIncrementalCompilation(
-    projectEnvironment: AbstractProjectEnvironment,
+    projectEnvironment: VfsBasedProjectEnvironment,
     moduleConfiguration: CompilerConfiguration,
     sourceScope: AbstractProjectFileSearchScope,
 ): IncrementalCompilationContext? {

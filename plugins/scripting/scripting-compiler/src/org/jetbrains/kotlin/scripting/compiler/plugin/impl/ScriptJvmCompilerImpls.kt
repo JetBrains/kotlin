@@ -327,7 +327,7 @@ private fun doCompileWithK2(
     val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
-    val projectEnvironment = context.environment.toAbstractProjectEnvironment()
+    val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()

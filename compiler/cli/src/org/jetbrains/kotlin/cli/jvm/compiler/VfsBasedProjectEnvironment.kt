@@ -149,7 +149,7 @@ private fun AbstractProjectFileSearchScope.asPsiSearchScope() =
         else -> (this as PsiBasedProjectFileSearchScope).psiSearchScope
     }
 
-fun KotlinCoreEnvironment.toAbstractProjectEnvironment(): AbstractProjectEnvironment =
+fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnvironment =
     VfsBasedProjectEnvironment(
         project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
         { createPackagePartProvider(it) }

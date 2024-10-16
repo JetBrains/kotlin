@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +24,7 @@ import java.nio.file.Path
 object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: VfsBasedProjectEnvironment,
         javaSourceScope: AbstractProjectFileSearchScope,
         librariesScope: AbstractProjectFileSearchScope = !javaSourceScope,
         moduleName: String = "TestModule",

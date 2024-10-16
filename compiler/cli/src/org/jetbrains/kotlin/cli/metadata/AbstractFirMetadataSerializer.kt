@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
-import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -88,7 +88,7 @@ internal abstract class AbstractFirMetadataSerializer(
         }
 
         val outputs = if (isLightTree) {
-            val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
+            val projectEnvironment = environment.toVfsBasedProjectEnvironment() as VfsBasedProjectEnvironment
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
             val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
