@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.IrVerificationMode
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
@@ -68,10 +65,10 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-            checkValueScopes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
-            checkCrossFileFieldUsage = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkValueScopes = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkCrossFileFieldUsage = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
             checkTypeParameterScopes = false,
-            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkVisibilities = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
             checkVarargTypes = true,
         )

@@ -19,6 +19,10 @@ object KlibConfigurationKeys {
         CompilerConfigurationKey.create("Turn on the checks on uniqueness of signatures")
 
     @JvmField
+    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING =
+        CompilerConfigurationKey.create<Boolean>("Check post-inlining IR for visibility violations")
+
+    @JvmField
     val NO_DOUBLE_INLINING: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("Turns off double-inlining mode")
 

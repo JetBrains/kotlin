@@ -56,7 +56,7 @@ fun CompilerConfiguration.setupCommonArguments(
     }
 
     if (arguments.verifyIrVisibilityAfterInlining) {
-        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING, true)
+        put(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
