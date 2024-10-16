@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.DependencyDescription
+import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 
@@ -30,7 +31,9 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 object PlatformModuleProvider : ModuleStructureTransformer() {
     override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
         val module = moduleStructure.modules.singleOrNull() ?: return moduleStructure
-        val dependency = DependencyDescription(module.name, defaultsProvider.defaultDependencyKind, DependencyRelation.DependsOnDependency)
+        // `defaultsProvider.defaultDependencyKind` may be `Binary`.
+        // See `compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt`
+        val dependency = DependencyDescription(module.name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
         val platformModule = module.copy(
             name = "${module.name}-platform",
             targetPlatform = defaultsProvider.defaultPlatform,
