@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
-internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
-
 internal class FileLowerState {
     private var functionReferenceCount = 0
     private var coroutineCount = 0
