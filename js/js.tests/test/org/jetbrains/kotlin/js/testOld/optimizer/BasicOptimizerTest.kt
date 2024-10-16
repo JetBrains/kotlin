@@ -11,18 +11,37 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.testOld.TEST_DATA_DIR_PATH
 import org.jetbrains.kotlin.js.testOld.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.junit.AfterClass
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.TestName
 import java.io.File
 
 abstract class BasicOptimizerTest(private var basePath: String) {
+    companion object {
+        lateinit var engine: ScriptEngine
+
+        @BeforeClass
+        @JvmStatic
+        fun create() {
+            engine = createScriptEngine()
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun release() {
+            engine.release()
+        }
+    }
+
     @Rule
     @JvmField
     var testName = TestName()
@@ -116,7 +135,6 @@ abstract class BasicOptimizerTest(private var basePath: String) {
     }
 
     private fun runScript(fileName: String, code: String) {
-        val engine = createScriptEngine()
         engine.eval(code)
         val result = engine.eval("box()")
 
