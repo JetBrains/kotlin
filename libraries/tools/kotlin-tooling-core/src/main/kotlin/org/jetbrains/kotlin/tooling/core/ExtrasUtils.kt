@@ -40,7 +40,7 @@ fun mutableExtrasOf(): MutableExtras = MutableExtrasImpl()
 fun mutableExtrasOf(vararg entries: Extras.Entry<*>): MutableExtras = MutableExtrasImpl(entries.toList())
 
 inline fun <reified T> extrasTypeOf(): Extras.Type<T> {
-    @OptIn(UnsafeApi::class, ExperimentalStdlibApi::class)
+    @OptIn(UnsafeApi::class)
     return Extras.Type(renderReifiedTypeSignatureString(typeOf<T>()))
 }
 
