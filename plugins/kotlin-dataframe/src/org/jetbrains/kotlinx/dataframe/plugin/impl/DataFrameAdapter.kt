@@ -1,3 +1,5 @@
+@file:Suppress("INVISIBLE_REFERENCE")
+
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlinx.dataframe.AnyCol
@@ -7,21 +9,34 @@ import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
+import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnGroupImpl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
-fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> = columns().map()
+fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
+    val df = columns().map()
+    return df
+}
 
 fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchema(columns().mapBack())
 
 interface ConeTypesAdapter
 
-private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> = map {
-    when (it) {
-        is SimpleDataColumn -> DataColumn.create(it.name, listOf(it.type))
-        is SimpleColumnGroup -> DataColumn.createColumnGroup(it.name, it.columns().map())
-        is SimpleFrameColumn -> DataColumn.createFrameColumn(it.name, listOf(it.columns().map()))
+private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
+    val columns = map {
+        it.asDataColumn()
     }
-}.let { dataFrameOf(it).cast() }
+    return dataFrameOf(columns).cast()
+}
+
+@Suppress("INVISIBLE_REFERENCE")
+fun SimpleCol.asDataColumn(): DataColumn<*> {
+    val column = when (this) {
+        is SimpleDataColumn -> DataColumn.create(this.name, listOf(this.type))
+        is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()) as ColumnGroupImpl<*>
+        is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, listOf(this.columns().map()))
+    }
+    return column
+}
 
 private fun List<AnyCol>.mapBack(): List<SimpleCol> = map {
     when (it) {

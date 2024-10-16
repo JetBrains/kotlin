@@ -6,9 +6,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.isNullable
-import org.jetbrains.kotlinx.dataframe.impl.api.DataFrameLikeContainer
-import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumn
-import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
@@ -17,11 +14,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class PluginDataFrameSchema(
     private val columns: List<SimpleCol>
-) : DataFrameLikeContainer<SimpleCol> {
+) {
     companion object {
         val EMPTY = PluginDataFrameSchema(emptyList())
     }
-    override fun columns(): List<SimpleCol> {
+    fun columns(): List<SimpleCol> {
         return columns
     }
 
@@ -47,10 +44,10 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
     }
 }
 
-sealed interface SimpleCol : GenericColumn {
+sealed interface SimpleCol {
     val name: String
 
-    override fun name(): String {
+    fun name(): String {
         return name
     }
 
@@ -60,7 +57,7 @@ sealed interface SimpleCol : GenericColumn {
 data class SimpleDataColumn(
     override val name: String,
     val type: TypeApproximation
-) : GenericColumn, SimpleCol {
+) : SimpleCol {
 
     override fun name(): String {
         return name
@@ -79,8 +76,8 @@ data class SimpleDataColumn(
 data class SimpleFrameColumn(
     override val name: String,
     private val columns: List<SimpleCol>
-) : GenericColumnGroup<SimpleCol>, SimpleCol {
-    override fun columns(): List<SimpleCol> {
+) : SimpleCol {
+    fun columns(): List<SimpleCol> {
         return columns
     }
 
@@ -92,9 +89,9 @@ data class SimpleFrameColumn(
 data class SimpleColumnGroup(
     override val name: String,
     private val columns: List<SimpleCol>
-) : GenericColumnGroup<SimpleCol>, SimpleCol {
+) : SimpleCol {
 
-    override fun columns(): List<SimpleCol> {
+    fun columns(): List<SimpleCol> {
         return columns
     }
 
