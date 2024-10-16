@@ -1,3 +1,5 @@
 > Configure project :
+w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin Native is being used with an newer '2.1.0-RC-212' Kotlin. Please adjust versions to avoid incompatibilities.
+#diagnostic-end
 
 > Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
