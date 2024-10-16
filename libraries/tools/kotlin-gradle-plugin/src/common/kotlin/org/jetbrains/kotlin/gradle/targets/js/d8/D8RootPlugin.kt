@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 // To be compatible with previous KGP version, we need to keep D8RootPlugin as deprecated.
-// To prevent Kotlin build from failing (due to `-Werror`), only deprecate after upgrade of bootstrap version
-//@Deprecated("This type is deprecated. Use D8Plugin instead.", ReplaceWith("D8Plugin"))
+@Deprecated("This type is deprecated. Use D8Plugin instead.", ReplaceWith("D8Plugin"))
 @OptIn(ExperimentalWasmDsl::class)
 typealias D8RootPlugin = D8Plugin

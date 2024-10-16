@@ -70,6 +70,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
             "subprojects-nodejs-setup",
             gradleVersion
         ) {
+            @Suppress("DEPRECATION")
             buildScriptInjection {
                 project.rootProject.plugins.withType(NodeJsRootPlugin::class.java, Action {
                     project.rootProject.extensions.getByType(NodeJsRootExtension::class.java).version = "22.3.0"

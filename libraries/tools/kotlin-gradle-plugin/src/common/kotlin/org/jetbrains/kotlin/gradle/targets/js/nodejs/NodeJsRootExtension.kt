@@ -61,30 +61,30 @@ open class NodeJsRootExtension(
     )
     var download = true
 
+    @Suppress("DEPRECATION")
     @Deprecated(
         "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var nodeDownloadBaseUrl by ::downloadBaseUrl
 
-    // To prevent Kotlin build from failing (due to `-Werror`), only deprecate after upgrade of bootstrap version
-//    @Deprecated(
-//        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
-//                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
-//    )
+    @Deprecated(
+        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
+                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+    )
     var downloadBaseUrl: String? = "https://nodejs.org/dist"
 
+    @Suppress("DEPRECATION")
     @Deprecated(
         "Use version from NodeJsExtension (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var nodeVersion by ::version
 
-    // To prevent Kotlin build from failing (due to `-Werror`), only deprecate after upgrade of bootstrap version
-//    @Deprecated(
-//        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
-//                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
-//    )
+    @Deprecated(
+        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
+                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+    )
     var version = "22.0.0"
 
     @Deprecated(
