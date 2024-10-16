@@ -13,5 +13,5 @@ class Owner<in T> {
         fun getT() = u
     }
 
-    <!TYPE_VARIANCE_CONFLICT_ERROR!>fun foo(arg: Inner<*>)<!> = arg.getT()
+    <!TYPE_VARIANCE_CONFLICT_ERROR!>fun foo(arg: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<*><!>)<!> = arg.getT()
 }

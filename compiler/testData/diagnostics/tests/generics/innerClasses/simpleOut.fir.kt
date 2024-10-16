@@ -9,7 +9,7 @@ class Outer<out E> {
 
     fun bar() = Inner()
 
-    fun set(inner: Inner) {}
+    fun set(inner: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {}
 }
 
 fun factoryString(): Outer<String>.Inner = null!!

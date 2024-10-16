@@ -107,7 +107,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
             containingType = expandedType,
             context = context,
             reporter = reporter,
-            source = source
+            source = source ?: typeRef.source,
         )
     }
 
