@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
 import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
+import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.junit.jupiter.api.AfterAll
 import java.lang.Boolean.getBoolean
 
 
@@ -102,6 +104,15 @@ open class AbstractFirJsTest(
                     +JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
                 }
             }
+        }
+    }
+
+    companion object {
+        @AfterAll
+        @JvmStatic
+        fun tearDown() {
+            // Carefully release all possible kinds of test executors
+            V8IrJsTestChecker.releaseAll()
         }
     }
 }

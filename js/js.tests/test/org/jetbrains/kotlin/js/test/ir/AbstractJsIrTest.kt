@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
 import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
+import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
+import org.junit.jupiter.api.AfterAll
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsIrTest(
@@ -80,6 +82,15 @@ abstract class AbstractJsIrTest(
                     +JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
                 }
             }
+        }
+    }
+
+    companion object {
+        @AfterAll
+        @JvmStatic
+        fun tearDown() {
+            // Carefully release all possible kinds of test executors
+            V8IrJsTestChecker.releaseAll()
         }
     }
 }

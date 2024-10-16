@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
 import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
@@ -258,11 +259,26 @@ object V8JsTestChecker : AbstractJsTestChecker() {
 }
 
 object V8IrJsTestChecker : AbstractJsTestChecker() {
+    private val engineRegistry: MutableList<ScriptEngineV8> = mutableListOf()
+
     private val engineTL = object : ThreadLocal<ScriptEngineV8>() {
-        override fun initialValue() = ScriptEngineV8()
+        override fun initialValue() = ScriptEngineV8().also {
+            engineRegistry.addIfNotNull(it)
+        }
+
         override fun remove() {
-            get().release()
+            val engine = get()
+            engine.release()
+            engineRegistry.remove(engine)
             super.remove()
+        }
+    }
+
+    fun releaseAll() {
+        val engineIterator = engineRegistry.iterator()
+        while (engineIterator.hasNext()) {
+            engineIterator.next().release()
+            engineIterator.remove()
         }
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.engine
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
@@ -22,8 +23,12 @@ abstract class ProcessBasedScriptEngine(
     private var process: Process? = null
     private val buffer = ByteArray(1024)
 
+    private val evaluatingProcessRegistry: MutableSet<Process> = mutableSetOf()
+    private val toBeDestroyedAfterEval: MutableSet<Process> = mutableSetOf()
+
     override fun eval(script: String): String {
         val vm = getOrCreateProcess()
+        evaluatingProcessRegistry.addIfNotNull(vm)
 
         val stdin = vm.outputStream
         val stdout = vm.inputStream
@@ -59,6 +64,10 @@ abstract class ProcessBasedScriptEngine(
             error("ERROR:\n$err\nOUTPUT:\n$out")
         }
 
+        evaluatingProcessRegistry.remove(vm)
+        if (toBeDestroyedAfterEval.contains(vm)) {
+            destroyProcess("Destroyed after end of `eval()`")
+        }
         return out.removeSuffix(END_MARKER).removeSuffix(LINE_SEPARATOR).toString()
     }
 
@@ -80,10 +89,20 @@ abstract class ProcessBasedScriptEngine(
     }
 
     override fun release() {
+        if (process != null && evaluatingProcessRegistry.contains(process)) {
+            toBeDestroyedAfterEval.addIfNotNull(process)
+            if (doTrace)
+                println("Queued destruction of repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")
+        } else {
+            destroyProcess("Released")
+        }
+    }
+
+    private fun destroyProcess(tracePrefix: String) {
         process?.destroy()
         process = null
         if (doTrace)
-            println("Release repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")
+            println("$tracePrefix repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")
     }
 
     private fun getOrCreateProcess(): Process {
