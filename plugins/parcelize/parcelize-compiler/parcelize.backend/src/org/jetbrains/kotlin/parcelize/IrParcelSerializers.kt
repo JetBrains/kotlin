@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isBoxedArray
 
 interface IrParcelSerializer {
     fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression

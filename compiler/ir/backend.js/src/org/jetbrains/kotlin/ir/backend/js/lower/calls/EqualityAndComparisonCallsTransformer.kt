@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 

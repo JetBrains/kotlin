@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
