@@ -556,6 +556,15 @@ fun checkTypeMismatch(
     }
 }
 
+fun ConeCapturedType.projectionKindAsString(): String {
+    return when (constructor.projection.kind) {
+        ProjectionKind.OUT -> "out"
+        ProjectionKind.IN -> "in"
+        ProjectionKind.STAR -> "star"
+        ProjectionKind.INVARIANT -> error("no projection")
+    }
+}
+
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
     val coneType = condition.resolvedType.fullyExpandedType(context.session).lowerBoundIfFlexible()
     if (coneType !is ConeErrorType &&

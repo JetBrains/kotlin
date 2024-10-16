@@ -2104,6 +2104,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MEMBER_PROJECTED_OUT) { firDiagnostic ->
+        MemberProjectedOutImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NULL_FOR_NONNULL_TYPE) { firDiagnostic ->
         NullForNonnullTypeImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

@@ -11,7 +11,7 @@ class BS : Builder<String, BS>("")
 class BI : Builder<Int, BI>(1)
 
 fun bar(b: Builder<String, *>, bb: Builder<*, *>) {
-    b.test<<!UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(<!ARGUMENT_TYPE_MISMATCH!>bb<!>)
+    b.test<<!UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(<!MEMBER_PROJECTED_OUT!>bb<!>)
 }
 
 fun main() {

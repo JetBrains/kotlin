@@ -1508,6 +1508,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val isMismatchDueToNullability: Boolean
     }
 
+    interface MemberProjectedOut : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MemberProjectedOut::class
+        val receiver: KaType
+        val projection: String
+        val symbol: KaCallableSymbol
+    }
+
     interface NullForNonnullType : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullForNonnullType::class
         val expectedType: KaType

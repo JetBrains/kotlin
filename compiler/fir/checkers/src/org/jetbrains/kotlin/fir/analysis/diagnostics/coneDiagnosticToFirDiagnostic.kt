@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -309,16 +311,16 @@ private fun mapInapplicableCandidateError(
             )
 
             is ArgumentTypeMismatch -> {
-                FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-                    rootCause.argument.source ?: source,
-                    rootCause.expectedType.removeTypeVariableTypes(typeContext),
-                    // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
-                    if (rootCause.argument is FirAnonymousFunctionExpression && !rootCause.argument.resolvedType.hasError()) {
+                diagnosticForArgumentTypeMismatch(
+                    source = rootCause.argument.source ?: source,
+                    expectedType = rootCause.expectedType.removeTypeVariableTypes(typeContext),
+                    actualType = if (rootCause.argument is FirAnonymousFunctionExpression && !rootCause.argument.resolvedType.hasError()) {
                         rootCause.argument.resolvedType
                     } else {
                         rootCause.actualType.removeTypeVariableTypes(typeContext)
                     },
-                    rootCause.isMismatchDueToNullability
+                    isMismatchDueToNullability = rootCause.isMismatchDueToNullability,
+                    candidate = diagnostic.candidate
                 )
             }
 
@@ -446,6 +448,39 @@ private fun mapInapplicableCandidateError(
     }
 }
 
+private fun diagnosticForArgumentTypeMismatch(
+    source: KtSourceElement?,
+    expectedType: ConeKotlinType,
+    actualType: ConeKotlinType,
+    isMismatchDueToNullability: Boolean,
+    candidate: AbstractCallCandidate<*>,
+): KtDiagnostic {
+    val symbol = candidate.symbol as FirCallableSymbol
+    val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
+
+    return if (expectedType is ConeCapturedType &&
+        expectedType.constructor.projection.kind.let { it == ProjectionKind.OUT || it == ProjectionKind.STAR } &&
+        receiverType != null &&
+        // Ensure we report an actual argument type mismatch of the candidate and not a lambda return expression
+        candidate.argumentMapping.keys.any { it.expression.source == source }
+    ) {
+        FirErrors.MEMBER_PROJECTED_OUT.createOn(
+            source,
+            receiverType,
+            expectedType.projectionKindAsString(),
+            symbol.originalOrSelf(),
+        )
+    } else {
+        FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
+            source,
+            expectedType,
+            // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
+            actualType,
+            isMismatchDueToNullability
+        )
+    }
+}
+
 private fun UnstableSmartCast.mapUnstableSmartCast(): KtDiagnosticWithParameters4<ConeKotlinType, FirExpression, String, Boolean> {
     val factory = when {
         isImplicitInvokeReceiver -> FirErrors.SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER
@@ -528,11 +563,12 @@ private fun ConstraintSystemError.toDiagnostic(
 
             val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)
             argument?.let {
-                return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-                    reportOn ?: it.source ?: source,
-                    lowerConeType.removeTypeVariableTypes(typeContext),
-                    upperConeType.removeTypeVariableTypes(typeContext),
-                    typeMismatchDueToNullability
+                return diagnosticForArgumentTypeMismatch(
+                    source = reportOn ?: it.source ?: source,
+                    expectedType = lowerConeType.removeTypeVariableTypes(typeContext),
+                    actualType = upperConeType.removeTypeVariableTypes(typeContext),
+                    isMismatchDueToNullability = typeMismatchDueToNullability,
+                    candidate = candidate
                 )
             }
 

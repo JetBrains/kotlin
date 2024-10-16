@@ -36,13 +36,13 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().outf()
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch

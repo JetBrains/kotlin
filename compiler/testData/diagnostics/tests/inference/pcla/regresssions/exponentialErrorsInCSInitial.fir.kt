@@ -19,7 +19,7 @@ public fun <E> List<E>.permutations1(k: Int = size) {
 
         fun addStartMark(): Int {
             val index = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!><!BUILDER_INFERENCE_STUB_RECEIVER!>references<!>[<!ARGUMENT_TYPE_MISMATCH!>1<!>]<!>
-            references<!NO_SET_METHOD!>[1]<!> = references[<!ARGUMENT_TYPE_MISMATCH!>index<!>]
+            references<!NO_SET_METHOD!>[1]<!> = references[<!MEMBER_PROJECTED_OUT!>index<!>]
             references<!NO_SET_METHOD!>[index]<!> = 1
             return index
         }
@@ -36,7 +36,7 @@ public fun <E> List<E>.permutations1(k: Int = size) {
             val firstToIncrease = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>scope<!> <!ARGUMENT_TYPE_MISMATCH!>{
                 var current = k - 1
                 var index = currentIndices[current]
-                while (references[<!ARGUMENT_TYPE_MISMATCH!>references[<!ARGUMENT_TYPE_MISMATCH!>index<!>]<!>] == size + 1) {
+                while (references[<!MEMBER_PROJECTED_OUT!>references[<!MEMBER_PROJECTED_OUT!>index<!>]<!>] == size + 1) {
                     removeMark(index)
                     current--
                     if (current == Int.MAX_VALUE) break

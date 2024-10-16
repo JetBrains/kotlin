@@ -17818,6 +17818,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("projectedOutTypeMismatch.kt")
+        public void testProjectedOutTypeMismatch() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/projectedOutTypeMismatch.kt");
+        }
+
+        @Test
         @TestMetadata("propagateNullailityOnSupertypesWhenCaptureTypes.kt")
         public void testPropagateNullailityOnSupertypesWhenCaptureTypes() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/propagateNullailityOnSupertypesWhenCaptureTypes.kt");

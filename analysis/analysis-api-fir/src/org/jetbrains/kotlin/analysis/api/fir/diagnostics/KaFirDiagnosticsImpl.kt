@@ -1806,6 +1806,14 @@ internal class ArgumentTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ArgumentTypeMismatch
 
+internal class MemberProjectedOutImpl(
+    override val receiver: KaType,
+    override val projection: String,
+    override val symbol: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MemberProjectedOut
+
 internal class NullForNonnullTypeImpl(
     override val expectedType: KaType,
     firDiagnostic: KtPsiDiagnostic,

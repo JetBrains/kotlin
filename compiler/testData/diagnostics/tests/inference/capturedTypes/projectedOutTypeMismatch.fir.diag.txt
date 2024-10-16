@@ -1,0 +1,9 @@
+/projectedOutTypeMismatch.fir.kt:(129,131): error: Receiver type 'kotlin.collections.MutableList<out kotlin.Number>' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.
+
+/projectedOutTypeMismatch.fir.kt:(146,148): error: Receiver type 'kotlin.collections.MutableList<out kotlin.Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.bar(t: T): Unit'.
+
+/projectedOutTypeMismatch.fir.kt:(182,184): error: Receiver type 'kotlin.collections.MutableList<out kotlin.Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.foo(t: T): Unit'.
+
+/projectedOutTypeMismatch.fir.kt:(214,216): error: Receiver type 'Consumer<*>' contains star projection which prohibits the use of 'fun consume(t: T): Unit'.
+
+/projectedOutTypeMismatch.fir.kt:(370,372): error: Receiver type 'T (of fun <T : MutableList<out Number>> test2)' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.

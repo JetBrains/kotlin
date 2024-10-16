@@ -74,7 +74,7 @@ typealias Invariant1<X> = Invariant<X>
 fun test_5(a: A, in1: In1<A>, in2: In1<<!REDUNDANT_PROJECTION!>in<!> A>, in3: In1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> A>) {
     in1.take(a)
     in2.take(a)
-    in3.take(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    in3.take(<!MEMBER_PROJECTED_OUT!>a<!>)
 }
 
 fun test_6(a: A, out1: Out1<A>, out2: Out1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> A>, out3: Out1<<!REDUNDANT_PROJECTION!>out<!> A>) {
@@ -90,5 +90,5 @@ fun test_7(a: A, inv1: Invariant1<A>, inv2: Invariant1<in A>, inv3: Invariant1<o
 
     inv1.take(a)
     inv2.take(a)
-    inv3.take(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    inv3.take(<!MEMBER_PROJECTED_OUT!>a<!>)
 }

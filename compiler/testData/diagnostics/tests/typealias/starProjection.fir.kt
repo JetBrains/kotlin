@@ -9,6 +9,6 @@ fun test2(x: Map<String, Int>) = check(x)
 
 fun test3(x: Map<Int, String>) = check(x).size
 
-fun test4(x: Map<Int, String>) = check(x)[<!ARGUMENT_TYPE_MISMATCH!>"42"<!>]
+fun test4(x: Map<Int, String>) = check(x)[<!MEMBER_PROJECTED_OUT!>"42"<!>]
 
-fun test5(x: Map<Int, String>) = check(x)[<!ARGUMENT_TYPE_MISMATCH!>42<!>]
+fun test5(x: Map<Int, String>) = check(x)[<!MEMBER_PROJECTED_OUT!>42<!>]
