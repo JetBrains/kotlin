@@ -335,12 +335,25 @@ val IrDeclarationWithName.fqNameWhenAvailable: FqName?
         return if (computeFqNameString(this, sb)) FqName(sb.toString()) else null
     }
 
-private fun computeFqNameString(declaration: IrDeclarationWithName, result: StringBuilder): Boolean {
-    when (val parent = declaration.parent) {
-        is IrDeclarationWithName -> {
+val IrDeclarationWithName.fqNameWithoutFileClassesWhenAvailable: FqName?
+    get() {
+        val sb = StringBuilder()
+        return if (computeFqNameString(this, sb, this.parentButNotFileClasses)) FqName(sb.toString()) else null
+    }
+
+private fun computeFqNameString(declaration: IrDeclarationWithName, result: StringBuilder): Boolean =
+    computeFqNameString(declaration, result, declaration.parent)
+
+private fun computeFqNameString(
+    declaration: IrDeclarationWithName,
+    result: StringBuilder,
+    parent: IrDeclarationParent,
+): Boolean {
+    when {
+        parent is IrDeclarationWithName -> {
             if (!computeFqNameString(parent, result)) return false
         }
-        is IrPackageFragment -> {
+        parent is IrPackageFragment -> {
             val packageFqName = parent.packageFqName
             if (!packageFqName.isRoot) result.append(packageFqName)
         }
@@ -350,6 +363,17 @@ private fun computeFqNameString(declaration: IrDeclarationWithName, result: Stri
     result.append(declaration.name.asString())
     return true
 }
+
+private val IrDeclaration.parentButNotFileClasses: IrDeclarationParent
+    get() {
+        var current = parent
+
+        while (current is IrClass && current.origin == IrDeclarationOrigin.FILE_CLASS) {
+            current = current.parent
+        }
+
+        return current
+    }
 
 val IrDeclaration.parentAsClass: IrClass
     get() = parent as? IrClass
