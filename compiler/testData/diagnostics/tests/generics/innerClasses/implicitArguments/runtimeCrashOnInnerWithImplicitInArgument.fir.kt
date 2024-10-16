@@ -12,7 +12,7 @@ class In<in T>(private var t: T, private val f: (T) -> Unit) {
         }
     }
 
-    fun accept(inner: Inner) {
+    fun accept(inner: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {
         inner.takeT(t)
     }
 }

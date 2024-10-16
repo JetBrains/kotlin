@@ -7,6 +7,6 @@ class Outer<out E, in F> {
         fun unsafe4(): Collection<<!TYPE_VARIANCE_CONFLICT_ERROR!>F<!>>? = null
     }
 
-    fun foo(x: Inner) {}
+    fun foo(x: <!TYPE_VARIANCE_CONFLICT_ERROR, TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {}
     fun bar(): Inner? = null
 }

@@ -10,7 +10,7 @@ class Out<out T>(private var p: T) {
         }
     }
 
-    fun accept(inner: Inner) {
+    fun accept(inner: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {
         p = inner.getP()
     }
 }
