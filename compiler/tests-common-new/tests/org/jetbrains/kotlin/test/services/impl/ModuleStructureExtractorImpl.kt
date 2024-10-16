@@ -177,6 +177,9 @@ class ModuleStructureExtractorImpl(
                     if (currentModuleName != null) {
                         finishModule(lineNumber)
                     } else {
+                        if (currentFileName != null) {
+                            error("Defining `// FILE` before `// MODULE` is prohibited: it's unclear if the directives before the first `// FILE` are global- or module-specific")
+                        }
                         finishGlobalDirectives()
                     }
                     val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(
