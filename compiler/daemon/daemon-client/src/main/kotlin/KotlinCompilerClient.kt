@@ -111,7 +111,7 @@ object KotlinCompilerClient {
         val ignoredDaemonSessionFiles = mutableSetOf<File>()
         var daemonStartupAttemptsCount = 0
         val gcAutoConfiguration = GcAutoConfiguration()
-        val initiatorInfo = InitiatorInformation(clientAliveFlagFile)
+        val initialClientInfo = InitialClientInformation(clientAliveFlagFile)
         return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
             fun CompileService.tryToLeaseSession(): CompileServiceSession? {
@@ -166,7 +166,7 @@ object KotlinCompilerClient {
                                 reportingTargets,
                                 daemonStartupAttemptsCount++,
                                 gcAutoConfiguration,
-                                initiatorInfo,
+                                initialClientInfo,
                             )
                         ) {
                             reportingTargets.report(DaemonReportCategory.DEBUG, "new compiler daemon started, trying to find it")
@@ -511,7 +511,7 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         startupAttempt: Int,
         gcAutoConfiguration: GcAutoConfiguration,
-        initiatorInfo: InitiatorInformation,
+        initialClientInfo: InitialClientInformation,
     ): Boolean {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
@@ -541,7 +541,7 @@ object KotlinCompilerClient {
         )
         // TODO: KT-72161. Investigate IDEA's JSR223 Kotlin Script integration. Possibly transform this into regular arguments
         val initiatorInfoAsSystemProperties = listOfNotNull(
-            initiatorInfo.clientMarkerFile?.absolutePath?.let {
+            initialClientInfo.aliveFlagFile?.absolutePath?.let {
                 "-D${CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.property}=$it"
             }
         )

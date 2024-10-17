@@ -18,7 +18,6 @@ import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
-import java.net.URLClassLoader
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
@@ -105,7 +104,7 @@ abstract class KotlinCompileDaemonBase {
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
-        val initiatorInfo = InitiatorInformation(CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.value?.let { File(it) })
+        val initialClientInfo = InitialClientInformation(CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.value?.let { File(it) })
         runSynchronized {
             var serverRun: Any?
             try {
@@ -147,7 +146,7 @@ abstract class KotlinCompileDaemonBase {
                 val timer = Timer(true)
                 val (compilerService, port) = getCompileServiceAndPort(compilerSelector, compilerId, daemonOptions, daemonJVMOptions, timer)
                 compilerService.startDaemonElections()
-                compilerService.registerClient(initiatorInfo)
+                compilerService.registerInitialClient(initialClientInfo)
                 compilerService.configurePeriodicActivities()
                 serverRun = runCompileService(compilerService)
 
@@ -175,8 +174,8 @@ abstract class KotlinCompileDaemonBase {
     }
 }
 
-private fun CompileService.registerClient(information: InitiatorInformation) {
-    information.clientMarkerFile?.let {
+private fun CompileService.registerInitialClient(initialClient: InitialClientInformation) {
+    initialClient.aliveFlagFile?.let {
         registerClient(it.absolutePath)
     }
 }
