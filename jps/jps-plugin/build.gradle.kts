@@ -80,6 +80,7 @@ dependencies {
     }
 
     testImplementation("org.projectlombok:lombok:1.18.16")
+    testImplementation(libs.kotlinx.serialization.json)
 }
 
 sourceSets {
