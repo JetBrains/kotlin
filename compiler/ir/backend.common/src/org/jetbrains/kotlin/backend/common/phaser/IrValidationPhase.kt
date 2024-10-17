@@ -16,8 +16,10 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
     protected abstract val defaultValidationConfig: IrValidatorConfig
 
     final override fun lower(irModule: IrModuleFragment) {
-        if (context.configuration[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]!!.languageVersion.usesK2 != true)
-            return
+        context.configuration[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]?.let {
+            if (!it.languageVersion.usesK2)
+                return
+        }
         val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
         val phaseName = this.javaClass.simpleName
         validateIr(context.messageCollector, verificationMode) {
