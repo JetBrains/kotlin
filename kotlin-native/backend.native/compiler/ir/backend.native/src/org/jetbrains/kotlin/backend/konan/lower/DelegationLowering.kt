@@ -11,55 +11,48 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+internal class PropertyReferencesConstructorsSet(
+    val local: IrConstructorSymbol,
+    val byRecieversCount: List<IrConstructorSymbol>
+) {
+    constructor(local: IrClassSymbol, byRecieversCount: List<IrClassSymbol>) : this(
+            local.constructors.single(),
+            byRecieversCount.map { it.constructors.single() }
+    )
+}
+
+internal val KonanSymbols.immutablePropertiesConstructors
+    get() = PropertyReferencesConstructorsSet(
+        kLocalDelegatedPropertyImpl,
+        listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
+    )
+
+internal val KonanSymbols.mutablePropertiesConstructors
+    get() = PropertyReferencesConstructorsSet(
+            kLocalDelegatedMutablePropertyImpl,
+            listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)
+    )
+
 internal class PropertyDelegationLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     private val context = generationState.context
+    private val immutableSymbols = context.ir.symbols.immutablePropertiesConstructors
+    private val mutableSymbols = context.ir.symbols.mutablePropertiesConstructors
     private var tempIndex = 0
-
-    private fun getKPropertyImpl(receiverTypes: List<IrType>,
-                                 isLocal: Boolean,
-                                 isMutable: Boolean): IrClass {
-
-        val symbols = context.ir.symbols
-
-        val classSymbol =
-                if (isLocal) {
-                    assert(receiverTypes.isEmpty()) { "Local delegated property cannot have explicit receiver" }
-                    when {
-                        isMutable -> symbols.kLocalDelegatedMutablePropertyImpl
-                        else -> symbols.kLocalDelegatedPropertyImpl
-                    }
-                } else {
-                    when (receiverTypes.size) {
-                        0 -> when {
-                            isMutable -> symbols.kMutableProperty0Impl
-                            else -> symbols.kProperty0Impl
-                        }
-                        1 -> when {
-                            isMutable -> symbols.kMutableProperty1Impl
-                            else -> symbols.kProperty1Impl
-                        }
-                        2 -> when {
-                            isMutable -> symbols.kMutableProperty2Impl
-                            else -> symbols.kProperty2Impl
-                        }
-                        else -> throw AssertionError("More than 2 receivers is not allowed")
-                    }
-                }
-
-        return classSymbol.owner
-    }
 
     override fun lower(irFile: IrFile) {
         // Somehow there is no reasonable common ancestor for IrProperty and IrLocalDelegatedProperty,
@@ -102,7 +95,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                         else -> { // Cache KProperties with no arguments.
                             val field = kProperties.getOrPut(expression.symbol.owner) {
                                 kPropertyField(
-                                    irExprBody(createKProperty(expression, this, irFile, generatedClasses) as IrConstantValue),
+                                    irExprBody(createKProperty(expression, this, irFile, generatedClasses)),
                                     kProperties.size
                                 )
                             }
@@ -150,17 +143,11 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
         val endOffset = expression.endOffset
         return irBuilder.irBlock(expression) {
             val receiverTypes = mutableListOf<IrType>()
-            val dispatchReceiver = expression.dispatchReceiver.let {
-                if (it == null)
-                    null
-                else
-                    irTemporary(value = it, nameHint = "\$dispatchReceiver${tempIndex++}")
+            val dispatchReceiver = expression.dispatchReceiver?.let {
+                irTemporary(value = it, nameHint = "\$dispatchReceiver${tempIndex++}")
             }
-            val extensionReceiver = expression.extensionReceiver.let {
-                if (it == null)
-                    null
-                else
-                    irTemporary(value = it, nameHint = "\$extensionReceiver${tempIndex++}")
+            val extensionReceiver = expression.extensionReceiver?.let {
+                irTemporary(value = it, nameHint = "\$extensionReceiver${tempIndex++}")
             }
             val returnType = expression.getter?.owner?.returnType ?: expression.field!!.owner.type
 
@@ -192,37 +179,33 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                 }
             }
 
-            val setterCallableReference = expression.setter?.owner?.let { setter ->
-                if (!isKMutablePropertyType(expression.type)) null
-                else {
-                    val setterKFunctionType = this@PropertyDelegationLowering.context.ir.symbols.getKFunctionType(
-                            context.irBuiltIns.unitType,
-                            receiverTypes + returnType
-                    )
-                    IrFunctionReferenceImpl(
-                            startOffset = startOffset,
-                            endOffset = endOffset,
-                            type = setterKFunctionType,
-                            symbol = expression.setter!!,
-                            typeArgumentsCount = setter.typeParameters.size,
-                            reflectionTarget = expression.setter!!
-                    ).apply {
-                        this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
-                        this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                        for (index in 0 until expression.typeArgumentsCount)
-                            putTypeArgument(index, expression.getTypeArgument(index))
-                    }
+            val setterCallableReference = expression.setter?.owner?.takeIf { isKMutablePropertyType(expression.type) }?.let { setter ->
+                val setterKFunctionType = this@PropertyDelegationLowering.context.ir.symbols.getKFunctionType(
+                        context.irBuiltIns.unitType,
+                        receiverTypes + returnType
+                )
+                IrFunctionReferenceImpl(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = setterKFunctionType,
+                        symbol = expression.setter!!,
+                        typeArgumentsCount = setter.typeParameters.size,
+                        reflectionTarget = expression.setter!!
+                ).apply {
+                    this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
+                    this.extensionReceiver = extensionReceiver?.let { irGet(it) }
+                    for (index in 0 until expression.typeArgumentsCount)
+                        putTypeArgument(index, expression.getTypeArgument(index))
                 }
             }
 
-            val clazz = getKPropertyImpl(
-                    receiverTypes = receiverTypes,
-                    isLocal = false,
-                    isMutable = setterCallableReference != null)
+            val constructor = if (setterCallableReference != null) {
+                mutableSymbols
+            } else {
+                immutableSymbols
+            }.byRecieversCount[receiverTypes.size]
 
-            val name = irString(expression.symbol.owner.name.asString())
-
-            fun IrFunctionReference.convert(produceConstantObject: Boolean): IrExpression {
+            fun IrFunctionReference.convert(): IrExpression {
                 val builder = FunctionReferenceLowering.FunctionReferenceBuilder(
                         irFile,
                         irFile,
@@ -232,33 +215,16 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                 )
                 val (newClass, newExpression) = builder.build()
                 generatedClasses.add(newClass)
-                return if (!produceConstantObject)
-                    newExpression
-                else {
-                    val constructor = newClass.primaryConstructor
-                            ?: error("A function reference impl class must have a primary constructor: ${newClass.render()}")
-                    require(constructor.valueParameters.isEmpty()) {
-                        "Expected a function reference impl class with no captured parameters: ${constructor.render()}"
-                    }
-                    irConstantObject(constructor.symbol, emptyList())
-                }
+                return newExpression
             }
 
-            val initializer = if (dispatchReceiver == null && extensionReceiver == null) {
-                return irConstantObject(clazz, buildMap {
-                    put("name", irConstantPrimitive(name))
-                    put("getter", getterCallableReference.convert(true) as IrConstantValue)
-                    if (setterCallableReference != null) {
-                        put("setter", setterCallableReference.convert(true) as IrConstantValue)
-                    }
-                })
-            } else irCallWithSubstitutedType(clazz.constructors.single(), receiverTypes + listOf(returnType)).apply {
-                putValueArgument(0, name)
-                putValueArgument(1, getterCallableReference.convert(false))
-                if (setterCallableReference != null)
-                    putValueArgument(2, setterCallableReference.convert(false))
+            +irCallWithSubstitutedType(constructor, receiverTypes + listOf(returnType)).apply {
+                putValueArgument(0, irString(expression.symbol.owner.name.asString()))
+                putValueArgument(1, getterCallableReference.convert())
+                if (setterCallableReference != null) {
+                    putValueArgument(2, setterCallableReference.convert())
+                }
             }
-            +initializer
         }
     }
 

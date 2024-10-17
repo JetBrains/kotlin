@@ -318,9 +318,9 @@ private val functionReferencePhase = createFileLoweringPhase(
         name = "FunctionReference",
 )
 
-private val staticFunctionReferenceOptimizationPhase = createFileLoweringPhase(
-        lowering = ::StaticFunctionReferenceOptimization,
-        name = "StaticFunctionReferenceOptimization",
+private val staticCallableReferenceOptimizationPhase = createFileLoweringPhase(
+        lowering = ::StaticCallableReferenceOptimization,
+        name = "StaticCallableReferenceOptimization",
         prerequisite = setOf(functionReferencePhase, delegationPhase)
 )
 
@@ -587,7 +587,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
         delegationPhase,
-        staticFunctionReferenceOptimizationPhase,
+        staticCallableReferenceOptimizationPhase,
         singleAbstractMethodPhase,
         enumWhenPhase,
         finallyBlocksPhase,
