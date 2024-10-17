@@ -23,7 +23,8 @@ class StubIrContext(
         val platform: KotlinPlatform,
         val generationMode: GenerationMode,
         val libName: String,
-        val plugin: Plugin
+        val plugin: Plugin,
+        val allowPrecompiledHeaders: Boolean,
 ) {
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<IncludeInfo>().apply {
@@ -43,7 +44,9 @@ class StubIrContext(
                         Language.C, Language.CPP -> emptyList()
                         Language.OBJECTIVE_C -> listOf("void objc_terminate();")
                     }
-    ).precompileHeaders()
+    ).let {
+        if (allowPrecompiledHeaders) it.precompileHeaders() else it
+    }
 
     // TODO: Used only for JVM.
     val jvmFileClassName = if (configuration.pkgName.isEmpty()) {

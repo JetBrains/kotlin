@@ -309,7 +309,7 @@ private fun processCLib(
 
     val plugin = Plugins.plugin(def.config.pluginName)
 
-    val (nativeIndex, compilation) = plugin.buildNativeIndex(library, verbose)
+    val (nativeIndex, compilation) = plugin.buildNativeIndex(library, verbose, allowPrecompiledHeaders = true)
 
     val target = tool.target
 
@@ -345,7 +345,7 @@ private fun processCLib(
         KotlinPlatform.JVM -> GenerationMode.SOURCE_CODE
         KotlinPlatform.NATIVE -> GenerationMode.METADATA
     }
-    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, plugin)
+    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, plugin, allowPrecompiledHeaders = true)
     val stubIrOutput = run {
         val outKtFileCreator = {
             val outKtFileName = fqParts.last() + ".kt"

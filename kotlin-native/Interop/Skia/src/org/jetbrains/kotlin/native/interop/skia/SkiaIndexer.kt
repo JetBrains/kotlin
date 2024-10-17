@@ -8,9 +8,9 @@ import clang.*
 import kotlinx.cinterop.CValue
 import org.jetbrains.kotlin.native.interop.indexer.*
 
-fun buildSkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
+fun buildSkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult {
     val result = SkiaNativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result)
+    return buildNativeIndexImpl(result, allowPrecompiledHeaders)
 }
 
 class SkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean) : NativeIndexImpl(library, verbose) {

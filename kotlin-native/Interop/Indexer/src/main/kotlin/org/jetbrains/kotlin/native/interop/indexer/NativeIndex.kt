@@ -124,7 +124,7 @@ data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult = buildNativeIndexImpl(library, verbose)
+fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean = true): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
 /**
  * This class describes the IR of definitions from C header file(s).

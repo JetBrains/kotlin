@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.native.interop.indexer.Type
 
 class SkiaPlugin : Plugin {
     override val name = "Skia"
-    override fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult =
-            buildSkiaNativeIndexImpl(library, verbose)
+    override fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult =
+            buildSkiaNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
     override val managedTypePassing = object : ManagedTypePassing() {
         override val ManagedType.passValue: String get() = "sk_ref_sp<${this.decl.stripSkiaSharedPointer}>"

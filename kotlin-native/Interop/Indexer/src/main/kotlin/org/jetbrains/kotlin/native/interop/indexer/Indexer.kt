@@ -1311,21 +1311,23 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result)
+    return buildNativeIndexImpl(result, allowPrecompiledHeaders)
 }
 
-fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
-    val compilation = indexDeclarations(index)
+fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean): IndexerResult {
+    val compilation = indexDeclarations(index, allowPrecompiledHeaders)
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()
-        val translationUnit = nativeIndex.library.copyWithArgsForPCH().parse(
+        val translationUnit = nativeIndex.library.let {
+            if (allowPrecompiledHeaders) it.copyWithArgsForPCH() else it
+        }.parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
                 diagnosticHandler = { if (it.isError()) errors.add(it) }
@@ -1336,7 +1338,9 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
             }
             translationUnit.ensureNoCompileErrors()
 
-            val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
+            val compilation = nativeIndex.library.let {
+                if (allowPrecompiledHeaders) it.withPrecompiledHeader(translationUnit) else it
+            }
 
             UnitsHolder(index).use { unitsHolder ->
                 val (headers, ownTranslationUnits) = getHeadersAndUnits(nativeIndex.library, index, translationUnit, unitsHolder)
@@ -1398,7 +1402,12 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
                     }
                 }
 
-                findMacros(nativeIndex, compilation, unitsToProcess, ownHeaders)
+                if (allowPrecompiledHeaders) {
+                    findMacros(nativeIndex, compilation as CompilationWithPCH, unitsToProcess, ownHeaders)
+                } else {
+                    findMacros(nativeIndex, compilation.withPrecompiledHeader(translationUnit), unitsToProcess, ownHeaders)
+                }
+
                 return compilation
             }
         } finally {
