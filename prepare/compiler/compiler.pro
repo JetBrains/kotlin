@@ -378,3 +378,10 @@
 }
 # Uses a ClassLoader method from JDK 9+
 -dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
+
+-keep class org.jetbrains.kotlin.commonizer.cli.CommonizerCLI {
+    public static void main(java.lang.String[]);
+}
+-keep class it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap {
+    public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
+}

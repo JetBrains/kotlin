@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.repl
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -69,7 +71,13 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
             Assert.assertTrue(res)
         } finally {
-            Disposer.dispose(disposable)
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(disposable)
+                }
+            } else {
+                Disposer.dispose(disposable)
+            }
             resetApplicationToNull()
         }
     }
