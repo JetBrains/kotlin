@@ -308,13 +308,13 @@ fun example(int: Int) {
 
 #### `PCLA_POSTPONED_CALL` completion mode
 
-A modification of `FULL` completion mode.
+A modification of the `FULL` completion mode.
 Used for [PCLA](#partially-constrained-lambda-analysis).
 See [the "PCLA_POSTPONED_CALL completion mode" section of pcla.md](pcla.md#pcla_postponed_call-completion-mode).
 
 #### `UNTIL_FIRST_LAMBDA` completion mode
 
-A modification of `FULL` completion mode that stops after the first lambda analyzed.
+A modification of the `FULL` completion mode that stops after the first lambda analyzed.
 Used for overload resolution by a lambda's return type.
 
 ### Completion Framework
@@ -334,7 +334,7 @@ while (true) {
 }
 ```
 
-After the loop is completed in `FULL` mode, the completion results are being applied to the FIR call representations via
+After the loop is completed in the `FULL` mode, the completion results are being applied to the FIR call representations via
 `FirCallCompletionResultsWriterTransformer`.
 
 For more details see `FirCallCompleter` and `org.jetbrains.kotlin.fir.resolve.inference.ConstraintSystemCompleter.runCompletion` for the
