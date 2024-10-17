@@ -72,6 +72,8 @@
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreter
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
 
+-printusage /Users/Alexander.Likhachev/Work/IdeaProjects/kotlin/prepare/compiler/usage.txt
+
 # The appropriate jar is either loaded separately or added explicitly to the classpath then needed
 -dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 
@@ -378,3 +380,10 @@
 }
 # Uses a ClassLoader method from JDK 9+
 -dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
+
+-keep class org.jetbrains.kotlin.commonizer.cli.CommonizerCLI {
+    public static void main(java.lang.String[]);
+}
+-keep class it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap {
+    public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
+}
