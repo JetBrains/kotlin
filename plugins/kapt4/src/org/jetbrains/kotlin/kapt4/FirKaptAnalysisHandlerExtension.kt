@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
@@ -118,7 +120,13 @@ open class FirKaptAnalysisHandlerExtension(
                 }
             }
         } finally {
-            Disposer.dispose(disposable)
+            if (ApplicationManager.getApplication() != null) {
+                ApplicationManager.getApplication().runWriteAction {
+                    Disposer.dispose(disposable)
+                }
+            } else {
+                Disposer.dispose(disposable)
+            }
         }
 
         if (!options.mode.runAnnotationProcessing) return true

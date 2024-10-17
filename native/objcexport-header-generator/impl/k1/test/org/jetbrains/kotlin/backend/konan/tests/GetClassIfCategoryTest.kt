@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.tests
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.getClassIfCategory
 import org.jetbrains.kotlin.backend.konan.testUtils.*
@@ -122,7 +124,13 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @AfterEach
     fun dispose() {
-        Disposer.dispose(testDisposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(testDisposable)
+            }
+        } else {
+            Disposer.dispose(testDisposable)
+        }
     }
 }
 

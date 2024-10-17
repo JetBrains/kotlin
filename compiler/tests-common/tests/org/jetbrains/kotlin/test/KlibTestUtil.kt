@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
@@ -114,7 +116,13 @@ object KlibTestUtil {
 
             analysisResult.moduleDescriptor
         } finally {
-            Disposer.dispose(rootDisposable)
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(rootDisposable)
+                }
+            } else {
+                Disposer.dispose(rootDisposable)
+            }
         }
 
         serializeCommonModuleToKlib(module, libraryName, klibFile)

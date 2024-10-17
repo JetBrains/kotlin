@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.converters.incremental
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -80,7 +82,13 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             incrementalRunner.reportFailures(incrementalServices)
             incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
-            Disposer.dispose(incrementalConfiguration.rootDisposable)
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(incrementalConfiguration.rootDisposable)
+                }
+            } else {
+                Disposer.dispose(incrementalConfiguration.rootDisposable)
+            }
         }
 
         return BinaryArtifacts.Js.IncrementalJsArtifact(inputArtifact, incrementalArtifact)

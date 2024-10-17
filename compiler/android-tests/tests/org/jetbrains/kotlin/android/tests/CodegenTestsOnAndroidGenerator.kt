@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.android.tests
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
@@ -221,7 +223,13 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             } finally {
                 rawFiles.clear()
                 unitTestDescriptions.clear()
-                Disposer.dispose(disposable)
+                if (ApplicationManager.getApplication() != null) {
+                    runWriteAction {
+                        Disposer.dispose(disposable)
+                    }
+                } else {
+                    Disposer.dispose(disposable)
+                }
             }
         }
 

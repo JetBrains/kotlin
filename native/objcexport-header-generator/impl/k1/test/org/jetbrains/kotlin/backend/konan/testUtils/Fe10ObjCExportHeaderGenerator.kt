@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.testUtils
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -45,7 +47,13 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
     override fun afterEach(context: ExtensionContext) {
         val disposable = context.getStore(namespace).get(disposableKey, Disposable::class.java) ?: return
-        Disposer.dispose(disposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(disposable)
+            }
+        } else {
+            Disposer.dispose(disposable)
+        }
     }
 }
 

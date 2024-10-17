@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -255,7 +257,13 @@ internal fun <R> withDisposable(body: (Disposable) -> R) {
     try {
         body(disposable)
     } finally {
-        Disposer.dispose(disposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(disposable)
+            }
+        } else {
+            Disposer.dispose(disposable)
+        }
     }
 }
 
