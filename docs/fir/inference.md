@@ -303,9 +303,11 @@ fun <R> run(block: () -> R): R = block()
 
 fun example(int: Int) {
     // a candidate for this call cannot be chosen
-    // without fixing Rv to Int first
+    // without adding to the Constraint System
+    // an `Int <: Rv` proper constraint from deeper in the call-tree
     foo(
-        // Rv cannot be fixed to Int
+        // the aforementioned `Int <: Rv` proper constraint
+        // cannot be added to the Constraint System
         // without analyzing this call's lambda argument first
         run(
             // PARTIAL completion mode makes it possible to analyze this lambda
