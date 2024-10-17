@@ -1505,6 +1505,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirPropertySymbol>("property")
         }
         val SETTER_PROJECTED_OUT by error<KtBinaryExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("receiverType")
+            parameter<String>("projection")
             parameter<FirPropertySymbol>("property")
         }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {

@@ -512,11 +512,21 @@ fun checkTypeMismatch(
     if (isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) return
 
     val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
+    val receiverType = (assignment?.extensionReceiver ?: assignment?.dispatchReceiver)?.resolvedType
+
     when {
-        resolvedSymbol != null && lValueType is ConeCapturedType && lValueType.constructor.projection.kind.let {
-            it == ProjectionKind.STAR || it == ProjectionKind.OUT
-        } -> {
-            reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
+        resolvedSymbol != null &&
+                receiverType != null &&
+                lValueType is ConeCapturedType &&
+                lValueType.constructor.projection.kind.let { it == ProjectionKind.STAR || it == ProjectionKind.OUT } -> {
+            reporter.reportOn(
+                assignment.source,
+                FirErrors.SETTER_PROJECTED_OUT,
+                receiverType,
+                lValueType.projectionKindAsString(),
+                resolvedSymbol,
+                context
+            )
         }
         rValue.isNullLiteral && !lValueType.isMarkedOrFlexiblyNullable -> {
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, lValueType, context)

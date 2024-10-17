@@ -763,7 +763,7 @@ object FirErrors {
     val CAPTURED_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("CAPTURED_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val CAPTURED_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("CAPTURED_MEMBER_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val NON_INLINE_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("NON_INLINE_MEMBER_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
-    val SETTER_PROJECTED_OUT: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("SETTER_PROJECTED_OUT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtBinaryExpression::class)
+    val SETTER_PROJECTED_OUT: KtDiagnosticFactory3<ConeKotlinType, String, FirPropertySymbol> = KtDiagnosticFactory3("SETTER_PROJECTED_OUT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtBinaryExpression::class)
     val WRONG_INVOCATION_KIND: KtDiagnosticFactory3<FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange> = KtDiagnosticFactory3("WRONG_INVOCATION_KIND", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val LEAKED_IN_PLACE_LAMBDA: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("LEAKED_IN_PLACE_LAMBDA", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val WRONG_IMPLIES_CONDITION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_IMPLIES_CONDITION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

@@ -4336,7 +4336,9 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.SETTER_PROJECTED_OUT) { firDiagnostic ->
         SetterProjectedOutImpl(
-            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
