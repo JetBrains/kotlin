@@ -72,7 +72,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder
 
     /**
-     * Configures this source set [LanguageSettingsBuilder] with the provided configuration.
+     * Configures the [LanguageSettingsBuilder] in the source set with the provided configuration.
      *
      * **Note**: This interface is soft-deprecated.
      * Instead, it is better to use the existing `compilerOptions` DSL.
@@ -84,8 +84,8 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      *
      * Consider a general example that has Kotlin source sets `A` and `B`. The expression `A.dependsOn(B)` instructs Kotlin that:
      * - `A` observes the API from `B`, including internal declarations.
-     * - `A` can provide actual implementations for expected declarations from `B`. This is a necessary and sufficient condition,
-     * as `A` can provide actuals for `B` if and only if `A.dependsOn(B)` either directly or transitive `dependsOn` relation.
+     * - `A` can provide actual implementations for expected declarations from `B` if and only if `A.dependsOn(B)`,
+     * either directly or through a transitive `dependsOn` relationship. This is both a necessary and sufficient condition.
      * - Source code from `A` will always compile together with source code from `B`. The opposite is not true!
      * - `A` [extends][org.gradle.api.artifacts.DependencyScopeConfiguration.extendsFrom] dependencies from all
      * [dependency configurations](https://docs.gradle.org/current/userguide/dependency_configurations.html#dependency-configurations)
@@ -97,7 +97,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     fun dependsOn(other: KotlinSourceSet)
 
     /**
-     * Returns a set of source set to which this source set has [dependsOn] relationship.
+     * Returns a set of source sets that have a [dependsOn] relationship with this source set.
      *
      * @return a set of source sets added with `dependsOn` relationship at the current state of configuration.
      * Note that Kotlin Gradle plugin may add additional required
