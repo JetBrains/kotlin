@@ -90,7 +90,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * - `A` [extends][org.gradle.api.artifacts.DependencyScopeConfiguration.extendsFrom] dependencies from all
      * [dependency configurations](https://docs.gradle.org/current/userguide/dependency_configurations.html#dependency-configurations)
      * of `B`.
-     * - `A` inherits all [KotlinSourceSets][KotlinSourceSet] which `B` has [dependsOn] relationship.
+     * - `A` inherits all [KotlinSourceSets][KotlinSourceSet] that `B` has a [dependsOn] relationship with.
      *
      * For more information, see [`dependsOn` and source set hierarchies](https://kotlinlang.org/docs/multiplatform-advanced-project-structure.html#dependson-and-source-set-hierarchies).
      */
