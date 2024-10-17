@@ -30103,6 +30103,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("multipleJavaOverloadsNamedArgumentsNotAllowed.kt")
+      public void testMultipleJavaOverloadsNamedArgumentsNotAllowed() {
+        runTest("compiler/testData/diagnostics/tests/namedArguments/multipleJavaOverloadsNamedArgumentsNotAllowed.kt");
+      }
+
+      @Test
       @TestMetadata("namedArgumentsAndDefaultValues.kt")
       public void testNamedArgumentsAndDefaultValues() {
         runTest("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsAndDefaultValues.kt");
