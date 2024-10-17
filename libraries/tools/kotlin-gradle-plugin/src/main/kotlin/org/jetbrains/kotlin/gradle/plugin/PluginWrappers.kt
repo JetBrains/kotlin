@@ -141,4 +141,6 @@ private fun Project.registerVariantImplementations() {
         CompatibilityConventionRegistrarG76.Factory()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
         ConfigurationCacheStartParameterAccessorG76.Factory()
+    factories[MavenPublicationComponentAccessor.Factory::class] =
+        MavenPublicationComponentAccessorG76.Factory()
 }

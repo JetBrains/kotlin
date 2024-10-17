@@ -140,4 +140,6 @@ private fun Project.registerVariantImplementations() {
         ConfigurationCacheStartParameterAccessorG81.Factory()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG81.Factory()
+    factories[MavenPublicationComponentAccessor.Factory::class] =
+        MavenPublicationComponentAccessorG81.Factory()
 }
