@@ -27603,6 +27603,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("expectActualExtensionOverride.kt")
+      public void testExpectActualExtensionOverride() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualExtensionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("expectActualInTheSameModule.kt")
       public void testExpectActualInTheSameModule() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualInTheSameModule.kt");
@@ -30048,6 +30054,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("expectActualExtension.kt")
+        public void testExpectActualExtension() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/expectActualExtension.kt");
+        }
+
+        @Test
         @TestMetadata("functionModifiers.kt")
         public void testFunctionModifiers() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/functionModifiers.kt");
@@ -30115,6 +30127,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("differentKindsOfProperties.kt")
         public void testDifferentKindsOfProperties() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualExtensionProperty.kt")
+        public void testExpectActualExtensionProperty() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/expectActualExtensionProperty.kt");
         }
 
         @Test
