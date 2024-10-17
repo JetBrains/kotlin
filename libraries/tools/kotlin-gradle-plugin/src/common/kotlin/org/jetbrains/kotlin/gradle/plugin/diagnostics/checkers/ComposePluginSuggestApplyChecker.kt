@@ -27,12 +27,10 @@ internal object ComposePluginSuggestApplyChecker : KotlinGradleProjectChecker {
         ) {
             collector.reportSuggestion(project)
         } else if (
-        // KMP project without Jetbrains Compose plugin, but with AGP <8.5.0 where Compose enabled,
-        // and no Kotlin Compose Gradle plugin is used
+        // KMP project without Jetbrains Compose plugin
             project.plugins.hasKotlinMultiplatformPlugin() &&
             !project.plugins.hasJetBrainsComposePlugin() &&
             project.isAgpComposeEnabled &&
-            !isAgp850AndAbove &&
             !project.plugins.hasKotlinComposePlugin()
         ) {
             collector.reportSuggestion(project)

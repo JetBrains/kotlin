@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -155,4 +156,14 @@ fun assertNotContains(
     if (actual.contains(expected, ignoreCase = ignoreCase)) {
         fail("expected:<string does not contain '$expected' (ignoreCase:$ignoreCase)> but was:<$actual>")
     }
+}
+
+inline fun <reified T : Throwable> assertFailsWithChainedCause(block: () -> Unit): T {
+    val throwable = assertFails(block)
+    var cause: Throwable? = throwable
+    while (cause != null) {
+        if (cause is T) return cause
+        cause = cause.cause
+    }
+    fail("Expected to fail with ${T::class.java.name} but failed with ${throwable::class.java.name}")
 }
