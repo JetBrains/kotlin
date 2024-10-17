@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
@@ -270,7 +271,7 @@ class IdeStdlibResolutionTest {
         enableDependencyVerification(false)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
-        androidExtension.compileSdkVersion(33)
+        androidExtension.configureDefaults()
         repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
         repositories.google()
