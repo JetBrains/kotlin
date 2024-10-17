@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.native.interop.indexer.CompilationWithPCH
+import org.jetbrains.kotlin.native.interop.indexer.Compilation
 
 /**
  * Describes the native library and the options for adjusting the Kotlin API to be generated for this library.
  */
 class InteropConfiguration(
-        val library: CompilationWithPCH,
+        val library: Compilation,
         val pkgName: String,
         val excludedFunctions: Set<String>,
         val excludedMacros: Set<String>,

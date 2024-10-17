@@ -1321,7 +1321,7 @@ fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()

@@ -119,7 +119,7 @@ data class NativeLibrary(
         val allowIncludingObjCCategoriesFromDefFile: Boolean,
 ) : Compilation
 
-data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
+data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).

@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.native.interop.indexer.Compilation
 import org.jetbrains.kotlin.native.interop.indexer.CompilationWithPCH
 import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.mapFragmentIsCompilable
+import org.jetbrains.kotlin.native.interop.indexer.precompileHeaders
 
 internal val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
 
@@ -27,7 +29,7 @@ class SimpleBridgeGeneratorImpl(
         private val platform: KotlinPlatform,
         private val pkgName: String,
         private val jvmFileClassName: String,
-        private val libraryForCStubs: CompilationWithPCH,
+        private val libraryForCStubs: Compilation,
         override val topLevelNativeScope: NativeScope,
         private val topLevelKotlinScope: KotlinScope
 ) : SimpleBridgeGenerator {
@@ -222,8 +224,10 @@ class SimpleBridgeGeneratorImpl(
         val includedBridges = mutableListOf<NativeBridge>()
         val excludedClients = mutableSetOf<NativeBacked>()
 
+        val libraryWithPCH = if (libraryForCStubs is CompilationWithPCH) libraryForCStubs else libraryForCStubs.precompileHeaders()
+
         nativeBridges.map { it.second.nativeLines }
-                .mapFragmentIsCompilable(libraryForCStubs)
+                .mapFragmentIsCompilable(libraryWithPCH)
                 .forEachIndexed { index, isCompilable ->
                     if (!isCompilable) {
                         excludedClients.add(nativeBridges[index].first)
