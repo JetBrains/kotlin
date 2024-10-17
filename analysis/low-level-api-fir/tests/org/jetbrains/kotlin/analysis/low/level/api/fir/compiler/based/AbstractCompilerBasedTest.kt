@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.isKtFile
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -25,7 +27,15 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
     @AfterEach
     fun disposeDisposable() {
-        _disposable?.let { Disposer.dispose(it) }
+        _disposable?.let {
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(it)
+                }
+            } else {
+                Disposer.dispose(it)
+            }
+        }
         _disposable = null
     }
 
