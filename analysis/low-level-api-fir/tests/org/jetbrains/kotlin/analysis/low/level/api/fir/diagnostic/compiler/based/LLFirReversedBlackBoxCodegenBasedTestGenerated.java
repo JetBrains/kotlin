@@ -5396,9 +5396,21 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("extensionFunctionLocal.kt")
+      public void testExtensionFunctionLocal() {
+        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionLocal.kt");
+      }
+
+      @Test
       @TestMetadata("extensionFunctionPassToSAMInterface.kt")
       public void testExtensionFunctionPassToSAMInterface() {
         runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionPassToSAMInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionToJavaFun.kt")
+      public void testExtensionFunctionToJavaFun() {
+        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionToJavaFun.kt");
       }
 
       @Test
@@ -5411,6 +5423,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       @TestMetadata("extensionProperty.kt")
       public void testExtensionProperty() {
         runTest("compiler/testData/codegen/box/callableReference/function/extensionProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionWithNestedFunction.kt")
+      public void testExtensionWithNestedFunction() {
+        runTest("compiler/testData/codegen/box/callableReference/function/extensionWithNestedFunction.kt");
       }
 
       @Test
@@ -5555,6 +5573,18 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       @TestMetadata("nestedConstructorFromTopLevelOneStringArg.kt")
       public void testNestedConstructorFromTopLevelOneStringArg() {
         runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelOneStringArg.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedExtensionInSAMInterface.kt")
+      public void testNestedExtensionInSAMInterface() {
+        runTest("compiler/testData/codegen/box/callableReference/function/nestedExtensionInSAMInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedExtensionToJavaFun.kt")
+      public void testNestedExtensionToJavaFun() {
+        runTest("compiler/testData/codegen/box/callableReference/function/nestedExtensionToJavaFun.kt");
       }
 
       @Test
@@ -20347,6 +20377,18 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("extensionFunctionAsATypeLocal.kt")
+    public void testExtensionFunctionAsATypeLocal() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsATypeLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionAsAnonymous.kt")
+    public void testExtensionFunctionAsAnonymous() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsAnonymous.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunctionAsSupertype.kt")
     public void testExtensionFunctionAsSupertype() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsSupertype.kt");
@@ -20356,6 +20398,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("extensionFunctionAsType.kt")
     public void testExtensionFunctionAsType() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsType.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionClassLevelLocal.kt")
+    public void testExtensionFunctionClassLevelLocal() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionClassLevelLocal.kt");
     }
 
     @Test
@@ -20398,6 +20446,18 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("extensionFunctionJavaReceiver.kt")
     public void testExtensionFunctionJavaReceiver() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionJavaReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionLocal.kt")
+    public void testExtensionFunctionLocal() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionNestedInExtensionFunction.kt")
+    public void testExtensionFunctionNestedInExtensionFunction() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionNestedInExtensionFunction.kt");
     }
 
     @Test
@@ -20590,6 +20650,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("nested2.kt")
     public void testNested2() {
       runTest("compiler/testData/codegen/box/extensionFunctions/nested2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedExtensionFunctionAsASupertype.kt")
+    public void testNestedExtensionFunctionAsASupertype() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/nestedExtensionFunctionAsASupertype.kt");
     }
 
     @Test
@@ -21049,9 +21115,27 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("extensionPropertyWithAnonymousExtensionFun.kt")
+    public void testExtensionPropertyWithAnonymousExtensionFun() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithAnonymousExtensionFun.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyWithAnonymousExtensionFunWithTypeParam.kt")
+    public void testExtensionPropertyWithAnonymousExtensionFunWithTypeParam() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithAnonymousExtensionFunWithTypeParam.kt");
+    }
+
+    @Test
     @TestMetadata("extensionPropertyWithExtensionAsReceiver.kt")
     public void testExtensionPropertyWithExtensionAsReceiver() {
       runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithExtensionAsReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyWithExtensionNestedType.kt")
+    public void testExtensionPropertyWithExtensionNestedType() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithExtensionNestedType.kt");
     }
 
     @Test
@@ -21148,6 +21232,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("nonAbstractInInterface.kt")
     public void testNonAbstractInInterface() {
       runTest("compiler/testData/codegen/box/extensionProperties/nonAbstractInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithExtensionNestedType.kt")
+    public void testPropertyWithExtensionNestedType() {
+      runTest("compiler/testData/codegen/box/extensionProperties/propertyWithExtensionNestedType.kt");
     }
 
     @Test
@@ -40032,6 +40122,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         @TestMetadata("extensionFunctionAsATypeWithJavaActualization.kt")
         public void testExtensionFunctionAsATypeWithJavaActualization() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsATypeWithJavaActualization.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionFunctionAsAnonymous.kt")
+        public void testExtensionFunctionAsAnonymous() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionFunctionAsAnonymous.kt");
         }
 
         @Test

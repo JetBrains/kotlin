@@ -3939,6 +3939,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("extensionFunctionLocal.kt")
+        public void testExtensionFunctionLocal() {
+          runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionLocal.kt");
+        }
+
+        @Test
         @TestMetadata("extensionFunctionPassToSAMInterface.kt")
         public void testExtensionFunctionPassToSAMInterface() {
           runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionPassToSAMInterface.kt");
@@ -3948,6 +3954,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @TestMetadata("extensionFunctionWithExtensionInSAMInterface.kt")
         public void testExtensionFunctionWithExtensionInSAMInterface() {
           runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionWithExtensionInSAMInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionWithNestedFunction.kt")
+        public void testExtensionWithNestedFunction() {
+          runTest("compiler/testData/codegen/box/callableReference/function/extensionWithNestedFunction.kt");
         }
 
         @Test
@@ -4056,6 +4068,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @TestMetadata("nestedConstructorFromTopLevelOneStringArg.kt")
         public void testNestedConstructorFromTopLevelOneStringArg() {
           runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelOneStringArg.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedExtensionInSAMInterface.kt")
+        public void testNestedExtensionInSAMInterface() {
+          runTest("compiler/testData/codegen/box/callableReference/function/nestedExtensionInSAMInterface.kt");
         }
 
         @Test
@@ -16182,6 +16200,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("extensionFunctionAsATypeLocal.kt")
+      public void testExtensionFunctionAsATypeLocal() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsATypeLocal.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionAsAnonymous.kt")
+      public void testExtensionFunctionAsAnonymous() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsAnonymous.kt");
+      }
+
+      @Test
       @TestMetadata("extensionFunctionAsSupertype.kt")
       public void testExtensionFunctionAsSupertype() {
         runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsSupertype.kt");
@@ -16191,6 +16221,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("extensionFunctionAsType.kt")
       public void testExtensionFunctionAsType() {
         runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsType.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionClassLevelLocal.kt")
+      public void testExtensionFunctionClassLevelLocal() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionClassLevelLocal.kt");
       }
 
       @Test
@@ -16228,6 +16264,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       public void testExtensionFunctionInValueClass() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
         runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionLocal.kt")
+      public void testExtensionFunctionLocal() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionLocal.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFunctionNestedInExtensionFunction.kt")
+      public void testExtensionFunctionNestedInExtensionFunction() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionNestedInExtensionFunction.kt");
       }
 
       @Test
@@ -16399,6 +16447,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("nestedExtensionFunctionAsASupertype.kt")
+      public void testNestedExtensionFunctionAsASupertype() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/nestedExtensionFunctionAsASupertype.kt");
+      }
+
+      @Test
       @TestMetadata("shared.kt")
       public void testShared() {
         runTest("compiler/testData/codegen/box/extensionFunctions/shared.kt");
@@ -16516,9 +16570,27 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("extensionPropertyWithAnonymousExtensionFun.kt")
+      public void testExtensionPropertyWithAnonymousExtensionFun() {
+        runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithAnonymousExtensionFun.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionPropertyWithAnonymousExtensionFunWithTypeParam.kt")
+      public void testExtensionPropertyWithAnonymousExtensionFunWithTypeParam() {
+        runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithAnonymousExtensionFunWithTypeParam.kt");
+      }
+
+      @Test
       @TestMetadata("extensionPropertyWithExtensionAsReceiver.kt")
       public void testExtensionPropertyWithExtensionAsReceiver() {
         runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithExtensionAsReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionPropertyWithExtensionNestedType.kt")
+      public void testExtensionPropertyWithExtensionNestedType() {
+        runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithExtensionNestedType.kt");
       }
 
       @Test
@@ -16609,6 +16681,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("nonAbstractInInterface.kt")
       public void testNonAbstractInInterface() {
         runTest("compiler/testData/codegen/box/extensionProperties/nonAbstractInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyWithExtensionNestedType.kt")
+      public void testPropertyWithExtensionNestedType() {
+        runTest("compiler/testData/codegen/box/extensionProperties/propertyWithExtensionNestedType.kt");
       }
 
       @Test
