@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -249,7 +250,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
 
         override fun extract(archive: File, targetDirectory: File, archiveType: ArchiveType) {
             when (archiveType) {
-                ArchiveType.ZIP -> archiveOperations.zipTree(archive)
+                ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
                 ArchiveType.TAR_GZ -> unzipTarGz(archive, targetDirectory)
                 else -> error("Unsupported format for unzipping $archive")
             }
