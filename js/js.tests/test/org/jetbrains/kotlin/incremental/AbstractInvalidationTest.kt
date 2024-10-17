@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -78,7 +80,13 @@ abstract class AbstractInvalidationTest(
     @AfterEach
     protected fun disposeEnvironment() {
         // The test is run with `Lifecycle.PER_METHOD` (as it's the default), so the disposable needs to be disposed after each test.
-        Disposer.dispose(rootDisposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(rootDisposable)
+            }
+        } else {
+            Disposer.dispose(rootDisposable)
+        }
     }
 
     @AfterEach
