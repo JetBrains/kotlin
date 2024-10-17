@@ -523,3 +523,43 @@ internal fun <T> collectionToArrayCommonImpl(collection: Collection<*>, array: A
  * Returns the given [array].
  */
 internal expect fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T>
+
+/**
+ * Returns a list containing all possible pairs with left field from the first collection,
+ * and the right field from the second collection.
+ *
+ * The returned set preserves the element iteration order of both original collections.
+ * It begins with all the pairs with the first element of left collection,
+ * combined with all the elements of the right one in the order of the right collection.
+ *
+ * @sample samples.collections.Collections.BinaryOperations.crossJoinToPairs
+ */
+public infix fun <T, U> Collection<T>.crossJoin(other: Collection<U>) =
+    crossJoin(this, other) { left: T, right: U ->
+        Pair(left, right)
+    }
+
+/**
+ * Returns a list containing all possible pairs with left field from the first collection,
+ * and the right field from the second collection,
+ * applying the provided transformation against those pairs.
+ *
+ * The returned set preserves the element iteration order of both original collections.
+ * It begins with all the pairs with the first element of left collection,
+ * combined with all the elements of the right one in the order of the right collection.
+ *
+ * @sample samples.collections.Collections.BinaryOperations.crossJoinWithTransformation
+ */
+fun <T, U, V> crossJoin(
+    left: Collection<T>,
+    right: Collection<U>,
+    transformation: (left: T, right: U) -> V,
+): Sequence<V> {
+    return sequence {
+        left.forEach { leftElement ->
+            right.forEach { rightElement ->
+                yield(transformation(leftElement, rightElement))
+            }
+        }
+    }
+}
