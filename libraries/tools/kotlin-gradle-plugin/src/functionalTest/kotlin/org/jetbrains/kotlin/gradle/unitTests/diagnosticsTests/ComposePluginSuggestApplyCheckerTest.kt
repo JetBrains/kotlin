@@ -5,21 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import com.android.builder.errors.EvalIssueException
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 
 class ComposePluginSuggestApplyCheckerTest {
+    private val isAgp850AndAbove get() = AndroidGradlePluginVersion.current >= AndroidGradlePluginVersion(8, 5, 0)
 
     @Test
     fun shouldSuggestToApplyComposePluginInAndroidProject() {
         val project = buildProjectWithKotlinAndroidPlugin()
 
-        project.evaluate()
-
-        project.checkDiagnostics("ComposePluginSuggestApplyChecker")
+        if (isAgp850AndAbove) {
+            val exception = assertFailsWithChainedCause<EvalIssueException> { project.evaluate() }
+            assertContains("Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required", exception.message)
+        } else {
+            project.evaluate()
+            project.checkDiagnostics("ComposePluginSuggestApplyChecker")
+        }
     }
 
     @Test
