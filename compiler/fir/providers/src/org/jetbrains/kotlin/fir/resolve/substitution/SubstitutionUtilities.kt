@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.types.*
 
+/**
+ * For capturing of captured types see [org.jetbrains.kotlin.fir.types.captureCapturedType] which doesn't have the issue of KT-64024.
+ */
 inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): ConeCapturedType? {
     val innerType = this.lowerType ?: this.constructor.projection.type
     // TODO(KT-64024): This early return looks suspicious.

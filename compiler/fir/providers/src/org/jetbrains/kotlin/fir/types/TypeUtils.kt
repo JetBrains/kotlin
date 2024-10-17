@@ -520,6 +520,29 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
     }
 }
 
+/**
+ * To understand why we need to do capturing on captured types, consider the following case:
+ *
+ * ```kt
+ * class Box<T>(val value: T)
+ * interface Foo<T> { fun bar() }
+ *
+ * fun test(x: Box<out Foo<*>>) {
+ *     x.value.bar()
+ * }
+ * ```
+ *
+ * The type of `x.value` is `CapturedType(out Foo<*>)`.
+ * Note that capturing only applies to the top level, i.e., nested projections are not captured.
+ *
+ * When we use the expression with type `CapturedType(out Foo<*>)` as an argument or receiver of another call,
+ * it becomes necessary to support capturing of captured types,
+ * otherwise the star projection in `CapturedType(out Foo<*>)` is not properly captured.
+ *
+ * The method is a version of [org.jetbrains.kotlin.fir.resolve.substitution.substitute] specifically for capturing
+ * that doesn't have the issue of KT-64024 where nothing is done when neither [ConeCapturedType.lowerType]
+ * nor [ConeCapturedTypeConstructor.projection] need capturing.
+ */
 private fun ConeTypeContext.captureCapturedType(type: ConeCapturedType): ConeCapturedType? {
     val capturedProjection = type.constructor.projection.type
         ?.let { captureFromExpressionInternal(it) }
