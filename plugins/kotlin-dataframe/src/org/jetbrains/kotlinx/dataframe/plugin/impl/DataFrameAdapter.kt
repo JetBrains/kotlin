@@ -17,7 +17,7 @@ interface ConeTypesAdapter
 
 private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> = map {
     when (it) {
-        is SimpleDataColumn -> DataColumn.create(it.name, listOf(it.type))
+        is SimpleDataColumn -> DataColumn.createUnsafe(it.name, listOf(it.type))
         is SimpleColumnGroup -> DataColumn.createColumnGroup(it.name, it.columns().map())
         is SimpleFrameColumn -> DataColumn.createFrameColumn(it.name, listOf(it.columns().map()))
     }
