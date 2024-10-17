@@ -100,7 +100,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * Returns a set of source sets that have a [dependsOn] relationship with this source set.
      *
      * @return a set of source sets added with `dependsOn` relationship at the current state of configuration.
-     * Note that Kotlin Gradle plugin may add additional required
+     * Note that the Kotlin Gradle plugin may add additional required
      * source sets on late stages of Gradle configuration and the most reliable way to get a full final set is
      * to use this property as a task input with [org.gradle.api.provider.Provider] type.
      */
