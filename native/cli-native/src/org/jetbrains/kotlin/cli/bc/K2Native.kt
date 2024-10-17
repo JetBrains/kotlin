@@ -160,12 +160,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
                     spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
                 }
-                spawnedConfiguration.setupConfiguration()
                 val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
-                // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
-                // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
-                // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
-                // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
+                // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the user keys for 1st compilation stage
+                // In order to keep them, they should be re-initialized after the invocation of `prepareEnvironment()`
                 spawnedConfiguration.setupConfiguration()
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             }
