@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -231,6 +232,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs
             LOG.debug { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
+
             LOG.error("Could not clean up K2 caches", e)
         }
     }
