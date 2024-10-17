@@ -48,13 +48,7 @@ sourceSets {
     }
 }
 
-val testDataDir = projectDir.resolve("testData")
-
-val test by nativeTest("test", null) {
-    inputs.dir(testDataDir)
-    workingDir = rootDir
-    useJUnitPlatform { }
-}
+val test by nativeTest("test", null)
 
 publish()
 

@@ -7,7 +7,6 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.Comparators
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -22,7 +21,7 @@ public class SirAsSwiftSourcesPrinter(
 
     public companion object {
 
-        public val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
+        private val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
             listOf("fatalError()")
         )
 

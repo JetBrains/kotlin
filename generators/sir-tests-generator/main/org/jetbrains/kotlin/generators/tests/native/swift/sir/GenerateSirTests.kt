@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.generators.tests.native.swift.sir
 
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.swiftexport.ide.AbstractSymbolToSirTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
 import org.jetbrains.kotlin.generators.tests.frontendFir
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftExportExecutionTest
@@ -16,7 +21,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.AbstractKlibBasedSwiftRunnerT
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
         testGroup(
             "native/swift/sir-compiler-bridge/tests-gen/",
             "native/swift/sir-compiler-bridge/testData"
@@ -41,7 +46,7 @@ fun main() {
                 model("", extension = null, recursive = false)
             }
         }
-        // Swift Export
+        // Swift Export Standalone
         testGroup(
             "native/swift/swift-export-standalone/tests-gen/",
             "native/swift/swift-export-standalone/testData/execution"
@@ -54,6 +59,24 @@ fun main() {
                 ),
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+        // Swift Export IDE
+        testGroup(
+            "native/swift/swift-export-ide/tests-gen/",
+            "native/swift/swift-export-ide/testData"
+        ) {
+            testClass<AbstractSymbolToSirTest>(
+                suiteTestClassName = "SwiftExportInIdeTestGenerated",
+            ) {
+                model(recursive = false)
+                val data = AnalysisApiTestConfiguratorFactoryData(
+                    FrontendKind.Fir,
+                    TestModuleKind.Source,
+                    AnalysisSessionMode.Normal,
+                    AnalysisApiMode.Ide
+                )
+                method(FrontendConfiguratorTestModel(AnalysisApiFirTestConfiguratorFactory::class, data))
             }
         }
     }
