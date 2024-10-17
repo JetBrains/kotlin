@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.Variance
 open class IrFactory(
     val stageController: StageController,
 ) {
-    protected open fun <T : IrDeclaration> T.declarationCreated(): T {
+    open fun <T : IrDeclaration> T.declarationCreated(): T {
         return this
     }
 

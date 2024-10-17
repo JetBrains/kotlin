@@ -142,22 +142,22 @@ fun IrConstantArrayImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    initElements: List<IrConstantValue>,
+    elements: List<IrConstantValue>,
 ) = IrConstantArrayImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ).apply {
-    elements.addAll(initElements)
+    this.elements.addAll(elements)
 }
 
 fun IrConstantObjectImpl(
     startOffset: Int,
     endOffset: Int,
     constructor: IrConstructorSymbol,
-    initValueArguments: List<IrConstantValue>,
-    initTypeArguments: List<IrType>,
+    valueArguments: List<IrConstantValue>,
+    typeArguments: List<IrType>,
     type: IrType = constructor.owner.constructedClassType,
 ) = IrConstantObjectImpl(
     constructorIndicator = null,
@@ -166,8 +166,8 @@ fun IrConstantObjectImpl(
     constructor = constructor,
     type = type,
 ).apply {
-    valueArguments.addAll(initValueArguments)
-    typeArguments.addAll(initTypeArguments)
+    this.valueArguments.addAll(valueArguments)
+    this.typeArguments.addAll(typeArguments)
 }
 
 fun IrConstantPrimitiveImpl(
