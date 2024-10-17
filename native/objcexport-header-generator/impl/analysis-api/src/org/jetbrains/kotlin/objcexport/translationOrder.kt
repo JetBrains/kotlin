@@ -51,9 +51,9 @@ internal val StableNamedOrder: Comparator<KaNamedSymbol> = compareBy { it.name.t
 
 internal fun KaSession.getStableCallableOrder(): Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
     when (it) {
-        is KaConstructorSymbol -> 0
+        is KaConstructorSymbol -> -1
         is KaNamedFunctionSymbol -> 1
-        is KaPropertySymbol -> 2
+        is KaPropertySymbol -> if (isObjCProperty(it)) 2 else 0
         else -> 3
     }
 }.thenComparing(getStableConstructorOrder())

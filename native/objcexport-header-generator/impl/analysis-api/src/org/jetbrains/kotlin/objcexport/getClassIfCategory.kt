@@ -44,6 +44,6 @@ fun KaSession.getClassIfCategory(type: KaType?): KaClassSymbol? {
     if (type == null) return null
     val isInterface = (type.symbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE
     val isInline = (type.symbol as? KaNamedClassSymbol)?.isInline
-    return if (isInterface == false && isInline == false && type.isAnyType == false && isMappedObjCType(type) == false)
+    return if (!isInterface && isInline == false && !type.isAnyType && !isMappedObjCType(type))
         type.symbol as? KaClassSymbol else null
 }
