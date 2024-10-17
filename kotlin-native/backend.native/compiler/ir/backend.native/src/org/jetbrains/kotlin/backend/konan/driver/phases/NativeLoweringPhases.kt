@@ -307,10 +307,16 @@ private val testProcessorPhase = createFileLoweringPhase(
         name = "TestProcessor",
 )
 
-private val delegationPhase = createFileLoweringPhase(
-        lowering = ::PropertyDelegationLowering,
-        name = "Delegation",
-        prerequisite = setOf(volatilePhase)
+private val delegatedPropertyOptimizationPhase = createFileLoweringPhase(
+        lowering = ::DelegatedPropertyOptimizationLowering,
+        name = "DelegatedPropertyOptimization",
+        prerequisite = setOf()
+)
+
+private val propertyReferencePhase = createFileLoweringPhase(
+        lowering = ::PropertyReferenceLowering,
+        name = "PropertyReference",
+        prerequisite = setOf(volatilePhase, delegatedPropertyOptimizationPhase)
 )
 
 private val functionReferencePhase = createFileLoweringPhase(
@@ -321,7 +327,7 @@ private val functionReferencePhase = createFileLoweringPhase(
 private val staticCallableReferenceOptimizationPhase = createFileLoweringPhase(
         lowering = ::StaticCallableReferenceOptimization,
         name = "StaticCallableReferenceOptimization",
-        prerequisite = setOf(functionReferencePhase, delegationPhase)
+        prerequisite = setOf(functionReferencePhase, propertyReferencePhase)
 )
 
 private val enumWhenPhase = createFileLoweringPhase(
@@ -586,7 +592,8 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         innerClassPhase,
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
-        delegationPhase,
+        delegatedPropertyOptimizationPhase,
+        propertyReferencePhase,
         staticCallableReferenceOptimizationPhase,
         singleAbstractMethodPhase,
         enumWhenPhase,

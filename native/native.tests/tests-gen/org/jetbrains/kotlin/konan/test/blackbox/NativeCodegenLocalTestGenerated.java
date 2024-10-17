@@ -929,6 +929,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("delegated_references_are_const.kt")
+    public void testDelegated_references_are_const() {
+      runTest("native/native.tests/testData/codegen/fileCheck/delegated_references_are_const.kt");
+    }
+
+    @Test
     @TestMetadata("enumWithDifferentFileOrder.kt")
     public void testEnumWithDifferentFileOrder() {
       runTest("native/native.tests/testData/codegen/fileCheck/enumWithDifferentFileOrder.kt");

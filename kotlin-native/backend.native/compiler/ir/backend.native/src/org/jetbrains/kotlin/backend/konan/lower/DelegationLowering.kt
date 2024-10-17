@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -48,35 +43,14 @@ internal val KonanSymbols.mutablePropertiesConstructors
             listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)
     )
 
-internal class PropertyDelegationLowering(val generationState: NativeGenerationState) : FileLoweringPass {
+internal class PropertyReferenceLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     private val context = generationState.context
     private val immutableSymbols = context.ir.symbols.immutablePropertiesConstructors
     private val mutableSymbols = context.ir.symbols.mutablePropertiesConstructors
     private var tempIndex = 0
 
     override fun lower(irFile: IrFile) {
-        // Somehow there is no reasonable common ancestor for IrProperty and IrLocalDelegatedProperty,
-        // so index by IrDeclaration.
-        val kProperties = mutableMapOf<IrDeclaration, IrField>()
         val generatedClasses = mutableListOf<IrClass>()
-
-        fun kPropertyField(value: IrExpressionBody, id:Int) =
-                context.irFactory.createField(
-                        SYNTHETIC_OFFSET,
-                        SYNTHETIC_OFFSET,
-                        DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                        "KPROPERTY${id}".synthesizedName,
-                        DescriptorVisibilities.PRIVATE,
-                        IrFieldSymbolImpl(),
-                        value.expression.type,
-                        isFinal = true,
-                        isStatic = true,
-                ).apply {
-                    parent = irFile
-                    annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
-                    initializer = value
-                }
-
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
@@ -85,25 +59,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
-                irBuilder.run {
-                    val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
-                    return when (receiversCount) {
-                        1 -> createKProperty(expression, this, irFile, generatedClasses) // Has receiver.
-
-                        2 -> error("Callable reference to properties with two receivers is not allowed: ${expression.symbol.owner.name}")
-
-                        else -> { // Cache KProperties with no arguments.
-                            val field = kProperties.getOrPut(expression.symbol.owner) {
-                                kPropertyField(
-                                    irExprBody(createKProperty(expression, this, irFile, generatedClasses)),
-                                    kProperties.size
-                                )
-                            }
-
-                            irGetField(null, field)
-                        }
-                    }
-                }
+                return createKProperty(expression, irBuilder, irFile, generatedClasses)
             }
 
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
@@ -116,20 +72,13 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                 if (receiversCount == 2)
                     throw AssertionError("Callable reference to properties with two receivers is not allowed: ${expression}")
                 else { // Cache KProperties with no arguments.
-                    // TODO: what about `receiversCount == 1` case?
-                    val field = kProperties.getOrPut(expression.symbol.owner) {
-                        val kProperty = irBuilder.createLocalKProperty(
-                                expression.symbol.owner.name.asString(),
-                                expression.getter.owner.returnType,
-                        )
-                        kPropertyField(irBuilder.irExprBody(kProperty), kProperties.size)
-                    }
-
-                    return irBuilder.irGetField(null, field)
+                    return irBuilder.createLocalKProperty(
+                            expression.symbol.owner.name.asString(),
+                            expression.getter.owner.returnType,
+                    )
                 }
             }
         })
-        irFile.declarations.addAll(0, kProperties.values)
         irFile.declarations.addAll(generatedClasses)
     }
 
@@ -160,7 +109,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                     if (it != null && expression.dispatchReceiver == null)
                         receiverTypes.add(it.type)
                 }
-                val getterKFunctionType = this@PropertyDelegationLowering.context.ir.symbols.getKFunctionType(
+                val getterKFunctionType = this@PropertyReferenceLowering.context.ir.symbols.getKFunctionType(
                         returnType,
                         receiverTypes
                 )
@@ -180,7 +129,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
             }
 
             val setterCallableReference = expression.setter?.owner?.takeIf { isKMutablePropertyType(expression.type) }?.let { setter ->
-                val setterKFunctionType = this@PropertyDelegationLowering.context.ir.symbols.getKFunctionType(
+                val setterKFunctionType = this@PropertyReferenceLowering.context.ir.symbols.getKFunctionType(
                         context.irBuiltIns.unitType,
                         receiverTypes + returnType
                 )
@@ -230,7 +179,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
 
     private fun NativeConstantReflectionIrBuilder.createLocalKProperty(propertyName: String,
                                                                        propertyType: IrType): IrConstantValue {
-        val symbols = this@PropertyDelegationLowering.context.ir.symbols
+        val symbols = this@PropertyReferenceLowering.context.ir.symbols
         return irConstantObject(
                 symbols.kLocalDelegatedPropertyImpl.owner,
                 mapOf(
@@ -250,9 +199,5 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
             else -> throw AssertionError("More than 2 receivers is not allowed")
         }
         return type.classifier == expectedClass
-    }
-
-    private companion object {
-        private val DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION = IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
     }
 }
