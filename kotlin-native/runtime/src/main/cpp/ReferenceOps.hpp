@@ -41,7 +41,7 @@ public:
 
     explicit DirectRefAccessor(ObjHeader*& fieldRef) noexcept : ref_(fieldRef) {}
     explicit DirectRefAccessor(ObjHeader** fieldPtr) noexcept : DirectRefAccessor(*fieldPtr) {}
-    DirectRefAccessor(const DirectRefAccessor& other) noexcept : DirectRefAccessor(other.ref_) {}
+    DirectRefAccessor(const DirectRefAccessor& other) = default;
 
     ObjHeader** location() const noexcept { return &ref_; }
 
