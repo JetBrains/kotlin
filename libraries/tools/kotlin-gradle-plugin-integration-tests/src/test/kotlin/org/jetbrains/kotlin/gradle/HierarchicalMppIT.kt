@@ -1236,8 +1236,27 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     fun `test type safe project accessors with KotlinDependencyHandler`(gradleVersion: GradleVersion) {
         project("mpp-project-with-type-safe-accessors", gradleVersion) {
+            val projectPathString = if (gradleVersion < GradleVersion.version("8.11")) {
+                "${'$'}{it.dependencyProject.path}"
+            } else {
+                "${'$'}{it.path}"
+            }
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                |
+                |afterEvaluate {
+                |    configurations
+                |        .getByName("commonMainApi")
+                |        .dependencies
+                |        .filterIsInstance<ProjectDependency>()
+                |        .forEach {
+                |             println("PROJECT_DEPENDENCY: $projectPathString")
+                |        }
+                |}
+                """.trimMargin()
+            )
             build("help") {
-                println(output)
                 val actualDependencies = output.lineSequence()
                     .filter { it.startsWith("PROJECT_DEPENDENCY: ") }
                     .map { it.removePrefix("PROJECT_DEPENDENCY: ") }
