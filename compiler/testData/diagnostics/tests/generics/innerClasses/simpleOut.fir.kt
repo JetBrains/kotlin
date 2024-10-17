@@ -7,7 +7,7 @@ class Outer<out E> {
         fun baz(): Inner = this
     }
 
-    fun bar() = Inner()
+    fun bar(): Inner = Inner()
 
     fun set(inner: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {}
 }

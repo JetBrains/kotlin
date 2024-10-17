@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-71579
 
 class In<in T>(private var t: T, private val f: (T) -> Unit) {

@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-71579
 
 class Out<out T>(private var p: T) {
