@@ -28826,6 +28826,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaults.kt");
       }
 
+      @TestMetadata("fakeOverrides.kt")
+      public void testFakeOverrides() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/fakeOverrides.kt");
+      }
+
       @TestMetadata("nestedTypeAnnotation.kt")
       public void testNestedTypeAnnotation() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/nestedTypeAnnotation.kt");

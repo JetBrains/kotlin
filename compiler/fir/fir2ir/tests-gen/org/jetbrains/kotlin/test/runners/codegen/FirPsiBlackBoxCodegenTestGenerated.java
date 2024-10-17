@@ -34079,6 +34079,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("fakeOverrides.kt")
+      public void testFakeOverrides() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/fakeOverrides.kt");
+      }
+
+      @Test
       @TestMetadata("nestedTypeAnnotation.kt")
       public void testNestedTypeAnnotation() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/nestedTypeAnnotation.kt");

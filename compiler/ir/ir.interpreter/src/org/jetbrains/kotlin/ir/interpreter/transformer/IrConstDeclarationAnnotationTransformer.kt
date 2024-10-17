@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -25,7 +26,9 @@ internal class IrConstDeclarationAnnotationTransformer(context: IrConstEvaluatio
             }
 
             override fun visitDeclaration(declaration: IrDeclarationBase) {
-                transformAnnotations(declaration)
+                if (declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+                    transformAnnotations(declaration)
+                }
                 super.visitDeclaration(declaration)
             }
         })

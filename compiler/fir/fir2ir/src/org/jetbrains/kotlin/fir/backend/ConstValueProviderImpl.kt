@@ -45,7 +45,7 @@ class ConstValueProviderImpl(
                 val end = this.source?.endOffset ?: return null
                 start to end
             } else {
-                val start = this.source?.startOffset ?: return null
+                val start = source?.startOffsetSkippingComments() ?: this.source?.startOffset ?: return null
                 val end = this.source?.endOffset ?: return null
                 start to end
             }
