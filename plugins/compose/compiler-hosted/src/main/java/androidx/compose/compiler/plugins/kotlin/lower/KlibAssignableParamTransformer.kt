@@ -123,18 +123,20 @@ class KlibAssignableParamTransformer(
                                 if (expression.symbol.owner in assignableParams) {
                                     val paramIndex =
                                         assignableParams.indexOf(expression.symbol.owner)
-                                    return IrTypeOperatorCallImpl(
-                                        expression.startOffset,
-                                        expression.endOffset,
-                                        expression.type,
-                                        IrTypeOperator.IMPLICIT_CAST,
-                                        expression.type,
-                                        IrGetValueImpl(
+                                    return super.visitTypeOperator( //TODO not sure about that as it would provoke recursive visiting of already visited IrGetValue?
+                                        IrTypeOperatorCallImpl(
                                             expression.startOffset,
                                             expression.endOffset,
-                                            expression.type.defaultParameterType(),
-                                            variables[paramIndex].symbol,
-                                            expression.origin
+                                            expression.type,
+                                            IrTypeOperator.IMPLICIT_CAST,
+                                            expression.type,
+                                            IrGetValueImpl(
+                                                expression.startOffset,
+                                                expression.endOffset,
+                                                expression.type.defaultParameterType(),
+                                                variables[paramIndex].symbol,
+                                                expression.origin
+                                            )
                                         )
                                     )
                                 }
