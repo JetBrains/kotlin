@@ -454,7 +454,6 @@ private fun IrPluginContext.runMandatoryIrValidation(
                 // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
                 //  non-private visibilities for fields.
                 checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-                checkVarargTypes = true,
             )
         )
     }
