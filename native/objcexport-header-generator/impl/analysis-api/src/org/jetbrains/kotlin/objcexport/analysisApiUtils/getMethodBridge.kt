@@ -49,20 +49,36 @@ internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol)
     }
 
     return MethodBridge(
-        bridgeReturnType(symbol),
-        analysisSession.getBridgeReceiverType(symbol),
-        valueParameters
+        returnBridge = bridgeReturnType(symbol),
+        receiver = analysisSession.getBridgeReceiverType(symbol),
+        valueParameters = valueParameters
     )
 }
 
 internal fun KaSession.getBridgeReceiverType(symbol: KaCallableSymbol): MethodBridgeReceiver {
     return if (isArrayConstructor(symbol)) {
         MethodBridgeReceiver.Factory
-    } else if (!symbol.isConstructor && isTopLevel(symbol)) {
+    } else if (!symbol.isConstructor && isTopLevelCallable(symbol)) {
         MethodBridgeReceiver.Static
     } else {
         MethodBridgeReceiver.Instance
     }
+}
+
+/**
+ * We can't use [KaSymbol.isTopLevel] directly since top level callables in Objective-C handled differently
+ * So we use [isTopLevel] for most cases.
+ * But there is one edge case is when extension receiver is containing class itself, hence property isn't top level:
+ * ```kotlin
+ * class Foo {
+ *   val Foo.bar: Int get() = 42
+ * }
+ * ```
+ */
+private fun KaSession.isTopLevelCallable(symbol: KaCallableSymbol): Boolean {
+    return if (symbol.containingSymbol is KaPropertySymbol) {
+        return (symbol.containingSymbol as KaPropertySymbol).isTopLevel
+    } else isTopLevel(symbol)
 }
 
 /**

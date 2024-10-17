@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.objcexport.getStableCallableOrder
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
+import org.jetbrains.kotlin.objcexport.getStableCallableOrder
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.junit.jupiter.api.Test
@@ -75,6 +75,28 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             val foo = getClassOrFail(file, "Foo")
             assertEquals(
                 emptyList(),
+                getCallableSymbolsForObjCMemberTranslation(foo)
+                    .sortedWith(getStableCallableOrder())
+                    .map { it as KaNamedSymbol }
+                    .map { it.name.asString() }
+            )
+        }
+    }
+
+    @Test
+    fun `test - extension properties ordered as functions`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                class Foo { 
+                  val Foo.a: Int get() = 42
+                  fun b(): Int = 42
+                }
+            """.trimIndent()
+        )
+        analyze(file) {
+            val foo = getClassOrFail(file, "Foo")
+            assertEquals(
+                listOf("a", "b"),
                 getCallableSymbolsForObjCMemberTranslation(foo)
                     .sortedWith(getStableCallableOrder())
                     .map { it as KaNamedSymbol }
