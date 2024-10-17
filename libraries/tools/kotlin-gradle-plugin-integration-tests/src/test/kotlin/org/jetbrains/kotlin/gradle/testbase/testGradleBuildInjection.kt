@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.publish.PublishingExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -76,7 +80,10 @@ annotation class BuildGradleKtsInjectionScope
 class GradleBuildScriptInjectionContext(
     val project: Project
 ) {
-    val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+    val java get() = project.extensions.getByName("java") as JavaPluginExtension
+    val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+    val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
+    val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val dependencies get() = project.dependencies
 }
 

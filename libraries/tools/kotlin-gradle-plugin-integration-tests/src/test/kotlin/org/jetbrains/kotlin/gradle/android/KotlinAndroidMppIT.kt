@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -1065,6 +1066,40 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             )
             build(":app:compileDebugKotlinAndroidApp") {
                 assertTasksExecuted(":app:compileDebugKotlinAndroidApp")
+            }
+        }
+    }
+
+    @DisplayName("KT-70380: KMM App failed to consume android binary lib when published incorrectly")
+    @GradleAndroidTest
+    @AndroidTestVersions(additionalVersions = [TestVersions.AGP.AGP_81])
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3])
+    fun kotlinAndroidHasBuildTypeAttribute(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        kotlinAndroidLibraryProject(gradleVersion, agpVersion, jdkVersion).apply {
+            buildScriptInjection {
+                applyMavenPublishPlugin()
+                publishing.publications.create("default", MavenPublication::class.java) { publication ->
+                    publication.groupId = "com.example"
+                    publication.artifactId = "lib"
+                    publication.version = "1.0"
+
+                    project.afterEvaluate {
+                        publication.from(project.components.getByName("release"))
+                    }
+                }
+            }
+
+            build("publish") {
+                if (agpVersion == TestVersions.AGP.AGP_73) {
+                    // AGP 7.3 configures Publication automatically, so no diagnostic should be reported
+                    assertNoDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
+                } else {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
+                }
             }
         }
     }
