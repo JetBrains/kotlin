@@ -281,6 +281,16 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(createChangeAction("module1/src/Base.kt", newContent), null, null)
     }
 
+    fun testUseSerializationPluginWithClassesInOut() {
+        assertTrue(IncrementalCompilation.isEnabledForJvm())
+        initProject(LibraryDependency.SERIALIZATION)
+        rebuildAllModules()
+        val jpsCaches = myDataStorageRoot.resolve("targets/java-production")
+        assertExists(jpsCaches)
+        assertTrue(jpsCaches.deleteRecursively())
+        checkWhen(createTouchAction("src/Bar.kt"), null, null)
+    }
+
     private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
         initProject(LibraryDependency.JVM_MOCK_RUNTIME)
 
