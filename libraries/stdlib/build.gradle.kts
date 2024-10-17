@@ -52,7 +52,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
-val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
+val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins/kotlin"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
 val jsDir = "${projectDir}/js"
@@ -642,17 +642,6 @@ tasks {
     val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
-        into("jvmMain") {
-            from(jvmBuiltinsDir) {
-                into("kotlin")
-            }
-            from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
-                into("jdk7")
-            }
-            from(kotlin.sourceSets["jvmMainJdk8"].kotlin) {
-                into("jdk8")
-            }
-        }
     }
 
     dexMethodCount {

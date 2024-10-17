@@ -67,7 +67,7 @@ val copySources by task<Sync> {
             "kotlin/io/Serializable.kt",
         )
 
-    from(stdlibProjectDir.resolve("jvm/builtins"))
+    from(stdlibProjectDir.resolve("jvm/builtins/kotlin"))
         .include("*.kt")
 
     into(layout.buildDirectory.dir("src/jvm"))
