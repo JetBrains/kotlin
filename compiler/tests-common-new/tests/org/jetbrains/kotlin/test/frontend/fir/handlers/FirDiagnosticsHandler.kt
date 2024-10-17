@@ -665,6 +665,11 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return cache.getOrPut(info) { computeDiagnostics(info) }
     }
 
+    val containsErrorDiagnostics: Boolean
+        get() = cache.values.any { info ->
+            info.values.any { it.diagnostic.severity == Severity.ERROR }
+        }
+
     fun containsErrors(info: FirOutputArtifact): Boolean {
         return getFrontendDiagnosticsForModule(info).values.any { it.diagnostic.severity == Severity.ERROR }
     }

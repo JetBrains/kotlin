@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorSer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
 
 class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHandler(testServices, failureDisablesNextSteps = true) {
@@ -29,9 +30,11 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirDiagnosticCollectorService))
 
+    private val seenModules = mutableSetOf<TestModule>()
+
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
-            var hasError = false
+            seenModules.add(part.module)
 
             val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in part.module.directives
 
@@ -40,7 +43,6 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
                 for ((diagnostic, mode) in diagnostics) {
                     if (mode == KmpCompilationMode.METADATA) continue
                     if (diagnostic.severity == Severity.ERROR) {
-                        hasError = true
                         if (!ignoreErrors) {
                             val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
                             val range = diagnostic.textRanges.first()
@@ -52,12 +54,19 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
                     }
                 }
             }
-
-            if (!hasError && ignoreErrors) {
-                assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
-            }
         }
     }
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        // The `IGNORE_FIR_DIAGNOSTICS` directive is global and could have been used for
+        // a module that we haven't yet analyzed.
+        // See: `compiler/testData/diagnostics/tests/multiplatform/topLevelFun/inlineFun.kt`
+
+        val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in testServices.moduleStructure.allDirectives
+        val hasError = testServices.firDiagnosticCollectorService.containsErrorDiagnostics
+
+        if (!hasError && ignoreErrors) {
+            assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
+        }
+    }
 }
