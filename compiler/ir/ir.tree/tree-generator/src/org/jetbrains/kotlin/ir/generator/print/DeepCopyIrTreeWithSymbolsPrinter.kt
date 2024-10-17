@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding
-import org.jetbrains.kotlin.ir.generator.declarationOriginType
+import org.jetbrains.kotlin.ir.generator.IrTree.suspendableExpression
+import org.jetbrains.kotlin.ir.generator.IrTree.suspensionPoint
 import org.jetbrains.kotlin.ir.generator.deepCopyTypeRemapperType
 import org.jetbrains.kotlin.ir.generator.elementTransformerVoidType
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
+import org.jetbrains.kotlin.ir.generator.model.Implementation
+import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.obsoleteDescriptorBasedApiAnnotation
 import org.jetbrains.kotlin.ir.generator.symbolRemapperType
 import org.jetbrains.kotlin.ir.generator.typeRemapperType
@@ -59,12 +62,11 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     override val constructorParameters: List<PrimaryConstructorParameter> = listOf(symbolRemapperParameter, typeRemapperParameter)
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
-        // TODO: remove mapDeclarationOrigin and mapStatementOrigin
         // TODO: check if import still useful
         addImport(ArbitraryImportable("org.jetbrains.kotlin.utils", "memoryOptimizedMap"))
         addImport(ArbitraryImportable("org.jetbrains.kotlin.ir.types", "IrType"))
         addImport(ArbitraryImportable("org.jetbrains.kotlin.ir", "IrStatement"))
-        addImport(ArbitraryImportable("org.jetbrains.kotlin.ir.expressions.impl", "*"))
+        addImport(ArbitraryImportable("org.jetbrains.kotlin.ir", "IrImplementationDetail"))
 
         printPropertyDeclaration(
             name = "transformedModule",
@@ -104,6 +106,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     private fun ImportCollectingPrinter.printUtils() {
         printlnMultiLine(
             """
+            // TODO: remove these two functions and others that can be safely removed
             protected fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
             protected fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
         
@@ -129,8 +132,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             
             private fun <T : IrFunction> T.transformFunctionChildren(declaration: T): T =
                 apply {
-                    transformAnnotations(declaration)
-                    copyTypeParametersFrom(declaration)
                     typeRemapper.withinScope(this) {
                         dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
                         extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
@@ -148,14 +149,14 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 declaration.factory.createTypeParameter(
                     startOffset = declaration.startOffset,
                     endOffset = declaration.endOffset,
-                    origin = mapDeclarationOrigin(declaration.origin),
+                    origin = declaration.origin,
                     name = declaration.name,
                     symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
                     variance = declaration.variance,
                     index = declaration.index,
                     isReified = declaration.isReified,
                 ).apply {
-                    transformAnnotations(declaration)
+                    annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
                 }
         
             protected fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
@@ -189,25 +190,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 }
             }
         
-            private fun shallowCopyCall(expression: IrCall): IrCall {
-                val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
-                return IrCallImplWithShape(
-                    startOffset = expression.startOffset,
-                    endOffset = expression.endOffset,
-                    type = expression.type.remapType(),
-                    symbol = newCallee,
-                    typeArgumentsCount = expression.typeArgumentsCount,
-                    valueArgumentsCount = expression.valueArgumentsCount,
-                    contextParameterCount = expression.targetContextParameterCount,
-                    hasDispatchReceiver = expression.targetHasDispatchReceiver,
-                    hasExtensionReceiver = expression.targetHasExtensionReceiver,
-                    origin = mapStatementOrigin(expression.origin),
-                    superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass)
-                ).apply {
-                    copyRemappedTypeArgumentsFrom(expression)
-                }.processAttributes(expression)
-            }
-        
             protected fun <T : IrMemberAccessExpression<*>> T.transformReceiverArguments(original: T): T =
                 apply {
                     dispatchReceiver = original.dispatchReceiver?.transform()
@@ -222,16 +204,12 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             }
         
             private val transformedLoops = HashMap<IrLoop, IrLoop>()
-        
-            private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
-                transformedLoops.getOrDefault(irLoop, irLoop)
             """
         )
     }
 
     override fun printMethodsForElement(element: Element) {
-        // FIXME: Use a more elegant solution
-        if (element == functionWithLateBinding || element == propertyWithLateBinding) return
+        if (element in setOf(functionWithLateBinding, propertyWithLateBinding, suspendableExpression, suspensionPoint)) return
 
         printer.run {
             if (element.isRootElement) {
@@ -244,15 +222,62 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 return
             }
 
+            if (element.isSubclassOf(IrTree.expressionBody)) {
+                // TODO: `printVisitMethodDeclaration` 3 times, can be fixed later
+                println()
+                printVisitMethodDeclaration(element, hasDataParameter = false, override = true, returnType = element)
+                printBlock {
+                    printlnMultiLine(
+                        """
+                    val expression = body.expression.transform()
+                    return IrExpressionBodyImpl(
+                        startOffset = expression.startOffset,
+                        endOffset = expression.endOffset,
+                        expression = expression,
+                        constructorIndicator = null,
+                    )
+                    """
+                    )
+                }
+                return
+            }
+
+            if (element.isSubclassOf(IrTree.blockBody)) {
+                println()
+                printVisitMethodDeclaration(element, hasDataParameter = false, override = true, returnType = element)
+                println(" =")
+                withIndent {
+                    // TODO: maybe some parts can be automatic
+                    printlnMultiLine(
+                        """
+                        IrBlockBodyImpl(
+                            startOffset = body.startOffset,
+                            endOffset = body.endOffset,
+                            constructorIndicator = null
+                        ).apply {
+                            statements.addAll(body.statements.memoryOptimizedMap { it.transform() })
+                        }
+                        """
+                    )
+                }
+                return
+            }
+
             if (element.implementations.isEmpty()) return
             println()
+            if (element.isSubclassOf(IrTree.declaration) || element.isSubclassOf(IrTree.body)) {
+                println("@OptIn(IrImplementationDetail::class)")
+            }
             printVisitMethodDeclaration(element, hasDataParameter = false, override = true, returnType = element)
             println(" =")
             withIndent {
                 val implementation = element.implementations.singleOrNull() ?: error("Ambiguous implementation")
                 print(implementation.render())
-                val constructorArguments: List<Pair<String, Field>> = implementation.fieldsInConstructor.map { it.name to it }
-                val fieldsInApply = implementation.fieldsInBody
+                if (withShape(element)) {
+                    print("WithShape")
+                }
+                val constructorArguments: List<Pair<String, Field>> =
+                    implementation.constructorArguments()
 
                 println("(")
                 withIndent {
@@ -261,49 +286,109 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         copyField(element, field)
                         println(",")
                     }
+                    if (element.isSubclassOf(IrTree.errorDeclaration)) {
+                        println("origin = IrDeclarationOrigin.DEFINED,")
+                    }
+                    if (withShape(element)) {
+                        printlnMultiLine(
+                            """
+                            typeArgumentsCount = expression.typeArgumentsCount,
+                            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+                            hasExtensionReceiver = expression.targetHasExtensionReceiver,
+                            """
+                        )
+                        // TODO: is it better to use `isSubclassOf`
+                        if (element.name != "PropertyReference"){
+                            printlnMultiLine(
+                                """
+                                valueArgumentsCount = expression.valueArgumentsCount,
+                                contextParameterCount = expression.targetContextParameterCount,
+                                """
+                            )
+                        }
+                    }
                 }
-                print(").apply")
-                printBlock {
-                    if (element.isSubclassOf(IrTree.mutableAnnotationContainer)) {
-                        println("transformAnnotations(", element.visitorParameterName, ")")
-                    }
-                    if (element.isSubclassOf(IrTree.typeParametersContainer)) {
-                        println("copyTypeParametersFrom(", element.visitorParameterName, ")")
-                    }
-                    if (element.isSubclassOf(IrTree.declarationContainer)) {
-                        println(element.visitorParameterName, ".transformDeclarationsTo(this)")
-                    }
-                    if (element.isSubclassOf(IrTree.attributeContainer)) {
-                        println("processAttributes(", element.visitorParameterName, ")")
-                    }
-                }
+                // TODO: check if the set of included is actually smaller
+                val excludedApplyFields = setOf(
+                    "originalBeforeInline",
+                    "attributeOwnerId",
+                    "startOffset",
+                    "endOffset",
+                    "metadata",
+                    "typeParameters",
+                    "dispatchReceiver",
+                    "dispatchReceiverParameter",
+                    "extensionReceiver",
+                    "extensionReceiverParameter",
+                    "valueParameters",
+                    "returnType",
+                    "origin",
+                    "type",
+                    "source",
+                    "correspondingPropertySymbol",
+                    "contextReceiverParametersCount",
+                    "module",
+                )
+                val excludedApplyFieldsFor = mapOf(
+                    "body" to setOf("Constructor", "SimpleFunction")
+                )
+                val fieldsInApply =
+                    implementation.allFields.filter { it.isMutable && it.name !in excludedApplyFields }. filter {
+                        val excludedFields = excludedApplyFieldsFor[it.name]
+                        excludedFields == null || element.name !in excludedFields
+                    } - implementation.constructorArguments().map { it.second }
+                printApply(element, fieldsInApply)
             }
         }
     }
 
     private fun ImportCollectingPrinter.copyField(element: Element, field: Field) {
-        copyValue(field.typeRef, element.visitorParameterName, ".", field.name)
+        if (field is ListField) {
+            print(element.visitorParameterName, ".", field.name, field.call(), "memoryOptimizedMap")
+            print(" { ")
+            copyValue(element, field, "it")
+            print(" }")
+        } else {
+            copyValue(element, field, element.visitorParameterName, ".", field.name)
+            if (element.isSubclassOf(IrTree.property) && field.name in setOf("backingField", "getter", "setter")) {
+                print("?.also { it.correspondingPropertySymbol = symbol }")
+            }
+        }
     }
 
-    private fun ImportCollectingPrinter.copyValue(typeRef: TypeRef, vararg valueArgs: Any?) {
+    // TODO: fix signature (element)
+    private fun ImportCollectingPrinter.copyValue(element: Element, field: Field, vararg valueArgs: Any?) {
+        val typeRef = if (field is ListField) {
+            field.baseType
+        } else {
+            field.typeRef
+        }
         val safeCall = if (typeRef.nullable) "?." else "."
+        if (element.name == "When"){
+            print("")
+        }
         when {
             typeRef !is ClassOrElementRef -> {
                 print(*valueArgs)
             }
             typeRef.isSymbol() -> {
-                if (typeRef.nullable) {
-                    print(*valueArgs, "?.let(", symbolRemapperParameter.name, "::getReferenced", typeRef.getIrSymbolName(), ")")
-                } else {
-                    print(symbolRemapperParameter.name, ".getReferenced", typeRef.getIrSymbolName(), "(", *valueArgs, ")")
+                when {
+                    element.isSubclassOf(IrTree.inlinedFunctionBlock) -> {
+                        print(*valueArgs)
+                    }
+                    typeRef.nullable -> {
+                        print(*valueArgs, "?.let(", symbolRemapperParameter.name, "::", element.getIrFunctionForSymbol(field), typeRef.getIrSymbolName(), ")")
+                    }
+                    else -> {
+                        print(symbolRemapperParameter.name, ".", element.getIrFunctionForSymbol(field), typeRef.getIrSymbolName(), "(", *valueArgs, ")")
+                    }
                 }
+            }
+            typeRef.isSameClassAs(IrTree.loop) -> {
+                print("transformedLoops.getOrDefault(", *valueArgs, ", ", *valueArgs, ")")
             }
             typeRef is ElementOrRef<*> -> {
                 print(*valueArgs, safeCall, "transform()")
-            }
-            // TODO: remove
-            typeRef.isSameClassAs(declarationOriginType) -> {
-                print("mapDeclarationOrigin(", *valueArgs, ")")
             }
             typeRef.isSameClassAs(irTypeType) -> {
                 print(*valueArgs, safeCall, "remapType()")
@@ -318,8 +403,17 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         }
     }
 
-    fun ClassOrElementRef.isSymbol(): Boolean =
+    private fun ClassOrElementRef.isSymbol(): Boolean =
         packageName == "org.jetbrains.kotlin.ir.symbols.impl" || packageName == "org.jetbrains.kotlin.ir.symbols"
+
+    private fun Element.getIrFunctionForSymbol(field: Field): String = when {
+        // TODO: do it better
+        field.name != "symbol" -> "getReferenced"
+        isSubclassOf(IrTree.declaration) || isSubclassOf(IrTree.packageFragment) || isSubclassOf(IrTree.returnableBlock) -> "getDeclared"
+        isSubclassOf(IrTree.expression) -> "getReferenced"
+        // TODO: better message
+        else -> throw IllegalArgumentException("Unsupported element type: $this")
+    }
 
     fun ClassOrElementRef.getIrSymbolName(): String =
         typeName.replace("Ir", "").replace("Symbol", "")
@@ -327,4 +421,133 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
 
     fun ClassOrElementRef.isSameClassAs(other: ClassOrElementRef): Boolean =
         packageName == other.packageName && typeName == other.typeName
+
+    private fun Implementation.constructorArguments(): List<Pair<String, Field>> {
+        val alwaysExcludedConstructorFields = setOf("valueArguments", "typeArguments")
+        val excludedConstructorFields = mapOf(
+            "origin" to setOf("EnumConstructorCall", "DelegatingConstructorCall", "ErrorDeclaration"),
+            "type" to setOf("ConstantPrimitive"),
+            "source" to setOf("ConstructorCall"),
+        )
+        // TODO: probably better with subtypes
+        val includedBodyFields = mapOf(
+            "branches" to setOf("When"),
+            "result" to setOf("Catch"),
+            "elements" to setOf("Vararg", "ConstantArray"),
+            "tryResult" to setOf("Try"),
+            "catches" to setOf("Try"),
+            "finallyExpression" to setOf("Try"),
+            "arguments" to setOf("StringConcatenation"),
+            "receiver" to setOf("SetField", "GetField"),
+            "value" to setOf("SetField"),
+            "statements" to setOf("BlockBody", "InlinedFunctionBlock", "ReturnableBlock", "Composite", "Block"),
+            "valueArguments" to setOf("ConstantObject"),
+            "typeArguments" to setOf("ConstantObject")
+        )
+        val filteredConstructorFields = fieldsInConstructor.filter {
+            it.name !in alwaysExcludedConstructorFields &&
+                    excludedConstructorFields[it.name]?.contains(element.name) != true
+        }
+        val filteredBodyFields = fieldsInBody.filter {
+            val includedElements = includedBodyFields[it.name]
+            includedElements != null && element.name in includedElements
+        }
+        val allFields = filteredConstructorFields + filteredBodyFields
+        return allFields.map { it.name to it }
+    }
+
+    private fun withShape(element: Element): Boolean {
+        // TODO: is it better to use `isSubclassOf`
+        val elementsWithShape =
+            setOf("ConstructorCall", "FunctionReference", "PropertyReference", "DelegatingConstructorCall", "EnumConstructorCall", "Call")
+        return element.name in elementsWithShape
+    }
+
+    private fun ImportCollectingPrinter.printApply(element: Element, applyFields: List<Field>) {
+        if (
+            element.isSubclassOf(IrTree.mutableAnnotationContainer) ||
+            element.isSubclassOf(IrTree.typeParametersContainer) ||
+            element.isSubclassOf(IrTree.declarationContainer) ||
+            element.isSubclassOf(IrTree.attributeContainer) ||
+            element.isSubclassOf(IrTree.moduleFragment) ||
+            applyFields.isNotEmpty()
+        ) {
+            print(").apply")
+            printBlock {
+                if (element.isSubclassOf(IrTree.script)){
+                    printScriptApply(element)
+                    return@printBlock
+                }
+                if (element.isSubclassOf(IrTree.loop)){
+                    println("transformedLoops[", element.visitorParameterName, "] = this")
+                }
+                applyFields.forEach { field ->
+                    print(field.name, " = ")
+                    copyField(element, field)
+                    println()
+                }
+                // TODO: data structure for these if-conditions
+                if (element.isSubclassOf(IrTree.typeParametersContainer)) {
+                    println("copyTypeParametersFrom(", element.visitorParameterName, ")")
+                }
+                if (element.isSubclassOf(IrTree.declarationContainer)) {
+                    println(element.visitorParameterName, ".transformDeclarationsTo(this)")
+                }
+                if (element.isSubclassOf(IrTree.attributeContainer)) {
+                    println("processAttributes(", element.visitorParameterName, ")")
+                }
+                if (element.isSubclassOf(IrTree.memberAccessExpression) && !element.isSubclassOf(IrTree.localDelegatedPropertyReference)){
+                    println("copyRemappedTypeArgumentsFrom(", element.visitorParameterName, ")")
+                    println("transformValueArguments(", element.visitorParameterName, ")")
+                }
+                if (element.isSubclassOf(IrTree.function)){
+                    println("transformFunctionChildren(", element.visitorParameterName, ")")
+                }
+                if (element.isSubclassOf(IrTree.simpleFunction)){
+                    addImport(ArbitraryImportable("org.jetbrains.kotlin.ir.symbols", "IrSimpleFunctionSymbol"))
+                    printlnMultiLine(
+                        """
+                        overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
+                            symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
+                        }
+                        """
+                    )
+                }
+                if (element.isSubclassOf(IrTree.errorCallExpression) || element.isSubclassOf(IrTree.dynamicOperatorExpression)) {
+                    println("expression.arguments.transformTo(arguments)")
+                }
+                if (element.isSubclassOf(IrTree.file)) {
+                    println("module = transformedModule ?: declaration.module")
+                }
+                if (element.isSubclassOf(IrTree.moduleFragment)) {
+                    printlnMultiLine(
+                        """
+                        this@DeepCopyIrTreeWithSymbols.transformedModule = this
+                        files += declaration.files.transform()
+                        this@DeepCopyIrTreeWithSymbols.transformedModule = null
+                        """
+                    )
+                }
+            }
+        } else {
+            println(")")
+        }
+    }
+
+    private fun ImportCollectingPrinter.printScriptApply(element: Element) {
+        printlnMultiLine(
+            """
+            thisReceiver = declaration.thisReceiver?.transform()
+            declaration.statements.mapTo(statements) { it.transform() }
+            importedScripts = declaration.importedScripts
+            resultProperty = declaration.resultProperty
+            earlierScripts = declaration.earlierScripts
+            earlierScriptsParameter = declaration.earlierScriptsParameter
+            explicitCallParameters = declaration.explicitCallParameters.memoryOptimizedMap { it.transform() }
+            implicitReceiversParameters = declaration.implicitReceiversParameters.memoryOptimizedMap { it.transform() }
+            providedPropertiesParameters = declaration.providedPropertiesParameters.memoryOptimizedMap { it.transform() }
+            """
+        )
+    }
+
 }
