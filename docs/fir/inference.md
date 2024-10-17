@@ -266,20 +266,30 @@ Completion modes (`ConstraintSystemCompletionMode`) define how actively/forceful
 
 Used for call-trees in top-statement and receiver positions.
 
-- tries to fix every type variable from the Constraint System
+In this mode, the compiler:
+- tries to fix all type variables from the Constraint System
 - reports errors if there’s not enough information to fix a type variable
-- processes lambdas via [PCLA](#partially-constrained-lambda-analysis) if necessary and possible
+- tries to process lambdas via [PCLA](#partially-constrained-lambda-analysis) if necessary and possible
+
+In a general sense, `FULL` completion can be interpreted as a final attempt at completing a call-tree:
+if there are still any not-fixed type variables at the end of a `FULL` completion,
+we conclude that the call-tree cannot be completed and report corresponding compiler errors.
 
 #### `PARTIAL` completion mode
 
 Used for call-trees in value-argument positions.
 
-- doesn't try to fix type variables from the Constraint System that are related to the calls' return types
-  - (fixation of such type variables depends on the results of overload resolution for the containing call)
+In this mode, the compiler:
+- tries to fix type variables from the Constraint System only if they are not related to any call's return type
+  - (fixation of TVs that _are_ related to some call's return type depends on the results of overload resolution for the said call)
 - doesn't report errors if there’s not enough information to fix a type variable
-  - (such a type variable could be fixed later during `FULL` completion of the top-level containing call-tree)
-- doesn't process lambdas via [PCLA](#partially-constrained-lambda-analysis) (but does process lambdas via regular lambda analysis if possible)
+  - (it is possible for such type variables to be fixed later during completion of containing calls)
+- doesn't try to process lambdas via [PCLA](#partially-constrained-lambda-analysis)
   - (see [the "PCLA entry point" section of pcla.md](pcla.md#pcla-entry-point))
+
+In a general sense, `PARTIAL` completion can be interpreted as an intermediate step of completing a call-tree:
+we still try to fix type variables and analyze lambda arguments during a `PARTIAL` completion,
+but we also take into consideration the possibility of finding more type information during completion of containing calls.
 
 One could argue that the `PARTIAL` mode could or/and should have been removed
 in favor of performing a single `FULL` completion of the entire top-level containing call-tree;
