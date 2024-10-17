@@ -437,12 +437,12 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
     functionalTestCompilation.compileJavaTaskProvider.configure {
-        sourceCompatibility = JavaLanguageVersion.of(11).toString()
-        targetCompatibility = JavaLanguageVersion.of(11).toString()
+        sourceCompatibility = JavaLanguageVersion.of(17).toString()
+        targetCompatibility = JavaLanguageVersion.of(17).toString()
     }
     functionalTestCompilation.compileTaskProvider.configure {
         with(this as KotlinCompile) {
-            kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+            kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         }
     }
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
@@ -478,7 +478,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         classpath = functionalTestSourceSet.runtimeClasspath
         workingDir = projectDir
         javaLauncher.set(javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         })
         dependsOnKotlinGradlePluginInstall()
         androidSdkProvisioner {
@@ -486,6 +486,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             dependsOn(acceptLicensesTask)
         }
         maxParallelForks = 8
+        maxHeapSize = "4G" // KT-72460 to investigate why we need to change heap size
 
         testLogging {
             events("passed", "skipped", "failed")
@@ -496,8 +497,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
         val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
 
-        implementation("com.android.tools.build:gradle:7.4.2")
-        implementation("com.android.tools.build:gradle-api:7.4.2")
+        implementation("com.android.tools.build:gradle:8.7.1")
+        implementation("com.android.tools.build:gradle-api:8.7.1")
         compileOnly("com.android.tools:common:30.2.1")
         implementation(gradleKotlinDsl())
         implementation(project(":kotlin-gradle-plugin-tcs-android"))
