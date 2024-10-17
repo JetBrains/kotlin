@@ -153,6 +153,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             ConfigurationCacheStartParameterAccessor.Factory::class,
             DefaultConfigurationCacheStartParameterAccessorVariantFactory()
         )
+
+        factories.putIfAbsent(
+            MavenPublicationComponentAccessor.Factory::class,
+            DefaultMavenPublicationComponentAccessorFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
