@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import kotlin.test.*
 
@@ -36,7 +37,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
         /* Arbitrary minimal Android setup */
         android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.configureDefaults()
 
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension

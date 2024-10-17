@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.internal.project.ProjectInternal
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
@@ -73,10 +75,10 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
 
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(ApplicationExtension::class.java)
         val kotlin = multiplatformExtension
 
-        android.compileSdkVersion(28)
+        android.configureDefaults()
         kotlin.androidTarget()
         kotlin.jvm()
         kotlin.js {
@@ -118,12 +120,12 @@ class BuildKotlinToolingMetadataTest {
     fun `multiplatform Android target with different source and target compatibility`() {
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("com.android.application")
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(ApplicationExtension::class.java)
         val kotlin = multiplatformExtension
-        android.compileSdkVersion(28)
+        android.configureDefaults()
         kotlin.androidTarget()
-        android.compileOptions.setSourceCompatibility(JavaVersion.VERSION_1_6)
-        android.compileOptions.setTargetCompatibility(JavaVersion.VERSION_1_8)
+        android.compileOptions.sourceCompatibility(JavaVersion.VERSION_1_6)
+        android.compileOptions.targetCompatibility(JavaVersion.VERSION_1_8)
         project.evaluate()
 
         val androidTargetMetadata = getKotlinToolingMetadata()

@@ -92,7 +92,7 @@ class IdeBinaryDependencyResolverTest {
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
             plugins.apply("com.android.library")
-            androidExtension.compileSdkVersion(33)
+            androidExtension.configureDefaults()
             repositories.mavenCentralCacheRedirector()
         }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
@@ -34,7 +35,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
 
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension

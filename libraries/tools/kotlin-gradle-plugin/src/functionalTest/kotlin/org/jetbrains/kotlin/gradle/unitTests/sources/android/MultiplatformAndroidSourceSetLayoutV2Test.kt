@@ -14,6 +14,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
@@ -37,7 +38,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     init {
-        android.compileSdk = 31
+        android.configureDefaults()
     }
 
     @Test

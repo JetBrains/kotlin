@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.tooling.core.withClosure
 import kotlin.test.Test
@@ -31,7 +32,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
 
         /* Minimal MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
@@ -71,7 +72,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
 
         /* Custom MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension

@@ -92,12 +92,14 @@ fun Project.kotlinArtifacts(code: KotlinArtifactsExtensionImpl.() -> Unit) {
 fun Project.androidLibrary(code: LibraryExtension.() -> Unit) {
     plugins.findPlugin("com.android.library") ?: plugins.apply("com.android.library")
     val androidExtension = project.extensions.getByName("android") as LibraryExtension
+    androidExtension.configureDefaults()
     androidExtension.code()
 }
 
 fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
     plugins.findPlugin("com.android.application") ?: plugins.apply("com.android.application")
     val androidExtension = project.extensions.getByName("android") as ApplicationExtension
+    androidExtension.configureDefaults()
     androidExtension.code()
 }
 

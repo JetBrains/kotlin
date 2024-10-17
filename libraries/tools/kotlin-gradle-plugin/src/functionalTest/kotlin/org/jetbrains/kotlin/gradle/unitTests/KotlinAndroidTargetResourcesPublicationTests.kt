@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
@@ -119,7 +120,7 @@ class KotlinAndroidTargetResourcesPublicationTests {
             }
         }
         val libraryExt = (project.extensions.getByName("android") as LibraryExtension)
-        libraryExt.compileSdk = 30
+        libraryExt.configureDefaults()
         libraryExt.configure(Unit)
         return project
     }

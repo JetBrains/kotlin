@@ -13,6 +13,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertFalse
@@ -67,6 +68,6 @@ class WhenEvaluatedAndroidOrderingTest {
     private fun Project.applyAndroidLibraryPlugin() {
         project.plugins.apply("android-library")
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
+        android.configureDefaults()
     }
 }
