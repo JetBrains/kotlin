@@ -419,8 +419,8 @@ gradlePlugin {
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
+    val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
-        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
         compileClasspath += gradlePluginVariantSourceSet.output
         runtimeClasspath += gradlePluginVariantSourceSet.output
 
@@ -448,48 +448,73 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
-    tasks.register<Test>("functionalTest") {
-        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
-    }
-
-    tasks.register<Test>("functionalUnitTest") {
-        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
-        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
-    }
-
-    tasks.register<Test>("functionalRegressionTest") {
-        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
-    }
-
-    tasks.register<Test>("functionalDependencyResolutionTest") {
-        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
-    }
-
     val acceptLicensesTask = with(androidSdkProvisioner) {
         registerAcceptLicensesTask()
     }
 
-    tasks.withType<Test>().configureEach {
-        if (!name.startsWith("functional")) return@configureEach
+    fun registerFunctionalTest(
+        name: String,
+        overrideRuntimeClasspath: FileCollection? = null,
+        configure: Test.() -> Unit
+    ) {
+        tasks.register<Test>(name) {
+            systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
 
-        group = JavaBasePlugin.VERIFICATION_GROUP
-        description = "Runs functional tests"
-        testClassesDirs = functionalTestSourceSet.output.classesDirs
-        classpath = functionalTestSourceSet.runtimeClasspath
-        workingDir = projectDir
+            group = JavaBasePlugin.VERIFICATION_GROUP
+            description = "Runs functional tests"
+            testClassesDirs = functionalTestSourceSet.output.classesDirs
+            classpath = overrideRuntimeClasspath ?: functionalTestSourceSet.runtimeClasspath
+            workingDir = projectDir
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(11))
+            })
+            dependsOnKotlinGradlePluginInstall()
+            androidSdkProvisioner {
+                provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
+                dependsOn(acceptLicensesTask)
+            }
+            maxParallelForks = 8
+            println("HEAP FOR $name")
+            this.maxHeapSize = "4G"
+
+            testLogging {
+                events("passed", "skipped", "failed")
+            }
+
+            configure()
+        }
+    }
+
+    registerFunctionalTest("functionalTest") {}
+
+    registerFunctionalTest("functionalUnitTest") {
+        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+    }
+
+    registerFunctionalTest("functionalRegressionTest") {
+        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
+    }
+
+    registerFunctionalTest("functionalDependencyResolutionTest") {
+        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
+    }
+
+    val functionalTestLatestAgpRuntimeClasspath by configurations.creating {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        extendsFrom(configurations.getByName(functionalTestSourceSet.runtimeClasspathConfigurationName))
+    }
+
+    val functionalTestLatestAgpRuntimeFiles = project.files(
+        functionalTestLatestAgpRuntimeClasspath,
+        gradlePluginVariantSourceSet.output,
+        functionalTestSourceSet.output,
+    )
+
+    registerFunctionalTest("functionalTestLatestAgp", overrideRuntimeClasspath = functionalTestLatestAgpRuntimeFiles) {
         javaLauncher.set(javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         })
-        dependsOnKotlinGradlePluginInstall()
-        androidSdkProvisioner {
-            provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
-            dependsOn(acceptLicensesTask)
-        }
-        maxParallelForks = 8
-
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
     }
 
     dependencies {
@@ -498,6 +523,11 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
         implementation("com.android.tools.build:gradle:7.4.2")
         implementation("com.android.tools.build:gradle-api:7.4.2")
+
+        // In sync with [AgpCompatibilityMatrix]
+        functionalTestLatestAgpRuntimeClasspath("com.android.tools.build:gradle:8.6.0-alpha08")
+        functionalTestLatestAgpRuntimeClasspath("com.android.tools.build:gradle-api:8.6.0-alpha08")
+
         compileOnly("com.android.tools:common:30.2.1")
         implementation(gradleKotlinDsl())
         implementation(project(":kotlin-gradle-plugin-tcs-android"))
