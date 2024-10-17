@@ -584,6 +584,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("mangleGenerics"))
     }
 
+    @Test
+    fun `test - class type property translation`() {
+        doTest(headersTestDataDir.resolve("classTypePropertyTranslation"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

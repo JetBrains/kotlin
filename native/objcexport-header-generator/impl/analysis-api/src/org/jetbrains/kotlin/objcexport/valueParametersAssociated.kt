@@ -150,15 +150,6 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         else if (getClassIfCategory(symbol) == null) receiverType else null
     } else if (symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol) {
         val property = symbol.containingDeclaration as KaPropertySymbol
-        val isExtension = property.isExtension
-        val receiverType = property.receiverType
-        if (isExtension) {
-            if (getClassIfCategory(receiverType) == null) {
-                receiverType
-            } else {
-                null
-            }
-        } else null
-
+        if (property.isExtension) property.receiverType else null
     } else null
 }

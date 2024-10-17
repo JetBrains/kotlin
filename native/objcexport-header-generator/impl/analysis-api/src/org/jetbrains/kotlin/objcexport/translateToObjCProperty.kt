@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCIdType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
@@ -30,25 +29,10 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
     val type = mapReturnType(symbolGetter, getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
-    val setterName: String?
+    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
     if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
-
-    val propertySetter = symbol.setter
-    // Note: the condition below is similar to "toObjCMethods" logic in [ObjCExportedInterface.createCodeSpec].
-    val shouldBeSetterExposed = true //TODO: mapper.shouldBeExposed
-
-    if (propertySetter != null && shouldBeSetterExposed) {
-        val setterSelector = getSelector(propertySetter, getFunctionMethodBridge(propertySetter))
-        setterName = if (setterSelector == name.asSetterSelector) null else setterSelector
-    } else {
-        attributes += "readonly"
-        setterName = null
-    }
-
-    val getterSelector = getSelector(symbolGetter, getterBridge)
-    val getterName: String? = if (getterSelector != name && getterSelector.isNotBlank() == true) getterSelector else null
-    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
+    if (symbol.setter == null) attributes += "readonly"
 
     declarationAttributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
 
@@ -56,13 +40,16 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
         name = name,
         comment = analysisSession.translateToObjCComment(symbol.annotations),
         origin = analysisSession.getObjCExportStubOrigin(symbol),
-        type = type ?: ObjCIdType, //[ObjCIdType] temp fix, should be translated properly, see KT-65709
+        type = type,
         propertyAttributes = attributes,
-        setterName = if (setterName.isNullOrBlank()) null else setterName,
-        getterName = getterName,
+        setterName = getObjCPropertySetter(symbol, name),
+        getterName = getObjCPropertyGetter(symbol, name),
         declarationAttributes = declarationAttributes
     )
 }
 
-private val String.asSetterSelector: String
+internal val String.asSetterSelector: String
     get() = "set" + replaceFirstChar(Char::uppercase) + ":"
+
+internal val KaPropertySymbol.hasReservedName: Boolean
+    get() = name.asString().isReservedPropertyName
