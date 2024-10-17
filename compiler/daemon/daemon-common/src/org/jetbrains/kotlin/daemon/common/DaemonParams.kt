@@ -257,12 +257,12 @@ data class CompilerId(
  * Contains optional information about the client initiated daemon startup
  * The information is used as a shortcut for registering the client as soon as possible, avoiding issues like KT-69929
  */
-data class InitiatorInformation(
-    var clientMarkerFile: File? = null,
+data class InitialClientInformation(
+    var aliveFlagFile: File? = null,
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, InitiatorInformation::clientMarkerFile, toString = { it?.absolutePath }, fromString = { File(it) }))
+        get() = listOf(PropMapper(this, InitialClientInformation::aliveFlagFile, toString = { it?.absolutePath }, fromString = { File(it) }))
 }
 
 fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
