@@ -17,8 +17,8 @@ class A<T : <!NON_EXPORTABLE_TYPE("upper bound; foo.C")!>C<!>, S: <!NON_EXPORTAB
 interface I2<T> where T : <!NON_EXPORTABLE_TYPE("upper bound; foo.C")!>C<!>, T : <!NON_EXPORTABLE_TYPE("upper bound; foo.I")!>I<!>
 
 @JsExport
-class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; kotlin.Comparable<T>")!>val b: Comparable<T><!>) {
-    <!NON_EXPORTABLE_TYPE("property; kotlin.Comparable<T>")!>val c: Comparable<T><!> = b
+class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; kotlin.Comparable<T (of class B<T>)>")!>val b: Comparable<T><!>) {
+    <!NON_EXPORTABLE_TYPE("property; kotlin.Comparable<T (of class B<T>)>")!>val c: Comparable<T><!> = b
 }
 
 @JsExport
