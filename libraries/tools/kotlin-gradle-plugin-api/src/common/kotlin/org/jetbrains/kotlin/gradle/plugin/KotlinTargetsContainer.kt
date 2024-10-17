@@ -33,7 +33,7 @@ interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
 }
 
 /**
- * Represents a Kotlin DSL entity containing a collection of [KotlinSourceSets][KotlinSourceSet].
+ * Represents a Kotlin DSL entity containing a collection of multiple [KotlinSourceSets][KotlinSourceSet].
  */
 interface KotlinSourceSetContainer {
 
