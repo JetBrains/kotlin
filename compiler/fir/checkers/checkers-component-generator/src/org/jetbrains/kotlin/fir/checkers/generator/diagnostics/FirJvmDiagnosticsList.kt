@@ -62,7 +62,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
         val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
-        val PROPERTY_HIDES_JAVA_FIELD by warning<KtProperty>(PositioningStrategy.DECLARATION_NAME) {
+        val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
     }
