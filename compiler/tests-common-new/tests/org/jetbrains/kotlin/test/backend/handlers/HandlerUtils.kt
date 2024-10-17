@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -98,7 +99,11 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
             dumper.generateResultingDump()
         )
     } else {
-        testServices.assertions.assertFileDoesntExist(expectedFile, RENDER_ALL_DIAGNOSTICS_FULL_TEXT)
+        val renderAtLeastFrontendDiagnostics = moduleStructure.modules.any { RENDER_DIAGNOSTICS_FULL_TEXT in it.directives }
+
+        if (!renderAtLeastFrontendDiagnostics) {
+            testServices.assertions.assertFileDoesntExist(expectedFile, RENDER_ALL_DIAGNOSTICS_FULL_TEXT)
+        }
     }
 }
 
