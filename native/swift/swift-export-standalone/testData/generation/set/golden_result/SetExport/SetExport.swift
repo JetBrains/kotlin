@@ -1,5 +1,5 @@
-import KotlinRuntime
 @_implementationOnly import KotlinBridges_SetExport
+import KotlinRuntime
 
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?

@@ -1,5 +1,5 @@
-import KotlinRuntime
 @_implementationOnly import KotlinBridges_MapExport
+import KotlinRuntime
 
 public func testMapAnyLong(
     m: [KotlinRuntime.KotlinBase: Swift.Int64]
