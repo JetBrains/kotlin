@@ -66,7 +66,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 
             // We do allow automatic conversion in the other direction, though
             if (!isInvokeFromExtensionFunctionType && isImplicitInvokeCallWithExplicitReceiver) {
-                sink.reportDiagnostic(NoReceiverAllowed)
+                sink.yieldDiagnostic(NoReceiverAllowed)
             }
         }
 
@@ -96,7 +96,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         }
     }
 
-    private suspend fun resolveExtensionReceiver(
+    private fun resolveExtensionReceiver(
         receivers: List<ReceiverDescription>,
         candidate: Candidate,
         expectedType: ConeKotlinType,
@@ -118,8 +118,6 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         // TODO: store atoms for receivers in candidate
         candidate.chosenExtensionReceiver = atom
-
-        sink.yieldIfNeed()
     }
 }
 
