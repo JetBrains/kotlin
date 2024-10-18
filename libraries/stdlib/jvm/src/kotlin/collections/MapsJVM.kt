@@ -9,6 +9,7 @@
 package kotlin.collections
 
 import java.util.Comparator
+import java.util.EnumMap
 import java.util.Properties
 import java.util.SortedMap
 import java.util.TreeMap
@@ -129,6 +130,24 @@ public fun <K, V> sortedMapOf(comparator: Comparator<in K>, vararg pairs: Pair<K
 public inline fun Map<String, String>.toProperties(): Properties =
     Properties().apply { putAll(this@toProperties) }
 
+/**
+ * Converts this [Map] that uses [Enum]-typed keys into an [EnumMap].
+ *
+ * @sample samples.collections.Maps.Instantiation.enumMapFromPairs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified K : Enum<K>, V> Map<K, V>.toEnumMap(): EnumMap<K, V> =
+    EnumMap<_, V>(K::class.java).apply { putAll(this@toEnumMap) }
+
+/**
+ * Returns a new [EnumMap] with the specified contents, given as a list of pairs
+ * where the first value is the enum-typed key and the second is the value.
+ *
+ * @sample samples.collections.Maps.Instantiation.enumMapFromPairs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified K : Enum<K>, V> enumMapOf(vararg pairs: Pair<K, V>): EnumMap<K, V> =
+    pairs.toMap(EnumMap<_, V>(K::class.java))
 
 // creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
 @kotlin.internal.InlineOnly
