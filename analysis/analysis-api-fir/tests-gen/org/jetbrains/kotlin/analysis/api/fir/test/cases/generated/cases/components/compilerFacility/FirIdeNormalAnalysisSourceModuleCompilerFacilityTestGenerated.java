@@ -176,6 +176,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("annotatedEnumEntry.kt")
+    public void testAnnotatedEnumEntry() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/annotatedEnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("annotationUsage.kt")
     public void testAnnotationUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/annotationUsage.kt");
