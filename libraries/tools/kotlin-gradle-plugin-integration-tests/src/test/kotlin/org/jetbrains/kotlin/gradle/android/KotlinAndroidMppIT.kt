@@ -1100,6 +1100,11 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                     assertNoDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
                 } else {
                     assertHasDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
+                    assertFileDoesNotContain(
+                        projectPath.resolve("repo/com/example/lib/1.0/lib-1.0.module"),
+                        "com.android.build.api.attributes.BuildTypeAttr",
+                        "release-only Android publication should not contain BuildTypeAttribute"
+                    )
                 }
             }
         }

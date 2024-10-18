@@ -49,6 +49,7 @@ internal open class KotlinAndroidPlugin(
             }
         ) { androidTarget ->
             registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))
+            // TODO (KT-72395): stop adding androidTarget.components as AGP does it on its own
             project.whenEvaluated { project.components.addAll(androidTarget.components) }
         }
     }

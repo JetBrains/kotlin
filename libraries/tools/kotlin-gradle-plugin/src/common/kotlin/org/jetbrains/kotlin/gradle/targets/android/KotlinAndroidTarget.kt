@@ -172,6 +172,15 @@ abstract class KotlinAndroidTarget @Inject constructor(
             }
         }
 
+        // In non-kmp projects (i.e. when kotlin-android is applied) it is not possible to have multi-build publication with
+        // default components that is created by KGP.
+        // FIXME related to this entire doCreateComponents function.
+        //  We should think about re-using Components created by AGP even for KMP (KT-72395)
+        val isSingleBuildType = !isMultiplatformProject || publishableVariants
+            .filter(::isVariantPublished)
+            .map(::getBuildTypeName)
+            .distinct().size == 1
+
         return publishableVariantGroups.map { (flavorGroupNameParts, androidVariants) ->
             val nestedVariants = androidVariants.mapTo(mutableSetOf()) { androidVariant ->
                 val androidVariantName = getVariantName(androidVariant)
@@ -180,7 +189,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 val usageContexts = createAndroidUsageContexts(
                     variant = androidVariant,
                     compilation = compilation,
-                    isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
+                    isSingleBuildType = isSingleBuildType,
                 )
 
                 createKotlinVariant(
@@ -318,14 +327,14 @@ abstract class KotlinAndroidTarget @Inject constructor(
         it: Attribute<*>,
         valueString: String,
         isSinglePublishedVariant: Boolean,
-    ) = when {
-        PropertiesProvider(project).keepAndroidBuildTypeAttribute -> true
-        it.name != "com.android.build.api.attributes.BuildTypeAttr" -> true
+    ): Boolean {
+        if (it.name != "com.android.build.api.attributes.BuildTypeAttr") return true
 
-        // then the name is "com.android.build.api.attributes.BuildTypeAttr", so we omit it if there's just the single variant and always for the release one:
-        valueString == "release" -> false
-        isSinglePublishedVariant -> false
-        else -> true
+        return if (PropertiesProvider(project).keepAndroidBuildTypeAttribute) {
+            !(isSinglePublishedVariant && valueString == "release")
+        } else {
+            false
+        }
     }
 
     private fun filterOutAndroidAgpVersionAttribute(
