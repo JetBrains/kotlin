@@ -34,25 +34,18 @@ repositories {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain  {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             }
-            kotlin.srcDir("../benchmarks/shared/src")
         }
-        val jsMain by creating {
+        jsMain {
             dependencies {
-                implementation(npm("body-parser", "~1.20.0"))
+                implementation(npm("body-parser", "~1.20.3"))
                 implementation(npm("debug", "~4.3.4"))
                 implementation(npm("ejs", "~3.1.7"))
-                implementation(npm("express", "~4.19.2"))
-                implementation(npm("kotlin", "~1.6.20"))
+                implementation(npm("express", "~4.20.0"))
                 implementation(npm("node-fetch", "~2.6.6"))
-            }
-            kotlin {
-                srcDir("src/main/kotlin")
-                srcDir("src/main/kotlin-js")
-                srcDir("shared/src/main/kotlin")
             }
         }
     }
@@ -61,12 +54,6 @@ kotlin {
         js {
             moduleName = "app"
             nodejs()
-            compilations.all {
-                compilerOptions.configure {
-                    moduleKind.set(MODULE_COMMONJS)
-                    sourceMap.set(true)
-                }
-            }
             binaries.executable()
         }
     }
