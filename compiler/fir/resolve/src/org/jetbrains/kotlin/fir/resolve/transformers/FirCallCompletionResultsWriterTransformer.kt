@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -72,6 +73,7 @@ import kotlin.collections.component2
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     private val scopeSession: ScopeSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
@@ -82,6 +84,8 @@ class FirCallCompletionResultsWriterTransformer(
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+
+    val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
     private fun finallySubstituteOrNull(
         type: ConeKotlinType,
@@ -1187,19 +1191,17 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.isResolved) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
-        val expectedArrayElementType = expectedArrayType?.arrayElementType()
+        val expectedArrayElementType = expectedArrayType?.arrayElementType(collectionLiteral = true)
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
-        val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
-                typeApproximator.approximateToSuperType(
-                    it,
-                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
-                )
-                    ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
-        arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType(session)?.isPrimitiveArray == true)
-        return arrayLiteral
+        val call = components.syntheticCallGenerator.generateCollectionCall(
+            arrayLiteral,
+            expectedArrayType!!,
+            resolutionContext,
+            resolutionMode = ResolutionMode.ContextIndependent
+        )
+        val s = call.transform<FirExpression, ExpectedArgumentType>(this, data)
+        s.resultType = expectedArrayType
+        return s
     }
 
     override fun transformVarargArgumentsExpression(

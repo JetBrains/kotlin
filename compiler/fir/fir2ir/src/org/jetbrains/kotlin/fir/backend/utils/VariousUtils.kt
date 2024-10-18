@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
@@ -29,9 +30,11 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isBoxedArray
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
 
@@ -136,10 +139,17 @@ internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fi
     }
 }
 
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType {
-    return when {
-        isBoxedArray -> {
-            when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
+    val classifier = this.classOrNull
+    when {
+        isBoxedArray || classifier?.owner?.fqNameWhenAvailable in listOf(
+            StandardNames.FqNames.list,
+            StandardNames.FqNames.set,
+            StandardNames.FqNames.mutableSet,
+            StandardNames.FqNames.mutableList
+        ) -> {
+            return when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
                 is IrTypeProjection ->
                     argument.type
                 is IrStarProjection ->
@@ -149,8 +159,7 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
             }
         }
         else -> {
-            val classifier = this.classOrNull!!
-            builtins.primitiveArrayElementTypes[classifier]
+            return builtins.primitiveArrayElementTypes[classifier!!]
                 ?: builtins.unsignedArraysElementTypes[classifier]
                 ?: error("Primitive array expected: $classifier")
         }

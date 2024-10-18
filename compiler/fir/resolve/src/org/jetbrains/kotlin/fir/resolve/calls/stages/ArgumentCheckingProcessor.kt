@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createClassLikeType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -105,8 +106,25 @@ internal object ArgumentCheckingProcessor {
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
-                is FirArrayLiteral -> {
-                    TODO("mozhet nahui?")
+            }
+            is ConeClResolutionAtom -> {
+                val context = this@resolveArgumentExpression
+                val newContext = context.copy(
+                    expectedType = context.expectedType?.arrayElementType(collectionLiteral = true)
+                        ?: error("Unsupported parameter type: ${context.expectedType} ${context.expectedType?.let { it::class }}")
+                )
+                // val newContext = when {
+                //     context.expectedType?.isList == true || context.expectedType?.isSet == true ->
+                //         context.copy(expectedType = context.expectedType.typeArguments.single() as ConeClassLikeType)
+                //     context.expectedType?.isArrayType == true ->
+                //         context.copy(
+                //             expectedType = context.expectedType.typeArguments.singleOrNull() as? ConeKotlinType
+                //                 ?: createClassLikeType(StandardClassIds.Int)
+                //         )
+                //     else -> error("Unsupported parameter type: ${context.expectedType} ${context.expectedType?.let { it::class }}")
+                // }
+                for (atom in atom.subAtoms) {
+                    newContext.resolvePlainExpressionArgument(atom)
                 }
             }
 
