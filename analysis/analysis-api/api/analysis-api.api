@@ -910,20 +910,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/scopes/KaScope
 	public fun getDeclarations ()Lkotlin/sequences/Sequence;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/session/KaSessionProvider : com/intellij/openapi/Disposable {
-	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/session/KaSessionProvider$Companion;
-	public fun <init> (Lcom/intellij/openapi/project/Project;)V
-	public final fun analyze (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public final fun analyze (Lorg/jetbrains/kotlin/psi/KtElement;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public fun dispose ()V
-	public abstract fun getAnalysisSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/KaSession;
-	public abstract fun getAnalysisSession (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/KaSession;
-	public final fun getProject ()Lcom/intellij/openapi/project/Project;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/session/KaSessionProvider$Companion {
-}
-
 public abstract interface class org/jetbrains/kotlin/analysis/api/signatures/KaCallableSignature : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
