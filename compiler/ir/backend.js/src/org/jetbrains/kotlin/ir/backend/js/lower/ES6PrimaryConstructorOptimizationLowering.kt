@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -25,17 +28,19 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 const val CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS = 2
 
+private var IrClass.possibilityToOptimizeForEsClass: MutableReference<Boolean>? by irAttribute(followAttributeOwner = false)
+
 /**
  * Optimization: replaces synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.
  */
 class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (!context.es6mode || declaration !is IrFunction || !declaration.shouldBeConvertedToPlainConstructor(context)) {
+        if (!context.es6mode || declaration !is IrFunction || !declaration.shouldBeConvertedToPlainConstructor) {
             return null
         }
 
         val irClass = declaration.parentAsClass
-        val defaultConstructor = context.findDefaultConstructorFor(irClass)
+        val defaultConstructor = irClass.findDefaultConstructorForReflection()
 
         if (irClass.isExported(context)) {
             irClass.removeConstructorForExport()
@@ -44,7 +49,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         val constructorReplacement = declaration.convertToRegularConstructor(irClass)
 
         if (declaration == defaultConstructor) {
-            context.mapping.classToItsDefaultConstructor[irClass] = constructorReplacement
+            irClass.defaultConstructorForReflection = constructorReplacement
         }
 
         return listOf(constructorReplacement)
@@ -167,7 +172,7 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
             override fun visitCall(expression: IrCall): IrExpression {
                 val callee = expression.symbol.owner
                 return when {
-                    !callee.shouldBeConvertedToPlainConstructor(context) -> super.visitCall(expression)
+                    !callee.shouldBeConvertedToPlainConstructor -> super.visitCall(expression)
                     expression.isSyntheticDelegatingReplacement -> {
                         super.visitDelegatingConstructorCall(JsIrBuilder.buildDelegatingConstructorCall(callee.parentAsClass.primaryConstructor!!.symbol)
                                                                  .apply { copyTypeAndValueArgumentsFrom(expression) })
@@ -193,9 +198,6 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
  * Otherwise, we can generate a simple ES-class constructor in each class of the hierarchy
  */
 class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
-    private var IrClass.possibilityToOptimizeForEsClass by context.mapping.esClassToPossibilityForOptimization
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (
             context.es6mode &&
@@ -267,10 +269,9 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
     }
 
     private fun IrClass.isSubclassOfExternalClassWithRequiredBoxParameter(): Boolean {
-        return superClass?.isExternal == true && needsOfBoxParameter == true
+        return superClass?.isExternal == true && needsBoxParameter
     }
 }
 
-private fun IrFunction.shouldBeConvertedToPlainConstructor(context: JsIrBackendContext): Boolean {
-    return isEs6PrimaryConstructorReplacement && context.mapping.esClassToPossibilityForOptimization[parentAsClass]?.value == true
-}
+private val IrFunction.shouldBeConvertedToPlainConstructor: Boolean
+    get() = isEs6PrimaryConstructorReplacement && parentAsClass.possibilityToOptimizeForEsClass?.value == true

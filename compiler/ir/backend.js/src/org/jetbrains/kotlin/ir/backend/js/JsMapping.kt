@@ -6,22 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.Mapping
-import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
-    val classToItsDefaultConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
-
-    val esClassWhichNeedBoxParameters: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
-    val esClassToPossibilityForOptimization: DeclarationMapping<IrClass, MutableReference<Boolean>> by AttributeBasedMappingDelegate()
-
     // Main function wrappers
     val mainFunctionToItsWrapper: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val outerThisFieldSymbols: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val innerClassConstructors: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
     val originalInnerClassPrimaryConstructorByClass: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
     val secondaryConstructorToDelegate: DeclarationMapping<IrConstructor, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val secondaryConstructorToFactory: DeclarationMapping<IrConstructor, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val objectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val objectToInstanceField: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()

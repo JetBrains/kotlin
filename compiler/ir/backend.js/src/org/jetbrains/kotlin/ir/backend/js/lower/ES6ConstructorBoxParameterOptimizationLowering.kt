@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
  * Optimization: removes the box parameter from the constructors which don't require it.
  */
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
-    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.es6mode) return
@@ -37,7 +37,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         val containerFunction = container as? IrFunction
 
         val shouldRemoveBoxRelatedDeclarationsAndStatements =
-            containerFunction?.isEs6ConstructorReplacement == true && !containerFunction.parentAsClass.requiredToHaveBoxParameter()
+            containerFunction?.isEs6ConstructorReplacement == true && !containerFunction.parentAsClass.needsBoxParameter
 
         if (containerFunction != null && shouldRemoveBoxRelatedDeclarationsAndStatements && irBody is IrBlockBody) {
             containerFunction.valueParameters = containerFunction.valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
@@ -60,7 +60,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
                         expression.putValueArgument(expression.valueArgumentsCount - 1, context.getVoid())
                         super.visitCall(expression)
                     }
-                    callee.isEs6ConstructorReplacement && (!callee.parentAsClass.requiredToHaveBoxParameter() || shouldRemoveBoxRelatedDeclarationsAndStatements) -> {
+                    callee.isEs6ConstructorReplacement && (!callee.parentAsClass.needsBoxParameter || shouldRemoveBoxRelatedDeclarationsAndStatements) -> {
                         val newArgumentsSize = expression.valueArgumentsCount - 1
                         super.visitCall(IrCallImplWithShape(
                             expression.startOffset,
@@ -91,16 +91,12 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         })
     }
 
-    private fun IrClass.requiredToHaveBoxParameter(): Boolean {
-        return needsOfBoxParameter == true
-    }
 }
 
 /**
  * Optimization: collects all constructors which require a box parameter.
  */
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private var IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrClass) return null
@@ -108,10 +104,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
         val hasSuperClass = declaration.superClass != null
 
         if (hasSuperClass && declaration.isInner) {
-            declaration.addToClassListWhichNeedBoxParameter()
-        }
-        if (hasSuperClass && declaration.isLocal && declaration.containsCapturedValues()) {
-            declaration.addToClassListWhichNeedBoxParameter()
+            declaration.markAsNeedsBoxParameter()
+        } else if (hasSuperClass && declaration.isLocal && declaration.containsCapturedValues()) {
+            declaration.markAsNeedsBoxParameter()
         }
 
         return null
@@ -142,9 +137,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
         return false
     }
 
-    private fun IrClass.addToClassListWhichNeedBoxParameter() {
+    private fun IrClass.markAsNeedsBoxParameter() {
         if (isExternal) return
-        needsOfBoxParameter = true
-        superClass?.addToClassListWhichNeedBoxParameter()
+        needsBoxParameter = true
+        superClass?.markAsNeedsBoxParameter()
     }
 }

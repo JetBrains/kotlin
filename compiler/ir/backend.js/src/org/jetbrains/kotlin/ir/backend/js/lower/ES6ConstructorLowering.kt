@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -58,7 +59,6 @@ private val IrClass.constructorPostfix: String
  * Lowers synthetic primary constructor declarations to support ES classes.
  */
 class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
-    private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null
@@ -132,7 +132,6 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
  * Lowers constructor declarations to support ES classes.
  */
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
-    private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null

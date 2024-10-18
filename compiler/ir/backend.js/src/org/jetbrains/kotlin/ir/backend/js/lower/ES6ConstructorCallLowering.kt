@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Lowers constructor usages to support ES classes.
  */
 class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLoweringPass {
-    private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.es6mode) return

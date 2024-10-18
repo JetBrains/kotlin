@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -62,9 +63,9 @@ class UselessDeclarationsRemover(
             .memoryOptimizedMap { it.defaultType }
 
         // Remove default constructor if the class was never constructed
-        val defaultConstructor = context.findDefaultConstructorFor(declaration)
+        val defaultConstructor = declaration.findDefaultConstructorForReflection()
         if (defaultConstructor != null && defaultConstructor !in usefulDeclarations) {
-            context.mapping.classToItsDefaultConstructor[declaration] = null
+            declaration.defaultConstructorForReflection = null
         }
     }
 
