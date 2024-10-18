@@ -1365,6 +1365,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/Throwable;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinCompilerEmbeddableIsPresentInClasspath : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinCompilerEmbeddableIsPresentInClasspath;
+	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinDefaultHierarchyFallbackDependsOnUsageDetected : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinDefaultHierarchyFallbackDependsOnUsageDetected;
 	public final fun invoke (Lorg/gradle/api/Project;Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;

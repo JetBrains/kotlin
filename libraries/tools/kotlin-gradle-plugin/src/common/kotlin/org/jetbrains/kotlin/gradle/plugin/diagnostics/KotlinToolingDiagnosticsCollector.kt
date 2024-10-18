@@ -124,3 +124,17 @@ internal fun Project.reportDiagnosticOncePerProject(diagnostic: ToolingDiagnosti
 internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(this, diagnostic, key)
 }
+
+@RequiresOptIn("Usage of immediate diagnostic reporting is discouraged. Please use the regular diagnostics pipeline.")
+internal annotation class ImmediateDiagnosticReporting
+
+@ImmediateDiagnosticReporting
+internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
+    val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(project)
+    if (diagnostic.isSuppressed(renderingOptions)) return
+    renderReportedDiagnostic(
+        diagnostic,
+        project.logger,
+        renderingOptions
+    )
+}
