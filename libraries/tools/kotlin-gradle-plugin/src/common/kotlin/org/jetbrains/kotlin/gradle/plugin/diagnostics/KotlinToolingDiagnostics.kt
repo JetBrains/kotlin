@@ -1027,7 +1027,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    internal object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING) {
+    object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(
             componentName: String,
             publicationName: String,
