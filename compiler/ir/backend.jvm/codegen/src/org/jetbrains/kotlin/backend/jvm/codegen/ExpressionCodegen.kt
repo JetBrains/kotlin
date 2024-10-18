@@ -772,7 +772,8 @@ class ExpressionCodegen(
         val variableIndex = findLocalIndex(expression.symbol)
         val asmType = frameMap.typeOf(expression.symbol)
         val irValueDeclaration = expression.symbol.owner
-        val kotlinType = if (eraseType) irValueDeclaration.realType.upperBound else irValueDeclaration.realType
+        val realType = irValueDeclaration.realType
+        val kotlinType = if (eraseType) realType.upperBound.withNullability(realType.isNullable()) else realType
         StackValue.local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
     } else {
         genToStackValue(expression, type, parameterType, data)

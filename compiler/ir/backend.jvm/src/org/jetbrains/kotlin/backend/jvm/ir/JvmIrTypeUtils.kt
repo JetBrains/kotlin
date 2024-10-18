@@ -139,7 +139,7 @@ fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiField
 
 fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
 
-val IrType.upperBound: IrType
+val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType
 
 fun IrType.eraseToScope(scopeOwner: IrTypeParametersContainer): IrType =
