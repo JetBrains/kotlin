@@ -27,29 +27,4 @@ data class Build(val buildNumber: String, val startTime: String, val finishTime:
             }
         }
     }
-
-    private fun formatTime(time: String, targetZone: Int = 3): String {
-        val matchResult = "^\\d{8}T(\\d{2})(\\d{2})\\d{2}((\\+|-)\\d{2})".toRegex().find(time)?.groupValues
-        matchResult?.let {
-            val timeZone = matchResult[3].toInt()
-            val timeDifference = targetZone - timeZone
-            var hours = (matchResult[1].toInt() + timeDifference)
-            if (hours > 23) {
-                hours -= 24
-            }
-            return "${if (hours < 10) "0$hours" else "$hours"}:${matchResult[2]}"
-        } ?: error { "Wrong format of time $startTime" }
-    }
-
-    val date: String by lazy {
-        val matchResult = "^(\\d{4})(\\d{2})(\\d{2})".toRegex().find(startTime)?.groupValues
-        matchResult?.let { "${matchResult[3]}/${matchResult[2]}/${matchResult[1]}" }
-                ?: error { "Wrong format of time $startTime" }
-    }
-    val formattedStartTime: String by lazy {
-        formatTime(startTime)
-    }
-    val formattedFinishTime: String by lazy {
-        formatTime(finishTime)
-    }
 }

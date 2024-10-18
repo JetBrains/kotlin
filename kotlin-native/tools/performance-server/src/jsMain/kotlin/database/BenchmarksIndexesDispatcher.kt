@@ -7,7 +7,6 @@ package org.jetbrains.database
 
 import kotlin.js.Promise
 import org.jetbrains.elastic.*
-import org.jetbrains.utils.*
 import org.jetbrains.report.json.*
 import org.jetbrains.report.*
 
