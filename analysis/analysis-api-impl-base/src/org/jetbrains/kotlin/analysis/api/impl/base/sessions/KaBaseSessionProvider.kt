@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
@@ -55,6 +56,8 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
         }
+
+        ProgressManager.checkCanceled()
 
         /**
          * The Analysis API is not supposed to work in the dumb mode.

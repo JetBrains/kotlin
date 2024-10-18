@@ -9,6 +9,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
@@ -86,6 +87,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        ProgressManager.checkCanceled()
+
         // The cache cleaner must be called before we get a session.
         // Otherwise, the acquired session might become invalid after the session cleanup.
         cacheCleaner.enterAnalysis()
