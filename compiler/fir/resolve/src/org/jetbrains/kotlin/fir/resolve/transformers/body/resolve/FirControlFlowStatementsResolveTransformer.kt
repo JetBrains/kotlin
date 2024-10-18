@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -233,23 +235,20 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         @Suppress("NAME_SHADOWING")
         val data = data.takeUnless { it is ResolutionMode.WithExpectedType && !it.forceFullCompletion } ?: ResolutionMode.ContextDependent
 
-        val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
-        val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
-
-        val resolutionModeForLhs =
-            if (mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true)
-                withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
-            else
-                withExpectedType(expectedType?.withNullability(nullable = true, session.typeContext))
         dataFlowAnalyzer.enterElvis(elvisExpression)
-        elvisExpression.transformLhs(transformer, resolutionModeForLhs)
+
+        elvisExpression.transformLhs(
+            transformer,
+            // should be constant ResolutionMode.ContextDependent since LV >= 2.1
+            computeResolutionModeForElvisLHS(data)
+        )
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
-        val resolutionModeForRhs = withExpectedType(
-            expectedType,
-            mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied
+        elvisExpression.transformRhs(
+            transformer,
+            // should be constant ResolutionMode.ContextDependent since LV >= 2.1
+            computeResolutionModeForElvisRHS(data)
         )
-        elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
         val result = callCompleter.completeCall(
             syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext, data), data
@@ -296,6 +295,38 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
         dataFlowAnalyzer.exitElvis(elvisExpression, isLhsNotNull, data.forceFullCompletion)
         return result
+    }
+
+    private fun computeResolutionModeForElvisLHS(
+        data: ResolutionMode,
+    ): ResolutionMode {
+        val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
+        val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+
+        return when {
+            session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21) ->
+                ResolutionMode.ContextDependent
+
+            // In general, it seems correct Dependent mode for elvis parts,
+            // but we still should preserve obsolete behavior for LV == 2.0
+            mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true ->
+                withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
+            else -> withExpectedType(expectedType?.withNullability(nullable = true, session.typeContext))
+        }
+    }
+
+    private fun computeResolutionModeForElvisRHS(
+        data: ResolutionMode,
+    ): ResolutionMode = when {
+        session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21) ->
+            ResolutionMode.ContextDependent
+
+        // In general, it seems correct Dependent mode for elvis parts,
+        // but we still should preserve obsolete behavior for LV == 2.0
+        else -> withExpectedType(
+            data.expectedType?.coneTypeSafe<ConeKotlinType>(),
+            mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+        )
     }
 
     private fun ConeKotlinType.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext: ConeTypeContext): ConeKotlinType {
