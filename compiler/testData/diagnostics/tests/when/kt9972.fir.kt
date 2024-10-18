@@ -21,7 +21,7 @@ fun test1(): Int {
 
 fun test2(): Int {
     val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>when {
-                        true -> <!TYPE_MISMATCH!>Any()<!>
+                        true -> Any()
                         else -> null
                     } ?: return 0<!>
     return x.hashCode()

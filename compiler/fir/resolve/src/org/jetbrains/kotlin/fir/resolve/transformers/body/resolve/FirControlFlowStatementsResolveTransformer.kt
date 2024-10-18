@@ -233,21 +233,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         @Suppress("NAME_SHADOWING")
         val data = data.takeUnless { it is ResolutionMode.WithExpectedType && !it.forceFullCompletion } ?: ResolutionMode.ContextDependent
 
-        val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
-        val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
-
-        val resolutionModeForLhs =
-            if (mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true)
-                withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
-            else
-                withExpectedType(expectedType?.withNullability(nullable = true, session.typeContext))
         dataFlowAnalyzer.enterElvis(elvisExpression)
-        elvisExpression.transformLhs(transformer, resolutionModeForLhs)
+        elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
         val resolutionModeForRhs = withExpectedType(
-            expectedType,
-            mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied
+            data.expectedType?.coneTypeSafe(),
+            mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
         )
         elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
