@@ -40746,6 +40746,22 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/unitCoercion")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnitCoercion {
+      @Test
+      public void testAllFilesPresentInUnitCoercion() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unitCoercion"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("elvisRHSRemainsNullable.kt")
+      public void testElvisRHSRemainsNullable() {
+        runTest("compiler/testData/diagnostics/tests/unitCoercion/elvisRHSRemainsNullable.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/unitConversion")
     @TestDataPath("$PROJECT_ROOT")
     public class UnitConversion {
