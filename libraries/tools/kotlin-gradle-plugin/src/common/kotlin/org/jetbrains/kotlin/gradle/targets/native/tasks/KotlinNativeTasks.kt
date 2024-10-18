@@ -165,6 +165,11 @@ abstract class AbstractKotlinNativeCompile<
 
     override val produceUnpackagedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    @Suppress("unused")
+    @Deprecated("KT-72387: used in KSP", level = DeprecationLevel.HIDDEN)
+    internal val produceUnpackedKlib: Property<Boolean>
+        get() = produceUnpackagedKlib
+
     @get:Input
     @get:Optional
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
