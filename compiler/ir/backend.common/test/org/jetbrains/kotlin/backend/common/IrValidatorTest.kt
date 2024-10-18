@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -75,13 +76,14 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
+        function.addExtensionReceiver(TestIrBuiltins.stringType)
         function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val functionCall =
             IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                dispatchReceiver = stringConcatenationWithWrongType
+                extensionReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }
         return functionCall
@@ -98,6 +100,7 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
+        function.addExtensionReceiver(TestIrBuiltins.stringType)
         function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
@@ -106,7 +109,7 @@ class IrValidatorTest {
                 6, 23, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
            ).apply {
-                dispatchReceiver = stringConcatenationWithWrongType
+                extensionReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }
         body.statements.add(functionCall)
@@ -193,7 +196,7 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
                     CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
@@ -205,7 +208,7 @@ class IrValidatorTest {
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -217,7 +220,7 @@ class IrValidatorTest {
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -266,7 +269,7 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
                     CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
@@ -278,7 +281,7 @@ class IrValidatorTest {
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -290,7 +293,7 @@ class IrValidatorTest {
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
