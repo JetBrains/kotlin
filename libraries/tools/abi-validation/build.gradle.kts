@@ -109,6 +109,7 @@ kotlin {
 tasks.compileTestKotlin {
     compilerOptions {
         languageVersion.set(KotlinVersion.KOTLIN_1_9)
+        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
     }
 }
 

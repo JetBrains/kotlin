@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2024 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -57,6 +57,8 @@ class CasesPublicAPITest {
     @Test fun public() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun special() { snapshotAPIAndCompare(testName.methodName) }
+
+    @Test fun suspend() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun whenMappings() { snapshotAPIAndCompare(testName.methodName) }
 
