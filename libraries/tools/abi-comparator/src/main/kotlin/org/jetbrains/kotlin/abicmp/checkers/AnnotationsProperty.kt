@@ -28,11 +28,10 @@ fun Any?.toAnnotation(): AnnotationEntry? {
     return AnnotationEntry(ann.desc, values.sortedBy { it.first })
 }
 
-fun Any.toAnnotationArgumentValue(): Any =
-    when (this) {
-        is Array<*> -> map { it!!.toAnnotationArgumentValue() }
-        is List<*> -> map { it!!.toAnnotationArgumentValue() }
-        is AnnotationNode -> this.toAnnotation()!!
-        else -> this
-    }
+fun Any.toAnnotationArgumentValue(): Any = when (this) {
+    is Array<*> -> map { it?.toAnnotationArgumentValue() ?: it }
+    is List<*> -> map { it?.toAnnotationArgumentValue() ?: it }
+    is AnnotationNode -> this.toAnnotation() ?: this
+    else -> this
+}
 
