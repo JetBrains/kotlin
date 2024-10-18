@@ -40,23 +40,21 @@ class TypeVariableDependencyInformationProvider(
 
     private val relatedToAllOutputTypes: MutableSet<TypeConstructorMarker> = hashSetOf()
     private val relatedToTopLevelType: MutableSet<TypeConstructorMarker> = hashSetOf()
+    private var relatedToOuterTypeVariables: MutableSet<TypeConstructorMarker>? = null
 
     init {
         computeConstraintEdges()
         computePostponeArgumentsEdges()
         computeRelatedToAllOutputTypes()
         computeRelatedToTopLevelType()
+        computeRelatedToTopOuterTypeVariables()
     }
 
     fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) =
         relatedToTopLevelType.contains(variable)
 
 
-    fun isRelatedToOuterTypeVariable(variable: TypeConstructorMarker): Boolean {
-        val outerTypeVariables = outerTypeVariables ?: return false
-        val myDependent = getDeeplyDependentVariables(variable) ?: return false
-        return myDependent.any { it in outerTypeVariables }
-    }
+    fun isRelatedToOuterTypeVariable(variable: TypeConstructorMarker): Boolean = relatedToOuterTypeVariables?.contains(variable) == true
 
     fun isVariableRelatedToAnyOutputType(variable: TypeConstructorMarker) = relatedToAllOutputTypes.contains(variable)
 
@@ -136,6 +134,14 @@ class TypeVariableDependencyInformationProvider(
         if (topLevelType == null) return
         topLevelType.forAllMyTypeVariables {
             addAllRelatedNodes(relatedToTopLevelType, it, includePostponedEdges = true)
+        }
+    }
+
+    private fun computeRelatedToTopOuterTypeVariables() {
+        val outerTypeVariables = outerTypeVariables ?: return
+        relatedToOuterTypeVariables = mutableSetOf()
+        for (outerTypeVariable in outerTypeVariables) {
+            addAllRelatedNodes(relatedToOuterTypeVariables!!, outerTypeVariable, includePostponedEdges = true)
         }
     }
 

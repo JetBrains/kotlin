@@ -1,13 +1,22 @@
 // FIR_IDENTICAL
 interface Box<F> {
     fun add(f: F)
-    fun get(): F
 }
 
-fun <E> myBuilder(x: Box<E>.() -> Unit): Box<E> = TODO()
+fun <E> myBuilder(x: Box<E>.() -> Unit) {}
 
-fun main() {
+fun <T, R> T.myRun(block: T.() -> R): R = TODO()
+
+fun String.foo(result: String?) {
+    //result ?: myRun { Unit }
+
     myBuilder {
-        add("")
-    }.get().length
+
+        // K1: OK
+        // K2: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+        result ?: myRun { Unit }
+
+        add("a")
+
+    }
 }
