@@ -154,8 +154,12 @@ class TypeAliasExpander(
         }
     }
 
-    private fun SimpleType.combineNullability(fromType: KotlinType) =
-        TypeUtils.makeNullableIfNeeded(this, fromType.isMarkedNullable)
+    private fun SimpleType.combineNullability(fromType: KotlinType): SimpleType =
+        if (fromType is DefinitelyNotNullType) {
+            TypeUtils.makeNotNullable(this).asSimpleType()
+        } else {
+            TypeUtils.makeNullableIfNeeded(this, fromType.isMarkedNullable)
+        }
 
     private fun SimpleType.combineNullabilityAndAnnotations(fromType: KotlinType) =
         combineNullability(fromType).combineAttributes(fromType.attributes)
