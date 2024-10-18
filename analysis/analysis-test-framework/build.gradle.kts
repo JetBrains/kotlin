@@ -22,7 +22,6 @@ dependencies {
     testImplementation(project(":analysis:analysis-api"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(project(":analysis:analysis-api-impl-barebone"))
     testImplementation(project(":analysis:analysis-api-impl-base"))
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))

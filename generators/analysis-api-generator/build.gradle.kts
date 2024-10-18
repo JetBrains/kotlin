@@ -19,7 +19,6 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-fe10"))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(projectTests(":analysis:symbol-light-classes"))

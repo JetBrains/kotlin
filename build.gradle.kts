@@ -268,7 +268,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-api",
                 ":analysis:analysis-api-fe10",
                 ":analysis:analysis-api-fir",
-                ":analysis:analysis-api-impl-barebone",
                 ":analysis:analysis-api-impl-base",
                 ":analysis:analysis-api-platform-interface",
                 ":analysis:analysis-api-standalone:analysis-api-standalone-base",

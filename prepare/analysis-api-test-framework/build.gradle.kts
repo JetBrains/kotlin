@@ -7,7 +7,6 @@ val testModules = listOf(
     ":analysis:low-level-api-fir",
     ":analysis:low-level-api-fir:tests-jdk11",
     ":analysis:analysis-test-framework",
-    ":analysis:analysis-api-impl-barebone",
     ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-standalone",
     ":analysis:decompiled:decompiler-to-file-stubs",
