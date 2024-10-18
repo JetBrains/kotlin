@@ -1,5 +1,5 @@
 public abstract interface class cases/interfaces/BaseWithImpl {
-	public abstract fun foo ()I
+	public fun foo ()I
 }
 
 public final class cases/interfaces/BaseWithImpl$DefaultImpls {
@@ -7,7 +7,7 @@ public final class cases/interfaces/BaseWithImpl$DefaultImpls {
 }
 
 public abstract interface class cases/interfaces/DerivedWithImpl : cases/interfaces/BaseWithImpl {
-	public abstract fun foo ()I
+	public fun foo ()I
 }
 
 public final class cases/interfaces/DerivedWithImpl$DefaultImpls {

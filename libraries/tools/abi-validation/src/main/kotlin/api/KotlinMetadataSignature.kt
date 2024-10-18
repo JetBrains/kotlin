@@ -60,6 +60,7 @@ internal data class MethodBinarySignature(
         super.isEffectivelyPublic(classAccess, classVisibility)
                 && !isAccessOrAnnotationsMethod()
                 && !isDummyDefaultConstructor()
+                && !isSuspendImplMethod()
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return super.findMemberVisibility(classVisibility)
@@ -71,6 +72,14 @@ internal data class MethodBinarySignature(
 
     private fun isDummyDefaultConstructor() =
         access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+
+    /**
+     * Kotlin compiler emits special `<originalFunctionName>$suspendImpl` methods for open
+     * suspendable functions. These synthetic functions could only be invoked from original function,
+     * or from a corresponding continuation. They don't constitute class's public ABI, but in some cases
+     * they might be declared public (namely, in case of default interface methods).
+     */
+    private fun isSuspendImplMethod() = access.isSynthetic && name.endsWith("\$suspendImpl")
 }
 
 /**
