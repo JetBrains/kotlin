@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringR
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -38,6 +39,10 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
         while (true) {
             val parent = candidate.parent
             if (parent is KtExpression && parent.textRange in textRange && parent.startOffset == candidate.startOffset) {
+                if (parent.textRange == textRange && parent is KtBlockExpression && parent.lBrace == null) {
+                    // All children of a brace-less block are requested
+                    break
+                }
                 candidate = parent
             } else {
                 break
