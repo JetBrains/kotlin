@@ -3051,6 +3051,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
+      @TestMetadata("extensionFunctionAnonymous.kt")
+      public void testExtensionFunctionAnonymous() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionAnonymous.kt");
+      }
+
+      @Test
       @TestMetadata("extensionFunctionWithNestedReceiver.kt")
       public void testExtensionFunctionWithNestedReceiver() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithNestedReceiver.kt");
@@ -3078,6 +3084,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       @TestMetadata("extensionPropertyToFun.kt")
       public void testExtensionPropertyToFun() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToFun.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionPropertyWithAnonymousExtensionFun.kt")
+      public void testExtensionPropertyWithAnonymousExtensionFun() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousExtensionFun.kt");
       }
 
       @Test
@@ -15392,6 +15404,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("delegatedPropertyWithExtensionType.kt")
+    public void testDelegatedPropertyWithExtensionType() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/delegatedPropertyWithExtensionType.kt");
+    }
+
+    @Test
     @TestMetadata("executionOrder.kt")
     public void testExecutionOrder() {
       runTest("compiler/testData/codegen/box/extensionFunctions/executionOrder.kt");
@@ -15413,6 +15431,18 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     @TestMetadata("extensionFunctionAsATypeLocal.kt")
     public void testExtensionFunctionAsATypeLocal() {
       runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsATypeLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionAsAnExpression.kt")
+    public void testExtensionFunctionAsAnExpression() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsAnExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionFunctionAsAnExpressionWithNestedType.kt")
+    public void testExtensionFunctionAsAnExpressionWithNestedType() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsAnExpressionWithNestedType.kt");
     }
 
     @Test
@@ -15752,6 +15782,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("extensionPropertyDelegated.kt")
+    public void testExtensionPropertyDelegated() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyDelegated.kt");
+    }
+
+    @Test
     @TestMetadata("extensionPropertyDifferentReceiver.kt")
     public void testExtensionPropertyDifferentReceiver() {
       runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyDifferentReceiver.kt");
@@ -15773,6 +15809,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     @TestMetadata("extensionPropertyInSAMInterface.kt")
     public void testExtensionPropertyInSAMInterface() {
       runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyInSAMInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionPropertyWithAnonymoesExtensionWithALabel.kt")
+    public void testExtensionPropertyWithAnonymoesExtensionWithALabel() {
+      runTest("compiler/testData/codegen/box/extensionProperties/extensionPropertyWithAnonymoesExtensionWithALabel.kt");
     }
 
     @Test
@@ -28516,6 +28558,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
+        @TestMetadata("extensionPropertyWithAnonymousExtension.kt")
+        public void testExtensionPropertyWithAnonymousExtension() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/extensionPropertyWithAnonymousExtension.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverridesInPlatformModule.kt")
         public void testFakeOverridesInPlatformModule() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/basic/fakeOverridesInPlatformModule.kt");
@@ -38305,6 +38353,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         @Test
         public void testAllFilesPresentInGetDelegate() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("delegatedByExtensionProperty.kt")
+        public void testDelegatedByExtensionProperty() {
+          runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/delegatedByExtensionProperty.kt");
         }
 
         @Nested
