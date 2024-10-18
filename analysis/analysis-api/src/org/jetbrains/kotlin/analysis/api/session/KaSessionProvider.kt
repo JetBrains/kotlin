@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.session
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * This provider should not be used directly.
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
-@OptIn(KaImplementationDetail::class)
+@KaImplementationDetail
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
     public abstract fun getAnalysisSession(useSiteElement: KtElement): KaSession
 
@@ -104,6 +103,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
     override fun dispose() {}
 
+    @KaImplementationDetail
     public companion object {
         @KaImplementationDetail
         public fun getInstance(project: Project): KaSessionProvider =
@@ -111,5 +111,6 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     }
 }
 
+@KaImplementationDetail
 @Deprecated("Use 'KaSessionProvider' instead", ReplaceWith("KaSessionProvider"))
 public typealias KtAnalysisSessionProvider = KaSessionProvider
