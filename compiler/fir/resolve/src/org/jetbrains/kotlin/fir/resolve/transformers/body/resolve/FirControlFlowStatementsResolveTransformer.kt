@@ -226,22 +226,17 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression
         elvisExpression.transformAnnotations(transformer, data)
 
+        dataFlowAnalyzer.enterElvis(elvisExpression)
+        elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)
+        dataFlowAnalyzer.exitElvisLhs(elvisExpression)
+        elvisExpression.transformRhs(transformer, ResolutionMode.ContextDependent)
+
         // Do not use expect type when it's came from if/when (when it doesn't require completion)
         // It returns us to K1 behavior in the case of when-elvis combination (see testData/diagnostics/tests/inference/elvisInsideWhen.kt)
         // But this is mostly a hack that I hope might be lifted once KT-55692 is considered
         // NB: Currently situation `it is ResolutionMode.WithExpectedType && !it.forceFullCompletion` might only happen in case of when branches
         @Suppress("NAME_SHADOWING")
         val data = data.takeUnless { it is ResolutionMode.WithExpectedType && !it.forceFullCompletion } ?: ResolutionMode.ContextDependent
-
-        dataFlowAnalyzer.enterElvis(elvisExpression)
-        elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)
-        dataFlowAnalyzer.exitElvisLhs(elvisExpression)
-
-        val resolutionModeForRhs = withExpectedType(
-            data.expectedType?.coneTypeSafe(),
-            mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
-        )
-        elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
         val result = callCompleter.completeCall(
             syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext, data), data
