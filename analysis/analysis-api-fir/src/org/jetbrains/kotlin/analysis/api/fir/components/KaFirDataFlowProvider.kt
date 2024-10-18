@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
@@ -29,13 +28,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -253,6 +253,7 @@ internal class KaFirDataFlowProvider(
         val defaultConeType = computeOrdinaryDefaultType(defaultStatement, firDefaultStatement)
             ?: computeOperationDefaultType(defaultStatement)
             ?: computeAssignmentTargetDefaultType(defaultStatement, firDefaultStatement)
+            ?: computeCalleeDefaultType(defaultStatement, firDefaultStatement)
 
         if (defaultConeType == null || defaultConeType.isNothing) {
             return null
@@ -304,6 +305,21 @@ internal class KaFirDataFlowProvider(
     private fun computeAssignmentTargetDefaultType(defaultStatement: KtExpression, firDefaultStatement: FirElement): ConeKotlinType? {
         if (firDefaultStatement is FirVariableAssignment && firDefaultStatement.lValue.psi == defaultStatement) {
             return computeOrdinaryDefaultType(defaultStatement, firDefaultStatement.lValue)
+        }
+
+        return null
+    }
+
+    private fun computeCalleeDefaultType(defaultStatement: KtExpression, firDefaultStatement: FirElement): ConeKotlinType? {
+        if (defaultStatement is KtNameReferenceExpression && firDefaultStatement is FirResolvedNamedReference) {
+            val parent = defaultStatement.parent
+            if (parent is KtCallExpression && parent.calleeExpression == defaultStatement) {
+                val resolvedFunction = firDefaultStatement.resolvedSymbol.fir
+                if (resolvedFunction is FirFunction) {
+                    val functionTypeKind = resolvedFunction.specialFunctionTypeKind(rootModuleSession)
+                    return resolvedFunction.constructFunctionType(functionTypeKind)
+                }
+            }
         }
 
         return null
