@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -167,6 +168,8 @@ internal class FileStructure private constructor(
         diagnosticCheckerFilter: DiagnosticCheckerFilter,
     ) {
         structureElements.forEach { structureElement ->
+            ProgressManager.checkCanceled()
+
             structureElement.diagnostics.forEach(diagnosticCheckerFilter) { diagnostics ->
                 addAll(diagnostics)
             }

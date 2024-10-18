@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
@@ -57,6 +58,8 @@ internal sealed class FileStructureElementDiagnosticRetriever(
      * For instance, functions and classes are not a part of the container body resolution.
      */
     private fun forceBodyResolve() {
+        ProgressManager.checkCanceled()
+
         declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         val additionalDeclarationsToResolve = when (declaration) {
