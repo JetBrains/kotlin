@@ -120,7 +120,9 @@ class FirCallCompleter(
                     .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                 call.transformSingle(
                     FirCallCompletionResultsWriterTransformer(
-                        session, components.scopeSession, finalSubstitutor,
+                        session,
+                        components,
+                        components.scopeSession, finalSubstitutor,
                         components.returnTypeCalculator,
                         session.typeApproximator,
                         components.dataFlowAnalyzer,
@@ -309,7 +311,7 @@ class FirCallCompleter(
         mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal,
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
-            session, components.scopeSession, substitutor, components.returnTypeCalculator,
+            session, components, components.scopeSession, substitutor, components.returnTypeCalculator,
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,

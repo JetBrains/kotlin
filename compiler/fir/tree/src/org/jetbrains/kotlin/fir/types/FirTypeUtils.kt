@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createClassLikeType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
@@ -166,18 +167,23 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection = when (this) {
     }
 }
 
-fun ConeKotlinType.arrayElementType(checkUnsignedArrays: Boolean = true): ConeKotlinType? {
-    return when (val argument = arrayElementTypeArgument(checkUnsignedArrays)) {
+fun ConeKotlinType.arrayElementType(checkUnsignedArrays: Boolean = true, collectionLiteral: Boolean = false): ConeKotlinType? {
+    return when (val argument = arrayElementTypeArgument(checkUnsignedArrays, collectionLiteral)) {
         is ConeKotlinTypeProjection -> argument.type
         else -> null
     }
 }
 
-fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true): ConeTypeProjection? {
+fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true, collectionLiteral: Boolean = false): ConeTypeProjection? {
     val type = this.lowerBoundIfFlexible()
     if (type !is ConeClassLikeType) return null
     val classId = type.lookupTag.classId
-    if (classId == StandardClassIds.Array) {
+    if (classId == StandardClassIds.Array ||
+        collectionLiteral && (classId == StandardClassIds.List ||
+                classId == StandardClassIds.Set ||
+                classId == StandardClassIds.MutableList ||
+                classId == StandardClassIds.MutableSet)
+    ) {
         return type.typeArguments.first()
     }
     val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: runIf(checkUnsignedArrays) {

@@ -1834,7 +1834,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             when (data) {
                 is ResolutionMode.ContextIndependent -> {
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextIndependent)
-                    val call = components.syntheticCallGenerator.generateListOfCall(arrayLiteral, resolutionContext, data)
+                    val call = components.syntheticCallGenerator.generateCollectionOfCall(
+                        Name.identifier("listOf"),
+                        arrayLiteral,
+                        resolutionContext,
+                        data
+                    )
                     callCompleter.completeCall(call, data)
                     call
                 }
@@ -1860,21 +1865,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 //     TODO()
                 // }
                 else -> {
-                    // Other unsupported usage.
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    // We set the arrayLiteral's type to the expect type or Array<Any>
-                    // because arguments need to have a type during resolution of the synthetic call.
-                    // We remove the type so that it will be set during completion to the CST (common super type) of the arguments.
-                    arrayLiteral.replaceConeTypeOrNull(
-                        StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
-                    )
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
-                        arrayLiteral,
-                        resolutionContext,
-                        data,
-                    )
-                    arrayLiteral.replaceConeTypeOrNull(null)
-                    callCompleter.completeCall(syntheticIdCall, ResolutionMode.ContextIndependent)
                     arrayLiteral
                 }
             }
