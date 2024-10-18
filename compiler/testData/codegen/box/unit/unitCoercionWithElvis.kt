@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // ISSUE: KT-71751
-// IGNORE_BACKEND_K2: ANY
 
 fun launch(x: () -> Unit) {
     x()
