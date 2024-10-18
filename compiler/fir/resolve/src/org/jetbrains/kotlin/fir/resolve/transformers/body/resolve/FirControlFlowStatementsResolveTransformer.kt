@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -237,10 +239,15 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
 
         val resolutionModeForLhs =
-            if (mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true)
-                withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
-            else
-                withExpectedType(expectedType?.withNullability(nullable = true, session.typeContext))
+            when {
+                // In general, it feels ok to use Dependent mode for elvis LHS, but we still do that for LV == 2.0
+                session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21) ->
+                    ResolutionMode.ContextDependent
+
+                mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true ->
+                    withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
+                else -> withExpectedType(expectedType?.withNullability(nullable = true, session.typeContext))
+            }
         dataFlowAnalyzer.enterElvis(elvisExpression)
         elvisExpression.transformLhs(transformer, resolutionModeForLhs)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
