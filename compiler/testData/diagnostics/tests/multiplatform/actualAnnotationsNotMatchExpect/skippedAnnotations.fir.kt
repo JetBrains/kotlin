@@ -24,6 +24,9 @@ expect fun skippedAnnotationsOnExpectOnly()
 @kotlin.jvm.<!DEPRECATION_ERROR!>ImplicitlyActualizedByJvmDeclaration<!>
 expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 
+@SubclassOptInRequired(MyOptIn::class)
+expect open class SubclassOptInRequiredOnExpectOnly
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 package kotlin
@@ -34,3 +37,5 @@ actual annotation class OptionalExpectationOnExpectOnly
 actual fun skippedAnnotationsOnExpectOnly() {}
 
 actual class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
+
+actual open class SubclassOptInRequiredOnExpectOnly

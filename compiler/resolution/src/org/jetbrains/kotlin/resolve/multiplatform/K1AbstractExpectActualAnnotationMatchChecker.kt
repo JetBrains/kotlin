@@ -24,6 +24,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.Suppress,
         StandardClassIds.Annotations.WasExperimental,
         OptInNames.OPT_IN_CLASS_ID,
+        OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
     )
 
     class Incompatibility(
