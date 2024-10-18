@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -72,9 +73,6 @@ class FirSyntheticCallGenerator(
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
-    private val listOfSymbol = session.symbolProvider
-        .getTopLevelFunctionSymbols(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf"))
-        .single { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -195,31 +193,37 @@ class FirSyntheticCallGenerator(
 
     fun generateCollectionCall(
         arrayLiteral: FirArrayLiteral,
-        expectedTypeRef: FirTypeRef,
+        expectedTypeConeType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
-        val expectedTypeConeType = expectedTypeRef.coneType
         return when {
-            expectedTypeConeType.isList -> generateListOfCall(arrayLiteral, context, resolutionMode)
+            expectedTypeConeType.isList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
+            expectedTypeConeType.isMutableList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
+            expectedTypeConeType.isSet -> generateCollectionOfCall(Name.identifier("setOf"), arrayLiteral, context, resolutionMode)
+            expectedTypeConeType.isMutableSet -> generateCollectionOfCall(Name.identifier("mutableSetOf"), arrayLiteral, context, resolutionMode)
             expectedTypeConeType.isArrayType -> generateArrayOfCall(arrayLiteral, expectedTypeConeType, context, resolutionMode)
             else -> TODO("nested static of is not yet supported")
         }
     }
 
-    fun generateListOfCall(
+    fun generateCollectionOfCall(
+        name: Name,
         arrayLiteral: FirArrayLiteral,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
         val argumentList = arrayLiteral.argumentList
+        val symbol = session.symbolProvider
+            .getTopLevelFunctionSymbols(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, name)
+            .single { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
         return buildFunctionCall {
             this.argumentList = argumentList
             calleeReference = generateCalleeReferenceWithCandidate(
                 arrayLiteral,
-                listOfSymbol.fir,
+                symbol.fir,
                 argumentList,
-                Name.identifier("listOf"),
+                name,
                 callKind = CallKind.Function,
                 context = context,
                 resolutionMode,
