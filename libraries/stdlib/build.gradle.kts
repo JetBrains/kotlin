@@ -642,6 +642,14 @@ tasks {
     val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
+        into("jvmMain") {
+            from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
+                into("jdk7")
+            }
+            from(kotlin.sourceSets["jvmMainJdk8"].kotlin) {
+                into("jdk8")
+            }
+        }
     }
 
     dexMethodCount {
