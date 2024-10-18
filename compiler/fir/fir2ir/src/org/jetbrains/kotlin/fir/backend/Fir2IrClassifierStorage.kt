@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -335,6 +336,7 @@ class Fir2IrClassifierStorage(
 
         val irParent = declarationStorage.findIrParent(enumEntry, fakeOverrideOwnerLookupTag = null) as IrClass
         if (irParent.isExternalParent()) {
+            enumEntry.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             classifiersGenerator.createIrEnumEntry(
                 enumEntry,
                 irParent = irParent,
