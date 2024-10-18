@@ -51,7 +51,7 @@ class NativeSourceRangesTest : AbstractNativeSimpleTest() {
 
     // Reproducer for KT-72356
     @Test
-    fun testKT72356FailWhenDifferentSourceRange() {
+    fun testKT72356FailWhenSameSourceRange() {
         val result = compileLibrary(BASE_DIR.resolve("sameSourceRange"))
         // TODO: KT-72356: Fix the issue with `FirExpression.toConstantValue()`, correct testcase name, change asserts below
         if (result is TestCompilationResult.CompilationToolFailure)
