@@ -553,7 +553,7 @@ class DurationTest {
         }
 
         // zero
-        test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S")
+        test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S", "PT000000000000000000000000H")
 
         // single unit
         test(1.days, "PT24H", "P1D", "PT1440M", "PT86400S")
@@ -600,6 +600,7 @@ class DurationTest {
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+            "PT+-2H", "PT-+2H",
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }.let { e ->
