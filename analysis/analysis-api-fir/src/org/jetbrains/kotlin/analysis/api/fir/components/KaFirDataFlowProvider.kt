@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -205,6 +207,14 @@ internal class KaFirDataFlowProvider(
             if (firStatement is FirExpression && firStatement.resolvedType == firLeaf.resolvedType) {
                 // Trivial blocks might not appear in the CFG, so here we include their content
                 return firStatement
+            }
+        }
+
+        if (firLeaf is FirReturnExpression) {
+            val sourceKind = firLeaf.source?.kind
+            if (sourceKind == KtFakeSourceElementKind.ImplicitReturn.FromLastStatement) {
+                // CFG node is only generated for the statement itself, an implicit return is absent in the graph
+                return firLeaf.result
             }
         }
 
