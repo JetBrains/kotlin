@@ -1,5 +1,7 @@
 KaDataFlowExitPointSnapshot:
-  defaultExpressionInfo = null
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = append("Baz")
+    type = java.lang.StringBuilder!
   hasEscapingJumps = false
   hasJumps = true
   hasMultipleJumpKinds = false
