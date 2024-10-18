@@ -633,6 +633,14 @@ private class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
             return directNodes.last()
         }
 
+        if (fir is FirReturnExpression) {
+            val sourceKind = fir.source?.kind
+            if (sourceKind == KtFakeSourceElementKind.ImplicitReturn.FromLastStatement) {
+                // CFG node is only generated for the statement itself, an implicit return is absent in the graph
+                return findLast(fir.result)
+            }
+        }
+
         if (fir is FirBlock) {
             return fir.statements
                 .asReversed()
