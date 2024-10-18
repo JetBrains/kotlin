@@ -200,16 +200,17 @@ class FirCallCompleter(
                     )
                 }
             }
-            !expectedType.isUnitOrFlexibleUnit || !resolutionMode.mayBeCoercionToUnitApplied -> {
-                system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+            expectedType.isUnitOrFlexibleUnit && resolutionMode.mayBeCoercionToUnitApplied -> {
+                when {
+                    system.notFixedTypeVariables.isEmpty() -> return
+                    expectedType.isUnit ->
+                        system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                    // Flexible Unit!
+                    // TODO: Consider unifying Unit! and Unit behavior (KT-72396)
+                    else -> system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                }
             }
-            system.notFixedTypeVariables.isEmpty() -> return
-            expectedType.isUnit -> {
-                system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
-            }
-            else -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
-            }
+            else -> system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
         }
     }
 
