@@ -47774,6 +47774,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/unit/unitClassObject.kt");
     }
 
+    @TestMetadata("unitCoercionWithElvis.kt")
+    public void testUnitCoercionWithElvis() {
+      runTest("compiler/testData/codegen/box/unit/unitCoercionWithElvis.kt");
+    }
+
     @TestMetadata("UnitValue.kt")
     public void testUnitValue() {
       runTest("compiler/testData/codegen/box/unit/UnitValue.kt");
