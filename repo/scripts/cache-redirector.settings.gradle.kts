@@ -318,7 +318,7 @@ fun Task.logNonCachedRepo(
 ) {
     val msg = "Repository $repoUrl in ${project.displayName} should be cached with cache-redirector"
     val details = "Using non cached repository may lead to download failures in CI builds." +
-            " Check https://github.com/JetBrains/kotlin/blob/master/gradle/cacheRedirector.gradle.kts for details."
+            " Check https://github.com/JetBrains/kotlin/blob/master/repo/scripts/cache-redirector.settings.gradle.kts for details."
 
     if (isTeamcityBuild) {
         testFailed(testName, msg, details)
