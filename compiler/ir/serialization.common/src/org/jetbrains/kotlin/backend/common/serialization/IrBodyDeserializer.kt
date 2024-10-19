@@ -76,10 +76,10 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommo
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
-    private val allowErrorNodes: Boolean,
     private val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
-    private val declarationDeserializer: IrDeclarationDeserializer
+    private val declarationDeserializer: IrDeclarationDeserializer,
+    private val settings: IrDeserializationSettings,
 ) {
 
     private val fileLoops = hashMapOf<Int, IrLoop>()
@@ -344,7 +344,7 @@ class IrBodyDeserializer(
         proto: ProtoErrorExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorExpression {
-        require(allowErrorNodes) {
+        require(settings.allowErrorNodes) {
             "IrErrorExpression($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
         return IrErrorExpressionImpl(start, end, type, libraryFile.string(proto.description))
@@ -354,7 +354,7 @@ class IrBodyDeserializer(
         proto: ProtoErrorCallExpression,
         start: Int, end: Int, type: IrType
     ): IrErrorCallExpression {
-        require(allowErrorNodes) {
+        require(settings.allowErrorNodes) {
             "IrErrorCallExpressionImpl($start, $end, \"${libraryFile.string(proto.description)}\") found but error code is not allowed"
         }
         return IrErrorCallExpressionImpl(start, end, type, libraryFile.string(proto.description)).apply {
