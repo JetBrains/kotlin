@@ -76,8 +76,6 @@ fun deserializeFromByteArray(
         settings = IrDeserializationSettings(
             allowAlreadyBoundSymbols = true,
         ),
-        deserializeInlineFunctions = true,
-        deserializeBodies = true,
         symbolDeserializer,
         onDeserializedClass = { _, _ -> },
         needToDeserializeFakeOverrides = { false },

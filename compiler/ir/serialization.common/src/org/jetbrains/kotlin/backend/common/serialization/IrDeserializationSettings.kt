@@ -16,8 +16,13 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
  * @property allowAlreadyBoundSymbols Don't attempt to create a new declaration (IR entity) during deserialization
  *   if it turns out that the symbol is already bound. This is needed for specific JVM-related scenarios when it's
  *   necessary to deserialize IR for already existing declarations.
+ * @property deserializeInlineFunctionBodies Whether to deserialize bodies of only inline functions (and their local functions).
+ *   Note: This setting is ignored if [deserializeAllFunctionBodies] is `true`.
+ * @property deserializeAllFunctionBodies Whether to deserialize bodies of all functions.
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
     val allowAlreadyBoundSymbols: Boolean = false,
+    val deserializeInlineFunctionBodies: Boolean = true,
+    val deserializeAllFunctionBodies: Boolean = true,
 )

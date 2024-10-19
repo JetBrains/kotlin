@@ -68,14 +68,13 @@ class IrDeclarationDeserializer(
     private val libraryFile: IrLibraryFile,
     parent: IrDeclarationParent,
     private val settings: IrDeserializationSettings,
-    private val deserializeInlineFunctions: Boolean,
-    private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
     private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val needToDeserializeFakeOverrides: (IrClass) -> Boolean,
     private val specialProcessingForMismatchedSymbolKind: ((deserializedSymbol: IrSymbol, fallbackSymbolKind: SymbolKind?) -> IrSymbol)?,
     private val irInterner: IrInterningService,
 ) {
+    private var deserializeFunctionBodies: Boolean = settings.deserializeAllFunctionBodies
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, irFactory, libraryFile, this, settings)
 
@@ -470,27 +469,27 @@ class IrDeclarationDeserializer(
     }
 
     private fun <T : IrFunction> T.withBodyGuard(block: T.() -> Unit) {
-        val oldBodiesPolicy = deserializeBodies
+        val oldBodiesPolicy = deserializeFunctionBodies
 
-        fun checkInlineBody(): Boolean = deserializeInlineFunctions && this is IrSimpleFunction && isInline
+        fun checkInlineBody(): Boolean = settings.deserializeInlineFunctionBodies && this is IrSimpleFunction && isInline
 
         try {
-            deserializeBodies = oldBodiesPolicy || checkInlineBody() || returnType.checkObjectLeak()
+            deserializeFunctionBodies = oldBodiesPolicy || checkInlineBody() || returnType.checkObjectLeak()
             block()
         } finally {
-            deserializeBodies = oldBodiesPolicy
+            deserializeFunctionBodies = oldBodiesPolicy
         }
     }
 
 
     private fun IrField.withInitializerGuard(isConst: Boolean, f: IrField.() -> Unit) {
-        val oldBodiesPolicy = deserializeBodies
+        val oldBodiesPolicy = deserializeFunctionBodies
 
         try {
-            deserializeBodies = isConst || oldBodiesPolicy || type.checkObjectLeak()
+            deserializeFunctionBodies = isConst || oldBodiesPolicy || type.checkObjectLeak()
             f()
         } finally {
-            deserializeBodies = oldBodiesPolicy
+            deserializeFunctionBodies = oldBodiesPolicy
         }
     }
 
@@ -503,7 +502,7 @@ class IrDeclarationDeserializer(
     }
 
     fun deserializeExpressionBody(index: Int): IrExpressionBody? {
-        return if (deserializeBodies) {
+        return if (deserializeFunctionBodies) {
             val bodyData = loadExpressionBodyProto(index)
             irFactory.createExpressionBody(bodyDeserializer.deserializeExpression(bodyData))
         } else {
@@ -512,7 +511,7 @@ class IrDeclarationDeserializer(
     }
 
     fun deserializeStatementBody(index: Int): IrElement? {
-        return if (deserializeBodies) {
+        return if (deserializeFunctionBodies) {
             val bodyData = loadStatementBodyProto(index)
             bodyDeserializer.deserializeStatement(bodyData)
         } else {
@@ -552,12 +551,12 @@ class IrDeclarationDeserializer(
     }
 
     fun <T : IrFunction> T.withDeserializeBodies(block: T.() -> Unit) {
-        val oldBodiesPolicy = deserializeBodies
+        val oldBodiesPolicy = deserializeFunctionBodies
         try {
-            deserializeBodies = true
+            deserializeFunctionBodies = true
             usingParent { block() }
         } finally {
-            deserializeBodies = oldBodiesPolicy
+            deserializeFunctionBodies = oldBodiesPolicy
         }
     }
 
