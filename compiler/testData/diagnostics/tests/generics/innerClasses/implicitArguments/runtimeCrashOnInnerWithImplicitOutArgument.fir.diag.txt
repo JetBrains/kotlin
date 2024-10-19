@@ -1,1 +1,1 @@
-/runtimeCrashOnInnerWithImplicitOutArgument.fir.kt:(220,225): error: Type parameter 'T' is declared as 'out' but occurs in 'in' position in type 'Out.Inner<T>'.
+/runtimeCrashOnInnerWithImplicitOutArgument.fir.kt:(220,225): error: Type parameter 'T' is declared as 'out' but occurs in 'in' position in type 'Out.Inner<T (of class Out<out T>)>'.
