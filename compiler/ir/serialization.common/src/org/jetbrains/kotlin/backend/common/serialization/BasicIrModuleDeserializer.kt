@@ -110,9 +110,11 @@ abstract class BasicIrModuleDeserializer(
             file,
             fileReader,
             fileProto,
-            fileStrategy.needBodies,
-            allowErrorNodes,
-            fileStrategy.inlineBodies,
+            IrDeserializationSettings(
+                allowErrorNodes = allowErrorNodes,
+                deserializeInlineFunctionBodies = fileStrategy.inlineBodies,
+                deserializeAllFunctionBodies = fileStrategy.needBodies,
+            ),
             moduleDeserializer,
         )
 
