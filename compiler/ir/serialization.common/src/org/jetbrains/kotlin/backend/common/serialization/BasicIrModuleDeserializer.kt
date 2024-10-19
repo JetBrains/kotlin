@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -110,9 +111,14 @@ abstract class BasicIrModuleDeserializer(
             file,
             fileReader,
             fileProto,
-            fileStrategy.needBodies,
-            allowErrorNodes,
-            fileStrategy.inlineBodies,
+            IrDeserializationSettings(
+                allowErrorNodes = allowErrorNodes,
+                deserializeFunctionBodies = when {
+                    fileStrategy.needBodies -> DeserializeFunctionBodies.ALL
+                    fileStrategy.inlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
+                    else -> DeserializeFunctionBodies.NONE
+                }
+            ),
             moduleDeserializer,
         )
 

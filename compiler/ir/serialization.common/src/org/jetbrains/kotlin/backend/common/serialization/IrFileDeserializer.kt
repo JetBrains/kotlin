@@ -62,9 +62,7 @@ class FileDeserializationState(
     val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
-    deserializeBodies: Boolean,
-    allowErrorNodes: Boolean,
-    deserializeInlineFunctions: Boolean,
+    settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
 ) {
 
@@ -84,11 +82,7 @@ class FileDeserializationState(
         linker.symbolTable.irFactory,
         fileReader,
         file,
-        settings = IrDeserializationSettings(
-            allowErrorNodes = allowErrorNodes,
-        ),
-        deserializeInlineFunctions,
-        deserializeBodies,
+        settings,
         symbolDeserializer,
         onDeserializedClass = { clazz, signature ->
             linker.fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode)
