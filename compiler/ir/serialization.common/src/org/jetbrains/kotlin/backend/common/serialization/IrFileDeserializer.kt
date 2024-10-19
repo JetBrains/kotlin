@@ -87,7 +87,6 @@ class FileDeserializationState(
         settings = IrDeserializationSettings(
             allowErrorNodes = allowErrorNodes,
         ),
-        allowAlreadyBoundSymbols = false,
         deserializeInlineFunctions,
         deserializeBodies,
         symbolDeserializer,
