@@ -73,8 +73,9 @@ fun deserializeFromByteArray(
     // Patching will be needed.
     val deserializer = IrDeclarationDeserializer(
         irBuiltIns, symbolTable, irBuiltIns.irFactory, irLibraryFile, toplevelParent,
-        settings = IrDeserializationSettings(),
-        allowAlreadyBoundSymbols = true,
+        settings = IrDeserializationSettings(
+            allowAlreadyBoundSymbols = true,
+        ),
         deserializeInlineFunctions = true,
         deserializeBodies = true,
         symbolDeserializer,

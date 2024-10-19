@@ -68,7 +68,6 @@ class IrDeclarationDeserializer(
     private val libraryFile: IrLibraryFile,
     parent: IrDeclarationParent,
     private val settings: IrDeserializationSettings,
-    private val allowAlreadyBoundSymbols: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
@@ -857,7 +856,7 @@ class IrDeclarationDeserializer(
     private inline fun <Declaration : IrDeclaration, Symbol : IrBindableSymbol<*, Declaration>> createIfUnbound(
         symbol: Symbol,
         create: () -> Declaration,
-    ): Declaration = if (allowAlreadyBoundSymbols && symbol.isBound) {
+    ): Declaration = if (settings.allowAlreadyBoundSymbols && symbol.isBound) {
         symbol.owner
     } else {
         create()

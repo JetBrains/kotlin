@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
  *
  * @property allowErrorNodes Whether serialization of [IrErrorType] and [IrErrorDeclaration] is permitted.
  *   TODO Consider removing in KT-69714.
+ * @property allowAlreadyBoundSymbols Don't attempt to create a new declaration (IR entity) during deserialization
+ *   if it turns out that the symbol is already bound. This is needed for specific JVM-related scenarios when it's
+ *   necessary to deserialize IR for already existing declarations.
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
+    val allowAlreadyBoundSymbols: Boolean = false,
 )
