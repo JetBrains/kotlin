@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrErrorType
 
 /**
@@ -19,10 +20,16 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
  * @property deserializeInlineFunctionBodies Whether to deserialize bodies of only inline functions (and their local functions).
  *   Note: This setting is ignored if [deserializeAllFunctionBodies] is `true`.
  * @property deserializeAllFunctionBodies Whether to deserialize bodies of all functions.
+ * @property useNullableAnyAsAnnotationConstructorCallType Whether to use `kotlin/Any?` as the type of the
+ *   annotation [IrConstructorCall] instead of the lazy type that is computed by [IrConstructorCall.symbol].
+ *   This setting is necessary for deserialization of unbound IR, where [IrConstructorCall.symbol] can happen
+ *   to be unbound resulting in "X is unbound" crash on the first attempt to read annotation's type.
+ *   See [org.jetbrains.kotlin.backend.common.serialization.IrBodyDeserializer.IrAnnotationType] for more details.
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
     val allowAlreadyBoundSymbols: Boolean = false,
     val deserializeInlineFunctionBodies: Boolean = true,
     val deserializeAllFunctionBodies: Boolean = true,
+    val useNullableAnyAsAnnotationConstructorCallType: Boolean = false,
 )
