@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -69,8 +67,8 @@ class IrDeclarationDeserializer(
     val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
     parent: IrDeclarationParent,
+    private val settings: IrDeserializationSettings,
     private val allowAlreadyBoundSymbols: Boolean,
-    val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
@@ -80,7 +78,7 @@ class IrDeclarationDeserializer(
     private val irInterner: IrInterningService,
 ) {
 
-    private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
+    private val bodyDeserializer = IrBodyDeserializer(builtIns, irFactory, libraryFile, this, settings)
 
     private fun deserializeName(index: Int): Name = irInterner.name(Name.guessByFirstCharacter(libraryFile.string(index)))
 
@@ -168,7 +166,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
-        if (!allowErrorNodes) throw IrDisallowedErrorNode(IrErrorType::class.java)
+        if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorType::class.java)
         val annotations = deserializeAnnotations(proto.annotationList)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
@@ -422,7 +420,7 @@ class IrDeclarationDeserializer(
         }
 
     private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration, setParent: Boolean = true): IrErrorDeclaration {
-        if (!allowErrorNodes) throw IrDisallowedErrorNode(IrErrorDeclaration::class.java)
+        if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorDeclaration::class.java)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset).also {
             if (setParent) it.parent = currentParent

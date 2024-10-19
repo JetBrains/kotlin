@@ -84,8 +84,10 @@ class FileDeserializationState(
         linker.symbolTable.irFactory,
         fileReader,
         file,
+        settings = IrDeserializationSettings(
+            allowErrorNodes = allowErrorNodes,
+        ),
         allowAlreadyBoundSymbols = false,
-        allowErrorNodes,
         deserializeInlineFunctions,
         deserializeBodies,
         symbolDeserializer,
