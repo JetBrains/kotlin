@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventions
@@ -112,6 +113,8 @@ fun Project.applyCocoapodsPlugin() {
     plugins.apply("org.jetbrains.kotlin.native.cocoapods")
     kotlin { cocoapods { version = "1.0" } }
 }
+
+val Project.publishing: PublishingExtension get() = extensions.getByType(PublishingExtension::class.java)
 
 fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
     requireNotNull(getExtension<CocoapodsExtension>("cocoapods")).apply(code)

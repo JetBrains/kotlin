@@ -1075,7 +1075,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     @GradleAndroidTest
     @AndroidTestVersions(additionalVersions = [TestVersions.AGP.AGP_81])
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3])
-    fun kotlinAndroidHasBuildTypeAttribute(
+    fun kotlinAndroidPublicationNotConfiguredIsReported(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -1109,4 +1109,42 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-72403: Report warning when user tries to publish different build types of Android publication")
+    @GradleAndroidTest
+    fun kotlinAndroidMultiplePublicationsHasBuildTypeAttribute(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        kmpAndroidLibraryProject(gradleVersion, agpVersion, jdkVersion).apply {
+            buildScriptInjection {
+                applyMavenPublishPlugin()
+                publishing.publications.withType(MavenPublication::class.java).configureEach { publication ->
+                    project.afterEvaluate {
+                        publication.groupId = "com.example"
+                        publication.artifactId = "lib-${publication.name}"
+                        publication.version = "1.0"
+                    }
+                }
+
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.androidTarget().apply {
+                    publishLibraryVariants("release", "debug")
+                }
+            }
+
+            build("publish") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.AndroidReleasePublicationIsNotConsumable)
+
+                // This is the reason why the diagnostic is reported, attempt to consume 'com.example:lib-androidRelease:1.0'
+                // instead 'com.example:lib:1.0' in pure Android Project would lead into an error
+                assertFileContains(
+                    projectPath.resolve("repo/com/example/lib-androidRelease/1.0/lib-androidRelease-1.0.module"),
+                    "\"com.android.build.api.attributes.BuildTypeAttr\": \"release\"",
+                )
+            }
+        }
+    }
+
 }

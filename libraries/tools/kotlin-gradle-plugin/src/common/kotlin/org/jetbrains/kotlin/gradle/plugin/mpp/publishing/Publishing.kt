@@ -28,6 +28,18 @@ private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<Ma
 internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication?>
     get() = kotlinMultiplatformRootPublicationImpl
 
+private val InternalKotlinTarget.publicationsReady: CompletableFuture<Unit>
+        by extrasStoredProperty { CompletableFuture() }
+
+internal suspend fun InternalKotlinTarget.awaitMavenPublications(): Map<String, MavenPublication> {
+    publicationsReady.await()
+    return kotlinComponents
+        .filterIsInstance<KotlinTargetComponentWithPublication>()
+        // publicationDelegate can be null when component is not publishable, so no publication is created
+        .filter { it.publicationDelegate != null }
+        .associate { component -> component.name to component.publicationDelegate!! }
+}
+
 internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
     if (isPluginApplied("maven-publish")) {
         if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
@@ -107,6 +119,7 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
             onPublicationCreated(componentPublication)
         }
+    publicationsReady.complete()
 }
 
 internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinTarget) {

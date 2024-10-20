@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.rememberPublishLibraryVariantsCallTrace
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.reportAndroidReleaseComponentPublicationIsBroken
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
@@ -101,17 +103,20 @@ abstract class KotlinAndroidTarget @Inject constructor(
     var publishLibraryVariants: List<String>? = listOf()
         // Workaround for Groovy GString items in a list:
         set(value) {
+            rememberPublishLibraryVariantsCallTrace(Throwable())
             field = value?.map(Any::toString)
         }
 
     /** Add Android library variant names to [publishLibraryVariants]. */
     fun publishLibraryVariants(vararg names: String) {
+        rememberPublishLibraryVariantsCallTrace(Throwable())
         publishLibraryVariants = publishLibraryVariants.orEmpty() + names
     }
 
     /** Set up all of the Android library variants to be published from this target's project within the default publications, which are
      * set up if the `maven-publish` Gradle plugin is applied. This overrides the variants chosen with [publishLibraryVariants] */
     fun publishAllLibraryVariants() {
+        rememberPublishLibraryVariantsCallTrace(Throwable())
         publishLibraryVariants = null
     }
 
@@ -156,12 +161,12 @@ abstract class KotlinAndroidTarget @Inject constructor(
         assert(project.state.executed) { "Android: doCreateComponents requires 'afterEvaluate' based project state" }
 
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-        val publishableVariants = mutableListOf<DeprecatedAndroidBaseVariant>()
+        val allVariants = mutableListOf<DeprecatedAndroidBaseVariant>()
             .apply { project.forAllAndroidVariants { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null }
 
-        val publishableVariantGroups = publishableVariants.groupBy { variant ->
+        val variantGroups = allVariants.groupBy { variant ->
             val flavorNames = getFlavorNames(variant)
             if (publishLibraryVariantsGroupedByFlavor) {
                 // For each flavor, we group its variants (which differ only in the build type) in a single component in order to publish
@@ -176,12 +181,12 @@ abstract class KotlinAndroidTarget @Inject constructor(
         // default components that is created by KGP.
         // FIXME related to this entire doCreateComponents function.
         //  We should think about re-using Components created by AGP even for KMP (KT-72395)
-        val isSingleBuildType = !isMultiplatformProject || publishableVariants
+        val isSingleBuildType = !isMultiplatformProject || allVariants
             .filter(::isVariantPublished)
             .map(::getBuildTypeName)
             .distinct().size == 1
 
-        return publishableVariantGroups.map { (flavorGroupNameParts, androidVariants) ->
+        return variantGroups.map { (flavorGroupNameParts, androidVariants) ->
             val nestedVariants = androidVariants.mapTo(mutableSetOf()) { androidVariant ->
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
@@ -197,14 +202,24 @@ abstract class KotlinAndroidTarget @Inject constructor(
                     compilation,
                     usageContexts,
                 ).apply {
+                    val buildTypeName = getBuildTypeName(androidVariant)
                     publishable = isVariantPublished(androidVariant)
 
                     if (!publishLibraryVariantsGroupedByFlavor) {
                         defaultArtifactIdSuffix =
                             dashSeparatedName(
-                                (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
+                                (getFlavorNames(androidVariant) + buildTypeName.takeIf { it != "release" })
                                     .map { it?.toLowerCaseAsciiOnly() }
                             ).takeIf { it.isNotEmpty() }
+                    }
+
+                    if (PropertiesProvider(project).keepAndroidBuildTypeAttribute &&
+                        !isSingleBuildType &&
+                        buildTypeName == "release" &&
+                        publishable
+                    ) {
+                        val publishableVariants = allVariants.filter(::isVariantPublished)
+                        this@KotlinAndroidTarget.reportAndroidReleaseComponentPublicationIsBroken(this, publishableVariants.map { it.name })
                     }
                 }
             }

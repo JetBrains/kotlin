@@ -1049,6 +1049,35 @@ object KotlinToolingDiagnostics {
             throwable = Throwable()
         )
     }
+
+    object AndroidReleasePublicationIsNotConsumable : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(
+            coordinates: String,
+            rootCoordinates: String,
+            publishableAndroidVariants: List<String>,
+            trace: Throwable?,
+        ): ToolingDiagnostic = build(
+            """
+            Android publication with coordinates '$coordinates' is broken! It can't be consumed by Android projects.
+
+            To avoid this, please make sure that consumers use these coordinates '$rootCoordinates' instead of '$coordinates'.
+
+            If you want '$coordinates' to be consumable, please make sure you publish only the release build type.
+            Currently, the following Android Variants are configured to be published: ${publishableAndroidVariants.joinToString(", ")}
+
+            Sample:
+                kotlin {
+                    androidTarget {
+                       publishLibraryVariants("release")
+                       // OR
+                       publishLibraryVariants = listOf("release")
+                    }
+                }
+
+            See https://kotl.in/ajjgg1 for more details
+        """.trimIndent(), throwable = trace
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

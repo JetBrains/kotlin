@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 fun KGPBaseTest.kotlinAndroidLibraryProject(
     gradleVersion: GradleVersion,
@@ -23,6 +25,30 @@ fun KGPBaseTest.kotlinAndroidLibraryProject(
         buildScriptInjection { applyDefaultAndroidLibraryConfiguration() }
     }
 }
+
+fun KGPBaseTest.kmpAndroidLibraryProject(
+    gradleVersion: GradleVersion,
+    agpVersion: String,
+    jdkVersion: JdkVersions.ProvidedJdk,
+): TestProject {
+    return project(
+        "base-kmp-android-library",
+        gradleVersion,
+        buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        buildJdk = jdkVersion.location,
+    ) {
+        buildScriptInjection {
+            applyDefaultAndroidLibraryConfiguration()
+            kotlinMultiplatform.androidTarget().apply {
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_1_8)
+                }
+            }
+        }
+    }
+}
+
 
 fun GradleBuildScriptInjectionContext.applyMavenPublishPlugin(): PublishingExtension {
     project.plugins.apply("maven-publish")
