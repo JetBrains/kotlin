@@ -474,8 +474,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 dependsOn(acceptLicensesTask)
             }
             maxParallelForks = 8
-            println("HEAP FOR $name")
-            this.maxHeapSize = "4G"
+            maxHeapSize = "4G"
 
             testLogging {
                 events("passed", "skipped", "failed")
@@ -542,6 +541,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     tasks.named("check") {
         dependsOn("functionalTest")
+        dependsOn("functionalTestLatestAgp")
         dependsOn("lincheckTest")
     }
 }
