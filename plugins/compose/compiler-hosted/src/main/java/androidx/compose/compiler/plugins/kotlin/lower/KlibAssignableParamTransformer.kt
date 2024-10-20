@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -38,11 +39,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// TODO fix description
 /**
  * This transformer is a workaround for https://youtrack.jetbrains.com/issue/KT-44945 on non-JVM
  * targets. Once KT-44945 is fixed (we expect it in 1.5.0), this Transformer can be removed
@@ -62,8 +63,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  *     $composer = $composer.startRestartGroup(...)
  * }
  */
-class AssignableParamTransformer(
-    val isJvm: Boolean,
+class KlibAssignableParamTransformer(
     context: IrPluginContext,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
@@ -78,6 +78,7 @@ class AssignableParamTransformer(
         module.transformChildrenVoid(this)
     }
 
+    @OptIn(IrImplementationDetail::class)
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val assignableParams = declaration.valueParameters.filter { it.isAssignable }
 
@@ -85,30 +86,27 @@ class AssignableParamTransformer(
             return super.visitFunction(declaration)
         }
 
-        val param2var = assignableParams.associateWith {
-            if (isJvm) {
-                it
-            } else {
-                IrVariableImpl(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = IrDeclarationOrigin.DEFINED,
-                    symbol = IrVariableSymbolImpl(),
-                    name = it.name,
-                    type = it.type,
-                    isVar = true,
-                    isConst = false,
-                    isLateinit = false
-                ).also { variable ->
-                    variable.parent = declaration
+        val variables = assignableParams.map {
+            val variable = IrVariableImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.DEFINED,
+                symbol = IrVariableSymbolImpl(),
+                name = it.name,
+                type = it.type,
+                isVar = true,
+                isConst = false,
+                isLateinit = false
+            )
+            variable.parent = declaration
 
-                    variable.initializer = IrGetValueImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        it.symbol
-                    )
-                }
-            }
+            variable.initializer = IrGetValueImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                it.symbol
+            )
+
+            variable
         }
 
         declaration.body = declaration.body?.let { body ->
@@ -116,27 +114,29 @@ class AssignableParamTransformer(
                 body.startOffset,
                 body.endOffset
             ).apply {
-                if (!isJvm) {
-                    statements.addAll(param2var.values)
-                }
+                statements.addAll(variables)
 
                 val updatedBody = body.statements.map {
                     it.transformStatement(
                         object : IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                param2var[expression.symbol.owner]?.let { valueDeclaration ->
-                                    return IrTypeOperatorCallImpl(
-                                        expression.startOffset,
-                                        expression.endOffset,
-                                        expression.type,
-                                        IrTypeOperator.IMPLICIT_CAST,
-                                        expression.type,
-                                        IrGetValueImpl(
+                                if (expression.symbol.owner in assignableParams) {
+                                    val paramIndex =
+                                        assignableParams.indexOf(expression.symbol.owner)
+                                    return super.visitTypeOperator( //TODO not sure about that as it would provoke recursive visiting of already visited IrGetValue?
+                                        IrTypeOperatorCallImpl(
                                             expression.startOffset,
                                             expression.endOffset,
-                                            expression.type.defaultParameterType(),
-                                            valueDeclaration.symbol,
-                                            expression.origin
+                                            expression.type,
+                                            IrTypeOperator.IMPLICIT_CAST,
+                                            expression.type,
+                                            IrGetValueImpl(
+                                                expression.startOffset,
+                                                expression.endOffset,
+                                                expression.type.defaultParameterType(),
+                                                variables[paramIndex].symbol,
+                                                expression.origin
+                                            )
                                         )
                                     )
                                 }
@@ -144,14 +144,15 @@ class AssignableParamTransformer(
                             }
 
                             override fun visitSetValue(expression: IrSetValue): IrExpression {
-                                val valueDeclaration = param2var[expression.symbol.owner]
-                                if (!isJvm && valueDeclaration != null) {
+                                if (expression.symbol.owner in assignableParams) {
+                                    val paramIndex =
+                                        assignableParams.indexOf(expression.symbol.owner)
                                     return super.visitSetValue(
                                         IrSetValueImpl(
                                             expression.startOffset,
                                             expression.endOffset,
                                             expression.type, // TODO defaultParameterType?
-                                            valueDeclaration.symbol,
+                                            variables[paramIndex].symbol,
                                             expression.value,
                                             expression.origin
                                         )

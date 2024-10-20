@@ -58,6 +58,7 @@ class ComposeIrGenerationExtension(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext,
     ) {
+        val isKlibTarget = !pluginContext.platform.isJvm()
         if (VersionChecker(pluginContext, messageCollector).check(skipIfRuntimeNotFound) == VersionCheckerResult.NOT_FOUND) {
             return
         }
@@ -191,13 +192,14 @@ class ComposeIrGenerationExtension(
             featureFlags,
         ).lower(moduleFragment)
 
-        AssignableParamTransformer(
-            pluginContext.platform.isJvm(),
-            pluginContext,
-            metrics,
-            stabilityInferencer,
-            featureFlags,
-        ).lower(moduleFragment)
+        if (isKlibTarget) {
+            KlibAssignableParamTransformer(
+                pluginContext,
+                metrics,
+                stabilityInferencer,
+                featureFlags,
+            ).lower(moduleFragment)
+        }
 
         if (pluginContext.platform.isJs() || pluginContext.platform.isWasm()) {
             WrapJsComposableLambdaLowering(
