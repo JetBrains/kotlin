@@ -669,6 +669,37 @@ class ComposableFunctionBodyTransformer(
                 changedParam,
                 defaultParam
             )
+        }.also { function ->
+            val assignableParams = declaration.valueParameters.filter { it.isAssignable }.toSet()
+            val defaultArgs = assignableParams // TODO FIX its not only default args?
+
+            if (assignableParams.isNotEmpty()) {
+                function.transform(
+                    object : IrElementTransformerVoid() {
+                        override fun visitGetValue(expression: IrGetValue): IrExpression {
+                            val defaultParameterType = expression.type.defaultParameterType()
+                            val shouldAdaptType = defaultParameterType != expression.type
+                            if (shouldAdaptType && expression.symbol.owner in defaultArgs) {
+                                return IrTypeOperatorCallImpl(
+                                    expression.startOffset,
+                                    expression.endOffset,
+                                    expression.type,
+                                    IrTypeOperator.IMPLICIT_CAST,
+                                    expression.type,
+                                    IrGetValueImpl(
+                                        expression.startOffset,
+                                        expression.endOffset,
+                                        defaultParameterType,
+                                        expression.symbol,
+                                        expression.origin
+                                    )
+                                )
+                            }
+                            return super.visitGetValue(expression)
+                        }
+                    }, null
+                )
+            }
         }
     }
 
@@ -764,7 +795,7 @@ class ComposableFunctionBodyTransformer(
         scope: Scope.FunctionScope,
         changedParam: IrChangedBitMaskValue,
         defaultParam: IrDefaultBitMaskValue?,
-    ): IrStatement {
+    ): IrFunction {
         val body = declaration.body!!
 
         val hasExplicitGroups = declaration.hasExplicitGroups
@@ -901,7 +932,7 @@ class ComposableFunctionBodyTransformer(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
         changedParam: IrChangedBitMaskValue,
-    ): IrStatement {
+    ): IrFunction {
         // no group, since composableLambda should already create one
         // no default logic
         val body = declaration.body!!
@@ -1081,7 +1112,7 @@ class ComposableFunctionBodyTransformer(
         scope: Scope.FunctionScope,
         changedParam: IrChangedBitMaskValue,
         defaultParam: IrDefaultBitMaskValue?,
-    ): IrStatement {
+    ): IrFunction {
         val body = declaration.body!!
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
