@@ -74,7 +74,7 @@ class ClassStabilityTransformer(
     private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
     private val messageCollector: MessageCollector? = null,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, classStabilityInferredCollection, featureFlags),
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags, mutableSetOf()),
     ClassLoweringPass,
     ModuleLoweringPass {
 

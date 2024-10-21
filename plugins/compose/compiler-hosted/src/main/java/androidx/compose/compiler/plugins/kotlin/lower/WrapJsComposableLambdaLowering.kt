@@ -97,7 +97,7 @@ class WrapJsComposableLambdaLowering(
     symbolRemapper,
     metrics,
     stabilityInferencer,
-    featureFlags,
+    featureFlags = featureFlags,
 ) {
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(

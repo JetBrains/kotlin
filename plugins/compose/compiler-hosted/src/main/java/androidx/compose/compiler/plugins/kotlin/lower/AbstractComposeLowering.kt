@@ -177,8 +177,8 @@ abstract class AbstractComposeLowering(
     val symbolRemapper: DeepCopySymbolRemapper,
     val metrics: ModuleMetrics,
     val stabilityInferencer: StabilityInferencer,
-    protected val unstableClassesWarning: MutableSet<ClassDescriptor>? = null,
     private val featureFlags: FeatureFlags,
+    protected val unstableClassesWarning: MutableSet<ClassDescriptor>? = null,
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
