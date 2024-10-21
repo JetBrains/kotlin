@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Resul
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextWithAdditionalAxioms
 import org.jetbrains.kotlin.ir.types.createIrTypeCheckerState
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
@@ -89,16 +90,12 @@ class IrOverrideChecker(
             return incompatible("Name mismatch")
         }
 
-        val superExtensionReceiver = superFunction?.extensionReceiverParameter
-        val subExtensionReceiver = subFunction?.extensionReceiverParameter
-        if ((superExtensionReceiver == null) != (subExtensionReceiver == null)) return incompatible("Receiver presence mismatch")
-
         val superTypeParameters = superFunction?.typeParameters.orEmpty()
         val subTypeParameters = subFunction?.typeParameters.orEmpty()
         if (superTypeParameters.size != subTypeParameters.size) return incompatible("Type parameter number mismatch")
 
-        val superValueParameters = superFunction?.valueParameters.orEmpty()
-        val subValueParameters = subFunction?.valueParameters.orEmpty()
+        val superValueParameters = superFunction?.nonDispatchParameters.orEmpty()
+        val subValueParameters = subFunction?.nonDispatchParameters.orEmpty()
         if (superValueParameters.size != subValueParameters.size) return incompatible("Value parameter number mismatch")
 
         val typeCheckerState = createIrTypeCheckerState(
@@ -109,12 +106,6 @@ class IrOverrideChecker(
             if (!areTypeParametersEquivalent(superTypeParameter, subTypeParameters[index], typeCheckerState)) {
                 return incompatible("Type parameter bounds mismatch")
             }
-        }
-
-        if (superExtensionReceiver != null && subExtensionReceiver != null &&
-            !AbstractTypeChecker.equalTypes(typeCheckerState, subExtensionReceiver.type, superExtensionReceiver.type)
-        ) {
-            return incompatible("Extension receiver parameter type mismatch")
         }
 
         for ((index, superValueParameter) in superValueParameters.withIndex()) {
