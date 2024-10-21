@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Paths
@@ -63,7 +64,8 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         JVM_FULL_RUNTIME,
         JS_STDLIB_WITHOUT_FACET,
         JS_STDLIB,
-        LOMBOK
+        LOMBOK,
+        SERIALIZATION
     }
 
     protected fun initProject(libraryDependency: LibraryDependency = LibraryDependency.NONE) {
@@ -82,6 +84,10 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
             LibraryDependency.LOMBOK -> {
                 addKotlinLombokDependency()
                 setupKotlinLombokFacet()
+            }
+            LibraryDependency.SERIALIZATION -> {
+                addKotlinSerializationDependency()
+                setupKotlinSerializationFacet()
             }
         }
     }
@@ -105,6 +111,21 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
             facet.useProjectSettings = false
             facet.compilerSettings = CompilerSettings().also {
                 it.additionalArguments = "-Xallow-no-source-files -Xplugin=${PathUtil.kotlinPathsForDistDirectory.lombokPluginJarPath}"
+            }
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+    }
+
+    private fun setupKotlinSerializationFacet() {
+        myProject.modules.forEach {
+            val facet = it.container.getChild(JpsKotlinFacetModuleExtension.KIND)?.settings ?: KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerSettings = CompilerSettings().also {
+                it.additionalArguments = "-Xallow-no-source-files -Xplugin=${PathUtil.kotlinPathsForDistDirectory.jar(KotlinPaths.Jar.SerializationPlugin)}"
             }
 
             it.container.setChild(

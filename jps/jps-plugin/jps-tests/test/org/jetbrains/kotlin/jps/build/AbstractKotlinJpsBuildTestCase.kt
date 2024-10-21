@@ -38,6 +38,10 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
         return addDependency(KotlinJpsLibrary.Lombok)
     }
 
+    protected fun addKotlinSerializationDependency(): JpsLibrary {
+        return addDependency(KotlinJpsLibrary.Serialization)
+    }
+
     private fun addDependency(library: KotlinJpsLibrary): JpsLibrary {
         return addDependency(myProject, library)
     }

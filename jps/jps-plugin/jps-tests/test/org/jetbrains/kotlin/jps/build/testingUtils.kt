@@ -77,11 +77,14 @@ fun withDaemon(fn: () -> Unit) {
 
 interface Action {
     fun apply()
+    fun checkPath(path: String) {
+        assertTrue("$path does not exist", File(path).exists())
+    }
 }
 
 class TouchAction(val path: String): Action {
     override fun apply() {
-        assertTrue(File(path).exists())
+        checkPath(path)
         change(path)
     }
 }
@@ -89,15 +92,14 @@ class TouchAction(val path: String): Action {
 class DeleteAction(val path: String): Action {
     override fun apply() {
         val file = File(path)
-        assertTrue(file.exists())
+        checkPath(path)
         assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
     }
 }
 
 class ChangeAction(val path: String, val newContent: String): Action {
     override fun apply() {
-        val file = File(path)
-        assertTrue(file.exists())
+        checkPath(path)
         change(path, newContent)
     }
 }
