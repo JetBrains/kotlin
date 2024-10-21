@@ -64,34 +64,6 @@ fun IrMemberAccessExpression<*>.getArguments(): List<Pair<ParameterDescriptor, I
 }
 
 /**
- * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
- * The arguments are to be evaluated in the same order as they appear in the resulting list.
- */
-@ObsoleteDescriptorBasedAPI
-@Suppress("unused") // Used in kotlin-native
-fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
-    val res = mutableListOf<Pair<IrValueParameterSymbol, IrExpression>>()
-    val irFunction = symbol.owner
-
-    dispatchReceiver?.let {
-        res += (irFunction.dispatchReceiverParameter!!.symbol to it)
-    }
-
-    extensionReceiver?.let {
-        res += (irFunction.extensionReceiverParameter!!.symbol to it)
-    }
-
-    irFunction.valueParameters.forEach {
-        val arg = getValueArgument((it.descriptor as ValueParameterDescriptor).index)
-        if (arg != null) {
-            res += (it.symbol to arg)
-        }
-    }
-
-    return res
-}
-
-/**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
