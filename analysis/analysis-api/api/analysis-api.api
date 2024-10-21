@@ -685,11 +685,6 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/per
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/permissions/KaAllowAnalysisOnEdt : java/lang/annotation/Annotation {
 }
 
-public final class org/jetbrains/kotlin/analysis/api/permissions/KaAnalysisPermissionRegistry$KaExplicitAnalysisRestriction {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getDescription ()Ljava/lang/String;
-}
-
 public final class org/jetbrains/kotlin/analysis/api/permissions/PermissionsKt {
 	public static final fun allowAnalysisFromWriteAction (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static final fun allowAnalysisOnEdt (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;

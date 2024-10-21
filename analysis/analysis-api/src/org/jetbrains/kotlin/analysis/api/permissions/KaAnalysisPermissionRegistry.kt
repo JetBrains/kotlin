@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistr
  */
 @KaImplementationDetail
 public interface KaAnalysisPermissionRegistry {
+    @KaImplementationDetail
     public class KaExplicitAnalysisRestriction(public val description: String)
 
     public var explicitAnalysisRestriction: KaExplicitAnalysisRestriction?
