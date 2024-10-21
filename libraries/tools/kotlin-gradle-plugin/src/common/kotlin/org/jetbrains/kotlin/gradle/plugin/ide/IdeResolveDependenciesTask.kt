@@ -66,7 +66,7 @@ internal open class IdeResolveDependenciesTask : DefaultTask() {
     fun resolveDependencies() {
         val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies").get().asFile
         outputDirectory.deleteRecursively()
-        val gson = GsonBuilder().setLenient().setPrettyPrinting()
+        val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting()
             .registerTypeHierarchyAdapter(IdeDependencyResolver::class.java, IdeDependencyResolverAdapter)
             .registerTypeHierarchyAdapter(Extras::class.java, ExtrasAdapter)
             .registerTypeHierarchyAdapter(IdeaKotlinDependencyCoordinates::class.java, IdeaKotlinDependencyCoordinatesAdapter)

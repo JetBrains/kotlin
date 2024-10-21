@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(gradleKotlinDsl())
-    compileOnly("com.android.tools.build:gradle:7.2.1")
+    compileOnly(libs.android.gradle.plugin.gradle)
     compileOnly(project(":kotlin-gradle-plugin")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
