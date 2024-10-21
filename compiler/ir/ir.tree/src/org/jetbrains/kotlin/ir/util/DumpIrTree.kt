@@ -190,15 +190,22 @@ class DumpIrTreeVisitor(
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
             declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
             declaration.typeParameters.dumpElements()
-            declaration.dispatchReceiverParameter?.accept(this, "\$this")
-
-            val contextReceiverParametersCount = declaration.contextReceiverParametersCount
-            if (contextReceiverParametersCount > 0) {
-                printer.println("contextReceiverParametersCount: $contextReceiverParametersCount")
+            var printedContextParameterCount = false
+            for (param in declaration.parameters) {
+                when (param.kind) {
+                    IrParameterKind.DispatchReceiver -> param.accept(this, "\$this")
+                    IrParameterKind.ContextParameter -> {
+                        // todo: print context parameters normally?
+                        if (!printedContextParameterCount) {
+                            val contextReceiverParametersCount = declaration.parameters.count { it.kind == IrParameterKind.ContextParameter }
+                            printer.println("contextReceiverParametersCount: $contextReceiverParametersCount")
+                            printedContextParameterCount = true
+                        }
+                    }
+                    IrParameterKind.ExtensionReceiver -> param.accept(this, "\$receiver")
+                    IrParameterKind.RegularParameter -> param.accept(this, "")
+                }
             }
-
-            declaration.extensionReceiverParameter?.accept(this, "\$receiver")
-            declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
         }
     }
