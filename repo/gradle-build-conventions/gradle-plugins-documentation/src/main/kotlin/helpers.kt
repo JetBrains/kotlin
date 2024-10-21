@@ -77,6 +77,9 @@ fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
     commonSourceSet: SourceSet,
     variantSourceSet: SourceSet,
 ) {
+    suppressInheritedMembers.set(true)
+    suppressObviousFunctions.set(true)
+
     dokkaSourceSets.named(commonSourceSet.name) {
         suppress.set(false)
         jdkVersion.set(8)
@@ -86,6 +89,7 @@ fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
         dependsOn(commonSourceSet)
         suppress.set(false)
         jdkVersion.set(8)
+
 
         externalDocumentationLink {
             url.set(URI(gradlePluginVariant.gradleApiJavadocUrl).toURL())
