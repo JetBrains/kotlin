@@ -150,6 +150,7 @@ object SetOps : TemplateGroupBase() {
             return set
             """
         }
+        sample("samples.collections.Collections.BinaryOperations.intersectOf${primitive ?: "Generic"}")
     }
 
     val f_subtract = fn("subtract(other: Iterable<T>)") {
