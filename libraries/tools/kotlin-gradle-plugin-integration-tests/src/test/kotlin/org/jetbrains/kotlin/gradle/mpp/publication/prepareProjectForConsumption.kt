@@ -5,10 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.mpp.publication
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.result.ResolutionResult
+import org.gradle.api.artifacts.result.UnresolvedDependencyResult
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.GradleBuildScriptInjectionContext
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
@@ -56,6 +64,13 @@ private fun GradleProject.prepareAndroidConsumer(dependencies: List<Scenario.Pro
             }
         """.trimIndent()
     )
+
+    buildScriptInjection {
+        registerResolveDependenciesTask(
+            "flavor1DebugCompileClasspath",
+            "flavor1ReleaseCompileClasspath"
+        )
+    }
 }
 
 private fun List<Scenario.Project>.asDependenciesBlock(): String = joinToString("\n") {
@@ -71,6 +86,10 @@ private fun GradleProject.prepareJavaConsumer(dependencies: List<Scenario.Projec
             }
         """.trimIndent()
     )
+
+    buildScriptInjection {
+        registerResolveDependenciesTask("compileClasspath")
+    }
 }
 
 private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, dependencies: List<Scenario.Project>) {
@@ -123,4 +142,60 @@ private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, depende
             }           
         """.trimIndent()
     )
+
+    buildScriptInjection {
+        registerResolveDependenciesTask(
+            "jvmCompileClasspath",
+            "androidFlavor1ReleaseCompileClasspath",
+            "androidFlavor1DebugCompileClasspath",
+            "linuxX64CompileKlibraries",
+            "linuxArm64CompileKlibraries"
+        )
+    }
+}
+
+
+private abstract class ResolveDependenciesTask : DefaultTask() {
+    @get:OutputDirectory
+    val outDir: File = project.file("resolvedDependenciesReports")
+
+    private val configurations = mutableMapOf<String, ResolutionResult>()
+    fun reportForConfiguration(name: String) {
+        val configuration = project.configurations.findByName(name) ?: return
+        configurations[name] = configuration.incoming.resolutionResult
+    }
+
+    @TaskAction
+    fun action() {
+        configurations.forEach { (name, artifacts) ->
+            reportResolutionResult(name, artifacts)
+        }
+    }
+
+    private fun reportResolutionResult(name: String, resolutionResult: ResolutionResult) {
+        val content = buildString {
+            // report errors if any
+            resolutionResult.allDependencies
+                .filterIsInstance<UnresolvedDependencyResult>()
+                .forEach {
+                    appendLine("ERROR: ${it.attempted} -> ${it.failure}")
+                }
+
+            resolutionResult.allComponents
+                .map { component -> "${component.id} => ${component.variants.map { it.displayName }}" }
+                .sorted()
+                .joinToString("\n")
+                .also { append(it) }
+        }
+
+        outDir.resolve("${name}.txt").writeText(content)
+    }
+}
+
+internal fun GradleBuildScriptInjectionContext.registerResolveDependenciesTask(vararg configurationNames: String) {
+    project.tasks.register("resolveDependencies", ResolveDependenciesTask::class.java) { task ->
+        for (configurationName in configurationNames) {
+            task.reportForConfiguration(configurationName)
+        }
+    }
 }
