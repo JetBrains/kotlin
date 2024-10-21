@@ -42,25 +42,6 @@ val IrFile.name: String get() = File(path).name
 val IrFile.nameWithPackage: String get() = packageFqName.child(Name.identifier(name)).asString()
 val IrFile.packagePartClassName: String get() = getPackagePartClassNamePrefix(File(path).nameWithoutExtension) + "Kt"
 
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-    getIrValueParameter(parameter, parameter.index)
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.getIrValueParameter(parameter: ParameterDescriptor, index: Int): IrValueParameter =
-    valueParameters.getOrElse(index) {
-        throw AssertionError("No IrValueParameter for $parameter")
-    }.also { found ->
-        assert(found.descriptor == parameter) {
-            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-        }
-    }
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-    getIrValueParameter(parameter).defaultValue = expressionBody
-}
-
 val IrFunction.isStaticMethodOfClass: Boolean
     get() = this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter == null
 
