@@ -457,7 +457,7 @@ fun IrBuilderWithScope.irConstantObject(
 ): IrConstantValue {
     return irConstantObject(
         clazz,
-        clazz.primaryConstructor!!.symbol.owner.valueParameters.also {
+        clazz.primaryConstructor!!.symbol.owner.parameters.also {
             require(it.size == elements.size) {
                 "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
             }
