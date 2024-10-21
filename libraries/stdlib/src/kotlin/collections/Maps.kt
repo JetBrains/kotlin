@@ -364,6 +364,9 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
  *
  * @throws NoSuchElementException when the map doesn't contain a value for the specified key and
  * no implicit default value was provided for that map.
+ *
+ * @sample samples.collections.Maps.Usage.getValueWithoutDefault
+ * @sample samples.collections.Maps.Usage.getValueWithDefault
  */
 @SinceKotlin("1.1")
 public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
