@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class DeclarationStubGenerator(
@@ -204,9 +205,7 @@ abstract class DeclarationStubGenerator(
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
             ).generateParentDeclaration().also {
-                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
-                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
-                it.valueParameters = it.createValueParameters()
+                it.parameters = it.createValueParameters()
             }
         }
     }
@@ -228,9 +227,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
             ).generateParentDeclaration().also {
-                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
-                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
-                it.valueParameters = it.createValueParameters()
+                it.parameters = it.createValueParameters()
             }
         }
     }
@@ -240,11 +237,13 @@ abstract class DeclarationStubGenerator(
     private fun IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
         typeTranslator.buildWithScope(this) {
             val result = arrayListOf<IrValueParameter>()
+            result.addIfNotNull(createReceiverParameter(descriptor.dispatchReceiverParameter, IrParameterKind.DispatchReceiver))
             descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
                 factory.createValueParameter(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = origin,
+                    kind = IrParameterKind.ContextParameter,
                     name = Name.identifier("contextReceiverParameter$i"),
                     type = contextReceiverParameter.type.toIrType(),
                     isAssignable = false,
@@ -255,6 +254,7 @@ abstract class DeclarationStubGenerator(
                     isHidden = false,
                 ).apply { parent = this@createValueParameters }
             }
+            result.addIfNotNull(createReceiverParameter(descriptor.extensionReceiverParameter, IrParameterKind.ExtensionReceiver))
             descriptor.valueParameters.mapTo(result) {
                 stubGenerator.generateValueParameterStub(it)
                     .apply { parent = this@createValueParameters }
@@ -268,6 +268,7 @@ abstract class DeclarationStubGenerator(
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
         ).also { irValueParameter ->
+            irValueParameter.kind = IrParameterKind.RegularParameter
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
@@ -276,8 +277,12 @@ abstract class DeclarationStubGenerator(
 
     private fun IrLazyFunctionBase.createReceiverParameter(
         parameter: ReceiverParameterDescriptor?,
+        kind: IrParameterKind,
     ): IrValueParameter? = typeTranslator.buildWithScope(this) {
-        parameter?.generateReceiverParameterStub()?.also { it.parent = this@createReceiverParameter }
+        parameter?.generateReceiverParameterStub()?.also {
+            it.kind = kind
+            it.parent = this@createReceiverParameter
+        }
     }
 
     // in IR Generator enums also have special handling, but here we have not enough data for it
