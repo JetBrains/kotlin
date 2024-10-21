@@ -248,7 +248,7 @@ abstract class DataClassMembersGenerator(
                 val irPropertyStringValue =
                     if (classifier.isArrayOrPrimitiveArray)
                         irCall(context.irBuiltIns.dataClassArrayMemberToStringSymbol, context.irBuiltIns.stringType).apply {
-                            putValueArgument(0, irPropertyValue)
+                            arguments[0] = irPropertyValue
                         }
                     else
                         irPropertyValue
