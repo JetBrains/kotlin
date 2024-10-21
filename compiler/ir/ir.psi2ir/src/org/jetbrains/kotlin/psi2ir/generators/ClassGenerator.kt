@@ -345,26 +345,23 @@ internal class ClassGenerator(
             putTypeArguments(typeArguments) { it.toIrType() }
 
             val dispatchReceiverParameter = irDelegatedFunction.dispatchReceiverParameter!!
-            dispatchReceiver =
-                IrGetFieldImpl(
+            val nonDispatchParameterCount = delegatedDescriptor.contextReceiverParameters.size +
+                    (if (delegatedDescriptor.extensionReceiverParameter != null) 1 else 0) +
+                    delegatedDescriptor.valueParameters.size
+
+            arguments[0] = IrGetFieldImpl(
+                startOffset, endOffset,
+                irDelegate.symbol,
+                irDelegate.type,
+                IrGetValueImpl(
                     startOffset, endOffset,
-                    irDelegate.symbol,
-                    irDelegate.type,
-                    IrGetValueImpl(
-                        startOffset, endOffset,
-                        dispatchReceiverParameter.type,
-                        dispatchReceiverParameter.symbol
-                    )
+                    dispatchReceiverParameter.type,
+                    dispatchReceiverParameter.symbol
                 )
-
-            extensionReceiver =
-                irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
-                }
-
-            (delegatedDescriptor.contextReceiverParameters + delegatedDescriptor.valueParameters).forEachIndexed { index, param ->
-                val delegatedParameter = irDelegatedFunction.getIrValueParameter(param, index)
-                putValueArgument(index, IrGetValueImpl(startOffset, endOffset, delegatedParameter.type, delegatedParameter.symbol))
+            )
+            for (index in 1..nonDispatchParameterCount) {
+                val delegatedParameter = irDelegatedFunction.parameters[index]
+                arguments[index] = IrGetValueImpl(startOffset, endOffset, delegatedParameter.type, delegatedParameter.symbol)
             }
         }
 

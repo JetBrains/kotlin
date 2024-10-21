@@ -203,7 +203,10 @@ private abstract class DescriptorBasedDataClassMembersGenerator(
     fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
         buildMember(function) {
             function.valueParameters.forEach { parameter ->
-                putDefault(parameter, irGetProperty(irThis(), getProperty(parameter)))
+                val irParameter = irFunction.parameters
+                    .filter { it.kind == IrParameterKind.Regular }
+                    .getOrElse(parameter.index) { error("No IrValueParameter for $parameter") }
+                irParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(parameter)))
             }
             generateCopyFunction(constructorSymbol)
         }
@@ -249,10 +252,6 @@ private abstract class DescriptorBasedDataClassMembersGenerator(
                 }
             }
         }
-    }
-
-    private fun MemberFunctionBuilder.putDefault(parameter: ValueParameterDescriptor, value: IrExpression) {
-        irFunction.putDefault(parameter, irExprBody(value))
     }
 
     override fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
