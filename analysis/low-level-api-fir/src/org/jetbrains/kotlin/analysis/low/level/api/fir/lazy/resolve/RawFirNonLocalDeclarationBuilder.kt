@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -233,7 +234,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: FirElement?): FirElement {
             val owner = containingClass ?: errorWithAttachment("Enum entry outside of class") {
                 withPsiEntry("enumEntry", enumEntry, baseSession.llFirModuleData.ktModule)
+                withPsiEntry("containingClassPsi", enumEntry.containingClassOrObject)
+                withFirEntry("originalDeclaration", originalDeclaration)
             }
+
             val classOrObject = owner.psi as KtClassOrObject
             val primaryConstructor = classOrObject.primaryConstructor
             val ownerClassHasDefaultConstructor =
