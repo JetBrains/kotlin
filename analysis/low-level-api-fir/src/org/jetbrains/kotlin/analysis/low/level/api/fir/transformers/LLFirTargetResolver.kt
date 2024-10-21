@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTargetVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -82,10 +82,12 @@ internal sealed class LLFirTargetResolver(
      * @param context used as a context in the case of exception
      * @return the last class from [containingDeclarations]
      */
-    fun containingClass(context: FirElement): FirRegularClass {
+    fun containingClass(context: FirDeclaration): FirRegularClass {
         val containingDeclaration = containingDeclarations.lastOrNull() ?: errorWithAttachment("Containing declaration is not found") {
             withFirEntry("context", context)
             withFirDesignationEntry("designation", resolveTarget.designation)
+            context.tryCollectDesignation()?.let { withFirDesignationEntry("calculatedDesignation", it) }
+            withEntry("origin", context.origin.toString())
         }
 
         requireWithAttachment(
@@ -94,6 +96,8 @@ internal sealed class LLFirTargetResolver(
         ) {
             withFirEntry("context", context)
             withFirDesignationEntry("designation", resolveTarget.designation)
+            context.tryCollectDesignation()?.let { withFirDesignationEntry("calculatedDesignation", it) }
+            withEntry("origin", context.origin.toString())
         }
 
         return containingDeclaration
