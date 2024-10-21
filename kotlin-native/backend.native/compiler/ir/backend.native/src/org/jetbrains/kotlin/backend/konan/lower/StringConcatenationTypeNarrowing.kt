@@ -78,7 +78,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     }
 
     private fun buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
-            builder.irCall(function.symbol, function.returnType, valueArgumentsCount = 1, typeArgumentsCount = 0)
+            builder.irCall(function.symbol, function.returnType, typeArgumentsCount = 0)
                     .apply {
                         putValueArgument(0, argument)
                         dispatchReceiver = receiver
@@ -142,7 +142,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             }?.symbol
             val callee = calleeOrNull ?: context.ir.symbols.memberToString  // defaults to `Any.toString()`
             builder
-                    .irCall(callee, callee.owner.returnType, valueArgumentsCount = 0, typeArgumentsCount = 0)
+                    .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
                     .apply { dispatchReceiver = argument }
         }
     }
