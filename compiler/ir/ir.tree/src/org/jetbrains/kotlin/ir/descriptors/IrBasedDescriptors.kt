@@ -350,17 +350,19 @@ fun IrLocalDelegatedProperty.toIrBasedDescriptor() = IrBasedVariableDescriptorWi
 
 abstract class IrBasedFunctionDescriptor<Function : IrFunction>(owner: Function) : IrBasedCallableDescriptor<Function>(owner) {
 
-    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+    override fun getExtensionReceiverParameter() = owner
+        .parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+        ?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
-    override fun getContextReceiverParameters() = owner.valueParameters
+    override fun getContextReceiverParameters() = owner.parameters
         .asSequence()
-        .take(owner.contextReceiverParametersCount)
+        .filter { it.kind == IrParameterKind.ContextParameter }
         .map(::IrBasedReceiverParameterDescriptor)
         .toMutableList()
 
-    override fun getValueParameters() = owner.valueParameters
+    override fun getValueParameters() = owner.parameters
         .asSequence()
-        .drop(owner.contextReceiverParametersCount)
+        .filter { it.kind == IrParameterKind.RegularParameter }
         .map(::IrBasedValueParameterDescriptor)
         .toMutableList()
 }
@@ -849,7 +851,9 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
     override fun isLateInit() = owner.isLateinit
 
     override fun getExtensionReceiverParameter() =
-        owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+        owner.getter?.parameters
+            ?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+            ?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
         return getter?.contextReceiverParameters ?: emptyList()
