@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
+
 val kotlinVersion: String by rootProject.extra
 
 plugins {
