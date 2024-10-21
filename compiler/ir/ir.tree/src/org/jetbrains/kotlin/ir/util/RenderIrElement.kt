@@ -131,15 +131,21 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
                 renderTypeParameters(declaration)
 
-                appendIterableWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
+                appendIterableWith(declaration.parameters, "(", ")", ", ") { valueParameter ->
+                    val name = when (valueParameter.kind) {
+                        IrParameterKind.DispatchReceiver -> "\$this"
+                        IrParameterKind.ExtensionReceiver -> "\$receiver"
+                        IrParameterKind.RegularParameter, IrParameterKind.ContextParameter -> valueParameter.name.asString()
+                    }
+
                     val varargElementType = valueParameter.varargElementType
                     if (varargElementType != null) {
                         append("vararg ")
-                        append(valueParameter.name.asString())
+                        append(name)
                         append(": ")
                         append(varargElementType.renderTypeWithRenderer(null, options))
                     } else {
-                        append(valueParameter.name.asString())
+                        append(name)
                         append(": ")
                         append(valueParameter.type.renderTypeWithRenderer(null, options))
                     }
