@@ -118,9 +118,9 @@ open class AbstractFirLightTreeJsBoxTest : AbstractFirJsTest(
     parser = FirParser.LightTree,
 )
 
-open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/firBox/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -134,7 +134,12 @@ open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTest() {
+open class AbstractFirJsCodegenBoxTest : AbstractFirJsCodegenBoxTestBase(
+    testGroupOutputDirPrefix = "codegen/firBox/"
+)
+open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTestBase(
+    testGroupOutputDirPrefix = "codegen/firBoxWithInlinedFunInKlib"
+) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
