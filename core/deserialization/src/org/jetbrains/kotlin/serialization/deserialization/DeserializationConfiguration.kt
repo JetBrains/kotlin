@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 interface DeserializationConfiguration {
 
-    val metadataVersion: MetadataVersion?
-        get() = null
+    val metadataVersion: MetadataVersion
+        get() = MetadataVersion.INSTANCE
 
     val skipMetadataVersionCheck: Boolean
         get() = false
@@ -44,6 +44,3 @@ interface DeserializationConfiguration {
 
     object Default : DeserializationConfiguration
 }
-
-fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =
-    metadataVersion ?: MetadataVersion.INSTANCE

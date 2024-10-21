@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 
 class LazyJavaPackageFragment(
     outerContext: LazyJavaResolverContext,
@@ -41,7 +40,7 @@ class LazyJavaPackageFragment(
     private val c = outerContext.childForClassOrPackage(this)
 
     private val metadataVersion =
-        outerContext.components.deserializedDescriptorResolver.components.configuration.metadataVersionOrDefault()
+        outerContext.components.deserializedDescriptorResolver.components.configuration.metadataVersion
 
     internal val binaryClasses by c.storageManager.createLazyValue {
         c.components.packagePartProvider.findPackageParts(fqName.asString()).mapNotNull { partName ->

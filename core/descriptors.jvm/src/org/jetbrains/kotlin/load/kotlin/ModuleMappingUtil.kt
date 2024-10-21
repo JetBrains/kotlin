@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 
 fun ModuleMapping.Companion.loadModuleMapping(
     bytes: ByteArray?,
@@ -21,6 +20,6 @@ fun ModuleMapping.Companion.loadModuleMapping(
         debugName,
         configuration.skipMetadataVersionCheck,
         configuration.isJvmPackageNameSupported,
-        configuration.metadataVersionOrDefault(),
+        configuration.metadataVersion,
         reportIncompatibleVersionError
     )

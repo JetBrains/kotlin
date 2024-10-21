@@ -28,13 +28,12 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
     lateinit var components: DeserializationComponents
 
-    private val ownMetadataVersion: MetadataVersion get() = components.configuration.metadataVersionOrDefault()
+    private val ownMetadataVersion: MetadataVersion get() = components.configuration.metadataVersion
 
     // component dependency cycle
     @Inject
