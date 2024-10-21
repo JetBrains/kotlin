@@ -9,6 +9,8 @@
 
 package kotlin.text
 
+import kotlin.code
+
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
  *
@@ -250,9 +252,6 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     }
 }
 
-private const val LengthOfNaN = 2 // "NaN".length - 1
-private const val LengthOfInfinity = 7 // "Infinity".length - 1
-
 private fun isValidFloat(s: String): Boolean {
     // A float can have one of two representations:
     //
@@ -281,81 +280,42 @@ private fun isValidFloat(s: String): Boolean {
     // Implementation notes:
     //     - The pattern "myChar.code or 0x20 == 'x'.code" is used to perform a case-insensitive
     //       comparison of a character. Adding the 0x20 bit turns an upper case ASCII letter into
-    //       a lower case one.
+    //       a lower case one. This is encapsulated in the toAsciiLowerCase() extension
 
     var start = 0
-    var end = s.length - 1
+    var endInclusive = s.length - 1
 
     // Skip leading spaces
-    while (start <= end && s[start].code <= 0x20) start++
+    start = s.advanceWhile(start, endInclusive) { it.code <= 0x20 }
 
     // Empty/whitespace string
-    if (start > end) return false
+    if (start > endInclusive) return false
 
     // Skip trailing spaces
-    while (end > start && s[end].code <= 0x20) end--
+    endInclusive = s.backtrackWhile(start, endInclusive) { it.code <= 0x20 }
 
     // Number starts with a positive or negative sign
     if (s[start] == '+' || s[start] == '-') start++
     // If we have nothing after the sign, the string is invalid
-    if (start > end) return false
+    if (start > endInclusive) return false
 
-    var hasIntegerPart: Boolean
-    var hasFractionalPart = false
     var isHex = false
 
     // Might be a hex string
     if (s[start] == '0') {
         start++
         // A "0" on its own is valid
-        if (start > end) return true
+        if (start > endInclusive) return true
 
         // Test for [xX] to see if we truly have a hex string
-        if (s[start].code or 0x20 == 'x'.code) {
+        if (s[start].toAsciiLowerCase() == 'x'.code) {
             start++
 
-            // Look for hex digits after the 0x prefix
-            var checkpoint = start
-            while (start <= end) {
-                val d = s[start]
-                if (d.isAsciiDigit() || d.isHexLetter()) {
-                    start++
-                } else {
-                    break
-                }
-            }
-            // Check if we found 0x*****, otherwise, the hex number might be of the
-            // form 0x.*******
-            hasIntegerPart = checkpoint != start
-
-            // A hex string must have an exponent, the string is invalid if we only found an
-            // integer part
-            if (start > end) return false
-
-            if (s[start] == '.') {
-                start++
-
-                // Look for hex digits for the fractional part
-                checkpoint = start
-                while (start <= end) {
-                    val d = s[start]
-                    if (d.isAsciiDigit() || d.isHexLetter()) {
-                        start++
-                    } else {
-                        break
-                    }
-                }
-
-                // Did we find a fractional part?
-                hasFractionalPart = checkpoint != start
-            }
-
-            // A string must have an integer part, or a fractional part, or both
-            if (!hasIntegerPart && !hasFractionalPart) return false
+            start = s.advanceAndValidateMantissa(start, endInclusive, true) { it.isAsciiDigit() || it.isHexLetter() }
 
             // A hex string must have an exponent, the string is invalid if we only found an
             // integer and/or fractional part
-            if (start > end) return false
+            if (start == -1 || start > endInclusive) return false
 
             isHex = true
         } else {
@@ -367,78 +327,44 @@ private fun isValidFloat(s: String): Boolean {
 
     // Parse a non-hexadecimal representations
     if (!isHex) {
-        // Look for digits before the decimal separator, if any
-        var checkpoint = start
-        while (start <= end && s[start].isAsciiDigit()) start++
+        start = s.advanceAndValidateMantissa(start, endInclusive, false) { it.isAsciiDigit() }
 
-        // If there's no integer part, the float might be of the form .1234
-        hasIntegerPart = checkpoint != start
+        // We couldn't validate the mantissa, stop here
+        if (start == -1) return false
 
-        // A non-hexadecimal representation only needs an integer part, we can stop here
-        if (start > end) return hasIntegerPart
-
-        if (s[start] == '.') {
-            start++
-
-            // Look for the fractional part
-            checkpoint = start
-            while (start <= end && s[start].isAsciiDigit()) start++
-
-            // Did we find a fractional part?
-            hasFractionalPart = checkpoint != start
-        }
-
-        // A string must have an integer part, or a fractional part, or both
-        if (!hasIntegerPart && !hasFractionalPart) {
-            // Special case non-finite constants
-            val constant = when (end) {
-                start + LengthOfNaN -> {
-                    "NaN"
-                }
-                start + LengthOfInfinity -> {
-                    "Infinity"
-                }
-                else -> {
-                    // If we don't have enough characters left for the 2 known constants, just bail
-                    return false
-                }
-            }
-            return s.indexOf(constant, start, false) == start
-        }
-
-        // If we have either, we can stop here if we've run out of characters
-        if (start > end) return true
+        // If we have validated the mantissa, we can stop here if we've run out of characters
+        if (start > endInclusive) return true
     }
 
     // Look for an exponent:
     //     - Mandatory for hexadecimal strings (marked by a p or P)
     //     - Optional for "regular" strings (marked by an e or E)
-    var l = s[start++].code or 0x20
+    var l = s[start++].toAsciiLowerCase()
     if (l != if (isHex) 'p'.code else 'e'.code) {
         // We're here if the exponent character is not valid, but if the string is a "regular"
         // string, it could be a valid f/F/d/D suffix, so check for that (it must be the last
         // character too)
-        return !isHex && (l == 'f'.code || l == 'd'.code) && start > end
+        return !isHex && (l == 'f'.code || l == 'd'.code) && start > endInclusive
     }
 
     // An exponent must be followed by digits
-    if (start > end) return false
+    if (start > endInclusive) return false
 
     // There may be a sign prefix before the exponent digits
     if (s[start] == '+' || s[start] == '-') {
         start++
-        if (start > end) return false
+        if (start > endInclusive) return false
     }
 
     // Look for digits after the exponent and its optional sign
-    while (start <= end && s[start].isAsciiDigit()) start++
+    start = s.advanceWhile(start, endInclusive) { it.isAsciiDigit() }
 
     // The last suffix is optional, the string is valid here
-    if (start > end) return true
+    if (start > endInclusive) return true
 
     // We may have an optional fFdD suffix
-    if (start == end) {
-        l = s[start].code or 0x20
+    if (start == endInclusive) {
+        l = s[start].toAsciiLowerCase()
         return l == 'f'.code || l == 'd'.code
     }
 
@@ -446,8 +372,98 @@ private fun isValidFloat(s: String): Boolean {
     return false
 }
 
+/**
+ * Given a [start] and [endInclusive] index in a string, returns what possible float
+ * named constant could be in that string. For instance, if there are 3 characters
+ * between [start] and [endInclusive], this function will return "NaN".
+ *
+ * This function can return "NaN", "Infinity", or null. Null is returned when none of
+ * the non-null constants can be stored in the string given the [start]/[endInclusive]
+ * constraints.
+ */
+@kotlin.internal.InlineOnly
+private inline fun guessNamedFloatConstant(start: Int, endInclusive: Int): String? = when (endInclusive) {
+    start + 3 - 1 -> { // "NaN".length == 3, - 1 because we used and inclusive end index
+        "NaN"
+    }
+    start + 8 - 1 -> { // "Infinity".length == 8, - 1 because we used and inclusive end index
+        "Infinity"
+    }
+    else -> {
+        // We have too many or too few characters, there's no valid constant
+        null
+    }
+}
+
 @kotlin.internal.InlineOnly
 private inline fun Char.isAsciiDigit() = (this - '0').toChar().code < 10
 
 @kotlin.internal.InlineOnly
-private inline fun Char.isHexLetter() = ((this.code or 0x20) - 'a'.code).toChar().code < 6
+private inline fun Char.isHexLetter() = (toAsciiLowerCase() - 'a'.code).toChar().code < 6
+
+@kotlin.internal.InlineOnly
+private inline fun Char.toAsciiLowerCase() = this.code or 0x20
+
+@kotlin.internal.InlineOnly
+private inline fun String.advanceWhile(start: Int, endInclusive: Int, predicate: (Char) -> Boolean): Int {
+    var start = start
+    while (start <= endInclusive && predicate(this[start])) start++
+    return start
+}
+
+@kotlin.internal.InlineOnly
+private inline fun String.backtrackWhile(start: Int, endInclusive: Int, predicate: (Char) -> Boolean): Int {
+    var endInclusive = endInclusive
+    while (endInclusive > start && predicate(this[endInclusive])) endInclusive--
+    return endInclusive
+}
+
+/**
+ * Advances until after the end of the mantissa, in the substring defined by the [start] and [endInclusive] indices.
+ * If a valid mantissa cannot be found, this method returns -1.
+ * If a valid mantissa is found, this method returns [endInclusive] + 1.
+ */
+@kotlin.internal.InlineOnly
+private inline fun String.advanceAndValidateMantissa(start: Int, endInclusive: Int, hexFormat: Boolean, predicate: (Char) -> Boolean): Int {
+    var start = start
+
+    // Look for hex digits after the 0x prefix
+    var checkpoint = start
+    start = advanceWhile(start, endInclusive, predicate)
+
+    // Check if we found the integer part of the number
+    val hasIntegerPart = checkpoint != start
+
+    // A hex string must have an exponent, the string is invalid if we only found an
+    // integer part, but a non-hex string is valid if there's only an integer part
+    if (start > endInclusive) return if (hexFormat) -1 else start
+
+    var hasFractionalPart = false
+    if (this[start] == '.') {
+        start++
+
+        // Look for hex digits for the fractional part
+        checkpoint = start
+        start = advanceWhile(start, endInclusive, predicate)
+
+        // Did we find a fractional part?
+        hasFractionalPart = checkpoint != start
+    }
+
+    // A hex string must have an integer part and a fractional part
+    // A non-hex string may have an integer part, or a fractional part, or both
+    if (!hasIntegerPart && !hasFractionalPart) {
+        if (hexFormat) {
+            return -1
+        } else {
+            // Check for non-finite constants
+            val constant = guessNamedFloatConstant(start, endInclusive)
+            if (constant == null) return -1
+
+            // If the string contains exactly the constant we guessed, advance to after the constant
+            if (indexOf(constant, start, false) == start) return endInclusive + 1
+        }
+    }
+
+    return start
+}
