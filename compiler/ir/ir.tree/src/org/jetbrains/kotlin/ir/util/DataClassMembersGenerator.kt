@@ -295,11 +295,7 @@ abstract class DataClassMembersGenerator(
             hasExtensionReceiver = false,
             typeArgumentsCount = 0,
         ).apply {
-            if (hasDispatchReceiver) {
-                dispatchReceiver = irValue
-            } else {
-                putValueArgument(0, irValue)
-            }
+            arguments[0] = irValue
             hashCodeFunctionInfo.commitSubstituted(this)
         }
     }
