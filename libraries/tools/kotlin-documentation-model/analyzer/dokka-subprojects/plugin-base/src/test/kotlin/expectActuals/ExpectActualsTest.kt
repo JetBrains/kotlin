@@ -4,6 +4,7 @@
 
 package expectActuals
 
+import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
@@ -378,6 +379,60 @@ class ExpectActualsTest : BaseAbstractTest() {
                 setOf("jvm", "native"),
                 classlike.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
             )
+        }
+    }
+
+
+    @Test
+    fun `should work with the reversed order of source sets #3798`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                val commonId = DokkaSourceSetID("root", "common")
+                sourceSet {
+                    sourceRoots = listOf("src/jvm/")
+                    analysisPlatform = "jvm"
+                    name = "jvm"
+                    displayName = "jvm"
+                    dependentSourceSets = setOf(commonId)
+                }
+                sourceSet {
+                    sourceRoots = listOf("src/native/")
+                    analysisPlatform = "native"
+                    name = "native"
+                    displayName = "native"
+                    dependentSourceSets = setOf(commonId)
+                }
+                sourceSet {
+                    sourceRoots = listOf("src/common/")
+                    analysisPlatform = "common"
+                    name = "common"
+                    displayName = "common"
+                }
+            }
+        }
+
+        testInline(
+            """
+        /src/common/test.kt
+        expect fun shared()
+        
+        /src/native/test.kt
+        actual fun shared(){}
+        
+        /src/jvm/test.kt
+        actual fun shared(){}
+        """.trimMargin(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                val function = module.packages.single().functions.single { it.name == "shared" }
+                assertTrue(function.isExpectActual)
+                assertEquals(
+                    "common", function.expectPresentInSet?.sourceSetID?.sourceSetName
+                )
+                assertEquals(
+                    setOf("common", "jvm", "native"), function.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                )
+            }
         }
     }
 }
