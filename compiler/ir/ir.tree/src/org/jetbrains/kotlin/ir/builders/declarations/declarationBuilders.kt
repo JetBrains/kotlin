@@ -351,8 +351,9 @@ inline fun <D> buildValueParameter(declaration: D, builder: IrValueParameterBuil
 inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
+        kind = IrParameterKind.Regular
         factory.buildValueParameter(this, this@addValueParameter).also { valueParameter ->
-            valueParameters = valueParameters + valueParameter
+            parameters += valueParameter
         }
     }
 
