@@ -48,10 +48,8 @@ internal class FakeOverrideCopier(
                 val otherTypeParameter = declaration.typeParameters[i]
                 thisTypeParameter.superTypes = otherTypeParameter.superTypes.map(typeRemapper::remapType)
             }
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.let { copyValueParameter(it, this) }
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.let { copyValueParameter(it, this) }
+            parameters = declaration.parameters.map { copyValueParameter(it, this) }
             returnType = typeRemapper.remapType(declaration.returnType)
-            valueParameters = declaration.valueParameters.map { copyValueParameter(it, this) }
         }
     }
 
@@ -86,6 +84,7 @@ internal class FakeOverrideCopier(
             startOffset = parentClass.startOffset,
             endOffset = parentClass.endOffset,
             origin = IrDeclarationOrigin.DEFINED,
+            kind = declaration.kind,
             name = declaration.name,
             type = typeRemapper.remapType(declaration.type),
             isAssignable = declaration.isAssignable,
