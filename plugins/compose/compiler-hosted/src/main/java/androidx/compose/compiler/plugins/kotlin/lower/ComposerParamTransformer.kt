@@ -56,17 +56,9 @@ class ComposerParamTransformer(
 ) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
-    /**
-     * Used to identify module fragment in case of incremental compilation
-     * see [externallyTransformed]
-     */
-    private var currentModule: IrModuleFragment? = null // TODO obsolete?
-
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
     override fun lower(module: IrModuleFragment) {
-        currentModule = module
-
         inlineLambdaInfo.scan(module)
 
         module.transformChildrenVoid(this)
