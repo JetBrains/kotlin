@@ -22,7 +22,7 @@ fun IrClassifierSymbol?.isArrayOrPrimitiveArray(builtins: IrBuiltIns): Boolean =
 
 // Constructors can't be marked as inline in metadata, hence this check.
 fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
-    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
+    this is IrConstructor && parameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
 
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
