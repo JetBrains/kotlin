@@ -214,10 +214,8 @@ open class DeepCopyIrTreeWithSymbols(
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
             typeRemapper.withinScope(this) {
-                dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+                parameters = declaration.parameters.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
-                valueParameters = declaration.valueParameters.transform()
                 body = declaration.body?.transform()
             }
         }
