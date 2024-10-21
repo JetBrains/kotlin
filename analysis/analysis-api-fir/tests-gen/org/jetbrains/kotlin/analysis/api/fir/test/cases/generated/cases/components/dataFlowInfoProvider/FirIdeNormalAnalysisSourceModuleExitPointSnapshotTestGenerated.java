@@ -552,6 +552,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("varargItem.kt")
+    public void testVarargItem() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/varargItem.kt");
+    }
+
+    @Test
     @TestMetadata("variableDeclaration.kt")
     public void testVariableDeclaration() {
       run("variableDeclaration.kt");
