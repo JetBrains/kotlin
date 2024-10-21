@@ -1311,7 +1311,7 @@ private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
     }
     return AnnotationDescriptorImpl(
         annotationClass.defaultType.toIrBasedKotlinType(),
-        symbol.owner.valueParameters.memoryOptimizedMap { it.name to getValueArgument(it.index) }
+        symbol.owner.parameters.memoryOptimizedMap { it.name to arguments[it.indexNew] }
             .filter { it.second != null }
             .associate { it.first to it.second!!.toConstantValue() },
         source
