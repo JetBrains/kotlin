@@ -276,11 +276,9 @@ class DumpIrTreeVisitor(
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: String) {
         expression.dumpLabeledElementWith(data) {
             dumpTypeArguments(expression)
-            expression.dispatchReceiver?.accept(this, "\$this")
-            expression.extensionReceiver?.accept(this, "\$receiver")
             val valueParameterNames = expression.getValueParameterNamesForDebug()
-            for (index in 0 until expression.valueArgumentsCount) {
-                expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
+            for ((index, value) in expression.arguments.withIndex()) {
+                value?.accept(this, valueParameterNames[index])
             }
         }
     }
@@ -295,8 +293,8 @@ class DumpIrTreeVisitor(
 
     private fun dumpConstructorValueArguments(expression: IrConstructorCall) {
         val valueParameterNames = expression.getValueParameterNamesForDebug()
-        for (index in 0 until expression.valueArgumentsCount) {
-            expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
+        for ((index, value) in expression.arguments.withIndex()) {
+            value?.accept(this, valueParameterNames[index])
         }
     }
 
@@ -501,19 +499,17 @@ class DumpTreeFromSourceLineVisitor(
 }
 
 internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
-    val expectedCount = valueArgumentsCount
-    if (symbol.isBound) {
-        val owner = symbol.owner
-        if (owner is IrFunction) {
-            return (0 until expectedCount).map {
-                if (it < owner.valueParameters.size)
-                    owner.valueParameters[it].name.asString()
-                else
-                    "${it + 1}"
-            }
+    val owner = if (symbol.isBound) symbol.owner as? IrFunction else null
+    return arguments.indices.map { index ->
+        val param = owner?.parameters?.getOrNull(index)
+        when (param?.kind) {
+            IrParameterKind.DispatchReceiver -> "\$this"
+            IrParameterKind.ContextParameter -> param.name.asString()
+            IrParameterKind.ExtensionReceiver -> "\$receiver"
+            IrParameterKind.RegularParameter -> param.name.asString()
+            null -> "${index + 1}"
         }
     }
-    return getPlaceholderParameterNames(expectedCount)
 }
 
 internal fun getPlaceholderParameterNames(expectedCount: Int) =

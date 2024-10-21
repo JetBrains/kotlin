@@ -881,10 +881,10 @@ private fun StringBuilder.renderAsAnnotation(
 
     val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
 
-    appendIterableWith(0 until irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
+    appendIterableWith(irAnnotation.arguments.indices, separator = ", ", prefix = "(", postfix = ")") {
         append(valueParameterNames[it])
         append(" = ")
-        renderAsAnnotationArgument(irAnnotation.getValueArgument(it), renderer, options)
+        renderAsAnnotationArgument(irAnnotation.arguments[it], renderer, options)
     }
 }
 
