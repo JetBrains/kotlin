@@ -229,7 +229,7 @@ class DumpIrTreeVisitor(
             dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$outer")
-            declaration.valueParameters.dumpElements()
+            declaration.nonDispatchParameters.dumpElements()
             declaration.body?.accept(this, "")
         }
     }
