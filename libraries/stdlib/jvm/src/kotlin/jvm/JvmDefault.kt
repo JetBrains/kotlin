@@ -9,14 +9,12 @@ import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
 
 /**
- * Specifies that a JVM default method should be generated for non-abstract Kotlin interface member.
- *
  * This annotation can no longer be used. It has been superseded by the new `-Xjvm-default` modes `all` and `all-compatibility`,
- * and the new annotations `@JvmDefaultWithCompatibility` and `@JvmDefaultWithoutCompatibility`.
+ * and the new annotations [JvmDefaultWithCompatibility] and [JvmDefaultWithoutCompatibility].
  */
 @SinceKotlin("1.2")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`", level = DeprecationLevel.ERROR)
+@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`", level = DeprecationLevel.HIDDEN)
 public annotation class JvmDefault
 
 /**
