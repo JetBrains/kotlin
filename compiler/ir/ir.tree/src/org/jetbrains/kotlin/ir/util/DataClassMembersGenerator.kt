@@ -81,7 +81,7 @@ abstract class DataClassMembersGenerator(
         }
 
         private fun irOther(): IrExpression {
-            val irFirstParameter = irFunction.valueParameters[0]
+            val irFirstParameter = irFunction.parameters[1]
             return IrGetValueImpl(
                 startOffset, endOffset,
                 irFirstParameter.type,
@@ -117,8 +117,8 @@ abstract class DataClassMembersGenerator(
                     for ((i, typeParameterType) in constructorSymbol.typesOfTypeParameters().withIndex()) {
                         putTypeArgument(i, typeParameterType)
                     }
-                    for ((i, valueParameter) in irFunction.valueParameters.withIndex()) {
-                        putValueArgument(i, irGet(valueParameter.type, valueParameter.symbol))
+                    for (param in irFunction.nonDispatchParameters) {
+                        arguments[param.indexNew - 1] = irGet(param.type, param.symbol)
                     }
                 }
             )
