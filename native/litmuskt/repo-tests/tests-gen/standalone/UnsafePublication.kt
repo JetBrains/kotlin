@@ -26,20 +26,26 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun plain() = runTest(UnsafePublication.Plain)
+object UnsafePublicationTests {
+    @Test
+    fun plain() = runTest(UnsafePublication.Plain)
 
-@Test
-fun volatileAnnotated() = runTest(UnsafePublication.VolatileAnnotated)
+    @Test
+    fun volatileAnnotated() = runTest(UnsafePublication.VolatileAnnotated)
 
-@Test
-fun plainWithConstructor() = runTest(UnsafePublication.PlainWithConstructor)
+    @Test
+    fun plainWithConstructor() = runTest(UnsafePublication.PlainWithConstructor)
 
-@Test
-fun plainArray() = runTest(UnsafePublication.PlainArray)
+    @Test
+    fun plainIntArray() = runTest(UnsafePublication.PlainIntArray)
 
-@Test
-fun reference() = runTest(UnsafePublication.Reference)
+    // See UnsafePublicationFailing.kt
+//    @Test
+//    fun plainArray() = runTest(UnsafePublication.PlainArray)
+//
+//    @Test
+//    fun reference() = runTest(UnsafePublication.Reference)
 
-@Test
-fun plainWithLeakingConstructor() = runTest(UnsafePublication.PlainWithLeakingConstructor)
+    @Test
+    fun plainWithLeakingConstructor() = runTest(UnsafePublication.PlainWithLeakingConstructor)
+}

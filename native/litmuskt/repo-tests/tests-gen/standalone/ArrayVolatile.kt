@@ -27,5 +27,7 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun array() = runTest(ArrayVolatile.Array)
+object ArrayVolatileTests {
+    @Test
+    fun array() = runTest(ArrayVolatile.Array)
+}

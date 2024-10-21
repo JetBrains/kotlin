@@ -334,8 +334,7 @@ include ":kotlin-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
         ":atomicfu"
 
-include ":litmuskt:repo-utils",
-        ":litmuskt:repo-tests"
+include ":litmuskt:repo-tests"
 
 include ":plugins:js-plain-objects:compiler-plugin",
         ":plugins:js-plain-objects:compiler-plugin-embeddable",
@@ -926,7 +925,6 @@ project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootD
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
-project(':litmuskt:repo-utils').projectDir = file("$rootDir/native/litmuskt/repo-utils")
 project(':litmuskt:repo-tests').projectDir = file("$rootDir/native/litmuskt/repo-tests")
 
 if (!buildProperties.inJpsBuildIdeaSync) {

@@ -26,8 +26,10 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun plain() = runTest(Coherence.Plain)
+object CoherenceTests {
+    @Test
+    fun plain() = runTest(Coherence.Plain)
 
-@Test
-fun cse() = runTest(Coherence.CSE)
+    @Test
+    fun cse() = runTest(Coherence.CSE)
+}

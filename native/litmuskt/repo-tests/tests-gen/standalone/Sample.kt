@@ -26,23 +26,27 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-// This is a sample test written outside of litmuskt-testsuite.
-val sampleTest = litmusTest({
-    object : LitmusIOutcome() {
-    }
-}) {
-    thread {
-        r1++
-    }
-    thread {
-        r1++
-    }
-    spec {
-        accept(2)
-        interesting(1)
-    }
-    reset { }
-}
+// Place tests in a class to get more meaningful error messages in case they fail.
+object SampleTests {
 
-@Test
-fun plain() = runTest(sampleTest)
+    // This is a sample test written outside of litmuskt-testsuite.
+    val sampleTest = litmusTest({
+        object : LitmusIOutcome() {
+        }
+    }) {
+            thread {
+                r1++
+            }
+        thread {
+            r1++
+        }
+        spec {
+            accept(2)
+            interesting(1)
+        }
+        reset { }
+    }
+
+    @Test
+    fun plain() = runTest(sampleTest)
+}

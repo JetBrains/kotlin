@@ -26,11 +26,13 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun int() = runTest(Atomicity.Int)
+object AtomicityTests {
+    @Test
+    fun int() = runTest(Atomicity.Int)
 
-@Test
-fun long() = runTest(Atomicity.Long)
+    @Test
+    fun long() = runTest(Atomicity.Long)
 
-@Test
-fun longVolatile() = runTest(Atomicity.LongVolatile)
+    @Test
+    fun longVolatile() = runTest(Atomicity.LongVolatile)
+}

@@ -2,6 +2,7 @@
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// DISABLE_NATIVE
 
 import kotlin.test.*
 import org.jetbrains.litmuskt.*
@@ -26,10 +27,13 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-object IndependentReadsOfIndependentWritesTests {
-    @Test
-    fun plain() = runTest(IndependentReadsOfIndependentWrites.Plain)
+object UnsafePublicationFailingTests {
+
+    // These tests will fail, because Kotlin does not have a full construction guarantee.
 
     @Test
-    fun volatileAnnotated() = runTest(IndependentReadsOfIndependentWrites.VolatileAnnotated)
+    fun plainArray() = runTest(UnsafePublication.PlainArray)
+
+    @Test
+    fun reference() = runTest(UnsafePublication.Reference)
 }

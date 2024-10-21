@@ -26,14 +26,16 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun plain() = runTest(MessagePassing.Plain)
+object MessagePassingTests {
+    @Test
+    fun plain() = runTest(MessagePassing.Plain)
 
-@Test
-fun volatileAnnotated() = runTest(MessagePassing.VolatileAnnotated)
+    @Test
+    fun volatileAnnotated() = runTest(MessagePassing.VolatileAnnotated)
 
-@Test
-fun raceFree() = runTest(MessagePassing.RaceFree)
+    @Test
+    fun raceFree() = runTest(MessagePassing.RaceFree)
 
-@Test
-fun missingVolatile() = runTest(MessagePassing.MissingVolatile)
+    @Test
+    fun missingVolatile() = runTest(MessagePassing.MissingVolatile)
+}

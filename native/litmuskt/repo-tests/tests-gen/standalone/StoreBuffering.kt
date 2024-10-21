@@ -26,8 +26,10 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun plain() = runTest(StoreBuffering.Plain)
+object StoreBufferingTests {
+    @Test
+    fun plain() = runTest(StoreBuffering.Plain)
 
-@Test
-fun volatileAnnotated() = runTest(StoreBuffering.VolatileAnnotated)
+    @Test
+    fun volatileAnnotated() = runTest(StoreBuffering.VolatileAnnotated)
+}

@@ -26,8 +26,10 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun array() = runTest(WordTearing.Array)
+object WordTearingTests {
+    @Test
+    fun array() = runTest(WordTearing.Array)
 
-@Test
-fun arrayInterleave() = runTest(WordTearing.ArrayInterleave)
+    @Test
+    fun arrayInterleave() = runTest(WordTearing.ArrayInterleave)
+}

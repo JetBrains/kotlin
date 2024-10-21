@@ -26,14 +26,16 @@ fun runTest(test: LitmusTest<*>) {
     assertFalse { result.any { it.type == LitmusOutcomeType.FORBIDDEN } }
 }
 
-@Test
-fun plain() = runTest(LoadBuffering.Plain)
+object LoadBufferingTests {
+    @Test
+    fun plain() = runTest(LoadBuffering.Plain)
 
-@Test
-fun volatileAnnotated() = runTest(LoadBuffering.VolatileAnnotated)
+    @Test
+    fun volatileAnnotated() = runTest(LoadBuffering.VolatileAnnotated)
 
-@Test
-fun plainWithFakeDependencies() = runTest(LoadBuffering.PlainWithFakeDependencies)
+    @Test
+    fun plainWithFakeDependencies() = runTest(LoadBuffering.PlainWithFakeDependencies)
 
-@Test
-fun noOutOfThinAirValues() = runTest(LoadBuffering.NoOutOfThinAirValues)
+    @Test
+    fun noOutOfThinAirValues() = runTest(LoadBuffering.NoOutOfThinAirValues)
+}

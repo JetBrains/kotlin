@@ -37,20 +37,9 @@ val litmusktTestsuiteNativeKlib by configurations.creating {
     }
 }
 
-val litmusktRepoUtilsNativeKlib by configurations.creating {
-    attributes {
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
-        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-    }
-}
-
 dependencies {
     litmusktCoreNativeKlib("org.jetbrains.litmuskt:litmuskt-core:0.1")
     litmusktTestsuiteNativeKlib("org.jetbrains.litmuskt:litmuskt-testsuite:0.1")
-    litmusktRepoUtilsNativeKlib(project(":litmuskt:repo-utils"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -72,7 +61,7 @@ val nativeTest = nativeTest(
     taskName = "nativeTest",
     tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
     requirePlatformLibs = true,
-    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib, litmusktRepoUtilsNativeKlib),
+    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib),
     allowParallelExecution = false,
 )
 
