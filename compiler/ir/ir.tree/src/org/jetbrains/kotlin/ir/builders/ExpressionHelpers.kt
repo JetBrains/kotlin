@@ -240,7 +240,6 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
 fun IrBuilderWithScope.irCall(
     callee: IrSimpleFunctionSymbol,
     type: IrType,
-    valueArgumentsCount: Int = callee.owner.valueParameters.size,
     typeArgumentsCount: Int = callee.owner.typeParameters.size,
     origin: IrStatementOrigin? = null
 ): IrCall =
@@ -309,7 +308,7 @@ fun IrBuilderWithScope.irCallOp(
     argument: IrExpression? = null,
     origin: IrStatementOrigin? = null
 ): IrMemberAccessExpression<*> =
-    irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0, origin = origin).apply {
+    irCall(callee, type, typeArgumentsCount = 0, origin = origin).apply {
         arguments[0] = dispatchReceiver
         if (argument != null)
             arguments[1] = argument
