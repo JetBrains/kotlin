@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 
 class MessageCollectorToOutputItemsCollectorAdapter(
-        private val delegate: MessageCollector,
-        private val outputCollector: OutputItemsCollector
+    private val delegate: MessageCollector,
+    private val outputCollector: OutputItemsCollector
 ) : MessageCollector by delegate {
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         // TODO: consider adding some other way of passing input -> output mapping from compiler, e.g. dedicated service
