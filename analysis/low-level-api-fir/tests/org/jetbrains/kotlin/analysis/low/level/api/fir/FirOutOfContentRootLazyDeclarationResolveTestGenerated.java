@@ -319,6 +319,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("externalClassConstructor.kt")
+  public void testExternalClassConstructor() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/externalClassConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("fakeOverride.kt")
   public void testFakeOverride() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverride.kt");
