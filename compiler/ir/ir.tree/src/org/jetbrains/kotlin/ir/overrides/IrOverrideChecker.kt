@@ -101,6 +101,10 @@ class IrOverrideChecker(
         val subValueParameters = subFunction?.valueParameters.orEmpty()
         if (superValueParameters.size != subValueParameters.size) return incompatible("Value parameter number mismatch")
 
+        if (superValueParameters.map { it.kind } != subValueParameters.map { it.kind }) {
+            return incompatible("Value parameter kind mismatch")
+        }
+
         val typeCheckerState = createIrTypeCheckerState(
             IrTypeSystemContextWithAdditionalAxioms(typeSystem, superTypeParameters, subTypeParameters)
         )
