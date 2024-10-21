@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.generator.IrTree.valueParameter
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
@@ -289,11 +290,14 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         }
 
     private fun IrFunction.renderValueParameterTypes(): String =
-        ArrayList<String>().apply {
-            addIfNotNull(dispatchReceiverParameter?.run { "\$this:${type.render()}" })
-            addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
-            valueParameters.mapTo(this) { "${it.name}:${it.type.render()}" }
-        }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+        parameters.joinToString(separator = ", ", prefix = "(", postfix = ")") { param ->
+            val name = when (param.kind) {
+                IrParameterKind.DispatchReceiver -> "\$this"
+                IrParameterKind.ExtensionReceiver -> "\$receiver"
+                IrParameterKind.RegularParameter, IrParameterKind.ContextParameter -> param.name.asString()
+            }
+            "$name:${param.type.render()}"
+        }
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
         declaration.runTrimEnd {
