@@ -352,9 +352,11 @@ abstract class IrBasedDataClassMembersGenerator(
 
     fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
         buildMember(irFunction) {
-            irFunction.valueParameters.forEach { irValueParameter ->
-                irValueParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(irValueParameter)))
-            }
+            irFunction.parameters
+                .filter { it.kind == IrParameterKind.Regular }
+                .forEach { irValueParameter ->
+                    irValueParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(irValueParameter)))
+                }
             generateCopyFunction(constructorSymbol)
         }
     }
