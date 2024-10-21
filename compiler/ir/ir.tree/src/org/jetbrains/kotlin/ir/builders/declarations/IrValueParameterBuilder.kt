@@ -24,7 +24,9 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
     fun updateFrom(from: IrValueParameter) {
         super.updateFrom(from)
 
-        kind = from._kind
+        if (from._kind != null) {
+            kind = from._kind
+        }
         type = from.type
         varargElementType = from.varargElementType
         isCrossInline = from.isCrossinline
