@@ -111,12 +111,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             checkFrozen()
             field = value
         }
-
-    // This is a hack to workaround an issue that incremental compilation does not recompile CLI arguments classes after the change in
-    // the previous commit. This method can be removed after some time.
-    override fun equals(other: Any?): Boolean = super.equals(other)
 }
-
 
 /**
  * An argument which should be passed to Kotlin compiler to enable [this] compiler option
