@@ -136,8 +136,8 @@ abstract class DataClassMembersGenerator(
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherCasted = irImplicitCast(irOther(), irType)
                 +irReturn(irCall(typedEqualsFunction).apply {
-                    putArgument(typedEqualsFunction.dispatchReceiverParameter!!, irThis())
-                    putValueArgument(0, otherCasted)
+                    arguments[0] = irThis()
+                    arguments[1] = otherCasted
                 })
                 return
             }
