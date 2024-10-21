@@ -98,7 +98,7 @@ abstract class DataClassMembersGenerator(
                 irGetField(receiver, backingField)
             } else {
                 irCall(property.getter!!).apply {
-                    dispatchReceiver = receiver
+                    arguments[0] = receiver
                 }
             }
         }
