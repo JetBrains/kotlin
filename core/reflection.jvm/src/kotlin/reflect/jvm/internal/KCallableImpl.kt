@@ -37,7 +37,8 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
 
     override val annotations: List<Annotation> get() = _annotations()
 
-    private val _parameters = ReflectProperties.lazySoft {
+    // See KT-67041 for why this property is not lazySoft
+    override val parameters by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
         var index = 0
@@ -68,9 +69,6 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         result.trimToSize()
         result
     }
-
-    override val parameters: List<KParameter>
-        get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
         KTypeImpl(descriptor.returnType!!) {
