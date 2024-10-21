@@ -273,8 +273,8 @@ abstract class DataClassMembersGenerator(
             hasDispatchReceiver = true,
             hasExtensionReceiver = false,
         ).apply {
-            dispatchReceiver = irGet(irResultVar)
-            putValueArgument(0, irInt(31))
+            arguments[0] = irGet(irResultVar)
+            arguments[1] = irInt(31)
         }
 
     protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression {
