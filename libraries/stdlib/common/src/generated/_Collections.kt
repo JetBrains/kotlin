@@ -3183,7 +3183,7 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
 }
 
 /**
- * Splits the original collection into pair of lists,
+ * Splits the original collection into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  * 
