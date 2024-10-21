@@ -12,7 +12,7 @@ import java.lang.reflect.Type
 internal object JsonUtils {
     internal val gson: Gson by lazy {
         GsonBuilder()
-            .setLenient()
+            .setStrictness(Strictness.LENIENT)
             .setPrettyPrinting()
             .serializeNulls()
             .registerTypeHierarchyAdapter(File::class.java, FileAdapter)

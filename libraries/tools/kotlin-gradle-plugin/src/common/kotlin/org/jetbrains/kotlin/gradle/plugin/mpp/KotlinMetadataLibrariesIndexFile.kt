@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import com.google.gson.reflect.TypeToken
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
-private val gson = GsonBuilder().setLenient().setPrettyPrinting().serializeNulls().create()
+private val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting().serializeNulls().create()
 
 data class TransformedMetadataLibraryRecord(
     val moduleId: String,

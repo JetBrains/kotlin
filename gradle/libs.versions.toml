@@ -6,7 +6,7 @@ develocity = "3.17.5"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
-guava = "33.1.0-jre"
+guava = "33.3.1-jre"
 javaDiffUtils = "4.12"
 jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
@@ -16,14 +16,14 @@ kotlinx-coroutines = "1.6.4"
 shadow = "8.3.0" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
-ktor = "2.3.7"
+ktor = "2.3.12"
 kotlinx-metadataJvm = "0.9.0"
 kotlinx-bcv = "0.15.1"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
-gson = { strictly = "2.8.9" } # should be in sync with version.properties
+gson = { strictly = "2.11.0" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
 jackson = "2.15.2"
-jgit = "6.10.0.202406032230-r"
+jgit = "7.0.0.202409031743-r"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.10.1"

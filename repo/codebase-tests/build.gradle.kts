@@ -13,7 +13,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 
-    testImplementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
+    testImplementation("org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r")
 }
 
 sourceSets {

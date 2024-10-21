@@ -23,8 +23,8 @@ val embedded by configurations.getting {
 
 dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
-    embedded("com.google.protobuf:protobuf-java:3.21.9")
-    embedded("com.google.protobuf:protobuf-kotlin:3.21.9")
+    embedded("com.google.protobuf:protobuf-java:3.25.5")
+    embedded("com.google.protobuf:protobuf-kotlin:3.25.5")
     testImplementation(kotlinTest("junit"))
     testImplementation(kotlin("reflect"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
@@ -75,7 +75,7 @@ run {
     }
 
     dependencies {
-        protoc("com.google.protobuf:protoc:3.21.9") {
+        protoc("com.google.protobuf:protoc:3.25.5") {
             artifact {
                 type = "exe"
                 classifier = when (HostManager.host) {
@@ -88,10 +88,10 @@ run {
             }
         }
 
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:linux-x86_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-aarch_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-x86_64@exe")
-        implicitDependencies("com.google.protobuf:protoc:3.21.9:windows-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.25.5:linux-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.25.5:osx-aarch_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.25.5:osx-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.25.5:windows-x86_64@exe")
     }
 
     val protocExecutable = layout.buildDirectory.file("protoc/bin")
