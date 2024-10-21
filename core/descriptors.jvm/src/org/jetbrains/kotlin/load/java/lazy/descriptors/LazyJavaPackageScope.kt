@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
-import org.jetbrains.kotlin.serialization.deserialization.metadataVersionOrDefault
 import java.util.*
 
 class LazyJavaPackageScope(
@@ -52,7 +51,7 @@ class LazyJavaPackageScope(
     }
 
     private val metadataVersion: MetadataVersion
-        get() = c.components.deserializedDescriptorResolver.components.configuration.metadataVersionOrDefault()
+        get() = c.components.deserializedDescriptorResolver.components.configuration.metadataVersion
 
 
     private val classes =
