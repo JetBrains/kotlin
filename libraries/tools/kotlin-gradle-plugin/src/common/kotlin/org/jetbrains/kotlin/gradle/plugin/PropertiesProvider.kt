@@ -182,7 +182,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
 
     val keepAndroidBuildTypeAttribute: Boolean
-        get() = booleanProperty("kotlin.android.buildTypeAttribute.keep") ?: true
+        get() = booleanProperty("kotlin.android.buildTypeAttribute.keep") ?: false
 
     val enableGranularSourceSetsMetadata: Boolean?
         get() = booleanProperty(KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA)
