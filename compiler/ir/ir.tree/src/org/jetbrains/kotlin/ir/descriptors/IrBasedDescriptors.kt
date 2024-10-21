@@ -352,15 +352,15 @@ abstract class IrBasedFunctionDescriptor<Function : IrFunction>(owner: Function)
 
     override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
-    override fun getContextReceiverParameters() = owner.valueParameters
+    override fun getContextReceiverParameters() = owner.parameters
         .asSequence()
-        .take(owner.contextReceiverParametersCount)
+        .filter { it.kind == IrParameterKind.ContextParameter }
         .map(::IrBasedReceiverParameterDescriptor)
         .toMutableList()
 
-    override fun getValueParameters() = owner.valueParameters
+    override fun getValueParameters() = owner.parameters
         .asSequence()
-        .drop(owner.contextReceiverParametersCount)
+        .filter { it.kind == IrParameterKind.RegularParameter }
         .map(::IrBasedValueParameterDescriptor)
         .toMutableList()
 }
