@@ -163,7 +163,7 @@ abstract class DataClassMembersGenerator(
                         hasExtensionReceiver = false,
                         origin = IrStatementOrigin.EXCLEQ,
                     ).apply<IrCallImpl> {
-                        dispatchReceiver = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
+                        arguments[0] = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
                     }
                 )
             }
