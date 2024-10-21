@@ -64,34 +64,6 @@ fun IrMemberAccessExpression<*>.getArguments(): List<Pair<ParameterDescriptor, I
 }
 
 /**
- * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
- * The arguments are to be evaluated in the same order as they appear in the resulting list.
- */
-@ObsoleteDescriptorBasedAPI
-@Suppress("unused") // Used in kotlin-native
-fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
-    val res = mutableListOf<Pair<IrValueParameterSymbol, IrExpression>>()
-    val irFunction = symbol.owner
-
-    dispatchReceiver?.let {
-        res += (irFunction.dispatchReceiverParameter!!.symbol to it)
-    }
-
-    extensionReceiver?.let {
-        res += (irFunction.extensionReceiverParameter!!.symbol to it)
-    }
-
-    irFunction.valueParameters.forEach {
-        val arg = getValueArgument((it.descriptor as ValueParameterDescriptor).index)
-        if (arg != null) {
-            res += (it.symbol to arg)
-        }
-    }
-
-    return res
-}
-
-/**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
@@ -123,34 +95,6 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(irFunction: IrFunction): L
 @Suppress("UNCHECKED_CAST")
 fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter, IrExpression>> {
     return getAllArgumentsWithIr().filter { it.second != null } as List<Pair<IrValueParameter, IrExpression>>
-}
-
-/**
- * Sets arguments that are specified by given mapping of parameters.
- */
-@ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
-    val descriptor = symbol.descriptor as CallableDescriptor
-    descriptor.dispatchReceiverParameter?.let {
-        val arg = args[it]
-        if (arg != null) {
-            this.dispatchReceiver = arg
-        }
-    }
-
-    descriptor.extensionReceiverParameter?.let {
-        val arg = args[it]
-        if (arg != null) {
-            this.extensionReceiver = arg
-        }
-    }
-
-    descriptor.valueParameters.forEach {
-        val arg = args[it]
-        if (arg != null) {
-            this.putValueArgument(it.index, arg)
-        }
-    }
 }
 
 fun IrExpression.isNullConst() = this is IrConst && this.kind == IrConstKind.Null
