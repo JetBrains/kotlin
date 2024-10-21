@@ -23,24 +23,6 @@ fun <T> IdentitySet(): MutableSet<T> {
     return Collections.newSetFromMap(IdentityHashMap<T, Boolean>())
 }
 
-fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
-    val result = IdentitySet<T>()
-    for (element in this) {
-        result.add(element)
-    }
-
-    return result
-}
-
-fun <T> Sequence<T>.toIdentitySet(): MutableSet<T> {
-    val result = IdentitySet<T>()
-    for (element in this) {
-        result.add(element)
-    }
-
-    return result
-}
-
 fun <T, R> Iterable<T>.zipWithDefault(
         other: Iterable<R>,
         defaultT: T

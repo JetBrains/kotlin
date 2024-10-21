@@ -59,12 +59,6 @@ class AstGenerationResult(
                 )
             }
         }
-
-    fun buildProgram(): Pair<JsProgram, List<String>> {
-        val fragments = units.map { getTranslationResult(it).fragment }
-        fragments.forEach { merger.addFragment(it) }
-        return merger.buildProgram() to merger.importedModules.map { it.externalName }
-    }
 }
 
 sealed class FileTranslationResult {

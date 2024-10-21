@@ -19,9 +19,6 @@ package org.jetbrains.kotlin.js.inline.util
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsReturn
 
-fun isFunctionCreator(outer: JsFunction): Boolean =
-        outer.getInnerFunction() != null
-
 /**
  * Gets inner function from function, that creates closure
  *

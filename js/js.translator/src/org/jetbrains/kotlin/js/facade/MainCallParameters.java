@@ -39,24 +39,6 @@ public abstract class MainCallParameters {
         };
     }
 
-
-    @NotNull
-    public static MainCallParameters mainWithoutArguments() {
-        return new MainCallParameters() {
-
-            @NotNull
-            @Override
-            public List<String> arguments() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public boolean shouldBeGenerated() {
-                return true;
-            }
-        };
-    }
-
     @NotNull
     public static MainCallParameters mainWithArguments(@NotNull List<String> parameters) {
         return new MainCallParameters() {

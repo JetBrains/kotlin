@@ -57,11 +57,6 @@ class Merger(
 
     private val fragments = mutableListOf<JsProgramFragment>()
 
-    // Add declaration and initialization statements from program fragment to resulting single program
-    fun addFragment(fragment: JsProgramFragment) {
-        fragments.add(fragment)
-    }
-
     private fun JsProgramFragment.tryUpdateTests() {
         tests?.let { newTests ->
             testsMap.computeIfAbsent(packageFqn) {
@@ -259,37 +254,6 @@ class Merger(
         }
     }
 
-    fun buildProgram(): JsProgram {
-        merge()
-
-        val rootBlock = rootFunction.getBody()
-
-        val statements = rootBlock.getStatements()
-
-        statements.add(0, JsStringLiteral("use strict").makeStmt())
-        if (!isBuiltinModule(fragments)) {
-            defineModule(program, statements, moduleId)
-        }
-
-        // Invoke function passing modules as arguments
-        // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
-        for (importedModule in importedModules) {
-            rootFunction.parameters.add(JsParameter(importedModule.internalName))
-        }
-
-        statements.add(JsReturn(internalModuleName.makeRef()))
-
-        val block = program.globalBlock
-        block.statements.addAll(
-            ModuleWrapperTranslation.wrapIfNecessary(
-                moduleId, rootFunction, importedModules, program,
-                moduleKind
-            )
-        )
-
-        return program
-    }
-
     private fun MutableList<JsStatement>.addImportForInlineDeclarationIfNecessary() {
         val importsForInlineName = nameTable[Namer.IMPORTS_FOR_INLINE_PROPERTY] ?: return
         this += definePackageAlias(
@@ -336,35 +300,5 @@ class Merger(
         cls.superName?.let { addClassPostDeclarations(it, visited, statements) }
         cls.interfaces.forEach { addClassPostDeclarations(it, visited, statements) }
         statements += cls.postDeclarationBlock.statements
-    }
-
-    companion object {
-        private val ENUM_SIGNATURE = "kotlin\$Enum"
-
-        // TODO is there no better way?
-        private fun isBuiltinModule(fragments: List<JsProgramFragment>): Boolean {
-            for (fragment in fragments) {
-                for (nameBinding in fragment.nameBindings) {
-                    if (nameBinding.key == ENUM_SIGNATURE && !fragment.imports.containsKey(ENUM_SIGNATURE)) {
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-
-        private fun defineModule(program: JsProgram, statements: MutableList<JsStatement>, moduleId: String) {
-            val rootPackageName = program.scope.findName(Namer.getRootPackageName())
-            if (rootPackageName != null) {
-                val namer = Namer.newInstance(program.scope)
-                statements.add(
-                    JsInvocation(
-                        namer.kotlin("defineModule"),
-                        JsStringLiteral(moduleId),
-                        rootPackageName.makeRef()
-                    ).makeStmt()
-                )
-            }
-        }
     }
 }

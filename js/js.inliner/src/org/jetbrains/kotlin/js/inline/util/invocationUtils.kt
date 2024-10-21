@@ -33,32 +33,6 @@ fun getSimpleName(call: JsInvocation): JsName? {
 }
 
 /**
- * Tries to get ident for call.
- *
- * @returns first name ident (iterating through qualifier chain)
- */
-fun getSimpleIdent(call: JsInvocation): String? {
-    var qualifier: JsExpression? = call.qualifier
-
-    qualifiers@ while (qualifier != null) {
-        when (qualifier) {
-            is JsInvocation -> {
-                val callableQualifier = qualifier
-                qualifier = callableQualifier.qualifier
-
-                if (isCallInvocation(callableQualifier)) {
-                    qualifier = (qualifier as? JsNameRef)?.qualifier
-                }
-            }
-            is HasName -> return qualifier.name?.ident
-            else -> break@qualifiers
-        }
-    }
-    
-    return null
-}
-
-/**
  * Tests if invocation is JavaScript call function
  *
  * @return true  if invocation is something like `x.call(thisReplacement)`
@@ -71,34 +45,6 @@ fun isCallInvocation(invocation: JsInvocation): Boolean {
     if (qualifier.name?.descriptor != null) return false
 
     return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty() && qualifier.qualifier != null
-}
-
-/**
- * Checks if invocation has qualifier before call.
- *
- * @return true,  if invocation is similar to `something.f()`
- *         false, if invocation is similar to `f()`
- */
-fun hasCallerQualifier(invocation: JsInvocation): Boolean {
-    return getCallerQualifierImpl(invocation) != null
-}
-
-/**
- * Gets qualifier preceding call.
- *
- * @return caller for invocation of type `caller.f()`,
- *         where caller is any JsNameRef (for example a.b.c. etc.)
- *
- * @throws AssertionError, if invocation does not have caller qualifier.
- */
-fun getCallerQualifier(invocation: JsInvocation): JsExpression {
-    return getCallerQualifierImpl(invocation) ?:
-            throw AssertionError("must check hasQualifier() before calling getQualifier")
-
-}
-
-private fun getCallerQualifierImpl(invocation: JsInvocation): JsExpression? {
-    return (invocation.qualifier as? JsNameRef)?.qualifier
 }
 
 /**
