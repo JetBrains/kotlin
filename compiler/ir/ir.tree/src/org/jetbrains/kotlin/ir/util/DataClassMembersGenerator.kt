@@ -124,10 +124,11 @@ abstract class DataClassMembersGenerator(
             )
         }
 
-        private fun IrSimpleFunction.isTypedEqualsInValueClass() = name == OperatorNameConventions.EQUALS &&
-                returnType == context.irBuiltIns.booleanType && irClass.isValue
-                && valueParameters.size == 1 && valueParameters[0].type.classifierOrNull == irClass.symbol
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+        private fun IrSimpleFunction.isTypedEqualsInValueClass() =
+            name == OperatorNameConventions.EQUALS
+                    && irClass.isValue
+                    && hasShape(dispatchReceiver = true, regularParameters = 1)
+                    && parameters[1].type.classifierOrNull == irClass.symbol
 
         fun generateEqualsMethodBody(properties: List<IrProperty>) {
             val irType = irClass.defaultType
