@@ -206,8 +206,8 @@ abstract class DataClassMembersGenerator(
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiver = shiftedResult
-                    putValueArgument(0, getHashCodeOfProperty(property))
+                    arguments[0] = shiftedResult
+                    arguments[1] = getHashCodeOfProperty(property)
                 }
                 +irSet(irResultVar.symbol, irRhs)
             }
