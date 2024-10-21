@@ -3,7 +3,7 @@
   "builds": [
     {
       "teamcity": {
-        "configuration": "ijplatform_master_KotlinPluginAnalyzerUpdate",
+        "configuration": "ijplatform_IjPlatform242_KotlinPluginAnalyzerUpdate",
         "url": "https://buildserver.labs.intellij.net",
         "token": "${safe.merge.robot.teamcity.token}",
         "ssl-keystore": "BuildServer client"
