@@ -57,6 +57,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(projectTests(":native:native.tests"))
+
+    // needed for verification metadata
+    implicitDependencies("org.jetbrains.litmuskt:litmuskt-core:0.1")
+    implicitDependencies("org.jetbrains.litmuskt:litmuskt-testsuite:0.1")
 }
 
 sourceSets {
@@ -71,3 +75,7 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib, litmusktRepoUtilsNativeKlib),
     allowParallelExecution = false,
 )
+
+tasks.named("test") {
+    finalizedBy(nativeTest)
+}
