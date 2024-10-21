@@ -470,6 +470,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("nestedParentheses.kt")
+    public void testNestedParentheses() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/nestedParentheses.kt");
+    }
+
+    @Test
     @TestMetadata("nullableDefaultType.kt")
     public void testNullableDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/nullableDefaultType.kt");
@@ -485,6 +491,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("packageQualifier.kt")
     public void testPackageQualifier() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/packageQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("parentheses.kt")
+    public void testParentheses() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/parentheses.kt");
     }
 
     @Test
