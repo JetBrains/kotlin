@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.cartesianProductOf
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.x
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
@@ -216,7 +215,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                     .map { it.replace(TestVersions.Kotlin.CURRENT, "SNAPSHOT") }
                     .joinToString("\n")
 
-                KotlinTestUtils.assertEqualsToFile(expectedReportFile, actualReportSanitized)
+                assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized, withTrailingEOF = false)
             }
             assertAll(consumer.resolvedConfigurationsNames.map { configurationName -> { assertResolvedDependencies(configurationName) } })
         }
