@@ -19610,6 +19610,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("unitElvisLikeWithRun.kt")
+        public void testUnitElvisLikeWithRun() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/unitElvisLikeWithRun.kt");
+        }
+
+        @Test
+        @TestMetadata("unitElvisWithRun.kt")
+        public void testUnitElvisWithRun() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/unitElvisWithRun.kt");
+        }
+
+        @Test
         @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
         public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
@@ -20858,6 +20870,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
           @TestMetadata("kt71662.kt")
           public void testKt71662() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt71662.kt");
+          }
+
+          @Test
+          @TestMetadata("kt72238.kt")
+          public void testKt72238() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt72238.kt");
+          }
+
+          @Test
+          @TestMetadata("kt72272.kt")
+          public void testKt72272() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt72272.kt");
           }
 
           @Test
