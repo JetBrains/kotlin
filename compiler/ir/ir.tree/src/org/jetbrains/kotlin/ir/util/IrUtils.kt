@@ -1223,10 +1223,11 @@ fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
-    dispatchReceiverParameter = factory.createValueParameter(
+    val new = factory.createValueParameter(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin ?: parentAsClass.origin,
+        kind = IrParameterKind.DispatchReceiver,
         name = SpecialNames.THIS,
         type = parentAsClass.defaultType,
         isAssignable = false,
@@ -1238,6 +1239,8 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
     ).apply {
         parent = this@createDispatchReceiverParameter
     }
+
+    parameters = listOf(new) + parameters
 }
 
 val IrFunction.allParameters: List<IrValueParameter>
