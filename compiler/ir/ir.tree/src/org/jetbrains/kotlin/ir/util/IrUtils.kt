@@ -790,8 +790,13 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
     is IrCall ->
         IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, origin, superQualifierSymbol).also {
-            it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
-            it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
+            for (param in symbol.owner.parameters) {
+                val argument = arguments[param.indexInParameters]
+                it.arguments[param.indexInParameters] =
+                    if (param.kind == IrParameterKind.DispatchReceiver || param.kind == IrParameterKind.ExtensionReceiver) {
+                        argument?.remapReceiver(oldReceiver, newReceiver)
+                    } else argument
+            }
         }
     else -> shallowCopy()
 }
