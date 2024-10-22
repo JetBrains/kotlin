@@ -31,15 +31,6 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.originalFunction
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-/**
- * This is the cache of the inline functions that have already been lowered.
- * It is helpful to avoid re-lowering the same function multiple times.
- */
- var IrFunction.loweredInlineFunction: IrFunction? by irAttribute(followAttributeOwner = false)
-
-internal fun IrFunction.getOrSaveLoweredInlineFunction(): IrFunction =
-        this::loweredInlineFunction.getOrSetIfNull { this.deepCopyWithSymbols(this.parent) }
-
 internal class NativeInlineFunctionResolver(
         private val generationState: NativeGenerationState,
         inlineMode: InlineMode,
@@ -48,7 +39,6 @@ internal class NativeInlineFunctionResolver(
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
         if (function.body != null) return function
-        function.loweredInlineFunction?.let { return it }
 
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val functionIsCached = moduleDeserializer != null
@@ -59,7 +49,7 @@ internal class NativeInlineFunctionResolver(
 
         lower(function, functionIsCached)
 
-        return function.getOrSaveLoweredInlineFunction()
+        return function
     }
 
     private fun lower(function: IrFunction, functionIsCached: Boolean) {
