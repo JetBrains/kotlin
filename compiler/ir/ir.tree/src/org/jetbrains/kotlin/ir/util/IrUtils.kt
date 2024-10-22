@@ -678,7 +678,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
             when (irFunction) {
                 is IrConstructor -> {
                     val constructedClass = irFunction.parentAsClass
-                    if (!constructedClass.isInner && dispatchReceiver != null) {
+                    if (!constructedClass.isInner && arguments[0] != null) {
                         throw AssertionError("Non-inner class constructor reference with dispatch receiver:\n${this.dump()}")
                     }
                     extractTypeParameters(constructedClass.parent as IrClass)
