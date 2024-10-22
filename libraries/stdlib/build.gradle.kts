@@ -75,12 +75,6 @@ kotlin {
 
     explicitApi()
 
-    val tmpJar by task<Jar> {
-        dependsOn(":kotlin-stdlib:compileKotlinJvm")
-        destinationDirectory.set(layout.buildDirectory.dir("libs"))
-        archiveAppendix.set("tmp")
-    }
-
     metadata {
         compilations {
             all {
@@ -150,7 +144,6 @@ kotlin {
             val mainJdk7 by creating {
                 associateWith(main)
                 compileTaskProvider.configure {
-                    dependsOn(tmpJar.get())
                     this as UsesKotlinJavaToolchain
                     kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
                     compilerOptions {
@@ -379,9 +372,6 @@ kotlin {
         }
 
         val jvmMainJdk7 by getting {
-            dependencies {
-                compileOnly(files(tmpJar.get().outputs.files))
-            }
             kotlin.srcDir("jdk7/src")
         }
         val jvmMainJdk8 by getting {
