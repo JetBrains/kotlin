@@ -1,0 +1,104 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+open class Test {
+    @Composable open fun doSomething(value: Int = remember { 0 }) {}
+}
+
+class TestImpl : Test() {
+    @Composable override fun doSomething(value: Int) {
+        super.doSomething(value)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+open class Test {
+  @Composable
+  open fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(doSomething):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+  class ComposeDefaultImpls {
+    @Composable
+    fun doSomething%default(value: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(doSomething%default)<rememb...>:Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty or 0b00110000
+      } else if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (%composer.changed(%this%)) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (%default and 0b0001 != 0) {
+          value = <block>{
+            sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+            val tmp0_group = %composer.cache(false) {
+              0
+            }
+            sourceInformationMarkerEnd(%composer)
+            tmp0_group
+          }
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.doSomething(value, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        doSomething%default(value, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+  }
+  @Composable
+  @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
+  open fun doSomething(value: Int, %composer: Composer?, %changed: Int, %default: Int) {
+    return doSomething%default(value, <this>, %composer, %changed, %default)
+  }
+}
+@StabilityInferred(parameters = 1)
+class TestImpl : Test {
+  @Composable
+  override fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(doSomething)<doSome...>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    super<Test>.doSomething(value, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+}

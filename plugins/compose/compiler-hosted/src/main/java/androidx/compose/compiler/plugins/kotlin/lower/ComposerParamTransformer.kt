@@ -25,6 +25,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -487,7 +489,7 @@ class ComposerParamTransformer(
                 }
             }
 
-            fn.makeStubForDefaultValuesIfNeeded()?.also {
+            fn.makeStubForDefaultValueClassIfNeeded()?.also {
                 when (val parent = fn.parent) {
                     is IrClass -> parent.addChild(it)
                     is IrFile -> parent.addChild(it)
@@ -573,12 +575,8 @@ class ComposerParamTransformer(
      * nullability changed the value class mangle on a function signature. This stub creates a
      * binary compatible function to support old compilers while redirecting to a new function.
      */
-    private fun IrSimpleFunction.makeStubForDefaultValuesIfNeeded(): IrSimpleFunction? {
-        if (!visibility.isPublicAPI && !hasAnnotation(PublishedApiFqName)) {
-            return null
-        }
-
-        if (!hasComposableAnnotation()) {
+    private fun IrSimpleFunction.makeStubForDefaultValueClassIfNeeded(): IrSimpleFunction? {
+        if (!isPublicComposableFunction()) {
             return null
         }
 
@@ -603,47 +601,33 @@ class ComposerParamTransformer(
         }
 
         val source = this
-        val copy = source.deepCopyWithSymbols(parent)
-        copy.attributeOwnerId = copy
-        copy.originalBeforeInline = null
-        copy.valueParameters.fastForEach {
-            it.defaultValue = null
-        }
-        copy.isDefaultValueStub = true
-        copy.annotations += IrConstructorCallImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            type = jvmSyntheticIrClass.defaultType,
-            symbol = jvmSyntheticIrClass.primaryConstructor!!.symbol,
-            typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-        )
-        copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements.add(
-                IrReturnImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    copy.returnType,
-                    copy.symbol,
-                    irCall(source).apply {
-                        dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
-                        extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
-                        copy.typeParameters.fastForEachIndexed { index, param ->
-                            typeArguments[index] = param.defaultType
-                        }
-                        copy.valueParameters.fastForEachIndexed { index, param ->
-                            putValueArgument(index, irGet(param))
-                        }
-                    }
+        return makeStub().also { copy ->
+            transformedFunctions[copy] = copy
+            transformedFunctionSet += copy
+
+            copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements.add(
+                    irReturn(
+                        copy.symbol,
+                        irCall(source).apply {
+                            dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
+                            extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
+                            copy.typeParameters.fastForEachIndexed { index, param ->
+                                typeArguments[index] = param.defaultType
+                            }
+                            copy.valueParameters.fastForEachIndexed { index, param ->
+                                putValueArgument(index, irGet(param))
+                            }
+                        },
+                        copy.returnType
+                    )
                 )
-            )
+            }
         }
-
-        transformedFunctions[copy] = copy
-        transformedFunctionSet += copy
-
-        return copy
     }
 
-    private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()
+    private fun IrSimpleFunction.isPublicComposableFunction(): Boolean =
+        hasComposableAnnotation() && (visibility.isPublicAPI || isPublishedApi())
 }
+
+private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()

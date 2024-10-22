@@ -305,9 +305,9 @@ class IrSourcePrinterVisitor(
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next", "getValue", "setValue",
-                "noWhenBranchMatchedException",
-                -> name
+                "noWhenBranchMatchedException" -> name
                 "CHECK_NOT_NULL" -> "!!"
+                "THROW_ISE" -> "throw IllegalStateException()"
                 else -> {
                     if (name.startsWith("component")) name
                     else error("Unhandled operator $name")
@@ -374,19 +374,20 @@ class IrSourcePrinterVisitor(
                 }
                 // builtin static operators
                 "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
-                "ieee754equals",
-                -> {
+                "ieee754equals" -> {
                     expression.getValueArgument(0)?.print()
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
                 "iterator", "hasNext", "next",
-                "noWhenBranchMatchedException",
-                -> {
+                "noWhenBranchMatchedException" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
                     print("()")
+                }
+                "THROW_ISE" -> {
+                    print(opSymbol)
                 }
                 else -> {
                     if (name.startsWith("component")) {

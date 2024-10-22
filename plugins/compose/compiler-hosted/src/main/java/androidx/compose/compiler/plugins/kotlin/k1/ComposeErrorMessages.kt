@@ -92,7 +92,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
         MAP.put(
             ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
-            "Open Composable functions with default values are not currently supported"
+            "Open Composable functions with default values are only supported with language version 2.0 or higher."
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_FUN_MAIN,

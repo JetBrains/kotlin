@@ -30,6 +30,4 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val FUNCTION_METRICS: WritableSlice<IrAttributeContainer, FunctionMetrics> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val IS_VIRTUAL_WITH_DEFAULT_PARAM: WritableSlice<IrAttributeContainer, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }

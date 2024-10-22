@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -1225,9 +1226,9 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
-    @Ignore("b/357878245")
     @Test
     fun defaultParametersInFakeOverrideOpenComposableFunctions() {
+        assumeTrue(useFir)
         compile(
             mapOf(
                 "Base" to mapOf(

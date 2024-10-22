@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
-import org.junit.Ignore
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -26,22 +26,28 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         unchecked: String,
         @Language("kotlin")
         checked: String,
+        supportsK1: Boolean = true,
         dumpTree: Boolean = false,
-    ) = verifyGoldenComposeIrTransform(
-        """
+    ) {
+        if (!supportsK1) {
+            assumeTrue(useFir)
+        }
+        verifyGoldenComposeIrTransform(
+            """
             import androidx.compose.runtime.*
 
             $checked
-        """.trimIndent(),
-        """
+            """.trimIndent(),
+            """
             import androidx.compose.runtime.*
 
             $unchecked
 
             fun used(x: Any?) {}
-        """.trimIndent(),
-        dumpTree = dumpTree
-    )
+            """.trimIndent(),
+            dumpTree = dumpTree
+        )
+    }
 
     @Test
     fun testComposableWithAndWithoutDefaultParams(): Unit = defaultParams(
@@ -439,7 +445,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         """
     )
 
-    @Ignore("b/357878245")
     @Test
     fun testOpenDefaultParamOnInterface() = defaultParams(
         unchecked = """""",
@@ -454,11 +459,9 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
             }
 
             class TestImpl : TestBetween {
-                @Composable override fun foo(param: Int) {}
                 @Composable override fun bar(param: Int): Int {
                     return super.bar(param)
                 }
-                @Composable override fun betweenFoo(param: Int) {}
             }
 
             @Composable fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl) {
@@ -479,10 +482,10 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 testImpl.betweenBar()
                 testImpl.betweenBar(0)
             }
-        """
+        """,
+        supportsK1 = false
     )
 
-    @Ignore("b/357878245")
     @Test
     fun testDefaultParamOverrideOpenFunction() = defaultParams(
         unchecked = """""",
@@ -505,7 +508,8 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                     return super.bar(param)
                 }
             }
-        """
+        """,
+        supportsK1 = false
     )
 
     @Test
@@ -529,7 +533,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         """
     )
 
-    @Ignore("b/357878245")
     @Test
     fun testOpenDefaultParamOverrideExtensionReceiver() = defaultParams(
         unchecked = "",
@@ -548,10 +551,10 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                     42.bar(0)
                 }
             }
-        """
+        """,
+        supportsK1 = false
     )
 
-    @Ignore("b/357878245")
     @Test
     fun testDefaultParamFakeOverride() = defaultParams(
         unchecked = "",
@@ -571,7 +574,8 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 test.bar()
                 test.bar(0)
             }
-        """
+        """,
+        supportsK1 = false
     )
 
     @Test
@@ -591,7 +595,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         """,
     )
 
-    @Ignore("b/357878245")
     @Test
     fun testOpenDefaultParamComposableLambda() = defaultParams(
         unchecked = """
@@ -609,5 +612,26 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 }
             }
         """,
+        supportsK1 = false
+    )
+
+    @Test
+    fun defaultParameterOpenFunction() = defaultParams(
+        unchecked = "",
+        checked = """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.remember
+
+            open class Test {
+                @Composable open fun doSomething(value: Int = remember { 0 }) {}
+            }
+
+            class TestImpl : Test() {
+                @Composable override fun doSomething(value: Int) {
+                    super.doSomething(value)
+                }
+            }
+        """.trimIndent(),
+        supportsK1 = false
     )
 }
