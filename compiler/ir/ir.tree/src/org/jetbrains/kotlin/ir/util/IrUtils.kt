@@ -34,36 +34,6 @@ import org.jetbrains.kotlin.utils.*
 import java.io.StringWriter
 
 /**
- * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
- * The arguments are to be evaluated in the same order as they appear in the resulting list.
- */
-@Suppress("unused") // used in kotlin-native
-@ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression<*>.getArguments(): List<Pair<ParameterDescriptor, IrExpression>> {
-    val res = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
-    val descriptor = symbol.descriptor as CallableDescriptor
-
-    // TODO: ensure the order below corresponds to the one defined in Kotlin specs.
-
-    dispatchReceiver?.let {
-        res += (descriptor.dispatchReceiverParameter!! to it)
-    }
-
-    extensionReceiver?.let {
-        res += (descriptor.extensionReceiverParameter!! to it)
-    }
-
-    descriptor.valueParameters.forEach {
-        val arg = getValueArgument(it.index)
-        if (arg != null) {
-            res += (it to arg)
-        }
-    }
-
-    return res
-}
-
-/**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
