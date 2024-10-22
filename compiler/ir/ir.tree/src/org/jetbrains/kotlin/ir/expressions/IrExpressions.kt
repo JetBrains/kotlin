@@ -99,9 +99,10 @@ val CallableDescriptor.typeParametersCount: Int
         }
 
 @DeprecatedCompilerApi
-fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
-    when (parameter) {
-        callee.dispatchReceiverParameter -> dispatchReceiver = argument
-        callee.extensionReceiverParameter -> extensionReceiver = argument
-        else -> putValueArgument(parameter.indexInOldValueParameters, argument)
-    }
+fun IrMemberAccessExpression<*>.putArgument(
+    @Suppress("unused") callee: IrFunction, // To be removed
+    parameter: IrValueParameter,
+    argument: IrExpression
+) {
+    arguments[parameter.indexInParameters] = argument
+}
