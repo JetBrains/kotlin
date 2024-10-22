@@ -1430,9 +1430,7 @@ val IrFunction.isValueClassTypedEquals: Boolean
         val enclosingClassStartProjection = parentClass.symbol.starProjectedType
         return name == OperatorNameConventions.EQUALS
                 && (returnType.isBoolean() || returnType.isNothing())
-                && valueParameters.size == 1
-                && (valueParameters[0].type == enclosingClassStartProjection)
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+                && (nonDispatchParameters.getOrNull(0)?.type == enclosingClassStartProjection)
                 && (parentClass.isValue)
     }
 
