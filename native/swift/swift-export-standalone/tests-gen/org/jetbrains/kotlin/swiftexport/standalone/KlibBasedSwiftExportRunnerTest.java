@@ -78,6 +78,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("map")
+  public void testMap() {
+    runTest("native/swift/swift-export-standalone/testData/generation/map/");
+  }
+
+  @Test
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/generation/no_package/");
@@ -117,6 +123,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("package_flattening_missing_target")
   public void testPackage_flattening_missing_target() {
     runTest("native/swift/swift-export-standalone/testData/generation/package_flattening_missing_target/");
+  }
+
+  @Test
+  @TestMetadata("set")
+  public void testSet() {
+    runTest("native/swift/swift-export-standalone/testData/generation/set/");
   }
 
   @Test

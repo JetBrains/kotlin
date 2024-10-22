@@ -426,6 +426,7 @@ private val SirType.swiftRender: String
     get() = when (this) {
         is SirOptionalType -> wrappedType.swiftRender + "?"
         is SirArrayType -> "[${elementType.swiftRender}]"
+        is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
         else -> swiftName
     }
 

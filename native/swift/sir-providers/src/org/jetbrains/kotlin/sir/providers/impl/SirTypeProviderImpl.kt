@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -25,10 +24,6 @@ public class SirTypeProviderImpl(
     override val errorTypeStrategy: ErrorTypeStrategy,
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
-
-    private object StandardClassIds {
-        val LIST: ClassId = ClassId.topLevel(StandardNames.FqNames.list)
-    }
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
@@ -75,9 +70,26 @@ public class SirTypeProviderImpl(
                         kaType.isStringType -> SirNominalType(SirSwiftModule.string)
                         kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
 
-                        kaType.isClassType(StandardClassIds.LIST) -> {
-                            val elementType = kaType.typeArguments.first().type!!
-                            SirArrayType(buildSirNominalType(elementType, ktAnalysisSession))
+                        kaType.isClassType(StandardClassIds.List) -> {
+                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            SirArrayType(elementType)
+                        }
+
+                        kaType.isClassType(StandardClassIds.Set) -> {
+                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            SirNominalType(SirSwiftModule.set, typeArguments = listOf(elementType))
+                        }
+
+                        kaType.isClassType(StandardClassIds.Map) -> {
+                            val keyType = buildSirNominalType(kaType.typeArguments[0].type!!, ktAnalysisSession)
+                            val valueType = buildSirNominalType(kaType.typeArguments[1].type!!, ktAnalysisSession)
+
+                            if (keyType is SirNominalType && keyType.typeDeclaration == SirSwiftModule.optional) {
+                                // TODO(KT-71920) At the moment optional keys are not supported
+                                null
+                            } else {
+                                SirDictionaryType(keyType, valueType)
+                            }
                         }
 
                         else -> {
