@@ -7,29 +7,19 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.originalFunction
-import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 internal class NativeInlineFunctionResolver(
         private val generationState: NativeGenerationState,
@@ -40,19 +30,14 @@ internal class NativeInlineFunctionResolver(
 
         if (function.body != null) return function
 
-        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
-        val functionIsCached = moduleDeserializer != null
-        if (functionIsCached) {
-            // The function is cached, get its body from the IR linker.
-            moduleDeserializer.deserializeInlineFunction(function)
-        }
-
-        lower(function, functionIsCached)
+        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function) ?: return null
+        moduleDeserializer.deserializeInlineFunction(function)
+        lower(function)
 
         return function
     }
 
-    private fun lower(function: IrFunction, functionIsCached: Boolean) {
+    private fun lower(function: IrFunction) {
         val body = function.body ?: return
 
         val doubleInliningEnabled = !context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
@@ -71,12 +56,9 @@ internal class NativeInlineFunctionResolver(
         ).lowerWithoutAddingAccessorsToParents(function)
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
-
-        if (!context.config.produce.isCache && !functionIsCached && !doubleInliningEnabled) {
-            // Do not extract local classes off of inline functions from cached libraries.
-            LocalClassesInInlineFunctionsLowering(context).lower(body, function)
-            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
-        }
+        // Do not extract local classes off of inline functions from cached libraries.
+        // LocalClassesInInlineFunctionsLowering(context).lower(body, function)
+        // LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
 
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         ArrayConstructorLowering(context).lower(body, function)
