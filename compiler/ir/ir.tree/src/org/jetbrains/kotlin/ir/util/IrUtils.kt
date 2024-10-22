@@ -1003,36 +1003,34 @@ fun IrFunction.copyValueParametersToStatic(
     dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
 ) {
     val target = this
-    assert(target.valueParameters.isEmpty())
+    assert(target.parameters.isEmpty())
 
-    source.dispatchReceiverParameter?.let { originalDispatchReceiver ->
-        assert(dispatchReceiverType!!.isSubtypeOfClass(originalDispatchReceiver.type.classOrNull!!)) {
-            "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${originalDispatchReceiver.type.render()}"
+    target.parameters += source.parameters.map { param ->
+        val name = when (param.kind) {
+            IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
+            IrParameterKind.ContextParameter -> Name.identifier("\$receiver")
+            IrParameterKind.ExtensionReceiver, IrParameterKind.RegularParameter -> param.name
         }
-        val type = dispatchReceiverType.remapTypeParameters(
-            (originalDispatchReceiver.parent as IrTypeParametersContainer).classIfConstructor,
-            target.classIfConstructor
-        )
+        val origin = when (param.kind) {
+            IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> param.origin
+            IrParameterKind.ContextParameter, IrParameterKind.RegularParameter -> origin
+        }
+        val type = if (param.kind == IrParameterKind.DispatchReceiver) {
+            assert(dispatchReceiverType!!.isSubtypeOfClass(param.type.classOrNull!!)) {
+                "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${param.type.render()}"
+            }
+            dispatchReceiverType.remapTypeParameters(
+                (param.parent as IrTypeParametersContainer).classIfConstructor,
+                target.classIfConstructor
+            )
+        } else param.type
 
-        target.valueParameters = target.valueParameters memoryOptimizedPlus originalDispatchReceiver.copyTo(
+        param.copyTo(
             target,
-            origin = originalDispatchReceiver.origin,
+            origin = origin,
             type = type,
-            name = Name.identifier("\$this")
-        )
-    }
-    source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.valueParameters = target.valueParameters memoryOptimizedPlus originalExtensionReceiver.copyTo(
-            target,
-            origin = originalExtensionReceiver.origin,
-            name = Name.identifier("\$receiver")
-        )
-    }
-
-    for (oldValueParameter in source.valueParameters) {
-        target.valueParameters = target.valueParameters memoryOptimizedPlus oldValueParameter.copyTo(
-            target,
-            origin = origin
+            name = name,
+            kind = IrParameterKind.RegularParameter,
         )
     }
 }
