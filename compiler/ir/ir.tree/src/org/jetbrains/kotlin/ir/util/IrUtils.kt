@@ -1331,47 +1331,30 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         annotations = oldFunction.annotations
 
-        valueParameters = buildList {
-            addIfNotNull(
-                oldFunction.dispatchReceiverParameter?.copyTo(
-                    this@apply,
-                    name = Name.identifier("\$this"),
-                    type = remap(dispatchReceiverType!!),
-                    origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                )
-            )
+        parameters = oldFunction.parameters.map { oldParam ->
+            val name = when (oldParam.kind) {
+                IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
+                IrParameterKind.ExtensionReceiver -> Name.identifier("\$receiver")
+                IrParameterKind.Context, IrParameterKind.Regular -> oldParam.name
+            }
+            val origin = when (oldParam.kind) {
+                IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+                IrParameterKind.Regular -> oldParam.origin
+            }
+            val type = if (oldParam.kind == IrParameterKind.DispatchReceiver) {
+                remap(dispatchReceiverType!!)
+            } else {
+                oldParam.type.remapTypeParameters(oldFunction.classIfConstructor, this.classIfConstructor, typeParameterMap)
+            }
 
-            addAll(
-                oldFunction.valueParameters
-                    .asSequence()
-                    .take(oldFunction.contextReceiverParametersCount)
-                    .map {
-                        it.copyTo(
-                            this@apply,
-                            remapTypeMap = typeParameterMap
-                        )
-                    }
-            )
-
-            addIfNotNull(
-                oldFunction.extensionReceiverParameter?.copyTo(
-                    this@apply,
-                    name = Name.identifier("\$receiver"),
-                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
-                    remapTypeMap = typeParameterMap
-                )
-            )
-
-            addAll(
-                oldFunction.valueParameters
-                    .asSequence()
-                    .drop(oldFunction.contextReceiverParametersCount)
-                    .map {
-                        it.copyTo(
-                            this@apply,
-                            remapTypeMap = typeParameterMap
-                        )
-                    }
+            oldParam.copyTo(
+                this@apply,
+                name = name,
+                type = type,
+                origin = origin,
+                kind = IrParameterKind.Regular,
             )
         }
 
