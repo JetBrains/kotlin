@@ -31,14 +31,12 @@ abstract class BuiltinsVirtualFileProvider {
 abstract class BuiltinsVirtualFileProviderBaseImpl : BuiltinsVirtualFileProvider() {
     private val builtInUrls: Set<URL> by lazy {
         val classLoader = this::class.java.classLoader
-        buildSet {
-            addAll(StandardClassIds.builtInsPackages.mapTo(mutableSetOf()) { builtInPackageFqName ->
-                val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
-                classLoader.getResource(resourcePath)
-                    ?: errorWithAttachment("Resource for builtin $builtInPackageFqName not found") {
-                        withEntry("resourcePath", resourcePath)
-                    }
-            })
+        StandardClassIds.builtInsPackages.mapTo(mutableSetOf()) { builtInPackageFqName ->
+            val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
+            classLoader.getResource(resourcePath)
+                ?: errorWithAttachment("Resource for builtin $builtInPackageFqName not found") {
+                    withEntry("resourcePath", resourcePath)
+                }
         }
     }
 

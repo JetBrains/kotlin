@@ -31,17 +31,17 @@ object StandardClassIds {
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
         BASE_RANGES_PACKAGE,
-        BASE_ANNOTATION_PACKAGE
+        BASE_ANNOTATION_PACKAGE,
     )
 
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
-        BASE_COROUTINES_PACKAGE,
         BASE_RANGES_PACKAGE,
         BASE_ANNOTATION_PACKAGE,
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
+        BASE_COROUTINES_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()
