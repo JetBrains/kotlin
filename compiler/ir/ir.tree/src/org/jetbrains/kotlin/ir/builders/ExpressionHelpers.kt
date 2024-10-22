@@ -310,9 +310,9 @@ fun IrBuilderWithScope.irCallOp(
     origin: IrStatementOrigin? = null
 ): IrMemberAccessExpression<*> =
     irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0, origin = origin).apply {
-        this.dispatchReceiver = dispatchReceiver
+        arguments[0] = dispatchReceiver
         if (argument != null)
-            putValueArgument(0, argument)
+            arguments[1] = argument
     }
 
 fun IrBuilderWithScope.typeOperator(
