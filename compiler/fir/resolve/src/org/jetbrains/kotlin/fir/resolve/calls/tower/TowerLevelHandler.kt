@@ -53,7 +53,7 @@ internal class TowerLevelHandler {
                 // However, this only applies if the best current candidate applicability has shouldStopResolve == true. Exceptions to this
                 // are candidates from dynamic scopes or properties with @LowPriorityInOverloadResolution (from earlier or the same level),
                 // therefore we check for collector.shouldStopResolve and not collector.isSuccess.
-                if (!collector.shouldStopResolve && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
+                if (!collector.shouldStopResolve && towerLevel is ScopeBasedTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
