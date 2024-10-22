@@ -1251,18 +1251,18 @@ val IrFunction.allParameters: List<IrValueParameter>
                     this.constructedClass.thisReceiver
                         ?: error(this.render())
                 )
-                addExplicitParametersTo(it)
+                it.addAll(parameters)
             }
         }
         is IrSimpleFunction -> {
-            explicitParameters
+            parameters
         }
     }
 
 val IrFunction.allParametersCount: Int
     get() = when (this) {
-        is IrConstructor -> explicitParametersCount + 1
-        is IrSimpleFunction -> explicitParametersCount
+        is IrConstructor -> parameters.size + 1
+        is IrSimpleFunction -> parameters.size
     }
 
 private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
