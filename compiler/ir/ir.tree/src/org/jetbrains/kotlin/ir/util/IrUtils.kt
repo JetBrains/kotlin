@@ -396,10 +396,9 @@ inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, 
 @PublishedApi
 internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (index in 0 until annotation.valueArgumentsCount) {
-        val parameter = annotation.symbol.owner.valueParameters[index]
+    for (parameter in annotation.symbol.owner.parameters) {
         if (parameter.name.asString() == argumentName) {
-            val actual = annotation.getValueArgument(index) as? IrConst
+            val actual = annotation.arguments[parameter.indexNew] as? IrConst
             return actual?.value
         }
     }
