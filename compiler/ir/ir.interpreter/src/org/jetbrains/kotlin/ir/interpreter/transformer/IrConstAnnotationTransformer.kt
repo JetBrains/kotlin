@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -21,8 +23,11 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
     abstract fun visitAnnotations(element: IrElement)
 
     protected fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
+        val declarationIsFakeOverride = (annotationContainer as? IrDeclaration)?.origin == IrDeclarationOrigin.FAKE_OVERRIDE
         annotationContainer.annotations.forEach { annotation ->
-            transformAnnotation(annotation)
+            context.saveConstantsOnCondition(!declarationIsFakeOverride) {
+                transformAnnotation(annotation)
+            }
         }
     }
 
@@ -35,7 +40,7 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
         context.saveInConstTracker(annotation)
     }
 
-    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
+    private fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
         return when (argument) {
             is IrVararg -> argument.transformVarArg()
             else -> argument.transformSingleArg(valueParameter.type)

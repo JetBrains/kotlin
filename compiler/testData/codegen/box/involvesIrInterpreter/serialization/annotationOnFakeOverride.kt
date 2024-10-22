@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
-// IGNORE_BACKEND_K2: JVM, JVM_IR, JS_IR, JS_IR_ES6, WASM, NATIVE
 // ISSUE: KT-72356
 // STOP_EVALUATION_CHECKS
 // FILE: A.kt
@@ -9,7 +7,7 @@ annotation class A(val x: String)
 annotation class Something
 
 // FILE: B.kt
-open class B { @A("String  ") fun foo() {} }
+open class B { @A(<!EVALUATED("String  ")!>"String  "<!>) fun foo() {} }
 
 // FILE: E.kt
 fun <          @Something X> bar() {}
