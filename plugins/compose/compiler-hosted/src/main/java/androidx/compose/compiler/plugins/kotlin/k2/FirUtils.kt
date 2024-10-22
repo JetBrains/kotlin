@@ -108,6 +108,10 @@ fun FirFunction.getDirectOverriddenFunctions(
             scope.getDirectOverriddenFunctions(symbol, true)
         }
         is FirPropertyAccessorSymbol -> {
+            // On IDE, for some FIR session on some threads like background threads for highlight feature, it randomly skips
+            // processing properties, which results in false negative missing direct overridden properties. To avoid the bug,
+            // we explicitly run `processPropertiesByName` here.
+            scope.processPropertiesByName(symbol.propertySymbol.name) {}
             scope.getDirectOverriddenProperties(symbol.propertySymbol, true).mapNotNull {
                 if (symbol.isGetter) it.getterSymbol else it.setterSymbol
             }
