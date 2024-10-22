@@ -47,16 +47,16 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     val resolvedTypeRef = buildResolvedTypeRef {
                         type = property.dataRowReturnType
                     }
-                    val propertyName = Name.identifier(property.name)
-                    propertyName to listOf(buildProperty(resolvedTypeRef, propertyName, k, order = index))
+                    val identifier = property.propertyName.identifier
+                    identifier to listOf(buildProperty(resolvedTypeRef, identifier, k, property.propertyName.columnNameAnnotation, order = index))
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
-                    val propertyName = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, isScopeProperty = true))
+                    val identifier = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
+                    identifier to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), identifier, k, isScopeProperty = true))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
-                    val propertyName = Name.identifier(schemaProperty.name)
-                    val callableId = CallableId(k.classId, propertyName)
+                    val propertyName = schemaProperty.propertyName
+                    val callableId = CallableId(k.classId, propertyName.identifier)
                     val dataRowExtension = generateExtensionProperty(
                         callableId = callableId,
                         symbol = k,
@@ -82,7 +82,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         symbol = k,
                         effectiveVisibility = EffectiveVisibility.Local
                     )
-                    propertyName to listOf(dataRowExtension, columnContainerExtension)
+                    propertyName.identifier to listOf(dataRowExtension, columnContainerExtension)
                 }
             }
         }
@@ -109,6 +109,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         resolvedTypeRef: FirResolvedTypeRef,
         propertyName: Name,
         k: FirClassSymbol<*>,
+        columnNameAnnotation: FirAnnotation? = null,
         isScopeProperty: Boolean = false,
         order: Int? = null,
     ): FirProperty {
@@ -134,6 +135,9 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     }
                     argumentMapping = buildAnnotationArgumentMapping()
                 }
+            }
+            columnNameAnnotation?.let {
+                annotations += it
             }
             replaceAnnotations(annotations)
         }

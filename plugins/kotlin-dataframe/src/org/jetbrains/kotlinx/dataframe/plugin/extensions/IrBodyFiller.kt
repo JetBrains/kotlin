@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -41,11 +42,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
@@ -61,6 +64,7 @@ import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.serialize
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import java.io.File
 
 class IrBodyFiller(
@@ -207,7 +211,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0, 1).also {
             val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
             it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
-            val columName = pluginKey.columnName ?: declaration.name.identifier
+            val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
+            val columnName = (annotation?.valueArguments?.get(0) as? IrConst<*>)?.value as? String
+            val columName = columnName ?: declaration.name.identifier
             it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName))
         }
 
@@ -235,16 +241,32 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return true
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    // org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator#applyReceivers
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        if (isScope(expression.typeOperand)) {
+            return expression.replaceWithConstructorCall()
+        }
+        return super.visitTypeOperator(expression)
+    }
+
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
-        val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
-        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin
-        val scopeReference = expression.type.classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
-        if (!(fromPlugin || scopeReference)) {
+        if (!isScope(expression.type)) {
             return expression
         }
-        val constructor = expression.type.getClass()!!.constructors.toList().single()
-        val type = expression.type
+        return expression.replaceWithConstructorCall()
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun isScope(type: IrType): Boolean {
+        val origin = (type.classifierOrNull?.owner as? IrClass)?.origin ?: return false
+        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin
+        val scopeReference = type.classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
+        return fromPlugin || scopeReference
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrExpression.replaceWithConstructorCall(): IrConstructorCallImpl {
+        val constructor = type.getClass()!!.constructors.toList().single()
         return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0, 0)
     }
 }

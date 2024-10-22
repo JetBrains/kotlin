@@ -53,6 +53,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnName_invalidSymbol.kt")
+  public void testColumnName_invalidSymbol() {
+    runTest("testData/box/columnName_invalidSymbol.kt");
+  }
+
+  @Test
   @TestMetadata("columnWithStarProjection.kt")
   public void testColumnWithStarProjection() {
     runTest("testData/box/columnWithStarProjection.kt");
@@ -80,6 +86,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("dataFrameOf.kt")
   public void testDataFrameOf() {
     runTest("testData/box/dataFrameOf.kt");
+  }
+
+  @Test
+  @TestMetadata("dataFrameOf_to.kt")
+  public void testDataFrameOf_to() {
+    runTest("testData/box/dataFrameOf_to.kt");
   }
 
   @Test
@@ -227,6 +239,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("inventNamesForLocalClasses.kt")
+  public void testInventNamesForLocalClasses() {
+    runTest("testData/box/inventNamesForLocalClasses.kt");
+  }
+
+  @Test
   @TestMetadata("join.kt")
   public void testJoin() {
     runTest("testData/box/join.kt");
@@ -290,6 +308,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("platformType.kt")
   public void testPlatformType() {
     runTest("testData/box/platformType.kt");
+  }
+
+  @Test
+  @TestMetadata("playground.kt")
+  public void testPlayground() {
+    runTest("testData/box/playground.kt");
   }
 
   @Test
@@ -431,6 +455,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("trimIndent.kt")
+  public void testTrimIndent() {
+    runTest("testData/box/trimIndent.kt");
+  }
+
+  @Test
+  @TestMetadata("trimMargin.kt")
+  public void testTrimMargin() {
+    runTest("testData/box/trimMargin.kt");
+  }
+
+  @Test
   @TestMetadata("ungroup.kt")
   public void testUngroup() {
     runTest("testData/box/ungroup.kt");
@@ -440,6 +476,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("update.kt")
   public void testUpdate() {
     runTest("testData/box/update.kt");
+  }
+
+  @Test
+  @TestMetadata("wrongReceiver.kt")
+  public void testWrongReceiver() {
+    runTest("testData/box/wrongReceiver.kt");
   }
 
   @Nested

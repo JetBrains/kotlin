@@ -21,23 +21,25 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     callableId: CallableId,
     receiverType: ConeClassLikeTypeImpl,
-    propertyName: Name,
+    propertyName: PropertyName,
     returnTypeRef: FirResolvedTypeRef,
-    columnName: String? = null,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public
 ): FirProperty {
     val firPropertySymbol = FirPropertySymbol(callableId)
     return buildProperty {
+        propertyName.columnNameAnnotation?.let {
+            annotations += it
+        }
         moduleData = session.moduleData
         resolvePhase = FirResolvePhase.BODY_RESOLVE
-        origin = FirDeclarationOrigin.Plugin(DataFramePlugin(columnName))
+        origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
         status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
@@ -67,7 +69,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         getter = buildPropertyAccessor {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(DataFramePlugin(columnName))
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             this.returnTypeRef = returnTypeRef
             dispatchReceiverType = receiverType
             this.symbol = firPropertyAccessorSymbol
@@ -79,7 +81,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
                     effectiveVisibility
             )
         }
-        name = propertyName
+        name = propertyName.identifier
         this.symbol = firPropertySymbol
         isVar = false
         isLocal = false

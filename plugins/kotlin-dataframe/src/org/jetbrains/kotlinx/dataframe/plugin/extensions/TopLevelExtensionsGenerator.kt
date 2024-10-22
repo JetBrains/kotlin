@@ -29,11 +29,15 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
-class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+/**
+ * extensions inside scope classes are generated here:
+ * @see org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator
+ */
+class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {
         val dataSchema = FqName(DataSchema::class.qualifiedName!!)
     }
@@ -83,7 +87,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
                 val columnName = property.getAnnotationByClassId(Names.COLUMN_NAME_ANNOTATION, session)?.let { annotation ->
                     (annotation.argumentMapping.mapping[Names.COLUMN_NAME_ARGUMENT] as? FirLiteralExpression)?.value as? String?
                 }
-                val propertyName = property.name
+                val name = property.name
                 val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
 
                 val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(
@@ -115,8 +119,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
                         typeArguments = arrayOf(marker),
                         isNullable = false
                     ),
-                    propertyName = propertyName,
-                    columnName = columnName,
+                    propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
                     returnTypeRef = resolvedReturnTypeRef
                 )
 
@@ -138,8 +141,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
                         typeArguments = arrayOf(marker),
                         isNullable = false
                     ),
-                    propertyName = propertyName,
-                    columnName = columnName,
+                    propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
                     returnTypeRef = columnReturnType
                 )
                 listOf(rowExtension.symbol, columnsContainerExtension.symbol)
