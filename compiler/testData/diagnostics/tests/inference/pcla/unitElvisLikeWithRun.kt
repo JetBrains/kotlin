@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-72238
 
 interface Box<F> {
