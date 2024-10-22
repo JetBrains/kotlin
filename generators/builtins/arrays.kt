@@ -215,13 +215,9 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
 
 class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
-    override fun FileBuilder.modifyGeneratedFile() {
-        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
-    }
 
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
         override fun ClassBuilder.modifyGeneratedClass() {
-            annotations += "ActualizeByJvmBuiltinProvider"
             expectActual = ExpectActualModifier.Expect
         }
     }

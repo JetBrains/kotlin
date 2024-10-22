@@ -171,12 +171,8 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
 }
 
 class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
-    override fun FileBuilder.modifyGeneratedFile() {
-        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
-    }
 
     override fun ClassBuilder.modifyGeneratedClass() {
-        annotations += "ActualizeByJvmBuiltinProvider"
         expectActual = ExpectActualModifier.Expect
     }
 

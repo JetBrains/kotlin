@@ -44,6 +44,13 @@ sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: Cal
 // ------------------------ named ------------------------
 
 open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirSimpleFunction>(callableId), SimpleFunctionSymbolMarker
+{
+    init {
+        if (callableId.toString() == "java/util/ArrayList.removeAt") {
+            println()
+        }
+    }
+}
 
 interface FirIntersectionCallableSymbol {
     val intersections: Collection<FirCallableSymbol<*>>

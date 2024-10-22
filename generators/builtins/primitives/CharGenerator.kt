@@ -343,13 +343,9 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
 }
 
 class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
-    override fun FileBuilder.modifyGeneratedFile() {
-        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
-    }
 
     override fun ClassBuilder.modifyGeneratedClass() {
         expectActual = ExpectActualModifier.Expect
-        annotations += "ActualizeByJvmBuiltinProvider"
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {

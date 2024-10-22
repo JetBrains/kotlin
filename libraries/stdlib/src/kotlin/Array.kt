@@ -8,8 +8,6 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
-
 /**
  * A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.
  * Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]
@@ -18,7 +16,6 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
-@ActualizeByJvmBuiltinProvider
 public expect class Array<T> {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
