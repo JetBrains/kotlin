@@ -105,6 +105,7 @@ class FirDelegatedMemberScope(
                     FirDeclarationOrigin.Delegated,
                     newDispatchReceiverType = dispatchReceiverType,
                     newModality = Modality.OPEN,
+                    markAsOverride = true
                 ).apply {
                     delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
                 }.symbol

@@ -97,7 +97,8 @@ object FirFakeOverrideGenerator {
             newReceiverType,
             newContextReceiverTypes,
             newReturnType,
-            deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater
+            deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater,
+            markAsOverride = true
         ).apply {
             originalForSubstitutionOverrideAttr = baseFunction
         }
@@ -120,7 +121,7 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source,
-        dontForceOverride: Boolean = false,
+        markAsOverride: Boolean,
     ): FirSimpleFunction = buildSimpleFunction {
         source = newSource
         moduleData = session.nullableModuleData ?: baseFunction.moduleData
@@ -130,7 +131,7 @@ object FirFakeOverrideGenerator {
             newVisibility,
             newModality,
             isExpect = isExpect,
-            isOverride = if (dontForceOverride) baseFunction.status.isOverride else true
+            isOverride = if (markAsOverride) true else baseFunction.status.isOverride
         )
         symbol = newSymbol
         resolvePhase = origin.resolvePhaseForCopy
