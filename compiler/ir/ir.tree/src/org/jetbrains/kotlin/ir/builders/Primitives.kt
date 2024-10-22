@@ -38,7 +38,7 @@ fun primitiveOp1(
         typeArgumentsCount = 0,
         origin = origin
     ).also {
-        it.dispatchReceiver = dispatchReceiver
+        it.arguments[0] = dispatchReceiver
     }
 
 fun primitiveOp2(
@@ -55,8 +55,8 @@ fun primitiveOp2(
         typeArgumentsCount = 0,
         origin = origin
     ).apply {
-        putValueArgument(0, argument1)
-        putValueArgument(1, argument2)
+        arguments[0] = argument1
+        arguments[1] = argument2
     }
 
 fun IrGeneratorContextInterface.constNull(startOffset: Int, endOffset: Int): IrExpression =
