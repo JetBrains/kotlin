@@ -376,8 +376,8 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
 fun IrConstructorCall.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return (getValueArgument(parameter.index) as IrConst).value as String
+    val parameter = symbol.owner.parameters.single { it.name.asString() == name }
+    return (arguments[parameter.indexNew] as IrConst).value as String
 }
 
 inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
