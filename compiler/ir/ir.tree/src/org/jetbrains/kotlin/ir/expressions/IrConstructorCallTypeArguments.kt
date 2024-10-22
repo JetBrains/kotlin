@@ -65,8 +65,5 @@ fun IrConstructorCall.getConstructorTypeArguments() =
 fun IrConstructorCall.getClassTypeArguments() =
     ClassTypeArguments(this)
 
-var IrConstructorCall.outerClassReceiver: IrExpression?
-    get() = dispatchReceiver
-    set(value) {
-        dispatchReceiver = value
-    }
+val IrConstructorCall.outerClassReceiver: IrExpression?
+    get() = if (symbol.owner.dispatchReceiverParameter != null) arguments[0] else null
