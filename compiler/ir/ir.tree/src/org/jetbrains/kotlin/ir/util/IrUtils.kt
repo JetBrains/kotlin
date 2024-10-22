@@ -816,14 +816,7 @@ fun IrGetValue.remapSymbolParent(classRemapper: (IrClass) -> IrClass, functionRe
 
         is IrFunction -> {
             val remappedFunction = functionRemapper(parent)
-            when (parameter) {
-                parent.dispatchReceiverParameter -> remappedFunction.dispatchReceiverParameter!!
-                parent.extensionReceiverParameter -> remappedFunction.extensionReceiverParameter!!
-                else -> {
-                    assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
-                    remappedFunction.valueParameters[parameter.indexInOldValueParameters]
-                }
-            }
+            remappedFunction.parameters[parameter.indexInParameters]
         }
 
         else -> error(parent)
