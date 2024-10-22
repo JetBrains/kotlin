@@ -721,20 +721,13 @@ class FirCallResolver(
         outerConstraintSystemBuilder: ConstraintSystemBuilder?,
         hasSyntheticOuterCall: Boolean,
     ): CallInfo {
-        return CallInfo(
+        return CallableReferenceInfo(
             callableReferenceAccess,
-            CallKind.CallableReference,
             callableReferenceAccess.calleeReference.name,
             callableReferenceAccess.explicitReceiver,
-            FirEmptyArgumentList,
-            isImplicitInvoke = false,
-            isUsedAsGetClassReceiver = false,
-            emptyList(),
             session,
             components.file,
             transformer.components.containingDeclarations,
-            candidateForCommonInvokeReceiver = null,
-            resolutionMode = ResolutionMode.ContextIndependent,
             // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,
