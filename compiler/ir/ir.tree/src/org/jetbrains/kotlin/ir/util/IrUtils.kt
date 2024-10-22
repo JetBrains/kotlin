@@ -603,41 +603,33 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false
 ) {
-    var destValueArgumentIndex = 0
-    var srcValueArgumentIndex = 0
-
     val srcFunction = src.symbol.owner
 
-    when {
-        receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {
-            putValueArgument(destValueArgumentIndex++, src.dispatchReceiver)
-        }
-        argumentsAsReceivers && destFunction.dispatchReceiverParameter != null -> {
-            dispatchReceiver = src.getValueArgument(srcValueArgumentIndex++)
-        }
-        else -> {
-            dispatchReceiver = src.dispatchReceiver
-        }
-    }
+    var srcArgumentIndex = 0
+    var dstArgumentIndex = 0
+    while (srcArgumentIndex < src.arguments.size && dstArgumentIndex < arguments.size) {
+        val srcParam = srcFunction.parameters.getOrNull(srcArgumentIndex)?.kind ?: break
+        val dstParam = destFunction.parameters.getOrNull(dstArgumentIndex)?.kind ?: break
 
-    while (srcValueArgumentIndex < src.symbol.owner.contextReceiverParametersCount) {
-        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
-    }
+        if (srcParam != dstParam) {
+            val srcIsReceiver = srcParam == IrParameterKind.DispatchReceiver || srcParam == IrParameterKind.ExtensionReceiver
+            val dstIsReceiver = dstParam == IrParameterKind.DispatchReceiver || dstParam == IrParameterKind.ExtensionReceiver
 
-    when {
-        receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
-            putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
+            if (srcIsReceiver && !dstIsReceiver && !receiversAsArguments) {
+                srcArgumentIndex++
+                continue
+            }
+            if (!srcIsReceiver && dstIsReceiver && !argumentsAsReceivers) {
+                dstArgumentIndex++
+                continue
+            }
         }
-        argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
-            extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
-        }
-        else -> {
-            extensionReceiver = src.extensionReceiver
-        }
-    }
 
-    while (srcValueArgumentIndex < src.valueArgumentsCount) {
-        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
+        // todo: Can be dropped after https://youtrack.jetbrains.com/issue/KT-70803
+        if (dstArgumentIndex >= arguments.size) break
+        if (srcArgumentIndex >= src.arguments.size) break
+
+        arguments[dstArgumentIndex++] = src.arguments[srcArgumentIndex++]
     }
 }
 
