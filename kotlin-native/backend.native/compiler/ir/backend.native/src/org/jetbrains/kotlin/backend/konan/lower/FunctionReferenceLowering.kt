@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -21,48 +20,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-
-internal var IrClass.functionReferenceImplMethod: IrFunction? by irAttribute(followAttributeOwner = false)
-
-internal class FunctionReferenceImplNamesBuilder(val generationState: NativeGenerationState) : FileLoweringPass {
-    private val fileLowerState = generationState.fileLowerState
-
-    override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                declaration.acceptChildrenVoid(this)
-
-                if (isLoweredFunctionReference(declaration)) {
-                    val functionReferenceImplMethod = declaration.functionReferenceImplMethod
-                            ?: error("functionReferenceImplMethod is not set for ${declaration.render()}")
-                    val singleStatement = (functionReferenceImplMethod.body as? IrBlockBody)?.statements?.singleOrNull()
-                            ?: error("Expected a single statement for the body of ${functionReferenceImplMethod.render()}")
-                    require(singleStatement is IrReturn) {
-                        "Expected a return statement: ${singleStatement.render()}"
-                    }
-                    val delegatingCall = singleStatement.value as? IrFunctionAccessExpression
-                            ?: error("Expected IrFunctionAccessExpression: ${singleStatement.value.render()}")
-                    declaration.name = fileLowerState.getFunctionReferenceImplUniqueName(delegatingCall.symbol.owner).synthesizedName
-                }
-            }
-        })
-    }
-}
 
 /**
  * Transforms a function reference into a subclass of `kotlin.native.internal.KFunctionImpl` and `kotlin.FunctionN`,
@@ -256,17 +221,20 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             startOffset = this@FunctionReferenceBuilder.startOffset
             endOffset = this@FunctionReferenceBuilder.endOffset
             origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
-            name = SpecialNames.NO_NAME_PROVIDED
+            val reflectionTarget = (functionReference.reflectionTarget ?: functionReference.symbol).owner
+            if (isLambda) {
+                name = SpecialNames.NO_NAME_PROVIDED
+            } else {
+                name = generationState.fileLowerState.getFunctionReferenceImplUniqueName("FUNCTION_REFERENCE_FOR$${reflectionTarget.name}$").synthesizedName
+            }
             visibility = DescriptorVisibilities.LOCAL
         }.apply {
+            hasSyntheticNameToBeHiddenInReflection = true
             parent = this@FunctionReferenceBuilder.parent
 
             // The function reference class only needs to be generic over type parameters coming from an enclosing scope.
             copyTypeParameters(typeParametersFromEnclosingScope)
             createParameterDeclarations()
-
-            // copy the generated name for IrClass, partially solves KT-47194
-            generationState.copyLocalClassName(functionReference, this)
         }
 
         /**
@@ -381,7 +349,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 }
             }
             val originalSuperMethod = transformedSuperMethod.suspendFunction ?: transformedSuperMethod
-            functionReferenceClass.functionReferenceImplMethod = buildInvokeMethod(originalSuperMethod)
+            buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
             if (!isLambda) {

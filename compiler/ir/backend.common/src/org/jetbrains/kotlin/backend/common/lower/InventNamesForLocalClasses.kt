@@ -236,8 +236,17 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
         }
 
         override fun visitField(declaration: IrField, data: NameBuilder) {
-            // Skip field name because the name of the property is already there.
-            declaration.acceptChildren(this, data.copy(isLocal = true))
+            if (data.parent == null && declaration.correspondingPropertySymbol == null) {
+                // Normally this shouldn't happen, but it can because of previous lowerings and plugins
+                // If we add nothing to the name, this would crash, as there would be a local declaration,
+                // which is not inside anything. But if we are inside any declaration.
+                // But if we are inside any declaration, let's just skip.
+                // Syntetic field name is probably not useful anyway.
+                visitDeclaration(declaration, data)
+            } else {
+                // Skip the field name because the name of the property is already there.
+                declaration.acceptChildren(this, data.copy(isLocal = true))
+            }
         }
 
         override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: NameBuilder) {

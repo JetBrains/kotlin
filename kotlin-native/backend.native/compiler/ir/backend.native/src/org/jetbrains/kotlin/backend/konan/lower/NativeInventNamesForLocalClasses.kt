@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.name.Name
+
+internal var IrClass.hasSyntheticNameToBeHiddenInReflection by irFlag(followAttributeOwner = true)
 
 // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
-internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses(
-        shouldIncludeVariableName = false
-) {
+internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses() {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.asString()
     override fun sanitizeNameIfNeeded(name: String) = name
 
@@ -24,6 +26,11 @@ internal class NativeInventNamesForLocalClasses(val generationState: NativeGener
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
-        generationState.putLocalClassName(declaration, localClassName)
+        if (declaration is IrClass) {
+            if (declaration.isAnonymousObject) {
+                declaration.hasSyntheticNameToBeHiddenInReflection = true
+            }
+            declaration.name = Name.identifier(localClassName)
+        }
     }
 }

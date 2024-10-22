@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
+import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
@@ -590,17 +590,12 @@ internal class RTTIGenerator(
         val flags: Int
 
         when {
-            isLoweredFunctionReference(irClass) -> {
-                // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = generationState.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
-                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
-            }
-            irClass.isAnonymousObject -> {
-                relativeName = generationState.getLocalClassName(irClass)
+            irClass.hasSyntheticNameToBeHiddenInReflection -> {
+                relativeName = irClass.name.asString()
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             irClass.isLocal -> {
-                relativeName = generationState.getLocalClassName(irClass)
+                relativeName = irClass.name.asString()
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }
             else -> {
