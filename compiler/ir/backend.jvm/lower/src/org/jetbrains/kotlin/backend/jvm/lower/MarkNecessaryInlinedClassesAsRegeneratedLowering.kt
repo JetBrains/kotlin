@@ -78,7 +78,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 val callee = this.inlineDeclaration
                 if (callee !is IrFunction) return emptyList()
                 // Must pass `callee` explicitly because there can be problems if call was created for fake override
-                return this.inlineCall!!.getAllArgumentsWithIr(callee)
+                return (callee.parameters zip this.inlineCall!!.arguments)
                     .filter { (param, arg) ->
                         param.isInlineParameter() && (arg ?: param.defaultValue?.expression).isInlinable() ||
                                 arg is IrGetValue && arg.symbol.owner in inlinableParameters

@@ -48,15 +48,8 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParame
         else -> error(this)
     }
 
-    return getAllArgumentsWithIr(irFunction)
+    return irFunction.parameters zip arguments
 }
-
-/**
- * Binds all arguments represented in the IR to the parameters of the explicitly given function.
- * The arguments are to be evaluated in the same order as they appear in the resulting list.
- */
-fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(irFunction: IrFunction): List<Pair<IrValueParameter, IrExpression?>> =
-    irFunction.parameters zip arguments
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
