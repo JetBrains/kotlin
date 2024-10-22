@@ -41,6 +41,8 @@ internal class IrConstEvaluationContext(
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
 ) {
+    private var shouldSaveEvaluatedConstants = true
+
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)
@@ -94,10 +96,21 @@ internal class IrConstEvaluationContext(
     }
 
     fun saveInConstTracker(expression: IrExpression) {
+        if (!shouldSaveEvaluatedConstants) return
         evaluatedConstTracker?.save(
             expression.startOffset, expression.endOffset, irFile.nameWithPackage,
             constant = if (expression is IrErrorExpression) ErrorValue.Companion.create(expression.description) else expression.toConstantValue()
         )
+    }
+
+    inline fun saveConstantsOnCondition(saveConstants: Boolean, block: () -> Unit) {
+        val oldValue = shouldSaveEvaluatedConstants
+        shouldSaveEvaluatedConstants = saveConstants
+        try {
+            block()
+        } finally {
+            shouldSaveEvaluatedConstants = oldValue
+        }
     }
 
     private fun reportInlinedJavaConst(expression: IrExpression, result: IrConst) {
