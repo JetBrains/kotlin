@@ -200,7 +200,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
+    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
 
     init {
         baseName.convention(project.name)
