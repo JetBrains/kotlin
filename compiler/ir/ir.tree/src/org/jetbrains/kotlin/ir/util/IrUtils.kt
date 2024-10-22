@@ -1054,7 +1054,6 @@ fun IrFunction.copyValueParametersToStatic(
     source: IrFunction,
     origin: IrDeclarationOrigin,
     dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
-    numValueParametersToCopy: Int = source.valueParameters.size
 ) {
     val target = this
     assert(target.valueParameters.isEmpty())
@@ -1084,7 +1083,6 @@ fun IrFunction.copyValueParametersToStatic(
     }
 
     for (oldValueParameter in source.valueParameters) {
-        if (oldValueParameter.indexInOldValueParameters >= numValueParametersToCopy) break
         target.valueParameters = target.valueParameters memoryOptimizedPlus oldValueParameter.copyTo(
             target,
             origin = origin
