@@ -106,11 +106,16 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     //  - 'remove' member functions:
                     //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
                     //          kotlin.collections.MutableMap<K, V>#remove(K): V?
+                    //          kotlin.collections.MutableMap<K, V>#remove(key: K, value: V): Boolean
                     //      We've checked that corresponding 'remove(T)' member function is not present in the class.
                     //      We should add a member function that overrides, respectively:
                     //          java.util.Collection<E>#remove(Object): boolean
                     //          java.util.Map<K, V>#remove(K): V
                     //      This corresponds to replacing value parameter types with 'Any?'.
+
+                    //      Here we manually filter out remove(key, value) method.
+                    //      We have to reproduce old behavior to avoid introducing breaking changes until it's approved by LC.
+                    //      As soon as changes that fix KT-72496 are approved, this must be dropped.
                     if (context.config.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
                         && irClass.classId == StandardClassIds.AbstractMap
                         && stub.valueParameters.size == 2
