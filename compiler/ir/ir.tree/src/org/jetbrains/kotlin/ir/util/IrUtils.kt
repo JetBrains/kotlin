@@ -855,7 +855,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         this.visibility = superConstructor.visibility
         this.isPrimary = isPrimary
     }.also { constructor ->
-        constructor.valueParameters = superConstructor.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
+        constructor.parameters = superConstructor.parameters.memoryOptimizedMap { parameter ->
             parameter.copyTo(constructor)
         }
 
@@ -866,8 +866,8 @@ fun IrClass.addSimpleDelegatingConstructor(
                     startOffset, endOffset, irBuiltIns.unitType,
                     superConstructor.symbol, 0
                 ).apply {
-                    constructor.valueParameters.forEachIndexed { idx, parameter ->
-                        putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol))
+                    constructor.parameters.forEach { parameter ->
+                        arguments[parameter.indexInParameters] = IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol)
                     }
                 },
                 IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol, irBuiltIns.unitType)
