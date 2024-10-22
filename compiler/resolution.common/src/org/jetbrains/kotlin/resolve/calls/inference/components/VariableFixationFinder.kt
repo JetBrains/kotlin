@@ -140,7 +140,8 @@ class VariableFixationFinder(
     ): Boolean {
         return with(context) {
             val dependencyProvider = TypeVariableDependencyInformationProvider(
-                notFixedTypeVariables, emptyList(), topLevelType = null, context
+                notFixedTypeVariables, emptyList(), topLevelType = null, context,
+                languageVersionSettings,
             )
             when (getTypeVariableReadiness(typeVariable, dependencyProvider)) {
                 TypeVariableFixationReadiness.FORBIDDEN, TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> false
@@ -171,6 +172,7 @@ class VariableFixationFinder(
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
             notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
+            languageVersionSettings,
         )
 
         val candidate =
