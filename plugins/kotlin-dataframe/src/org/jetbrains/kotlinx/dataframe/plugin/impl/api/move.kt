@@ -25,7 +25,7 @@ class ToTop : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = receiver.columns.resolve(receiver.df).map { pathOf(*it.path.path.toTypedArray()) }
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
         return receiver.df.asDataFrame().move { columns.toColumnSet() }.toTop().toPluginDataFrameSchema()
     }
 }
