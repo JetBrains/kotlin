@@ -373,7 +373,7 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.symbol.owner.parentAsClass.symbol == symbol
     }
 
-fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst)?.value as String?
+fun IrConstructorCall.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
