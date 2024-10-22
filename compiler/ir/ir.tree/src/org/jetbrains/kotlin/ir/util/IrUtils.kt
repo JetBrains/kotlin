@@ -229,7 +229,7 @@ val IrClass.constructors: Sequence<IrConstructor>
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
 @UnsafeDuringIrConstructionAPI
 val IrClass.defaultConstructor: IrConstructor?
-    get() = constructors.firstOrNull { ctor -> ctor.valueParameters.all { it.defaultValue != null } }
+    get() = constructors.firstOrNull { ctor -> ctor.nonDispatchParameters.all { it.defaultValue != null } }
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
 @UnsafeDuringIrConstructionAPI
