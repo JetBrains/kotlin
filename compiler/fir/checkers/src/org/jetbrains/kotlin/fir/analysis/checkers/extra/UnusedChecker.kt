@@ -85,6 +85,15 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+            // `name.isSpecial` checks in this analysis are required to avoid cases like KT-72164:
+            // In cases of incorrect syntactic constructions, the analysis is still performed.
+            // However, some invalid constructions can be considered as variable declarations.
+            // These "variables" are then involved in dataflow analysis, leading to potential errors.
+            // Names marked as special could not be used as identifiers,
+            // hence such placeholder variables were created not by the user and
+            // should be excluded from the analysis.
+            if (node.fir.name.isSpecial) return
+
             val graph = node.owner.nearestNonInPlaceGraph()
             if (node.fir.initializer != null) {
                 data.unreadWrites[node.fir] = graph
@@ -94,7 +103,10 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         }
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            if (node.fir.calleeReference?.toResolvedPropertySymbol() in data.localProperties) {
+            val propertySymbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
+            if (propertySymbol.name.isSpecial) return
+
+            if (propertySymbol in data.localProperties) {
                 data.unreadWrites[node.fir] = node.owner.nearestNonInPlaceGraph()
             }
         }
@@ -113,13 +125,15 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             node: VariableDeclarationNode,
             data: PathAwareVariableWriteInfo,
         ): PathAwareVariableWriteInfo =
-            data.overwrite(node.fir.symbol, if (node.fir.initializer != null) persistentSetOf(node) else persistentSetOf())
+            if (node.fir.name.isSpecial) data
+            else data.overwrite(node.fir.symbol, if (node.fir.initializer != null) persistentSetOf(node) else persistentSetOf())
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
             data: PathAwareVariableWriteInfo,
         ): PathAwareVariableWriteInfo {
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol()?.takeIf { it in properties } ?: return data
+            if (symbol.name.isSpecial) return data
             return data.overwrite(symbol, persistentSetOf(node))
         }
     }
@@ -158,6 +172,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
 
         private fun visitQualifiedAccess(node: CFGNode<*>, fir: FirQualifiedAccessExpression) {
             val symbol = fir.calleeReference.toResolvedPropertySymbol() ?: return
+            if (symbol.name.isSpecial) return
             data.variablesWithoutReads.remove(symbol)
             data.writesByNode[node]?.values?.forEach { dataForLabel ->
                 dataForLabel[symbol]?.forEach { data.unreadWrites.remove(it.fir) }
