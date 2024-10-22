@@ -65,14 +65,15 @@ abstract class TowerLevel {
     }
 }
 
-
-// This is more like "dispatch receiver-based tower level"
-// Here we always have an explicit or implicit dispatch receiver, and can access members of its scope
-// (which is separated from currently accessible scope, see below)
-// So: dispatch receiver = given explicit or implicit receiver (always present)
-// So: extension receiver = either none, if dispatch receiver = explicit receiver,
-//     or given implicit or explicit receiver, otherwise
-class MemberScopeTowerLevel(
+/**
+ * Here we always have an explicit or implicit dispatch receiver and can access members of its scope
+ * (which is separated from the currently accessible scope, see below).
+ * So:
+ * * dispatch receiver = given explicit or implicit receiver (always present);
+ * * extension receiver = either none, if dispatch receiver = explicit receiver,
+ *     or given implicit or explicit receiver, otherwise
+ */
+class DispatchReceiverMemberScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val givenExtensionReceiverOptions: List<FirExpression>,
@@ -352,30 +353,29 @@ class ContextReceiverGroupMemberScopeTowerLevel(
     contextReceiverGroup: ContextReceiverGroup,
     givenExtensionReceiverOptions: List<FirExpression> = emptyList(),
 ) : TowerLevel() {
-    private val memberScopeLevels = contextReceiverGroup.map {
-        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
+    private val dispatchReceiverMemberScopeTowerLevels = contextReceiverGroup.map {
+        DispatchReceiverMemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
     }
 
     override fun processFunctionsByName(info: CallInfo, processor: LevelProcessor<FirFunctionSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processFunctionsByName(info, processor) }
+        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processFunctionsByName(info, processor) }
     }
 
     override fun processPropertiesByName(info: CallInfo, processor: LevelProcessor<FirVariableSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processPropertiesByName(info, processor) }
+        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processPropertiesByName(info, processor) }
     }
 
     override fun processObjectsByName(info: CallInfo, processor: LevelProcessor<FirBasedSymbol<*>>): ProcessResult {
-        return memberScopeLevels.minOf { it.processObjectsByName(info, processor) }
+        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processObjectsByName(info, processor) }
     }
 }
 
 /**
- * We can access here members of currently accessible scope which is not influenced by explicit receiver
- * We can either have no explicit receiver at all, or it can be an extension receiver
- * An explicit receiver never can be a dispatch receiver at this level
- * So: dispatch receiver = strictly none (EXCEPTIONS: importing scopes with import from objects, synthetic field variable)
- * So: extension receiver = either none or explicit
- * (if explicit receiver exists, it always *should* be an extension receiver)
+ * We can access here members of currently accessible scope which is not influenced by explicit receiver.
+ * We can either have no explicit receiver at all, or it can be an extension receiver.
+ * An explicit receiver never can be a dispatch receiver at this level.
+ * * dispatch receiver = strictly none (EXCEPTIONS: importing scopes with import from objects, synthetic field variable)
+ * * extension receiver = either none or explicit (if explicit receiver exists, it always *should* be an extension receiver)
  */
 internal class ScopeBasedTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,

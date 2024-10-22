@@ -415,7 +415,7 @@ private class InvokeFunctionResolveTask(
         invokeReceiverValue: ExpressionReceiverValue,
     ) {
         processLevelForRegularInvoke(
-            invokeReceiverValue.toMemberScopeTowerLevel(),
+            invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
@@ -431,14 +431,14 @@ private class InvokeFunctionResolveTask(
             onImplicitReceiver = { receiver, group ->
                 // NB: companions are processed via implicitReceiverValues!
                 processLevelForRegularInvoke(
-                    receiver.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    receiver.toDispatchReceiverMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group.Member,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
                 processLevelForRegularInvoke(
-                    contextReceiverGroup.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    contextReceiverGroup.toDispatchReceiverMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, towerGroup.Member,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
@@ -452,7 +452,7 @@ private class InvokeFunctionResolveTask(
         invokeReceiverValue: ExpressionReceiverValue,
     ) {
         processLevel(
-            invokeReceiverValue.toMemberScopeTowerLevel(),
+            invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
             info, TowerGroup.Member.withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER
         )
@@ -474,7 +474,7 @@ private class InvokeFunctionResolveTask(
                     .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
 
             processLevel(
-                invokeReceiverValue.toMemberScopeTowerLevel(),
+                invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
                 // Try to supply `implicitReceiverValue` as an "x" in "f.invoke(x)"
                 info.withReceiverAsArgument(implicitReceiverValue.receiverExpression), towerGroup,
                 ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -486,7 +486,7 @@ private class InvokeFunctionResolveTask(
                     .ContextReceiverGroup(depth)
                     .InvokeExtensionWithImplicitReceiver
                     .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
-            val towerLevel = invokeReceiverValue.toMemberScopeTowerLevel()
+            val towerLevel = invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel()
             // TODO: resolve for all receivers in the group, but implement the ambiguity diagnostics first. See KT-62712 and KT-69709
             contextReceiverGroup.singleOrNull()?.let { contextReceiverValue ->
                 processLevel(
