@@ -61,7 +61,7 @@ fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
 
 fun IrExpression.isUnchanging(): Boolean =
     this is IrFunctionExpression ||
-            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
+            (this is IrCallableReference<*> && arguments.all { it == null }) ||
             this is IrClassReference ||
             this is IrConst ||
             (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
