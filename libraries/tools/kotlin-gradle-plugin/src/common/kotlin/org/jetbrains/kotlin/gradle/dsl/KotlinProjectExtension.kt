@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import com.gradle.scan.agent.serialization.scan.serializer.kryo.it
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
@@ -77,21 +79,28 @@ internal fun KotlinBaseExtension.explicitApiModeAsCompilerArg(): String? {
 }
 
 @KotlinGradlePluginPublicDsl
-open class KotlinProjectExtension @Inject constructor(
+abstract class KotlinProjectExtension @Inject constructor(
     override val project: Project
 ) : KotlinBaseExtension,
     HasMutableExtras,
-    HasProject {
+    HasProject,
+    ExtensionAware {
 
     override lateinit var coreLibrariesVersion: String
 
     final override val extras: MutableExtras = mutableExtrasOf()
 
+    private val sourceSetsContainer = project.objects.domainObjectContainer(
+        KotlinSourceSet::class.java,
+        DefaultKotlinSourceSetFactory(project)
+    ).also { kotlinSourceSets ->
+        // Required for Gradle to generate accessors to source sets or 'sourceSets {}' DSL
+        extensions.add("sourceSets", kotlinSourceSets)
+    }
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
-        @Suppress("UNCHECKED_CAST")
-        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
-        internal set(value) {
-            DslObject(this).extensions.add("sourceSets", value)
+        get() = sourceSetsContainer
+        @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
+        internal set(_) {
         }
 
     internal suspend fun awaitSourceSets(): NamedDomainObjectContainer<KotlinSourceSet> {
