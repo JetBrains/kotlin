@@ -448,7 +448,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
             annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
         }?.run {
-            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst)?.value else null
+            (arguments.getOrNull(0) as? IrConst)?.value
         }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
