@@ -446,8 +446,8 @@ fun IrClass.getAnnotationRetention(): KotlinRetention? {
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.indexInOldValueParameters ?: return null
-    return getValueArgument(index)
+    val index = symbol.owner.parameters.find { it.name == name }?.indexInParameters ?: return null
+    return arguments[index]
 }
 
 
