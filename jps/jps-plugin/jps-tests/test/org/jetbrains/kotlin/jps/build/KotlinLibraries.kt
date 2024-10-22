@@ -10,6 +10,7 @@ import org.jetbrains.jps.model.java.JpsJavaLibraryType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -53,6 +54,15 @@ enum class KotlinJpsLibrary(val id: String, roots: () -> Array<File>) {
             arrayOf(
                 PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
                 File(lombok.Lombok::class.java.protectionDomain.codeSource.location.toURI().path),
+            )
+        }
+    ),
+    Serialization(
+        "serialization",
+        {
+            arrayOf(
+                PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
+                File(kotlinx.serialization.Serializable::class.java.protectionDomain.codeSource.location.toURI().path)
             )
         }
     );
