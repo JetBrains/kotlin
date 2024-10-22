@@ -1,9 +1,12 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -34,5 +37,20 @@ class DataFrameBuilderInvoke0 : AbstractSchemaModificationInterpreter() {
             simpleColumnOf(name, type)
         }
         return PluginDataFrameSchema(columns)
+    }
+}
+
+class DataFrameOf3 : AbstractSchemaModificationInterpreter() {
+    val Arguments.columns: List<Interpreter.Success<Pair<*, *>>> by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val res = columns.map {
+            val it = it.value
+            val name = (it.first as? FirLiteralExpression)?.value as? String
+            val type = (it.second as? FirExpression)?.resolvedType?.typeArguments?.getOrNull(0)?.type
+            if (name == null || type == null) return PluginDataFrameSchema(emptyList())
+            simpleColumnOf(name, type)
+        }
+        return PluginDataFrameSchema(res)
     }
 }
