@@ -568,45 +568,15 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyTypeAndValueArgumentsFrom(
 
 fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
     src: IrMemberAccessExpression<IrFunctionSymbol>,
+    @Suppress("unused") // Those parameters are not needed in new argument API. To be removed.
     destFunction: IrFunction,
+    @Suppress("unused")
     receiversAsArguments: Boolean = false,
+    @Suppress("unused")
     argumentsAsReceivers: Boolean = false
 ) {
-    var destValueArgumentIndex = 0
-    var srcValueArgumentIndex = 0
-
-    val srcFunction = src.symbol.owner
-
-    when {
-        receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {
-            putValueArgument(destValueArgumentIndex++, src.dispatchReceiver)
-        }
-        argumentsAsReceivers && destFunction.dispatchReceiverParameter != null -> {
-            dispatchReceiver = src.getValueArgument(srcValueArgumentIndex++)
-        }
-        else -> {
-            dispatchReceiver = src.dispatchReceiver
-        }
-    }
-
-    while (srcValueArgumentIndex < src.symbol.owner.contextReceiverParametersCount) {
-        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
-    }
-
-    when {
-        receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
-            putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
-        }
-        argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
-            extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
-        }
-        else -> {
-            extensionReceiver = src.extensionReceiver
-        }
-    }
-
-    while (srcValueArgumentIndex < src.valueArgumentsCount) {
-        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
+    for ((i, arg) in src.arguments.withIndex()) {
+        arguments[i] = arg
     }
 }
 
