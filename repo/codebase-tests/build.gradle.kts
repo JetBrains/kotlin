@@ -13,7 +13,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 
-    testImplementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
+    testImplementation(libs.jgit)
 }
 
 sourceSets {
@@ -26,6 +26,7 @@ sourceSets {
 projectTest() {
     dependsOn(":dist")
     workingDir = rootDir
+    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }
 
 testsJar()
