@@ -132,6 +132,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<FqName>("kotlinRepeatable")
             parameter<FqName>("javaRepeatable")
         }
+        val THROWS_IN_ANNOTATION by deprecationError<KtAnnotationEntry>(ForbidJvmAnnotationsOnAnnotationParameters)
+        val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS by deprecationError<KtAnnotationEntry>(
+            featureForError = ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
+        )
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
@@ -257,6 +261,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val MISSING_BUILT_IN_DECLARATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("symbol")
+        }
+        val DANGEROUS_CHARACTERS by warning<KtNamedDeclaration>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<String>("characters")
         }
     }
 }

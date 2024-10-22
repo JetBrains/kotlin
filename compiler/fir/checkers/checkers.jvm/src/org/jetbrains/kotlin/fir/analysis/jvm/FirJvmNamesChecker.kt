@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.name.Name
 
 object FirJvmNamesChecker {
@@ -34,7 +35,7 @@ object FirJvmNamesChecker {
             } else if (nameString.any { it in DANGEROUS_CHARS }) {
                 reporter.reportOn(
                     declarationSource,
-                    FirErrors.DANGEROUS_CHARACTERS,
+                    FirJvmErrors.DANGEROUS_CHARACTERS,
                     DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString(""),
                     context
                 )
