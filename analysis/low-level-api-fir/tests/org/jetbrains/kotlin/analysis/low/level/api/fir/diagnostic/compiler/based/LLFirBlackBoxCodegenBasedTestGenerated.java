@@ -34210,6 +34210,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("annotationOnFakeOverride.kt")
+      public void testAnnotationOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverride.kt");
+      }
+
+      @Test
       @TestMetadata("annotationSerialization.kt")
       public void testAnnotationSerialization() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");

@@ -28816,6 +28816,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationInArguments.kt");
       }
 
+      @TestMetadata("annotationOnFakeOverride.kt")
+      public void testAnnotationOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverride.kt");
+      }
+
       @TestMetadata("annotationSerialization.kt")
       public void testAnnotationSerialization() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");
