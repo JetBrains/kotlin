@@ -98,9 +98,21 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveDanglingFileReference
     }
 
     @Test
+    @TestMetadata("constructorValueParameterFromPrecedingParameterDefaultValue.kt")
+    public void testConstructorValueParameterFromPrecedingParameterDefaultValue() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/constructorValueParameterFromPrecedingParameterDefaultValue.kt");
+    }
+
+    @Test
     @TestMetadata("functionTypeParameter.kt")
     public void testFunctionTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/functionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameterFromPrecedingParameterDefaultValue.kt")
+    public void testFunctionValueParameterFromPrecedingParameterDefaultValue() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/functionValueParameterFromPrecedingParameterDefaultValue.kt");
     }
 
     @Test
