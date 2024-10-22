@@ -33,11 +33,11 @@ internal class TowerLevelHandler {
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
-        towerLevel: TowerScopeLevel
+        towerLevel: TowerLevel
     ): ProcessResult {
         processResult = ProcessResult.SCOPE_EMPTY
         val processor =
-            TowerScopeLevelProcessor(
+            TowerLevelProcessor(
                 info,
                 explicitReceiverKind,
                 collector,
@@ -72,13 +72,13 @@ internal class TowerLevelHandler {
     }
 }
 
-private class TowerScopeLevelProcessor(
+private class TowerLevelProcessor(
     val callInfo: CallInfo,
     val explicitReceiverKind: ExplicitReceiverKind,
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
     val group: TowerGroup
-) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
+) : TowerLevel.LevelProcessor<FirBasedSymbol<*>> {
     override fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
         dispatchReceiver: FirExpression?,

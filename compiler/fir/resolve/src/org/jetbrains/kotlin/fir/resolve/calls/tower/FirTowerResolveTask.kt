@@ -73,7 +73,7 @@ internal abstract class FirBaseTowerResolveTask(
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
 
     protected suspend inline fun processLevel(
-        towerLevel: TowerScopeLevel,
+        towerLevel: TowerLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
@@ -192,7 +192,7 @@ internal abstract class FirBaseTowerResolveTask(
      * @return true if level is empty
      */
     private suspend fun processLevel(
-        towerLevel: TowerScopeLevel,
+        towerLevel: TowerLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind

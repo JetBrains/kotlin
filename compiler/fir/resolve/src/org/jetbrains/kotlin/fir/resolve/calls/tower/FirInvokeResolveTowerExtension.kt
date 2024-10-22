@@ -499,7 +499,7 @@ private class InvokeFunctionResolveTask(
     }
 
     private suspend fun processLevelForRegularInvoke(
-        towerLevel: TowerScopeLevel,
+        towerLevel: TowerLevel,
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind
