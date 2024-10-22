@@ -96,9 +96,10 @@ val CallableDescriptor.typeParametersCount: Int
             else -> typeParameters.size
         }
 
-fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
-    when (parameter) {
-        callee.dispatchReceiverParameter -> dispatchReceiver = argument
-        callee.extensionReceiverParameter -> extensionReceiver = argument
-        else -> putValueArgument(parameter.index, argument)
-    }
+fun IrMemberAccessExpression<*>.putArgument(
+    @Suppress("unused") callee: IrFunction, // To be removed
+    parameter: IrValueParameter,
+    argument: IrExpression
+) {
+    arguments[parameter.indexNew] = argument
+}
