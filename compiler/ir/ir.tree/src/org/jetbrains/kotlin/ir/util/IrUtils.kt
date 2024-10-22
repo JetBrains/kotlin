@@ -416,8 +416,8 @@ inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String):
 
 @PublishedApi
 internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
-    val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { getValueArgument(it.indexInOldValueParameters) }
+    val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
+    val argument = parameter?.let { arguments[it.indexInParameters] }
     return (argument as IrConst?)?.value
 }
 
