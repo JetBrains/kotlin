@@ -457,7 +457,7 @@ inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(pr
 
 fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     listOf(this),
-    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
+    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.parameters[current.indexNew] } ?: listOf() },
     { current -> current.defaultValue != null }
 )
 
