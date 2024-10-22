@@ -1,7 +1,7 @@
 > b main.kt:12
 > r
 > p x
-(int) 42[..]
+(int)[..] 42[..]
 > s
 > s
 > s
@@ -14,9 +14,9 @@
     frame #3: [..]
     frame #4: [..]
 > p x
-(int) 1
+(int)[..] 1
 > p y
-(int) 24
+(int)[..] 24
 > p z
-(int) 5
+(int)[..] 5
 > q
