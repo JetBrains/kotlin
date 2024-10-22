@@ -267,22 +267,16 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
-    parametersList.addIfNotNull(dispatchReceiverParameter)
-    parametersList.addAll(valueParameters.take(contextReceiverParametersCount))
-    parametersList.addIfNotNull(extensionReceiverParameter)
-    parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
+    parametersList.addAll(parameters)
 }
 
 private fun Boolean.toInt(): Int = if (this) 1 else 0
 
 val IrFunction.explicitParametersCount: Int
-    get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +
-            valueParameters.size
+    get() = parameters.size
 
 val IrFunction.explicitParameters: List<IrValueParameter>
-    get() = ArrayList<IrValueParameter>(explicitParametersCount).also {
-        addExplicitParametersTo(it)
-    }
+    get() = parameters
 
 /**
  * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
