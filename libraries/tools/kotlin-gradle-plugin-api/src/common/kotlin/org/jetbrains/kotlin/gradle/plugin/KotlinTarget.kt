@@ -142,7 +142,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      * Represents a collection of Gradle [software components][SoftwareComponent] associated with this Kotlin target.
      *
      * **Note**: Returned [SoftwareComponent] potentially could be in not fully configured state (for example without some usages).
-     * Call this function during the Gradle execution phase retrieve to retrieve [SoftwareComponent] in a fully configured state.
+     * Call this function during the Gradle execution phase to retrieve [SoftwareComponent] in a fully configured state.
      */
     val components: Set<SoftwareComponent>
 
