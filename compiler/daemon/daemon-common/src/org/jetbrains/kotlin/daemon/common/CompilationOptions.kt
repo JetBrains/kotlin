@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
@@ -51,19 +52,17 @@ open class CompilationOptions(
 }
 
 class IncrementalCompilationOptions(
-    val areFileChangesKnown: Boolean,
-    val modifiedFiles: List<File>?,
-    val deletedFiles: List<File>?,
+    val sourceChanges: SourcesChanges,
     val classpathChanges: ClasspathChanges,
     val workingDir: File,
     compilerMode: CompilerMode,
     targetPlatform: CompileService.TargetPlatform,
     /** @See [ReportCategory] */
-        reportCategories: Array<Int>,
+    reportCategories: Array<Int>,
     /** @See [ReportSeverity] */
-        reportSeverity: Int,
+    reportSeverity: Int,
     /** @See [CompilationResultCategory]] */
-        requestedCompilationResults: Array<Int>,
+    requestedCompilationResults: Array<Int>,
     val usePreciseJavaTracking: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
@@ -87,15 +86,13 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions
 ) {
     companion object {
-        const val serialVersionUID: Long = 4
+        const val serialVersionUID: Long = 5
     }
 
     override fun toString(): String {
         return "IncrementalCompilationOptions(" +
                 "super=${super.toString()}, " +
-                "areFileChangesKnown=$areFileChangesKnown, " +
-                "modifiedFiles=$modifiedFiles, " +
-                "deletedFiles=$deletedFiles, " +
+                "sourceChanges=$sourceChanges, " +
                 "classpathChanges=${classpathChanges::class.simpleName}, " +
                 "workingDir=$workingDir, " +
                 "multiModuleICSettings=$multiModuleICSettings, " +

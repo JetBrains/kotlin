@@ -36,9 +36,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                 val classpathChanges =
                     (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
                 IncrementalCompilationOptions(
-                    areFileChangesKnown = sourcesChanges is SourcesChanges.Known,
-                    modifiedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.modifiedFiles else null,
-                    deletedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.removedFiles else null,
+                    sourcesChanges,
                     classpathChanges = classpathChanges,
                     workingDir = aggregatedIcConfiguration.workingDir,
                     compilerMode = CompilerMode.INCREMENTAL_COMPILER,

@@ -300,12 +300,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         bufferingMessageCollector: GradleBufferingMessageCollector
     ): CompileService.CallResult<Int> {
         val icEnv = config.incrementalCompilationEnvironment ?: error("incrementalCompilationEnvironment is null!")
-        val knownChangedFiles = icEnv.changedFiles as? SourcesChanges.Known
         val requestedCompilationResults = requestedCompilationResults()
         val compilationOptions = IncrementalCompilationOptions(
-            areFileChangesKnown = knownChangedFiles != null,
-            modifiedFiles = knownChangedFiles?.modifiedFiles,
-            deletedFiles = knownChangedFiles?.removedFiles,
+            sourceChanges = icEnv.changedFiles,
             classpathChanges = icEnv.classpathChanges,
             workingDir = icEnv.workingDir,
             reportCategories = reportCategories(config.isVerbose),

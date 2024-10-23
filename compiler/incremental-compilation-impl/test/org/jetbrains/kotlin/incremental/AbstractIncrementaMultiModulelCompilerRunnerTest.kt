@@ -214,7 +214,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
             val moduleDeletedDependencies = deletedLibraries.filter { it.first in moduleDependencies }.map { it.second }
 
             val changedDepsFiles =
-                if (isInitial) null else ChangedFiles.Known(moduleModifiedDependencies, moduleDeletedDependencies, forDependencies = true)
+                if (isInitial) null else ChangedFiles.DeterminableFiles.Known(moduleModifiedDependencies, moduleDeletedDependencies, forDependencies = true)
 
             val moduleOutDir = File(outDir, module)
             val moduleCacheDir = File(cacheDir, module)

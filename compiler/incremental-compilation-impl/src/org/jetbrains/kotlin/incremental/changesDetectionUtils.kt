@@ -15,7 +15,7 @@ import java.io.File
 
 internal fun getClasspathChanges(
     classpath: List<File>,
-    changedFiles: ChangedFiles.Known,
+    changedFiles: ChangedFiles.DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,

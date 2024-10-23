@@ -104,7 +104,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                     )
                 }
             //TODO by @Ilya.Chernikov: set properly
-            compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
+            compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
         }
     }
 

@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 
 internal val SourcesChanges.asChangedFiles
     get() = when (this) {
-        is SourcesChanges.Known -> ChangedFiles.Known(modifiedFiles, removedFiles)
-        is SourcesChanges.ToBeCalculated -> ChangedFiles.Unknown() // TODO: add proper support for SourcesChanges.ToBeCalculated
-        is SourcesChanges.Unknown -> ChangedFiles.Unknown()
+        is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
+        is SourcesChanges.ToBeCalculated -> ChangedFiles.DeterminableFiles.ToBeComputed
+        is SourcesChanges.Unknown -> ChangedFiles.Unknown
     }
 
 internal val AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled

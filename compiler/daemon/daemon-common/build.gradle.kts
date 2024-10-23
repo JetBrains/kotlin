@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     api(project(":compiler:cli-common"))
     api(project(":kotlin-build-common"))
     api(kotlinStdlib())

@@ -31,7 +31,7 @@ class FileSnapshotMap(
     icContext
 ) {
     @Synchronized
-    fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.Known {
+    fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.DeterminableFiles.Known {
         val snapshotProvider = SimpleFileSnapshotProviderImpl()
         val newOrModified = ArrayList<File>()
         val removed = ArrayList<File>()
@@ -54,6 +54,6 @@ class FileSnapshotMap(
             }
         }
 
-        return ChangedFiles.Known(newOrModified, removed)
+        return ChangedFiles.DeterminableFiles.Known(newOrModified, removed)
     }
 }

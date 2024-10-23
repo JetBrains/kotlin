@@ -319,7 +319,7 @@ class GenerateIrRuntime {
                 buildHistoryFile = buildHistoryFile,
                 modulesApiHistory = EmptyModulesApiHistory
             )
-            compiler.compile(allFiles, args, MessageCollector.NONE, changedFiles = null)
+            compiler.compile(allFiles, args, MessageCollector.NONE, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
         }
 
         val cleanBuildTime = System.nanoTime() - cleanBuildStart
@@ -330,10 +330,10 @@ class GenerateIrRuntime {
         val wmpDone = { index = 0 }
 
         val elist = emptyList<File>()
-        var changedFiles = ChangedFiles.Known(dirtyFiles, elist)
+        var changedFiles = ChangedFiles.DeterminableFiles.Known(dirtyFiles, elist)
 
         val update = {
-            changedFiles = if (index < 0) changedFiles else ChangedFiles.Known(listOf(allFiles[index++]), elist)
+            changedFiles = if (index < 0) changedFiles else ChangedFiles.DeterminableFiles.Known(listOf(allFiles[index++]), elist)
             System.gc()
         }
 
