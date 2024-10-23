@@ -22,43 +22,153 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents a target platform for which Kotlin code is built.
+ *
+ * This abstraction allows for the configuration of tasks, dependencies, and other settings specific to the platform on which the code is intended to run.
+ *
+ * By default, a Kotlin target contains two [KotlinCompilations][KotlinCompilation]: one for [production][KotlinCompilation.MAIN_COMPILATION_NAME]
+ * and one for [test][KotlinCompilation.TEST_COMPILATION_NAME] source code.
+ *
+ * Examples of accessing the Kotlin target:
+ *
+ * - In Kotlin/JVM or Kotlin/Android projects:
+ * ```
+ * kotlin {
+ *     target {
+ *         // Configure JVM or Android target specifics here
+ *     }
+ * }
+ * ```
+ *
+ * - In Kotlin Multiplatform projects:
+ * ```
+ * kotlin {
+ *     jvm { // Creates JVM target
+ *         // Configure JVM target specifics here
+ *     }
+ *
+ *     linuxX64 {
+ *         // Configure Kotlin native target for Linux X86_64 here
+ *     }
+ * }
+ * ```
+ *
+ * To learn more about the different targets in Kotlin, see [Targets](https://kotlinlang.org/docs/multiplatform-discover-project.html#targets).
  */
 @KotlinGradlePluginDsl
 interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
+
+    /**
+     * The name of the target in the Kotlin build configuration.
+     */
     val targetName: String
+
+    /**
+     * Retrieves the disambiguation classifier for the Kotlin target.
+     *
+     * The disambiguation classifier can be used to distinguish between multiple Kotlin targets within the same project.
+     * It is often applied as a prefix or suffix to generated names to avoid naming conflicts.
+     */
     val disambiguationClassifier: String? get() = targetName
 
-    /* Long deprecation cycle, because IDE might be calling into this via reflection */
+    /**
+     * @suppress
+     * Long deprecation cycle, because IDE might be calling into this via reflection.
+     */
     @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean
 
-    /* Long deprecation cycle, because IDE might be calling into this via reflection */
+    /**
+     * @suppress
+     * Long deprecation cycle, because IDE might be calling into this via reflection.
+     */
     @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     val overrideDisambiguationClassifierOnIdeImport: String?
 
+    /**
+     * Represents the type of Kotlin platform associated with the target.
+     */
     val platformType: KotlinPlatformType
 
+    /**
+     * A container for [Kotlin compilations][KotlinCompilation] related to this target.
+     *
+     * Allows access to the default [main][KotlinCompilation.MAIN_COMPILATION_NAME] or [test][KotlinCompilation.TEST_COMPILATION_NAME]
+     * compilations, or the creation of additional compilations.
+     */
     val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptionsDeprecated>>
 
+    /**
+     * The name of the task responsible for assembling the final artifact for this target.
+     */
     val artifactsTaskName: String
 
+    /**
+     * The name of the configuration that is used when compiling against the API of this Kotlin target.
+     *
+     * This configuration is intended to be consumed by other components when they need to compile against it.
+     */
     val apiElementsConfigurationName: String
+
+    /**
+     * The name of the configuration containing elements that are strictly required at runtime by this Kotlin target.
+     *
+     * Consumers of this configuration receive all the necessary elements for this component to execute at runtime.
+     */
     val runtimeElementsConfigurationName: String
+
+    /**
+     * The name of the configuration that represents the variant that carries the original source code in packaged form.
+     *
+     * This is typically only needed for publishing.
+     */
     val sourcesElementsConfigurationName: String
 
+    /**
+     * Indicates whether the Kotlin target is publishable.
+     *
+     * For example, the target could have a value of `false` if it's not possible to compile for the target platform on the current host.
+     */
     val publishable: Boolean
 
+    /**
+     * Configures the publication of sources.
+     *
+     * @param publish Indicates whether the sources JAR is to be published. Defaults to `true`.
+     */
     fun withSourcesJar(publish: Boolean = true)
 
+    /**
+     * Represents a collection of Gradle [software components][SoftwareComponent] associated with this Kotlin target.
+     *
+     * **Note**: Returned [SoftwareComponent] potentially could be in not fully configured state (for example without some usages).
+     * Call this function during the Gradle execution phase retrieve to retrieve [SoftwareComponent] in a fully configured state.
+     */
     val components: Set<SoftwareComponent>
 
+    /**
+     * Configures the [Maven publication][MavenPublication] for this Kotlin target.
+     */
     fun mavenPublication(action: MavenPublication.() -> Unit) = mavenPublication(Action { action(it) })
+
+    /**
+     * Configures the [Maven publication][MavenPublication] for this Kotlin target.
+     */
     fun mavenPublication(action: Action<MavenPublication>)
 
+    /**
+     * Configures the attributes associated with this target.
+     */
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
+
+    /**
+     * Configures the attributes associated with this target.
+     */
     fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
+    /**
+     * @suppress
+     */
     @OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
     @get:Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
@@ -66,8 +176,14 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     )
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
+    /**
+     * @suppress
+     */
     override fun getName(): String = targetName
 
+    /**
+     * @suppress
+     */
     @Deprecated(
         "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +
                 "Consider configuring 'sourceSets' on the Kotlin extension level.",
