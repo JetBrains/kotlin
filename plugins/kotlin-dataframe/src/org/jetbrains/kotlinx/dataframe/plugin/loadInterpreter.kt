@@ -90,6 +90,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColumnsConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
@@ -232,7 +233,7 @@ internal inline fun <reified T> String.load(): T {
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "ToDataFrameColumn" -> ToDataFrameColumn()
-        "StringColumns" -> ToDataFrameColumn()
+        "StringColumns" -> StringColumnsConstructor()
         "ReadExcel" -> ReadExcel()
         "FillNulls0" -> FillNulls0()
         "UpdateWith0" -> UpdateWith0()
