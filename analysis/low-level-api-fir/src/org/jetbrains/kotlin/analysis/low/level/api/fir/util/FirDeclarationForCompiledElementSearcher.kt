@@ -226,7 +226,7 @@ private val LLModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSy
         if (hasPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE)
             || moduleData is LLFirModuleData && moduleData.ktModule is KaBuiltinsModule
         ) {
-            return dependencyProvider.providers.find { it.session is LLFirBuiltinsAndCloneableSession }
+            return dependencyProviders.find { it.session is LLFirBuiltinsAndCloneableSession }
         }
 
         return null

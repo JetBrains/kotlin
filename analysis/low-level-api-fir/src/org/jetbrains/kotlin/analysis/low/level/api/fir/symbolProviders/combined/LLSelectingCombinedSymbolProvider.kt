@@ -27,7 +27,8 @@ internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolPr
     project: Project,
     override val providers: List<PROVIDER>,
 ) : LLCombinedSymbolProvider<PROVIDER>(session) {
-    protected val providersByKtModule: Map<KaModule, PROVIDER> =
+    // TODO (marco): Get rid of this...
+    protected open val providersByKtModule: Map<KaModule, PROVIDER> =
         providers
             .groupingBy { it.session.llFirModuleData.ktModule }
             // `reduce` invokes the `error` operation if it encounters a second element.
@@ -64,7 +65,6 @@ internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolPr
         // We're using a custom implementation instead of `minBy` so that `ktModule` doesn't need to be fetched twice.
         var currentCandidate: CANDIDATE? = null
         var currentPrecedence: Int = Int.MAX_VALUE
-        var currentKtModule: KaModule? = null
 
         for (candidate in candidates) {
             val element = getElement(candidate) ?: continue
@@ -77,16 +77,15 @@ internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolPr
             if (precedence < currentPrecedence) {
                 currentCandidate = candidate
                 currentPrecedence = precedence
-                currentKtModule = ktModule
             }
         }
 
         val candidate = currentCandidate ?: return null
-        val ktModule = currentKtModule ?: error("`currentKtModule` must not be `null` when `currentCandidate` has been found.")
 
+        // TODO (marco): Update comment.
         // The provider will always be found at this point, because `modulePrecedenceMap` contains the same keys as `providersByKtModule`
         // and a precedence for `currentKtModule` must have been found in the previous step.
-        val provider = providersByKtModule.getValue(ktModule)
+        val provider = providers[currentPrecedence]
 
         return Pair(candidate, provider)
     }

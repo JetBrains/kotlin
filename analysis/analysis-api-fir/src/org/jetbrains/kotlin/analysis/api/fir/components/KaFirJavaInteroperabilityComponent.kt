@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -196,6 +197,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
     }
 
+    @OptIn(FirSymbolProviderInternals::class)
     override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
         val javaType = JavaTypeImpl.create(this, javaElementSourceFactory.createTypeSource(this))

@@ -52,6 +52,8 @@ class KotlinStandalonePackageProviderFactory(
 class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger {
     override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider =
         providers.mergeSpecificProviders<_, KotlinStandalonePackageProvider>(KotlinCompositePackageProvider.factory) { targetProviders ->
+            if (targetProviders.isEmpty()) return@mergeSpecificProviders KotlinEmptyPackageProvider
+
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createPackageProvider(combinedScope).apply {
                 check(this is KotlinStandalonePackageProvider) {

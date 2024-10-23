@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -40,19 +41,19 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        context.firProvider.symbolProvider,
-                        context.switchableExtensionDeclarationsSymbolProvider,
-                        javaSymbolProvider,
-                        context.syntheticFunctionInterfaceProvider,
-                    ),
-                    context.dependencyProvider,
-                )
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOfNotNull(
+                    context.firProvider.symbolProvider,
+                    context.switchableExtensionDeclarationsSymbolProvider,
+                    javaSymbolProvider,
+                    context.syntheticFunctionInterfaceProvider,
+                ),
+                context.computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
 
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
@@ -62,17 +63,18 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         return doCreateLibrarySession(module) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOf(
-                        context.firProvider.symbolProvider,
-                        javaSymbolProvider,
-                    ),
-                    context.dependencyProvider,
-                )
+
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOf(
+                    context.firProvider.symbolProvider,
+                    javaSymbolProvider,
+                ),
+                context.computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
             register(JavaSymbolProvider::class, javaSymbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
@@ -94,19 +96,20 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                 register(JavaSymbolProvider::class, contextJavaSymbolProvider)
             }
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        firProvider.symbolProvider,
-                        context.switchableExtensionDeclarationsSymbolProvider,
-                        context.syntheticFunctionInterfaceProvider,
-                        contextJavaSymbolProvider
-                    ),
-                    context.dependencyProvider
-                )
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                // We don't need to register `contextJavaSymbolProvider` here. As a context session symbol provider, it is already included
+                // in the dependency providers.
+                providers = listOfNotNull(
+                    firProvider.symbolProvider,
+                    switchableExtensionDeclarationsSymbolProvider,
+                    syntheticFunctionInterfaceProvider,
+                ),
+                computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
 
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }

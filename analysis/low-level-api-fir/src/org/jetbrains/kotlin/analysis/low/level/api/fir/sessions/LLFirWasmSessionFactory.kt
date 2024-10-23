@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getWasmTarget
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
@@ -25,18 +26,18 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         return doCreateSourcesSession(module) { context ->
             registerWasmComponents()
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        context.firProvider.symbolProvider,
-                        context.switchableExtensionDeclarationsSymbolProvider,
-                        context.syntheticFunctionInterfaceProvider,
-                    ),
-                    context.dependencyProvider,
-                )
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOfNotNull(
+                    context.firProvider.symbolProvider,
+                    context.switchableExtensionDeclarationsSymbolProvider,
+                    context.syntheticFunctionInterfaceProvider,
+                ),
+                context.computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
         }
     }
 
@@ -44,16 +45,16 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         return doCreateLibrarySession(module) { context ->
             registerWasmComponents()
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOf(
-                        context.firProvider.symbolProvider,
-                    ),
-                    context.dependencyProvider,
-                )
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOf(
+                    context.firProvider.symbolProvider,
+                ),
+                context.computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
         }
     }
 
@@ -67,18 +68,18 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         return doCreateDanglingFileSession(module, contextSession) { context ->
             registerWasmComponents()
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        firProvider.symbolProvider,
-                        context.switchableExtensionDeclarationsSymbolProvider,
-                        context.syntheticFunctionInterfaceProvider,
-                    ),
-                    context.dependencyProvider,
-                )
+            val symbolProvider = LLFirModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOfNotNull(
+                    firProvider.symbolProvider,
+                    switchableExtensionDeclarationsSymbolProvider,
+                    syntheticFunctionInterfaceProvider,
+                ),
+                computeDependencyProviders,
             )
+
+            register(FirSymbolProvider::class, symbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
         }
     }
 

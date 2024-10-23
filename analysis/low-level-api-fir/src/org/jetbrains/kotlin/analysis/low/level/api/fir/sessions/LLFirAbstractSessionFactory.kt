@@ -92,13 +92,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         return LLModuleWithDependenciesSymbolProvider(
             session,
             providers = createProjectLibraryProvidersForScope(session, scope),
-            LLDependenciesSymbolProvider(session) {
-                buildList {
-                    addAll(collectDependencySymbolProviders(session.ktModule))
-                    add(builtinSymbolProvider)
-                }
-            },
-        )
+        ) {
+            buildList {
+                addAll(collectDependencySymbolProviders(session.ktModule))
+                add(builtinSymbolProvider)
+            }
+        }
     }
 
     abstract fun createProjectLibraryProvidersForScope(
@@ -141,30 +140,25 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) {
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, provider.searchScope)
+            register(JavaSymbolProvider::class, javaSymbolProvider)
+
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOfNotNull(
+                    javaSymbolProvider,
+                    provider.symbolProvider,
+                ),
+            ) {
                 buildList {
-                    addMerged(session, collectDependencySymbolProviders(module))
+                    addMerged(collectDependencySymbolProviders(module))
                     add(builtinsSession.symbolProvider)
                 }
             }
 
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, provider.searchScope)
-            register(JavaSymbolProvider::class, javaSymbolProvider)
-
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        javaSymbolProvider,
-                        provider.symbolProvider,
-                    ),
-                    dependencyProvider,
-                )
-            )
-
+            register(FirSymbolProvider::class, symbolProvider)
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
@@ -239,21 +233,19 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) { listOf(builtinsSession.symbolProvider) }
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
+                this,
+                providers = listOf(
+                    provider.symbolProvider,
+                ),
+            ) {
+                listOf(builtinsSession.symbolProvider)
+            }
 
-            register(
-                FirSymbolProvider::class,
-                LLModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOf(
-                        provider.symbolProvider,
-                    ),
-                    dependencyProvider,
-                )
-            )
+            register(FirSymbolProvider::class, symbolProvider)
 
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, symbolProvider.dependenciesSymbolProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
 
@@ -264,7 +256,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     protected class SourceSessionCreationContext(
         val contentScope: GlobalSearchScope,
         val firProvider: LLFirProvider,
-        val dependencyProvider: LLDependenciesSymbolProvider,
+        val computeDependencyProviders: () -> List<FirSymbolProvider>,
         val syntheticFunctionInterfaceProvider: FirExtensionSyntheticFunctionInterfaceProvider?,
         val switchableExtensionDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider?,
     )
@@ -307,14 +299,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCompilerPluginExtensions(project, module)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) {
+            val computeDependenciesSymbolProvider: () -> List<FirSymbolProvider> = {
                 buildList {
                     addMerged(session, collectDependencySymbolProviders(module))
                     add(builtinsSession.symbolProvider)
                 }
             }
 
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             LLFirSessionConfigurator.configure(this)
@@ -329,7 +320,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
 
             val context = SourceSessionCreationContext(
-                firProvider.searchScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
+                firProvider.searchScope,
+                firProvider,
+                computeDependenciesSymbolProvider,
+                syntheticFunctionInterfaceProvider,
                 switchableExtensionDeclarationsSymbolProvider,
             )
 
@@ -345,7 +339,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     protected class LibrarySessionCreationContext(
         val contentScope: GlobalSearchScope,
         val firProvider: LLFirProvider,
-        val dependencyProvider: LLDependenciesSymbolProvider,
+        val computeDependencyProviders: () -> List<FirSymbolProvider>,
     )
 
     protected fun doCreateLibrarySession(
@@ -398,7 +392,9 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) {
+            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
+
+            val context = LibrarySessionCreationContext(contentScope, firProvider) {
                 buildList {
                     if (module !is KaBuiltinsModule) {
                         add(builtinsSession.symbolProvider)
@@ -425,17 +421,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                                     anchorModuleSession.symbolProvider as LLModuleWithDependenciesSymbolProvider
 
                                 addAll(anchorModuleSymbolProvider.providers)
-                                addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
+                                addAll(anchorModuleSymbolProvider.dependencyProviders)
                             }
                         }
                     }
                 }
             }
-
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
-
-            val context = LibrarySessionCreationContext(contentScope, firProvider, dependencyProvider)
             additionalSessionConfiguration(context)
 
             LLFirSessionConfigurator.configure(this)
@@ -535,10 +526,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) {
+            val computeDependencyProviders: () -> List<FirSymbolProvider> = {
                 buildList {
                     addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
 
+                    // TODO (marco): Unwrap the `dependenciesSymbolProvider` into individual providers?
                     when (contextSession.ktModule) {
                         is KaLibraryModule, is KaLibrarySourceModule -> {
                             // Wrap library dependencies into a single classpath-filtering provider
@@ -552,7 +544,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
             }
 
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             LLFirSessionConfigurator.configure(this)
@@ -572,7 +563,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val context = DanglingFileSessionCreationContext(
                 moduleData,
-                dependencyProvider,
+                computeDependencyProviders,
                 syntheticFunctionInterfaceProvider,
                 switchableExtensionDeclarationsSymbolProvider
             )
@@ -583,7 +574,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     protected class DanglingFileSessionCreationContext(
         val moduleData: LLFirModuleData,
-        val dependencyProvider: LLDependenciesSymbolProvider,
+        val computeDependencyProviders: () -> List<FirSymbolProvider>,
         val syntheticFunctionInterfaceProvider: FirExtensionSyntheticFunctionInterfaceProvider?,
         val switchableExtensionDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider?,
     )
@@ -705,8 +696,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         destination: MutableList<FirSymbolProvider>,
     ) {
         mergeInto(destination) {
-            merge<LLKotlinSourceSymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
-            merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
+            //merge<LLKotlinSourceSymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
+            //merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
     }
