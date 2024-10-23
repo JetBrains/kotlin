@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -332,10 +333,10 @@ class GenerateIrRuntime {
         val wmpDone = { index = 0 }
 
         val elist = emptyList<File>()
-        var changedFiles = ChangedFiles.Known(dirtyFiles, elist)
+        var changedFiles = ChangedFiles.DeterminableFiles.Known(dirtyFiles, elist)
 
         val update = {
-            changedFiles = if (index < 0) changedFiles else ChangedFiles.Known(listOf(allFiles[index++]), elist)
+            changedFiles = if (index < 0) changedFiles else ChangedFiles.DeterminableFiles.Known(listOf(allFiles[index++]), elist)
             System.gc()
         }
 

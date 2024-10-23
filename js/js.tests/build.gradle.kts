@@ -61,6 +61,7 @@ dependencies {
     testApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
     testApi(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":kotlin-daemon"))
     testApi(projectTests(":generators:test-generator"))
 
     testApi(intellijCore())

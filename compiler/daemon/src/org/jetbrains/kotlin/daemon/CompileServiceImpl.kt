@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -88,6 +93,7 @@ class EventManagerImpl : EventManager {
     }
 }
 
+@OptIn(ExperimentalBuildToolsApi::class)
 abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
@@ -580,12 +586,6 @@ abstract class CompileServiceImplBase(
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
         val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"))
 
-        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
-        } else {
-            ChangedFiles.Unknown()
-        }
-
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
             val modulesInfo = incrementalCompilationOptions.modulesInfo
@@ -604,7 +604,7 @@ abstract class CompileServiceImplBase(
             icFeatures = incrementalCompilationOptions.icFeatures,
         )
         return try {
-            compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
+            compiler.compile(allKotlinFiles, args, compilerMessageCollector, incrementalCompilationOptions.sourceChanges)
         } finally {
             reporter.endMeasureGc()
             reporter.flush()
@@ -623,12 +623,6 @@ abstract class CompileServiceImplBase(
 
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
         val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinExtensions)
-
-        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
-        } else {
-            ChangedFiles.Unknown()
-        }
 
         val workingDir = incrementalCompilationOptions.workingDir
 
@@ -671,7 +665,7 @@ abstract class CompileServiceImplBase(
         )
         return try {
             compiler.compile(
-                allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles,
+                allKotlinFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges,
                 fileLocations = if (rootProjectDir != null && buildDir != null) {
                     FileLocations(rootProjectDir, buildDir)
                 } else null
@@ -690,7 +684,6 @@ abstract class CompileServiceImplBase(
             @Suppress("UNCHECKED_CAST")
             (session?.data as? KotlinJvmReplServiceT?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
         }
-
 }
 
 class CompileServiceImpl(
