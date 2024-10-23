@@ -34,6 +34,7 @@ data class IrValidatorConfig(
     val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
+    val checkCallTypes: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 
@@ -80,6 +81,9 @@ private class IrValidator(
         }
         if (config.checkVarargTypes) {
             declaration.acceptVoid(IrVarargTypesValidator(elementChecker.irBuiltIns, declaration, config, reportError))
+        }
+        if (config.checkCallTypes) {
+            declaration.acceptVoid(IrCallTypesValidator(elementChecker.irBuiltIns, declaration, config, reportError))
         }
         config.checkInlineFunctionUseSites?.let {
             declaration.acceptVoid(NoInlineFunctionUseSitesValidator(declaration, reportError, it))
