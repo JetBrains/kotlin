@@ -50,7 +50,7 @@ class IrSourceCompilerForInline(
                     codegen.methodSignatureMapper.mapAsmMethod(rootFunction),
                 rootFunction.inlineScopeVisibility,
                 rootFunction.fileParent.getIoFile(),
-                callElement.psiElement?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
+                codegen.irFunction.fileParent.fileEntry.getLineNumber(callElement.startOffset),
             )
         }
 

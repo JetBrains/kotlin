@@ -5414,6 +5414,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("linenumberZero.kt")
+      public void testLinenumberZero() {
+        runTest("compiler/testData/codegen/boxInline/suspend/linenumberZero.kt");
+      }
+
+      @Test
       @TestMetadata("maxStackWithCrossinline.kt")
       public void testMaxStackWithCrossinline() {
         runTest("compiler/testData/codegen/boxInline/suspend/maxStackWithCrossinline.kt");
