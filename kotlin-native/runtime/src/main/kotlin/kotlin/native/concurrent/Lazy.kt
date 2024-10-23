@@ -21,7 +21,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         get() {
             if (value_.compareAndExchange(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
                 // We execute exclusively here.
-                val ctor = initializer_.value
+                val ctor = initializer_.load()
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {
                     value_.compareAndSet(INITIALIZING, ctor())
                 } else {
@@ -31,7 +31,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             }
             var result: Any?
             do {
-                result = value_.value
+                result = value_.load()
             } while (result === INITIALIZING)
 
             assert(result !== UNINITIALIZED && result !== INITIALIZING)
@@ -39,10 +39,10 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             return result as T
         }
 
-    override fun isInitialized(): Boolean = value_.value !== UNINITIALIZED
+    override fun isInitialized(): Boolean = value_.load() !== UNINITIALIZED
 
     override fun toString(): String = if (isInitialized())
-        value_.value.toString() else "Lazy value not initialized yet."
+        value_.load().toString() else "Lazy value not initialized yet."
 }
 
 /**

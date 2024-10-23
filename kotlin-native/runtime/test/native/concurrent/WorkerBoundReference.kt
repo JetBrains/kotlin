@@ -92,17 +92,17 @@ class WorkerBoundReference {
 
         val worker = Worker.start()
         val future = worker.execute(TransferMode.SAFE, { semaphore }) { semaphore ->
-            semaphore.incrementAndGet()
-            while (semaphore.value < 2) {
+            semaphore.incrementAndFetch()
+            while (semaphore.load() < 2) {
             }
 
             global5.value.a
         }
 
-        while (semaphore.value < 1) {
+        while (semaphore.load() < 1) {
         }
         global5.value.freeze()
-        semaphore.incrementAndGet()
+        semaphore.incrementAndFetch()
 
         val value = future.result
         assertEquals(3, value)
@@ -117,16 +117,16 @@ class WorkerBoundReference {
 
         val worker = Worker.start()
         val future = worker.execute(TransferMode.SAFE, { semaphore }) { semaphore ->
-            semaphore.incrementAndGet()
-            while (semaphore.value < 2) {
+            semaphore.incrementAndFetch()
+            while (semaphore.load() < 2) {
             }
             global6
         }
 
-        while (semaphore.value < 1) {
+        while (semaphore.load() < 1) {
         }
         global6.value.a = 4
-        semaphore.incrementAndGet()
+        semaphore.incrementAndFetch()
 
         val value = future.result
         assertEquals(4, value.value.a)
@@ -229,17 +229,17 @@ class WorkerBoundReference {
 
         val worker = Worker.start()
         val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
-            semaphore.incrementAndGet()
-            while (semaphore.value < 2) {
+            semaphore.incrementAndFetch()
+            while (semaphore.load() < 2) {
             }
 
             local.value.a
         }
 
-        while (semaphore.value < 1) {
+        while (semaphore.load() < 1) {
         }
         local.value.freeze()
-        semaphore.incrementAndGet()
+        semaphore.incrementAndFetch()
 
         val value = future.result
         assertEquals(3, value)
@@ -281,16 +281,16 @@ class WorkerBoundReference {
 
         val worker = Worker.start()
         val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
-            semaphore.incrementAndGet()
-            while (semaphore.value < 2) {
+            semaphore.incrementAndFetch()
+            while (semaphore.load() < 2) {
             }
             local
         }
 
-        while (semaphore.value < 1) {
+        while (semaphore.load() < 1) {
         }
         local.value.a = 4
-        semaphore.incrementAndGet()
+        semaphore.incrementAndFetch()
 
         val value = future.result
         assertEquals(4, value.value.a)
@@ -396,7 +396,7 @@ class WorkerBoundReference {
                 ref.value.a
             }
         }
-        workerUnlocker.incrementAndGet()
+        workerUnlocker.incrementAndFetch()
 
         for (future in futures) {
             val value = future.result
