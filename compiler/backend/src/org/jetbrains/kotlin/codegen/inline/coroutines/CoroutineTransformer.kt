@@ -127,7 +127,6 @@ class CoroutineTransformer(
                 config = state.config,
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
-                putContinuationParameterToLvt = !state.isIrBackend,
             )
 
             if (generateForInline)

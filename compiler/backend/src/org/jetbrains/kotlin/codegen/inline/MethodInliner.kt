@@ -901,7 +901,7 @@ class MethodInliner(
         try {
             InplaceArgumentsMethodTransformer().transform("fake", node)
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
-            TemporaryVariablesEliminationTransformer(inliningContext.state).transform("fake", node)
+            TemporaryVariablesEliminationTransformer().transform("fake", node)
         } catch (e: Throwable) {
             throw wrapException(e, node, "couldn't inline method call")
         }

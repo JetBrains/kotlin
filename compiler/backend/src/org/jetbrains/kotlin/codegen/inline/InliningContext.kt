@@ -83,13 +83,9 @@ open class InliningContext(
             //mark lambda inlined
             hashMapOf(lambdaInfo.lambdaClassType.internalName to null),
             lambdaInfo,
-            // TODO we also want this for the old backend (KT-28064), but this changes EnclosingMethod of objects
-            //      in inline lambdas, so use a language version flag.
-            if (state.isIrBackend)
-                false // Do not regenerate objects in lambdas inlined into regenerated objects unless needed for some other reason.
-            else
-                classRegeneration,
-            inlineScopesGenerator
+            // Do not regenerate objects in lambdas inlined into regenerated objects unless needed for some other reason.
+            classRegeneration = false,
+            inlineScopesGenerator,
         )
 
     fun subInlineWithClassRegeneration(

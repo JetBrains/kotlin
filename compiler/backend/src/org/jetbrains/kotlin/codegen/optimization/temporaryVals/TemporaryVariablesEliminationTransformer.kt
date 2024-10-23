@@ -13,19 +13,16 @@ import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariabl
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
-class TemporaryVariablesEliminationTransformer(private val state: GenerationState) : MethodTransformer() {
+class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     private val temporaryValsAnalyzer = TemporaryValsAnalyzer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        if (!state.isIrBackend) return
-
         // If there are any suspend inline markers, don't touch anything now.
         if (methodNode.instructions.any { isSuspendInlineMarker(it) }) return
 

@@ -68,7 +68,6 @@ internal fun MethodNode.acceptWithStateMachine(
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
-        putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
     )
     accept(visitor)

@@ -212,7 +212,7 @@ class GenerationState private constructor(
     private val extraJvmDiagnosticsTrace: BindingTrace =
         DelegatingBindingTrace(
             originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false,
-            customSuppressCache = if (isIrBackend) OnDemandSuppressCache(originalFrontendBindingContext) else null,
+            customSuppressCache = OnDemandSuppressCache(originalFrontendBindingContext),
         )
 
     private val interceptedBuilderFactory: ClassBuilderFactory
