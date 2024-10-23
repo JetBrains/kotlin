@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.daemon.client
 
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_IS_READY_MESSAGE
+import java.util.concurrent.atomic.AtomicBoolean
+
 internal interface DaemonProblemReportingOutputListener {
     fun onOutputLine(line: String)
 
@@ -89,6 +92,25 @@ internal class DaemonGcAutoConfigurationProblemsListener(
             "Problems may have occurred during auto-selection of GC. The preferred GC is ${gcAutoConfiguration.preferredGc} GC.",
             "If the problems persist, try adding the JVM option to the Kotlin daemon JVM arguments: -XX:-Use${gcAutoConfiguration.preferredGc}GC.",
             "GC auto-selection logic is disabled temporary for the next daemon startup.",
+        )
+    }
+}
+
+internal class DaemonInitMessageListener : DaemonProblemReportingOutputListener {
+    var caughtInitMessage = false
+        private set
+
+    override fun onOutputLine(line: String) {
+        if (caughtInitMessage) return
+        if (line == COMPILE_DAEMON_IS_READY_MESSAGE) {
+            caughtInitMessage = true
+        }
+    }
+
+    override fun retrieveProblems(): List<String> {
+        if (caughtInitMessage) return emptyList()
+        return listOf(
+            "The daemon didn't produce the message \"$COMPILE_DAEMON_IS_READY_MESSAGE\" during startup.",
         )
     }
 }

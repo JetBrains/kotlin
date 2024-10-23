@@ -23,6 +23,7 @@ dependencies {
     compileOnly(project(":daemon-common"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
+    testCompileOnly(project(":daemon-common"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
