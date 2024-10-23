@@ -10,12 +10,16 @@
 #include <atomic>
 #include <optional>
 
+#include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Utils.hpp"
 
 class GCStateHolder {
 public:
     int64_t schedule() {
+        // Should be a fast function. `mutex_` is never taken for long.
+        kotlin::CallsCheckerIgnoreGuard callsCheckerIgnoreGuard;
+
         std::unique_lock lock(mutex_);
         if (*scheduledEpoch <= *startedEpoch) {
             scheduledEpoch.set(lock, *startedEpoch + 1);
