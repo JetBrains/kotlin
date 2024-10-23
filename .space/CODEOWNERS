@@ -79,6 +79,7 @@
 /compiler/frontend.common-psi/ "Kotlin Frontend"
 /compiler/frontend.java/ "Kotlin Frontend"
 /compiler/incremental-compilation-impl/ "Kotlin Build Tools"
+/compiler/ir/ReadMe.md "Kotlin Common Backend"
 /compiler/ir/backend.common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/ir/backend.js/ "Kotlin Common Backend"
 /compiler/ir/backend.jvm/ "Kotlin JVM"
@@ -243,6 +244,7 @@
 /docs/analysis/ "Kotlin IDE Analysis Core"
 /docs/code_authoring_and_core_review.md Vsevolod.Tolstopyato Simon.Ogorodnik
 
+/generators/ReadMe.md "Kotlin Build Infrastructure"
 /generators/analysis-api-generator/ "Kotlin IDE Analysis Core"
 /generators/builtins/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /generators/evaluate/ "Kotlin Frontend"

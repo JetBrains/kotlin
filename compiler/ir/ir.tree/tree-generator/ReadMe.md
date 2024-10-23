@@ -1,9 +1,9 @@
-# IR tree generator
+Generates the interfaces and classes of IR elements, as well as visitors and transformers.
 
-This module generates the IR tree interfaces and classes, as well as visitors and transformers.
+This is done to ensure all implementations are consistent, while avoiding to write boilerplate code manually.
 
-The generator is run on every build. If you change something in the model or in the generator code, just run `./gradlew dist` and the generator task will run before the start of the compilation.
+The generator is run on every build, such as when running `./gradlew :dist`.
+If you change anything in the model, generator, or the generator code and want to see the result immediately,
+you may also run `./gradlew :compiler:ir.tree:generateTree`.
 
-The model is declared in [IrTree.kt](src/org/jetbrains/kotlin/ir/generator/IrTree.kt).
-
-You can navigate to the model from a generated `Ir*` class by following the `Generated from` link in its kdoc.
+The actual model of IR is declared in [IrTree.kt](src/org/jetbrains/kotlin/ir/generator/IrTree.kt).
