@@ -41,24 +41,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Creates nullable fields for lateinit properties.
- */
-class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
-    override val withLocalDeclarations: Boolean get() = true
-
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrField) {
-            declaration.correspondingPropertySymbol?.owner?.let { property ->
-                if (property.isRealLateinit) {
-                    val newField = backendContext.buildOrGetNullableField(declaration)
-                    if (declaration != newField && declaration.parent != property.parent) return listOf(newField)
-                }
-            }
-        }
-        return null
-    }
-}
-
-/**
  * References nullable fields from properties and getters + inserts checks.
  */
 class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
@@ -66,6 +48,15 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
+            is IrField -> {
+                declaration.correspondingPropertySymbol?.owner?.let { property ->
+                    if (property.isRealLateinit) {
+                        val newField = backendContext.buildOrGetNullableField(declaration)
+                        if (declaration != newField && declaration.parent != property.parent) return listOf(newField)
+                    }
+                }
+            }
+
             is IrProperty -> {
                 if (declaration.isRealLateinit) {
                     declaration.backingField = backendContext.buildOrGetNullableField(declaration.backingField!!)

@@ -60,11 +60,6 @@ private val stringConcatenationLowering = makeIrModulePhase(
     name = "StringConcatenation",
 )
 
-private val lateinitNullableFieldsPhase = makeIrModulePhase(
-    ::NullableFieldsForLateinitCreationLowering,
-    name = "LateinitNullableFields",
-)
-
 private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
     ::NullableFieldsDeclarationLowering,
     name = "LateinitDeclarations",
@@ -545,7 +540,6 @@ fun getWasmLowerings(
     excludeDeclarationsFromCodegenPhase,
     expectDeclarationsRemovingPhase,
 
-    lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     rangeContainsLoweringPhase,

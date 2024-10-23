@@ -144,11 +144,6 @@ private val stringConcatenationLoweringPhase = makeIrModulePhase(
     name = "JsStringConcatenationLowering",
 )
 
-private val lateinitNullableFieldsPhase = makeIrModulePhase(
-    ::NullableFieldsForLateinitCreationLowering,
-    name = "LateinitNullableFields",
-)
-
 private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
     ::NullableFieldsDeclarationLowering,
     name = "LateinitDeclarations",
@@ -781,7 +776,6 @@ fun getJsLowerings(
     // BEGIN: Common Native/JS prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
-    lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     sharedVariablesLoweringPhase,
