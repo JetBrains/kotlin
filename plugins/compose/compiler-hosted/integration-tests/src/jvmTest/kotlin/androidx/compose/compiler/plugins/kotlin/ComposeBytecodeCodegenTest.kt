@@ -725,4 +725,33 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             """
         )
     }
+
+    // regression test for b/339322843
+    @Test
+    fun testPropertyReferenceInDelegate() {
+        testCompile(
+            """
+                import androidx.compose.runtime.*
+                import kotlin.reflect.KProperty
+
+                object MaterialTheme {
+                    val background: Int = 0
+                }
+                
+                fun interface ThemeToken<T> {
+
+                    @Composable
+                    @ReadOnlyComposable
+                    fun MaterialTheme.resolve(): T
+                
+                    @Composable
+                    @ReadOnlyComposable
+                    operator fun getValue(thisRef: Any?, property: KProperty<*>) = MaterialTheme.resolve()
+                }
+                
+                @get:Composable
+                val background by ThemeToken { background }
+            """
+        )
+    }
 }

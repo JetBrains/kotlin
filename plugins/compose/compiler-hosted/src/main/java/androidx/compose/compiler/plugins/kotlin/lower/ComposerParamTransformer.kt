@@ -96,19 +96,15 @@ class ComposerParamTransformer(
     override fun visitLocalDelegatedPropertyReference(
         expression: IrLocalDelegatedPropertyReference,
     ): IrExpression {
-        val transformedGetter = expression.getter.owner.withComposerParamIfNeeded()
-        return super.visitLocalDelegatedPropertyReference(
-            IrLocalDelegatedPropertyReferenceImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                expression.symbol,
-                expression.delegate,
-                transformedGetter.symbol,
-                expression.setter,
-                expression.origin
-            )
-        )
+        expression.getter = expression.getter.owner.withComposerParamIfNeeded().symbol
+        expression.setter = expression.setter?.run { owner.withComposerParamIfNeeded().symbol }
+        return super.visitLocalDelegatedPropertyReference(expression)
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+        expression.getter = expression.getter?.run { owner.withComposerParamIfNeeded().symbol }
+        expression.setter = expression.setter?.run { owner.withComposerParamIfNeeded().symbol }
+        return super.visitPropertyReference(expression)
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {

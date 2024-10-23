@@ -1,0 +1,75 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+import kotlin.reflect.KProperty
+
+fun interface ThemeToken<T> {
+
+    @Composable
+    @ReadOnlyComposable
+    fun MaterialTheme.resolve(): T
+
+    @Composable
+    @ReadOnlyComposable
+    operator fun getValue(thisRef: Any?, property: KProperty<*>) = MaterialTheme.resolve()
+}
+
+@get:Composable
+val background by ThemeToken { background }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface ThemeToken<T>  {
+  @Composable
+  @ReadOnlyComposable
+  abstract fun MaterialTheme.resolve(%composer: Composer?, %changed: Int): T
+  @Composable
+  @ReadOnlyComposable
+  open fun getValue(thisRef: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): T {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(getValue)P(1)<resolv...>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = MaterialTheme.resolve(%composer, 0b0110 or 0b01110000 and %changed shr 0b0011)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+}
+val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
+  @Composable
+  override fun resolve(%this%ThemeToken: MaterialTheme, %composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(resolve):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = %this%ThemeToken.background
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+}
+<no name provided>()
+  @Composable @JvmName(name = "getBackground")
+  get() {
+    sourceInformationMarkerStart(%composer, <>, "C(<get-background>)<ThemeT...>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = .background%delegate.getValue(null, ::background, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0
+  }
