@@ -29,9 +29,7 @@ internal class JvmFieldSignatureClashDetector(
             declarations,
             ConflictingJvmDeclarationsData(
                 classInternalName = classCodegen.type.internalName,
-                classOrigin = null,
                 signature = signature,
-                signatureOrigins = null,
                 signatureDescriptors = declarations.map(IrDeclaration::toIrBasedDescriptor),
             ),
             reportOnIfSynthetic = { classCodegen.irClass },

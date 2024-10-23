@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.codegen.state
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -47,7 +44,6 @@ import org.jetbrains.kotlin.resolve.diagnostics.OnDemandSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -223,10 +219,7 @@ class GenerationState private constructor(
     private var used = false
 
     val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
-    val collectedExtraJvmDiagnostics: Diagnostics = LazyJvmDiagnostics {
-        duplicateSignatureFactory?.reportDiagnostics()
-        extraJvmDiagnosticsTrace.bindingContext.diagnostics
-    }
+    val collectedExtraJvmDiagnostics: Diagnostics get() = extraJvmDiagnosticsTrace.bindingContext.diagnostics
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
@@ -250,7 +243,6 @@ class GenerationState private constructor(
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, languageVersionSettings)
     val factory: ClassFileFactory
-    private var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics? = null
 
     val scriptSpecific = ForScript()
 
@@ -301,18 +293,6 @@ class GenerationState private constructor(
                     else
                         it
                 },
-                {
-                    // In IR backend, we have more precise information about classes and methods we are going to generate,
-                    // and report signature conflict errors in JvmSignatureClashDetector.
-                    if (isIrBackend)
-                        it
-                    else
-                        BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, bindingContext, diagnostics, this.moduleName, languageVersionSettings,
-                            config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
-                            shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
-                        ).apply { duplicateSignatureFactory = this }
-                },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, this) },
             )
             .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
@@ -362,32 +342,10 @@ class GenerationState private constructor(
         interceptedBuilderFactory.close()
     }
 
-    private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin) =
-        classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
-
     val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
     fun recordNewFragmentCaptureParameter(string: String, type: KotlinType, descriptor: DeclarationDescriptor) {
         newFragmentCaptureParameters.add(Triple(string, type, descriptor))
     }
-}
-
-private val doNotGenerateInLightClassMode = setOf(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, BRIDGE, COLLECTION_STUB, AUGMENTED_BUILTIN_API)
-
-private class LazyJvmDiagnostics(compute: () -> Diagnostics) : Diagnostics {
-    private val delegate by lazy(LazyThreadSafetyMode.SYNCHRONIZED, compute)
-
-    override val modificationTracker: ModificationTracker
-        get() = delegate.modificationTracker
-
-    override fun all(): Collection<Diagnostic> = delegate.all()
-
-    override fun forElement(psiElement: PsiElement) = delegate.forElement(psiElement)
-
-    override fun isEmpty() = delegate.isEmpty()
-
-    override fun noSuppression() = delegate.noSuppression()
-
-    override fun iterator() = delegate.iterator()
 }
 
 interface GenerationStateEventCallback : (GenerationState) -> Unit {

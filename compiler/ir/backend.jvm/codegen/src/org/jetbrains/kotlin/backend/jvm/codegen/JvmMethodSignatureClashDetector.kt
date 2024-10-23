@@ -120,7 +120,7 @@ class JvmMethodSignatureClashDetector(
             val methods = declarationsWithSignature(predefinedSignature).filter { !it.isFakeOverride && !it.isSpecialOverride() }
             if (methods.isEmpty()) continue
             val conflictingJvmDeclarationsData = ConflictingJvmDeclarationsData(
-                classCodegen.type.internalName, null, predefinedSignature, null, methods.map(IrFunction::toIrBasedDescriptor),
+                classCodegen.type.internalName, predefinedSignature, methods.map(IrFunction::toIrBasedDescriptor),
             )
             reportJvmSignatureClash(diagnosticReporter, JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
@@ -146,9 +146,7 @@ class JvmMethodSignatureClashDetector(
         rawSignature: RawSignature,
         methods: Collection<IrDeclaration>
     ): ConflictingJvmDeclarationsData =
-        ConflictingJvmDeclarationsData(
-            classCodegen.type.internalName, null, rawSignature, null, methods.map(IrDeclaration::toIrBasedDescriptor),
-        )
+        ConflictingJvmDeclarationsData(classCodegen.type.internalName, rawSignature, methods.map(IrDeclaration::toIrBasedDescriptor))
 
     companion object {
         val SPECIAL_BRIDGES_AND_OVERRIDES = setOf(
