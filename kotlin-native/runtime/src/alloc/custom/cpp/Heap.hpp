@@ -49,8 +49,8 @@ public:
 
     template <typename T>
     void TraverseAllocatedObjects(T process) noexcept(noexcept(process(std::declval<ObjHeader*>()))) {
-        for (uint32_t blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-            fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
+        for (auto& bucket : fixedBlockPages_) {
+            bucket.TraversePages([process](auto *page) {
                 page->TraverseAllocatedBlocks([process](auto *block) {
                     process(reinterpret_cast<CustomHeapObject*>(block)->object());
                 });
