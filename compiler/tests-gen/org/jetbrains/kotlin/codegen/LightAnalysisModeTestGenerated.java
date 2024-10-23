@@ -44877,6 +44877,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/script/localCaptureTestsK2.kt");
     }
 
+    @TestMetadata("scripInstance.kt")
+    public void ignoreScripInstance() {
+      runTest("compiler/testData/codegen/box/script/scripInstance.kt");
+    }
+
     @TestMetadata("scriptNestedClassInstanceK2.kt")
     public void ignoreScriptNestedClassInstanceK2() {
       runTest("compiler/testData/codegen/box/script/scriptNestedClassInstanceK2.kt");
@@ -44903,11 +44908,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("outOuOrderDecls.kt")
     public void testOutOuOrderDecls() {
       runTest("compiler/testData/codegen/box/script/outOuOrderDecls.kt");
-    }
-
-    @TestMetadata("scripInstance.kt")
-    public void testScripInstance() {
-      runTest("compiler/testData/codegen/box/script/scripInstance.kt");
     }
 
     @TestMetadata("scriptNestedClassInstance.kt")
