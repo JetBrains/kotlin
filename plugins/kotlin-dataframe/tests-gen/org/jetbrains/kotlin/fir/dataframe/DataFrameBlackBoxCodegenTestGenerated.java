@@ -347,6 +347,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("readExcel_stringColumns.kt")
+  public void testReadExcel_stringColumns() {
+    runTest("testData/box/readExcel_stringColumns.kt");
+  }
+
+  @Test
   @TestMetadata("readJson.kt")
   public void testReadJson() {
     runTest("testData/box/readJson.kt");
