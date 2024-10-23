@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// ALLOW_KOTLIN_PACKAGE
 // MODULE: m1-common
 // FILE: common.kt
 package kotlin
