@@ -584,12 +584,16 @@ object KotlinCompilerClient {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
+        val initMessageListener = DaemonInitMessageListener()
         val outputListener = CompositeDaemonErrorReportingOutputListener(
             DaemonLastOutputLinesListener(),
-            DaemonGcAutoConfigurationProblemsListener(gcAutoConfiguration, startupAttempt)
+            DaemonGcAutoConfigurationProblemsListener(gcAutoConfiguration, startupAttempt),
+            initMessageListener,
         )
 
-        var daemonIsAlmostDead = AtomicBoolean(false)
+        // `daemonIsAlmostDead == true` implies `initMessageListener.caughtInitMessage == true` (and enables relevant diagnostic reporting)
+        // However, `initMessageListener.caughtInitMessage == true` does not imply `daemonIsAlmostDead == true`
+        val daemonIsAlmostDead = AtomicBoolean(false)
         val stdoutThread =
             thread {
                 try {
@@ -598,7 +602,7 @@ object KotlinCompilerClient {
                         .forEachLine {
                             if (Thread.currentThread().isInterrupted) return@forEachLine
                             outputListener.onOutputLine(it)
-                            if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
+                            if (initMessageListener.caughtInitMessage) {
                                 reportingTargets.report(
                                     DaemonReportCategory.DEBUG,
                                     "Received the message signalling that the daemon is ready"
@@ -609,12 +613,17 @@ object KotlinCompilerClient {
                                 reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
                             }
                         }
-                    if (isEchoRead.availablePermits() == 0) {
+                    if (!initMessageListener.caughtInitMessage) {
                         // That means the stream was fully read, but no "echo" received. The process is crashing.
                         daemonIsAlmostDead.set(true)
                     }
-                } catch (_: Throwable) {
-                    // Ignore, assuming all exceptions as interrupt exceptions
+                } catch (_: InterruptedException) {
+                    // Ignore
+                } catch (e: Throwable) {
+                    reportingTargets.report(
+                        DaemonReportCategory.EXCEPTION,
+                        "Exception occurred during daemon output processing: ${e.stackTraceToString()}"
+                    )
                 } finally {
                     daemon.inputStream.close()
                     daemon.outputStream.close()
@@ -627,7 +636,7 @@ object KotlinCompilerClient {
             val daemonStartupTimeout = CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.value?.let {
                 try {
                     it.toLong()
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     reportingTargets.report(
                         DaemonReportCategory.INFO,
                         "unable to interpret ${CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.property} property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms"
@@ -640,17 +649,19 @@ object KotlinCompilerClient {
                 return when {
                     !isProcessAlive(daemon) || daemonIsAlmostDead.get() -> {
                         /*
-                         * We know daemon crashed, but the process might be still running for a bit.
+                         * We know the daemon crashed, but the process might be still running for a bit.
                          * However, we do not want to wait indefinitely even in this case
                          */
-                        val exitCode = if (daemon.waitFor(daemonStartupTimeout, TimeUnit.MILLISECONDS)) {
-                            daemon.exitValue().toString()
+                        val processStateString = if (daemon.waitFor(daemonStartupTimeout, TimeUnit.MILLISECONDS)) {
+                            " with exit code: ${daemon.exitValue()}"
                         } else {
-                            "Unknown"
+                            ". The process may remain alive for a bit"
                         }
                         reportingTargets.report(
                             DaemonReportCategory.EXCEPTION,
-                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: $exitCode. ${outputListener.retrieveProblems().joinToString("\n")}"
+                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1}${processStateString}. ${
+                                outputListener.retrieveProblems().joinToString("\n")
+                            }"
                         )
                         false
                     }
