@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.DaemonOptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -19,6 +20,9 @@ import kotlin.test.assertEquals
 class LastSessionDaemonTest : BaseDaemonSessionTest() {
     private val logFile
         get() = workingDirectory.resolve("daemon.log")
+
+    override val defaultDaemonOptions: DaemonOptions
+        get() = super.defaultDaemonOptions.copy(autoshutdownUnusedSeconds = (DAEMON_PERIODIC_CHECK_INTERVAL_MS / 1000).toInt())
 
     @DisplayName("Already leased session can perform compilation")
     @Test

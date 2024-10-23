@@ -46,8 +46,8 @@ abstract class BaseDaemonSessionTest {
         get() = DaemonOptions(
             File(workingDirectory, "daemon-files").absolutePath,
             shutdownDelayMilliseconds = 0,
-            autoshutdownUnusedSeconds = 1,
-            autoshutdownIdleSeconds = 1,
+            autoshutdownUnusedSeconds = 10,
+            autoshutdownIdleSeconds = 10,
         )
 
     open val defaultDaemonJvmOptions
