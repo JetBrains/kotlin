@@ -100,7 +100,6 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> STATE_IN_MULTIFILE_CLASS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC = DiagnosticFactory0.create(ERROR);
@@ -183,7 +182,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, String> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> SUSPENSION_POINT_INSIDE_CRITICAL_SECTION = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactoryForDeprecation0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR =
@@ -204,9 +202,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<PsiElement> VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_INLINE_WITHOUT_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
-
-    DiagnosticFactory0<PsiElement> TYPEOF_SUSPEND_TYPE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, String> TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactoryForDeprecation0<PsiElement> ENUM_DECLARING_CLASS_DEPRECATED =

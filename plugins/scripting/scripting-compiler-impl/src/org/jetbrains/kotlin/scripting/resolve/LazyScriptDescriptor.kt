@@ -52,7 +52,6 @@ import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.toValidJvmIdentifier
 
-
 class LazyScriptDescriptor(
     val resolveSession: ResolveSession,
     containingDeclaration: DeclarationDescriptor,
@@ -295,7 +294,6 @@ class LazyScriptDescriptor(
         val constructor: ClassConstructorDescriptorImpl,
         val earlierScriptsParameter: ValueParameterDescriptor?,
         val baseClassConstructorParameters: List<ValueParameterDescriptor>,
-        val implicitReceiversParameters: List<ValueParameterDescriptor>,
         val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
     )
 
@@ -355,7 +353,6 @@ class LazyScriptDescriptor(
             constructorDescriptor,
             earlierScriptsParameter = earlierScriptsParameter,
             baseClassConstructorParameters = explicitParameters,
-            implicitReceiversParameters = implicitReceiversParameters,
             scriptProvidedPropertiesParameters = providedPropertiesParameters
         )
     }
@@ -365,9 +362,6 @@ class LazyScriptDescriptor(
 
     override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().baseClassConstructorParameters
-
-    override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
-        scriptPrimaryConstructorWithParams().implicitReceiversParameters
 
     override fun getScriptProvidedPropertiesParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().scriptProvidedPropertiesParameters
@@ -403,8 +397,4 @@ class LazyScriptDescriptor(
 
     override val annotations: Annotations
         get() = scriptClassAnnotations()
-
-    override fun isReplScript(): Boolean {
-        return isReplScript
-    }
 }

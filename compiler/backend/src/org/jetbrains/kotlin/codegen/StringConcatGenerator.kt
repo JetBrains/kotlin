@@ -45,17 +45,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
     private var justFlushed = false
 
     @JvmOverloads
-    fun genStringBuilderConstructorIfNeded(swap: Boolean = false) {
-        if (mode.isDynamic) return
-        mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
-        mv.dup()
-        mv.invokespecial("java/lang/StringBuilder", "<init>", "()V", false)
-        if (swap) {
-            mv.swap()
-        }
-    }
-
-    @JvmOverloads
     fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
         justFlushed = false
         if (mode == JvmStringConcat.INDY_WITH_CONSTANTS) {
@@ -83,10 +72,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         }
         stackValue.put(type, kotlinType, mv)
         invokeAppend(type)
-    }
-
-    fun addStringConstant(value: String) {
-        putValueOrProcessConstant(StackValue.constant(value, JAVA_STRING_TYPE, null))
     }
 
     fun invokeAppend(type: Type) {

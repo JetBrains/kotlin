@@ -49,12 +49,6 @@ fun writeKotlinMetadata(
     av.visitEnd()
 }
 
-fun writeSyntheticClassMetadata(cb: ClassBuilder, config: JvmBackendConfig, publicAbi: Boolean) {
-    writeKotlinMetadata(cb, config, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { _ ->
-        // Do nothing
-    }
-}
-
 fun generateLanguageVersionSettingsBasedMetadataFlags(languageVersionSettings: LanguageVersionSettings): Int {
     var flags = 0
     if (languageVersionSettings.isPreRelease()) {

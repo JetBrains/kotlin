@@ -49,21 +49,6 @@ public class FieldInfo {
         return new FieldInfo(owner, fieldType, fieldKotlinType, name, true);
     }
 
-    @NotNull
-    public static FieldInfo createForHiddenField(@NotNull Type owner, @NotNull Type fieldType, @NotNull String fieldName) {
-        return createForHiddenField(owner, fieldType, null, fieldName);
-    }
-
-    @NotNull
-    public static FieldInfo createForHiddenField(
-            @NotNull Type owner,
-            @NotNull Type fieldType,
-            @Nullable KotlinType fieldKotlinType,
-            @NotNull String fieldName
-    ) {
-        return new FieldInfo(owner, fieldType, fieldKotlinType, fieldName, false);
-    }
-
     private final Type fieldType;
     private final KotlinType fieldKotlinType;
     private final Type ownerType;

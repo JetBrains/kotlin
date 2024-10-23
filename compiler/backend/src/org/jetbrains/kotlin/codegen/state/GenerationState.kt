@@ -7,21 +7,15 @@ package org.jetbrains.kotlin.codegen.state
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -67,7 +61,6 @@ class GenerationState private constructor(
     val isIrBackend: Boolean,
     val ignoreErrors: Boolean,
     val diagnosticReporter: DiagnosticReporter,
-    val isIncrementalCompilation: Boolean
 ) {
     class Builder(
         private val project: Project,
@@ -124,8 +117,6 @@ class GenerationState private constructor(
         fun diagnosticReporter(v: DiagnosticReporter) =
             apply { diagnosticReporter = v }
 
-        val isIncrementalCompilation: Boolean = configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)
-
         // TODO: remove after cleanin up IDE counterpart
         private var files: List<KtFile>? = null
         private var codegenFactory: CodegenFactory? = null
@@ -140,7 +131,6 @@ class GenerationState private constructor(
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, isIrBackend = true, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
-                isIncrementalCompilation
             ).also {
                 it.files = files
                 it.codegenFactory = codegenFactory
@@ -235,28 +225,17 @@ class GenerationState private constructor(
         config.target,
         isIrBackend
     )
-    val intrinsics: IntrinsicMethods =
-        IntrinsicMethods(languageVersionSettings.apiVersion <= ApiVersion.parse(KotlinVersion.CURRENT.toString())!!)
 
-    val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()
-    val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, languageVersionSettings)
     val factory: ClassFileFactory
 
     val scriptSpecific = ForScript()
 
     // TODO: review usages and consider replace mutability with explicit passing of input and output
     class ForScript {
-        // quite a mess, this one is an input from repl interpreter
-        var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
-
-        // and the rest is an output from the codegen
         var resultFieldName: String? = null
         var resultType: KotlinType? = null
     }
-
-    val rootContext: CodegenContext<*> = RootContext(this)
 
     val jvmDefaultMode: JvmDefaultMode
         get() = config.jvmDefaultMode
@@ -320,12 +299,6 @@ class GenerationState private constructor(
 
     fun beforeCompile() {
         markUsed()
-    }
-
-    fun oldBEInitTrace(ktFiles: Collection<KtFile>) {
-        if (!isIrBackend) {
-            CodegenBinding.initTrace(this, ktFiles)
-        }
     }
 
     fun afterIndependentPart() {

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasPlatformDependentAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.util.findImplementationFromInterface
 import org.jetbrains.kotlin.util.findInterfaceImplementation
 
@@ -85,12 +85,4 @@ fun isAbstractOnJvmIgnoringActualModality(descriptor: FunctionDescriptor, jvmDef
     if (!DescriptorUtils.isInterface(descriptor.containingDeclaration)) return false
 
     return !descriptor.isJvmDefaultOrPlatformDependent(jvmDefaultMode)
-}
-
-fun <Signature> generateBridgesForFunctionDescriptorForJvm(
-    descriptor: FunctionDescriptor,
-    signature: (FunctionDescriptor) -> Signature,
-    state: GenerationState
-): Set<Bridge<Signature, DescriptorBasedFunctionHandleForJvm>> {
-    return generateBridges(DescriptorBasedFunctionHandleForJvm(descriptor, state)) { signature(it.descriptor) }
 }

@@ -13,22 +13,9 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeVariance
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.reflect.KVariance
-
-internal fun TypeSystemCommonBackendContext.createTypeOfMethodBody(typeParameter: TypeParameterMarker): MethodNode {
-    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", Type.getMethodDescriptor(K_TYPE), null, null)
-    val v = InstructionAdapter(node)
-    val argument = ReificationArgument(typeParameter.getName().asString(), false, 0)
-    ReifiedTypeInliner.putReifiedOperationMarker(ReifiedTypeInliner.OperationKind.TYPE_OF, argument, v)
-    v.aconst(null)
-    v.areturn(K_TYPE)
-    v.visitMaxs(2, 0)
-    return node
-}
 
 private inline fun InstructionAdapter.unrollArrayIfFewerThan(n: Int, limit: Int, type: Type, element: (Int) -> Unit): Array<Type> {
     if (n < limit) {

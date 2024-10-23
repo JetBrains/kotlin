@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.extractUrls
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.clientserver.TestProxy
@@ -295,12 +292,6 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             }
         }
         return classLoader
-    }
-
-    private fun KtFile.getFacadeFqName(): String? {
-        return runIf(getMemberDeclarationsToGenerate(this).isNotEmpty()) {
-            getFileClassInfoNoResolve(this).facadeClassFqName.asString()
-        }
     }
 
     private fun ClassLoader.getGeneratedClass(className: String): Class<*> {

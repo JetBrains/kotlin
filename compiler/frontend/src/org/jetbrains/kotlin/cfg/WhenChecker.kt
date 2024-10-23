@@ -281,10 +281,6 @@ object WhenChecker {
     )
 
     @JvmStatic
-    fun getClassIdForEnumSubject(expression: KtWhenExpression, context: BindingContext) =
-        getClassIdForTypeIfEnum(whenSubjectType(expression, context))
-
-    @JvmStatic
     fun getClassIdForTypeIfEnum(type: KotlinType?) =
         getClassDescriptorOfTypeIfEnum(type)?.classId
 
@@ -309,16 +305,6 @@ object WhenChecker {
         return when {
             subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
             subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
-            else -> null
-        }
-    }
-
-    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
-        val subjectVariable = expression.subjectVariable
-        val subjectExpression = expression.subjectExpression
-        return when {
-            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
-            subjectExpression != null -> context.getType(subjectExpression)
             else -> null
         }
     }

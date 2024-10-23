@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 
 object SimpleClassicTypeSystemContext : ClassicTypeSystemContext
-
-class ClassicTypeSystemContextImpl(override val builtIns: KotlinBuiltIns) : ClassicTypeSystemContext
 
 object StrictEqualityTypeChecker {
 

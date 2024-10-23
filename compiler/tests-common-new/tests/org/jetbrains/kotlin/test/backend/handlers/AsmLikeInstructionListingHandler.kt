@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.codegen.DefaultParameterValueSubstitutor
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
@@ -272,12 +271,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     }
 
     private fun getParameterName(index: Int, method: MethodNode): String {
-        val localVariableIndexOffset = when {
-            (method.access and Opcodes.ACC_STATIC) != 0 -> 0
-            method.isJvmOverloadsGenerated() -> 0
-            else -> 1
-        }
-
+        val localVariableIndexOffset = if ((method.access and Opcodes.ACC_STATIC) != 0) 0 else 1
         val actualIndex = index + localVariableIndexOffset
         val localVariables = method.localVariables
         return localVariables?.firstOrNull {
@@ -373,14 +367,6 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
             val hashCode = System.identityHashCode(label)
             return mappings.getOrPut(hashCode) { currentIndex++ }
         }
-    }
-
-    private fun MethodNode.isJvmOverloadsGenerated(): Boolean {
-        fun AnnotationNode.isJvmOverloadsGenerated() =
-            this.desc == DefaultParameterValueSubstitutor.ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS
-
-        return (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
-                || (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

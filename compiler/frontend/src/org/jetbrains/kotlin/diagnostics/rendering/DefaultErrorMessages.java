@@ -27,8 +27,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.NAME;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.of;
 
 public class DefaultErrorMessages {
@@ -373,10 +373,6 @@ public class DefaultErrorMessages {
                 "Default argument values inside expect declaration ''{0}'' are not allowed if it is actualized via typealias. " +
                 "Possible fix is to remove default argument values in members:{1}",
                 NAME, DESCRIPTORS_ON_NEWLINE_WITH_INDENT);
-
-        MAP.put(EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,
-                "Expected function source is not found, therefore it's impossible to generate default argument values declared there. " +
-                "Please add the corresponding file to compilation sources");
 
         MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module {1}{2}", DECLARATION_NAME_WITH_KIND,
                 MODULE_WITH_PLATFORM, adaptGenerics1(PlatformIncompatibilityDiagnosticRenderer.TEXT));
@@ -1274,8 +1270,6 @@ public class DefaultErrorMessages {
         MAP.put(PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS, "Return type of the private inline function can't be anonymous. It will be approximated to Any in a future release. See KT-33917 for more details");
         //Inline non locals
         MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT);
-        MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);
-        MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");
         MAP.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body");
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend function ''{0}'' should be called only from a coroutine or another suspend function", NAME);
         MAP.put(ILLEGAL_SUSPEND_PROPERTY_ACCESS, "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function", NAME);

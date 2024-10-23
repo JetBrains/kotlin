@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.codegen.AccessorForConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
@@ -86,7 +83,3 @@ fun CallableMemberDescriptor.createTypeParameterWithNewName(
     newDescriptor.setInitialized()
     return newDescriptor
 }
-
-fun isInlineClassConstructorAccessor(descriptor: FunctionDescriptor): Boolean =
-    descriptor is AccessorForConstructorDescriptor &&
-            descriptor.calleeDescriptor.constructedClass.isInlineClass()

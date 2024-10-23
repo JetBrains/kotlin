@@ -44,10 +44,5 @@ public interface ScriptDescriptor extends ClassDescriptor {
     List<ValueParameterDescriptor> getExplicitConstructorParameters();
 
     @NotNull
-    List<ValueParameterDescriptor> getImplicitReceiversParameters();
-
-    @NotNull
     List<ValueParameterDescriptor> getScriptProvidedPropertiesParameters();
-
-    boolean isReplScript();
 }

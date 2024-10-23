@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,9 +30,6 @@ public class AsmTypes {
     public static final Type VOID_WRAPPER_TYPE = getType(Void.class);
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
-
-    public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
-    public static final Type FUNCTION_ADAPTER = Type.getObjectType("kotlin/jvm/internal/FunctionAdapter");
 
     public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
     public static final Type FUNCTION_REFERENCE_IMPL = Type.getObjectType("kotlin/jvm/internal/FunctionReferenceImpl");
@@ -69,11 +65,6 @@ public class AsmTypes {
 
     public static final Type K_PROPERTY_TYPE = reflect("KProperty");
     public static final Type K_PROPERTY0_TYPE = reflect("KProperty0");
-    public static final Type K_PROPERTY1_TYPE = reflect("KProperty1");
-    public static final Type K_PROPERTY2_TYPE = reflect("KProperty2");
-    public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
-    public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
-    public static final Type K_MUTABLE_PROPERTY2_TYPE = reflect("KMutableProperty2");
 
     public static final Type K_TYPE = reflect("KType");
     public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
@@ -141,10 +132,6 @@ public class AsmTypes {
                     Arrays.asList(PROPERTY_REFERENCE_IMPL),
                     Arrays.asList(MUTABLE_PROPERTY_REFERENCE_IMPL)
             ));
-
-    public static boolean isOptimizedPropertyReferenceSupertype(@NotNull Type type) {
-        return OPTIMIZED_PROPERTY_REFERENCE_SUPERTYPES.contains(type);
-    }
 
     private AsmTypes() {
     }

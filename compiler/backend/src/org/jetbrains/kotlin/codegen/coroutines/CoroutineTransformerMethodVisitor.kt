@@ -1259,7 +1259,7 @@ private class SpillableVariable(
         get() = normalizedType == AsmTypes.OBJECT_TYPE && !isAlive
 }
 
-internal fun InstructionAdapter.generateContinuationConstructorCall(
+private fun InstructionAdapter.generateContinuationConstructorCall(
     objectTypeForState: Type?,
     methodNode: MethodNode,
     needDispatchReceiver: Boolean,

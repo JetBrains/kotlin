@@ -215,9 +215,6 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
 fun Annotated.isAnnotatedWithKotlinRepeatable(): Boolean =
     annotations.findAnnotation(StandardNames.FqNames.repeatable) != null
 
-fun Annotated.isDocumentedAnnotation(): Boolean =
-    annotations.findAnnotation(StandardNames.FqNames.mustBeDocumented) != null
-
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
     return annotations.findAnnotation(StandardNames.FqNames.retention)?.getAnnotationRetention()
 }

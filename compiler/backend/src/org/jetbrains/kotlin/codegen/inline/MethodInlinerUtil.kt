@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -86,28 +85,6 @@ internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner)
 
 internal fun AbstractInsnNode.isAloadBeforeCheckParameterIsNotNull(): Boolean =
     opcode == Opcodes.ALOAD && next?.opcode == Opcodes.LDC && next?.next?.isCheckParameterIsNotNull() == true
-
-// Interpreter, that analyzes only ALOAD_0s, which are used as continuation arguments
-
-internal class Aload0BasicValue private constructor(val indices: Set<Int>) : BasicValue(AsmTypes.OBJECT_TYPE) {
-    constructor(i: Int) : this(setOf(i)) {}
-
-    operator fun plus(other: Aload0BasicValue) = Aload0BasicValue(indices + other.indices)
-}
-
-internal class Aload0Interpreter(private val node: MethodNode) : BasicInterpreter(API_VERSION) {
-    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
-        when {
-            insn.isAload0() -> Aload0BasicValue(node.instructions.indexOf(insn))
-            insn.opcode == ALOAD -> if (value == null) null else BasicValue(value.type)
-            else -> super.copyOperation(insn, value)
-        }
-
-    override fun merge(v: BasicValue?, w: BasicValue?): BasicValue =
-        if (v is Aload0BasicValue && w is Aload0BasicValue) v + w else super.merge(v, w)
-}
-
-internal fun AbstractInsnNode.isAload0() = opcode == Opcodes.ALOAD && (this as VarInsnNode).`var` == 0
 
 internal fun analyzeMethodNodeWithInterpreter(
     node: MethodNode,

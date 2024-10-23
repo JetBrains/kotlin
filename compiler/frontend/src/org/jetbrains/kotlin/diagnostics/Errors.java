@@ -842,8 +842,6 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, ValueParameterDescriptor> ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE =
             DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND = DiagnosticFactory0.create(ERROR);
-
     DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
             DiagnosticFactory3.create(ERROR, INCOMPATIBLE_DECLARATION);
@@ -1412,8 +1410,6 @@ public interface Errors {
     DiagnosticFactory0<KtDeclaration> DECLARATION_CANT_BE_INLINED_WARNING = DiagnosticFactory0.create(WARNING, INLINE_FUN_MODIFIER);
     DiagnosticFactory0<KtDeclaration> OVERRIDE_BY_INLINE = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
     DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_IN_OVERRIDE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, CallableDescriptor> INLINE_CALL_CYCLE = DiagnosticFactory1.create(ERROR, DEFAULT);
-    DiagnosticFactory0<PsiElement> NON_LOCAL_RETURN_IN_DISABLED_INLINE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtDeclaration> INLINE_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR,
                                                                                                      DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
     DiagnosticFactory0<KtAnnotationEntry> NON_INTERNAL_PUBLISHED_API = DiagnosticFactory0.create(ERROR);

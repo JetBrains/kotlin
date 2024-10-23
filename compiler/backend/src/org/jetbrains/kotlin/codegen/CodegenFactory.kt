@@ -145,7 +145,7 @@ object DefaultCodegenFactory : CodegenFactory {
     }
 
     private fun generateMultifileClass(state: GenerationState, multifileClassFqName: FqName, files: Collection<KtFile>) {
-        state.factory.forMultifileClass(multifileClassFqName, files).generate()
+        error("")
     }
 
     fun generatePackage(
@@ -155,6 +155,6 @@ object DefaultCodegenFactory : CodegenFactory {
     ) {
         // We do not really generate package class, but use old package fqName to identify package in module-info.
         //FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
-        state.factory.forPackage(packageFqName, ktFiles).generate()
+        state.factory.forPackage(packageFqName, ktFiles)
     }
 }

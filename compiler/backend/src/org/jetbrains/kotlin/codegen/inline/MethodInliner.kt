@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Label
@@ -256,14 +254,7 @@ class MethodInliner(
                     val nullableAnyType = inliningContext.state.module.builtIns.nullableAnyType
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
-                    val argumentCount = Type.getArgumentTypes(desc).size.let {
-                        if (info is PsiExpressionLambda && info.invokeMethodDescriptor.isSuspend && it < expectedParameters.size) {
-                            // Inlining suspend lambda into a function that takes a non-suspend lambda.
-                            // In the IR backend, this cannot happen as inline lambdas are not lowered.
-                            addFakeContinuationMarker(this)
-                            it + 1
-                        } else it
-                    }
+                    val argumentCount = Type.getArgumentTypes(desc).size
                     assert(argumentCount == expectedParameters.size && argumentCount == expectedKotlinParameters.size) {
                         "inconsistent lambda arguments: $argumentCount on stack, ${expectedParameters.size} expected, " +
                                 "${expectedKotlinParameters.size} Kotlin types"
@@ -611,8 +602,6 @@ class MethodInliner(
 
         preprocessNodeBeforeInline(processingNode, returnLabels)
 
-        replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
-
         val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this))
         val instructions = processingNode.instructions
         val toDelete = markObsoleteInstruction(instructions, sources)
@@ -780,120 +769,6 @@ class MethodInliner(
                     sources[index]?.peek(0).functionalArgument is LambdaInfo || sources[index]?.peek(1).functionalArgument is LambdaInfo
                 else -> false
             }
-        }
-    }
-
-    // Replace ALOAD 0
-    // with
-    //   ICONST fakeContinuationMarker
-    //   INVOKESTATIC InlineMarker.mark
-    //   ACONST_NULL
-    // iff this ALOAD 0 is continuation and one of the following conditions is met
-    //   1) it is passed as the last parameter to suspending function
-    //   2) it is ASTORE'd right after
-    //   3) it is passed to invoke of lambda
-    private fun replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode: MethodNode) {
-        // in ir backend inline suspend lambdas do not use ALOAD 0 to get continuation, since they are generated as static functions
-        // instead they get continuation from parameter.
-        val lambdaInfo = inliningContext.lambdaInfo ?: return
-        if (lambdaInfo !is PsiExpressionLambda || !lambdaInfo.invokeMethodDescriptor.isSuspend) return
-        val sources = analyzeMethodNodeWithInterpreter(processingNode, Aload0Interpreter(processingNode))
-        val cfg = ControlFlowGraph.build(processingNode)
-        val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && (it as? VarInsnNode)?.`var` == 0 }
-
-        val visited = hashSetOf<AbstractInsnNode>()
-        fun findMeaningfulSuccs(insn: AbstractInsnNode): Collection<AbstractInsnNode> {
-            if (!visited.add(insn)) return emptySet()
-            val res = hashSetOf<AbstractInsnNode>()
-            for (succIndex in cfg.getSuccessorsIndices(insn)) {
-                val succ = processingNode.instructions[succIndex]
-                if (succ.isMeaningful) res.add(succ)
-                else res.addAll(findMeaningfulSuccs(succ))
-            }
-            return res
-        }
-
-        // After inlining suspendCoroutineUninterceptedOrReturn there will be suspension point, which is not a MethodInsnNode.
-        // So, it is incorrect to expect MethodInsnNodes only
-        val suspensionPoints = processingNode.instructions.asSequence()
-            .filter { isBeforeSuspendMarker(it) }
-            .flatMap { findMeaningfulSuccs(it).asSequence() }
-            .filter { it is MethodInsnNode }
-
-        val toReplace = hashSetOf<AbstractInsnNode>()
-        for (suspensionPoint in suspensionPoints) {
-            assert(suspensionPoint is MethodInsnNode) {
-                "suspensionPoint shall be MethodInsnNode, but instead $suspensionPoint"
-            }
-            suspensionPoint as MethodInsnNode
-            assert(Type.getReturnType(suspensionPoint.desc) == OBJECT_TYPE) {
-                "suspensionPoint shall return $OBJECT_TYPE, but returns ${Type.getReturnType(suspensionPoint.desc)}"
-            }
-            val frame = sources[processingNode.instructions.indexOf(suspensionPoint)] ?: continue
-            val paramTypes = Type.getArgumentTypes(suspensionPoint.desc)
-            if (suspensionPoint.name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) {
-                // Expected pattern here:
-                //     ALOAD 0
-                //     (ICONST or other integers creating instruction)
-                //     (ACONST_NULL or ALOAD)
-                //     ICONST_0
-                //     INVOKESTATIC InlineMarker.mark
-                //     INVOKE* suspendingFunction$default(..., Continuation;ILjava/lang/Object)Ljava/lang/Object;
-                assert(paramTypes.size >= 3) {
-                    "${suspensionPoint.name}${suspensionPoint.desc} shall have 3+ parameters"
-                }
-            } else {
-                // Expected pattern here:
-                //     ALOAD 0
-                //     ICONST_0
-                //     INVOKESTATIC InlineMarker.mark
-                //     INVOKE* suspendingFunction(..., Continuation;)Ljava/lang/Object;
-                assert(paramTypes.isNotEmpty()) {
-                    "${suspensionPoint.name}${suspensionPoint.desc} shall have 1+ parameters"
-                }
-            }
-
-            for ((index, param) in paramTypes.reversed().withIndex()) {
-                if (param != CONTINUATION_ASM_TYPE && param != OBJECT_TYPE) continue
-                val sourceIndices = (frame.getStack(frame.stackSize - index - 1) as? Aload0BasicValue)?.indices ?: continue
-                for (sourceIndex in sourceIndices) {
-                    val src = processingNode.instructions[sourceIndex]
-                    if (src in aload0s) {
-                        toReplace.add(src)
-                    }
-                }
-            }
-        }
-
-        // Expected pattern here:
-        //     ALOAD 0
-        //     ASTORE N
-        // This pattern may occur after multiple inlines
-        // Note, that this is not a suspension point, thus we check it separately
-        toReplace.addAll(aload0s.filter { it.next?.opcode == Opcodes.ASTORE })
-        // Expected pattern here:
-        //     ALOAD 0
-        //     INVOKEINTERFACE kotlin/jvm/functions/FunctionN.invoke (...,Ljava/lang/Object;)Ljava/lang/Object;
-        toReplace.addAll(aload0s.filter { isLambdaCall(it.next) })
-        replaceContinuationsWithFakeOnes(toReplace, processingNode)
-    }
-
-    private fun isLambdaCall(invoke: AbstractInsnNode?): Boolean {
-        if (invoke?.opcode != Opcodes.INVOKEINTERFACE) return false
-        invoke as MethodInsnNode
-        if (!invoke.owner.startsWith("kotlin/jvm/functions/Function")) return false
-        if (invoke.name != "invoke") return false
-        if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
-        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == OBJECT_TYPE }
-    }
-
-    private fun replaceContinuationsWithFakeOnes(
-        continuations: Collection<AbstractInsnNode>,
-        node: MethodNode
-    ) {
-        for (toReplace in continuations) {
-            insertNodeBefore(createFakeContinuationMethodNodeForInline(), node, toReplace)
-            node.instructions.remove(toReplace)
         }
     }
 

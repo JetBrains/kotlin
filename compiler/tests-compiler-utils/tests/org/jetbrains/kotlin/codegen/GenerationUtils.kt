@@ -150,7 +150,6 @@ object GenerationUtils {
         ).build()
 
         generationState.beforeCompile()
-        generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,

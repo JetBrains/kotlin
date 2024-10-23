@@ -289,7 +289,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     (this is StackValue.Local || isCapturedInlineParameter())
 
         private fun StackValue.isCapturedInlineParameter(): Boolean {
-            val field = if (this is StackValue.FieldForSharedVar) receiver else this
+            val field = this
             return field is StackValue.Field && field.descriptor is ParameterDescriptor &&
                     InlineUtil.isInlineParameter(field.descriptor) &&
                     InlineUtil.isInline(field.descriptor.containingDeclaration)

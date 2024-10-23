@@ -118,10 +118,6 @@ open class BranchedValue(
             condJump(condition).condJump(label, iv, jumpIfFalse)
         }
 
-        fun loopJump(condition: StackValue, label: Label, jumpIfFalse: Boolean, iv: InstructionAdapter) {
-            condJump(condition).loopJump(label, iv, jumpIfFalse)
-        }
-
         fun condJump(condition: StackValue): CondJump =
             CondJump(
                 condition as? BranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ),

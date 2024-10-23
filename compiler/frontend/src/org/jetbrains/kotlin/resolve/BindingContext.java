@@ -10,18 +10,15 @@ import com.google.common.collect.Multimap;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import kotlin.Pair;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
-import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange;
 import org.jetbrains.kotlin.contracts.model.Computation;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
@@ -119,8 +116,6 @@ public interface BindingContext {
     WritableSlice<KtExpression, LeakingThisDescriptor> LEAKING_THIS = Slices.createSimpleSlice();
     WritableSlice<KtParameter, Boolean> UNUSED_MAIN_PARAMETER = Slices.createSimpleSlice();
 
-    WritableSlice<VariableDescriptor, Boolean> UNUSED_DELEGATED_PROPERTY_OPERATOR_PARAMETER = Slices.createSimpleSlice();
-
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
      */
@@ -141,7 +136,6 @@ public interface BindingContext {
     WritableSlice<Call, PartialCallContainer> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, BasicCallResolutionContext> PARTIAL_CALL_RESOLUTION_CONTEXT = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, Call> DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL = new BasicWritableSlice<>(DO_NOTHING);
-    WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
     WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtElement, Call> CALL = new BasicWritableSlice<>(DO_NOTHING);
 
@@ -152,8 +146,6 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
-
-    WritableSlice<Call, FunctionDescriptor> ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL = Slices.createSimpleSlice();
 
     WritableSlice<VariableAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
 
@@ -183,8 +175,6 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, Boolean> VARIABLE_REASSIGNMENT =  new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
-
-    WritableSlice<Pair<AnonymousFunctionDescriptor, Integer>, Boolean> SUSPEND_LAMBDA_PARAMETER_USED = Slices.createSimpleSlice();
 
     WritableSlice<KtBinaryExpression, Boolean> MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE = Slices.createSimpleSlice();
 

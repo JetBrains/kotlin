@@ -426,12 +426,6 @@ object KotlinToJVMBytecodeCompiler {
 
         state.beforeCompile()
 
-        if (sourceFiles != null) {
-            state.oldBEInitTrace(sourceFiles)
-        }
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
         performanceManager?.notifyIRLoweringStarted()
         return codegenFactory.invokeLowerings(state, backendInput)
             .also { performanceManager?.notifyIRLoweringFinished() }

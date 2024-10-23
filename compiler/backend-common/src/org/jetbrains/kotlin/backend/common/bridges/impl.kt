@@ -16,23 +16,10 @@
 
 package org.jetbrains.kotlin.backend.common.bridges
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
-import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.util.findImplementationFromInterface
 import org.jetbrains.kotlin.util.findInterfaceImplementation
-
-fun <Signature> generateBridgesForFunctionDescriptor(
-    descriptor: FunctionDescriptor,
-    signature: (FunctionDescriptor) -> Signature
-): Set<Bridge<Signature, DescriptorBasedFunctionHandle>> {
-    return generateBridges(DescriptorBasedFunctionHandle(descriptor), { signature(it.descriptor) })
-}
 
 /**
  * An implementation of FunctionHandle based on descriptors.

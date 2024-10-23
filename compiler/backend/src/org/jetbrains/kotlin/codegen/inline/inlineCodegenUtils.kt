@@ -6,38 +6,19 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.InsnSequence
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.asSequence
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
-import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
-import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.coroutines.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass
-import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.*
@@ -126,51 +107,6 @@ internal fun findVirtualFileImprecise(state: GenerationState, internalClassName:
     //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
     // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
     return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
-}
-
-internal fun getInlineName(codegenContext: CodegenContext<*>, typeMapper: KotlinTypeMapper): String =
-    getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper)
-
-private fun getInlineName(
-    codegenContext: CodegenContext<*>,
-    currentDescriptor: DeclarationDescriptor,
-    typeMapper: KotlinTypeMapper
-): String {
-    when (currentDescriptor) {
-        is PackageFragmentDescriptor -> {
-            val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
-
-            val implementationOwnerInternalName: String? =
-                if (file == null) {
-                    CodegenContextUtil.getImplementationOwnerClassType(codegenContext)?.internalName
-                } else JvmFileClassUtil.getFileClassInternalName(file)
-
-            if (implementationOwnerInternalName == null) {
-                val contextDescriptor = codegenContext.contextDescriptor
-                throw RuntimeException(
-                    "Couldn't find declaration for " +
-                            contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
-                            "; context: " + codegenContext
-                )
-            }
-
-            return implementationOwnerInternalName
-        }
-        is ClassifierDescriptor -> {
-            return typeMapper.mapClass(currentDescriptor).internalName
-        }
-        is FunctionDescriptor -> {
-            val descriptor = typeMapper.bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, currentDescriptor)
-            if (descriptor != null) {
-                return typeMapper.mapClass(descriptor).internalName
-            }
-        }
-    }
-
-    //TODO: add suffix for special case
-    val suffix = if (currentDescriptor.name.isSpecial) "" else currentDescriptor.name.asString()
-
-    return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper) + "$" + suffix
 }
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
@@ -284,13 +220,6 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
 }
 
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
-
-internal fun createFakeContinuationMethodNodeForInline(): MethodNode {
-    val methodNode = createEmptyMethodNode()
-    val v = InstructionAdapter(methodNode)
-    addFakeContinuationMarker(v)
-    return methodNode
-}
 
 internal fun firstLabelInChain(node: LabelNode): LabelNode {
     var curNode = node
@@ -502,8 +431,6 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     return INLINE_MARKER_CLASS_NAME == node.owner && name == node.name
 }
 
-internal fun isFinallyMarkerRequired(context: MethodContext) = context.isInlineMethodContext || context is InlineLambdaContext
-
 fun getConstant(ins: AbstractInsnNode): Int {
     val opcode = ins.opcode
     return when (opcode) {
@@ -540,13 +467,6 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     )
 }
 
-internal fun addUnboxInlineClassMarkersIfNeeded(v: InstructionAdapter, descriptor: CallableDescriptor, typeMapper: KotlinTypeMapper) {
-    val inlineClass = (descriptor as? FunctionDescriptor)?.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper)
-    if (inlineClass != null) {
-        generateResumePathUnboxing(v, inlineClass, typeMapper)
-    }
-}
-
 fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase) {
     addBeforeUnboxInlineClassMarker(v)
     StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v, typeMapper)
@@ -571,30 +491,6 @@ fun addSuspendLambdaParameterMarker(v: InstructionAdapter) {
 }
 
 fun isSuspendLambdaParameterMarker(insn: AbstractInsnNode): Boolean = isSuspendMarker(insn, INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER)
-
-internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall: ResolvedCall<*>) {
-    val wrapperDescriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-    val unsubstitutedDescriptor = wrapperDescriptor.unwrapInitialDescriptorForSuspendFunction()
-
-    val typeSubstitutor = TypeSubstitutor.create(
-        unsubstitutedDescriptor.typeParameters
-            .withIndex()
-            .associateBy({ it.value.typeConstructor }) {
-                TypeProjectionImpl(resolvedCall.typeArguments[wrapperDescriptor.typeParameters[it.index]] ?: return)
-            }
-    )
-
-    val substitutedDescriptor = unsubstitutedDescriptor.substitute(typeSubstitutor) ?: return
-    val returnType = substitutedDescriptor.returnType ?: return
-
-    if (KotlinBuiltIns.isUnit(returnType)) {
-        addReturnsUnitMarker(v)
-    }
-}
-
-fun addReturnsUnitMarker(v: InstructionAdapter) {
-    v.emitInlineMarker(INLINE_MARKER_RETURNS_UNIT)
-}
 
 fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean, inlinable: Boolean = false) {
     val marker = when {
