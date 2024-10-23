@@ -74,8 +74,7 @@ ALWAYS_INLINE uint32_t FixedBlockPage::BucketSize(uint32_t blockSize) noexcept {
     return bucketSize;
 }
 
-ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate(uint32_t blockSize) noexcept {
-    RuntimeAssert(blockSize == blockSize_, "Trying to allocate block of size %d in the FixedBlockPage with block size %d", blockSize, blockSize_);
+ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate() noexcept {
     uint32_t next = nextFree_.first;
     if (next < nextFree_.last) {
         nextFree_.first += blockSize_;

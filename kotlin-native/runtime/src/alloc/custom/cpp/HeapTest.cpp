@@ -49,7 +49,7 @@ TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
         uint32_t bucket = FixedBlockPage::BucketIndex(blocks);
         uint32_t bucketSize = FixedBlockPage::BucketSize(blocks);
         pages[blocks] = heap.GetFixedBlockPage(bucket, bucketSize, finalizerQueue);
-        uint8_t* obj = pages[blocks]->TryAllocate(bucketSize);
+        uint8_t* obj = pages[blocks]->TryAllocate();
         size_t size = installType(obj, &fakeTypes[blocks]);
         EXPECT_EQ(size, static_cast<size_t>(blocks * 8));
         mark(obj); // to make the page survive a sweep

@@ -58,7 +58,7 @@ public:
     void Destroy() noexcept;
 
     // Tries to allocate in current page, returns null if no free block in page
-    uint8_t* TryAllocate(uint32_t blockSize) noexcept;
+    uint8_t* TryAllocate() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
