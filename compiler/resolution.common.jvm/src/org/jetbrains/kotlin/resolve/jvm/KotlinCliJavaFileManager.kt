@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -24,5 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 
 interface KotlinCliJavaFileManager : JavaFileManager {
     fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass?
+    fun findClasses(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): Array<PsiClass>
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
 }

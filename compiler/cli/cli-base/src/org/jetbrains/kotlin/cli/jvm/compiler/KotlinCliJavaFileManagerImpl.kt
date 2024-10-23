@@ -170,12 +170,6 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     // this method is called from IDEA to resolve dependencies in Java code
     // which supposedly shouldn't have errors so the dependencies exist in general
     override fun findClass(qName: String, scope: GlobalSearchScope): PsiClass? {
-        // String cannot be reliably converted to ClassId because we don't know where the package name ends and class names begin.
-        // For example, if qName is "a.b.c.d.e", we should either look for a top level class "e" in the package "a.b.c.d",
-        // or, for example, for a nested class with the relative qualified name "c.d.e" in the package "a.b".
-        // Below, we start by looking for the top level class "e" in the package "a.b.c.d" first, then for the class "d.e" in the package
-        // "a.b.c", and so on, until we find something. Most classes are top level, so most of the times the search ends quickly
-
         forEachClassId(qName) { classId ->
             findPsiClass(classId, scope)?.let { return it }
         }
@@ -183,6 +177,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return null
     }
 
+    /**
+     * [String] cannot be reliably converted to [ClassId] because we don't know where the package name ends and class names begin. For
+     * example, if [fqName] is "a.b.c.d.e", we should either look for a top level class "e" in the package "a.b.c.d", or, for example, for a
+     * nested class with the relative qualified name "c.d.e" in the package "a.b".
+     *
+     * With [forEachClassId], we start by looking for the top level class "e" in the package "a.b.c.d" first, then for the class "d.e" in
+     * the package "a.b.c", and so on, until we find something. Most classes are top level, so most of the time the search ends quickly.
+     */
     private inline fun forEachClassId(fqName: String, block: (ClassId) -> Unit) {
         var classId = fqName.toSafeTopLevelClassId() ?: return
 
@@ -204,7 +206,26 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
             val result = ArrayList<PsiClass>(1)
             forEachClassId(qName) { classId ->
-                val relativeClassName = classId.relativeClassName.asString()
+                collectClasses(result, classId, scope)
+
+            if (result.isNotEmpty()) {
+                return@tryMeasureSideTime result.toTypedArray()
+            }
+        }
+
+        PsiClass.EMPTY_ARRAY
+    }
+
+    /**
+     * This is an optimized variant of [findClasses] which doesn't need to iterate through multiple class IDs with [forEachClassId].
+     */
+    override fun findClasses(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): Array<PsiClass> =
+        buildList(1) {
+            collectClasses(this, request.classId, searchScope)
+        }.toTypedArray()
+
+    private fun collectClasses(result: MutableList<PsiClass>, classId: ClassId, scope: GlobalSearchScope) {
+        val relativeClassName = classId.relativeClassName.asString()
 
                 // Search java sources first. For build tools, it makes sense to build new files passing all the
                 // class files for the previous build on the class path.
@@ -214,25 +235,23 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                         ?.findPsiClassInVirtualFile(relativeClassName)
                 )
 
-                index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
-                    val psiClass =
-                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
-                            ?.takeIf { it in scope }
-                            ?.findPsiClassInVirtualFile(relativeClassName)
-                    if (psiClass != null) {
-                        result.add(psiClass)
-                    }
-                    // traverse all
-                    true
-                }
+        index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
+            val psiClass =
+                findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                    ?.takeIf { it in scope }
+                    ?.findPsiClassInVirtualFile(relativeClassName)
 
-                if (result.isNotEmpty()) {
-                    return@tryMeasureSideTime result.toTypedArray()
-                }
+            // We need to make sure that the PSI class's package actually matches the requested class ID. As we grab the virtual file for
+            // the PSI class simply based on the requested package and the directory structure, it doesn't ensure that the PSI class's
+            // declared package matches the requested package. When the class's package and file location don't match, this problem can
+            // occur, and the following check prevents it.
+            if (psiClass != null && psiClass.qualifiedName == classId.asSingleFqName().asString()) {
+                result.add(psiClass)
             }
-
-            PsiClass.EMPTY_ARRAY
+            // traverse all
+            true
         }
+    }
 
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false

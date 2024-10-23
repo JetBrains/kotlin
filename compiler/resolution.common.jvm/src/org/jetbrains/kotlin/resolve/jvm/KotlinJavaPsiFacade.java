@@ -210,7 +210,14 @@ public class KotlinJavaPsiFacade implements Disposable {
         for (KotlinPsiElementFinderWrapper finder : finders()) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-            for (PsiClass psiClass : finder.findClasses(qualifiedName, scope)) {
+            PsiClass[] psiClasses;
+            if (finder instanceof CliFinder) {
+                psiClasses = ((CliFinder) finder).findClasses(request, scope);
+            } else {
+                psiClasses = finder.findClasses(qualifiedName, scope);
+            }
+
+            for (PsiClass psiClass : psiClasses) {
                 JavaClass javaClass = tryCreateJavaClass(classId, psiClass);
                 if (javaClass != null) javaClasses.add(javaClass);
             }
@@ -541,6 +548,10 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Override
         public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
             return javaFileManager.findClasses(qualifiedName, scope);
+        }
+
+        public PsiClass[] findClasses(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
+            return javaFileManager.findClasses(request, scope);
         }
 
         @Nullable
