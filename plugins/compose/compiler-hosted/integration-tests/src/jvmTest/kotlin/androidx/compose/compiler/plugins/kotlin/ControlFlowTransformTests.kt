@@ -2539,4 +2539,33 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    @Test
+    fun testComposablePropertyDelegate() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            object MaterialTheme {
+                val background: Int = 0
+            }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            import kotlin.reflect.KProperty
+
+            fun interface ThemeToken<T> {
+
+                @Composable
+                @ReadOnlyComposable
+                fun MaterialTheme.resolve(): T
+            
+                @Composable
+                @ReadOnlyComposable
+                operator fun getValue(thisRef: Any?, property: KProperty<*>) = MaterialTheme.resolve()
+            }
+            
+            @get:Composable
+            val background by ThemeToken { background }
+        """
+    )
 }
