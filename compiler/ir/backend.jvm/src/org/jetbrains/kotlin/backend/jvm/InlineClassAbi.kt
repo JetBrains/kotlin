@@ -97,7 +97,7 @@ object InlineClassAbi {
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
         hashSuffix(
             useOldMangleRules,
-            irFunction.fullValueParameterList.map { it.type },
+            irFunction.nonDispatchParameters.map { it.type },
             irFunction.returnType.takeIf { mangleReturnTypes && irFunction.hasMangledReturnType },
             irFunction.isSuspend
         )
