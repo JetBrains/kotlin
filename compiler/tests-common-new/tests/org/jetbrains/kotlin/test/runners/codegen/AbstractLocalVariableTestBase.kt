@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForDebugTestsSourceProvider
 
 abstract class AbstractLocalVariableTestBase<R : ResultingArtifact.FrontendOutput<R>>(
     val targetFrontend: FrontendKind<R>,
@@ -28,9 +29,7 @@ abstract class AbstractLocalVariableTestBase<R : ResultingArtifact.FrontendOutpu
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter) {
-            commonServicesConfigurationForDebugTest(it)
-        }
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForDebugTestsSourceProvider)
 
         commonHandlersForCodegenTest()
         configureJvmArtifactsHandlersStep {

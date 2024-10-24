@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
@@ -32,9 +33,10 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    commonServicesConfiguration: (FrontendKind<*>) -> Unit = { commonServicesConfigurationForCodegenTest(it) }
+    additionalSourceProvider: Constructor<AdditionalSourceProvider>? = ::MainFunctionForBlackBoxTestsSourceProvider,
 ) {
-    commonServicesConfiguration(targetFrontend)
+    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
+    additionalSourceProvider?.let { useAdditionalSourceProviders(it) }
     facadeStep(frontendFacade)
     classicFrontendHandlersStep()
     firHandlersStep()
@@ -76,20 +78,6 @@ fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodege
 
     useAdditionalSourceProviders(
         ::CodegenHelpersSourceFilesProvider,
-    )
-}
-
-fun TestConfigurationBuilder.commonServicesConfigurationForCodegenTest(targetFrontend: FrontendKind<*>) {
-    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
-    useAdditionalSourceProviders(
-        ::MainFunctionForBlackBoxTestsSourceProvider
-    )
-}
-
-fun TestConfigurationBuilder.commonServicesConfigurationForDebugTest(targetFrontend: FrontendKind<*>) {
-    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
-    useAdditionalSourceProviders(
-        ::MainFunctionForDebugTestsSourceProvider
     )
 }
 
