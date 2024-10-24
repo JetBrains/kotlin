@@ -47,7 +47,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 it.bindSession(this)
             }
 
-            registerCliCompilerOnlyComponents()
+            registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)
             registerLibrarySessionComponents(context)
 
@@ -102,7 +102,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             moduleData.bindSession(this@session)
             sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
-            registerCliCompilerOnlyComponents()
+            registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
             registerSourceSessionComponents(context)
