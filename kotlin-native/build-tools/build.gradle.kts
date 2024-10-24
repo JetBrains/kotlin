@@ -11,7 +11,7 @@ buildscript {
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {
-        classpath("com.google.code.gson:gson:2.8.9")
+        classpath(libs.gson)
     }
 }
 
@@ -37,16 +37,13 @@ dependencies {
     // To build Konan Gradle plugin
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 
-    val versionProperties = Properties()
-    project.rootProject.projectDir.resolve("../../gradle/versions.properties").inputStream().use { propInput ->
-        versionProperties.load(propInput)
-    }
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation(libs.gson)
+
+    val gsonVersion = libs.versions.gson.get()
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(versionProperties["versions.gson"] as String)
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
+                useVersion(gsonVersion)
             }
         }
     }

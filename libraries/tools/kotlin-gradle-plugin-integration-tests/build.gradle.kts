@@ -95,8 +95,10 @@ dependencies {
     testRuntimeOnly(project(":kotlin-gradle-plugin-test-utils-embeddable")) { isTransitive = false }
 
     // AGP classes for buildScriptInjection's
-    testCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
     testCompileOnly(libs.android.gradle.plugin.gradle) { isTransitive = false }
+    testCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
+    testCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
+    testCompileOnly(libs.android.gradle.plugin.builder.model) { isTransitive = false }
 
 
     testImplementation(project(path = ":examples:annotation-processor-example"))

@@ -195,8 +195,8 @@ dependencies {
         exclude(group = "*")
     }
 
-    commonCompileOnly("org.apache.commons:commons-compress:1.26.0")
-    embedded("org.apache.commons:commons-compress:1.26.0")
+    commonCompileOnly("org.apache.commons:commons-compress:1.27.1")
+    embedded("org.apache.commons:commons-compress:1.27.1")
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
@@ -499,7 +499,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
         implementation("com.android.tools.build:gradle:8.7.1")
         implementation("com.android.tools.build:gradle-api:8.7.1")
-        compileOnly("com.android.tools:common:30.2.1")
+        compileOnly("com.android.tools:common:31.7.1")
         implementation(gradleKotlinDsl())
         implementation(project(":kotlin-gradle-plugin-tcs-android"))
         implementation(project(":kotlin-tooling-metadata"))

@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
+            <version>4.0.0-beta-1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
