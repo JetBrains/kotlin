@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
@@ -15,7 +16,7 @@ import java.io.File
 
 internal fun getClasspathChanges(
     classpath: List<File>,
-    changedFiles: ChangedFiles.Known,
+    changedFiles: ChangedFiles.DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,

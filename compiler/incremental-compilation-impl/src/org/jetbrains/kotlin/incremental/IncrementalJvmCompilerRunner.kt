@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
+import org.jetbrains.kotlin.daemon.common.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
@@ -134,7 +136,7 @@ open class IncrementalJvmCompilerRunner(
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJvmCachesManager,
-        changedFiles: ChangedFiles.Known,
+        changedFiles: DeterminableFiles.Known,
         args: K2JVMCompilerArguments,
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot>
@@ -181,7 +183,7 @@ open class IncrementalJvmCompilerRunner(
 
     private fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
-        changedFiles: ChangedFiles.Known,
+        changedFiles: DeterminableFiles.Known,
         args: K2JVMCompilerArguments,
         messageCollector: MessageCollector,
         abiSnapshots: Map<String, AbiSnapshot>,
@@ -303,7 +305,7 @@ open class IncrementalJvmCompilerRunner(
         )
     }
 
-    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
+    private fun processChangedJava(changedFiles: DeterminableFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
         val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
 
         for (javaFile in javaFiles) {
@@ -344,7 +346,7 @@ open class IncrementalJvmCompilerRunner(
         }
     }
 
-    private fun processLookupSymbolsForAndroidLayouts(changedFiles: ChangedFiles.Known): Collection<LookupSymbol> {
+    private fun processLookupSymbolsForAndroidLayouts(changedFiles: DeterminableFiles.Known): Collection<LookupSymbol> {
         val result = mutableListOf<LookupSymbol>()
         for (file in changedFiles.modified + changedFiles.removed) {
             if (file.extension.lowercase() != "xml") continue

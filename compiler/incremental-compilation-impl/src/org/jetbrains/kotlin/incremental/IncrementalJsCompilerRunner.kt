@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
@@ -101,7 +102,7 @@ class IncrementalJsCompilerRunner(
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
-        changedFiles: ChangedFiles.Known,
+        changedFiles: ChangedFiles.DeterminableFiles.Known,
         args: K2JSCompilerArguments,
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now

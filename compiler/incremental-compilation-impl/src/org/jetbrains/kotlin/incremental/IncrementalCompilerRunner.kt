@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
+import org.jetbrains.kotlin.daemon.common.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
@@ -198,6 +200,8 @@ abstract class IncrementalCompilerRunner<
             null
         }
 
+        changedFiles as DeterminableFiles?
+
         return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
             val icContext = createIncrementalCompilationContext(
                 fileLocations,
@@ -211,8 +215,8 @@ abstract class IncrementalCompilerRunner<
 
             fun compile(): ICResult {
                 // Step 1: Get changed files
-                val knownChangedFiles: ChangedFiles.Known = try {
-                    getChangedFiles(changedFiles as ChangedFiles.Known?, allSourceFiles, caches)
+                val knownChangedFiles: DeterminableFiles.Known = try {
+                    getChangedFiles(changedFiles, allSourceFiles, caches)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
@@ -326,26 +330,29 @@ abstract class IncrementalCompilerRunner<
     }
 
     private fun getChangedFiles(
-        changedFiles: ChangedFiles.Known?,
+        changedFiles: DeterminableFiles?,
         allSourceFiles: List<File>,
         caches: CacheManager,
-    ): ChangedFiles.Known {
-        return when {
-            changedFiles == null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-            changedFiles.forDependencies -> {
-                val moreChangedFiles = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-                ChangedFiles.Known(
-                    modified = changedFiles.modified + moreChangedFiles.modified,
-                    removed = changedFiles.removed + moreChangedFiles.removed
-                )
-            }
-            else -> changedFiles
+    ): DeterminableFiles.Known {
+        return when (changedFiles) {
+            null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            is DeterminableFiles.ToBeComputed -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            is DeterminableFiles.Known -> {
+                if (changedFiles.forDependencies) {
+                    val moreChangedFiles = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+                    DeterminableFiles.Known(
+                        modified = changedFiles.modified + moreChangedFiles.modified,
+                        removed = changedFiles.removed + moreChangedFiles.removed
+                    )
+                } else {
+                    changedFiles
+                }
         }
     }
 
     protected abstract fun calculateSourcesToCompile(
         caches: CacheManager,
-        changedFiles: ChangedFiles.Known,
+        changedFiles: DeterminableFiles.Known,
         args: Args,
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot>,
@@ -356,7 +363,7 @@ abstract class IncrementalCompilerRunner<
         reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): Map<String, AbiSnapshot> = emptyMap()
 
-    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
+    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: DeterminableFiles.Known) {
         dirtyFiles.add(changedFiles.modified, "was modified since last time")
         dirtyFiles.add(changedFiles.removed, "was removed since last time")
 
@@ -611,7 +618,7 @@ abstract class IncrementalCompilerRunner<
 
     protected fun getRemovedClassesChanges(
         caches: IncrementalCachesManager<*>,
-        changedFiles: ChangedFiles.Known,
+        changedFiles: DeterminableFiles.Known,
     ): DirtyData {
         val removedClasses = HashSet<String>()
         val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }

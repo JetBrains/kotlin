@@ -51,19 +51,17 @@ open class CompilationOptions(
 }
 
 class IncrementalCompilationOptions(
-    val areFileChangesKnown: Boolean,
-    val modifiedFiles: List<File>?,
-    val deletedFiles: List<File>?,
+    val sourceChanges: ChangedFiles,
     val classpathChanges: ClasspathChanges,
     val workingDir: File,
     compilerMode: CompilerMode,
     targetPlatform: CompileService.TargetPlatform,
     /** @See [ReportCategory] */
-        reportCategories: Array<Int>,
+    reportCategories: Array<Int>,
     /** @See [ReportSeverity] */
-        reportSeverity: Int,
+    reportSeverity: Int,
     /** @See [CompilationResultCategory]] */
-        requestedCompilationResults: Array<Int>,
+    requestedCompilationResults: Array<Int>,
     val usePreciseJavaTracking: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
@@ -86,14 +84,73 @@ class IncrementalCompilationOptions(
     requestedCompilationResults,
     kotlinScriptExtensions
 ) {
+    constructor(
+        areFileChangesKnown: Boolean,
+        modifiedFiles: List<File>?,
+        deletedFiles: List<File>?,
+        classpathChanges: ClasspathChanges,
+        workingDir: File,
+        compilerMode: CompilerMode,
+        targetPlatform: CompileService.TargetPlatform,
+        /** @See [ReportCategory] */
+        reportCategories: Array<Int>,
+        /** @See [ReportSeverity] */
+        reportSeverity: Int,
+        /** @See [CompilationResultCategory]] */
+        requestedCompilationResults: Array<Int>,
+        usePreciseJavaTracking: Boolean,
+        /**
+         * Directories that should be cleared when IC decides to rebuild
+         */
+        outputFiles: Collection<File>? = null,
+        multiModuleICSettings: MultiModuleICSettings? = null,
+        modulesInfo: IncrementalModuleInfo? = null,
+
+        // rootProjectDir and buildDir are used to resolve relative paths
+        rootProjectDir: File?,
+        buildDir: File?,
+
+        kotlinScriptExtensions: Array<String>? = null,
+        withAbiSnapshot: Boolean = false,
+        preciseCompilationResultsBackup: Boolean = false,
+        keepIncrementalCompilationCachesInMemory: Boolean = false,
+    ) : this(
+        if (areFileChangesKnown) ChangedFiles.DeterminableFiles.Known(modifiedFiles!!, deletedFiles!!) else ChangedFiles.Unknown(),
+        classpathChanges,
+        workingDir,
+        compilerMode,
+        targetPlatform,
+        reportCategories,
+        reportSeverity,
+        requestedCompilationResults,
+        usePreciseJavaTracking,
+        outputFiles,
+        multiModuleICSettings,
+        modulesInfo,
+        rootProjectDir,
+        buildDir,
+        kotlinScriptExtensions,
+        withAbiSnapshot,
+        preciseCompilationResultsBackup,
+        keepIncrementalCompilationCachesInMemory,
+    )
+
     companion object {
         const val serialVersionUID: Long = 4
     }
 
     override fun toString(): String {
+        val (modifiedFiles, deletedFiles) = when (sourceChanges) {
+            is ChangedFiles.DeterminableFiles.Known -> {
+                listOf(sourceChanges.modified, sourceChanges.removed)
+            }
+            else -> {
+                listOf(null, null)
+            }
+        }
         return "IncrementalCompilationOptions(" +
                 "super=${super.toString()}, " +
-                "areFileChangesKnown=$areFileChangesKnown, " +
+                "areFileChangesKnown=${sourceChanges::class.simpleName}, " +
                 "modifiedFiles=$modifiedFiles, " +
                 "deletedFiles=$deletedFiles, " +
                 "classpathChanges=${classpathChanges::class.simpleName}, " +

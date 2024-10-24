@@ -25,6 +25,7 @@ sourceSets {
 
 publish()
 
+testsJar()
 runtimeJar()
 sourcesJar()
 javadocJar()

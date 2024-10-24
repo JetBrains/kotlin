@@ -22,6 +22,7 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.daemon.common.ChangedFiles
 import java.io.File
 import java.util.*
 
@@ -34,7 +35,7 @@ internal class ChangedJavaFilesProcessor(
     val allChangedSymbols: Collection<LookupSymbol>
         get() = allSymbols
 
-    fun process(filesDiff: ChangedFiles.Known): ChangesEither {
+    fun process(filesDiff: ChangedFiles.DeterminableFiles.Known): ChangesEither {
         val modifiedJava = filesDiff.modified.filter(File::isJavaFile)
         val removedJava = filesDiff.removed.filter(File::isJavaFile)
 
