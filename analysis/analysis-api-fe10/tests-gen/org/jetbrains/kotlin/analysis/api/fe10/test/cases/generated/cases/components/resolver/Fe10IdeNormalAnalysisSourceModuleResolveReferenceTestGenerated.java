@@ -377,6 +377,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("defaultStarImportsInLibrarySource.kt")
+  public void testDefaultStarImportsInLibrarySource() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/defaultStarImportsInLibrarySource.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedConstructor.kt")
   public void testDelegatedConstructor() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructor.kt");
