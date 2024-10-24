@@ -304,7 +304,7 @@ val IrClass.isSyntheticSingleton: Boolean
     get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
             || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             || origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
-            && primaryConstructor!!.valueParameters.isEmpty()
+            && primaryConstructor!!.parameters.isEmpty()
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
