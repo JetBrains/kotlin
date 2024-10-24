@@ -159,14 +159,15 @@ class MemoizedInlineClassReplacements(
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
-                // The function's name will be mangled, so preserve the old receiver name.
-                this, name = Name.identifier(function.extensionReceiverName(context.config))
-            )
-            contextReceiverParametersCount = function.contextReceiverParametersCount
-            valueParameters = function.valueParameters.map { parameter ->
-                parameter.copyTo(this, defaultValue = null).also {
+            parameters += function.parameters.map { parameter ->
+                parameter.copyTo(
+                    this,
+                    defaultValue = null,
+                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                        // The function's name will be mangled, so preserve the old receiver name.
+                        Name.identifier(function.extensionReceiverName(context.config))
+                    } else parameter.name
+                ).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
