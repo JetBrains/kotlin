@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.backend.ir.*
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -23,7 +25,9 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.model.FrontendFacade
+import org.jetbrains.kotlin.test.model.FrontendKinds
 
 abstract class AbstractFirBlackBoxCodegenTestBase(
     val parser: FirParser
@@ -38,17 +42,16 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
         super.configure(builder)
         with(builder) {
             configureFirParser(parser)
-            defaultDirectives {
-                // See KT-44152
-                -USE_PSI_CLASS_FILES_READING
-            }
 
             configureFirHandlersStep {
                 useHandlersAtFirst(
                     ::FirDumpHandler,
-                    ::FirScopeDumpHandler,
                     ::FirCfgDumpHandler,
                     ::FirResolvedTypesVerifier,
+                )
+
+                useHandlersAtFirst(
+                    ::FirScopeDumpHandler,
                 )
             }
 
@@ -59,15 +62,23 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                 )
             }
 
-            useAfterAnalysisCheckers(
-                ::FirMetaInfoDiffSuppressor
-            )
-
+            configureBlackBoxTestSettings()
             configureDumpHandlersForCodegenTest()
-
-            baseFirBlackBoxCodegenTestDirectivesConfiguration()
         }
     }
+}
+
+fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
+    defaultDirectives {
+        // See KT-44152
+        -USE_PSI_CLASS_FILES_READING
+    }
+
+    useAfterAnalysisCheckers(
+        ::FirMetaInfoDiffSuppressor
+    )
+
+    baseFirBlackBoxCodegenTestDirectivesConfiguration()
 }
 
 fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {

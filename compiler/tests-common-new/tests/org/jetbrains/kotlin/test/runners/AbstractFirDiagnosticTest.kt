@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -40,10 +37,7 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -55,11 +49,17 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
+fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
+    baseFirDiagnosticTestConfiguration()
+    enableLazyResolvePhaseChecking()
+    configureFirParser(parser)
+
+    useAdditionalService(::LibraryProvider)
+}
+
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
-        baseFirDiagnosticTestConfiguration()
-        enableLazyResolvePhaseChecking()
-        configureFirParser(parser)
+        configureDiagnosticTest(parser)
     }
 }
 
@@ -112,17 +112,24 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         baseFirDiagnosticTestConfiguration()
 
         facadeStep(::Fir2IrResultsConverter)
-        irHandlersStep {
-            useHandlers(
-                ::IrDiagnosticsHandler
-            )
-        }
-
         useAdditionalService(::LibraryProvider)
 
         @OptIn(TestInfrastructureInternals::class)
-        useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
+        useModuleStructureTransformers(PlatformModuleProvider)
+
+        configureIrActualizerDiagnosticsTest()
     }
+}
+
+fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
+    irHandlersStep {
+        useHandlers(
+            ::IrDiagnosticsHandler
+        )
+    }
+
+    @OptIn(TestInfrastructureInternals::class)
+    useModuleStructureTransformers(DuplicateFileNameChecker)
 }
 
 open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)
@@ -160,6 +167,10 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         dependencyKind = DependencyKind.Source
     }
 
+    defaultDirectives {
+        LANGUAGE + "+EnableDfaWarningsInK2"
+    }
+
     enableMetaInfoHandler()
 
     useConfigurators(
@@ -187,7 +198,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
+    configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
+}
 
+fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
+    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
+) {
     forTestsMatching("compiler/testData/diagnostics/*") {
         configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
     }
@@ -277,10 +293,6 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         defaultDirectives {
             LANGUAGE + "+MultiPlatformProjects"
         }
-    }
-
-    defaultDirectives {
-        LANGUAGE + "+EnableDfaWarningsInK2"
     }
 }
 
