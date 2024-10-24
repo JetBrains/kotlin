@@ -25,8 +25,8 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
-            for (parameter in function.valueParameters) {
-                val lambda = expression.getValueArgument(parameter.indexInOldValueParameters)?.unwrapInlineLambda() ?: continue
+            for (parameter in function.parameters) {
+                val lambda = expression.arguments[parameter.indexInParameters]?.unwrapInlineLambda() ?: continue
                 visitInlineLambda(lambda, function, parameter, data!!)
             }
         }
