@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -150,7 +151,8 @@ fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: 
         parentAsClass.isSingleFieldValueClass -> includeInline
         parentAsClass.isMultiFieldValueClass -> includeMFVC
         else -> false
-    }) || fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } || (this is IrConstructor && when {
+    }) || nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) }
+            || (this is IrConstructor && when {
         constructedClass.isSingleFieldValueClass -> includeInline
         constructedClass.isMultiFieldValueClass -> includeMFVC
         else -> false
