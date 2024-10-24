@@ -484,6 +484,12 @@ private val autoboxPhase = createFileLoweringPhase(
         prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
+private val eraseGenericCallsReturnTypesPhase = createFileLoweringPhase(
+        name = "EraseGenericCallsReturnTypesPhase",
+        lowering = ::GenericCallsReturnTypeEraser,
+        prerequisite = setOf(autoboxPhase)
+)
+
 private val constructorsLoweringPhase = createFileLoweringPhase(
     name = "ConstructorsLowering",
     lowering = ::ConstructorsLowering,
@@ -640,6 +646,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         exportInternalAbiPhase.takeIf { context.config.produce.isCache },
         useInternalAbiPhase,
         autoboxPhase,
+        eraseGenericCallsReturnTypesPhase,
         constructorsLoweringPhase,
 )
 
