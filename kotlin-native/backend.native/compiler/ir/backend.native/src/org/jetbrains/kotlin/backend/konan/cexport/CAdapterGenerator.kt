@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -51,10 +52,18 @@ private enum class Direction {
     C_TO_KOTLIN
 }
 
+private val hiddenFromObjCAnnotation = FqName("kotlin.native.HiddenFromObjC")
+
+private fun hasHiddenAnnotation(descriptor: Annotated): Boolean {
+    return descriptor.annotations.hasAnnotation(hiddenFromObjCAnnotation)
+}
+
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
     if (descriptor.isSuspend)
+        return false
+    if (hasHiddenAnnotation(descriptor))
         return false
     return !descriptor.typeParameters.any()
 }
@@ -70,6 +79,7 @@ private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
     if (!descriptor.declaredTypeParameters.isEmpty()) return false
     // Do not export inline classes for now. TODO: add proper support.
     if (descriptor.isInlined()) return false
+    if (hasHiddenAnnotation(descriptor)) return false
 
     return true
 }
