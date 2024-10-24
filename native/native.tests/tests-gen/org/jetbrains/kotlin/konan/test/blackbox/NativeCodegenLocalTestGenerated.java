@@ -1175,6 +1175,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("remove_redundant_type_checks.kt")
+    public void testRemove_redundant_type_checks() {
+      runTest("native/native.tests/testData/codegen/fileCheck/remove_redundant_type_checks.kt");
+    }
+
+    @Test
     @TestMetadata("replace_invoke_with_call.kt")
     public void testReplace_invoke_with_call() {
       runTest("native/native.tests/testData/codegen/fileCheck/replace_invoke_with_call.kt");
