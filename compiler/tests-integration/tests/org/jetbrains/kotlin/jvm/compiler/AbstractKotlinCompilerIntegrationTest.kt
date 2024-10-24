@@ -34,8 +34,6 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         return File(testDataDirectory, "${getTestName(true)}.$extension")
     }
 
-    class JavaCompilationError : AssertionError("Java files are not compiled successfully")
-
     /**
      * Compiles all sources (.java and .kt) under the directory named [libraryName] to [destination].
      * [destination] should be either a path to the directory under [tmpdir], or a path to the resulting .jar file (also under [tmpdir]).
@@ -47,7 +45,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         libraryName: String,
         destination: File = File(tmpdir, "$libraryName.jar"),
         additionalOptions: List<String> = emptyList(),
-        compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Boolean = { _, javaFiles, outputDir ->
+        compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Unit = { _, javaFiles, outputDir ->
             KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
         },
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
@@ -69,9 +67,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (javaFiles.isNotEmpty()) {
             outputDir.mkdirs()
-            if (!compileJava(sourceDir, javaFiles, outputDir)) {
-                throw JavaCompilationError()
-            }
+            compileJava(sourceDir, javaFiles, outputDir)
         }
 
         if (isJar) {

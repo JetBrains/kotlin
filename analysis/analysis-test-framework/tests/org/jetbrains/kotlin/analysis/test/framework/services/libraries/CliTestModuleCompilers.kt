@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.sourceFileProvider
@@ -182,7 +181,6 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
             extraOptions = buildList<String> {
                 addAll(options)
             },
-            assertions = JUnit5Assertions,
             useJava11 = true,
             extraClasspath = extraClasspath,
         )

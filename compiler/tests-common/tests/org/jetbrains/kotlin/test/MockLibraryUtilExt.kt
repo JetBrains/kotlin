@@ -52,31 +52,4 @@ object MockLibraryUtilExt {
             JUnit4Assertions
         )
     }
-
-    @JvmStatic
-    @JvmOverloads
-    fun compileLibraryToJar(
-        sourcesPath: String,
-        contentDir: File,
-        jarName: String,
-        addSources: Boolean = false,
-        allowKotlinSources: Boolean = true,
-        extraOptions: List<String> = emptyList(),
-        extraClasspath: List<String> = emptyList(),
-        useJava11: Boolean = false
-    ): File {
-        return MockLibraryUtil.compileLibraryToJar(
-            sourcesPath,
-            contentDir,
-            jarName,
-            addSources,
-            allowKotlinSources,
-            extraOptions,
-            extraClasspath,
-            extraModulepath = listOf(),
-            useJava11,
-            JUnit4Assertions
-        )
-    }
-
 }

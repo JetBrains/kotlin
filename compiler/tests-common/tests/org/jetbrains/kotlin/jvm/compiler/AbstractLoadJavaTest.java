@@ -280,12 +280,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
                 FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), librarySrc),
                 libraryOut,
                 getTestRootDisposable(),
-                null,
                 configuration -> {
                     configureIrFir(configuration);
                     return Unit.INSTANCE;
                 }
-        );
+        ).assertSuccessful();
 
         CompilerConfiguration configuration =
                 newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind(), getClasspath(libraryOut), Collections.emptyList());

@@ -22,11 +22,10 @@ class FeaturesTest : TestCase() {
             runBlocking {
                 val srcDir = File(TEST_DATA_DIR, "samWithReceiver")
                 val destDir = File(tempDir, "dest").also { it.mkdir() }
-                val javaRes = KotlinTestUtils.compileJavaFiles(
+                KotlinTestUtils.compileJavaFiles(
                     srcDir.listFiles { file: File -> file.extension == "java" }!!.toMutableList(),
                     mutableListOf("-d", destDir.absolutePath)
                 )
-                assertTrue(javaRes)
 
                 val baseConfig = ScriptCompilationConfiguration {
                     fileExtension("samwr.kts")

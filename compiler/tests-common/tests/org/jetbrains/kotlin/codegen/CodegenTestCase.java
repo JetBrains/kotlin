@@ -456,15 +456,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             boolean isJava9Module = false; // No Java modules in legacy tests
             List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory, isJava9Module);
 
-            try {
-                runJavacTask(
-                        findJavaSourcesInDirectory(javaSourceDir).stream().map(File::new).collect(Collectors.toList()),
-                        finalJavacOptions
-                );
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
+            runJavacTask(
+                    findJavaSourcesInDirectory(javaSourceDir).stream().map(File::new).collect(Collectors.toList()),
+                    finalJavacOptions
+            );
         }
         if (kotlinOut != null) {
             postCompile(kotlinOut, javaClassesOutputDirectory);
@@ -475,7 +470,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     }
 
-    protected void runJavacTask(@NotNull Collection<File> files, @NotNull List<String> options) throws IOException {
+    protected void runJavacTask(@NotNull Collection<File> files, @NotNull List<String> options) {
         KotlinTestUtils.compileJavaFiles(files, options);
     }
 

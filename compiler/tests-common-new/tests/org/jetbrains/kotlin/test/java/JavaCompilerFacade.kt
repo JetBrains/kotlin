@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.compileJavaFilesExternally
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -43,7 +42,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         )
 
         val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
-        compileJavaFiles(testServices.assertions, module, javaFiles, finalJavacOptions)
+        compileJavaFiles(module, javaFiles, finalJavacOptions)
     }
 
     companion object {
@@ -65,16 +64,12 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             }
         }
 
-        fun compileJavaFiles(assertions: Assertions, module: TestModule, files: List<File>, javacOptions: List<String>) {
+        fun compileJavaFiles(module: TestModule, files: List<File>, javacOptions: List<String>) {
             val jdkHome = getExplicitJdkHome(module)
-            if (jdkHome == null) {
-                org.jetbrains.kotlin.test.compileJavaFiles(files, javacOptions, javaErrorFile = null, assertions)
-            } else {
-                val success = compileJavaFilesExternally(files, javacOptions, jdkHome)
-                if (!success) {
-                    throw AssertionError("Java files are not compiled successfully")
-                }
-            }
+            val result =
+                if (jdkHome == null) org.jetbrains.kotlin.test.compileJavaFiles(files, javacOptions)
+                else compileJavaFilesExternally(files, javacOptions, jdkHome)
+            result.assertSuccessful()
         }
 
         fun getExplicitJdkHome(module: TestModule): File? {
