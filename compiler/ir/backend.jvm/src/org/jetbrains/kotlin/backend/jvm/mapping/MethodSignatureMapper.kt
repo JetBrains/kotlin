@@ -240,23 +240,18 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         sw.writeParametersStart()
 
-        for (i in 0 until function.contextReceiverParametersCount) {
-            val contextReceiver = function.valueParameters[i]
-            writeParameter(sw, false, contextReceiver.type, function)
-        }
-
-        val receiverParameter = function.extensionReceiverParameter
-        if (receiverParameter != null) {
-            writeParameter(sw, false, receiverParameter.type, function)
-        }
-
-        for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
-            val parameter = function.valueParameters[i]
+        for (parameter in function.nonDispatchParameters) {
             val type =
-                if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
+                if (parameter.kind == IrParameterKind.Regular && shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, parameter.isSkippedInGenericSignature, type, function, materialized)
+            writeParameter(
+                sw = sw,
+                isSkippedInGenericSignature = parameter.kind == IrParameterKind.Regular && parameter.isSkippedInGenericSignature,
+                type = type,
+                function = function,
+                materialized = parameter.kind == IrParameterKind.Regular && materialized
+            )
         }
 
         sw.writeReturnType()
