@@ -300,7 +300,7 @@ class MemoizedMultiFieldValueClassReplacements(
 
     override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = when {
         constructor.constructedClass.isMultiFieldValueClass -> null
-        constructor.valueParameters.none { it.type.needsMfvcFlattening() } -> null
+        constructor.parameters.none { it.type.needsMfvcFlattening() } -> null
         else -> getReplacementForRegularClassConstructorImpl(constructor)
     }
 
