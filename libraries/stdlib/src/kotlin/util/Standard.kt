@@ -85,6 +85,22 @@ public inline fun <T> T.apply(block: T.() -> Unit): T {
 }
 
 /**
+ * If the predicate is true, calls the specified function [block] with `this` value as its receiver. Always returns `this` value.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#apply).
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> T.applyIf(predicate: Boolean, block: T.() -> Unit): T = if (predicate) apply(block) else this
+
+/**
+ * Unless the predicate is true, calls the specified function [block] with `this` value as its receiver. Always returns `this` value.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#apply).
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> T.applyUnless(predicate: Boolean, block: T.() -> Unit): T = if (!predicate) apply(block) else this
+
+/**
  * Calls the specified function [block] with `this` value as its argument and returns `this` value.
  *
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#also).
@@ -98,6 +114,22 @@ public inline fun <T> T.also(block: (T) -> Unit): T {
     block(this)
     return this
 }
+
+/**
+ * If the predicate is true, calls the specified function [block] with `this` value as its receiver. Always returns `this` value.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#apply).
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> T.alsoIf(predicate: Boolean, block: (T) -> Unit): T = if (predicate) also(block) else this
+
+/**
+ * Unless the predicate is true, calls the specified function [block] with `this` value as its receiver. Always returns `this` value.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#apply).
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> T.alsoUnless(predicate: Boolean, block: (T) -> Unit): T = if (!predicate) also(block) else this
 
 /**
  * Calls the specified function [block] with `this` value as its argument and returns its result.
