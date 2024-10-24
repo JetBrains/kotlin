@@ -25,14 +25,16 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
         when (request.callable) {
             is SirFunction -> {
                 add(
-                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
-                        "$name(${args.joinToString()})"
+                    request.descriptor(typeNamer).createFunctionBridge {
+                        if (selfParameter != null && extensionReceiverParameter != null) {
+                            "__${selfParameter.name}.run { __${extensionReceiverParameter.name}.${kotlinFqName.last()}(${args.joinToString()}) }"
+                        } else "$name(${args.joinToString()})"
                     }
                 )
             }
             is SirGetter -> {
                 add(
-                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
+                    request.descriptor(typeNamer).createFunctionBridge {
                         require(args.isEmpty()) { "Received a getter $name with ${args.size} parameters instead of no parameters, aborting" }
                         name
                     }
@@ -40,7 +42,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
             }
             is SirSetter -> {
                 add(
-                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
+                    request.descriptor(typeNamer).createFunctionBridge {
                         require(args.size == 1) { "Received a setter $name with ${args.size} parameters instead of a single one, aborting" }
                         "$name = ${args.single()}"
                     }
@@ -48,12 +50,12 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
             }
             is SirInit -> {
                 add(
-                    request.allocationDescriptor(typeNamer).createFunctionBridge { name, args ->
+                    request.allocationDescriptor(typeNamer).createFunctionBridge {
                         "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
                     }
                 )
                 add(
-                    request.initializationDescriptor(typeNamer).createFunctionBridge { name, args ->
+                    request.initializationDescriptor(typeNamer).createFunctionBridge {
                         "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
                     }
                 )
@@ -102,7 +104,7 @@ private class BridgeFunctionDescriptor(
     val allParameters
         get() = listOfNotNull(selfParameter, extensionReceiverParameter) + parameters
 
-    val kotlinName
+    val name
         get() = if (selfParameter != null) {
             "__${selfParameter.name}.${kotlinFqName.last()}"
         } else if (extensionReceiverParameter != null) { // TODO both
@@ -110,6 +112,9 @@ private class BridgeFunctionDescriptor(
         } else {
             kotlinFqName.joinToString(separator = ".")
         }
+
+    val args
+        get() = parameters.map { "__${it.name}" }
 }
 
 private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
@@ -185,7 +190,7 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
 
 private fun BridgeFunctionDescriptor.createKotlinBridge(
     typeNamer: SirTypeNamer,
-    buildCallSite: (name: String, args: List<String>) -> String,
+    buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
     add("public fun $kotlinBridgeName(${allParameters.filter { it.isRenderable }.joinToString { "${it.name}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
@@ -193,7 +198,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     allParameters.forEach {
         add("${indent}val __${it.name} = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name)}")
     }
-    val callSite = buildCallSite(kotlinName, parameters.map { "__${it.name}" })
+    val callSite = buildCallSite()
     if (returnType.swiftType.isVoid) {
         add("${indent}$callSite")
     } else {
@@ -212,7 +217,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 private fun BridgeFunctionDescriptor.cDeclaration() =
     "${returnType.cType.repr} ${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
 
-private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (name: String, args: List<String>) -> String) =
+private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunctionDescriptor.() -> String) =
     FunctionBridge(
         KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop)),
         CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))

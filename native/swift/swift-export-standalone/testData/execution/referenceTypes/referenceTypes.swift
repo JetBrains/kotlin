@@ -98,6 +98,12 @@ func primitiveMethod() throws {
     try assertEquals(actual: one.x, expected: 2)
 }
 
+func memberExtension() throws {
+    let foo = Foo(x: 1)
+    let sum = foo.memberExt(receiver: 10)
+    try assertEquals(actual: sum, expected: 11)
+}
+
 func objectGetter() throws {
     let one = Foo(x: 1)
     let two = Bar(foo: one)
@@ -416,6 +422,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "primitiveGetter", method: withAutorelease(primitiveGetter)),
             TestCase(name: "primitiveSetter", method: withAutorelease(primitiveSetter)),
             TestCase(name: "primitiveMethod", method: withAutorelease(primitiveMethod)),
+            TestCase(name: "memberExtension", method: withAutorelease(memberExtension)),
             TestCase(name: "objectGetter", method: withAutorelease(objectGetter)),
             TestCase(name: "objectSetter", method: withAutorelease(objectSetter)),
             TestCase(name: "objectMethod", method: withAutorelease(objectMethod)),

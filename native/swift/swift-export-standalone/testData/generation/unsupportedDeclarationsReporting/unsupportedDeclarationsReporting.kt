@@ -11,8 +11,6 @@ class Foo {
 
     val Unit.extPropMember
         get() = Unit
-
-    fun Unit.extFunMember() {}
 }
 
 interface MyInterface

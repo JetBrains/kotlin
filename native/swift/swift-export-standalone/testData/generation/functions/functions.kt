@@ -68,7 +68,9 @@ fun foo(arg1: Foo): Unit = TODO()
 fun foo(arg1: Foo?): Unit = TODO()
 
 // FILE: extension_fun.kt
-class Foo
+class Foo {
+    fun String.ext(): Unit = TODO()
+}
 fun Int.foo(): Unit = TODO()
 fun Int?.foo(): Unit = TODO()
 fun Foo.foo(): Unit = TODO()
