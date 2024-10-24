@@ -241,10 +241,11 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // Properties in annotation classes become abstract methods named after the property.
     (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
     // Multi-field value class accessors must always be added.
-    accessor.isGetter && accessor.contextReceiverParametersCount == 0 && accessor.extensionReceiverParameter == null &&
+    accessor.isGetter &&
+            accessor.nonDispatchParameters.isEmpty() &&
             accessor.returnType.needsMfvcFlattening() -> true
-    accessor.isSetter && accessor.contextReceiverParametersCount == 0 && accessor.extensionReceiverParameter == null &&
-            accessor.valueParameters.single().type.needsMfvcFlattening() -> true
+    accessor.isSetter &&
+            accessor.nonDispatchParameters.singleOrNull()?.type?.needsMfvcFlattening() == true -> true
     // @JvmField properties have no getters/setters
     resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
     // We do not produce default accessors for private fields
