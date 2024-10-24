@@ -164,11 +164,12 @@ class JvmCachedDeclarations(
             copyAttributes(target)
             copyTypeParametersFrom(target)
             copyAnnotationsFrom(target)
+            parameters = target.nonDispatchParameters.map { it.copyTo(this) }
             if (!isStatic) {
-                dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
+                parameters = listOfNotNull(
+                    thisReceiver?.copyTo(this, type = defaultType, kind = IrParameterKind.DispatchReceiver)
+                ) + parameters
             }
-            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
-            valueParameters = target.valueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {
