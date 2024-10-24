@@ -1,4 +1,2 @@
 KtNameReferenceExpression(68,76): 'Sequence'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Sequence'.>
+  null

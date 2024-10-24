@@ -105,12 +105,16 @@ val firCachesFactoryForCliMode: FirCachesFactory
     get() = FirThreadUnsafeCachesFactory
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCliCompilerOnlyComponents() {
+fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: LanguageVersionSettings) {
     register(FirCachesFactory::class, firCachesFactoryForCliMode)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
     register(FirModulePrivateVisibilityChecker::class, FirModulePrivateVisibilityChecker.Standard(this))
+    register(
+        FirLookupDefaultStarImportsInSourcesSettingHolder::class,
+        FirLookupDefaultStarImportsInSourcesSettingHolder.createDefault(languageVersionSettings)
+    )
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))

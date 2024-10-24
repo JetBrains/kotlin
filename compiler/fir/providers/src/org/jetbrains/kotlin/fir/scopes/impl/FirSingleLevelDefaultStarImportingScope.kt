@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
+import org.jetbrains.kotlin.fir.scopes.lookupDefaultStarImportsInSources
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +28,7 @@ class FirSingleLevelDefaultStarImportingScope(
     private val additionalExcludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(
     session, scopeSession,
-    lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage),
+    lookupInFir = session.lookupDefaultStarImportsInSources,
     additionalExcludedImportNames + session.defaultImportProvider.excludedImports
 ), DefaultStarImportingScopeMarker {
     // TODO: put languageVersionSettings into FirSession?

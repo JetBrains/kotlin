@@ -78,9 +78,10 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         val moduleData = LLFirModuleData(session)
 
         return session.apply {
-            registerIdeComponents(project)
+            val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT /*TODO*/
+            registerIdeComponents(project, languageVersionSettings)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
-            registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
+            registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT)
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerModuleData(moduleData)
 
