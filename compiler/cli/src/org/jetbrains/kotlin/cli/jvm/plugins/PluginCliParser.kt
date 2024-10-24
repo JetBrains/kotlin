@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.plugins
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
@@ -35,13 +37,15 @@ object PluginCliParser {
         pluginClasspaths: Array<String>?,
         pluginOptions: Array<String>?,
         pluginConfigurations: Array<String>?,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable
     ): ExitCode {
         return loadPluginsSafe(
             pluginClasspaths?.toList() ?: emptyList(),
             pluginOptions?.toList() ?: emptyList(),
             pluginConfigurations?.toList() ?: emptyList(),
-            configuration
+            configuration,
+            rootDisposable
         )
     }
 
@@ -50,12 +54,13 @@ object PluginCliParser {
         pluginClasspaths: Collection<String>,
         pluginOptions: Collection<String>,
         pluginConfigurations: Collection<String>,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         try {
-            loadPluginsLegacyStyle(pluginClasspaths, pluginOptions, configuration)
-            loadPluginsModernStyle(pluginConfigurations, configuration)
+            loadPluginsLegacyStyle(pluginClasspaths, pluginOptions, configuration, rootDisposable)
+            loadPluginsModernStyle(pluginConfigurations, configuration, rootDisposable)
             return ExitCode.OK
         } catch (e: PluginProcessingException) {
             messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
@@ -78,10 +83,13 @@ object PluginCliParser {
     )
 
     @Suppress("DEPRECATION")
-    private fun loadRegisteredPluginsInfo(rawPluginConfigurations: Iterable<String>): List<RegisteredPluginInfo> {
+    private fun loadRegisteredPluginsInfo(rawPluginConfigurations: Iterable<String>, rootDisposable: Disposable): List<RegisteredPluginInfo> {
         val pluginConfigurations = extractPluginClasspathAndOptions(rawPluginConfigurations)
         val pluginInfos = pluginConfigurations.map { pluginConfiguration ->
             val classLoader = createClassLoader(pluginConfiguration.classpath)
+            Disposer.register(rootDisposable) {
+                classLoader.close()
+            }
             val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
             val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
 
@@ -114,9 +122,9 @@ object PluginCliParser {
         return pluginInfos
     }
 
-    private fun loadPluginsModernStyle(rawPluginConfigurations: Iterable<String>?, configuration: CompilerConfiguration) {
+    private fun loadPluginsModernStyle(rawPluginConfigurations: Iterable<String>?, configuration: CompilerConfiguration, rootDisposable: Disposable) {
         if (rawPluginConfigurations == null) return
-        val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations)
+        val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations, rootDisposable)
         for (pluginInfo in pluginInfos) {
             pluginInfo.componentRegistrar?.let {
                 @Suppress("DEPRECATION")
@@ -135,9 +143,13 @@ object PluginCliParser {
     private fun loadPluginsLegacyStyle(
         pluginClasspaths: Iterable<String>?,
         pluginOptions: Iterable<String>?,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable
     ) {
         val classLoader = createClassLoader(pluginClasspaths ?: emptyList())
+        Disposer.register(rootDisposable) {
+            classLoader.close()
+        }
         val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.utils.PathUtil
@@ -20,9 +21,19 @@ fun loadScriptingPlugin(configuration: CompilerConfiguration) {
             KOTLIN_SCRIPTING_JVM_JAR
         ).map { File(libPath, it).path }
     }
-    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
+    val rootDisposable = Disposer.newDisposable()
+    try {
+        PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration, rootDisposable)
+    } finally {
+        Disposer.dispose(rootDisposable)
+    }
 }
 
 fun loadScriptingPlugin(configuration: CompilerConfiguration, pluginClasspath: Collection<String>) {
-    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
+    val rootDisposable = Disposer.newDisposable()
+    try {
+        PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration, rootDisposable)
+    } finally {
+        Disposer.dispose(rootDisposable)
+    }
 }
