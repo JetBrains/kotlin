@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -51,7 +52,7 @@ class BasicClassInfoTest {
         }
         val classesDir = tmpDir.newFolder()
 
-        KotlinTestUtils.compileJavaFiles(listOf(sourceFile), listOf("-d", classesDir.path))
+        compileJavaFiles(listOf(sourceFile), listOf("-d", classesDir.path)).assertSuccessful()
 
         return classesDir.walk().toList()
             .filter { it.isFile }

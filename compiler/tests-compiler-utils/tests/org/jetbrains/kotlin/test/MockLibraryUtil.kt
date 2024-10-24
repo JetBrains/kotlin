@@ -58,7 +58,6 @@ object MockLibraryUtil {
             extraClasspath,
             extraModulepath,
             useJava11,
-            assertions
         )
     }
 
@@ -96,7 +95,6 @@ object MockLibraryUtil {
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
         useJava11: Boolean = false,
-        assertions: Assertions
     ): File {
         assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava11 || extraModulepath.isEmpty())
 
@@ -136,14 +134,8 @@ object MockLibraryUtil {
                 add("utf8")
             }
 
-            val compile =
-                if (useJava11) ::compileJavaFilesExternallyWithJava11
-                else { files, opts -> compileJavaFiles(files, opts, assertions = assertions) }
-
-            val success = compile(javaFiles, options)
-            if (!success) {
-                throw AssertionError("Java files are not compiled successfully")
-            }
+            val jdkHome = if (useJava11) KtTestUtil.getJdk11Home() else null
+            compileJavaFiles(javaFiles, options, jdkHome).assertSuccessful()
         }
 
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })

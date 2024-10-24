@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
@@ -17,14 +16,36 @@ import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.ToolProvider
 
+sealed class JavaCompilationResult {
+    object Success : JavaCompilationResult()
+
+    sealed class Failure : JavaCompilationResult() {
+        abstract val diagnostics: String
+        abstract val presentableDiagnostics: String
+
+        class InProcess(diagnosticCollector: DiagnosticCollector<JavaFileObject>) : Failure() {
+            override val diagnostics: String = errorsToString(diagnosticCollector, humanReadable = false)
+            override val presentableDiagnostics: String = errorsToString(diagnosticCollector, humanReadable = true)
+        }
+
+        class External(override val diagnostics: String) : Failure() {
+            override val presentableDiagnostics: String = diagnostics
+        }
+    }
+
+    fun assertSuccessful() {
+        if (this is Failure) throw JavaCompilationError(presentableDiagnostics)
+    }
+}
+
+class JavaCompilationError(errors: String) : AssertionError("Java files are not compiled successfully\n$errors")
+
 @JvmOverloads
-@Throws(IOException::class)
-fun compileJavaFiles(
-    files: Collection<File>,
-    options: List<String?>?,
-    javaErrorFile: File? = null,
-    assertions: Assertions,
-): Boolean {
+fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: File? = null): JavaCompilationResult {
+    if (jdkHome != null) {
+        return compileJavaFilesExternally(files, options, jdkHome)
+    }
+
     val javaCompiler = ToolProvider.getSystemJavaCompiler()
     val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")).use { fileManager ->
@@ -37,21 +58,15 @@ fun compileJavaFiles(
             null,
             javaFileObjectsFromFiles
         )
-        val success = task.call() // do NOT inline this variable, call() should complete before errorsToString()
-        if (javaErrorFile == null || !javaErrorFile.exists()) {
-            assertions.assertTrue(success) { errorsToString(diagnosticCollector, true) }
-        } else {
-            assertions.assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false))
+        return when (task.call()) {
+            true -> JavaCompilationResult.Success
+            false -> JavaCompilationResult.Failure.InProcess(diagnosticCollector)
+            null -> error("JavaCompiler call() returned null")
         }
-        return success
     }
 }
 
-fun compileJavaFilesExternallyWithJava11(files: Collection<File>, options: List<String?>): Boolean {
-    return compileJavaFilesExternally(files, options, KtTestUtil.getJdk11Home())
-}
-
-fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, jdkHome: File): Boolean {
+private fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, jdkHome: File): JavaCompilationResult {
     val command: MutableList<String?> = ArrayList()
     command.add(File(jdkHome, "bin/javac").path)
     command.addAll(options)
@@ -64,13 +79,10 @@ fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, 
 
     process.waitFor()
 
-    val isSuccess = process.exitValue() == 0
-
-    if (!isSuccess) {
-        System.err.println(errors)
-    }
-
-    return isSuccess
+    return if (process.exitValue() == 0)
+        JavaCompilationResult.Success
+    else
+        JavaCompilationResult.Failure.External(errors)
 }
 
 private fun errorsToString(diagnosticCollector: DiagnosticCollector<JavaFileObject>, humanReadable: Boolean): String {

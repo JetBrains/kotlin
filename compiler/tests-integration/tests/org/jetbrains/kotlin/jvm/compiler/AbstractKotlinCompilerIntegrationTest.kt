@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
+import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.jar.JarOutputStream
@@ -34,8 +36,6 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         return File(testDataDirectory, "${getTestName(true)}.$extension")
     }
 
-    class JavaCompilationError : AssertionError("Java files are not compiled successfully")
-
     /**
      * Compiles all sources (.java and .kt) under the directory named [libraryName] to [destination].
      * [destination] should be either a path to the directory under [tmpdir], or a path to the resulting .jar file (also under [tmpdir]).
@@ -47,8 +47,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         libraryName: String,
         destination: File = File(tmpdir, "$libraryName.jar"),
         additionalOptions: List<String> = emptyList(),
-        compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Boolean = { _, javaFiles, outputDir ->
-            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+        compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> JavaCompilationResult = { _, javaFiles, outputDir ->
+            compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
         },
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
         manifest: Manifest? = null,
@@ -69,9 +69,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (javaFiles.isNotEmpty()) {
             outputDir.mkdirs()
-            if (!compileJava(sourceDir, javaFiles, outputDir)) {
-                throw JavaCompilationError()
-            }
+            compileJava(sourceDir, javaFiles, outputDir).assertSuccessful()
         }
 
         if (isJar) {

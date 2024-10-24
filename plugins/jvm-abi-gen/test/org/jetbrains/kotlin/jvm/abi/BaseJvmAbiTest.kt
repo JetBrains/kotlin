@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -120,7 +120,7 @@ abstract class BaseJvmAbiTest : TestCase() {
                 "-d",
                 compilation.javaDestinationDir.canonicalPath
             )
-            KotlinTestUtils.compileJavaFiles(javaFiles, javacOptions)
+            compileJavaFiles(javaFiles, javacOptions).assertSuccessful()
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.destinationDir)
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }

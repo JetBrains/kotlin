@@ -51,8 +51,8 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testNestedClass() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         KotlinTestUtils.compileKotlinWithJava(
-            listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable, null
-        )
+            listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable, null,
+        ).assertSuccessful()
 
         val environment = createEnvironment(tmpdir)
         val project = environment.project

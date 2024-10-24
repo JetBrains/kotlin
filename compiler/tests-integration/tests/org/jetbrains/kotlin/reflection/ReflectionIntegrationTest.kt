@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.reflection
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -27,10 +28,10 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
         val root = KtTestUtil.getTestDataPathBase() + "/reflection/classLoaderForBuiltIns"
-        KotlinTestUtils.compileJavaFiles(
+        compileJavaFiles(
             listOf(File("$root/Main.java")),
             listOf("-d", tmpdir.absolutePath)
-        )
+        ).assertSuccessful()
 
         val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
 

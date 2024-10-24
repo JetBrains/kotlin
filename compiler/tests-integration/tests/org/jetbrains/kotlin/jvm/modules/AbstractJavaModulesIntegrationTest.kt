@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
+import org.jetbrains.kotlin.test.JavaCompilationError
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -63,7 +65,7 @@ abstract class AbstractJavaModulesIntegrationTest(
                     javaOptions += "--add-modules"
                     javaOptions += addModules.joinToString()
                 }
-                KotlinTestUtils.compileJavaFilesExternallyWithJava11(javaFiles, javaOptions)
+                compileJavaFiles(javaFiles, javaOptions, KtTestUtil.getJdk11Home())
             },
             checkKotlinOutput,
             manifest
@@ -186,7 +188,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     fun testMultiReleaseLibrary() {
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
-        KotlinTestUtils.compileJavaFilesExternallyWithJava11(librarySrc, listOf("-d", libraryOut.path))
+        compileJavaFiles(librarySrc, listOf("-d", libraryOut.path), KtTestUtil.getJdk11Home()).assertSuccessful()
 
         val libraryOut11 = File(tmpdir, "out11")
         libraryOut11.mkdirs()

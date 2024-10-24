@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -158,7 +158,7 @@ abstract class ClasspathSnapshotTestCommon {
 
             val classpathOption =
                 if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
-            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption)
+            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption).assertSuccessful()
         }
 
         private fun getClassFilesInDir(classesDir: File): List<ClassFile> {

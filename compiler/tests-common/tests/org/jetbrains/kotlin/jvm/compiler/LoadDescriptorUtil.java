@@ -183,12 +183,7 @@ public class LoadDescriptorUtil {
 
         args.addAll(additionalArgs);
 
-        if (customJdkHomeForJavac != null) {
-            KotlinTestUtils.compileJavaFilesExternally(javaFiles, args, customJdkHomeForJavac);
-        }
-        else {
-            KotlinTestUtils.compileJavaFiles(javaFiles, args);
-        }
+        JvmCompilationUtils.compileJavaFiles(javaFiles, args, customJdkHomeForJavac).assertSuccessful();
     }
 
     @NotNull

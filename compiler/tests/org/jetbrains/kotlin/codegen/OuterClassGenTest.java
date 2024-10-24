@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JvmCompilationUtils;
-import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
@@ -150,9 +149,8 @@ public class OuterClassGenTest extends CodegenTestCase {
             File directory = KtTestUtil.tmpDir("java-classes");
             JvmCompilationUtils.compileJavaFiles(
                     CollectionsKt.map(fileNames, File::new),
-                    Arrays.asList("-d", directory.getPath()),
-                    JUnit4Assertions.INSTANCE
-            );
+                    Arrays.asList("-d", directory.getPath())
+            ).assertSuccessful();
             return directory;
         }
         catch (IOException e) {
