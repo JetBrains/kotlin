@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
@@ -56,17 +57,27 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = buildOptions
         ) {
-            build(":compileKotlinIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(
-                    projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+
+            val expectedDiagnostics = projectPath.resolve("expected-diagnostics.txt")
+            if (!HostManager.hostIsMingw) {
+                expectedDiagnostics.replaceText(
+                    "> Configure project :",
+                    """
+                    |> Configure project :
+                    |w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin. Please adjust versions to avoid incompatibilities.
+                    |#diagnostic-end
+                    |    
+                    """.trimMargin()
                 )
+            }
+
+            build(":compileKotlinIosArm64") {
+                KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, extractProjectsAndTheirDiagnostics())
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
 
             build(":linkIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(
-                    projectPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
-                )
+                KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, extractProjectsAndTheirDiagnostics())
                 // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
                 // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
                 assertTasksSkipped(":linkDebugTestIosArm64")
