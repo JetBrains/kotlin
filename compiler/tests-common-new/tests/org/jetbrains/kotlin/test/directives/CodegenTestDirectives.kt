@@ -120,10 +120,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val IGNORE_JAVA_ERRORS by directive(
-        description = "Ignore compilation errors from java"
-    )
-
     val IGNORE_FIR_DIAGNOSTICS by directive(
         description = "Run backend even FIR reported some diagnostics with ERROR severity"
     )
