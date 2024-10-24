@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.runners.codegen.commonConfigurationForTest
 import org.jetbrains.kotlin.test.runners.codegen.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.service
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
 abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput<R>>(
     val targetFrontend: FrontendKind<R>,
@@ -53,7 +54,7 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         }
 
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForBlackBoxTestsSourceProvider)
 
         configureClassicFrontendHandlersStep {
             useHandlers(

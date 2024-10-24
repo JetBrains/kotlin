@@ -33,7 +33,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    additionalSourceProvider: Constructor<AdditionalSourceProvider>? = ::MainFunctionForBlackBoxTestsSourceProvider,
+    additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null,
 ) {
     commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
     additionalSourceProvider?.let { useAdditionalSourceProviders(it) }
