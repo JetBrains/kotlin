@@ -267,8 +267,7 @@ open class FunctionInlining(
              */
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, endOffset, endOffset)
 
-            // Investigate the difference (KT-71425).
-            val returnType = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee.returnType else callSite.type
+            val returnType = callSite.type
 
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
