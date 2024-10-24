@@ -317,9 +317,9 @@ private fun requireSameSizes(vararg sizes: Int?) {
 }
 
 private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
-    require(function.valueParameters.isEmpty()) { "Value parameters are not expected for ${function.render()}" }
-    require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
-    require(function.contextReceiverParametersCount == 0) { "Context receivers is not expected for ${function.render()}" }
+    require(function.nonDispatchParameters.isEmpty()) {
+        "Parameters other than dispatch receiver are not expected for ${function.render()}"
+    }
     require(function.typeParameters.isEmpty()) { "Type parameters are not expected for ${function.render()}" }
 }
 
