@@ -174,12 +174,14 @@ class JvmCachedDeclarations(
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(this@proxy)
+
+                    var dstIndex = 0
                     if (target.dispatchReceiverParameter != null) {
-                        dispatchReceiver = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
+                        arguments[dstIndex++] = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
                     }
-                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
-                    for ((i, valueParameter) in valueParameters.withIndex()) {
-                        putValueArgument(i, irGet(valueParameter))
+                    for (param in parameters) {
+                        if (param.kind == IrParameterKind.DispatchReceiver) continue
+                        arguments[dstIndex++] = irGet(param)
                     }
                 })
             }
