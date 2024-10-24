@@ -143,9 +143,6 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
     }
 }
 
-val IrFunction.fullValueParameterList: List<IrValueParameter>
-    get() = listOfNotNull(extensionReceiverParameter) + valueParameters
-
 fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
     (dispatchReceiverParameter != null && when {
         parentAsClass.isSingleFieldValueClass -> includeInline
