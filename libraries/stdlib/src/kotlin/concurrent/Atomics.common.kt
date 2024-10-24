@@ -73,26 +73,6 @@ public expect class AtomicInt public constructor(value: Int) {
     public fun addAndFetch(delta: Int): Int
 
     /**
-     * Atomically increments the current value by one and returns the old value.
-     */
-    public fun fetchAndIncrement(): Int
-
-    /**
-     * Atomically increments the current value by one and returns the new value.
-     */
-    public fun incrementAndFetch(): Int
-
-    /**
-     * Atomically decrements the current value by one and returns the new value.
-     */
-    public fun decrementAndFetch(): Int
-
-    /**
-     * Atomically decrements the current value by one and returns the old value.
-     */
-    public fun fetchAndDecrement(): Int
-
-    /**
      * Returns the string representation of the underlying [Int] value.
      *
      * This operation does not provide any atomicity guarantees.
@@ -111,6 +91,30 @@ public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(de
  */
 @ExperimentalStdlibApi
 public operator fun AtomicInt.minusAssign(delta: Int): Unit { this.addAndFetch(-delta) }
+
+/**
+ * Atomically increments the current value by one and returns the old value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicInt.fetchAndIncrement(): Int = this.fetchAndAdd(1)
+
+/**
+ * Atomically increments the current value by one and returns the new value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicInt.incrementAndFetch(): Int = this.addAndFetch(1)
+
+/**
+ * Atomically decrements the current value by one and returns the new value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicInt.decrementAndFetch(): Int = this.addAndFetch(-1)
+
+/**
+ * Atomically decrements the current value by one and returns the old value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 
 /**
  * A [Long] value that may be updated atomically with guaranteed sequential consistent ordering.
@@ -178,26 +182,6 @@ public expect class AtomicLong public constructor(value: Long) {
     public fun addAndFetch(delta: Long): Long
 
     /**
-     * Atomically increments the current value by one and returns the old value.
-     */
-    public fun fetchAndIncrement(): Long
-
-    /**
-     * Atomically increments the current value by one and returns the new value.
-     */
-    public fun incrementAndFetch(): Long
-
-    /**
-     * Atomically decrements the current value by one and returns the new value.
-     */
-    public fun decrementAndFetch(): Long
-
-    /**
-     * Atomically decrements the current value by one and returns the old value.
-     */
-    public fun fetchAndDecrement(): Long
-
-    /**
      * Returns the string representation of the underlying [Long] value.
      *
      * This operation does not provide any atomicity guarantees.
@@ -216,6 +200,30 @@ public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(
  */
 @ExperimentalStdlibApi
 public operator fun AtomicLong.minusAssign(delta: Long): Unit { this.addAndFetch(-delta) }
+
+/**
+ * Atomically increments the current value by one and returns the old value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicLong.fetchAndIncrement(): Long = this.fetchAndAdd(1)
+
+/**
+ * Atomically increments the current value by one and returns the new value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicLong.incrementAndFetch(): Long = this.addAndFetch(1)
+
+/**
+ * Atomically decrements the current value by one and returns the new value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicLong.decrementAndFetch(): Long = this.addAndFetch(-1)
+
+/**
+ * Atomically decrements the current value by one and returns the old value.
+ */
+@ExperimentalStdlibApi
+public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
 
 /**
  * A [Boolean] value that may be updated atomically with guaranteed sequential consistent ordering.

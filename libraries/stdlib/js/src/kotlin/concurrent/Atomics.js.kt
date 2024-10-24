@@ -75,26 +75,6 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
     }
 
     /**
-     * Increments the current value by one and returns the old value.
-     */
-    public actual fun fetchAndIncrement(): Int = value++
-
-    /**
-     * Increments the current value by one and returns the new value.
-     */
-    public actual fun incrementAndFetch(): Int = ++value
-
-    /**
-     * Decrements the current value by one and returns the new value.
-     */
-    public actual fun fetchAndDecrement(): Int = value--
-
-    /**
-     * Decrements the current value by one and returns the old value.
-     */
-    public actual fun decrementAndFetch(): Int = --value
-
-    /**
      * Returns the string representation of the underlying [Int] value.
      */
     public actual override fun toString(): String = value.toString()
@@ -167,26 +147,6 @@ public actual class AtomicLong public actual constructor(private var value: Long
         value += delta
         return value
     }
-
-    /**
-     * Increments the current value by one and returns the old value.
-     */
-    public actual fun fetchAndIncrement(): Long = value++
-
-    /**
-     * Increments the current value by one and returns the new value.
-     */
-    public actual fun incrementAndFetch(): Long = ++value
-
-    /**
-     * Decrements the current value by one and returns the new value.
-     */
-    public actual fun fetchAndDecrement(): Long = value--
-
-    /**
-     * Decrements the current value by one and returns the old value.
-     */
-    public actual fun decrementAndFetch(): Long = --value
 
     /**
      * Returns the string representation of the underlying [Long] value.

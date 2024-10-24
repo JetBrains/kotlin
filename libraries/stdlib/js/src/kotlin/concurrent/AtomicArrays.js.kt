@@ -124,46 +124,6 @@ public actual class AtomicIntArray {
     }
 
     /**
-     * Increments the element at the given [index] by one and returns the old value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun fetchAndIncrementAt(index: Int): Int {
-        checkBounds(index)
-        return array[index]++
-    }
-
-    /**
-     * Increments the element at the given [index] by one and returns the new value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun incrementAndFetchAt(index: Int): Int {
-        checkBounds(index)
-        return ++array[index]
-    }
-
-    /**
-     * Decrements the element at the given [index] by one and returns the old value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun fetchAndDecrementAt(index: Int): Int {
-        checkBounds(index)
-        return array[index]--
-    }
-
-    /**
-     * Decrements the element at the given [index] by one and returns the new value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun decrementAndFetchAt(index: Int): Int {
-        checkBounds(index)
-        return --array[index]
-    }
-
-    /**
      * Returns the string representation of the underlying array of ints.
      */
     public actual override fun toString(): String = array.toString()
@@ -289,46 +249,6 @@ public actual class AtomicLongArray {
         checkBounds(index)
         array[index] += delta
         return array[index]
-    }
-
-    /**
-     * Increments the element at the given [index] by one and returns the old value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun fetchAndIncrementAt(index: Int): Long {
-        checkBounds(index)
-        return array[index]++
-    }
-
-    /**
-     * Increments the element at the given [index] by one and returns the new value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun incrementAndFetchAt(index: Int): Long {
-        checkBounds(index)
-        return ++array[index]
-    }
-
-    /**
-     * Decrements the element at the given [index] by one and returns the old value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun fetchAndDecrementAt(index: Int): Long {
-        checkBounds(index)
-        return array[index]--
-    }
-
-    /**
-     * Decrements the element at the given [index] by one and returns the new value of the element.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
-     */
-    public actual fun decrementAndFetchAt(index: Int): Long {
-        checkBounds(index)
-        return --array[index]
     }
 
     /**

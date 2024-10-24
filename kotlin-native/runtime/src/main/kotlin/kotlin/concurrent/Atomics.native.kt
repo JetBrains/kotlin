@@ -74,26 +74,6 @@ public actual class AtomicInt public actual constructor(
     public actual fun addAndFetch(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
-     * Atomically increments the current value by one and returns the old value.
-     */
-    public actual fun fetchAndIncrement(): Int = this::value.getAndAddField(1)
-
-    /**
-     * Atomically increments the current value by one and returns the new value.
-     */
-    public actual fun incrementAndFetch(): Int = this::value.getAndAddField(1) + 1
-
-    /**
-     * Atomically decrements the current value by one and returns the new value.
-     */
-    public actual fun decrementAndFetch(): Int = this::value.getAndAddField(-1) - 1
-
-    /**
-     * Atomically decrements the current value by one and returns the old value.
-     */
-    public actual fun fetchAndDecrement(): Int = this::value.getAndAddField(-1)
-
-    /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
     @Deprecated("Use exchange(newValue: Int) instead.", ReplaceWith("this.exchange(newValue)"))
@@ -203,26 +183,6 @@ public actual class AtomicLong public actual constructor(
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
     public actual fun addAndFetch(delta: Long): Long = this::value.getAndAddField(delta) + delta
-
-    /**
-     * Atomically increments the current value by one and returns the old value.
-     */
-    public actual fun fetchAndIncrement(): Long = this::value.getAndAddField(1L)
-
-    /**
-     * Atomically increments the current value by one and returns the new value.
-     */
-    public actual fun incrementAndFetch(): Long = this::value.getAndAddField(1L) + 1L
-
-    /**
-     * Atomically decrements the current value by one and returns the new value.
-     */
-    public actual fun decrementAndFetch(): Long = this::value.getAndAddField(-1L) - 1L
-
-    /**
-     * Atomically decrements the current value by one and returns the old value.
-     */
-    public actual fun fetchAndDecrement(): Long = this::value.getAndAddField(-1L)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
