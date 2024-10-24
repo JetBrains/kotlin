@@ -70,6 +70,8 @@ private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<
 fun IrFunction.moveBodyTo(target: IrFunction): IrBody? =
     moveBodyTo(target, createParameterMapping(this, target))
 
+//fun IrFunction.moveBodyAndDefaults(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>) =
+
 fun IrFunction.moveBodyTo(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>): IrBody? =
     body?.move(this, target, target.symbol, arguments)
 
