@@ -249,38 +249,6 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 /**
- * Cache copies of inline functions before [inlineOnlyPrivateFunctionsPhase].
- */
-// TODO: KT-67220: consider removing it
-private val cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = true)
-    },
-    name = "CacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase",
-    prerequisite = setOf(
-        sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersLowering
-    )
-)
-
-/**
- * Cache copies of inline functions before [inlineAllFunctionsPhase].
- */
-// TODO: KT-67220: consider removing it
-private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = false)
-    },
-    name = "CacheInlineFunctionsBeforeInliningAllFunctionsPhase",
-    prerequisite = setOf(
-        sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersLowering
-    )
-)
-
-/**
  * The second phase of inlining (inline all functions).
  */
 private val inlineAllFunctionsPhase = makeIrModulePhase(
@@ -292,7 +260,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "InlineAllFunctions",
-    prerequisite = setOf(cacheInlineFunctionsBeforeInliningAllFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase)
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
@@ -793,7 +761,6 @@ fun getJsLowerings(
     arrayConstructorPhase,
     legacySyntheticAccessorLoweringPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     inlineOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     syntheticAccessorGenerationPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
@@ -803,7 +770,6 @@ fun getJsLowerings(
         !configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) &&
                 configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
     },
-    cacheInlineFunctionsBeforeInliningAllFunctionsPhase,
     inlineAllFunctionsPhase,
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS prefix.

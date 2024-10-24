@@ -33,8 +33,6 @@ class JsMapping : Mapping() {
 
     val objectsWithPureInitialization: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
 
-    val inlineFunctionsBeforeInlining: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
-
     // Wasm mappings
     val wasmJsInteropFunctionToWrapper: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
