@@ -233,7 +233,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
+    fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
         return declaration.factory.stageController.restrictTo(declaration) {
             transformFlat(declaration)
         }
@@ -257,34 +257,9 @@ interface DeclarationTransformer : FileLoweringPass {
             // TODO This is a hack to allow lowering a getter separately from the enclosing property
 
             val visitor = this
-
-            fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>): Boolean {
-                var index = container.indexOf(this)
-                if (index == -1) {
-                    index = container.indexOf(declaration)
-                } else {
-                    container.removeAt(index)
-                    --index
-                }
-                return container.addAll(index + 1, result)
-            }
-
-            fun IrDeclaration.transform() {
-
-                acceptVoid(visitor)
-
-                val result = transformer.transformFlatRestricted(this)
-                if (result != null) {
-                    when (val parentCopy = parent) {
-                        is IrDeclarationContainer -> replaceInContainer(parentCopy.declarations, result)
-                        is IrStatementContainer -> replaceInContainer(parentCopy.statements, result)
-                    }
-                }
-            }
-
-            declaration.backingField?.transform()
-            declaration.getter?.transform()
-            declaration.setter?.transform()
+            declaration.backingField?.transform(visitor, transformer, declaration)
+            declaration.getter?.transform(visitor, transformer, declaration)
+            declaration.setter?.transform(visitor, transformer, declaration)
         }
 
         override fun visitClass(declaration: IrClass) {
@@ -314,6 +289,34 @@ fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFrag
     return { state, modules, context ->
         modules.forEach { module ->
             this(state, module, context)
+        }
+    }
+}
+
+fun IrDeclaration.replaceInContainer(
+    container: MutableList<in IrDeclaration>,
+    result: List<IrDeclaration>,
+    declaration: IrProperty
+): Boolean {
+    var index = container.indexOf(this)
+    if (index == -1) {
+        index = container.indexOf(declaration)
+    } else {
+        container.removeAt(index)
+        --index
+    }
+    return container.addAll(index + 1, result)
+}
+
+fun IrDeclaration.transform(visitor: IrElementVisitor<Unit, Nothing?>, transformer: DeclarationTransformer, declaration: IrProperty) {
+
+    accept(visitor, null)
+
+    val result = transformer.transformFlatRestricted(this)
+    if (result != null) {
+        when (val parentCopy = parent) {
+            is IrDeclarationContainer -> replaceInContainer(parentCopy.declarations, result, declaration)
+            is IrStatementContainer -> replaceInContainer(parentCopy.statements, result, declaration)
         }
     }
 }

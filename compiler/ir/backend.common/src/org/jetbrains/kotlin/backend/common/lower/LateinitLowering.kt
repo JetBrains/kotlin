@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.transform
+import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -36,15 +40,38 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.transformSubsetFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Creates nullable fields for lateinit properties.
  * References nullable fields from properties and getters + inserts checks.
+ * Inserts checks for lateinit field references.
  */
-class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
+class LateinitLowering(val backendContext: CommonBackendContext) : DeclarationTransformer, BodyLoweringPass {
     override val withLocalDeclarations: Boolean get() = true
+
+    override fun lower(irFile: IrFile) {
+        val visitor = LateinitLoweringVisitor(this)
+        irFile.declarations.transformFlat { declaration ->
+            try {
+                declaration.accept(visitor, null)
+                transformFlatRestricted(declaration)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(irFile)
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException(
+                    "Internal error in declaration transformer",
+                    irFile,
+                    declaration
+                )
+            }
+        }
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
@@ -75,36 +102,6 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
 
         return null
     }
-
-    private fun transformGetter(backingField: IrField, getter: IrFunction) {
-        val type = backingField.type
-        assert(!type.isPrimitiveType()) { "'lateinit' modifier is not allowed on primitive types" }
-        val startOffset = getter.startOffset
-        val endOffset = getter.endOffset
-        getter.body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
-            val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
-            irBuilder.run {
-                val resultVar = scope.createTmpVariable(
-                    irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
-                )
-                resultVar.parent = getter
-                statements.add(resultVar)
-                val throwIfNull = irIfThenElse(
-                    context.irBuiltIns.nothingType,
-                    irNotEquals(irGet(resultVar), irNull()),
-                    irReturn(irGet(resultVar)),
-                    backendContext.throwUninitializedPropertyAccessException(this, backingField.name.asString())
-                )
-                statements.add(throwIfNull)
-            }
-        }
-    }
-}
-
-/**
- * Inserts checks for lateinit field references.
- */
-class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val nullableVariables = mutableMapOf<IrVariable, IrVariable>()
@@ -193,6 +190,29 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
         })
     }
 
+    private fun transformGetter(backingField: IrField, getter: IrFunction) {
+        val type = backingField.type
+        assert(!type.isPrimitiveType()) { "'lateinit' modifier is not allowed on primitive types" }
+        val startOffset = getter.startOffset
+        val endOffset = getter.endOffset
+        getter.body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
+            val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
+            irBuilder.run {
+                val resultVar = scope.createTmpVariable(
+                    irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
+                )
+                resultVar.parent = getter
+                statements.add(resultVar)
+                val throwIfNull = irIfThenElse(
+                    context.irBuiltIns.nothingType,
+                    irNotEquals(irGet(resultVar), irNull()),
+                    irReturn(irGet(resultVar)),
+                    backendContext.throwUninitializedPropertyAccessException(this, backingField.name.asString())
+                )
+                statements.add(throwIfNull)
+            }
+        }
+    }
 }
 
 private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField): IrField {
@@ -225,4 +245,64 @@ inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpressi
     }
     block.statements[block.statements.size - 1] = current
     return this
+}
+
+private class LateinitLoweringVisitor(
+    private val transformer: LateinitLowering,
+) : IrElementVisitor<Unit, IrDeclaration?> {
+    override fun visitElement(element: IrElement, data: IrDeclaration?) {
+        element.acceptChildren(this, data)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
+        declaration.acceptChildren(this, declaration)
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
+        declaration.acceptChildren(this, declaration)
+
+        for (v in declaration.valueParameters) {
+            val result = transformer.transformFlatRestricted(v)
+            if (result != null) error("Don't know how to add value parameters")
+        }
+    }
+
+    override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) {
+        declaration.backingField?.transform(this, transformer, declaration)
+        declaration.getter?.transform(this, transformer, declaration)
+        declaration.setter?.transform(this, transformer, declaration)
+
+        // TODO: do we need this?
+//        declaration.acceptChildren(this, declaration)
+    }
+
+    override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
+        declaration.thisReceiver?.accept(this, declaration)
+        declaration.typeParameters.forEach { it.accept(this, declaration) }
+        ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+
+        declaration.declarations.transformFlat {
+            transformer.transformFlatRestricted(it)
+        }
+    }
+
+    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+        ArrayList(declaration.statements).forEach {
+            if (transformer.withLocalDeclarations || it is IrDeclaration) {
+                it.accept(this, null)
+            }
+        }
+        declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
+        declaration.thisReceiver?.accept(this, declaration)
+        // TODO: do we need this?
+//        ArrayList(declaration.statements).forEach { it.accept(this, declaration) }
+    }
+
+    override fun visitBody(body: IrBody, data: IrDeclaration?) {
+        body.acceptChildren(this, null)
+        val stageController = data!!.factory.stageController
+        stageController.restrictTo(data) {
+            transformer.lower(body, data)
+        }
+    }
 }

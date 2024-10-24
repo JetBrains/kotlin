@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctio
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
@@ -69,8 +67,7 @@ internal class NativeInlineFunctionResolver(
 
         NativeAssertionWrapperLowering(context).lower(function)
 
-        NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
-        LateinitUsageLowering(context).lower(body, function)
+        LateinitLowering(context).lower(body, function)
 
         SharedVariablesLowering(context).lower(body, function)
 

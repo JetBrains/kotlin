@@ -144,13 +144,8 @@ private val stringConcatenationLoweringPhase = makeIrModulePhase(
     name = "JsStringConcatenationLowering",
 )
 
-private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
-    ::NullableFieldsDeclarationLowering,
-    name = "LateinitDeclarations",
-)
-
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
+private val lateinitLoweringPhase = makeIrModulePhase(
+    ::LateinitLowering,
     name = "LateinitUsage",
 )
 
@@ -183,7 +178,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
     ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
-    prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
+    prerequisite = setOf(lateinitLoweringPhase)
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -776,8 +771,7 @@ fun getJsLowerings(
     // BEGIN: Common Native/JS prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitLoweringPhase,
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,

@@ -60,13 +60,8 @@ private val stringConcatenationLowering = makeIrModulePhase(
     name = "StringConcatenation",
 )
 
-private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
-    ::NullableFieldsDeclarationLowering,
-    name = "LateinitDeclarations",
-)
-
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
+private val lateinitLoweringPhase = makeIrModulePhase(
+    ::LateinitLowering,
     name = "LateinitUsage",
 )
 
@@ -90,8 +85,7 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
     prerequisite = setOf(
-        lateinitDeclarationLoweringPhase,
-        lateinitUsageLoweringPhase
+        lateinitLoweringPhase
     )
 )
 
@@ -540,8 +534,7 @@ fun getWasmLowerings(
     excludeDeclarationsFromCodegenPhase,
     expectDeclarationsRemovingPhase,
 
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitLoweringPhase,
     rangeContainsLoweringPhase,
 
     sharedVariablesLoweringPhase,
