@@ -91,7 +91,7 @@ public final class MyList<T extends java.lang.Object> implements java.util.List<
 
     @java.lang.Override()
     public boolean containsAll(@org.jetbrains.annotations.NotNull()
-    java.util.Collection<? extends java.lang.Object> elements) {
+    java.util.Collection<?> elements) {
         return false;
     }
 
@@ -151,12 +151,12 @@ public final class MyList<T extends java.lang.Object> implements java.util.List<
     }
 
     @java.lang.Override()
-    public boolean removeAll(java.util.Collection<? extends java.lang.Object> elements) {
+    public boolean removeAll(java.util.Collection<?> elements) {
         return false;
     }
 
     @java.lang.Override()
-    public boolean retainAll(java.util.Collection<? extends java.lang.Object> elements) {
+    public boolean retainAll(java.util.Collection<?> elements) {
         return false;
     }
 
