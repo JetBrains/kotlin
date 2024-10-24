@@ -479,7 +479,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
 
             if (MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(this)) {
-                valueParameters.last().let {
+                parameters.last().let {
                     it.type = it.type.makeNullable()
                 }
             }
