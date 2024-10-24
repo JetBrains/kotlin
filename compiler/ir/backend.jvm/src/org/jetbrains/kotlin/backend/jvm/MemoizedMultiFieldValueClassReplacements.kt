@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
@@ -130,39 +131,31 @@ class MemoizedMultiFieldValueClassReplacements(
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
         targetFunction: IrFunction,
     ): List<RemappedParameter> {
-        val newFlattenedParameters = mutableListOf<RemappedParameter>()
-        if (sourceFunction.dispatchReceiverParameter != null && includeDispatcherReceiver) {
-            newFlattenedParameters.add(
-                sourceFunction.parentAsClass.thisReceiver!!.grouped(
-                    "\$dispatchReceiver",
-                    substitutionMap,
-                    targetFunction,
-                    IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
-                )
-            )
-        }
-        val contextReceivers = sourceFunction.valueParameters.take(sourceFunction.contextReceiverParametersCount)
-            .mapIndexed { index: Int, valueParameter: IrValueParameter ->
-                valueParameter.grouped(
-                    "contextReceiver$index",
-                    substitutionMap,
-                    targetFunction,
-                    IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
-                )
+        var contextParameterIndex = 0
+        return sourceFunction.parameters.mapNotNull { param ->
+            val sourceParam = if (param.kind == IrParameterKind.DispatchReceiver) {
+                if (includeDispatcherReceiver) sourceFunction.parentAsClass.thisReceiver!! else null
+            } else param
+            val name = when (param.kind) {
+                IrParameterKind.DispatchReceiver -> "\$dispatchReceiver"
+                IrParameterKind.Context -> "contextReceiver${contextParameterIndex++}"
+                IrParameterKind.ExtensionReceiver -> sourceFunction.extensionReceiverName(context.config)
+                IrParameterKind.Regular -> null
             }
-        newFlattenedParameters.addAll(contextReceivers)
-        sourceFunction.extensionReceiverParameter?.let {
-            val newParameters = it.grouped(
-                sourceFunction.extensionReceiverName(context.config),
+            val origin = when (param.kind) {
+                IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+                IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                IrParameterKind.Regular -> JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER
+            }
+
+            sourceParam?.grouped(
+                name,
                 substitutionMap,
                 targetFunction,
-                IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
+                origin
             )
-            newFlattenedParameters.add(newParameters)
         }
-        newFlattenedParameters += sourceFunction.valueParameters.drop(sourceFunction.contextReceiverParametersCount)
-            .grouped(name = null, substitutionMap, targetFunction, JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER)
-        return newFlattenedParameters
     }
 
     sealed class RemappedParameter {
