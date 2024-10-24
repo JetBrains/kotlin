@@ -22,6 +22,7 @@ class SirEnumBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
+    var backingType: SirType? = null
     val cases: MutableList<SirEnumCase> = mutableListOf()
 
     fun build(): SirEnum {
@@ -32,6 +33,7 @@ class SirEnumBuilder {
             attributes,
             name,
             declarations,
+            backingType,
             cases,
         )
     }
@@ -58,6 +60,7 @@ inline fun buildEnumCopy(original: SirEnum, init: SirEnumBuilder.() -> Unit): Si
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.backingType = original.backingType
     copyBuilder.cases.addAll(original.cases)
     return copyBuilder.apply(init).build()
 }

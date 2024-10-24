@@ -19,5 +19,6 @@ abstract class SirEnum : SirMutableDeclarationContainer(), SirNamedDeclaration {
     abstract override val attributes: MutableList<SirAttribute>
     abstract override val name: String
     abstract override val declarations: MutableList<SirDeclaration>
+    abstract val backingType: SirType?
     abstract val cases: List<SirEnumCase>
 }

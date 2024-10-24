@@ -1071,6 +1071,29 @@ class SirAsSwiftSourcesPrinterTests {
             "testData/simple_function_returns_nullable"
         )
     }
+
+    @Test
+    fun `should print enum backed by int`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildEnum {
+                    origin = SirOrigin.Unknown
+                    name = "MyEnum"
+                    backingType = SirNominalType(SirSwiftModule.int32)
+                    cases.add(
+                        SirEnumCase("demo", emptyList())
+                    )
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/enum_by_int"
+        )
+    }
 }
 
 private fun <T : SirDeclarationContainer> T.attachDeclarations(): T = also { declarations.forEach { it.parent = this } }

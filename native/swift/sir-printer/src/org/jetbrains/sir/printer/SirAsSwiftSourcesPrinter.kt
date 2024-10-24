@@ -103,8 +103,10 @@ public class SirAsSwiftSourcesPrinter(
         print(" ")
         printName()
         print(" ")
-        if (this is SirClass) {
-            printSuperClass()
+        when (this) {
+            is SirClass -> printSuperClass()
+            is SirEnum -> printBackedType()
+            else -> Unit
         }
         println("{")
         withIndent {
@@ -153,6 +155,9 @@ public class SirAsSwiftSourcesPrinter(
                 .sortedWithIfNeeded(Comparators.stableExtensionComparator)
                 .forEach { it.print() }
         }
+        if (this is SirEnum) {
+            cases.forEach { it.print() }
+        }
         allPackageEnums()
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
@@ -160,6 +165,11 @@ public class SirAsSwiftSourcesPrinter(
 
     private inline fun <reified T : SirElement> Sequence<T>.sortedWithIfNeeded(comparator: Comparator<in T>): Sequence<T> =
         if (stableDeclarationsOrder) sortedWith(comparator) else this
+
+    private fun SirEnumCase.print() = println(
+        "case ",
+        name.swiftIdentifier,
+    )
 
     private fun SirVariable.print() {
         printDocumentation()
@@ -247,6 +257,10 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirClass.printSuperClass() = print(
         superClass?.let { ": ${it.swiftRender} " } ?: ""
+    )
+
+    private fun SirEnum.printBackedType() = print(
+        backingType?.let { ": ${it.swiftRender} " } ?: ""
     )
 
     private fun SirElement.printName() = print(

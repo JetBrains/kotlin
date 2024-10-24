@@ -87,6 +87,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(namedDeclaration)
         parent(mutableDeclarationContainer)
 
+        +field("backingType", typeType, nullable = true)
         +listField("cases", enumCaseType)
     }
 
