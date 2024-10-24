@@ -14,15 +14,22 @@ package kotlin.concurrent
 public actual class AtomicInt(value: Int) {
     /**
      * Atomically gets the value of the atomic.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.get].
      */
     public actual fun load(): Int
+
     /**
      * Atomically sets the value of the atomic to the [new value][newValue].
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.set].
      */
     public actual fun store(value: Int)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.getAndSet].
      */
     public actual fun exchange(newValue: Int): Int
 
@@ -31,6 +38,8 @@ public actual class AtomicInt(value: Int) {
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.compareAndSet].
      */
     public actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean
 
@@ -39,16 +48,26 @@ public actual class AtomicInt(value: Int) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchange] is implemented using [java.util.concurrent.atomic.AtomicInteger.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicInteger.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchange] to [java.util.concurrent.atomic.AtomicInteger.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.getAndAdd].
      */
     public actual fun fetchAndAdd(delta: Int): Int
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.addAndGet].
      */
     public actual fun addAndFetch(delta: Int): Int
 
@@ -69,16 +88,22 @@ public actual class AtomicInt(value: Int) {
 public actual class AtomicLong(value: Long) {
     /**
      * Atomically gets the value of the atomic.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.get].
      */
     public actual fun load(): Long
 
     /**
      * Atomically sets the value of the atomic to the [new value][newValue].
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.set].
      */
     public actual fun store(value: Long)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.getAndSet].
      */
     public actual fun exchange(newValue: Long): Long
 
@@ -87,6 +112,8 @@ public actual class AtomicLong(value: Long) {
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.compareAndSet].
      */
     public actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean
 
@@ -95,16 +122,26 @@ public actual class AtomicLong(value: Long) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchange] is implemented using [java.util.concurrent.atomic.AtomicLong.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicLong.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchange] to [java.util.concurrent.atomic.AtomicLong.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.getAndAdd].
      */
     public actual fun fetchAndAdd(delta: Long): Long
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.addAndGet].
      */
     public actual fun addAndFetch(delta: Long): Long
 
@@ -125,16 +162,22 @@ public actual class AtomicLong(value: Long) {
 public actual class AtomicBoolean (value: Boolean) {
     /**
      * Atomically gets the value of the atomic.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.get].
      */
     public actual fun load(): Boolean
 
     /**
      * Atomically sets the value of the atomic to the [new value][newValue].
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.set].
      */
     public actual fun store(newValue: Boolean)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.getAndSet].
      */
     public actual fun exchange(newValue: Boolean): Boolean
 
@@ -143,6 +186,8 @@ public actual class AtomicBoolean (value: Boolean) {
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.compareAndSet].
      */
     public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean
 
@@ -151,6 +196,12 @@ public actual class AtomicBoolean (value: Boolean) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchange] is implemented using [java.util.concurrent.atomic.AtomicBoolean.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicBoolean.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchange] to [java.util.concurrent.atomic.AtomicBoolean.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean
 
@@ -172,19 +223,21 @@ public actual class AtomicReference<T> (value: T) {
     /**
      * Atomically gets the value of the atomic.
      *
-     * Behaves like volatile read.
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.get].
      */
     public actual fun load(): T
 
     /**
      * Atomically sets the value of the atomic to the [new value][newValue].
      *
-     * Behaves like volatile write.
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.set].
      */
     public actual fun store(newValue: T)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.getAndSet].
      */
     public actual fun exchange(newValue: T): T
 
@@ -193,6 +246,8 @@ public actual class AtomicReference<T> (value: T) {
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.compareAndSet].
      */
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean
 
@@ -201,6 +256,12 @@ public actual class AtomicReference<T> (value: T) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchange] is implemented using [java.util.concurrent.atomic.AtomicReference.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicReference.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchange] to [java.util.concurrent.atomic.AtomicReference.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchange(expectedValue: T, newValue: T): T
 

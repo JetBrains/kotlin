@@ -33,7 +33,9 @@ public actual class AtomicIntArray {
      *
      * Behaves like volatile read.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.get].
      */
     public actual fun loadAt(index: Int): Int
 
@@ -42,7 +44,9 @@ public actual class AtomicIntArray {
      *
      * Behaves like volatile write.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.set].
      */
     public actual fun storeAt(index: Int, newValue: Int)
 
@@ -50,7 +54,9 @@ public actual class AtomicIntArray {
      * Atomically sets the value of the element at the given [index] to the [new value][newValue]
      * and returns the old value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.getAndSet].
      */
     public actual fun exchangeAt(index: Int, newValue: Int): Int
 
@@ -61,7 +67,9 @@ public actual class AtomicIntArray {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.compareAndSet].
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Int, newValue: Int): Boolean
 
@@ -71,21 +79,31 @@ public actual class AtomicIntArray {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchangeAt] is implemented using [java.util.concurrent.atomic.AtomicIntegerArray.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchangeAt] to [java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int): Int
 
     /**
      * Atomically adds the given [delta] to the element at the given [index] and returns the old value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.getAndAdd].
      */
     public actual fun fetchAndAddAt(index: Int, delta: Int): Int
 
     /**
      * Atomically adds the given [delta] to the element at the given [index] and returns the new value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicIntegerArray.addAndGet].
      */
     public actual fun addAndFetchAt(index: Int, delta: Int): Int
 
@@ -124,14 +142,18 @@ public actual class AtomicLongArray {
     /**
      * Atomically gets the value of the element at the given [index].
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.get].
      */
     public actual fun loadAt(index: Int): Long
 
     /**
      * Atomically sets the value of the element at the given [index] to the [new value][newValue].
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.set].
      */
     public actual fun storeAt(index: Int, newValue: Long)
 
@@ -139,7 +161,9 @@ public actual class AtomicLongArray {
      * Atomically sets the value of the element at the given [index] to the [new value][newValue]
      * and returns the old value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.getAndSet].
      */
     public actual fun exchangeAt(index: Int, newValue: Long): Long
 
@@ -150,7 +174,9 @@ public actual class AtomicLongArray {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.compareAndSet].
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: Long, newValue: Long): Boolean
 
@@ -160,21 +186,31 @@ public actual class AtomicLongArray {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchangeAt] is implemented using [java.util.concurrent.atomic.AtomicLongArray.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicLongArray.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchangeAt] to [java.util.concurrent.atomic.AtomicLongArray.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long): Long
 
     /**
      * Atomically adds the given [delta] to the element at the given [index] and returns the old value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.getAndAdd].
      */
     public actual fun fetchAndAddAt(index: Int, delta: Long): Long
 
     /**
      * Atomically adds the given [delta] to the element at the given [index] and returns the new value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicLongArray.addAndGet].
      */
     public actual fun addAndFetchAt(index: Int, delta: Long): Long
 
@@ -206,14 +242,18 @@ public actual class AtomicArray<T> {
     /**
      * Atomically gets the value of the element at the given [index].
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.get].
      */
     public actual fun loadAt(index: Int): T
 
     /**
      * Atomically sets the value of the element at the given [index] to the [new value][newValue].
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.set].
      */
     public actual fun storeAt(index: Int, newValue: T)
 
@@ -221,7 +261,9 @@ public actual class AtomicArray<T> {
      * Atomically sets the value of the element at the given [index] to the [new value][newValue]
      * and returns the old value of the element.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.getAndSet].
      */
     public actual fun exchangeAt(index: Int, newValue: T): T
 
@@ -232,7 +274,9 @@ public actual class AtomicArray<T> {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet].
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean
 
@@ -242,7 +286,13 @@ public actual class AtomicArray<T> {
      *
      * Comparison of values is done by value.
      *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+     * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * In order to maintain compatibility with Java 8, [compareAndExchangeAt] is implemented using [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet],
+     * since [java.util.concurrent.atomic.AtomicReferenceArray.compareAndExchange] method is only available starting from Java 9.
+     *
+     * In the future releases it's planned to delegate the implementation of [compareAndExchangeAt] to [java.util.concurrent.atomic.AtomicReferenceArray.compareAndExchange]
+     * for users running JDK 9 or higher.
      */
     public actual fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T
 
