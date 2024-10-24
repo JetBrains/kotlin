@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
     dependencies {
-        classpath("com.google.code.gson:gson:2.11.0")
+        classpath(libs.gson)
     }
 }
 
@@ -24,12 +24,13 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.gson)
+
+    val gsonVersion = libs.versions.gson.get()
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion("2.11.0")
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
+                useVersion(gsonVersion)
             }
         }
     }

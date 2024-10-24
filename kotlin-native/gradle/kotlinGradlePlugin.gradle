@@ -9,7 +9,6 @@ project.buildscript.configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "com.google.code.gson" && requested.name == "gson") {
             useVersion(versionProperties['versions.gson'])
-            because("Force using same gson version because of https://github.com/google/gson/pull/1991")
         }
     }
 }
