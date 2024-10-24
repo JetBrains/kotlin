@@ -610,7 +610,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         expressionBodyTransformPhase,
         objectClassesPhase,
         staticInitializersPhase,
-        optimizeCastsPhase,
+        optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
         builtinOperatorPhase,
         bridgesPhase,
