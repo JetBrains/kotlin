@@ -151,7 +151,7 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
                 /* isJava9Module = */ module.files.any { it.isModuleInfoJavaFile }
             )
             val realFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
-            JavaCompilerFacade.compileJavaFiles(testServices.assertions, module, realFiles, finalJavacOptions, ignoreErrors = false)
+            JavaCompilerFacade.compileJavaFiles(testServices.assertions, module, realFiles, finalJavacOptions)
         }
     }
 

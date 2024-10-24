@@ -43,8 +43,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         )
 
         val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
-        val ignoreErrors = CodegenTestDirectives.IGNORE_JAVA_ERRORS in module.directives
-        compileJavaFiles(testServices.assertions, module, javaFiles, finalJavacOptions, ignoreErrors)
+        compileJavaFiles(testServices.assertions, module, javaFiles, finalJavacOptions)
     }
 
     companion object {
@@ -66,15 +65,13 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             }
         }
 
-        fun compileJavaFiles(
-            assertions: Assertions, module: TestModule, files: List<File>, javacOptions: List<String>, ignoreErrors: Boolean,
-        ) {
+        fun compileJavaFiles(assertions: Assertions, module: TestModule, files: List<File>, javacOptions: List<String>) {
             val jdkHome = getExplicitJdkHome(module)
             if (jdkHome == null) {
-                org.jetbrains.kotlin.test.compileJavaFiles(files, javacOptions, javaErrorFile = null, assertions, ignoreErrors)
+                org.jetbrains.kotlin.test.compileJavaFiles(files, javacOptions, javaErrorFile = null, assertions)
             } else {
                 val success = compileJavaFilesExternally(files, javacOptions, jdkHome)
-                if (!success && !ignoreErrors) {
+                if (!success) {
                     throw AssertionError("Java files are not compiled successfully")
                 }
             }

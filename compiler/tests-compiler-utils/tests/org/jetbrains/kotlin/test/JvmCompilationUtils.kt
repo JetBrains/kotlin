@@ -8,16 +8,14 @@
 package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
+import java.util.stream.Collectors
 import javax.tools.Diagnostic
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.ToolProvider
-import java.util.stream.Collectors
-
 
 @JvmOverloads
 @Throws(IOException::class)
@@ -26,28 +24,22 @@ fun compileJavaFiles(
     options: List<String?>?,
     javaErrorFile: File? = null,
     assertions: Assertions,
-    ignoreJavaErrors: Boolean = false
 ): Boolean {
     val javaCompiler = ToolProvider.getSystemJavaCompiler()
     val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")).use { fileManager ->
         val javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files)
-        val task = try {
-            javaCompiler.getTask(
-                StringWriter(),  // do not write to System.err
-                fileManager,
-                diagnosticCollector,
-                options,
-                null,
-                javaFileObjectsFromFiles
-            )
-        } catch (e: Throwable) {
-            if (ignoreJavaErrors) return false
-            else throw e
-        }
+        val task = javaCompiler.getTask(
+            StringWriter(),  // do not write to System.err
+            fileManager,
+            diagnosticCollector,
+            options,
+            null,
+            javaFileObjectsFromFiles
+        )
         val success = task.call() // do NOT inline this variable, call() should complete before errorsToString()
         if (javaErrorFile == null || !javaErrorFile.exists()) {
-            assertions.assertTrue(success || ignoreJavaErrors) { errorsToString(diagnosticCollector, true) }
+            assertions.assertTrue(success) { errorsToString(diagnosticCollector, true) }
         } else {
             assertions.assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false))
         }
