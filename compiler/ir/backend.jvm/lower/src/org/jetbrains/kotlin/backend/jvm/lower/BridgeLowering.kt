@@ -544,24 +544,22 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         substitutedParameterTypes: List<IrType>? = null
     ) {
         val visibleTypeParameters = collectVisibleTypeParameters(this)
-        // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
-        // with dispatch receivers pointing at a superclass instead of the current class.
-        dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
-        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, visibleTypeParameters)
-        valueParameters = if (substitutedParameterTypes != null) {
-            from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                param.copyWithTypeErasure(this, visibleTypeParameters, type)
+        parameters = from.parameters.map { param ->
+            if (param.kind == IrParameterKind.DispatchReceiver) {
+                // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
+                // with dispatch receivers pointing at a superclass instead of the current class.
+                irClass.thisReceiver!!.copyTo(this, type = irClass.defaultType)
+            } else {
+                val newType = substitutedParameterTypes?.get(param.indexInParameters)
+                param.copyWithTypeErasure(this, visibleTypeParameters, newType)
             }
-        } else {
-            from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
-        contextReceiverParametersCount = from.contextReceiverParametersCount
     }
 
     private fun IrValueParameter.copyWithTypeErasure(
         target: IrSimpleFunction,
         visibleTypeParameters: Set<IrTypeParameter>,
-        substitutedType: IrType? = null
+        substitutedType: IrType?
     ): IrValueParameter = copyTo(
         target, IrDeclarationOrigin.BRIDGE,
         startOffset = target.startOffset,
