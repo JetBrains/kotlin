@@ -308,8 +308,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (irFunction !is IrSimpleFunction) return false
             if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
             if (irFunction.isFromJava()) return false
-            if (irFunction.valueParameters.size != 1) return false
-            val valueParameterType = irFunction.valueParameters[0].type
+            if (irFunction.parameters.size != 2) return false
+            val valueParameterType = irFunction.parameters[1].type
             if (!valueParameterType.unboxInlineClass().isInt()) return false
             return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
         }
