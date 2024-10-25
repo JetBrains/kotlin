@@ -154,9 +154,9 @@ private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
     name = "LateinitDeclarations",
 )
 
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
-    name = "LateinitUsage",
+private val lateinitLoweringPhase = makeIrModulePhase(
+    ::LateinitLowering,
+    name = "Lateinit",
 )
 
 private val kotlinNothingValueExceptionPhase = makeIrModulePhase(
@@ -188,7 +188,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
     ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
-    prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
+    prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitLoweringPhase)
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -783,7 +783,7 @@ fun getJsLowerings(
     jsCodeOutliningPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitLoweringPhase,
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,

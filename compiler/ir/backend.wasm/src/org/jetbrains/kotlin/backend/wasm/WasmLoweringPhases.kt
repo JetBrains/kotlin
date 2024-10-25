@@ -70,9 +70,9 @@ private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
     name = "LateinitDeclarations",
 )
 
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
-    name = "LateinitUsage",
+private val lateinitLoweringPhase = makeIrModulePhase(
+    ::LateinitLowering,
+    name = "Lateinit",
 )
 
 private val rangeContainsLoweringPhase = makeIrModulePhase(
@@ -96,7 +96,7 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     name = "SharedVariablesLowering",
     prerequisite = setOf(
         lateinitDeclarationLoweringPhase,
-        lateinitUsageLoweringPhase
+        lateinitLoweringPhase
     )
 )
 
@@ -547,7 +547,7 @@ fun getWasmLowerings(
 
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitLoweringPhase,
     rangeContainsLoweringPhase,
 
     sharedVariablesLoweringPhase,

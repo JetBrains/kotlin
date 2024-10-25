@@ -113,7 +113,7 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
 /**
  * Inserts checks for lateinit field references.
  */
-class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
+class LateinitLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val nullableVariables = mutableMapOf<IrVariable, IrVariable>()

@@ -36,7 +36,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendCon
                     jsCodeOutliningLowering, // Only on JS
 //                  ::NullableFieldsForLateinitCreationLowering,
 //                  ::NullableFieldsDeclarationLowering,
-//                  ::LateinitUsageLowering,
+//                  ::LateinitLowering,
 //                  ::SharedVariablesLowering,
 //                  ::OuterThisInInlineFunctionsSpecialAccessorLowering,
 //                  ::LocalClassesInInlineLambdasLowering,
