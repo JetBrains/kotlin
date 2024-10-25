@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
-import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler.Companion.FILE_SEPARATOR
+import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.kapt3.test.integration.LoggingMessageCollector
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint

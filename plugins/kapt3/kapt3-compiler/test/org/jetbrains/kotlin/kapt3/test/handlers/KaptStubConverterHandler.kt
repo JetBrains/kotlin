@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.util.*
 
-class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
+class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     companion object {
         const val FILE_SEPARATOR = "\n\n////////////////////\n\n"
     }

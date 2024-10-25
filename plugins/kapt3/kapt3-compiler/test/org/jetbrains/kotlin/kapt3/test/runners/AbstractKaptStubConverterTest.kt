@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
-import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
+import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -52,7 +52,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
 
         facadeStep(kaptFacade)
         handlersStep(KaptContextBinaryArtifact.Kind) {
-            useHandlers(::ClassFileToSourceKaptStubHandler)
+            useHandlers(::KaptStubConverterHandler)
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)

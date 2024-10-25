@@ -9,13 +9,13 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
-import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler.Companion.FILE_SEPARATOR
+import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 
-class KaptContextHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
+class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val kaptContext = info.kaptContext
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)

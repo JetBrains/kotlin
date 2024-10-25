@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
-import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
+import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.kapt3.test.handlers.removeMetadataAnnotationContents
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
 import org.jetbrains.kotlin.test.Assertions
@@ -42,7 +42,7 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
 
     override fun processModule(module: TestModule, info: Kapt4ContextBinaryArtifact) {
         val stubs = info.kaptStubs.map { it.source }
-        val actualRaw = stubs.joinToString(ClassFileToSourceKaptStubHandler.FILE_SEPARATOR)
+        val actualRaw = stubs.joinToString(KaptStubConverterHandler.FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
