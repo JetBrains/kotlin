@@ -50992,6 +50992,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("isFir2IrButBackendFails.kt")
+        public void testIsFir2IrButBackendFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFir2IrButBackendFails.kt");
+        }
+
+        @Test
         @TestMetadata("isFirButFir2IrFails.kt")
         public void testIsFirButFir2IrFails() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFirButFir2IrFails.kt");

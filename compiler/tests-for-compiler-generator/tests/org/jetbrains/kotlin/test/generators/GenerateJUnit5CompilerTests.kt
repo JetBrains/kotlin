@@ -322,6 +322,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
+            testClass<AbstractTieredBackendJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.BACKEND),
+            )
+
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir)
             }

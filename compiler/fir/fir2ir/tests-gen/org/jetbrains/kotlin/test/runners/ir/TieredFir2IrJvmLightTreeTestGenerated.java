@@ -42,6 +42,17 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButFir2IrPasses.kt");
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Good {
+        @Test
+        @TestMetadata("isFir2IrButBackendFails.kt")
+        public void testIsFir2IrButBackendFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFir2IrButBackendFails.kt");
+        }
+      }
     }
   }
 }

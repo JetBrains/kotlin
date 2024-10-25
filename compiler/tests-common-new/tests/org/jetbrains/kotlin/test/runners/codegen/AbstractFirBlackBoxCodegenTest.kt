@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -28,6 +29,13 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.TestTierChecker
+import org.jetbrains.kotlin.test.runners.TestTierLabel
+import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest.KlibFacades
+import org.jetbrains.kotlin.test.runners.ir.configureTieredFir2IrJvmTest
+import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
 abstract class AbstractFirBlackBoxCodegenTestBase(
     val parser: FirParser
@@ -99,3 +107,62 @@ open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractFirBlackBoxCodegenT
 
 @FirPsiCodegenTest
 open class AbstractFirPsiBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTestBase(FirParser.Psi)
+
+fun TestConfigurationBuilder.configureTieredBackendJvmTest(
+    parser: FirParser,
+    converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
+    targetBackend: TargetBackend,
+    klibFacades: KlibFacades?,
+) {
+    configureTieredFir2IrJvmTest(parser, targetBackend, converter, klibFacades)
+
+    configureIrHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
+
+    globalDefaults {
+        // FIR2IR sets it to `NoArtifact`, but this prevents BACKEND and BOX steps
+        artifactKind = null
+    }
+
+    // See: org.jetbrains.kotlin.test.runners.codegen.commonServicesConfigurationForCodegenTest
+    commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(FrontendKinds.FIR)
+    useAdditionalSourceProviders(
+        ::MainFunctionForBlackBoxTestsSourceProvider
+    )
+
+    facadeStep(::JvmIrBackendFacade)
+    jvmArtifactsHandlersStep(init = {})
+
+    configureJvmArtifactsHandlersStep {
+        commonBackendHandlersForCodegenTest()
+    }
+
+    configureJvmBoxCodegenSettings(includeAllDumpHandlers = false)
+    configureBlackBoxTestSettings()
+
+    // May be required by some diagnostic tests like:
+    // `compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt`.
+    // This config matches `forTestsMatching` from `configureTieredFir2IrJvmTest()`
+    // to make sure we always set a `LibraryProvider` and don't have duplicates.
+    forTestsNotMatching("diagnostics/tests/multiplatform/*") {
+        useAdditionalService(::LibraryProvider)
+    }
+}
+
+abstract class AbstractTieredBackendJvmTest(
+    private val parser: FirParser,
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+    override fun TestConfigurationBuilder.configuration() {
+        configureTieredBackendJvmTest(
+            parser, ::Fir2IrResultsConverter, targetBackend,
+            klibFacades = null,
+        )
+
+        useAfterAnalysisCheckers(
+            { TestTierChecker(TestTierLabel.BACKEND, numberOfMarkerHandlersPerModule = 0, it) },
+        )
+    }
+}
+
+open class AbstractTieredBackendJvmLightTreeTest : AbstractTieredBackendJvmTest(FirParser.LightTree)

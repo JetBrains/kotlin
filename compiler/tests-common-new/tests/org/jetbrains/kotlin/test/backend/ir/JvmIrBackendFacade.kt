@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.java.JavaCompilerFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -22,10 +23,9 @@ import org.jetbrains.kotlin.test.model.SourceFileInfo
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.moduleStructure
 
-class JvmIrBackendFacade(
-    testServices: TestServices
-) : IrBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
+class JvmIrBackendFacade(testServices: TestServices) : IrBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
     private val javaCompilerFacade = JavaCompilerFacade(testServices)
 
     override fun transform(
@@ -45,8 +45,14 @@ class JvmIrBackendFacade(
             throw e
         }
         state.factory.done()
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
+
+        // Currently there's a ton of diagnostic tests with incorrect Java code:
+        // strictly speaking, compiling it with javac is not required for testing
+        // Kotlin code
+        if (DISABLE_JAVA_FACADE !in testServices.moduleStructure.allDirectives) {
+            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
+        }
 
         fun sourceFileInfos(irFile: IrFile, allowNestedMultifileFacades: Boolean): List<SourceFileInfo> =
             when (val fileEntry = irFile.fileEntry) {

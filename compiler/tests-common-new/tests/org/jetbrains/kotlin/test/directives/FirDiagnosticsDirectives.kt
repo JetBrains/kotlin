@@ -91,6 +91,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enable experimental checkers"
     )
 
+    val DISABLE_JAVA_FACADE by directive(
+        description = "Disables javac for diagnostic tests containing incorrect Java code. Such tests must be fixed, but until they are, use this directive"
+    )
+
     val SCOPE_DUMP by stringDirective(
         description = """
             Dump hierarchies of overrides of classes listed in arguments
