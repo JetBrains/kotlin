@@ -79,10 +79,6 @@ public final class HomeFragment {
 @kotlin.Metadata()
 public final class IncorrectDelegateKt {
 
-    public IncorrectDelegateKt() {
-        super();
-    }
-
     public static final void moxyPresenter() {
     }
 }

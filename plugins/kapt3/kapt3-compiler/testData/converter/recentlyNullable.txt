@@ -12,8 +12,8 @@ package androidx.annotation;
 
 import java.lang.annotation.*;
 
-@Retention(value = RetentionPolicy.CLASS)
-@Target(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 @interface RecentlyNullable {
 }
 

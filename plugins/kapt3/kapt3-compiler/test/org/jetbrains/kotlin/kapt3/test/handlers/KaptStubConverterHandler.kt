@@ -41,7 +41,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 
         kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
-        if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
@@ -51,6 +50,9 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
+        if (validate) {
+            kaptContext.compiler.enterTrees(convertedFiles)
+        }
         val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
         val actualErrors = log.reportedDiagnostics

@@ -128,10 +128,6 @@ import kapt.Test.NestedEnum;
 @kotlin.Metadata()
 public final class BKt {
 
-    public BKt() {
-        super();
-    }
-
     public static final void test() {
     }
 }

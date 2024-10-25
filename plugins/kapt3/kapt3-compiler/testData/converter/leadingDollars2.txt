@@ -1,10 +1,6 @@
 package te.st.a;
 
 public class JavaClass {
-
-    public JavaClass() {
-        super();
-    }
 }
 
 ////////////////////
@@ -26,10 +22,6 @@ import te.st.a.Test$.Inner$;
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TestKt {
-
-    public TestKt() {
-        super();
-    }
 
     public static final void a(@org.jetbrains.annotations.NotNull()
     te.st.a.$Test.Inner a) {

@@ -15,10 +15,6 @@ import kotlin.io.encoding.*;
  */
 @kotlin.Metadata()
 public final class ResolvedKt {
-
-    public ResolvedKt() {
-        super();
-    }
     @org.jetbrains.annotations.Nullable()
     private static kotlin.io.encoding.Base64 base64;
 
@@ -53,10 +49,6 @@ import kotlin.io.encoding.*;
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class UnresolvedKt {
-
-    public UnresolvedKt() {
-        super();
-    }
     @org.jetbrains.annotations.Nullable()
     private static Base65 base65;
 

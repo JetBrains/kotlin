@@ -15,10 +15,6 @@ import kotlin.reflect.KProperty;
  */
 @kotlin.Metadata()
 public final class AnonymousDelegateKt {
-
-    public AnonymousDelegateKt() {
-        super();
-    }
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.Object delegate$delegate = null;
 

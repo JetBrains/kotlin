@@ -132,8 +132,4 @@ package test;
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class DataClassWithUnresolvedComponentTypeKt {
-
-    public DataClassWithUnresolvedComponentTypeKt() {
-        super();
-    }
 }

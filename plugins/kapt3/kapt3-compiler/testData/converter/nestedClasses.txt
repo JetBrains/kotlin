@@ -66,10 +66,6 @@ public final class A {
          */
         @kotlin.Metadata()
         public static final class DefaultImpls {
-
-            public DefaultImpls() {
-                super();
-            }
         }
     }
 

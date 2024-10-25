@@ -61,10 +61,6 @@ package test.another;
  */
 @kotlin.Metadata()
 public final class TopLevelKt {
-
-    public TopLevelKt() {
-        super();
-    }
     private static final int topLevelProperty = 2;
     public static final int topLevelConstProperty = 2;
 

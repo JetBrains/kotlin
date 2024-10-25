@@ -43,10 +43,6 @@ package test;
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
-    public AnnotationsTest() {
-        super();
-    }
-
     @Anno(value = "top-level-fun")
     public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
     @org.jetbrains.annotations.NotNull()

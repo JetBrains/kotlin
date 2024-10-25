@@ -58,10 +58,6 @@ public abstract interface Intf {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public DefaultImpls() {
-            super();
-        }
-
         public static int getColor(@org.jetbrains.annotations.NotNull()
         Intf $this) {
             return 0;
@@ -91,10 +87,6 @@ public abstract interface IntfWithDefaultImpls {
      */
     @kotlin.Metadata()
     public static final class DefaultImpls {
-
-        public DefaultImpls() {
-            super();
-        }
 
         public static void a(@org.jetbrains.annotations.NotNull()
         IntfWithDefaultImpls $this) {

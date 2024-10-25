@@ -28,10 +28,6 @@
  */
 @kotlin.Metadata()
 public final class Data {
-
-    public Data() {
-        super();
-    }
     private final int value = 0;
 
     @java.lang.Override()
@@ -72,8 +68,4 @@ public final class Data {
  */
 @kotlin.Metadata()
 public final class Kt67903Kt {
-
-    public Kt67903Kt() {
-        super();
-    }
 }

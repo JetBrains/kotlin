@@ -456,50 +456,22 @@ public abstract interface IFoo {
 
 public class J$B {
 
-    public J$B() {
-        super();
-    }
-
     public class C {
-
-        public C() {
-            super();
-        }
     }
 
     public class D$E {
 
-        public D$E() {
-            super();
-        }
-
         class F {
-
-            F() {
-                super();
-            }
         }
 
         class F$G {
-
-            F$G() {
-                super();
-            }
         }
     }
 
     public class D$$E {
-
-        public D$$E() {
-            super();
-        }
     }
 
     public class D$$$E {
-
-        public D$$$E() {
-            super();
-        }
     }
 }
 
@@ -508,21 +480,9 @@ public class J$B {
 
 public class JavaClass {
 
-    public JavaClass() {
-        super();
-    }
-
     public class Foo {
 
-        public Foo() {
-            super();
-        }
-
         public class Bar {
-
-            public Bar() {
-                super();
-            }
         }
     }
 }

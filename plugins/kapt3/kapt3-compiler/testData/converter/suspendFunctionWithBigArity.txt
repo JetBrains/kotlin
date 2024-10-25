@@ -23,10 +23,6 @@ public abstract interface Flow<T extends java.lang.Object> {
 @kotlin.Metadata()
 public final class SuspendFunctionWithBigArityKt {
 
-    public SuspendFunctionWithBigArityKt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final <T1 extends java.lang.Object, T2 extends java.lang.Object, T3 extends java.lang.Object, T4 extends java.lang.Object, T5 extends java.lang.Object, T6 extends java.lang.Object, T7 extends java.lang.Object, T8 extends java.lang.Object, T9 extends java.lang.Object, T10 extends java.lang.Object, T11 extends java.lang.Object, T12 extends java.lang.Object, T13 extends java.lang.Object, T14 extends java.lang.Object, T15 extends java.lang.Object, T16 extends java.lang.Object, T17 extends java.lang.Object, T18 extends java.lang.Object, T19 extends java.lang.Object, T20 extends java.lang.Object, T21 extends java.lang.Object, T22 extends java.lang.Object, T23 extends java.lang.Object, R extends java.lang.Object>Flow<R> combine(@org.jetbrains.annotations.NotNull()
     Flow<T1> flow, @org.jetbrains.annotations.NotNull()

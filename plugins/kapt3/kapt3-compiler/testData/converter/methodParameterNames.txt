@@ -59,10 +59,6 @@ public abstract interface Intf {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public DefaultImpls() {
-            super();
-        }
-
         @org.jetbrains.annotations.NotNull()
         public static java.lang.String bar(@org.jetbrains.annotations.NotNull()
         Intf $this, int bcd) {

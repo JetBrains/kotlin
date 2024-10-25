@@ -1,10 +1,6 @@
 package lib;
 
 public class File {
-
-    public File() {
-        super();
-    }
 }
 
 ////////////////////
@@ -12,10 +8,6 @@ public class File {
 package lib;
 
 public class IOException {
-
-    public IOException() {
-        super();
-    }
 }
 
 ////////////////////

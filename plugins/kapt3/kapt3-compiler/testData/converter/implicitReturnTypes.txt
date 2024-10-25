@@ -2,10 +2,6 @@ package lib;
 
 public abstract class Prop<T> {
 
-    public Prop() {
-        super();
-    }
-
     public abstract int get(T key);
 
     public abstract void set(T key, int value);
@@ -78,10 +74,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class TestKt {
-
-    public TestKt() {
-        super();
-    }
     @org.jetbrains.annotations.NotNull()
     private static final lib.Prop<test.Cl> TEST = null;
     @org.jetbrains.annotations.NotNull()

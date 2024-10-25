@@ -33,10 +33,6 @@ public abstract @interface A {
  */
 @kotlin.Metadata()
 public final class Kt68145Kt {
-
-    public Kt68145Kt() {
-        super();
-    }
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String value = "";
     private static final int hidden = 1;

@@ -39,10 +39,6 @@ public abstract @interface A {
 @kotlin.Metadata()
 public final class AnnotationWithVaragArgumentsKt {
 
-    public AnnotationWithVaragArgumentsKt() {
-        super();
-    }
-
     @A(x = {})
     @B(x = "x", z = "z", y = {})
     @C(a = @A(x = {}), b = @B(x = "x", y = {}, z = "z"))

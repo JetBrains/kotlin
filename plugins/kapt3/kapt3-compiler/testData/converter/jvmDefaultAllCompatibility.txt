@@ -40,10 +40,6 @@ public abstract interface Foo {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public DefaultImpls() {
-            super();
-        }
-
         @java.lang.Deprecated()
         public static void foo(@org.jetbrains.annotations.NotNull()
         Foo $this) {

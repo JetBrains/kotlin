@@ -53,11 +53,7 @@ public @interface RestrictTo {
 
     Scope[] value();
 
-    public static enum Scope {
+    enum Scope {
         /*public static final*/ LIBRARY_GROUP_PREFIX /* = new Scope() */;
-
-        private Scope() {
-            super();
-        }
     }
 }

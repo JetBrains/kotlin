@@ -9,8 +9,4 @@
  */
 @kotlin.Metadata()
 public final class InlineReifiedKt {
-
-    public InlineReifiedKt() {
-        super();
-    }
 }

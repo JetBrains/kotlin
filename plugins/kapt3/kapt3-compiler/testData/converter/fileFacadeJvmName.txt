@@ -16,10 +16,6 @@ package a.b.c;
 @kotlin.Metadata()
 @kotlin.jvm.JvmName(name = "FacadeName")
 public final class FacadeName {
-
-    public FacadeName() {
-        super();
-    }
     public static final int bar = 3;
 
     public static final void foo() {

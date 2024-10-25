@@ -459,15 +459,7 @@ package lib;
 
 public class R {
 
-    public R() {
-        super();
-    }
-
     public static class id {
-
-        public id() {
-            super();
-        }
         public static final int textView = 100;
     }
 }

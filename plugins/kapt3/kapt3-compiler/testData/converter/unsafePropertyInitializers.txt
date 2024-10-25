@@ -446,8 +446,4 @@ public enum State {
  */
 @kotlin.Metadata()
 public final class UnsafePropertyInitializersKt {
-
-    public UnsafePropertyInitializersKt() {
-        super();
-    }
 }

@@ -1,14 +1,6 @@
 public class $Test {
 
-    public $Test() {
-        super();
-    }
-
     public static class $Inner {
-
-        public $Inner() {
-            super();
-        }
     }
 }
 
@@ -17,15 +9,7 @@ public class $Test {
 
 public class Test$ {
 
-    public Test$() {
-        super();
-    }
-
     public static class Inner$ {
-
-        public Inner$() {
-            super();
-        }
     }
 }
 
@@ -47,10 +31,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class TestKt {
-
-    public TestKt() {
-        super();
-    }
 
     public static final void test(@org.jetbrains.annotations.NotNull()
     $Test.$Inner a) {

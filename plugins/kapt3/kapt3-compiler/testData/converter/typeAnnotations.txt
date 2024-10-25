@@ -72,10 +72,6 @@ package org.jetbrains;
 @kotlin.Metadata()
 public final class TypeAnnotationsKt {
 
-    public TypeAnnotationsKt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String foo(@org.jetbrains.annotations.NotNull()
     java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull()

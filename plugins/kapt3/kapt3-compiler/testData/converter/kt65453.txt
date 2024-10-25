@@ -29,10 +29,6 @@ public abstract @interface A {
 @kotlin.Metadata()
 public final class Kt65453Kt {
 
-    public Kt65453Kt() {
-        super();
-    }
-
     public static final void foo(@org.jetbrains.annotations.NotNull()
     kotlin.jvm.functions.Function1<? super kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.Unit> callback) {
     }

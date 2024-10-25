@@ -72,10 +72,6 @@ package test;
 @kotlin.Suppress(names = {"NOTHING_TO_INLINE"})
 public final class Kt27126Kt {
 
-    public Kt27126Kt() {
-        super();
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final test.BundleProperty<java.lang.CharSequence> charSequence(@org.jetbrains.annotations.Nullable()
     java.lang.String key) {

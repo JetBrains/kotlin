@@ -74,15 +74,7 @@ package app;
 
 public class B {
 
-    public B() {
-        super();
-    }
-
     public static class id {
-
-        public id() {
-            super();
-        }
         public static final int textView = 200;
     }
     public static final boolean a1 = false;
@@ -572,15 +564,7 @@ package app;
 
 public class R {
 
-    public R() {
-        super();
-    }
-
     public static class layout {
-
-        public layout() {
-            super();
-        }
         public static final int mainActivity = 100;
     }
 }
@@ -591,15 +575,7 @@ package app;
 
 public class R2 {
 
-    public R2() {
-        super();
-    }
-
     public static class layout {
-
-        public layout() {
-            super();
-        }
         public static final int mainActivity = 100;
     }
 }
@@ -613,8 +589,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(value = ElementType.METHOD)
-@Retention(value = RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface OnClick {
 
     int[] value() default {};
@@ -626,15 +602,7 @@ package lib;
 
 public class R {
 
-    public R() {
-        super();
-    }
-
     public static class id {
-
-        public id() {
-            super();
-        }
         public static final int textView = 100;
     }
 }

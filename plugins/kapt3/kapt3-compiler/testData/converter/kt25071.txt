@@ -97,10 +97,6 @@ package my.lib;
 @kotlin.Metadata()
 public final class LibKt {
 
-    public LibKt() {
-        super();
-    }
-
     public static final int func(@org.jetbrains.annotations.NotNull()
     java.lang.String $this$func) {
         return 0;
