@@ -256,6 +256,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("kt72552.kt")
+    public void testKt72552() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt72552.kt");
+    }
+
+    @Test
     @TestMetadata("libiconv.kt")
     public void testLibiconv() {
       runTest("native/native.tests/testData/codegen/cinterop/libiconv.kt");
