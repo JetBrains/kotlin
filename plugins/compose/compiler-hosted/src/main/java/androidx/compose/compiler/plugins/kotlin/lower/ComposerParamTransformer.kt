@@ -356,7 +356,7 @@ class ComposerParamTransformer(
 
             // The overridden symbols might also be composable functions, so we want to make sure
             // and transform them as well
-            fn.overriddenSymbols = overriddenSymbols.map {
+            fn.overriddenSymbols = overriddenSymbols.map {  // TODO use fn`s overriddenSymbols?
                 it.owner.withComposerParamIfNeeded().symbol
             }
 
@@ -366,6 +366,7 @@ class ComposerParamTransformer(
             // composable property getters since it ends up looking for the wrong jvmSignature.
             // In this case, we manually add the appropriate "@JvmName" annotation so that the
             // inliner doesn't get confused.
+            fn.correspondingPropertySymbol = correspondingPropertySymbol
             fn.correspondingPropertySymbol?.let { propertySymbol ->
                 if (!fn.hasAnnotation(DescriptorUtils.JVM_NAME)) {
                     val propertyName = propertySymbol.owner.name.identifier
