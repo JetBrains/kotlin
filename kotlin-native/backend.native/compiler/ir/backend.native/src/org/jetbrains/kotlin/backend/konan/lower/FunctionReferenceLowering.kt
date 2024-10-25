@@ -122,7 +122,10 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             }
 
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-                return super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+                stack.push(declaration)
+                val result = super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+                stack.pop()
+                return result
             }
 
             override fun visitSpreadElement(spread: IrSpreadElement, data: IrDeclarationParent): IrSpreadElement {
