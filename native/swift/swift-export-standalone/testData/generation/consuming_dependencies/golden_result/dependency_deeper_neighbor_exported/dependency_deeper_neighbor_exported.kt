@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(dependency.four.AnotherBar::class, "22ExportedKotlinPackages10dependencyO4fourO35dependency_deeper_neighbor_exportedE10AnotherBarC")
 
 import kotlin.native.internal.ExportedBridge

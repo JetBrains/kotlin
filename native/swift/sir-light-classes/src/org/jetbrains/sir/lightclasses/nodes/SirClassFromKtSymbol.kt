@@ -24,6 +24,7 @@ import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -82,7 +83,7 @@ internal class SirClassFromKtSymbol(
             }
     }
 
-    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     private fun childDeclarations(): List<SirDeclaration> = withSessions {
         ktSymbol.combinedDeclaredMemberScope

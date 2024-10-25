@@ -115,20 +115,9 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirDeclaration.printAttributes() {
         attributes.forEach {
-            when (it) {
-                is SirAttribute.Available -> {
-                    print("@available(")
-                    print(it.platform)
-                    if (it.deprecated) {
-                        print(", deprecated")
-                    }
-                    if (it.obsoleted) {
-                        print(", obsoleted")
-                    }
-                    print(", message: \"${it.message}\"")
-                    println(")")
-                }
-            }
+            println("@", it.identifier, it.arguments?.joinToString(prefix = "(", postfix = ")") { parameter ->
+                parameter.name?.let { "$it: ${parameter.expression}" } ?: "${parameter.expression}"
+            } ?: "")
         }
     }
 

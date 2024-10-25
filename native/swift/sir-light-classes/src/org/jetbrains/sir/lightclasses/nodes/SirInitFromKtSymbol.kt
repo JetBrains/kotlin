@@ -16,6 +16,7 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.translateParameters
+import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirInitFromKtSymbol(
     override val ktSymbol: KaConstructorSymbol,
@@ -51,7 +52,7 @@ internal class SirInitFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     override var body: SirFunctionBody? = null
 }

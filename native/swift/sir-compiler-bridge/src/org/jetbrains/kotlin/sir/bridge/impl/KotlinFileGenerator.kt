@@ -14,7 +14,9 @@ internal class KotlinBridgePrinter : BridgePrinter {
 
     private val imports = mutableSetOf<String>()
     private val functions = mutableSetOf<List<String>>()
-    private val fileLevelAnnotations = mutableSetOf<String>()
+    private val fileLevelAnnotations = mutableSetOf<String>(
+        """kotlin.Suppress("DEPRECATION_ERROR")""",
+    )
 
     override fun add(bridge: GeneratedBridge) {
         when (bridge) {

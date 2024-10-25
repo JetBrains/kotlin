@@ -22,7 +22,7 @@ public class SirTrampolineFunction(
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.UNSPECIFIED
 
-    override val attributes: MutableList<SirAttribute> get() = source.attributes
+    override val attributes: List<SirAttribute> get() = source.attributes
 
     override val extensionReceiverParameter: SirParameter?
         get() = source.extensionReceiverParameter

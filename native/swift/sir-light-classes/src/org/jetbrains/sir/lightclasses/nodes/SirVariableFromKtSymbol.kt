@@ -6,13 +6,14 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
@@ -21,6 +22,7 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.isSubtypeOf
 import org.jetbrains.sir.lightclasses.utils.overridableCandidates
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
+import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirVariableFromKtSymbol(
     override val ktSymbol: KaVariableSymbol,
@@ -40,17 +42,21 @@ internal class SirVariableFromKtSymbol(
         translateReturnType()
     }
     override val getter: SirGetter by lazy {
-        buildGetter {}.also {
+        ((ktSymbol as? KaPropertySymbol)?.let {
+            it.getter?.let {
+                SirGetterFromKtSymbol(it, ktModule, sirSession)
+            }
+        } ?: buildGetter()).also {
             it.parent = this@SirVariableFromKtSymbol
         }
     }
     override val setter: SirSetter? by lazy {
-        if (!ktSymbol.isVal) {
-            buildSetter {}.also {
-                it.parent = this@SirVariableFromKtSymbol
+        ((ktSymbol as? KaPropertySymbol)?.let {
+            it.setter?.let {
+                SirSetterFromKtSymbol(it, ktModule, sirSession)
             }
-        } else {
-            null
+        } ?: ktSymbol.isVal.ifFalse { buildSetter() })?.also {
+            it.parent = this@SirVariableFromKtSymbol
         }
     }
     override val documentation: String? by lazy {
@@ -63,7 +69,7 @@ internal class SirVariableFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     override val isOverride: Boolean
         get() = isInstance && overridableCandidates.any {
@@ -77,4 +83,31 @@ internal class SirVariableFromKtSymbol(
 
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
+}
+
+internal class SirGetterFromKtSymbol(
+    override val ktSymbol: KaPropertyGetterSymbol,
+    override val ktModule: KaModule,
+    override val sirSession: SirSession,
+) : SirGetter(), SirFromKtSymbol<KaPropertyGetterSymbol> {
+    override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
+    override val visibility: SirVisibility get() = SirVisibility.PUBLIC
+    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override lateinit var parent: SirDeclarationParent
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override var body: SirFunctionBody? = null
+}
+
+internal class SirSetterFromKtSymbol(
+    override val ktSymbol: KaPropertySetterSymbol,
+    override val ktModule: KaModule,
+    override val sirSession: SirSession,
+) : SirSetter(), SirFromKtSymbol<KaPropertySetterSymbol> {
+    override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
+    override val visibility: SirVisibility get() = SirVisibility.PUBLIC
+    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override lateinit var parent: SirDeclarationParent
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override var body: SirFunctionBody? = null
+    override val parameterName: String = "newValue"
 }

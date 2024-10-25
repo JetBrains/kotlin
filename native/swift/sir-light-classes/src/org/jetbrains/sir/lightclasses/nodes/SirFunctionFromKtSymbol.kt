@@ -68,7 +68,7 @@ internal class SirFunctionFromKtSymbol(
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
 
-    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     override var body: SirFunctionBody? = null
 }

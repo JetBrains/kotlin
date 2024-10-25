@@ -1012,7 +1012,7 @@ class SirAsSwiftSourcesPrinterTests {
                 name = "method"
                 returnType = SirNominalType(SirSwiftModule.bool)
                 documentation = "// Check that nested attributes handled properly"
-                attributes += SirAttribute.Available(message = "Available method", deprecated = false, obsoleted = false)
+                attributes += SirAttribute.Available(message = "Deprecated method", deprecated = true, obsoleted = false)
             }
         }.attachDeclarations()
 
@@ -1037,6 +1037,16 @@ class SirAsSwiftSourcesPrinterTests {
                             /// Example docstring
                         """.trimIndent()
                     attributes += SirAttribute.Available(message = "Obsolete variable", deprecated = false, obsoleted = true)
+                }
+            }
+            addChild {
+                buildTypealias {
+                    name = "myVariable"
+                    type = SirNominalType(SirSwiftModule.bool)
+                    documentation = """
+                            /// Example docstring
+                        """.trimIndent()
+                    attributes += SirAttribute.Available(message = "Unavailable typealias", unavailable = true)
                 }
             }
             addChild {

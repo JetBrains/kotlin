@@ -6,18 +6,35 @@
 package org.jetbrains.kotlin.sir
 
 public sealed interface SirAttribute {
+    val identifier: String
+    val arguments: List<SirArgument>? get() = null
+
     /**
-     * Models @available attribute
+     * Loosely models @available attribute
      * https://docs.swift.org/swift-book/documentation/the-swift-programming-language/attributes/#available
+     *
      */
     class Available(
-        val message: String,
-        val deprecated: Boolean,
-        val obsoleted: Boolean,
+        val message: String?,
+        val deprecated: Boolean = false,
+        val obsoleted: Boolean = false,
+        val unavailable: Boolean = false,
+        val renamed: String = ""
     ) : SirAttribute {
+        init {
+            require(obsoleted || deprecated || unavailable) { "Positive availability is not supported" }
+            require((obsoleted || deprecated) != unavailable) { "Declaration can not be both deprecated/obsolete and unavailable" }
+        }
 
-        val platform: String
-            // For now, we don't care about the platform.
-            get() = "*"
+        override val identifier: String get() = "available"
+
+        override val arguments: List<SirArgument> get() = listOfNotNull(
+                SirArgument("*"),
+                SirArgument("deprecated").takeIf { deprecated && !unavailable },
+                SirArgument("obsoleted", "1.0").takeIf { obsoleted && !unavailable },
+                SirArgument("unavailable").takeIf { unavailable },
+                renamed.takeIf { it.isNotEmpty() }?.let { SirArgument("renamed", "\"$renamed\"") },
+                message?.let { SirArgument("message", "\"$it\"") },
+            )
     }
 }

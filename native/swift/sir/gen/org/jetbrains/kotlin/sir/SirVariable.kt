@@ -16,7 +16,7 @@ abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationPar
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
-    abstract override val attributes: MutableList<SirAttribute>
+    abstract override val attributes: List<SirAttribute>
     abstract override val isOverride: Boolean
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality

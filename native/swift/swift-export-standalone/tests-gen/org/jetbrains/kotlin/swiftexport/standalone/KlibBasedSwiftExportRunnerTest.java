@@ -30,6 +30,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("annotations")
+  public void testAnnotations() {
+    runTest("native/swift/swift-export-standalone/testData/generation/annotations/");
+  }
+
+  @Test
   @TestMetadata("any")
   public void testAny() {
     runTest("native/swift/swift-export-standalone/testData/generation/any/");

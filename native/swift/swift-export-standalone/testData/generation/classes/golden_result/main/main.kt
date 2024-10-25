@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.Foo::class, "22ExportedKotlinPackages9namespaceO4mainE3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.Foo.INSIDE_CLASS::class, "22ExportedKotlinPackages9namespaceO4mainE3FooC12INSIDE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.NAMESPACED_CLASS::class, "22ExportedKotlinPackages9namespaceO4mainE16NAMESPACED_CLASSC")

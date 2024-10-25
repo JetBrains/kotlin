@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(flattenedPackage.FlattenedPackageClass::class, "22ExportedKotlinPackages16flattenedPackageO9flattenedE21FlattenedPackageClassC")
 
 import kotlin.native.internal.ExportedBridge

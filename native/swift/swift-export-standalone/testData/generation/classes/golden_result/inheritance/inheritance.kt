@@ -1,3 +1,4 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "11inheritance24INHERITANCE_SINGLE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_CLASS_INHERITANCE::class, "11inheritance29OBJECT_WITH_CLASS_INHERITANCEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS::class, "11inheritance10OPEN_CLASSC")
