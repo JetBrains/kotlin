@@ -15,9 +15,11 @@ import java.io.*
 class KotlinLocalVirtualFile(
     val file: File,
     private val _fileSystem: KotlinLocalFileSystem,
+    parent: KotlinLocalVirtualFile? = null,
 ) : VirtualFile() {
     // File system operations can be slow, so we're caching high-impact properties.
     private var _name: String? = null
+    private var _parent: KotlinLocalVirtualFile? = parent
 
     private var _isDirectory: Boolean? = null
 
@@ -50,8 +52,11 @@ class KotlinLocalVirtualFile(
     }
 
     override fun getParent(): VirtualFile? {
+        _parent?.let { return it }
         val parentFile = file.parentFile ?: return null
-        return KotlinLocalVirtualFile(parentFile, _fileSystem)
+        return KotlinLocalVirtualFile(parentFile, _fileSystem).also {
+            _parent = it
+        }
     }
 
     override fun getChildren(): Array<VirtualFile> {
@@ -59,7 +64,7 @@ class KotlinLocalVirtualFile(
         val fileChildren = file.listFiles() ?: emptyArray()
 
         _children = fileChildren
-            .map { KotlinLocalVirtualFile(it, _fileSystem) }
+            .map { KotlinLocalVirtualFile(it, _fileSystem, parent = this) }
             .sortedBy { it.name }
             .toTypedArray<VirtualFile>()
 
