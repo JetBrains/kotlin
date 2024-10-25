@@ -218,7 +218,7 @@ interface DeclarationTransformer : FileLoweringPass {
         val visitor = Visitor(this)
         irFile.declarations.transformFlat { declaration ->
             try {
-                declaration.acceptVoid(visitor)
+                declaration.accept(visitor, declaration)
                 transformFlatRestricted(declaration)
             } catch (e: CompilationException) {
                 e.initializeFileDetails(irFile)
@@ -233,87 +233,117 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
+    fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
         return declaration.factory.stageController.restrictTo(declaration) {
             transformFlat(declaration)
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
+    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitor<Unit, IrDeclaration?> {
+        override fun visitElement(element: IrElement, data: IrDeclaration?) {
+            element.acceptChildren(this, data)
         }
 
-        override fun visitFunction(declaration: IrFunction) {
-            declaration.acceptChildrenVoid(this)
-
-            for (v in declaration.valueParameters) {
-                val result = transformer.transformFlatRestricted(v)
-                if (result != null) error("Don't know how to add value parameters")
-            }
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            // TODO This is a hack to allow lowering a getter separately from the enclosing property
-
-            val visitor = this
-
-            fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>): Boolean {
-                var index = container.indexOf(this)
-                if (index == -1) {
-                    index = container.indexOf(declaration)
-                } else {
-                    container.removeAt(index)
-                    --index
-                }
-                return container.addAll(index + 1, result)
-            }
-
-            fun IrDeclaration.transform() {
-
-                acceptVoid(visitor)
-
-                val result = transformer.transformFlatRestricted(this)
-                if (result != null) {
-                    when (val parentCopy = parent) {
-                        is IrDeclarationContainer -> replaceInContainer(parentCopy.declarations, result)
-                        is IrStatementContainer -> replaceInContainer(parentCopy.statements, result)
-                    }
-                }
-            }
-
-            declaration.backingField?.transform()
-            declaration.getter?.transform()
-            declaration.setter?.transform()
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            declaration.thisReceiver?.accept(this, null)
-            declaration.typeParameters.forEach { it.accept(this, null) }
-            ArrayList(declaration.declarations).forEach { it.accept(this, null) }
-
-            declaration.declarations.transformFlat {
-                transformer.transformFlatRestricted(it)
-            }
-        }
-
-        override fun visitScript(declaration: IrScript) {
-            ArrayList(declaration.statements).forEach {
-                if (transformer.withLocalDeclarations || it is IrDeclaration) {
-                    it.accept(this, null)
-                }
-            }
-            declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
-
-            declaration.thisReceiver?.accept(this, null)
-        }
+        override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) = visitFunction(declaration, transformer, data)
+        override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) = visitProperty(declaration, transformer, data)
+        override fun visitClass(declaration: IrClass, data: IrDeclaration?) = visitClass(declaration, transformer, data)
+        override fun visitScript(declaration: IrScript, data: IrDeclaration?) = visitScript(declaration, transformer, data)
     }
 }
 
-fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFragment>, C> {
-    return { state, modules, context ->
-        modules.forEach { module ->
-            this(state, module, context)
+abstract class BodyLoweringDeclarationTransformerPass(private val transformer: DeclarationTransformer) : BodyLoweringPass {
+    override fun lower(irFile: IrFile) {
+        val visitor = BodyLoweringDeclarationTransformerVisitor(transformer, this)
+        for (declaration in ArrayList(irFile.declarations)) {
+            try {
+                declaration.accept(visitor, null)
+                transformer.transformFlatRestricted(declaration)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(irFile)
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException(
+                    "Internal error in body lowering",
+                    irFile,
+                    declaration
+                )
+            }
         }
     }
+
+    private class BodyLoweringDeclarationTransformerVisitor(
+        private val transformer: DeclarationTransformer,
+        loweringPass: BodyLoweringDeclarationTransformerPass,
+    ) : BodyLoweringVisitor(loweringPass, transformer.withLocalDeclarations) {
+        override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) = visitFunction(declaration, transformer, data)
+        override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) = visitProperty(declaration, transformer, data)
+        override fun visitClass(declaration: IrClass, data: IrDeclaration?) = visitClass(declaration, transformer, data)
+        override fun visitScript(declaration: IrScript, data: IrDeclaration?) = visitScript(declaration, transformer, data)
+    }
+}
+
+private fun IrElementVisitor<Unit, IrDeclaration?>.visitFunction(declaration: IrFunction, transformer: DeclarationTransformer, data: IrDeclaration?) {
+    declaration.acceptChildren(this, declaration)
+
+    for (v in declaration.valueParameters) {
+        val result = transformer.transformFlatRestricted(v)
+        if (result != null) error("Don't know how to add value parameters")
+    }
+}
+
+private fun IrElementVisitor<Unit, IrDeclaration?>.visitProperty(declaration: IrProperty, transformer: DeclarationTransformer, data: IrDeclaration?) {
+    // TODO This is a hack to allow lowering a getter separately from the enclosing property
+
+    val visitor = this
+
+    fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>): Boolean {
+        var index = container.indexOf(this)
+        if (index == -1) {
+            index = container.indexOf(declaration)
+        } else {
+            container.removeAt(index)
+            --index
+        }
+        return container.addAll(index + 1, result)
+    }
+
+    fun IrDeclaration.transform() {
+
+        accept(visitor, data)
+
+        val result = transformer.transformFlatRestricted(this)
+        if (result != null) {
+            when (val parentCopy = parent) {
+                is IrDeclarationContainer -> replaceInContainer(parentCopy.declarations, result)
+                is IrStatementContainer -> replaceInContainer(parentCopy.statements, result)
+            }
+        }
+    }
+
+    declaration.backingField?.transform()
+    declaration.getter?.transform()
+    declaration.setter?.transform()
+
+    declaration.acceptChildren(this, declaration)
+}
+
+private fun IrElementVisitor<Unit, IrDeclaration?>.visitClass(declaration: IrClass, transformer: DeclarationTransformer, data: IrDeclaration?) {
+    declaration.thisReceiver?.accept(this, declaration)
+    declaration.typeParameters.forEach { it.accept(this, declaration) }
+    ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+
+    declaration.declarations.transformFlat {
+        transformer.transformFlatRestricted(it)
+    }
+}
+
+private fun IrElementVisitor<Unit, IrDeclaration?>.visitScript(declaration: IrScript, transformer: DeclarationTransformer, data: IrDeclaration?) {
+    ArrayList(declaration.statements).forEach {
+        if (transformer.withLocalDeclarations || it is IrDeclaration) {
+            it.accept(this, declaration)
+        }
+    }
+    declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
+
+    declaration.thisReceiver?.accept(this, declaration)
 }
