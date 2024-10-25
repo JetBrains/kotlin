@@ -96,6 +96,7 @@ abstract class AbstractKotlinTarget(
 
     /**
      * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
+     * For final version of components use [awaitComponents]
      */
     override val components: Set<KotlinTargetSoftwareComponent> by lazy {
         kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()

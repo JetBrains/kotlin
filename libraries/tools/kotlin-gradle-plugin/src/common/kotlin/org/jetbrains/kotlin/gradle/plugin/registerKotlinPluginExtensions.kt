@@ -174,7 +174,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, OverriddenKotlinNativeHomeChecker)
         register(project, ComposePluginSuggestApplyChecker)
         register(project, NativeVersionChecker)
-        register(project, AndroidPublicationNotConfiguredChecker)
 
         if (isMultiplatform) {
             register(project, MultipleSourceSetRootsInCompilationChecker)
