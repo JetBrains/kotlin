@@ -301,7 +301,11 @@ class LightTreeRawFirExpressionBuilder(
                 if (children.size == 1 && children[0]!!.tokenType == LITERAL_STRING_TEMPLATE_ENTRY && context.folder.canFold()) {
                     context.folder.fold(children[0]!!.asText)
                     return null
-                } else {
+                } else if (context.folder.canFold() && children.all { it!!.tokenType == LITERAL_STRING_TEMPLATE_ENTRY || it.tokenType == ESCAPE_STRING_TEMPLATE_ENTRY }) {
+                    children.forEach { context.folder.fold(it!!.asText) }
+                    return null
+                }
+                else {
                     context.folder.disable()
                     return convertStringTemplate(expression)
                 }

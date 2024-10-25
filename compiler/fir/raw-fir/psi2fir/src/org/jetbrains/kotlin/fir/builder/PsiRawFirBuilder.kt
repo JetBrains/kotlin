@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiUtilCore.getElementType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
 import org.jetbrains.kotlin.KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
@@ -53,6 +54,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.collections.all
+import kotlin.collections.forEach
 
 open class PsiRawFirBuilder(
     session: FirSession,
@@ -2903,6 +2906,10 @@ open class PsiRawFirBuilder(
                 is KtStringTemplateExpression -> {
                     if (expression.entries.size == 1 && getElementType(expression.entries[0]) == LITERAL_STRING_TEMPLATE_ENTRY && context.folder.canFold()) {
                         context.folder.fold(expression.entries[0].asText)
+                        return null
+                    }
+                    else if (context.folder.canFold() && expression.entries.all { getElementType(it).let { it == LITERAL_STRING_TEMPLATE_ENTRY || it == ESCAPE_STRING_TEMPLATE_ENTRY } }) {
+                        expression.entries.forEach { context.folder.fold(it!!.asText) }
                         return null
                     } else {
                         context.folder.disable()

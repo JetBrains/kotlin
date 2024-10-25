@@ -40,6 +40,13 @@ FirFileImpl
    FirPropertyImpl
     FirResolvedDeclarationStatusImpl
     FirResolvedTypeRefImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
     FirFunctionCallImpl
      FirLiteralExpressionImpl
      FirResolvedArgumentListImpl

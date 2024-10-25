@@ -1,4 +1,5 @@
 fun main() {
+    val case0 = "\u0001\u0000" + "\u0001\u0800"
     val case1 = "1" + "2"
     val case2 = "1" + "2" + "3"
     val case3 = ("1" + "2") + "3"

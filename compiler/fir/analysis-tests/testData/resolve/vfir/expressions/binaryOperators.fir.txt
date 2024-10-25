@@ -1,5 +1,6 @@
 FILE: binaryOperators.kt
     public final fun main(): R|kotlin/Unit| {
+        lval case0: R|kotlin/String| = String(\u0001\u0000\u0001\u0800)
         lval case1: R|kotlin/String| = String(12)
         lval case2: R|kotlin/String| = String(123)
         lval case3: R|kotlin/String| = String(123)
