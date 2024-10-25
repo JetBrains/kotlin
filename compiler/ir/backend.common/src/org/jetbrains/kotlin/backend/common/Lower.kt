@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer.TransformingVisitor
 import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -218,7 +219,7 @@ interface DeclarationTransformer : FileLoweringPass {
         val visitor = Visitor(this)
         irFile.declarations.transformFlat { declaration ->
             try {
-                declaration.acceptVoid(visitor)
+                declaration.accept(visitor, declaration)
                 transformFlatRestricted(declaration)
             } catch (e: CompilationException) {
                 e.initializeFileDetails(irFile)
@@ -233,19 +234,23 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
+    fun transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
         return declaration.factory.stageController.restrictTo(declaration) {
             transformFlat(declaration)
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
+    private class Visitor(override val transformer: DeclarationTransformer) : TransformingVisitor {
+        override fun visitElement(element: IrElement, data: IrDeclaration?) {
+            element.acceptChildren(this, data)
         }
+    }
 
-        override fun visitFunction(declaration: IrFunction) {
-            declaration.acceptChildrenVoid(this)
+    interface TransformingVisitor : IrElementVisitor<Unit, IrDeclaration?> {
+        val transformer: DeclarationTransformer
+
+        override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
+            declaration.acceptChildren(this, declaration)
 
             for (v in declaration.valueParameters) {
                 val result = transformer.transformFlatRestricted(v)
@@ -253,7 +258,7 @@ interface DeclarationTransformer : FileLoweringPass {
             }
         }
 
-        override fun visitProperty(declaration: IrProperty) {
+        override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) {
             // TODO This is a hack to allow lowering a getter separately from the enclosing property
 
             val visitor = this
@@ -271,7 +276,7 @@ interface DeclarationTransformer : FileLoweringPass {
 
             fun IrDeclaration.transform() {
 
-                acceptVoid(visitor)
+                accept(visitor, data)
 
                 val result = transformer.transformFlatRestricted(this)
                 if (result != null) {
@@ -287,26 +292,57 @@ interface DeclarationTransformer : FileLoweringPass {
             declaration.setter?.transform()
         }
 
-        override fun visitClass(declaration: IrClass) {
-            declaration.thisReceiver?.accept(this, null)
-            declaration.typeParameters.forEach { it.accept(this, null) }
-            ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+        override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
+            declaration.thisReceiver?.accept(this, declaration)
+            declaration.typeParameters.forEach { it.accept(this, declaration) }
+            ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
 
             declaration.declarations.transformFlat {
                 transformer.transformFlatRestricted(it)
             }
         }
 
-        override fun visitScript(declaration: IrScript) {
+        override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
             ArrayList(declaration.statements).forEach {
                 if (transformer.withLocalDeclarations || it is IrDeclaration) {
-                    it.accept(this, null)
+                    it.accept(this, declaration)
                 }
             }
             declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
 
-            declaration.thisReceiver?.accept(this, null)
+            declaration.thisReceiver?.accept(this, declaration)
         }
+    }
+}
+
+abstract class BodyLoweringDeclarationTransformerPass(private val transformer: DeclarationTransformer) : BodyLoweringPass {
+    override fun lower(irFile: IrFile) {
+        val visitor = BodyLoweringDeclarationTransformerVisitor(transformer, this)
+        for (declaration in ArrayList(irFile.declarations)) {
+            try {
+                declaration.accept(visitor, null)
+                transformer.transformFlatRestricted(declaration)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(irFile)
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException(
+                    "Internal error in body lowering",
+                    irFile,
+                    declaration
+                )
+            }
+        }
+    }
+
+    private class BodyLoweringDeclarationTransformerVisitor(
+        override val transformer: DeclarationTransformer,
+        loweringPass: BodyLoweringDeclarationTransformerPass,
+    ) : BodyLoweringVisitor(loweringPass, transformer.withLocalDeclarations), TransformingVisitor {
+        override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) = super<TransformingVisitor>.visitFunction(declaration, data)
+        override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) = super<TransformingVisitor>.visitProperty(declaration, data)
+        override fun visitClass(declaration: IrClass, data: IrDeclaration?) = super<TransformingVisitor>.visitClass(declaration, data)
+        override fun visitScript(declaration: IrScript, data: IrDeclaration?) = super<TransformingVisitor>.visitScript(declaration, data)
     }
 }
 

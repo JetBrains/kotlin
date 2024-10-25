@@ -34,8 +34,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendCon
                 createFilePhases(
                     klibAssertionWrapperLowering, // Only on Native
                     jsCodeOutliningLowering, // Only on JS
-//                  ::NullableFieldsForLateinitCreationLowering,
-//                  ::NullableFieldsDeclarationLowering,
 //                  ::LateinitLowering,
 //                  ::SharedVariablesLowering,
 //                  ::OuterThisInInlineFunctionsSpecialAccessorLowering,

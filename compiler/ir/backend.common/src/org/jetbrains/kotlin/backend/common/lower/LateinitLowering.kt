@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -41,31 +38,21 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Creates nullable fields for lateinit properties.
- */
-class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
-    override val withLocalDeclarations: Boolean get() = true
-
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrField) {
-            declaration.correspondingPropertySymbol?.owner?.let { property ->
-                if (property.isRealLateinit) {
-                    val newField = backendContext.buildOrGetNullableField(declaration)
-                    if (declaration != newField && declaration.parent != property.parent) return listOf(newField)
-                }
-            }
-        }
-        return null
-    }
-}
-
-/**
  * References nullable fields from properties and getters + inserts checks.
  */
-class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
+class NullableFieldsTransformer(val backendContext: CommonBackendContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
+            is IrField -> {
+                declaration.correspondingPropertySymbol?.owner?.let { property ->
+                    if (property.isRealLateinit) {
+                        val newField = backendContext.buildOrGetNullableField(declaration)
+                        if (declaration != newField && declaration.parent != property.parent) return listOf(newField)
+                    }
+                }
+            }
             is IrProperty -> {
                 if (declaration.isRealLateinit) {
                     declaration.backingField = backendContext.buildOrGetNullableField(declaration.backingField!!)
@@ -112,8 +99,10 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
 
 /**
  * Inserts checks for lateinit field references.
+ * Invokes NullableFieldsTransformer on the way
  */
-class LateinitLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
+class LateinitLowering(val backendContext: CommonBackendContext) :
+    BodyLoweringDeclarationTransformerPass(NullableFieldsTransformer(backendContext)) {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val nullableVariables = mutableMapOf<IrVariable, IrVariable>()
