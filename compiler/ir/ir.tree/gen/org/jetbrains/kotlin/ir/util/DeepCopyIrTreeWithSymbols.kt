@@ -209,9 +209,10 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
         declaration.factory.createAnonymousInitializer(
-            declaration.startOffset, declaration.endOffset,
-            declaration.origin,
-            symbolRemapper.getDeclaredAnonymousInitializer(declaration.symbol),
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = declaration.origin,
+            symbol = symbolRemapper.getDeclaredAnonymousInitializer(declaration.symbol),
         ).apply {
             transformAnnotations(declaration)
             body = declaration.body.transform()
@@ -255,7 +256,11 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
-        declaration.factory.createErrorDeclaration(declaration.startOffset, declaration.endOffset, declaration.descriptor)
+        declaration.factory.createErrorDeclaration(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            descriptor = declaration.descriptor
+        )
 
     override fun visitField(declaration: IrField): IrField =
         declaration.factory.createField(
@@ -335,11 +340,11 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
-            symbolRemapper.getDeclaredScript(declaration.symbol),
-            declaration.name,
-            declaration.factory,
-            declaration.startOffset,
-            declaration.endOffset
+            symbol = symbolRemapper.getDeclaredScript(declaration.symbol),
+            name = declaration.name,
+            factory = declaration.factory,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset
         ).also { scriptCopy ->
             scriptCopy.thisReceiver = declaration.thisReceiver?.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
@@ -398,14 +403,15 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
         IrVariableImpl(
-            declaration.startOffset, declaration.endOffset,
-            declaration.origin,
-            symbolRemapper.getDeclaredVariable(declaration.symbol),
-            declaration.name,
-            declaration.type.remapType(),
-            declaration.isVar,
-            declaration.isConst,
-            declaration.isLateinit
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = declaration.origin,
+            symbol = symbolRemapper.getDeclaredVariable(declaration.symbol),
+            name = declaration.name,
+            type = declaration.type.remapType(),
+            isVar = declaration.isVar,
+            isConst = declaration.isConst,
+            isLateinit = declaration.isLateinit
         ).apply {
             transformAnnotations(declaration)
             initializer = declaration.initializer?.transform()
@@ -413,45 +419,49 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
-            symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
-            declaration.packageFqName
+            packageFqName = declaration.packageFqName,
+            symbol = symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
         ).apply {
             declaration.transformDeclarationsTo(this)
         }
 
     override fun visitFile(declaration: IrFile): IrFile =
         IrFileImpl(
-            declaration.fileEntry,
-            symbolRemapper.getDeclaredFile(declaration.symbol),
-            declaration.packageFqName,
-            transformedModule ?: declaration.module
+            fileEntry = declaration.fileEntry,
+            symbol = symbolRemapper.getDeclaredFile(declaration.symbol),
+            fqName = declaration.packageFqName,
+            module = transformedModule ?: declaration.module
         ).apply {
             transformAnnotations(declaration)
             declaration.transformDeclarationsTo(this)
         }
 
     override fun visitExpressionBody(body: IrExpressionBody): IrExpressionBody =
-        IrFactoryImpl.createExpressionBody(body.expression.transform())
+        IrFactoryImpl.createExpressionBody(
+            expression = body.expression.transform()
+        )
 
     override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
         IrFactoryImpl.createBlockBody(
-            body.startOffset, body.endOffset,
-            body.statements.memoryOptimizedMap { it.transform() }
+            startOffset = body.startOffset,
+            endOffset = body.endOffset,
+            statements = body.statements.memoryOptimizedMap { it.transform() }
         )
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
         return IrConstructorCallImplWithShape(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            constructorSymbol,
-            expression.typeArgumentsCount,
-            expression.constructorTypeArgumentsCount,
-            expression.valueArgumentsCount,
-            expression.targetContextParameterCount,
-            expression.targetHasDispatchReceiver,
-            expression.targetHasExtensionReceiver,
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = constructorSymbol,
+            typeArgumentsCount = expression.typeArgumentsCount,
+            constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            contextParameterCount = expression.targetContextParameterCount,
+            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+            hasExtensionReceiver = expression.targetHasExtensionReceiver,
+            origin = expression.origin
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -460,77 +470,90 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrGetObjectValue =
         IrGetObjectValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedClass(expression.symbol)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedClass(expression.symbol)
         ).processAttributes(expression)
 
     override fun visitGetEnumValue(expression: IrGetEnumValue): IrGetEnumValue =
         IrGetEnumValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedEnumEntry(expression.symbol)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedEnumEntry(expression.symbol)
         ).processAttributes(expression)
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrRawFunctionReference {
         val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
         return IrRawFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbol
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbol
         ).processAttributes(expression)
     }
 
     override fun visitBlock(expression: IrBlock): IrBlock =
         IrBlockImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.origin,
-            expression.statements.memoryOptimizedMap { it.transform() }
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            origin = expression.origin,
+            statements = expression.statements.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitComposite(expression: IrComposite): IrComposite =
         IrCompositeImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.origin,
-            expression.statements.memoryOptimizedMap { it.transform() }
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            origin = expression.origin,
+            statements = expression.statements.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitReturnableBlock(expression: IrReturnableBlock): IrReturnableBlock =
         IrReturnableBlockImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getDeclaredReturnableBlock(expression.symbol),
-            expression.origin,
-            expression.statements.memoryOptimizedMap { it.transform() }
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getDeclaredReturnableBlock(expression.symbol),
+            origin = expression.origin,
+            statements = expression.statements.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock =
         IrInlinedFunctionBlockImpl(
-            inlinedBlock.startOffset, inlinedBlock.endOffset,
-            inlinedBlock.type.remapType(),
-            inlinedBlock.inlineFunctionSymbol,
-            inlinedBlock.fileEntry,
-            inlinedBlock.origin,
+            startOffset = inlinedBlock.startOffset,
+            endOffset = inlinedBlock.endOffset,
+            type = inlinedBlock.type.remapType(),
+            inlineFunctionSymbol = inlinedBlock.inlineFunctionSymbol,
+            fileEntry = inlinedBlock.fileEntry,
+            origin = inlinedBlock.origin,
             statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
         ).processAttributes(inlinedBlock)
 
     override fun visitSyntheticBody(body: IrSyntheticBody): IrSyntheticBody =
-        IrSyntheticBodyImpl(body.startOffset, body.endOffset, body.kind)
+        IrSyntheticBodyImpl(
+            startOffset = body.startOffset,
+            endOffset = body.endOffset,
+            kind = body.kind
+        )
 
     override fun visitBreak(jump: IrBreak): IrBreak =
         IrBreakImpl(
-            jump.startOffset, jump.endOffset,
-            jump.type.remapType(),
-            getTransformedLoop(jump.loop)
+            startOffset = jump.startOffset,
+            endOffset = jump.endOffset,
+            type = jump.type.remapType(),
+            loop = getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.processAttributes(jump)
 
     override fun visitContinue(jump: IrContinue): IrContinue =
         IrContinueImpl(
-            jump.startOffset, jump.endOffset,
-            jump.type.remapType(),
-            getTransformedLoop(jump.loop)
+            startOffset = jump.startOffset,
+            endOffset = jump.endOffset,
+            type = jump.type.remapType(),
+            loop = getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.processAttributes(jump)
 
     override fun visitCall(expression: IrCall): IrCall =
@@ -543,16 +566,17 @@ open class DeepCopyIrTreeWithSymbols(
         val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
         val reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) }
         return IrFunctionReferenceImplWithShape(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbol,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            expression.targetContextParameterCount,
-            expression.targetHasDispatchReceiver,
-            expression.targetHasExtensionReceiver,
-            reflectionTarget,
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbol,
+            typeArgumentsCount = expression.typeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            contextParameterCount = expression.targetContextParameterCount,
+            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+            hasExtensionReceiver = expression.targetHasExtensionReceiver,
+            reflectionTarget = reflectionTarget,
+            origin = expression.origin
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -561,16 +585,17 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
         IrPropertyReferenceImplWithShape(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedProperty(expression.symbol),
-            expression.targetHasDispatchReceiver,
-            expression.targetHasExtensionReceiver,
-            expression.typeArgumentsCount,
-            expression.field?.let { symbolRemapper.getReferencedField(it) },
-            expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedProperty(expression.symbol),
+            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+            hasExtensionReceiver = expression.targetHasExtensionReceiver,
+            typeArgumentsCount = expression.typeArgumentsCount,
+            field = expression.field?.let { symbolRemapper.getReferencedField(it) },
+            getter = expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            setter = expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            origin = expression.origin
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformReceiverArguments(expression)
@@ -578,21 +603,23 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
         IrLocalDelegatedPropertyReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
-            symbolRemapper.getReferencedVariable(expression.delegate),
-            symbolRemapper.getReferencedSimpleFunction(expression.getter),
-            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
+            delegate = symbolRemapper.getReferencedVariable(expression.delegate),
+            getter = symbolRemapper.getReferencedSimpleFunction(expression.getter),
+            setter = expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            origin = expression.origin
         ).processAttributes(expression)
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference =
         IrClassReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedClassifier(expression.symbol),
-            expression.classType.remapType()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedClassifier(expression.symbol),
+            classType = expression.classType.remapType()
         ).processAttributes(expression)
 
     override fun visitConst(expression: IrConst): IrConst =
@@ -600,37 +627,41 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitConstantPrimitive(expression: IrConstantPrimitive): IrConstantValue =
         IrConstantPrimitiveImpl(
-            expression.startOffset, expression.endOffset,
-            expression.value.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            value = expression.value.transform()
         ).processAttributes(expression)
 
     override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =
         IrConstantObjectImpl(
-            expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedConstructor(expression.constructor),
-            expression.valueArguments.transform(),
-            expression.typeArguments.memoryOptimizedMap { it.remapType() },
-            expression.type.remapType()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            constructor = symbolRemapper.getReferencedConstructor(expression.constructor),
+            initValueArguments = expression.valueArguments.transform(),
+            initTypeArguments = expression.typeArguments.memoryOptimizedMap { it.remapType() },
+            type = expression.type.remapType()
         ).processAttributes(expression)
 
     override fun visitConstantArray(expression: IrConstantArray): IrConstantValue =
         IrConstantArrayImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.elements.transform(),
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            initElements = expression.elements.transform(),
         ).processAttributes(expression)
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
         val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
         return IrDelegatingConstructorCallImplWithShape(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            newConstructor,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            expression.targetContextParameterCount,
-            expression.targetHasDispatchReceiver,
-            expression.targetHasExtensionReceiver,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = newConstructor,
+            typeArgumentsCount = expression.typeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            contextParameterCount = expression.targetContextParameterCount,
+            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+            hasExtensionReceiver = expression.targetHasExtensionReceiver,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -639,9 +670,10 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
         IrDynamicOperatorExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.operator
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            operator = expression.operator
         ).apply {
             receiver = expression.receiver.transform()
             expression.arguments.mapTo(arguments) { it.transform() }
@@ -649,23 +681,25 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrDynamicMemberExpression =
         IrDynamicMemberExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.memberName,
-            expression.receiver.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            memberName = expression.memberName,
+            receiver = expression.receiver.transform()
         ).processAttributes(expression)
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
         val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
         return IrEnumConstructorCallImplWithShape(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            newConstructor,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            expression.targetContextParameterCount,
-            expression.targetHasDispatchReceiver,
-            expression.targetHasExtensionReceiver,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = newConstructor,
+            typeArgumentsCount = expression.typeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            contextParameterCount = expression.targetContextParameterCount,
+            hasDispatchReceiver = expression.targetHasDispatchReceiver,
+            hasExtensionReceiver = expression.targetHasExtensionReceiver,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -674,16 +708,18 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.description
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            description = expression.description
         ).processAttributes(expression)
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrErrorCallExpression =
         IrErrorCallExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.description
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            description = expression.description
         ).apply {
             explicitReceiver = expression.explicitReceiver?.transform()
             expression.arguments.transformTo(arguments)
@@ -691,49 +727,59 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitGetField(expression: IrGetField): IrGetField =
         IrGetFieldImpl(
-            expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedField(expression.symbol),
-            expression.type.remapType(),
-            expression.receiver?.transform(),
-            expression.origin,
-            expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            symbol = symbolRemapper.getReferencedField(expression.symbol),
+            type = expression.type.remapType(),
+            receiver = expression.receiver?.transform(),
+            origin = expression.origin,
+            superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass)
         ).processAttributes(expression)
 
     override fun visitSetField(expression: IrSetField): IrSetField =
         IrSetFieldImpl(
-            expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedField(expression.symbol),
-            expression.receiver?.transform(),
-            expression.value.transform(),
-            expression.type.remapType(),
-            expression.origin,
-            expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            symbol = symbolRemapper.getReferencedField(expression.symbol),
+            receiver = expression.receiver?.transform(),
+            value = expression.value.transform(),
+            type = expression.type.remapType(),
+            origin = expression.origin,
+            superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass)
         ).processAttributes(expression)
 
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
         IrFunctionExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.function.transform(),
-            expression.origin!!
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            function = expression.function.transform(),
+            origin = expression.origin!!
         ).processAttributes(expression)
 
     override fun visitGetClass(expression: IrGetClass): IrGetClass =
         IrGetClassImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.argument.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            argument = expression.argument.transform()
         ).processAttributes(expression)
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrInstanceInitializerCall =
         IrInstanceInitializerCallImpl(
-            expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedClass(expression.classSymbol),
-            expression.type.remapType()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            classSymbol = symbolRemapper.getReferencedClass(expression.classSymbol),
+            type = expression.type.remapType()
         ).processAttributes(expression)
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
-        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), loop.origin).also { newLoop ->
+        IrWhileLoopImpl(
+            startOffset = loop.startOffset,
+            endOffset = loop.endOffset,
+            type = loop.type.remapType(),
+            origin = loop.origin
+        ).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -741,7 +787,12 @@ open class DeepCopyIrTreeWithSymbols(
         }.processAttributes(loop)
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrDoWhileLoop =
-        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), loop.origin).also { newLoop ->
+        IrDoWhileLoopImpl(
+            startOffset = loop.startOffset,
+            endOffset = loop.endOffset,
+            type = loop.type.remapType(),
+            origin = loop.origin
+        ).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -750,101 +801,115 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitReturn(expression: IrReturn): IrReturn =
         IrReturnImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedReturnTarget(expression.returnTargetSymbol),
-            expression.value.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            returnTargetSymbol = symbolRemapper.getReferencedReturnTarget(expression.returnTargetSymbol),
+            value = expression.value.transform()
         ).processAttributes(expression)
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrStringConcatenation =
         IrStringConcatenationImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.arguments.memoryOptimizedMap { it.transform() }
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            arguments = expression.arguments.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitThrow(expression: IrThrow): IrThrow =
         IrThrowImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.value.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            value = expression.value.transform()
         ).processAttributes(expression)
 
     override fun visitTry(aTry: IrTry): IrTry =
         IrTryImpl(
-            aTry.startOffset, aTry.endOffset,
-            aTry.type.remapType(),
-            aTry.tryResult.transform(),
-            aTry.catches.memoryOptimizedMap { it.transform() },
-            aTry.finallyExpression?.transform()
+            startOffset = aTry.startOffset,
+            endOffset = aTry.endOffset,
+            type = aTry.type.remapType(),
+            tryResult = aTry.tryResult.transform(),
+            catches = aTry.catches.memoryOptimizedMap { it.transform() },
+            finallyExpression = aTry.finallyExpression?.transform()
         ).processAttributes(aTry)
 
     override fun visitCatch(aCatch: IrCatch): IrCatch =
         IrCatchImpl(
-            aCatch.startOffset, aCatch.endOffset,
-            aCatch.catchParameter.transform(),
-            aCatch.result.transform(),
-            aCatch.origin,
+            startOffset = aCatch.startOffset,
+            endOffset = aCatch.endOffset,
+            catchParameter = aCatch.catchParameter.transform(),
+            result = aCatch.result.transform(),
+            origin = aCatch.origin,
         )
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrTypeOperatorCall =
         IrTypeOperatorCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.operator,
-            expression.typeOperand.remapType(),
-            expression.argument.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            operator = expression.operator,
+            typeOperand = expression.typeOperand.remapType(),
+            argument = expression.argument.transform()
         ).processAttributes(expression)
 
     override fun visitGetValue(expression: IrGetValue): IrGetValue =
         IrGetValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedValue(expression.symbol),
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedValue(expression.symbol),
+            origin = expression.origin
         ).processAttributes(expression)
 
     override fun visitSetValue(expression: IrSetValue): IrSetValue =
         IrSetValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedValue(expression.symbol),
-            expression.value.transform(),
-            expression.origin
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedValue(expression.symbol),
+            value = expression.value.transform(),
+            origin = expression.origin
         ).processAttributes(expression)
 
     override fun visitVararg(expression: IrVararg): IrVararg =
         IrVarargImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(), expression.varargElementType.remapType(),
-            expression.elements.transform()
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            varargElementType = expression.varargElementType.remapType(),
+            elements = expression.elements.transform()
         ).processAttributes(expression)
 
     override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement =
         IrSpreadElementImpl(
-            spread.startOffset, spread.endOffset,
-            spread.expression.transform()
+            startOffset = spread.startOffset,
+            endOffset = spread.endOffset,
+            expression = spread.expression.transform()
         )
 
     override fun visitWhen(expression: IrWhen): IrWhen =
         IrWhenImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.origin,
-            expression.branches.memoryOptimizedMap { it.transform() }
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            origin = expression.origin,
+            branches = expression.branches.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitBranch(branch: IrBranch): IrBranch =
         IrBranchImpl(
-            branch.startOffset, branch.endOffset,
-            branch.condition.transform(),
-            branch.result.transform()
+            startOffset = branch.startOffset,
+            endOffset = branch.endOffset,
+            condition = branch.condition.transform(),
+            result = branch.result.transform()
         )
 
     override fun visitElseBranch(branch: IrElseBranch): IrElseBranch =
         IrElseBranchImpl(
-            branch.startOffset, branch.endOffset,
-            branch.condition.transform(),
-            branch.result.transform()
+            startOffset = branch.startOffset,
+            endOffset = branch.endOffset,
+            condition = branch.condition.transform(),
+            result = branch.result.transform()
         )
 }
