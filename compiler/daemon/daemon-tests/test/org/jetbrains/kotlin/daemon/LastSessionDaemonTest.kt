@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
@@ -30,7 +31,7 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
         val (compileService, sessionId) = leaseSession(logFile = logFile)
         sleep(DAEMON_PERIODIC_CHECK_INTERVAL_MS + 1_000)
         logFile.assertLogFileContains("Some sessions are active, waiting for them to finish")
-        val testMessageCollector = TestMessageCollector()
+        val testMessageCollector = MessageCollectorImpl()
         val exitCode = KotlinCompilerClient.compile(
             compileService,
             sessionId,

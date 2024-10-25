@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kapt4.integration
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
-import org.jetbrains.kotlin.kapt3.test.integration.LoggingMessageCollector
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.kapt4.FirKaptAnalysisHandlerExtension
@@ -75,7 +75,7 @@ class FirKaptExtensionForTests(
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
     val supportedAnnotations: List<String>,
     val sourceFiles: List<KtFile>,
-    val messageCollector: LoggingMessageCollector = LoggingMessageCollector()
+    val messageCollector: MessageCollectorImpl = MessageCollectorImpl()
 ) : FirKaptAnalysisHandlerExtension(
     MessageCollectorBackedKaptLogger(
         flags = options,

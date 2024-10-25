@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
-import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -498,7 +498,7 @@ abstract class IncrementalCompilerRunner<
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
             val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
-            val bufferingMessageCollector = BufferingMessageCollector()
+            val bufferingMessageCollector = MessageCollectorImpl()
             val messageCollectorAdapter =
                 MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
 
@@ -532,7 +532,7 @@ abstract class IncrementalCompilerRunner<
             }
 
             reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
-            bufferingMessageCollector.flush(originalMessageCollector)
+            bufferingMessageCollector.forward(originalMessageCollector)
 
             if (exitCode != ExitCode.OK) break
 

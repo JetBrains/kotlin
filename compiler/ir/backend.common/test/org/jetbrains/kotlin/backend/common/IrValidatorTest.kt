@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl.Message
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
@@ -48,19 +49,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.utils.TestMessageCollector
-import org.jetbrains.kotlin.test.utils.TestMessageCollector.Message
 import kotlin.reflect.KProperty
 import kotlin.test.*
 
 class IrValidatorTest {
 
-    private lateinit var messageCollector: TestMessageCollector
+    private lateinit var messageCollector: MessageCollectorImpl
     private lateinit var module: IrModuleFragment
 
     @BeforeTest
     fun setUp() {
-        messageCollector = TestMessageCollector()
+        messageCollector = MessageCollectorImpl()
 
         val moduleDescriptor = ModuleDescriptorImpl(
             Name.special("<testModule>"),

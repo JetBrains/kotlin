@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jvm.abi
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -69,7 +70,7 @@ abstract class BaseJvmAbiTest : TestCase() {
 
         val directives = if (compilation.directives.exists()) compilation.directives.readText() else ""
 
-        val messageCollector = LocationReportingTestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
@@ -104,7 +105,8 @@ abstract class BaseJvmAbiTest : TestCase() {
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
-            val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") + messageCollector.errors
+            val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") +
+                    messageCollector.errors.map { "e: ${it.location}: ${it.message}" }
             error(errorLines.joinToString("\n"))
         }
 

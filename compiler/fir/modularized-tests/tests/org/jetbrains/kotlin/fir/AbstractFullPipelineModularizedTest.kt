@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
@@ -356,31 +356,16 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         }
     }
 
-    protected class TestMessageCollector : MessageCollector {
-
-        data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-        val messages = arrayListOf<Message>()
-
-        override fun clear() {
-            messages.clear()
-        }
-
+    protected class TestMessageCollector : MessageCollectorImpl() {
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-            messages.add(Message(severity, message, location))
-            if (severity in CompilerMessageSeverity.VERBOSE) return
-            println(MessageRenderer.GRADLE_STYLE.render(severity, message, location))
-        }
+            super.report(severity, message, location)
 
-        override fun hasErrors(): Boolean = messages.any {
-            it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR
+            if (severity !in CompilerMessageSeverity.VERBOSE) {
+                println(MessageRenderer.GRADLE_STYLE.render(severity, message, location))
+            }
         }
     }
-
-
 }
-
-
 
 fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
     val file = File(path)
@@ -394,5 +379,4 @@ fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
         file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
         else -> null
     }
-
 }

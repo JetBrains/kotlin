@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
@@ -54,7 +54,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
-    private fun compileLocally(messageCollector: TestMessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
+    private fun compileLocally(messageCollector: MessageCollectorImpl, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
         val application = ApplicationManager.getApplication()
         try {
             val code = K2JVMCompiler().exec(messageCollector,
@@ -109,7 +109,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 
     fun testHelloAppLocal() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val (code, outputs) = compileLocally(
             messageCollector, K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath,
@@ -141,7 +141,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     compilerId,
                     daemonJVMOptions,
                     daemonOptions,
-                    TestMessageCollector(),
+                    MessageCollectorImpl(),
                     K2JVMCompilerArguments::includeRuntime.cliArgument,
                     File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar, K2JVMCompilerArguments::reportOutputFiles.cliArgument
                 )
@@ -159,7 +159,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 
     fun testSimpleScriptLocal() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val (code, outputs) = compileLocally(
             messageCollector,
             File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
@@ -191,7 +191,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     compilerId,
                     daemonJVMOptions,
                     daemonOptions,
-                    TestMessageCollector(),
+                    MessageCollectorImpl(),
                     File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
                     K2JVMCompilerArguments::reportOutputFiles.cliArgument,
                     K2JVMCompilerArguments::useFirLT.cliArgument("false"),
@@ -213,27 +213,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 }
 
-class TestMessageCollector : MessageCollector {
-    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-    val messages = arrayListOf<Message>()
-
-    override fun clear() {
-        messages.clear()
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messages.add(Message(severity, message, location))
-    }
-
-    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
-
-    override fun toString(): String {
-        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
-    }
-}
-
-fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
+fun MessageCollectorImpl.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
     assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
         "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
         messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
@@ -252,4 +232,3 @@ internal fun captureOut(body: () -> Unit): String {
     }
     return outStream.toString()
 }
-

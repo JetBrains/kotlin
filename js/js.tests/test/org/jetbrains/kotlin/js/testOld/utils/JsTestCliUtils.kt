@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.js.testOld.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import kotlin.test.fail
 
 internal fun runJsCompiler(
-    messageCollector: TestMessageCollector = TestMessageCollector(),
+    messageCollector: MessageCollectorImpl = MessageCollectorImpl(),
     argsBuilder: K2JSCompilerArguments.() -> Unit,
 ) {
     val args = K2JSCompilerArguments().apply(argsBuilder)

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.js.testOld.klib
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
@@ -140,7 +140,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         val sourceFile = sourcesDir.resolve("file.kt").apply { writeText("fun foo() = 42\n") }
         val moduleName = getTestName(true)
 
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
 
         withCustomCompilerVersion(compilerVersion) {
             val fakeStdlib = if (isZipped)
@@ -175,7 +175,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         )
     }
 
-    private fun TestMessageCollector.hasJsOldStdlibWarning(
+    private fun MessageCollectorImpl.hasJsOldStdlibWarning(
         specificVersions: Pair<TestVersion, TestVersion>? = null,
     ): Boolean {
         val stdlibMessagePart = "Kotlin/JS standard library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
@@ -184,7 +184,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    private fun TestMessageCollector.hasJsTooNewStdlibWarning(
+    private fun MessageCollectorImpl.hasJsTooNewStdlibWarning(
         specificVersions: Pair<TestVersion, TestVersion>? = null,
     ): Boolean {
         val stdlibMessagePart = "The Kotlin/JS standard library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
@@ -193,7 +193,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    private fun TestMessageCollector.hasWasmWarning(
+    private fun MessageCollectorImpl.hasWasmWarning(
         specificVersions: Pair<TestVersion, TestVersion>? = null,
     ): Boolean {
         val stdlibMessagePart = "The version of the Kotlin/Wasm standard library" + specificVersions?.first?.let { " ($it)" }.orEmpty()

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -286,7 +287,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val daemonJVMOptions = configureDaemonJVMOptions("-abracadabra", inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
 
-            val messageCollector = TestMessageCollector()
+            val messageCollector = MessageCollectorImpl()
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
                                                                       DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
@@ -304,7 +305,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
 
-            val messageCollector = TestMessageCollector()
+            val messageCollector = MessageCollectorImpl()
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
                                                                       DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
@@ -732,7 +733,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             var isErrorThrown = false
             try {
                 repl = KotlinRemoteReplCompilerClient(
-                    daemon, null, CompileService.TargetPlatform.JVM, emptyArray(), TestMessageCollector(),
+                    daemon, null, CompileService.TargetPlatform.JVM, emptyArray(), MessageCollectorImpl(),
                     classpathFromClassloader(), ScriptWithNoParam::class.qualifiedName!!
                 )
                 repl.createState()
@@ -753,7 +754,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         withDaemon(compilerWithScriptingId) { daemon ->
             val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM,
                                                       emptyArray(),
-                                                      TestMessageCollector(),
+                                                      MessageCollectorImpl(),
                                                       classpathFromClassloader(),
                                                       ScriptWithNoParam::class.qualifiedName!!)
 
@@ -767,7 +768,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun testDaemonReplLocalEvalStandardTemplate() {
         withDaemon(compilerWithScriptingId) { daemon ->
             val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
-                                                      TestMessageCollector(),
+                                                      MessageCollectorImpl(),
                                                       classpathFromClassloader(),
                                                       "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
@@ -819,7 +820,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 val replCompiler = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
                                                                   emptyArray(),
-                                                                  TestMessageCollector(),
+                                                                  MessageCollectorImpl(),
                                                                   classpathFromClassloader(),
                                                                   ScriptWithNoParam::class.qualifiedName!!)
 

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.io.PrintStream
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -169,27 +168,6 @@ open class KotlinJvmReplService(
             CompileService.CallResult.Good(body(it.state))
         }
             ?: CompileService.CallResult.Error("No REPL state with id $stateId found")
-    }
-}
-
-internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStream) : MessageCollector {
-
-    private val innerCollector = PrintingMessageCollector(compilerMessagesStream, MessageRenderer.WITHOUT_PATHS, false)
-
-    internal var firstErrorMessage: String? = null
-    internal var firstErrorLocation: CompilerMessageSourceLocation? = null
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        if (firstErrorMessage == null && severity.isError) {
-            firstErrorMessage = message
-            firstErrorLocation = location
-        }
-        innerCollector.report(severity, message, location)
-    }
-
-    override fun hasErrors(): Boolean = innerCollector.hasErrors()
-    override fun clear() {
-        innerCollector.clear()
     }
 }
 

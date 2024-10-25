@@ -4,9 +4,9 @@
  */
 package org.jetbrains.kotlin.kapt.cli.test
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.kapt.cli.transformArgs
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import java.io.File
 
 private val LINE_SEPARATOR: String = System.getProperty("line.separator")
@@ -18,7 +18,7 @@ abstract class AbstractArgumentParsingTest {
         val sections = Section.parse(testFile)
         val before = sections.single { it.name == "before" }
 
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val transformedArgs = transformArgs(before.content.lines(), messageCollector, isTest = true)
         val actualAfter = if (messageCollector.hasErrors()) messageCollector.toString() else transformedArgs.joinToString(LINE_SEPARATOR)
         val actual = sections.replacingSection("after", actualAfter).render()

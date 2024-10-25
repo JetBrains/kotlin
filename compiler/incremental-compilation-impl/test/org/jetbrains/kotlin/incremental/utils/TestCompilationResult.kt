@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import java.io.File
 
 data class TestCompilationResult(
@@ -27,6 +28,6 @@ data class TestCompilationResult(
 ) {
     constructor(
         icReporter: TestICReporter,
-        messageCollector: TestMessageCollector,
-    ) : this(icReporter.exitCode, icReporter.compiledSources, messageCollector.errors, icReporter.cachesDump)
+        messageCollector: MessageCollectorImpl,
+    ) : this(icReporter.exitCode, icReporter.compiledSources, messageCollector.errors.map { it.message }, icReporter.cachesDump)
 }

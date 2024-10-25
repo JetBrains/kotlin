@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.compiler.client
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
@@ -74,7 +72,7 @@ class CompilerClientIT {
                 ?: throw IllegalStateException("Unable to connect to compiler daemon:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
     }
 
-    private val myMessageCollector = TestMessageCollector()
+    private val myMessageCollector = MessageCollectorImpl()
 
     @Test
     fun testSimpleScript() {
@@ -113,21 +111,4 @@ internal fun captureOutAndErr(body: () -> Unit): String {
         System.setErr(prevErr)
     }
     return outStream.toString()
-}
-
-class TestMessageCollector : MessageCollector {
-
-    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-    val messages = arrayListOf<Message>()
-
-    override fun clear() {
-        messages.clear()
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messages.add(Message(severity, message, location))
-    }
-
-    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
 }

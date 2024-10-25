@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -119,7 +119,7 @@ class ScriptingCompilerPluginTest : TestCase() {
                 val scriptsOut2 = File(tmpdir, "testLazyScriptDefinition/out/scripts2")
                 val defClasses = listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars")
 
-                val messageCollector = TestMessageCollector()
+                val messageCollector = MessageCollectorImpl()
 
                 val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
                     createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector, disposable) {
@@ -231,7 +231,7 @@ class ScriptingCompilerPluginTest : TestCase() {
                 val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
                 val defClasses = listOf("TestScriptWithOtherAnnotation")
 
-                val messageCollector = TestMessageCollector()
+                val messageCollector = MessageCollectorImpl()
 
                 val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
                     createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector, disposable) {
@@ -269,28 +269,7 @@ class ScriptingCompilerPluginTest : TestCase() {
     }
 }
 
-
-class TestMessageCollector : MessageCollector {
-    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-    val messages = arrayListOf<Message>()
-
-    override fun clear() {
-        messages.clear()
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messages.add(Message(severity, message, location))
-    }
-
-    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
-
-    override fun toString(): String {
-        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
-    }
-}
-
-fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
+fun MessageCollectorImpl.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
     assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
         "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
                 messages.joinToString("\n") { it.severity.toString() + ": " + it.message }

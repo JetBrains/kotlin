@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.makeModuleFile
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
-import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.jps.incremental.runJSCompiler
@@ -312,7 +312,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
         markDirty(filesToCompile)
         val lookupTracker = TestLookupTracker()
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val outputItemsCollector = OutputItemsCollectorImpl()
         val services = Services.Builder().run {
             register(LookupTracker::class.java, lookupTracker)
@@ -327,7 +327,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
         val lookups = lookupTracker.lookups.groupBy { File(it.filePath) }
         val lookupsFromCompiledFiles = filesToCompile.associateWith { (lookups[it] ?: emptyList()) }
-        return CompilerOutput(exitCode.toString(), messageCollector.errors, filesToCompile, lookupsFromCompiledFiles)
+        return CompilerOutput(exitCode.toString(), messageCollector.errors.map { it.message }, filesToCompile, lookupsFromCompiledFiles)
     }
 
     protected open fun Services.Builder.registerAdditionalServices() {}

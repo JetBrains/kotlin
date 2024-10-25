@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -140,7 +141,7 @@ class IrKotlinKapt3IntegrationTest(private val testInfo: TestInfo) {
         diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:5: Note: note on field")
     }
 
-    private fun List<LoggingMessageCollector.Message>.assertContainsDiagnostic(
+    private fun List<MessageCollectorImpl.Message>.assertContainsDiagnostic(
         message: String,
         severity: CompilerMessageSeverity? = null
     ) {
@@ -165,8 +166,8 @@ class IrKotlinKapt3IntegrationTest(private val testInfo: TestInfo) {
         vararg supportedAnnotations: String,
         expectFailure: Boolean = false,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
-    ): List<LoggingMessageCollector.Message> {
-        lateinit var messageCollector: LoggingMessageCollector
+    ): List<MessageCollectorImpl.Message> {
+        lateinit var messageCollector: MessageCollectorImpl
         test(
             name = name,
             supportedAnnotations = supportedAnnotations,

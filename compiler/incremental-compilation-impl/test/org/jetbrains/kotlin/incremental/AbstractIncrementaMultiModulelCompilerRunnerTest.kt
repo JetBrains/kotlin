@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
-import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import java.util.regex.Pattern
@@ -199,7 +199,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
         args: Args
     ): TestCompilationResult {
         val reporter = TestICReporter()
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
 
         val modifiedLibraries = mutableListOf<Pair<String, File>>()
         val deletedLibraries = mutableListOf<Pair<String, File>>()
