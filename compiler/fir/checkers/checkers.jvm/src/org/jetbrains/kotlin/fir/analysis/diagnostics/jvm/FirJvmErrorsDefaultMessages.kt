@@ -375,7 +375,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(THROWS_IN_ANNOTATION, "'@Throws' annotation cannot be used on annotation parameters.")
         map.put(
             JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS,
-            "'@JvmSerializableLambda' is only applicable on not inlined function literals."
+            "'@JvmSerializableLambda' is not applicable to inlined function literals."
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,
