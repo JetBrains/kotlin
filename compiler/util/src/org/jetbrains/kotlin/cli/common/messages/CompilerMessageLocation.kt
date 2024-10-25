@@ -11,8 +11,6 @@ interface CompilerMessageSourceLocation : Serializable {
     val path: String
     val line: Int
     val column: Int
-    // NOTE: Seems that the end-of-location data do not belong here conceptually, and now causes confusion with other usages
-    // TODO: consider removing it and switching REPL/Scripting diagnostis to the higher-level entities (KtDiagnostics)
     val lineEnd: Int get() = -1
     val columnEnd: Int get() = -1
     val lineContent: String? // related to the (start) line/column only, used to show start position in the console output
@@ -36,6 +34,7 @@ data class CompilerMessageLocation private constructor(
         fun create(path: String?, line: Int, column: Int, lineContent: String?): CompilerMessageLocation? =
             if (path == null) null else CompilerMessageLocation(path, line, column, lineContent)
 
+        @Suppress("unused")
         private val serialVersionUID: Long = 8228357578L
     }
 }
@@ -63,7 +62,7 @@ data class CompilerMessageLocationWithRange private constructor(
         ): CompilerMessageLocationWithRange? =
             if (path == null) null else CompilerMessageLocationWithRange(path, lineStart, columnStart, lineEnd ?: -1, columnEnd ?: -1, lineContent)
 
+        @Suppress("unused")
         private val serialVersionUID: Long = 8228357578L
     }
 }
-
