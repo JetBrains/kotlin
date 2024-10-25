@@ -48002,6 +48002,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("isBackendButFir2IrRunner.kt")
+        public void testIsBackendButFir2IrRunner() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isBackendButFir2IrRunner.kt");
+        }
+
+        @Test
+        @TestMetadata("isFir2IrButFir2IrPasses.kt")
+        public void testIsFir2IrButFir2IrPasses() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFir2IrButFir2IrPasses.kt");
+        }
+
+        @Test
         @TestMetadata("isFirButFirPasses.kt")
         public void testIsFirButFirPasses() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/fail/isFirButFirPasses.kt");
@@ -48015,6 +48027,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         @Test
         public void testAllFilesPresentInGood() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("isFirButFir2IrFails.kt")
+        public void testIsFirButFir2IrFails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/tieredFailures/good/isFirButFir2IrFails.kt");
         }
 
         @Test
