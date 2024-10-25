@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.kapt3.test.handlers.removeMetadataAnnotationContents
@@ -47,13 +46,6 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
-        val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
-        if (validate) {
-            val (kaptContext) = info
-            val convertedFiles = module.getJavaFiles(info)
-            kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
-            kaptContext.compiler.enterTrees(convertedFiles)
-        }
         assertions.assertAll(
             { assertions.checkTxt(module, actual) },
             {

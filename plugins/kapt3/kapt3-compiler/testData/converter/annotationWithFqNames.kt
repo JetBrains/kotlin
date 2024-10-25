@@ -1,5 +1,4 @@
 // CORRECT_ERROR_TYPES
-// NO_VALIDATION
 
 // FILE: lib/Anno.java
 package lib;

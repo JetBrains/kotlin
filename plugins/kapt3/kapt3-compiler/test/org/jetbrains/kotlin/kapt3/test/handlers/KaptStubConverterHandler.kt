@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR_K1
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR_K2
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NON_EXISTENT_CLASS
-import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NO_VALIDATION
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -31,7 +30,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
-        val validate = NO_VALIDATION !in module.directives
         val kaptContext = info.kaptContext
         val expectedErrors = (
                 module.directives[EXPECTED_ERROR] +
@@ -39,8 +37,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
                 ).sorted()
 
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
-
-        kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
@@ -50,9 +46,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
-        if (validate) {
-            kaptContext.compiler.enterTrees(convertedFiles)
-        }
         val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
         val actualErrors = log.reportedDiagnostics

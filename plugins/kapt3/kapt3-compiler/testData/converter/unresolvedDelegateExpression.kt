@@ -1,5 +1,4 @@
 // CORRECT_ERROR_TYPES
-// NO_VALIDATION
 
 open class C
 

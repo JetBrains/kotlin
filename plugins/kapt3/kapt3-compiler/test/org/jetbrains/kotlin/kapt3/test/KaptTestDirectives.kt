@@ -25,7 +25,6 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val DISABLED_FLAGS by enumDirective<KaptFlag>("Disables listed flags")
 
     val NON_EXISTENT_CLASS by directive("TODO")
-    val NO_VALIDATION by directive("TODO")
     val EXPECTED_ERROR by stringDirective("TODO()", multiLine = true)
     val EXPECTED_ERROR_K1 by stringDirective("K1-specific error", multiLine = true)
     val EXPECTED_ERROR_K2 by stringDirective("K2-specific error", multiLine = true)

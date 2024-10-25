@@ -1,7 +1,6 @@
 // CORRECT_ERROR_TYPES
 // STRICT
 
-// EXPECTED_ERROR: (kotlin:43:1) cannot find symbol
 // EXPECTED_ERROR: (other:-1:-1) test.PackedClass: Can't reference type 'RootClass' from default package in Java stub.
 // EXPECTED_ERROR: (other:-1:-1) test.PackedClass: Can't reference type 'AnotherRootClass' from default package in Java stub.
 // EXPECTED_ERROR: (other:-1:-1) test.PackedWithAnnotation: Can't reference type 'RootClass' from default package in Java stub.

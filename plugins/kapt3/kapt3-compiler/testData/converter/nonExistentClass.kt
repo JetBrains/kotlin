@@ -1,6 +1,5 @@
 // CORRECT_ERROR_TYPES
 // NON_EXISTENT_CLASS
-// NO_VALIDATION
 
 @Suppress("UNRESOLVED_REFERENCE")
 object NonExistentType {

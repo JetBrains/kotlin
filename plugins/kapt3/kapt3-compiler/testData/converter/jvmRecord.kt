@@ -1,5 +1,5 @@
 // JDK_KIND: FULL_JDK_21
-// NO_VALIDATION
+
 annotation class A
 
 interface I {

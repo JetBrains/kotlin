@@ -1,5 +1,4 @@
 // CORRECT_ERROR_TYPES
-// NO_VALIDATION
 
 @file:Suppress("UNRESOLVED_REFERENCE")
 import java.util.Date as MyDate
