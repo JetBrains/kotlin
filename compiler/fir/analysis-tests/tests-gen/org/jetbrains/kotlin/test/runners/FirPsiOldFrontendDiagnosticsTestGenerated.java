@@ -328,6 +328,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("confirmObsoleteTypealiasExpansionInconsistencies.kt")
+    public void testConfirmObsoleteTypealiasExpansionInconsistencies() {
+      runTest("compiler/testData/diagnostics/tests/confirmObsoleteTypealiasExpansionInconsistencies.kt");
+    }
+
+    @Test
     @TestMetadata("conflictingOverloadsPrivateFunctions.kt")
     public void testConflictingOverloadsPrivateFunctions() {
       runTest("compiler/testData/diagnostics/tests/conflictingOverloadsPrivateFunctions.kt");
