@@ -1,0 +1,7 @@
+context - context.kt:
+
+
+contextFragment - contextFragment.kt:
+  KtNameReferenceExpression(163,168): 'Local'
+    KtSimpleNameReference:
+      (in <local>: Local) constructor()

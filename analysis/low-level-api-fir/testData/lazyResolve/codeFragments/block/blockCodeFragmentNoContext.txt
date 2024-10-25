@@ -1,0 +1,17 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] module_Context_blockCodeFragmentNoContext.kt
+
+FILE: [ResolvedTo(IMPORTS)] fragment.kt
+    CODE FRAGMENT: {
+        public? final? [ResolvedTo(BODY_RESOLVE)] val ii: R|kotlin/Int| = Int(1)
+            public? [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fragment.kt
+    CODE FRAGMENT: {
+        public? final? [ResolvedTo(BODY_RESOLVE)] val ii: R|kotlin/Int| = Int(1)
+            public? [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }

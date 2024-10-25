@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -411,5 +412,31 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
   @TestMetadata("withoutName.kt")
   public void testWithoutName() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/withoutName.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/fileStructure/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/fileStructure/codeFragments/block")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Block {
+      @Test
+      public void testAllFilesPresentInBlock() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure/codeFragments/block"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("noContext.kt")
+      public void testNoContext() {
+        runTest("analysis/low-level-api-fir/testData/fileStructure/codeFragments/block/noContext.kt");
+      }
+    }
   }
 }

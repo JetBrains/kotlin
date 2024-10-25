@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.codeFragmentCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -97,10 +99,17 @@ internal class LLFirResolvableResolveSession(
         }
 
         val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration, codeFragmentAware = true)
-            ?: errorWithAttachment("Declaration should have non-local container") {
+
+        if (nonLocalDeclaration == null) {
+            val containingFragment = ktDeclaration.containingKtFile as? KtCodeFragment
+            if (containingFragment?.codeFragmentCanBeLazilyResolved() == true) {
+                return findDeclarationInSourceViaResolve(ktDeclaration)
+            }
+            errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", module) { it.moduleDescription }
             }
+        }
 
         if (ktDeclaration == nonLocalDeclaration) {
             val session = sessionProvider.getResolvableSession(module)

@@ -15,7 +15,8 @@ internal fun declarationCanBeLazilyResolved(element: KtElement?, codeFragmentAwa
     is KtFunctionLiteral -> false
     is KtTypeParameter -> declarationCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false), codeFragmentAware)
     is KtScript -> declarationCanBeLazilyResolved(element.parent as? KtFile, codeFragmentAware)
-    is KtFile -> codeFragmentAware || element !is KtCodeFragment
+    is KtCodeFragment -> codeFragmentAware || element.codeFragmentCanBeLazilyResolved()
+    is KtFile -> true
     is KtDestructuringDeclarationEntry -> declarationCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration, codeFragmentAware)
     is KtParameter -> declarationCanBeLazilyResolved(element.ownerFunction, codeFragmentAware)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtAnonymousInitializer -> {
@@ -37,3 +38,9 @@ internal fun declarationCanBeLazilyResolved(element: KtElement?, codeFragmentAwa
         withPsiEntry("declaration", element)
     }
 }
+
+/**
+ * Code fragments without context elements can be lazily resolved on their own
+ */
+internal fun KtCodeFragment.codeFragmentCanBeLazilyResolved(): Boolean =
+    context == null

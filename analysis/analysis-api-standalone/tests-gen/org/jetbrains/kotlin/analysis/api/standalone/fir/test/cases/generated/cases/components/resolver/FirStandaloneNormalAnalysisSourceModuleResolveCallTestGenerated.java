@@ -1883,6 +1883,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
       }
 
       @Test
+      @TestMetadata("NoContext.kt")
+      public void testNoContext() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/NoContext.kt");
+      }
+
+      @Test
+      @TestMetadata("NoContextInLambda.kt")
+      public void testNoContextInLambda() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/NoContextInLambda.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyCall.kt")
       public void testPropertyCall() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/PropertyCall.kt");
@@ -1956,6 +1968,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
       @TestMetadata("NestedCodeFragmentUsage.kt")
       public void testNestedCodeFragmentUsage() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/expressionCodeFragment/NestedCodeFragmentUsage.kt");
+      }
+
+      @Test
+      @TestMetadata("NoContext.kt")
+      public void testNoContext() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/expressionCodeFragment/NoContext.kt");
       }
 
       @Test

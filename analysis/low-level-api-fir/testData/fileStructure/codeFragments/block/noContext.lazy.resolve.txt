@@ -1,0 +1,16 @@
+CODE FRAGMENT: {
+    public? final? [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = Int(10)
+        public? [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    Int(1).R|kotlin/Int.plus|(Int(2))
+    local final [ResolvedTo(BODY_RESOLVE)] fun xx(): R|kotlin/Unit| {
+    }
+
+    local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+}

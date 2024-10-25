@@ -825,6 +825,26 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/codeFragments"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/block")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Block {
+      @Test
+      public void testAllFilesPresentInBlock() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/block"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {
