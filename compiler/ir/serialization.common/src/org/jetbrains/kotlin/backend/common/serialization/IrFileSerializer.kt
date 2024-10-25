@@ -115,10 +115,39 @@ open class IrFileSerializer(
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
 
-    // The same type can be used multiple times in a file
-    // so use this index to store type data only once.
-    private val protoTypeMap = hashMapOf<IrTypeDeduplicationKey, Int>()
-    protected val protoTypeArray = arrayListOf<ProtoType>()
+    /**
+     * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
+     *
+     * It writes every protobuf 'type' entity to a byte array and ensures that there is no other 'type'
+     * entity that has been already added with exactly the same bytes. In other words, ensures that
+     * all types added to [ProtoTypeArray] are indeed unique. This is useful when serializing a mix
+     * of bound and unbound IR, when there are two equivalent [IrType]s referencing different symbols
+     * (bound and unbound) - the situation that the serializer otherwise is not able to recognize
+     * and therefore serializes them as two distinct types.
+     */
+    protected class ProtoTypeArray {
+        private class UniqueType(val protoType: ProtoType) {
+            val byteArray: ByteArray = protoType.toByteArray()
+
+            private val memoizedHashCode = byteArray.contentHashCode()
+            override fun hashCode() = memoizedHashCode
+
+            override fun equals(other: Any?) =
+                other is UniqueType && other.memoizedHashCode == memoizedHashCode && other.byteArray contentEquals byteArray
+        }
+
+        // Use `LinkedHashMap` to keep only unique types but preserve the insertion order.
+        private val uniqueTypes: MutableMap<UniqueType, /* ordered index */ Int> = linkedMapOf()
+
+        val protoTypes: List<ProtoType> get() = uniqueTypes.keys.map { it.protoType }
+        val byteArrays: List<ByteArray> get() = uniqueTypes.keys.map { it.byteArray }
+
+        fun addAndGetIndex(protoType: ProtoType) = uniqueTypes.getOrPut(UniqueType(protoType)) { uniqueTypes.size }
+    }
+
+    /** The same type can be used multiple times in a file, so use this map to store the unique index by a deduplication key. */
+    private val protoTypeMap = hashMapOf<IrTypeDeduplicationKey, /* unique type index */ Int>()
+    protected val protoTypeArray = ProtoTypeArray()
 
     private val protoStringMap = hashMapOf<String, Int>()
     protected val protoStringArray = arrayListOf<String>()
@@ -423,8 +452,7 @@ open class IrFileSerializer(
         )
 
     private fun serializeIrType(type: IrType) = protoTypeMap.getOrPut(type.toIrTypeDeduplicationKey) {
-        protoTypeArray.add(serializeIrTypeData(type))
-        protoTypeArray.size - 1
+        protoTypeArray.addAndGetIndex(serializeIrTypeData(type))
     }
 
     /* -------------------------------------------------------------------------- */
@@ -1430,7 +1458,7 @@ open class IrFileSerializer(
             fileData = proto.build().toByteArray(),
             fqName = file.packageFqName.asString(),
             path = file.path,
-            types = IrMemoryArrayWriter(protoTypeArray.map { it.toByteArray() }).writeIntoMemory(),
+            types = IrMemoryArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
             signatures = IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
             strings = IrMemoryStringWriter(protoStringArray).writeIntoMemory(),
             bodies = IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),

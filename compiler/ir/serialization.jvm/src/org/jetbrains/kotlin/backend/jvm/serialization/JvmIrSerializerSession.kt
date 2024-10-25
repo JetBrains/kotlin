@@ -69,7 +69,7 @@ class JvmIrSerializerSession(
     }
 
     private fun serializeAuxTables(proto: JvmIr.ClassOrFile.Builder) {
-        protoTypeArray.forEach(proto::addType)
+        protoTypeArray.protoTypes.forEach(proto::addType)
         protoIdSignatureArray.forEach(proto::addSignature)
         protoStringArray.forEach(proto::addString)
         protoBodyArray.forEach { proto.addBody(it.toProto()) }
