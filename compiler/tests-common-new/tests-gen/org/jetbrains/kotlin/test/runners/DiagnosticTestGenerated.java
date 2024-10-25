@@ -322,6 +322,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("confirmObsoleteAssignmentCanBeReplacedWithOperator.kt")
+    public void testConfirmObsoleteAssignmentCanBeReplacedWithOperator() {
+      runTest("compiler/testData/diagnostics/tests/confirmObsoleteAssignmentCanBeReplacedWithOperator.kt");
+    }
+
+    @Test
     @TestMetadata("conflictingOverloadsPrivateFunctions.kt")
     public void testConflictingOverloadsPrivateFunctions() {
       runTest("compiler/testData/diagnostics/tests/conflictingOverloadsPrivateFunctions.kt");
