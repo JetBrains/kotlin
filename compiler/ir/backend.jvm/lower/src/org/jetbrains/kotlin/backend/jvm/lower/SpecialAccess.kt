@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -442,9 +443,15 @@ internal class SpecialAccessLowering(
             setField.symbol,
         )
 
-    private fun shouldUseAccessor(accessor: IrSimpleFunction): Boolean {
-        return (context.generatorExtensions as StubGeneratorExtensions).isAccessorWithExplicitImplementation(accessor)
-                || accessor.correspondingPropertySymbol?.owner?.isDelegated == true
+    private fun isPresentInBytecode(accessor: IrSimpleFunction): Boolean {
+        val property = accessor.correspondingPropertySymbol!!.owner
+        // Normally, all the accessors which not present in bytecode are lowered during `JvmPropertiesLowering`.
+        // But `JvmPropertiesLowering` lowering relies on `IrProperty#needsAccessor,` which is correct only under the assumption
+        // of "normal" visibility rules.
+        // It is not the case when we compile code fragment from the debugger, so we need to handle special cases here.
+        return property.isNonPrivate
+                || property.isDelegated
+                || (context.generatorExtensions as StubGeneratorExtensions).isAccessorWithExplicitImplementation(accessor)
     }
 
     // Returns a pair of the _type_ containing the field and the _instance_ on
@@ -468,44 +475,42 @@ internal class SpecialAccessLowering(
         call.superQualifierSymbol?.defaultType ?: call.symbol.owner.resolveFakeOverrideOrFail().parentAsClass.defaultType
 
     private fun generateReflectiveAccessForGetter(call: IrCall): IrExpression {
-        val getter = call.symbol.owner
-        val property = getter.correspondingPropertySymbol!!.owner
+        val realGetter = call.symbol.owner.resolveFakeOverrideOrFail()
 
-        if (shouldUseAccessor(getter)) {
+        if (isPresentInBytecode(realGetter)) {
             return generateReflectiveMethodInvocation(
-                getter.parentAsClass.defaultType,
-                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(getter),
+                realGetter.parentAsClass.defaultType,
+                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realGetter),
                 call.dispatchReceiver,
                 listOfNotNull(call.extensionReceiver),
-                getter.returnType,
-                call.symbol
+                realGetter.returnType,
+                realGetter.symbol
             )
         }
 
         val (fieldLocation, instance) = fieldLocationAndReceiver(call)
         return generateReflectiveFieldGet(
             fieldLocation,
-            property.name.asString(),
-            getter.returnType,
+            realGetter.correspondingPropertySymbol!!.owner.name.asString(),
+            realGetter.returnType,
             instance,
             call.symbol,
         )
     }
 
     private fun generateReflectiveAccessForSetter(call: IrCall): IrExpression {
-        val setter = call.symbol.owner
-        val property = setter.correspondingPropertySymbol!!.owner
+        val realSetter = call.symbol.owner.resolveFakeOverrideOrFail()
 
-        if (shouldUseAccessor(setter)) {
+        if (isPresentInBytecode(realSetter)) {
             return generateReflectiveMethodInvocation(
-                setter.parentAsClass.defaultType,
-                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(setter),
+                realSetter.parentAsClass.defaultType,
+                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realSetter),
                 call.dispatchReceiver,
                 mutableListOf<IrExpression>().apply {
                     call.extensionReceiver?.let { add(it) }
                     addAll(call.getValueArguments())
                 },
-                setter.returnType,
+                realSetter.returnType,
                 call.symbol
             )
         }
@@ -513,7 +518,7 @@ internal class SpecialAccessLowering(
         val (fieldLocation, receiver) = fieldLocationAndReceiver(call)
         return generateReflectiveFieldSet(
             fieldLocation,
-            property.name.asString(),
+            realSetter.correspondingPropertySymbol!!.owner.name.asString(),
             call.getValueArgument(0)!!,
             call.type,
             receiver,
