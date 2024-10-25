@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -116,7 +117,7 @@ open class IrFileSerializer(
 
     // The same type can be used multiple times in a file
     // so use this index to store type data only once.
-    private val protoTypeMap = hashMapOf<IrTypeKey, Int>()
+    private val protoTypeMap = hashMapOf<IrTypeDeduplicationKey, Int>()
     protected val protoTypeArray = arrayListOf<ProtoType>()
 
     private val protoStringMap = hashMapOf<String, Int>()
@@ -351,37 +352,53 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    enum class IrTypeKind {
+    private enum class IrTypeKind {
         SIMPLE,
         DYNAMIC,
         ERROR,
     }
 
-    enum class IrTypeArgumentKind {
+    private enum class IrTypeArgumentKind {
         STAR,
         PROJECTION
     }
 
-    // This is just IrType repacked as a data class, good to address a hash map.
-    data class IrTypeKey(
+    /**
+     * This is just an [IrType] repacked as a data class, good to address a hash map.
+     *
+     * Note: This key does not guarantee the uniqueness of IR types for several reasons:
+     * - [IrTypeDeduplicationKey.classifier] is a symbol of a classifier in a type. In the case of a mix of
+     *   bound IR produced by Fir2Ir and unbound IR obtained through deserialization of inline function
+     *   body, there can be two symbols (one bound without a signature and another unbound but with a signature)
+     *   both pointing effectively to the same declaration.
+     * - [IrTypeDeduplicationKey.annotations] is just a list of [IrConstructorCall]s that cannot be
+     *   fully compared: The [IrConstructorCallImpl.equals] function resolves to [Any.equals], which
+     *   compares only object references.
+     * - [IrTypeDeduplicationKey.abbreviation] is just another IR node: [IrTypeAbbreviation]. And it also
+     *   cannot be fully compared.
+     *
+     * However, [IrTypeDeduplicationKey] can be used as a good approximation to store lesser number of records
+     * in [protoTypeMap] and overall speed-up the process of types serialization.
+     */
+    private data class IrTypeDeduplicationKey(
         val kind: IrTypeKind,
         val classifier: IrClassifierSymbol?,
         val nullability: SimpleTypeNullability?,
-        val arguments: List<IrTypeArgumentKey>?,
+        val arguments: List<IrTypeArgumentDeduplicationKey>?,
         val annotations: List<IrConstructorCall>,
         val abbreviation: IrTypeAbbreviation?
     )
 
-    data class IrTypeArgumentKey(
+    private data class IrTypeArgumentDeduplicationKey(
         val kind: IrTypeArgumentKind,
         val variance: Variance?,
-        val type: IrTypeKey?
+        val type: IrTypeDeduplicationKey?
     )
 
-    private val IrType.toIrTypeKey: IrTypeKey
+    private val IrType.toIrTypeDeduplicationKey: IrTypeDeduplicationKey
         get() {
             val type = this
-            return IrTypeKey(
+            return IrTypeDeduplicationKey(
                 kind = when (this) {
                     is IrSimpleType -> IrTypeKind.SIMPLE
                     is IrDynamicType -> IrTypeKind.DYNAMIC
@@ -389,23 +406,23 @@ open class IrFileSerializer(
                 },
                 classifier = type.classifierOrNull,
                 nullability = (type as? IrSimpleType)?.nullability,
-                arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
+                arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentDeduplicationKey },
                 annotations = type.annotations,
                 abbreviation = (type as? IrSimpleType)?.abbreviation
             )
         }
 
-    private val IrTypeArgument.toIrTypeArgumentKey: IrTypeArgumentKey
-        get() = IrTypeArgumentKey(
+    private val IrTypeArgument.toIrTypeArgumentDeduplicationKey: IrTypeArgumentDeduplicationKey
+        get() = IrTypeArgumentDeduplicationKey(
             kind = when (this) {
                 is IrStarProjection -> IrTypeArgumentKind.STAR
                 is IrTypeProjection -> IrTypeArgumentKind.PROJECTION
             },
             variance = (this as? IrTypeProjection)?.variance,
-            type = (this as? IrTypeProjection)?.type?.toIrTypeKey
+            type = (this as? IrTypeProjection)?.type?.toIrTypeDeduplicationKey
         )
 
-    private fun serializeIrType(type: IrType) = protoTypeMap.getOrPut(type.toIrTypeKey) {
+    private fun serializeIrType(type: IrType) = protoTypeMap.getOrPut(type.toIrTypeDeduplicationKey) {
         protoTypeArray.add(serializeIrTypeData(type))
         protoTypeArray.size - 1
     }
