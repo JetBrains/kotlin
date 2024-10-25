@@ -10,7 +10,7 @@ fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, add
     add("-${prefix}fir.bench.prefix=$path")
     add("-${prefix}fir.bench.jps.dir=$path/test-project-model-dump")
     add("-${prefix}fir.bench.passes=1")
-    add("-${prefix}fir.bench.dump=true")
+    add("-${prefix}fir.bench.dump=false")
     for ((name, value) in additionalParameters) {
         add("-$prefix$name=$value")
     }
