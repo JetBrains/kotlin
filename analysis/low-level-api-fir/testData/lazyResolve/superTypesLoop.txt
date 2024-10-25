@@ -114,19 +114,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -141,19 +141,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -168,19 +168,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -195,19 +195,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -222,19 +222,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -249,19 +249,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -276,19 +276,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -303,19 +303,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -330,19 +330,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -357,19 +357,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoop.kt
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Loop in supertypes involving /A> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|B|>()
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [ResolvedTo(BODY_RESOLVE)] class B : <ERROR TYPE REF: Loop in supertypes involving /B> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|C|>()
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }

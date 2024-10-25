@@ -88,12 +88,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(SUPER_TYPES)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -110,12 +110,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -123,7 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(TYPES)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(TYPES)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -132,12 +132,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(STATUS)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -154,12 +154,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -176,12 +176,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(CONTRACTS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(CONTRACTS)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -198,12 +198,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -220,12 +220,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(CONSTANT_EVALUATION)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(CONSTANT_EVALUATION)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -242,12 +242,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<C.CC>
         }
@@ -264,12 +264,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|D|>
         }
 
-        public open [ResolvedTo(STATUS)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(STATUS)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public [ResolvedTo(STATUS)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|D| {
             super<R|C.CC|>()
         }
@@ -286,12 +286,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2.kt
-    public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertypes involving /C> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|D|>()
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+        public open [ResolvedTo(BODY_RESOLVE)] class CC : <ERROR TYPE REF: Loop in supertypes involving /C.CC> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                 super<R|kotlin/Any|>()
             }
@@ -299,7 +299,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2.kt
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+    public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertypes involving /D> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|D| {
             super<R|C.CC|>()
         }

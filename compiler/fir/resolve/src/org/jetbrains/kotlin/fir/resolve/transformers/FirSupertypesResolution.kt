@@ -794,7 +794,8 @@ open class SupertypeComputationSession {
                         isErrorInSupertypesFound = true
                         createErrorTypeRef(
                             supertypeRef,
-                            "Loop in supertype: ${classLikeDeclaration.symbol.classId} -> ${supertypeFir?.symbol?.classId}",
+                            // A loop may have been caused by the outer declaration, not necessarily `supertypeRef`
+                            "Loop in supertypes involving ${classLikeDeclaration.symbol.classId}",
                             if (isTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                         )
                     } else {

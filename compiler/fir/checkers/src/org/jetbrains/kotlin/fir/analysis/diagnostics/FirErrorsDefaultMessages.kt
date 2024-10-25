@@ -1006,7 +1006,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Inheritance of a Java member referencing ''kotlin.jvm.functions.FunctionN'': {0} is unsupported.",
             SYMBOL,
         )
-        map.put(CYCLIC_INHERITANCE_HIERARCHY, "Cycle formed in the inheritance hierarchy of this type.")
+        map.put(CYCLIC_INHERITANCE_HIERARCHY, "Cycle in supertypes and/or containing declarations detected.")
         map.put(
             EXPANDED_TYPE_CANNOT_BE_INHERITED,
             "Type alias expands to ''{0}'', which is not a class, interface, or object.",

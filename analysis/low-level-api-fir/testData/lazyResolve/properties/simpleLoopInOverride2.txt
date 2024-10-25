@@ -96,21 +96,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(SUPER_TYPES)] val str: String
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -120,21 +120,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(TYPES)] val str: R|kotlin/String|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -144,21 +144,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -168,21 +168,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val str: R|kotlin/String|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -192,21 +192,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(CONTRACTS)] val str: R|kotlin/String|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -216,21 +216,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val str: R|kotlin/String|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -240,21 +240,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(CONSTANT_EVALUATION)] val str: R|kotlin/String|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -264,21 +264,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val str: R|kotlin/String|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -288,21 +288,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? open? override [ResolvedTo(RAW_FIR)] val str: String
@@ -312,21 +312,21 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] simpleLoopInOverride2.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertypes involving /Foo1> {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo2 : <ERROR TYPE REF: Loop in supertypes involving /Foo2> {
         public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
         public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo2] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo3 : <ERROR TYPE REF: Loop in supertypes involving /Foo3> {
         public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
         public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|

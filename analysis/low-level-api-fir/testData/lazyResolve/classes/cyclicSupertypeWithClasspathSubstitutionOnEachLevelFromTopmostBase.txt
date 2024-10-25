@@ -148,13 +148,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -185,13 +185,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public final? [ResolvedTo(TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public final? [ResolvedTo(TYPES)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -222,13 +222,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(STATUS)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -259,13 +259,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -296,13 +296,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(CONTRACTS)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(CONTRACTS)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -333,13 +333,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -370,13 +370,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -407,13 +407,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -444,13 +444,13 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] topmost.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public? final? [ResolvedTo(RAW_FIR)] fun topmost(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] top.kt
@@ -481,11 +481,11 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] topmost.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun topmost(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Base> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }

@@ -28,70 +28,70 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(TYPES)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public final? [ResolvedTo(TYPES)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(STATUS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(STATUS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(CONTRACTS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(CONTRACTS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }

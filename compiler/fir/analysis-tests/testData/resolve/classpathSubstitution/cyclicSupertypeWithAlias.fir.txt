@@ -2,14 +2,14 @@ Module: topmost
 FILE: topmost.kt
     package org.example
 
-    public abstract interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopmostAdditional> {
+    public abstract interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public abstract fun topmost(): R|kotlin/Unit|
 
     }
-    public final typealias Alias = <ERROR TYPE REF: Loop in supertype: org/example/Alias -> org/example/Base>
-    public abstract interface TopmostAdditional : <ERROR TYPE REF: Loop in supertype: org/example/TopmostAdditional -> org/example/Topmost> {
+    public final typealias Alias = <ERROR TYPE REF: Loop in supertypes involving org/example/Alias>
+    public abstract interface TopmostAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/TopmostAdditional> {
     }
-    public abstract interface Topmost : <ERROR TYPE REF: Loop in supertype: org/example/Topmost -> org/example/Alias> {
+    public abstract interface Topmost : <ERROR TYPE REF: Loop in supertypes involving org/example/Topmost> {
     }
 Module: top
 FILE: top.kt
