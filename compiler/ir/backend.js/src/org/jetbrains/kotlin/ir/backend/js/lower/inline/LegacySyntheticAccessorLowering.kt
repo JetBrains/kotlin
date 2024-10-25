@@ -96,7 +96,7 @@ class LegacySyntheticAccessorLowering(private val context: CommonBackendContext)
                 return declaration.factory.createSimpleFunction(
                     startOffset = declaration.startOffset,
                     endOffset = declaration.endOffset,
-                    origin = mapDeclarationOrigin(declaration.origin),
+                    origin = declaration.origin,
                     name = newName,
                     visibility = DescriptorVisibilities.INTERNAL,
                     isInline = declaration.isInline,
