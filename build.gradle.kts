@@ -38,7 +38,6 @@ plugins {
     id("java-instrumentation")
     id("jps")
     id("modularized-test-configurations")
-    id("idea-rt-hack")
     id("resolve-dependencies")
     id("org.gradle.crypto.checksum") version "1.4.0"
     alias(libs.plugins.kotlinx.bcv) apply false
