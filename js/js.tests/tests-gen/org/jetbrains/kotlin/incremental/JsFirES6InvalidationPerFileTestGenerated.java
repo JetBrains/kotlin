@@ -291,12 +291,6 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
-  @TestMetadata("inlineFunctionCircleUsage")
-  public void testInlineFunctionCircleUsage() {
-    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionCircleUsage/");
-  }
-
-  @Test
   @TestMetadata("inlineFunctionDefaultParams")
   public void testInlineFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");

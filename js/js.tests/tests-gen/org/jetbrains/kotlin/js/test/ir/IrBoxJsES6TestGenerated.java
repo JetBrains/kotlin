@@ -6292,12 +6292,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
-    @TestMetadata("recursiveDependency.kt")
-    public void testRecursiveDependency() {
-      runTest("js/js.translator/testData/box/inline/recursiveDependency.kt");
-    }
-
-    @Test
     @TestMetadata("requireNotNull.kt")
     public void testRequireNotNull() {
       runTest("js/js.translator/testData/box/inline/requireNotNull.kt");
