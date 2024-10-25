@@ -21,6 +21,36 @@ class KtPsiFactoryTest : KotlinTestWithEnvironment() {
         }
     }
 
+    fun testEmptyRawStringTemplate() {
+        val psiFactory = KtPsiFactory(project)
+        val template = psiFactory.createRawStringTemplate("")
+        Assert.assertEquals("\"\"\"\"\"\"", template.text)
+    }
+
+    fun testSingleLineRawStringTemplate() {
+        val psiFactory = KtPsiFactory(project)
+        val template = psiFactory.createRawStringTemplate("Foo Bar")
+        Assert.assertEquals("\"\"\"Foo Bar\"\"\"", template.text)
+    }
+
+    fun testSingleLineRawStringTemplateWithEntries() {
+        val psiFactory = KtPsiFactory(project)
+        val template = psiFactory.createRawStringTemplate("\$Foo \${Bar}")
+        Assert.assertEquals("\"\"\"\$Foo \${Bar}\"\"\"", template.text)
+    }
+
+    fun testMultiLineRawStringTemplate() {
+        val psiFactory = KtPsiFactory(project)
+        val template = psiFactory.createRawStringTemplate("Foo\nBar\nBaz")
+        Assert.assertEquals("\"\"\"Foo\nBar\nBaz\"\"\"", template.text)
+    }
+
+    fun testMultiLineRawStringTemplateWithEntries() {
+        val psiFactory = KtPsiFactory(project)
+        val template = psiFactory.createRawStringTemplate("\$Foo\n\${Bar}")
+        Assert.assertEquals("\"\"\"\$Foo\n\${Bar}\"\"\"", template.text)
+    }
+
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES

@@ -511,6 +511,11 @@ class KtPsiFactory private constructor(
 
     fun createStringTemplate(@NonNls content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
 
+    fun createRawStringTemplate(@NonNls content: String): KtStringTemplateExpression {
+        val quote = "\"\"\""
+        return createExpression("$quote$content$quote") as KtStringTemplateExpression
+    }
+
     /**
      * @param content string template content
      * @param prefixLength interpolation prefix length
