@@ -54,7 +54,10 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        java.srcDirs("tests-gen")
+        resources.srcDir("tests-gen-resources")
+    }
 }
 
 val nativeTest = nativeTest(
