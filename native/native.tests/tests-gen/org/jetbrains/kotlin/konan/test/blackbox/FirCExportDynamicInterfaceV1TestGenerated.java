@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
-import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -137,6 +137,12 @@ public class FirCExportDynamicInterfaceV1TestGenerated extends AbstractNativeCEx
   @TestMetadata("migrating_main_thread")
   public void testMigrating_main_thread() {
     runTest("native/native.tests/testData/CExport/InterfaceV1/migrating_main_thread/");
+  }
+
+  @Test
+  @TestMetadata("programName")
+  public void testProgramName() {
+    runTest("native/native.tests/testData/CExport/InterfaceV1/programName/");
   }
 
   @Test

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -259,6 +259,12 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("mainOverloadingNoArgs.kt")
     public void testMainOverloadingNoArgs() {
       runTest("native/native.tests/testData/standalone/entryPoint/mainOverloadingNoArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("programName.kt")
+    public void testProgramName() {
+      runTest("native/native.tests/testData/standalone/entryPoint/programName.kt");
     }
   }
 

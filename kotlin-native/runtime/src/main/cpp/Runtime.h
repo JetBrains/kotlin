@@ -51,6 +51,8 @@ namespace kotlin {
 // Returns `true` if initialized.
 bool initializeGlobalRuntimeIfNeeded() noexcept;
 
+extern const char* programName;
+
 }
 
 #endif // RUNTIME_RUNTIME_H
