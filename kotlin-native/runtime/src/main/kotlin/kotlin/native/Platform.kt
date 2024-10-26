@@ -164,6 +164,7 @@ private external fun Platform_getCpuArchitecture(): Int
 private external fun Platform_isDebugBinary(): Boolean
 
 @GCUnsafeCall("Konan_Platform_getProgramName")
+@Escapes.Nothing
 private external fun Platform_getProgramName(): String?
 
 @GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
