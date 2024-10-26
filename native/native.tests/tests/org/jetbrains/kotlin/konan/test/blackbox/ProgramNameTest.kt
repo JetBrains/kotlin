@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -61,6 +62,12 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
         // Simulate a custom program name, see e.g. https://busybox.net/downloads/BusyBox.html#usage
         validate("programName: customProgramName\nargs:", "customProgramName")
         validate("programName: customProgramName\nargs: firstArg, secondArg", "customProgramName", "firstArg", "secondArg")
+
+        if (targets.testTarget.family == Family.MINGW) {
+            // With MinGW, `execv` in `main.c` fails with errno=22 (EINVAL) in the tests below.
+            // Let's just skip those corner cases.
+            return
+        }
 
         // No program name - this would not be POSIX compliant, see https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html:
         // "[...] requires a Strictly Conforming POSIX Application to pass at least one argument to the exec function"
