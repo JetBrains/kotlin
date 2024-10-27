@@ -51,15 +51,6 @@ abstract class CheckerContextForProvider(
 
     abstract fun dropDeclaration()
 
-    fun <T> withDeclaration(declaration: FirDeclaration, f: (CheckerContextForProvider) -> T): T {
-        val newContext = addDeclaration(declaration)
-        try {
-            return f(newContext)
-        } finally {
-            newContext.dropDeclaration()
-        }
-    }
-
     abstract fun addCallOrAssignment(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContextForProvider
 
     abstract fun dropCallOrAssignment()
