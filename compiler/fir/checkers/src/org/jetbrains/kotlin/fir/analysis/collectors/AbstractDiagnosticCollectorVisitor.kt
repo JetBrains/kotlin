@@ -7,25 +7,24 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.whileAnalysing
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.PrivateForInline
 
 abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContextForProvider,
@@ -77,19 +76,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitJump(continueExpression)
     }
 
-    private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
-        val receiverParameter = buildReceiverParameter {
-            typeRef = buildResolvedTypeRef {
-                this.coneType = type
-            }
-        }
-
-        visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, receiverParameter)
-    }
-
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         withAnnotationContainer(regularClass) {
-            visitClassAndChildren(regularClass, regularClass.defaultType())
+            visitWithDeclaration(regularClass)
         }
     }
 
@@ -99,7 +88,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
         withAnnotationContainer(anonymousObject) {
-            visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
+            visitWithDeclaration(anonymousObject)
         }
     }
 
@@ -115,7 +104,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
             withInlineFunctionBodyIfApplicable(simpleFunction, simpleFunction.isInline) {
-                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
+                visitWithDeclaration(simpleFunction)
             }
         }
     }
@@ -137,12 +126,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
         withAnnotationContainer(anonymousFunction) {
             withLambdaBodyIfApplicable(anonymousFunction) {
-                val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-                visitWithDeclarationAndReceiver(
-                    anonymousFunction,
-                    labelName,
-                    anonymousFunction.receiverParameter
-                )
+                visitWithDeclaration(anonymousFunction)
             }
         }
     }
@@ -165,7 +149,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val property = context.containingDeclarations.last() as FirProperty
         withAnnotationContainer(propertyAccessor) {
             withInlineFunctionBodyIfApplicable(propertyAccessor, propertyAccessor.isInline || property.isInline) {
-                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverParameter)
+                visitWithDeclaration(propertyAccessor)
             }
         }
     }
@@ -301,18 +285,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverParameter: FirReceiverParameter?) {
-        visitWithDeclaration(declaration) {
-            withLabelAndReceiverType(
-                labelName,
-                declaration,
-                receiverParameter?.typeRef?.coneType
-            ) {
-                visitNestedElements(declaration)
-            }
-        }
-    }
-
     @OptIn(PrivateForInline::class)
     private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
         return try {
@@ -421,29 +393,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
             context = existingContext
         }
     }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withLabelAndReceiverType(
-        labelName: Name?,
-        owner: FirDeclaration,
-        type: ConeKotlinType?,
-        block: () -> R
-    ): R {
-        val (implicitReceiverValue, implicitCompanionValues) = context.sessionHolder.collectImplicitReceivers(type, owner)
-        val existingContext = context
-        implicitCompanionValues.forEach { value ->
-            context = context.addImplicitReceiver(null, value)
-        }
-        implicitReceiverValue?.let {
-            context = context.addImplicitReceiver(labelName, it)
-        }
-        try {
-            return block()
-        } finally {
-            context = existingContext
-        }
-    }
-
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withAnnotationContainer(annotationContainer: FirAnnotationContainer, block: () -> R): R {

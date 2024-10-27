@@ -26,45 +26,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-fun SessionHolder.collectImplicitReceivers(
-    type: ConeKotlinType?,
-    owner: FirDeclaration
-): ImplicitReceivers {
-    val implicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
-    val contextReceiverValues = mutableListOf<ContextReceiverValue<*>>()
-    val implicitReceiverValue = when (owner) {
-        is FirClass -> {
-            val towerElementsForClass = collectTowerDataElementsForClass(owner, type!!)
-            implicitCompanionValues.addAll(towerElementsForClass.implicitCompanionValues)
-            contextReceiverValues.addAll(towerElementsForClass.contextReceivers)
-
-            towerElementsForClass.thisReceiver
-        }
-        is FirFunction -> {
-            contextReceiverValues.addAll(owner.createContextReceiverValues(this))
-            type?.let { ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession) }
-        }
-        is FirVariable -> {
-            contextReceiverValues.addAll(owner.createContextReceiverValues(this))
-            type?.let { ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession) }
-        }
-        else -> {
-            if (type != null) {
-                throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
-            }
-
-            null
-        }
-    }
-    return ImplicitReceivers(implicitReceiverValue, implicitCompanionValues, contextReceiverValues)
-}
-
-data class ImplicitReceivers(
-    val implicitReceiverValue: ImplicitReceiverValue<*>?,
-    val implicitCompanionValues: List<ImplicitReceiverValue<*>>,
-    val contextReceivers: List<ContextReceiverValue<*>>,
-)
-
 fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType: ConeKotlinType): TowerElementsForClass {
     val allImplicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
 
@@ -111,7 +72,6 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
         companionReceiver,
         companionObject?.staticScope(this),
         superClassesStaticsAndCompanionReceivers.asReversed(),
-        allImplicitCompanionValues.asReversed()
     )
 }
 
@@ -123,8 +83,6 @@ class TowerElementsForClass(
     val companionStaticScope: FirScope?,
     // Ordered from inner scopes to outer scopes.
     val superClassesStaticsAndCompanionReceivers: List<FirTowerDataElement>,
-    // Ordered from inner scopes to outer scopes.
-    val implicitCompanionValues: List<ImplicitReceiverValue<*>>
 )
 
 class FirTowerDataContext private constructor(

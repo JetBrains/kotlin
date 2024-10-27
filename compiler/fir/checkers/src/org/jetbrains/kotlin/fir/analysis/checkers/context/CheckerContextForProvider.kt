@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.name.Name
 
 /**
  * This class should be invisible for checkers, but should be only used by DiagnosticCollectorVisitor who runs those checkers
@@ -48,8 +46,6 @@ abstract class CheckerContextForProvider(
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
     ): CheckerContextForProvider
-
-    abstract fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): CheckerContextForProvider
 
     abstract fun addDeclaration(declaration: FirDeclaration): CheckerContextForProvider
 

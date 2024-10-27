@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -90,12 +89,8 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
         }
 
         private fun compareStructurally(expected: CheckerContext, actual: CheckerContext) {
-            assertions.assertEquals(expected.implicitReceiverStack.asString(), actual.implicitReceiverStack.asString())
             assertions.assertEquals(expected.containingDeclarations.asString(), actual.containingDeclarations.asString())
         }
-
-        private fun ImplicitReceiverStack.asString() =
-            joinToString { it.boundSymbol.name() }
 
         private fun List<FirDeclaration>.asString() =
             joinToString(transform = FirDeclaration::name)

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -34,7 +33,6 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val returnTypeCalculator: ReturnTypeCalculator
 
     // Context
-    abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
 
     /** Contains qualified access, annotation call, delegated constructor call, and variable assignment. */
