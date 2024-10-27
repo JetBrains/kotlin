@@ -69,7 +69,7 @@ class BodyResolveContext(
             regularTowerDataContexts = regularTowerDataContexts.replaceTowerDataMode(newMode = value)
         }
 
-    val implicitReceiverStack: PersistentImplicitReceiverStack
+    val implicitReceiverStack: ImplicitReceiverStack
         get() = towerDataContext.implicitReceiverStack
 
     @set:PrivateForInline

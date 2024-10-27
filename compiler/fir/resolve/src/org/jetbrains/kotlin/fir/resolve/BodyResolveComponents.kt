@@ -26,7 +26,7 @@ data class SessionHolderImpl(override val session: FirSession, override val scop
 
 abstract class BodyResolveComponents : SessionHolder {
     abstract val returnTypeCalculator: ReturnTypeCalculator
-    abstract val implicitReceiverStack: PersistentImplicitReceiverStack
+    abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
     abstract val fileImportsScope: List<FirScope>
     abstract val towerDataElements: List<FirTowerDataElement>

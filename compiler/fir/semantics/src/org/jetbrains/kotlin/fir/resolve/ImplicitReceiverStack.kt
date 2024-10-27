@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
 
-class PersistentImplicitReceiverStack private constructor(
+class ImplicitReceiverStack private constructor(
     private val stack: PersistentList<ImplicitReceiverValue<*>>,
     // This multi-map holds indexes of the stack ^
     private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
@@ -31,21 +31,21 @@ class PersistentImplicitReceiverStack private constructor(
         persistentMapOf(),
     )
 
-    fun addAll(receivers: List<ImplicitReceiverValue<*>>): PersistentImplicitReceiverStack {
+    fun addAll(receivers: List<ImplicitReceiverValue<*>>): ImplicitReceiverStack {
         return receivers.fold(this) { acc, value -> acc.add(name = null, value) }
     }
 
-    fun addAllContextReceivers(receivers: List<ContextReceiverValue<*>>): PersistentImplicitReceiverStack {
+    fun addAllContextReceivers(receivers: List<ContextReceiverValue<*>>): ImplicitReceiverStack {
         return receivers.fold(this) { acc, value -> acc.addContextReceiver(value) }
     }
 
-    fun add(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): PersistentImplicitReceiverStack {
+    fun add(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitReceiverStack {
         val stack = stack.add(value)
         val index = stack.size - 1
         val receiversPerLabel = receiversPerLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
 
-        return PersistentImplicitReceiverStack(
+        return ImplicitReceiverStack(
             stack,
             receiversPerLabel,
             indexesPerSymbol,
@@ -58,11 +58,11 @@ class PersistentImplicitReceiverStack private constructor(
         else
             this
 
-    fun addContextReceiver(value: ContextReceiverValue<*>): PersistentImplicitReceiverStack {
+    fun addContextReceiver(value: ContextReceiverValue<*>): ImplicitReceiverStack {
         val labelName = value.labelName ?: return this
 
         val receiversPerLabel = receiversPerLabel.put(labelName, value)
-        return PersistentImplicitReceiverStack(
+        return ImplicitReceiverStack(
             stack,
             receiversPerLabel,
             indexesPerSymbol,
@@ -96,8 +96,8 @@ class PersistentImplicitReceiverStack private constructor(
         stack[index].updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(keepMutable: Boolean): PersistentImplicitReceiverStack {
-        return PersistentImplicitReceiverStack(
+    fun createSnapshot(keepMutable: Boolean): ImplicitReceiverStack {
+        return ImplicitReceiverStack(
             stack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
             receiversPerLabel,
             indexesPerSymbol,

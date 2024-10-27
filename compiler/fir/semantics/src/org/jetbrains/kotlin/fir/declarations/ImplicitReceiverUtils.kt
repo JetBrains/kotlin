@@ -90,7 +90,7 @@ class FirTowerDataContext private constructor(
     // These properties are effectively redundant, their content should be consistent with `towerDataElements`,
     // i.e. implicitReceiverStack == towerDataElements.mapNotNull { it.receiver }
     // i.e. localScopes == towerDataElements.mapNotNull { it.scope?.takeIf { it.isLocal } }
-    val implicitReceiverStack: PersistentImplicitReceiverStack,
+    val implicitReceiverStack: ImplicitReceiverStack,
     val classesUnderInitialization: PersistentList<FirClassSymbol<*>>,
     val localScopes: FirLocalScopes,
     val nonLocalTowerDataElements: PersistentList<FirTowerDataElement>
@@ -98,7 +98,7 @@ class FirTowerDataContext private constructor(
 
     constructor() : this(
         persistentListOf(),
-        PersistentImplicitReceiverStack(),
+        ImplicitReceiverStack(),
         persistentListOf(),
         persistentListOf(),
         persistentListOf()
@@ -156,7 +156,7 @@ class FirTowerDataContext private constructor(
 
         return FirTowerDataContext(
             towerDataElements.add(element),
-            contextReceiverGroup.fold(implicitReceiverStack, PersistentImplicitReceiverStack::addContextReceiver),
+            contextReceiverGroup.fold(implicitReceiverStack, ImplicitReceiverStack::addContextReceiver),
             classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.add(element)
