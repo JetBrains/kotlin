@@ -32664,6 +32664,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("behaviorIfApplicabilityIsResolveWithError.kt")
+        public void testBehaviorIfApplicabilityIsResolveWithError() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/behaviorIfApplicabilityIsResolveWithError.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferences.kt");
