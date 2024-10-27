@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
@@ -19,7 +22,7 @@ class PersistentImplicitReceiverStack private constructor(
     // This multi-map holds indexes of the stack ^
     private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
     private val indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>,
-) : ImplicitReceiverStack(), Iterable<ImplicitReceiverValue<*>> {
+) : Iterable<ImplicitReceiverValue<*>> {
     val size: Int get() = stack.size
 
     constructor() : this(
@@ -66,20 +69,20 @@ class PersistentImplicitReceiverStack private constructor(
         )
     }
 
-    override operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
+    operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
         if (name == null) return stack.lastOrNull()?.let(::setOf).orEmpty()
         return receiversPerLabel[Name.identifier(name)]
     }
 
-    override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
+    fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
         return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
     }
 
-    override fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue? {
+    fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue? {
         return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
     }
 
-    override fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = stack.asReversed()
+    fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = stack.asReversed()
 
     override operator fun iterator(): Iterator<ImplicitReceiverValue<*>> {
         return stack.iterator()
@@ -100,4 +103,26 @@ class PersistentImplicitReceiverStack private constructor(
             indexesPerSymbol,
         )
     }
+}
+
+fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull(): ImplicitReceiverValue<*>? {
+    return when {
+        // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't
+        // obvious how to fix it
+        distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1 -> this.firstOrNull()
+        else -> null
+    }
+}
+
+fun Set<ImplicitReceiverValue<*>>.ambiguityDiagnosticFor(labelName: String?): ConeSimpleDiagnostic {
+    // This condition helps choose between an error diagnostic and a warning one to better
+    // replicate the K1 behavior and avoid breaking changes.
+    val areAlmostAllAnonymousFunctions = count { it.boundSymbol is FirAnonymousFunctionSymbol } >= size - 1
+
+    val diagnostic = when {
+        areAlmostAllAnonymousFunctions -> ConeSimpleDiagnostic("Clashing this@$labelName", DiagnosticKind.LabelNameClash)
+        else -> ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
+    }
+
+    return diagnostic
 }

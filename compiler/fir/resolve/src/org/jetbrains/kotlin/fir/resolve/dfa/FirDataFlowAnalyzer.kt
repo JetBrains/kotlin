@@ -74,7 +74,7 @@ abstract class FirDataFlowAnalyzer(
         ): FirDataFlowAnalyzer =
             object : FirDataFlowAnalyzer(components, dataFlowAnalyzerContext) {
                 override val receiverStack: PersistentImplicitReceiverStack
-                    get() = components.implicitReceiverStack as PersistentImplicitReceiverStack
+                    get() = components.implicitReceiverStack
 
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
