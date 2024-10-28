@@ -1,0 +1,17 @@
+FILE: contextParameters.kt
+    context(s@String)
+    public final? class C : R|kotlin/Any| {
+        public? constructor(): R|C| { LAZY_BLOCK }
+
+    }
+    context(s@String)
+    public? final? fun f(): String { LAZY_BLOCK }
+    context(<unused var>@String)
+    public? final? val p: String
+        public? get(): String { LAZY_BLOCK }
+    context(s@String)
+    public? final? var p2: String
+        public? get(): String { LAZY_BLOCK }
+        public? set(value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    context(<unused var>@Any)
+    public? final? fun escapedBackTick(): R|kotlin/Unit| { LAZY_BLOCK }

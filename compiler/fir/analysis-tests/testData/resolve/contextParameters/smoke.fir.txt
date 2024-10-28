@@ -1,0 +1,45 @@
+FILE: smoke.kt
+    context(s@R|kotlin/String|)
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(s@R|kotlin/String|)
+    public final fun f(): R|kotlin/String| {
+        ^f <Unresolved name: s>#.R|kotlin/plus|(this@R|/f|)
+    }
+    context(<unused var>@R|kotlin/String|)
+    public final val p: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|/f|()
+        }
+    context(s@R|kotlin/String|)
+    public final var p2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ <Unresolved name: s>#.R|kotlin/plus|(this@R|/p2|)
+        }
+        public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            <Unresolved name: s>#.R|kotlin/plus|(this@R|/p2|)
+        }
+    context(s@R|kotlin/Any|)
+    public final val p3: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ when () {
+                (<Unresolved name: s># is R|kotlin/String|) ->  {
+                    <Unresolved name: s>#
+                }
+                else ->  {
+                    String()
+                }
+            }
+
+        }
+    context(s@R|kotlin/String|)
+    public final fun f2(): R|kotlin/Unit| {
+        this@R|/f2|.R|kotlin/String.length|
+    }
+    context(<unused var>@R|kotlin/Any|)
+    public final fun escapedBackTick(): R|kotlin/Unit| {
+    }
