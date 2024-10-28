@@ -8,7 +8,7 @@
 
 inline fun foo(x: Boolean) = assert(x)
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 fun box(): String {
     foo(true)
