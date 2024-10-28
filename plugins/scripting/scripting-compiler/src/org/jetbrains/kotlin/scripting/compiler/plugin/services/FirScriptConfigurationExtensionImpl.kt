@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
-import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension.Factory
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
@@ -29,12 +29,15 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -51,7 +54,7 @@ import kotlin.script.experimental.host.StringScriptSource
 
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
-    // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
+    // TODO: left here because it seems it will be needed soon, remove suppression if used or remove the param if it is not the case
     @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
@@ -65,17 +68,16 @@ class FirScriptConfiguratorExtensionImpl(
             return
         }
 
-        // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
-            val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, isBaseClassReceiver = true))
+            val baseClassTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass)
 
-            val baseClassSymbol =
-                session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
-                        as? FirRegularClassSymbol
-            if (baseClassSymbol != null) {
-                // assuming that if base class will be unresolved, the error will be reported on the contextReceiver
-                baseClassSymbol.fir.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
+            receivers.add(buildScriptReceiverParameter {
+                typeRef = baseClassTypeRef
+                isBaseClassReceiver = true
+            })
+
+            if (baseClassTypeRef is FirResolvedTypeRef) {
+                baseClassTypeRef.toRegularClassSymbol(session)?.fir?.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
                     parameters.add(
                         buildProperty {
                             moduleData = session.moduleData
@@ -96,26 +98,20 @@ class FirScriptConfiguratorExtensionImpl(
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
             receivers.add(
-                buildImplicitReceiverWithFqName(
-                    FqName.fromSegments(implicitReceiver.typeName.split(".")),
+                buildScriptReceiverParameter {
+                    typeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver)
                     isBaseClassReceiver = false
-                )
+                }
             )
         }
 
         configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
-            val typeRef = buildUserTypeRef {
-                isMarkedNullable = propertyType.isNullable
-                propertyType.typeName.split(".").forEach {
-                    qualifier.add(FirQualifierPartImpl(null, Name.identifier(it), FirTypeArgumentListImpl(null)))
-                }
-            }
             parameters.add(
                 buildProperty {
                     moduleData = session.moduleData
                     source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
-                    returnTypeRef = typeRef
+                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
                     name = Name.identifier(propertyName)
                     symbol = FirPropertySymbol(name)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
@@ -186,19 +182,32 @@ class FirScriptConfiguratorExtensionImpl(
         return configuration
     }
 
-    private fun buildImplicitReceiverWithFqName(classFqn: FqName, isBaseClassReceiver: Boolean) =
-        buildScriptReceiverParameter {
-            val userTypeRef = buildUserTypeRef {
-                isMarkedNullable = false
+    private fun FirScriptBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(kotlinType: KotlinType): FirTypeRef {
+        // TODO: check/support generics and other cases (KT-72638)
+        // such a conversion by simple splitting by a '.', is overly simple and does not support all cases, e.g. generics or backticks
+        // but to support it properly, one may need to reimplement or reuse types paring code
+        // but since such cases a considered exotic, it is not implemented yet.
+        val fqName = FqName.fromSegments(kotlinType.typeName.split("."))
+        val classId = ClassId(fqName.parent(), fqName.shortName())
+        val classFromDeps = session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId)
+        val sourceElement = source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+        return if (classFromDeps != null) {
+            buildResolvedTypeRef {
+                source = sourceElement
+                coneType = classFromDeps.constructType(isMarkedNullable = kotlinType.isNullable)
+            }
+        } else {
+            buildUserTypeRef {
+                source = sourceElement
+                isMarkedNullable = kotlinType.isNullable
                 qualifier.addAll(
-                    classFqn.pathSegments().map {
+                    fqName.pathSegments().map {
                         FirQualifierPartImpl(null, it, FirTypeArgumentListImpl(null))
                     }
                 )
             }
-            typeRef = userTypeRef
-            this.isBaseClassReceiver = isBaseClassReceiver
         }
+    }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()
 

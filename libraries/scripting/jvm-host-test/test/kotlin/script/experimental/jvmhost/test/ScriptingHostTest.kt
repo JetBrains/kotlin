@@ -270,6 +270,109 @@ class ScriptingHostTest : TestCase() {
         ).throwOnFailure()
     }
 
+    fun testScriptWithImplicitReceiverWithGeneric() {
+        val result = listOf<String>("")
+        val script = "5"
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.Wagoo::class,
+                )
+            },
+            evaluation = {
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.Wagoo<kotlin.script.experimental.jvmhost.test.forScript.Meow>()
+                )
+            }
+        )
+        definition.evalScriptAndCheckOutput(script, result)
+    }
+
+    fun testScriptWithUnresolvedImplicitReceiver() {
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                implicitReceivers(
+                    "kotlin.script.experimental.jvmhost.test.forScript.NotExistent",
+                )
+            },
+        )
+        with(BasicJvmScriptingHost()) {
+            val res = runBlocking {
+                compiler("this@NotExistent.toString()".toScriptSource(), definition.compilationConfiguration)
+            }
+            assertTrue(res is ResultWithDiagnostics.Failure)
+            assertTrue(res.reports.any { it.message in UNRESOLVED_CLASS_MESSAGES })
+        }
+    }
+
+    fun testScriptWithUnusedUnresolvedImplicitReceiver() {
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                implicitReceivers(
+                    KotlinType("kotlin.script.experimental.jvmhost.test.forScript.NotExistent", isNullable = true)
+                )
+            },
+            evaluation = {
+                implicitReceivers(null)
+            }
+        )
+        with(BasicJvmScriptingHost()) {
+            val res = runBlocking {
+                compiler("42".toScriptSource(), definition.compilationConfiguration)
+            }
+            assertTrue(res is ResultWithDiagnostics.Failure)
+            assertTrue(res.reports.any { it.message in UNRESOLVED_CLASS_MESSAGES })
+        }
+    }
+
+    fun testScriptWithUnresolvedProvidedPropertyType() {
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                providedProperties(
+                    "notExistent" to "kotlin.script.experimental.jvmhost.test.forScript.NotExistent",
+                )
+            },
+        )
+        with(BasicJvmScriptingHost()) {
+            val res = runBlocking {
+                compiler("notExistent".toScriptSource(), definition.compilationConfiguration)
+            }
+            if (IS_COMPILING_WITH_K2) {
+                // K1 behaves differently in this case, but we don't want to touch this place, at least while there are no complaints
+                assertTrue(res is ResultWithDiagnostics.Failure)
+                assertTrue(res.reports.any { it.message in UNRESOLVED_CLASS_MESSAGES })
+            }
+        }
+    }
+
+    fun testScriptWithUnusedUnresolvedProvidedPropertyType() {
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                providedProperties(
+                    "notExistent" to KotlinType("kotlin.script.experimental.jvmhost.test.forScript.NotExistent", isNullable = true)
+                )
+            },
+            evaluation = {
+                providedProperties("notExistent" to null)
+            }
+        )
+        with(BasicJvmScriptingHost()) {
+            val res = runBlocking {
+                compiler("42".toScriptSource(), definition.compilationConfiguration)
+            }
+            if (IS_COMPILING_WITH_K2) {
+                // K1 behaves differently in this case, but we don't want to touch this place, at least while there are no complaints
+                assertTrue(res is ResultWithDiagnostics.Failure)
+                assertTrue(res.reports.any { it.message in UNRESOLVED_CLASS_MESSAGES })
+            }
+        }
+    }
+
     fun testScriptWithImplicitReceiversWithSameShortName() {
         val result = listOf("42")
         val script = "println(v1 + v2)"
@@ -309,8 +412,7 @@ class ScriptingHostTest : TestCase() {
         )
         definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
 
-        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
-        if (isK2) {
+        if (IS_COMPILING_WITH_K2) {
             // this is not supported in K1
             definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
         }
@@ -805,3 +907,12 @@ internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     }
     return outStream.toString().trim() to errStream.toString().trim()
 }
+
+private val UNRESOLVED_CLASS_MESSAGES = arrayOf(
+    "unable to load class kotlin.script.experimental.jvmhost.test.forScript.NotExistent", // K1
+    "Unresolved reference 'kotlin.script.experimental.jvmhost.test.forScript.NotExistent'.", // K2
+)
+
+private val IS_COMPILING_WITH_K2 =
+    System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
