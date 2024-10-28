@@ -165,6 +165,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
 
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(constEvaluationPhase)) }
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsAfterInlining()) }
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterLowering) }
 

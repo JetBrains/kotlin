@@ -337,16 +337,15 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
     val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
     val enumClassObject = Common(this.correspondingClass ?: enumClass)
 
-    // TODO enable this check after KT-71903 fix
-//    if (enumEntries.isNotEmpty()) {
-    val valueArguments = listOf(
-        Primitive(this.name.asString(), irBuiltIns.stringType),
-        Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
-    )
-    irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
-        enumClassObject.setField(property.symbol, argument)
+    if (enumEntries.isNotEmpty()) {
+        val valueArguments = listOf(
+            Primitive(this.name.asString(), irBuiltIns.stringType),
+            Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
+        )
+        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+            enumClassObject.setField(property.symbol, argument)
+        }
     }
-//    }
 
     return enumClassObject
 }

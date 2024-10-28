@@ -548,7 +548,7 @@ private val assertionRemoverPhase = createFileLoweringPhase(
         prerequisite = setOf(assertionWrapperPhase),
 )
 
-private val constEvaluationPhase = createFileLoweringPhase(
+internal val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
             val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
             ConstEvaluationLowering(context, configuration = configuration)
@@ -574,7 +574,6 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
-        constEvaluationPhase,
         provisionalFunctionExpressionPhase,
         inventNamesForLocalClasses,
         functionReferencePhase,
