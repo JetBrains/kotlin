@@ -22,6 +22,8 @@ public interface KotlinProjectStructureProvider {
      */
     public fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule
 
+    public fun getImplementingModules(module: KaModule): List<KaModule>
+
     /**
      * Project-global [LanguageVersionSettings] for source modules lacking explicit settings (such as [KaNotUnderContentRootModule]).
      */

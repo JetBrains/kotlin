@@ -19,9 +19,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.refinedContextModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
@@ -101,13 +104,17 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.*
 
 internal class KaFirCompilerFacility(
@@ -121,11 +128,56 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult = withValidityAssertion {
         try {
-            compileUnsafe(file, configuration, target, allowedErrorFilter)
+            val effectiveFile = substituteTargetFile(file, target) ?: file
+            return compileUnsafe(effectiveFile, configuration, target, allowedErrorFilter)
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             throw KaCodeCompilationException(e)
         }
+    }
+
+    private fun substituteTargetFile(file: KtFile, target: KaCompilerTarget): KtFile? {
+        val fileModule = firResolveSession.getModule(file)
+
+        if (fileModule.targetPlatform.isCommon() && target is KaCompilerTarget.Jvm) {
+            val contextModule = when (fileModule) {
+                is KaDanglingFileModule -> fileModule.contextModule
+                else -> fileModule
+            }
+
+            checkWithAttachment(contextModule !is KaDanglingFileModule, { "Nested common dangling file compilation is not supported" }) {
+                withPsiEntry("file", file)
+            }
+
+            val jvmImplementingModule = KotlinProjectStructureProvider.getInstance(project)
+                .getImplementingModules(contextModule)
+                .find { it.targetPlatform.isJvm() }
+
+            checkWithAttachment(jvmImplementingModule != null, { "Cannot compile a common source without a JVM counterpart" }) {
+                withPsiEntry("file", file)
+            }
+
+            val newName = file.name
+            val newText = file.text
+
+            if (file is KtCodeFragment) {
+                val fileCopy = when (file) {
+                    is KtExpressionCodeFragment -> KtExpressionCodeFragment(project, newName, newText, file.importsToString(), file.context)
+                    is KtBlockCodeFragment -> KtBlockCodeFragment(project, newName, newText, file.importsToString(), file.context)
+                    is KtTypeCodeFragment -> KtTypeCodeFragment(project, newName, newText, file.context)
+                    else -> error("Unsupported code fragment type: " + file.javaClass.name)
+                }
+
+                fileCopy.refinedContextModule = jvmImplementingModule
+                return fileCopy
+            }
+
+            val fileCopy = KtPsiFactory(project).createFile(newName, newText)
+            fileCopy.contextModule = jvmImplementingModule
+            return fileCopy
+        }
+
+        return null
     }
 
     private fun compileUnsafe(
@@ -183,14 +235,20 @@ internal class KaFirCompilerFacility(
 
         val inlineFunDependencyBytecode = mutableMapOf<String, ByteArray>()
         for (dependencyFile in dependencyFiles) {
+            val effectiveDependencyFile = substituteTargetFile(dependencyFile, target) ?: dependencyFile
             var compileResult: KaCompilationResult? = null
             runFir2IrForDependency(
-                dependencyFile, configuration, jvmIrDeserializer, diagnosticReporter
+                effectiveDependencyFile, configuration, jvmIrDeserializer, diagnosticReporter
             ) { fir2IrResult, ktFiles, dependencyConfiguration ->
                 val codegenFactory = createJvmIrCodegenFactory(
                     configuration = dependencyConfiguration,
-                    isCodeFragment = dependencyFile is KtCodeFragment,
+                    isCodeFragment = effectiveDependencyFile is KtCodeFragment,
                     irModuleFragment = fir2IrResult.irModuleFragment
+                )
+
+                val generateClassFilter = SingleFileGenerateClassFilter(
+                    files = listOf(effectiveDependencyFile),
+                    inlinedClasses = compilationPeerData.inlinedClasses
                 )
 
                 compileResult = runJvmIrCodeGen(
@@ -200,7 +258,7 @@ internal class KaFirCompilerFacility(
                     targetFiles = ktFiles,
                     codeFragmentMappings = null,
                     codegenFactory = codegenFactory,
-                    generateClassFilter = SingleFileGenerateClassFilter(listOf(dependencyFile), compilationPeerData.inlinedClasses),
+                    generateClassFilter = generateClassFilter,
                     diagnosticReporter = diagnosticReporter,
                     jvmGeneratorExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer),
                     allowedErrorFilter = allowedErrorFilter,

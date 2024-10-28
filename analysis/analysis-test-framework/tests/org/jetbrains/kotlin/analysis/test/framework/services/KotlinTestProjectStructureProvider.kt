@@ -54,6 +54,10 @@ class KotlinTestProjectStructureProvider(
                 )
     }
 
+    override fun getImplementingModules(module: KaModule): List<KaModule> {
+        return ktTestModuleStructure.mainAndBinaryKtModules.filter { module in it.directDependsOnDependencies }
+    }
+
     override val allModules: List<KaModule> = ktTestModuleStructure.mainAndBinaryKtModules
 
     override val allSourceFiles: List<PsiFileSystemItem> = ktTestModuleStructure.allSourceFiles

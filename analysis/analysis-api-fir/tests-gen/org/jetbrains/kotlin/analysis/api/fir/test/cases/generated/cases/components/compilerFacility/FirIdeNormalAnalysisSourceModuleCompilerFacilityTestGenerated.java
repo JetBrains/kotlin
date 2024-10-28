@@ -59,6 +59,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
   }
 
   @Test
+  @TestMetadata("commonSimple.kt")
+  public void testCommonSimple() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/commonSimple.kt");
+  }
+
+  @Test
   @TestMetadata("commonUsage.kt")
   public void testCommonUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/commonUsage.kt");
@@ -209,6 +215,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     @TestMetadata("commonContext.kt")
     public void testCommonContext() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContext.kt");
+    }
+
+    @Test
+    @TestMetadata("commonContextJvmCall.kt")
+    public void testCommonContextJvmCall() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContextJvmCall.kt");
     }
 
     @Test
