@@ -427,12 +427,7 @@ open class PsiRawFirBuilder(
                         val block = bodyBlockExpression?.accept(this@Visitor, null) as? FirBlock
                         val contractDescription = when {
                             !hasContractEffectList() -> block?.let {
-                                val blockSourcePsi = it.source?.psi
-                                val diagnostic = when {
-                                    blockSourcePsi == null || !isCallTheFirstStatement(blockSourcePsi) -> ConeContractShouldBeFirstStatement
-                                    else -> null
-                                }
-                                processLegacyContractDescription(block, diagnostic)
+                                processLegacyContractDescription(block, null)
                             }
                             else -> null
                         }

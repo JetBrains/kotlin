@@ -2005,12 +2005,7 @@ class LightTreeRawFirDeclarationBuilder(
             blockNode != null -> {
                 val block = convertBlock(blockNode)
                 val contractDescription = runIf(allowLegacyContractDescription) {
-                    val blockSource = block.source
-                    val diagnostic = when {
-                        blockSource == null || !isCallTheFirstStatement(blockSource) -> ConeContractShouldBeFirstStatement
-                        else -> null
-                    }
-                    processLegacyContractDescription(block, diagnostic)
+                    processLegacyContractDescription(block, null)
                 }
                 block to contractDescription
             }
