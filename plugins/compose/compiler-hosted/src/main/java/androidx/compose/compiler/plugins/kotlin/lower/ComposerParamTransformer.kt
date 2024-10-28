@@ -356,17 +356,26 @@ class ComposerParamTransformer(
 
             // The overridden symbols might also be composable functions, so we want to make sure
             // and transform them as well
-            fn.overriddenSymbols = overriddenSymbols.map {  // TODO use fn`s overriddenSymbols?
+            fn.overriddenSymbols = oldFn.overriddenSymbols.map {  // TODO use fn`s overriddenSymbols?
                 it.owner.withComposerParamIfNeeded().symbol
             }
 
+            val propertySymbol = oldFn.correspondingPropertySymbol
+            if (propertySymbol != null) {
+                fn.correspondingPropertySymbol = propertySymbol
+                if (propertySymbol.owner.getter == oldFn) {
+                    propertySymbol.owner.getter = fn
+                }
+                if (propertySymbol.owner.setter == oldFn) {
+                    propertySymbol.owner.setter = fn
+                }
+            }
             // if we are transforming a composable property, the jvm signature of the
             // corresponding getters and setters have a composer parameter. Since Kotlin uses the
             // lack of a parameter to determine if it is a getter, this breaks inlining for
             // composable property getters since it ends up looking for the wrong jvmSignature.
             // In this case, we manually add the appropriate "@JvmName" annotation so that the
             // inliner doesn't get confused.
-            fn.correspondingPropertySymbol = correspondingPropertySymbol
             fn.correspondingPropertySymbol?.let { propertySymbol ->
                 if (!fn.hasAnnotation(DescriptorUtils.JVM_NAME)) {
                     val propertyName = propertySymbol.owner.name.identifier
@@ -414,7 +423,7 @@ class ComposerParamTransformer(
             }
 
             // $default[n]
-            if (oldFn.requiresDefaultParameter()) {
+            if (fn.requiresDefaultParameter()) {
                 val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
