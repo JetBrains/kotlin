@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
@@ -18,26 +19,38 @@ internal class PackagePartProviderTestImpl(
     private val testServices: TestServices,
 ) : KotlinPackagePartProviderFactory {
     override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
-        val providers = testServices.moduleStructure.modules.map { module ->
-            testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope)
+        val providers = testServices.moduleStructure.modules
+            .map { module -> testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope) }
+
+        return when (providers.size) {
+            0 -> PackagePartProvider.Empty
+            1 -> providers.single()
+            else -> CompositePackagePartProvider(providers)
         }
-        return object : PackagePartProvider {
-            override fun findPackageParts(packageFqName: String): List<String> {
-                return providers.flatMapTo(mutableSetOf()) { it.findPackageParts(packageFqName) }.toList()
-            }
+    }
+}
 
-            override fun computePackageSetWithNonClassDeclarations(): Set<String> =
-                providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithNonClassDeclarations() }
+private class CompositePackagePartProvider(private val providers: List<PackageAndMetadataPartProvider>) : PackageAndMetadataPartProvider {
+    override fun findPackageParts(packageFqName: String): List<String> {
+        return providers.flatMapTo(mutableSetOf()) { it.findPackageParts(packageFqName) }.toList()
+    }
 
-            override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
-                return providers.flatMapTo(mutableSetOf()) { it.getAnnotationsOnBinaryModule(moduleName) }.toList()
-            }
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> =
+        providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithNonClassDeclarations() }
 
-            override fun getAllOptionalAnnotationClasses(): List<ClassData> {
-                return providers.flatMapTo(mutableSetOf()) { it.getAllOptionalAnnotationClasses() }.toList()
-            }
+    override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
+        return providers.flatMapTo(mutableSetOf()) { it.getAnnotationsOnBinaryModule(moduleName) }.toList()
+    }
 
-            override fun mayHaveOptionalAnnotationClasses(): Boolean = providers.any { it.mayHaveOptionalAnnotationClasses() }
-        }
+    override fun getAllOptionalAnnotationClasses(): List<ClassData> {
+        return providers.flatMapTo(mutableSetOf()) { it.getAllOptionalAnnotationClasses() }.toList()
+    }
+
+    override fun mayHaveOptionalAnnotationClasses(): Boolean {
+        return providers.any { it.mayHaveOptionalAnnotationClasses() }
+    }
+
+    override fun findMetadataPackageParts(packageFqName: String): List<String> {
+        return providers.flatMapTo(mutableListOf()) { it.findMetadataPackageParts(packageFqName) }
     }
 }
