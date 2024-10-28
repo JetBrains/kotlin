@@ -15,12 +15,5 @@ internal class JsInlineFunctionResolver(
     context: JsIrBackendContext,
     inlineMode: InlineMode,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<JsIrBackendContext>(context, inlineMode) {
-    private val enumEntriesIntrinsic = context.intrinsics.enumEntriesIntrinsic
-
     override val allowExternalInlining: Boolean = true
-
-    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
-        return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
-    }
 }
