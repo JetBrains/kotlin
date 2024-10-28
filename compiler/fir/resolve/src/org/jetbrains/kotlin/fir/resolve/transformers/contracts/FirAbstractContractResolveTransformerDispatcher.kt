@@ -183,12 +183,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 return owner
             }
 
-            if (hasBodyContract) {
-                // Until the contract description is replaced with a resolved one, a call rests both in the description
-                // and in the callable body (scoped inside a marker block). Here we patch the second call occurrence.
-                owner.body.replaceFirstStatement<FirContractCallBlock> { FirContractCallBlock(resolvedContractCall) }
-            }
-
             val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
                 ?: return transformOwnerOfErrorContract(owner)
 
