@@ -168,4 +168,5 @@ public interface KtNodeTypes {
     IFileElementType TYPE_CODE_FRAGMENT = KtStubElementTypes.TYPE_CODE_FRAGMENT;
     IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT;
     IFileElementType BLOCK_CODE_FRAGMENT = KtStubElementTypes.BLOCK_CODE_FRAGMENT;
+    IFileElementType FILE_LIKE_CODE_FRAGMENT = KtStubElementTypes.FILE_LIKE_CODE_FRAGMENT;
 }

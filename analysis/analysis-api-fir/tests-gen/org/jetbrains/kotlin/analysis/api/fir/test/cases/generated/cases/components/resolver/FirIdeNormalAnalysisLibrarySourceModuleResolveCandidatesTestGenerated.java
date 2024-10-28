@@ -1956,6 +1956,22 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/fileLike")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FileLike {
+      @Test
+      public void testAllFilesPresentInFileLike() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/fileLike"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertyWithAccessors.kt")
+      public void testTopLevelPropertyWithAccessors() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/fileLike/topLevelPropertyWithAccessors.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/typeCodeFragment")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeCodeFragment {

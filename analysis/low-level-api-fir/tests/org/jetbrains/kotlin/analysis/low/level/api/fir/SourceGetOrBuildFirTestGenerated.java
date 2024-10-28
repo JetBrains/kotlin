@@ -583,6 +583,32 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/codeFragments/fileLike")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FileLike {
+      @Test
+      public void testAllFilesPresentInFileLike() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/codeFragments/fileLike"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertyWithGetterAndSetter.kt")
+      public void testTopLevelPropertyWithGetterAndSetter() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/codeFragments/fileLike/topLevelPropertyWithGetterAndSetter.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {

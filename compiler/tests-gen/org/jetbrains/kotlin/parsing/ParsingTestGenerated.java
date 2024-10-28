@@ -3015,4 +3015,57 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/parseCodeFragment/block/unexpectedSymbol.kt");
     }
   }
+
+  @TestMetadata("compiler/testData/parseCodeFragment/fileLike")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class FileLike extends AbstractParsingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doFileLikeCodeFragmentParsingTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInFileLike() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/parseCodeFragment/fileLike"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @TestMetadata("empty.kt")
+    public void testEmpty() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/empty.kt");
+    }
+
+    @TestMetadata("noImports.kt")
+    public void testNoImports() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/noImports.kt");
+    }
+
+    @TestMetadata("noPackage.kt")
+    public void testNoPackage() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/noPackage.kt");
+    }
+
+    @TestMetadata("noPackageNoImports.kt")
+    public void testNoPackageNoImports() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/noPackageNoImports.kt");
+    }
+
+    @TestMetadata("topLevelExpression.kt")
+    public void testTopLevelExpression() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/topLevelExpression.kt");
+    }
+
+    @TestMetadata("topLevelPropertyWithAcessors.kt")
+    public void testTopLevelPropertyWithAcessors() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/topLevelPropertyWithAcessors.kt");
+    }
+
+    @TestMetadata("topLevelStatements.kt")
+    public void testTopLevelStatements() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/topLevelStatements.kt");
+    }
+
+    @TestMetadata("topLevelStatementsAndExpressions.kt")
+    public void testTopLevelStatementsAndExpressions() {
+      runTest("compiler/testData/parseCodeFragment/fileLike/topLevelStatementsAndExpressions.kt");
+    }
+  }
 }

@@ -1500,6 +1500,7 @@ open class PsiRawFirBuilder(
                             is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
                             is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
                             is KtTypeCodeFragment -> convertTypeCodeFragmentBlock(file)
+                            is KtFileLikeCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
                             else -> error("Unexpected code fragment type: ${file::class}")
                         }
                     }

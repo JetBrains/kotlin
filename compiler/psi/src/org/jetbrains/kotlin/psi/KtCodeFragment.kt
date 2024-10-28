@@ -42,7 +42,8 @@ abstract class KtCodeFragment(
     )
 
     private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
-    private var importDirectiveStrings = LinkedHashSet<String>()
+    protected var importDirectiveStrings = LinkedHashSet<String>()
+        private set
 
     private val fakeContextForJavaFile: PsiElement? by lazy {
         this.getCopyableUserData(FAKE_CONTEXT_FOR_JAVA_FILE)?.invoke()
@@ -193,9 +194,6 @@ abstract class KtCodeFragment(
 
     override val importLists: List<KtImportList>
         get() = listOfNotNull(importsAsImportList())
-
-    override val importDirectives: List<KtImportDirective>
-        get() = importsAsImportList()?.imports ?: emptyList()
 
     override fun setVisibilityChecker(checker: VisibilityChecker?) {}
 

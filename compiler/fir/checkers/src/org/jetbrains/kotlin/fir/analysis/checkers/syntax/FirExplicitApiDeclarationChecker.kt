@@ -29,8 +29,12 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
-    private val codeFragmentTypes =
-        setOf(KtNodeTypes.BLOCK_CODE_FRAGMENT, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, KtNodeTypes.TYPE_CODE_FRAGMENT)
+    private val codeFragmentTypes = setOf(
+        KtNodeTypes.BLOCK_CODE_FRAGMENT,
+        KtNodeTypes.EXPRESSION_CODE_FRAGMENT,
+        KtNodeTypes.TYPE_CODE_FRAGMENT,
+        KtNodeTypes.FILE_LIKE_CODE_FRAGMENT
+    )
 
     override fun checkPsiOrLightTree(
         element: FirDeclaration,

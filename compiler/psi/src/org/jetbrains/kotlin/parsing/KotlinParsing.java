@@ -233,6 +233,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
         marker.done(BLOCK_CODE_FRAGMENT);
     }
 
+    void parseFileLikeCodeFragment() {
+        PsiBuilder.Marker marker = mark();
+
+        parsePreamble();
+
+        PsiBuilder.Marker blockMarker = mark();
+        myExpressionParsing.parseStatements(DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
+        checkForUnexpectedSymbols();
+        blockMarker.done(BLOCK);
+        marker.done(FILE_LIKE_CODE_FRAGMENT);
+    }
+
     void parseLambdaExpression() {
         myExpressionParsing.parseFunctionLiteral(/* preferBlock = */ false, /* collapse = */false);
     }
@@ -250,7 +262,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker blockMarker = mark();
 
-        myExpressionParsing.parseStatements(/*isScriptTopLevel = */true);
+        myExpressionParsing.parseStatements(DeclarationParsingMode.SCRIPT_TOPLEVEL);
 
         checkForUnexpectedSymbols();
 

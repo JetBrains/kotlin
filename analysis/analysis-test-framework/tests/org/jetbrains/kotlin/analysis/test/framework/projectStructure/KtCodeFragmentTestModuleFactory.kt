@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFileLikeCodeFragment
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -74,6 +75,7 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
         val codeFragment = when (codeFragmentKind) {
             CodeFragmentKind.EXPRESSION -> KtExpressionCodeFragment(project, fileName, fileText, codeFragmentImports, contextElement)
             CodeFragmentKind.BLOCK -> KtBlockCodeFragment(project, fileName, fileText, codeFragmentImports, contextElement)
+            CodeFragmentKind.FILE_LIKE -> KtFileLikeCodeFragment(project, fileName, fileText, codeFragmentImports)
             CodeFragmentKind.TYPE -> KtTypeCodeFragment(project, fileName, fileText, contextElement)
         }
 
@@ -139,5 +141,5 @@ object AnalysisApiTestCodeFragmentDirectives : SimpleDirectivesContainer() {
 }
 
 enum class CodeFragmentKind {
-    EXPRESSION, BLOCK, TYPE
+    EXPRESSION, BLOCK, TYPE, FILE_LIKE
 }

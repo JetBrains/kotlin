@@ -95,6 +95,10 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         doBaseTest(filePath, KtNodeTypes.BLOCK_CODE_FRAGMENT, null);
     }
 
+    protected void doFileLikeCodeFragmentParsingTest(@NotNull String filePath) {
+        doBaseTest(filePath, KtNodeTypes.FILE_LIKE_CODE_FRAGMENT, null);
+    }
+
     private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) {
         try {
             doBaseTestImpl(filePath, fileType, contentFilter);
@@ -137,6 +141,8 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         }
         else if (fileType == KtNodeTypes.BLOCK_CODE_FRAGMENT) {
             return psiFactory.createBlockCodeFragment(fileContent, null);
+        } else if (fileType == KtNodeTypes.FILE_LIKE_CODE_FRAGMENT) {
+            return psiFactory.createFileLikeCodeFragment(fileContent);
         }
         else {
             return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent);

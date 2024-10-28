@@ -1,0 +1,3 @@
+KtNameReferenceExpression(75,77): 'xx'
+  KtSimpleNameReference:
+    (in ROOT) var xx: kotlin.Int

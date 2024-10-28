@@ -607,6 +607,10 @@ class KtPsiFactory private constructor(
         return KtBlockCodeFragment(project, "fragment.kt", text, null, context)
     }
 
+    fun createFileLikeCodeFragment(@NonNls text: String): KtFileLikeCodeFragment {
+        return KtFileLikeCodeFragment(project, "fragment.kt", text, null)
+    }
+
     fun createIf(condition: KtExpression, thenExpr: KtExpression, elseExpr: KtExpression? = null): KtIfExpression {
         return (if (elseExpr != null)
             createExpressionByPattern("if ($0) $1 else $2", condition, thenExpr, elseExpr) as KtIfExpression

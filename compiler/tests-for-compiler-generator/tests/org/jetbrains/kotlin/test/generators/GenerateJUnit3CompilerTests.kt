@@ -93,6 +93,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
                 model("parseCodeFragment/expression", testMethod = "doExpressionCodeFragmentParsingTest", extension = "kt")
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
+                model("parseCodeFragment/fileLike", testMethod = "doFileLikeCodeFragmentParsingTest", extension = "kt")
             }
 
             testClass<AbstractLightAnalysisModeTest> {
