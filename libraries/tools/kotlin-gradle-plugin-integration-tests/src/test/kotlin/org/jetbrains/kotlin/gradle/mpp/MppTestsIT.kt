@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.name
+import kotlin.io.path.readText
+import kotlin.io.path.walk
+import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform testing")
@@ -111,6 +114,37 @@ class MppTestsIT : KGPBaseTest() {
                 projectPath.resolve("shared/build/kotlinProjectStructureMetadata/kotlin-project-structure-metadata.json"),
                 """"my-custom-group:my-custom-id""""
             )
+        }
+    }
+
+    @DisplayName("KT-72366: Dokka should have access to native dependencies")
+    @GradleTest
+    fun testWithDokka(gradleVersion: GradleVersion) {
+        project(
+            "dokkaHtml",
+            gradleVersion
+        ) {
+            settingsGradle.modify {
+                it.replaceFirst(
+                    "plugins {",
+                    "plugins {\nid(\"org.jetbrains.dokka\")  version \"${TestVersions.ThirdPartyDependencies.DOKKA}\""
+                )
+            }
+
+//            makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
+
+            build(":dokkaHtml", buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)) {
+                val errorContainedFiles = projectPath.resolve("build/dokka/html").walk()
+                    .filter {
+                        val file = it.toFile()
+                        file.isFile && file.extension == "html"
+                    }
+                    .filter { it.readText().contains("ERROR CLASS", ignoreCase = true) }
+                    .toList()
+                assertEquals(0, errorContainedFiles.size, errorContainedFiles.joinToString(separator = "----------------\n") {
+                    "'${it.name}' contains error: \n ${it.readText()}"
+                })
+            }
         }
     }
 }

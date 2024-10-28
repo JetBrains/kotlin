@@ -97,7 +97,7 @@ interface TestVersions {
         const val KOTLINX_ATOMICFU = "0.25.0"
         const val KOTLINX_KOVER = "0.9.0-RC"
         const val KOTLINX_BINARY_COMPATIBILITY_VALIDATOR = "0.16.3"
-        const val DOKKA = "1.8.10"
+        const val DOKKA = "1.9.20"
         // TODO KT-70336 update Dokka version to a stable version when 2.0.0 is released 
         const val DOKKA_V2 = "2.0.20-dev-360"
     }
