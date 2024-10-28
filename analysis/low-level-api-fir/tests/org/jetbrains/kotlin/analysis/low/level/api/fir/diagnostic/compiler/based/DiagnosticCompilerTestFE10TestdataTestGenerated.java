@@ -11210,6 +11210,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("commonSupertype.kt")
+        public void testCommonSupertype() {
+          runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/commonSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("genericProvideDelegate.kt")
         public void testGenericProvideDelegate() {
           runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/genericProvideDelegate.kt");
