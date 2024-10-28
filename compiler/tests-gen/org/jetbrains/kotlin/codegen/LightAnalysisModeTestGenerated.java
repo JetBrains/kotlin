@@ -29315,6 +29315,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/javaInterop/kjkPropertyAndExtensionProperty.kt");
     }
 
+    @TestMetadata("varargCall1.kt")
+    public void ignoreVarargCall1() {
+      runTest("compiler/testData/codegen/box/javaInterop/varargCall1.kt");
+    }
+
+    @TestMetadata("varargCall2.kt")
+    public void ignoreVarargCall2() {
+      runTest("compiler/testData/codegen/box/javaInterop/varargCall2.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }

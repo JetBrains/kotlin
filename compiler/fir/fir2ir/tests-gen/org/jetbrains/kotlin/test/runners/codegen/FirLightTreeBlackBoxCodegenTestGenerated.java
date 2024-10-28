@@ -34845,6 +34845,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
       runTest("compiler/testData/codegen/box/javaInterop/unresolvedJavaClassInDifferentFile.kt");
     }
 
+    @Test
+    @TestMetadata("varargCall1.kt")
+    public void testVarargCall1() {
+      runTest("compiler/testData/codegen/box/javaInterop/varargCall1.kt");
+    }
+
+    @Test
+    @TestMetadata("varargCall2.kt")
+    public void testVarargCall2() {
+      runTest("compiler/testData/codegen/box/javaInterop/varargCall2.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
     @TestDataPath("$PROJECT_ROOT")
