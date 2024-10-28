@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.psi.analysisContext
@@ -27,6 +29,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     @OptIn(KaImplementationDetail::class)
     protected fun computeSpecialModule(file: PsiFile): KaModule? {
         (file as? KtCodeFragment)?.forcedSpecialModule?.let { return it }
+
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
             val contextModule = virtualFile.analysisContextModule
@@ -52,10 +55,12 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return KaDanglingFileResolutionMode.PREFER_SELF
     }
 
-    @OptIn(KaImplementationDetail::class)
+    @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.originalFile.takeIf { it !== file }
         originalFile?.virtualFile?.analysisContextModule?.let { return it }
+
+        file.contextModule?.let { return it }
 
         val contextElement = file.context
             ?: file.analysisContext

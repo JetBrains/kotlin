@@ -364,7 +364,23 @@ internal class KaFirCompilerFacility(
 
     private fun computeTargetModules(module: KaModule): List<KaModule> {
         return when (module) {
-            is KaDanglingFileModule -> listOf(module.contextModule, module)
+            is KaDanglingFileModule -> buildList {
+                val contextModule = module.contextModule
+                add(contextModule)
+
+                val file = module.file
+                if (file is KtCodeFragment) {
+                    val contextElement = file.context
+                    if (contextElement != null) {
+                        val contextElementModule = firResolveSession.getModule(contextElement)
+                        if (contextElementModule != contextModule) {
+                            add(contextElementModule)
+                        }
+                    }
+                }
+
+                add(module)
+            }
             else -> listOf(module)
         }
     }
