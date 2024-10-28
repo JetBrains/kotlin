@@ -679,6 +679,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "context" "(" (contextReceiver{","})+ ")"
      */
     private void parseContextReceiverList() {
+        parseContextReceiverList(true);
+    }
+    /*
+     * contextReceiverList
+     *   : "context" "(" (contextReceiver{","})+ ")"
+     */
+    private void parseContextReceiverList(boolean allowNamed) {
         assert _at(CONTEXT_KEYWORD);
         PsiBuilder.Marker contextReceiverList = mark();
         advance(); // CONTEXT_KEYWORD
@@ -688,7 +695,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a type reference");
                 }
-                parseContextReceiver();
+                parseContextReceiver(allowNamed);
                 if (at(RPAR)) {
                     advance();
                     break;
@@ -713,7 +720,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiver
      *   : label? typeReference
      */
-    private void parseContextReceiver() {
+    private void parseContextReceiver(boolean allowNamed) {
+        if (allowNamed && tryParseValueParameter(true)) {
+            return;
+        }
+
         PsiBuilder.Marker contextReceiver = mark();
         if (myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
             myExpressionParsing.parseLabelDefinition();
@@ -2195,7 +2206,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
-            parseContextReceiverList();
+            // TODO parse named context parameters in function types and report diagnostic.
+            parseContextReceiverList(/*allowNamed = */ false);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();

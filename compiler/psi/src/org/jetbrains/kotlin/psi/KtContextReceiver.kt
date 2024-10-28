@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+/**
+ * Deprecated in favor of context parameters.
+ */
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubElementTypes.CONTEXT_RECEIVER)

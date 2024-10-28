@@ -162,10 +162,8 @@ abstract class KtClassOrObject :
                 !another.isLocal() &&
                 getClassId() == another.getClassId()
 
-    fun getContextReceiverList(): KtContextReceiverList? = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST)
-
     override fun getContextReceivers(): List<KtContextReceiver> =
-        getContextReceiverList()?.let { return it.contextReceivers() } ?: emptyList()
+        contextReceiverList?.let { return it.contextReceivers() } ?: emptyList()
 }
 
 

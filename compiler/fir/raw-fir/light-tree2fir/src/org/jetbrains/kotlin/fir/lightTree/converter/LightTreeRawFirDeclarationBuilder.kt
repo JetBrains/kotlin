@@ -670,7 +670,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextReceivers.addAll(convertContextReceivers(classNode, classSymbol))
+                        contextReceivers.addContextReceivers(classNode, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }
@@ -1071,7 +1071,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextReceivers.addAll(convertContextReceivers(classNode, constructorSymbol))
+                this.contextReceivers.addContextReceivers(classNode, constructorSymbol)
             }
 
             return PrimaryConstructor(
@@ -1182,7 +1182,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol))
+                this.contextReceivers.addContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
@@ -1500,7 +1500,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextReceivers.addAll(convertContextReceivers(property, propertySymbol))
+                contextReceivers.addContextReceivers(property, propertySymbol)
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1933,7 +1933,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextReceivers.addAll(convertContextReceivers(functionDeclaration, functionSymbol))
+                    contextReceivers.addContextReceivers(functionDeclaration, functionSymbol)
                 }
             }
 
@@ -2551,7 +2551,7 @@ class LightTreeRawFirDeclarationBuilder(
      */
     fun convertValueParameter(
         valueParameter: LighterASTNode,
-        functionSymbol: FirFunctionSymbol<*>?,
+        containingDeclarationSymbol: FirBasedSymbol<*>?,
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
@@ -2604,7 +2604,7 @@ class LightTreeRawFirDeclarationBuilder(
             additionalAnnotations = additionalAnnotations,
             name = name,
             defaultValue = firExpression,
-            containingDeclarationSymbol = functionSymbol,
+            containingDeclarationSymbol = containingDeclarationSymbol,
             destructuringDeclaration = destructuringDeclaration
         )
     }
@@ -2629,12 +2629,33 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
-    private fun convertContextReceivers(
+    private fun MutableList<FirContextReceiver>.addContextReceivers(
         container: LighterASTNode,
         containingDeclarationSymbol: FirBasedSymbol<*>,
-    ): List<FirContextReceiver> {
-        val receivers = container.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER) ?: emptyList()
-        return receivers.map { contextReceiverElement ->
+    ) {
+        val contextList = container.getChildNodeByType(CONTEXT_RECEIVER_LIST) ?: return
+
+        contextList.getChildNodesByType(VALUE_PARAMETER).mapTo(this) { contextParameterElement ->
+            val valueParameter = convertValueParameter(
+                valueParameter = contextParameterElement,
+                containingDeclarationSymbol = containingDeclarationSymbol,
+                valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
+            ).firValueParameter
+
+            buildContextReceiver {
+                this.source = valueParameter.source
+                this.customLabelName = valueParameter.name
+                this.typeRef = valueParameter.returnTypeRef
+
+                this.symbol = FirReceiverParameterSymbol()
+                this.moduleData = baseModuleData
+                this.origin = FirDeclarationOrigin.Source
+                this.containingDeclarationSymbol = containingDeclarationSymbol
+            }
+        }
+
+        // Legacy context receivers
+        contextList.getChildNodesByType(CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
             buildContextReceiver {
                 this.source = contextReceiverElement.toFirSourceElement()
                 this.customLabelName =

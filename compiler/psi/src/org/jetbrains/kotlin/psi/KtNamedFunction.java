@@ -199,7 +199,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @NotNull
     @Override
     public List<KtContextReceiver> getContextReceivers() {
-        KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        KtContextReceiverList contextReceiverList = getContextReceiverList();
         if (contextReceiverList != null) {
             return contextReceiverList.contextReceivers();
         }

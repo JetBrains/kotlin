@@ -19,6 +19,8 @@ class KtContextReceiverList : KtElementImplStub<KotlinPlaceHolderStub<KtContextR
 
     fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER)
 
+    fun contextParameters(): List<KtParameter> = getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER)
+
     fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
 
 }
