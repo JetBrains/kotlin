@@ -160,14 +160,16 @@ class SpecialRefRegistry : private Pinned {
         }
 
         void releaseRef() noexcept {
-            auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
-            RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
-            if (rcBefore == 1) {
+            if (rc_.load(std::memory_order_relaxed) == 1) {
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
                 // Notify GC about the removal.
-                gc::afterSpecialRefReleaseToZero(mm::DirectRefAccessor(obj_));
+                // NOTE that this barrier must be executed before the RC decrement.
+                // It's not an issue if the other thread would concurrently increment the RC.
+                gc::beforeSpecialRefReleaseToZero(mm::DirectRefAccessor(obj_));
             }
+            auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
+            RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
         }
 
         RawSpecialRef* asRaw() noexcept { return reinterpret_cast<RawSpecialRef*>(this); }

@@ -94,7 +94,7 @@ private:
 };
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
-void afterSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept;
+void beforeSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept;
 OBJ_GETTER(weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 bool isMarked(ObjHeader* object) noexcept;
