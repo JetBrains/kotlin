@@ -24,17 +24,7 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
 
     @Test
     fun programNameTest() {
-        // 1. Compile main.c to main.cexe
-
-        val cExecutable = buildDir.resolve("main.cexe")
-        compileWithClang(
-            clangDistribution = ClangDistribution.Llvm,
-            sourceFiles = listOf(sourceDir.resolve("main.c")),
-            outputFile = cExecutable,
-            additionalClangFlags = listOf("-Wall", "-Werror"),
-        ).assertSuccess()
-
-        // 2. Compile kotlinPrintEntryPoint.kt to kotlinPrintEntryPoint.kexe
+        // 1. Compile kotlinPrintEntryPoint.kt to kotlinPrintEntryPoint.kexe
 
         val kotlinCompilation = compileToExecutableInOneStage(
             generateTestCaseWithSingleFile(
@@ -42,6 +32,16 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
                 testKind = TestKind.STANDALONE_NO_TR,
                 extras = TestCase.NoTestRunnerExtras("main")
             )
+        ).assertSuccess()
+
+        // 2. Compile main.c to main.cexe
+
+        val cExecutable = buildDir.resolve("main.cexe")
+        compileWithClang(
+            clangDistribution = ClangDistribution.Llvm,
+            sourceFiles = listOf(sourceDir.resolve("main.c")),
+            outputFile = cExecutable,
+            additionalClangFlags = listOf("-Wall", "-Werror"),
         ).assertSuccess()
 
         // 3. run main.cexe (with different parameters) to call kotlin executable
