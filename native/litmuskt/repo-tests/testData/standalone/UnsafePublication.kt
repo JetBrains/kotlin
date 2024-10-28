@@ -1,7 +1,9 @@
-// KIND: STANDALONE
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// Without optimizations, this test runs too slowly.
+// DISABLE_NATIVE: optimizationMode=DEBUG
+// DISABLE_NATIVE: optimizationMode=NO
 
 import kotlin.test.*
 import org.jetbrains.litmuskt.*
