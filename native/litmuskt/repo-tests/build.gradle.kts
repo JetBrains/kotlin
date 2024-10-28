@@ -66,19 +66,15 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("tests-gen")
-        resources.srcDir("tests-gen-resources")
+        projectDefault()
+        generatedTestDir()
     }
 }
 
-val nativeTest = nativeTest(
-    taskName = "nativeTest",
+nativeTest(
+    taskName = "test",
     tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
     requirePlatformLibs = true,
     customTestDependencies = listOf(litmusKt),
     allowParallelExecution = false,
 )
-
-tasks.named("test") {
-    finalizedBy(nativeTest)
-}

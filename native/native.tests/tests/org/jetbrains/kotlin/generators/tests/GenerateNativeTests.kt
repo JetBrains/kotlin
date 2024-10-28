@@ -455,14 +455,19 @@ fun main() {
                 suiteTestClassName = "LitmusKtTestsGenerated",
                 annotations = listOf(
                     litmusktNative(),
-                    *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
                     forceHostTarget(),
-                    annotation(
-                        EnforcedProperty::class.java,
-                        "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
-                        "propertyValue" to "5m"
-                    ),
+                )
+            ) {
+                model("standalone")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirLitmusKtTestsGenerated",
+                annotations = listOf(
+                    litmusktNative(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    forceHostTarget(),
+                    *frontendFir(),
                 )
             ) {
                 model("standalone")
