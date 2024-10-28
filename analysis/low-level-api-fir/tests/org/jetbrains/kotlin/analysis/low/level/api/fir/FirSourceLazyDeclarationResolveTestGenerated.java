@@ -1232,6 +1232,28 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         runTest("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/block/blockCodeFragmentNoContext.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/fileLike")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FileLike {
+      @Test
+      public void testAllFilesPresentInFileLike() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/fileLike"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertySetter.kt")
+      public void testTopLevelPropertySetter() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/fileLike/topLevelPropertySetter.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertySetterParam.kt")
+      public void testTopLevelPropertySetterParam() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/codeFragments/fileLike/topLevelPropertySetterParam.kt");
+      }
+    }
   }
 
   @Nested

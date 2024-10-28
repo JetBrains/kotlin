@@ -207,7 +207,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         lazyFirSymbol = lazyFirSymbol(declaration, session),
         analysisSession = session,
     ) {
-        require(!declaration.isLocal)
+        require(!declaration.isLocal || (declaration.parent as? KtBlockExpression)?.parent is KtFileLikeCodeFragment)
     }
 
     override val location: KaSymbolLocation
