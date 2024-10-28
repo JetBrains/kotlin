@@ -366,12 +366,14 @@ class StabilityInferencer(
                     type.isString() -> Stability.Stable
 
             type.isTypeParameter() -> {
-                val arg = substitutions[type.classifierOrNull as IrTypeParameterSymbol]
-                if (arg != null) {
-                    stabilityOf(arg, substitutions, currentlyAnalyzing)
+                val classifier = type.classifierOrFail
+                val arg = substitutions[classifier]
+                val symbol = SymbolForAnalysis(classifier, emptyList())
+                if (arg != null && symbol !in currentlyAnalyzing) {
+                    stabilityOf(arg, substitutions, currentlyAnalyzing + symbol)
                 } else {
                     Stability.Parameter(
-                        type.classifierOrFail.owner as IrTypeParameter
+                        classifier.owner as IrTypeParameter
                     )
                 }
             }

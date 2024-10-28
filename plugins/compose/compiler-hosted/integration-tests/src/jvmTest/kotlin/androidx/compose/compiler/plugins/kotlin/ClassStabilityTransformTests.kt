@@ -61,6 +61,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "Parameter(T)"
     )
 
+
     @Test
     fun testValTypeParam33Types() = assertStability(
         """
@@ -858,6 +859,16 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         stability = "Stable",
         externalTypes = setOf("dependency.b.c.d.A"),
         packageName = "dependency.b.c.d"
+    )
+
+    @Test
+    fun testGenericLoop() = assertStability(
+        """
+            class B<T>(val a: A<T>)
+            class A<T>(val b: B<T>, val c: T)
+        """,
+        "class Foo(val a: A<String>)",
+        "Runtime(A)"
     )
 
     @Test
