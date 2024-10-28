@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
+    private val DUPLICATE_CALLS_IN_PLACE_MESSAGE = "A value parameter may not be annotated with callsInPlace twice"
 
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirContractDescriptionOwner) return
@@ -36,6 +37,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
             reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
         }
+        checkDuplicateCallsInPlace(contractDescription, context, reporter)
     }
 
     private fun checkUnresolvedEffects(
@@ -70,6 +72,24 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         else if (declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local) contractNotAllowed("Contracts are not allowed for local functions.")
         else return false
         return true
+    }
+
+    private fun checkDuplicateCallsInPlace(
+        description: FirResolvedContractDescription,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val callsInPlaceEffects = description.effects.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
+        val seenParameterIndices = mutableSetOf<Int>()
+
+        for (effect in callsInPlaceEffects) {
+            val parameterIndex = effect.valueParameterReference.parameterIndex
+            if (parameterIndex in seenParameterIndices) {
+                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, DUPLICATE_CALLS_IN_PLACE_MESSAGE, context)
+            } else {
+                seenParameterIndices.add(parameterIndex)
+            }
+        }
     }
 
     private object DiagnosticExtractor : KtContractDescriptionVisitor<ConeDiagnostic?, Nothing?, ConeKotlinType, ConeDiagnostic>() {
