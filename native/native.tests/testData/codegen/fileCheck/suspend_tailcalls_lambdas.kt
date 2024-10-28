@@ -375,7 +375,7 @@ fun s23(f: Boolean) {
 fun s24() {
     // CHECK-LABEL: define internal ptr @"kfun:s24$lambda${{[0-9]*}}
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s24$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK: call void @"kfun:$s24$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
         sInt()
     }
     // CHECK-LABEL: epilogue:

@@ -279,7 +279,7 @@ suspend fun s23(f: Boolean) {
 
 // CHECK-LABEL: define ptr @"kfun:#s24#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s24() {
-    // CHECK-NOT: call void @"kfun:$s24COROUTINE${{[0-9]*}}.<init>#internal
+    // CHECK: call void @"kfun:$s24COROUTINE${{[0-9]*}}.<init>#internal
     sInt()
 }
 // CHECK-LABEL: epilogue:
