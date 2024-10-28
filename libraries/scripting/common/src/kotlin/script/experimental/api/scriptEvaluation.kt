@@ -51,7 +51,7 @@ fun ScriptEvaluationConfiguration?.with(body: ScriptEvaluationConfiguration.Buil
 /**
  * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
  */
-val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any?>>()
 
 /**
  * The map of names to actual provided properties objects, according to the properties specified in
