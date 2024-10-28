@@ -450,7 +450,7 @@ fun main() {
         }
 
         // LitmusKt tests.
-        testGroup("native/litmuskt/repo-tests/tests-gen", "native/litmuskt/repo-tests/testData") {
+        testGroup("native/native.tests/litmus-tests/tests-gen", "native/native.tests/litmus-tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LitmusKtTestsGenerated",
                 annotations = listOf(

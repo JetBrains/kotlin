@@ -334,8 +334,6 @@ include ":kotlin-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
         ":atomicfu"
 
-include ":litmuskt:repo-tests"
-
 include ":plugins:js-plain-objects:compiler-plugin",
         ":plugins:js-plain-objects:compiler-plugin-embeddable",
         ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common",
@@ -702,7 +700,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":native:native.tests:driver",
             ":native:native.tests:stress",
             ":native:native.tests:klib-ir-inliner",
-            ":native:native.tests:klib-compatibility"
+            ":native:native.tests:klib-compatibility",
+            ":native:native.tests:litmus-tests"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
@@ -924,8 +923,6 @@ project(':kotlin-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/
 project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler-embeddable")
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
-
-project(':litmuskt:repo-tests').projectDir = file("$rootDir/native/litmuskt/repo-tests")
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")
