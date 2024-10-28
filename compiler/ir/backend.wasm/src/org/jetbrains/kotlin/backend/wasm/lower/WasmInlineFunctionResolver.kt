@@ -12,11 +12,4 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 class WasmInlineFunctionResolver(
     context: WasmBackendContext
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS) {
-    private val enumEntriesIntrinsic = context.wasmSymbols.enumEntriesIntrinsic
-
-    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
-        return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
-    }
-}
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
