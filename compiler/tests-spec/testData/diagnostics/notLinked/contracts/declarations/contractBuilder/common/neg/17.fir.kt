@@ -21,7 +21,7 @@ fun case_1(): Boolean {
 
 // TESTCASE NUMBER: 2
 fun case_2(): Boolean {
-    contract { returns(null) implies return return return false }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies return return return false<!> }
     return true
 }
 

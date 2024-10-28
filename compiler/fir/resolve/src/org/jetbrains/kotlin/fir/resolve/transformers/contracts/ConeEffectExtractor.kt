@@ -46,10 +46,6 @@ class ConeEffectExtractor(
         return ConeContractDescriptionError.IllegalElement(element).asElement()
     }
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Nothing?): ConeContractDescriptionElement {
-        return returnExpression.result.accept(this, data)
-    }
-
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConeContractDescriptionElement {
         val resolvedId = functionCall.toResolvedCallableSymbol()?.callableId
             ?: return ConeContractDescriptionError.UnresolvedCall(functionCall.calleeReference.name).asElement()
