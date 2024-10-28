@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// ISSUE: KT-69920
 
 interface SortableItem
 

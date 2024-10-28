@@ -19466,6 +19466,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("namedArgumentTypeSubstitution.kt")
+        public void testNamedArgumentTypeSubstitution() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/namedArgumentTypeSubstitution.kt");
+        }
+
+        @Test
         @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
         public void testNestedLambdaWithLastLambdaContainingCall() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdaWithLastLambdaContainingCall.kt");
@@ -20894,12 +20900,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           @TestMetadata("kt72272.kt")
           public void testKt72272() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt72272.kt");
-          }
-
-          @Test
-          @TestMetadata("namedArgumentTypeSubstitution.kt")
-          public void testNamedArgumentTypeSubstitution() {
-            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/namedArgumentTypeSubstitution.kt");
           }
         }
 
