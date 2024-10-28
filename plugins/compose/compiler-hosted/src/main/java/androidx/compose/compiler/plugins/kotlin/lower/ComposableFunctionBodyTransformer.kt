@@ -1019,9 +1019,7 @@ class ComposableFunctionBodyTransformer(
                 ),
                 // Use end offsets so that stepping out of the composable function
                 // does not step back to the start line for the function.
-                elsePart = irSkipToGroupEnd(body.endOffset, body.endOffset),
-                startOffset = body.startOffset,
-                endOffset = body.endOffset
+                elsePart = irSkipToGroupEnd(),
             )
             scope.realizeCoalescableGroup()
             declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset).apply {
@@ -1217,9 +1215,7 @@ class ComposableFunctionBodyTransformer(
                 ),
                 // Use end offsets so that stepping out of the composable function
                 // does not step back to the start line for the function.
-                elsePart = irSkipToGroupEnd(body.endOffset, body.endOffset),
-                startOffset = body.startOffset,
-                endOffset = body.endOffset
+                elsePart = irSkipToGroupEnd(),
             )
         } else irComposite(
             statements = bodyPreamble.statements + transformed.statements
@@ -1603,7 +1599,7 @@ class ComposableFunctionBodyTransformer(
                     // composer.skipCurrentGroup()
                     elsePart = irBlock(
                         statements = listOf(
-                            irSkipToGroupEnd(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
+                            irSkipToGroupEnd(),
                             *skipDefaults.statements.toTypedArray()
                         )
                     )
@@ -2113,7 +2109,7 @@ class ComposableFunctionBodyTransformer(
             val dirty2 = params?.getOrNull(1)?.let { irGet(it) } ?: irConst(-1)
 
             irIfTraceInProgress(
-                irCall(traceEventStart, startOffset, endOffset).also {
+                irCall(traceEventStart).also {
                     it.putValueArgument(0, key)
                     it.putValueArgument(1, dirty1)
                     it.putValueArgument(2, dirty2)
@@ -2176,7 +2172,7 @@ class ComposableFunctionBodyTransformer(
         compareInstanceForUnstableValues = compareInstanceForUnstableValues
     )
 
-    private fun irSkipToGroupEnd(startOffset: Int, endOffset: Int): IrExpression {
+    private fun irSkipToGroupEnd(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrExpression {
         return irMethodCall(
             irCurrentComposer(startOffset, endOffset),
             skipToGroupEndFunction,

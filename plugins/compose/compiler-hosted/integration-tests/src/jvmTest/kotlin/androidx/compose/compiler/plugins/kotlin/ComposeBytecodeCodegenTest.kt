@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import kotlin.test.Ignore
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -752,6 +753,51 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 @get:Composable
                 val background by ThemeToken { background }
             """
+        )
+    }
+
+    @Test
+    fun testNoRepeatingLineNumbersInLambda() {
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun App() {}
+
+                class Activity {
+                    fun setContent(content: @Composable () -> Unit) {}
+                    
+                    fun onCreate() {
+                        setContent {
+                            println()
+                            App()
+                        }
+                    }
+                }
+            """,
+            validate = { bytecode ->
+                val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
+                val matches = classesRegex.findAll(bytecode)
+                val lambdaClass = matches
+                    .first { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda-1%1") == true }
+                    .value
+                val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
+                val invokeMethod = invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")
+                val lineNumbers = invokeMethod.lines()
+                    .mapNotNull {
+                        it.takeIf { it.contains("LINENUMBER") }
+                    }
+                    .joinToString("\n")
+
+                assertEquals(
+                    """
+                    LINENUMBER 19 L3
+                    LINENUMBER 20 L5
+                    LINENUMBER 21 L6
+                    """.trimIndent(),
+                    lineNumbers.trimIndent()
+                )
+            }
         )
     }
 }
