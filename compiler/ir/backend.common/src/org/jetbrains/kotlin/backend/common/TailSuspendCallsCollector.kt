@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 data class TailSuspendCalls(val callSites: Set<IrCall>, val hasNotTailSuspendCalls: Boolean)
 
@@ -37,14 +36,6 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
             element.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression = false))
         }
 
-        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
-            if (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-                expression.acceptChildren(this, data)
-            } else {
-                super.visitTypeOperator(expression, data)
-            }
-        }
-
         override fun visitTry(aTry: IrTry, data: VisitorState) {
             aTry.tryResult.accept(this, VisitorState(insideTryBlock = true, isTailExpression = false))
             aTry.catches.forEach { it.result.accept(this, data) }
@@ -54,8 +45,16 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         private fun isTailReturn(expression: IrReturn) =
             expression.returnTargetSymbol == irFunction.symbol || expression.returnTargetSymbol in tailReturnableBlocks
 
+        private fun IrTypeOperatorCall.canBeOptimized() =
+            operator == IrTypeOperator.IMPLICIT_CAST || operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+
         override fun visitReturn(expression: IrReturn, data: VisitorState) {
-            expression.value.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
+            val returnValue = expression.value
+            val actualExpressionValue = when {
+                returnValue is IrTypeOperatorCall && isTailReturn(expression) && returnValue.canBeOptimized() -> returnValue.argument
+                else -> returnValue
+            }
+            actualExpressionValue.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
         }
 
         override fun visitExpressionBody(body: IrExpressionBody, data: VisitorState) =
