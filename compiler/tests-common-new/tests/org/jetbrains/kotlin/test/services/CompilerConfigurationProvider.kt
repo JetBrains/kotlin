@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.isApplicableTo
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
@@ -145,12 +145,15 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
     configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
     configuration.put(
         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-        module.targetBackend !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS] &&
-                TargetBackend.ANY !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS],
+        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module),
     )
     configuration.put(
         KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING,
         KlibIrInlinerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in module.directives
+    )
+    configuration.put(
+        CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
+        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module),
     )
 
     val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)

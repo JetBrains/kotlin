@@ -85,6 +85,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val ENABLE_IR_VISIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("Check pre-lowering IR for visibility violations")
+
+    @JvmField
+    val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("Check IR for vararg types mismatches")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

@@ -42,7 +42,7 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
             checkAllKotlinFieldsArePrivate = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
                     !context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
-            checkVarargTypes = true,
+            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
         )
 }
 
@@ -55,7 +55,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : CommonBackend
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
             checkVisibilities = false, // TODO: Enable checking visibilities (KT-69516)
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
-            checkVarargTypes = true,
+            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
         )
 }
 
@@ -71,7 +71,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
             checkTypeParameterScopes = false,
             checkVisibilities = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
-            checkVarargTypes = true,
+            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
         )
 }
 

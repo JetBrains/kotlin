@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.isApplicableTo
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -355,8 +356,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
                     keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-                        module.targetBackend !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS] &&
-                                TargetBackend.ANY !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS],
+                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module),
+                    )
+                    keyConfiguration.put(
+                        CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
+                        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module),
                     )
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())

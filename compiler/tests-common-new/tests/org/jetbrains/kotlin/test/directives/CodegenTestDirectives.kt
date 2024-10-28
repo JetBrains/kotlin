@@ -270,6 +270,15 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VISIBILITY_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for visibility violations when validating IR on the target backend"
     )
+
+    val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
+        description = "Don't check for vararg type mismatches when validating IR on the target backend"
+    )
+}
+
+fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule): Boolean {
+    val specifiedBackends = module.directives[this]
+    return module.targetBackend in specifiedBackends || TargetBackend.ANY in specifiedBackends
 }
 
 fun extractIgnoredDirectiveForTargetBackend(
