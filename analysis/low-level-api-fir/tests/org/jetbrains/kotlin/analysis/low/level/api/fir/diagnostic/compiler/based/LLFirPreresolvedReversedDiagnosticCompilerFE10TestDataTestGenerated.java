@@ -19466,6 +19466,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("namedArgumentToBeResolved.kt")
+        public void testNamedArgumentToBeResolved() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/namedArgumentToBeResolved.kt");
+        }
+
+        @Test
         @TestMetadata("namedArgumentTypeSubstitution.kt")
         public void testNamedArgumentTypeSubstitution() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/namedArgumentTypeSubstitution.kt");
