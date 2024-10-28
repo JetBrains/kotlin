@@ -32,6 +32,37 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         module: KtTestModule,
         testServices: TestServices,
     ): Collection<ResolveTestCaseContext<KtElement>> {
+        collectElementsByMultipleCarets(testServices, file)?.let { return it }
+        collectElementsBySelectedExpression(testServices, file, module)?.let { return it }
+        collectElementsBySingleCaret(testServices, file)?.let { return it }
+        return emptyList()
+    }
+
+    private fun collectElementsBySingleCaret(
+        testServices: TestServices,
+        file: KtFile,
+    ): List<ResolveKtElementTestCaseContext>? {
+        val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtElement>(file) ?: return null
+        return listOf(ResolveKtElementTestCaseContext(element = element, marker = null))
+    }
+
+    private fun collectElementsBySelectedExpression(
+        testServices: TestServices,
+        file: KtFile,
+        module: KtTestModule,
+    ): List<ResolveKtElementTestCaseContext>? {
+        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(file)
+            ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirectiveOrNull(
+                ktFile = file,
+                module = module,
+                defaultType = KtElement::class,
+            ) as KtElement? ?: return null
+
+        val elementToResolve = expression.elementToResolve
+        return listOf(ResolveKtElementTestCaseContext(element = elementToResolve, marker = null))
+    }
+
+    private fun collectElementsByMultipleCarets(testServices: TestServices, file: KtFile): List<ResolveKtElementTestCaseContext>? {
         val carets = testServices.expressionMarkerProvider.getAllCarets(file)
         if (carets.size > 1) {
             return carets.map {
@@ -39,16 +70,7 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
                 ResolveKtElementTestCaseContext(element = element, marker = it.fullTag)
             }
         }
-
-        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(file)
-            ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
-                ktFile = file,
-                module = module,
-                defaultType = KtElement::class,
-            ) as KtElement
-
-        val elementToResolve = expression.elementToResolve
-        return listOf(ResolveKtElementTestCaseContext(element = elementToResolve, marker = null))
+        return null
     }
 
     class ResolveKtElementTestCaseContext(

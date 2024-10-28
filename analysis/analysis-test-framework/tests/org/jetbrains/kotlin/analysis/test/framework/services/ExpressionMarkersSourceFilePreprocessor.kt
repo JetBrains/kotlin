@@ -246,9 +246,19 @@ class ExpressionMarkerProvider : TestService {
         module: KtTestModule,
         defaultType: KClass<out PsiElement>? = null,
     ): PsiElement {
+        return getSelectedElementOfTypeByDirectiveOrNull(ktFile, module, defaultType)
+            ?: error("No selected expression found")
+    }
+
+    fun getSelectedElementOfTypeByDirectiveOrNull(
+        ktFile: KtFile,
+        module: KtTestModule,
+        defaultType: KClass<out PsiElement>? = null,
+    ): PsiElement? {
         val expectedType = expectedTypeClass(module.testModule.directives) ?: defaultType?.java ?: return getSelectedElement(ktFile)
 
-        val selectedElements = getSelectedElements(ktFile)
+        val selectedElements = getSelectedElementsOrNull(ktFile) ?: return null
+        if (selectedElements.isEmpty()) return null
         selectedElements.filter(expectedType::isInstance).ifNotEmpty {
             return singleOrNull() ?: singleElementError(this)
         }
