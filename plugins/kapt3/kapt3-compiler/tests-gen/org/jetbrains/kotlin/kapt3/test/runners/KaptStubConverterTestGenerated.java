@@ -48,6 +48,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("annotationWithEmptyTarget.kt")
+  public void testAnnotationWithEmptyTarget() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithEmptyTarget.kt");
+  }
+
+  @Test
   @TestMetadata("annotationWithFqNames.kt")
   public void testAnnotationWithFqNames() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithFqNames.kt");
