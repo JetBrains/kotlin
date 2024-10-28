@@ -205,6 +205,21 @@ extern "C" OBJ_GETTER(CreateUninitializedString, StringEncoding encoding, uint32
     });
 }
 
+extern "C" OBJ_GETTER(CreateBorrowedString, StringEncoding encoding, const char* data, uint32_t length) {
+    if (length == 0) RETURN_RESULT_OF0(TheEmptyString);
+    if (encoding == StringEncoding::kUTF8 && utf8StringIsASCII(data, length)) {
+        encoding = StringEncoding::kLatin1;
+    }
+    auto flags = (static_cast<uint32_t>(encoding) << StringHeader::ENCODING_OFFSET) | StringHeader::BORROWED;
+    auto result = AllocArrayInstance(theStringTypeInfo, StringHeader::extraLength(flags) / sizeof(KChar), OBJ_RESULT);
+    auto header = StringHeader::of(result);
+    header->flags_ = flags;
+    auto desc = reinterpret_cast<StringHeader::BorrowedData*>(header->data_);
+    desc->size_ = length;
+    desc->data_ = const_cast<char*>(data);
+    return result;
+}
+
 extern "C" char* CreateCStringFromString(KConstRef kref) {
     if (kref == nullptr) return nullptr;
     std::string utf8 = kotlin::to_string<KStringConversionMode::UNCHECKED>(kref);

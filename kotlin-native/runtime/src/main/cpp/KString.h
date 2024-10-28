@@ -36,23 +36,30 @@ struct StringHeader {
     uint16_t flags_;
     alignas(KChar) char data_[];
 
+    struct __attribute__((packed)) BorrowedData {
+        uint16_t padding_;
+        uint32_t size_;
+        char *data_;
+    };
+
     enum {
         HASHCODE_COMPUTED = 1 << 0,
         IGNORE_LAST_BYTE = 1 << 1,
+        BORROWED = 1 << 2,
         ENCODING_OFFSET = 12,
     };
 
     ALWAYS_INLINE StringEncoding encoding() const { return static_cast<StringEncoding>(flags_ >> ENCODING_OFFSET); }
 
-    ALWAYS_INLINE char *data() { return data_; }
-    ALWAYS_INLINE const char *data() const { return data_; }
-    ALWAYS_INLINE size_t size() const { return count_ * sizeof(KChar) - extraLength(flags_); }
+    ALWAYS_INLINE char *data() { return flags_ & BORROWED ? reinterpret_cast<BorrowedData*>(data_)->data_ : data_; }
+    ALWAYS_INLINE const char *data() const { return flags_ & BORROWED ? reinterpret_cast<const BorrowedData*>(data_)->data_ : data_; }
+    ALWAYS_INLINE size_t size() const { return flags_ & BORROWED ? reinterpret_cast<const BorrowedData*>(data_)->size_ : count_ * sizeof(KChar) - extraLength(flags_); }
 
     ALWAYS_INLINE static StringHeader* of(KRef string) { return reinterpret_cast<StringHeader*>(string); }
     ALWAYS_INLINE static const StringHeader* of(KConstRef string) { return reinterpret_cast<const StringHeader*>(string); }
 
     ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
-        return (offsetof(StringHeader, data_) - sizeof(ArrayHeader)) + !!(flags & IGNORE_LAST_BYTE);
+        return (offsetof(StringHeader, data_) - sizeof(ArrayHeader)) + (flags & BORROWED ? sizeof(BorrowedData) : 0) + (flags & IGNORE_LAST_BYTE ? 1 : 0);
     }
 };
 
@@ -121,6 +128,7 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t length);
 OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t length);
 OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length);
 OBJ_GETTER(CreateUninitializedString, StringEncoding encoding, uint32_t length);
+OBJ_GETTER(CreateBorrowedString, StringEncoding encoding, const char* data, uint32_t length);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);

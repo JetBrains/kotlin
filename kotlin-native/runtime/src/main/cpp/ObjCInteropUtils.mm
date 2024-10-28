@@ -64,15 +64,23 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   NSStringEncoding encoding = [immutableCopyOrSameStr fastestEncoding];
   switch (encoding) {
     case NSUTF8StringEncoding:
-      result = CreateStringFromUtf8(
-        [immutableCopyOrSameStr UTF8String],
-        [immutableCopyOrSameStr lengthOfBytesUsingEncoding: encoding], OBJ_RESULT);
+      if (auto borrowed = CFStringGetCStringPtr((CFStringRef)immutableCopyOrSameStr, encoding)) {
+        result = CreateBorrowedString(StringEncoding::kUTF8, borrowed, strlen(borrowed), OBJ_RESULT);
+      } else {
+        result = CreateStringFromUtf8(
+          [immutableCopyOrSameStr UTF8String],
+          [immutableCopyOrSameStr lengthOfBytesUsingEncoding: encoding], OBJ_RESULT);
+      }
       break;
     case NSASCIIStringEncoding:
     case NSISOLatin1StringEncoding:
-      result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
-      [immutableCopyOrSameStr getBytes: StringHeader::of(result)->data() maxLength: length usedLength: nullptr
-        encoding: encoding options: 0 range: NSMakeRange(0, length) remainingRange: nullptr];
+      if (auto borrowed = CFStringGetCStringPtr((CFStringRef)immutableCopyOrSameStr, encoding)) {
+        result = CreateBorrowedString(StringEncoding::kLatin1, borrowed, strlen(borrowed), OBJ_RESULT);
+      } else {
+        result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
+        [immutableCopyOrSameStr getBytes: StringHeader::of(result)->data() maxLength: length usedLength: nullptr
+          encoding: encoding options: 0 range: NSMakeRange(0, length) remainingRange: nullptr];
+      }
       break;
     default:
       result = CreateUninitializedString(StringEncoding::kUTF16, length, OBJ_RESULT);
