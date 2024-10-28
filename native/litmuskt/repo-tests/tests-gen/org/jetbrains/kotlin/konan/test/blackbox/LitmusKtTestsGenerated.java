@@ -89,12 +89,6 @@ public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
-  @TestMetadata("UnsafePublicationFailing.kt")
-  public void testUnsafePublicationFailing() {
-    runTest("native/litmuskt/repo-tests/testData/standalone/UnsafePublicationFailing.kt");
-  }
-
-  @Test
   @TestMetadata("WordTearing.kt")
   public void testWordTearing() {
     runTest("native/litmuskt/repo-tests/testData/standalone/WordTearing.kt");

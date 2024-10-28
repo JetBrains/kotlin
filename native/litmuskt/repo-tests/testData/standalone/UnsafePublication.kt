@@ -39,12 +39,13 @@ object UnsafePublicationTests {
     @Test
     fun plainIntArray() = runTest(UnsafePublication.PlainIntArray)
 
-    // See UnsafePublicationFailing.kt
-//    @Test
-//    fun plainArray() = runTest(UnsafePublication.PlainArray)
-//
-//    @Test
-//    fun reference() = runTest(UnsafePublication.Reference)
+    @Test
+    @Ignore // Fails, because Kotlin does not have a full construction guarantee.
+    fun plainArray() = runTest(UnsafePublication.PlainArray)
+
+    @Test
+    @Ignore // Fails, because Kotlin does not have a full construction guarantee.
+    fun reference() = runTest(UnsafePublication.Reference)
 
     @Test
     fun plainWithLeakingConstructor() = runTest(UnsafePublication.PlainWithLeakingConstructor)
