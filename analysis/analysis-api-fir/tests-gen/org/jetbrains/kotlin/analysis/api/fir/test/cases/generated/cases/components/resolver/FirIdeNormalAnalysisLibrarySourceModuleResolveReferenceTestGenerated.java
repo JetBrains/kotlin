@@ -1067,9 +1067,33 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   }
 
   @Test
+  @TestMetadata("qualifiedCallSelector.kt")
+  public void testQualifiedCallSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedCallSelector.kt");
+  }
+
+  @Test
   @TestMetadata("qualifiedCalleeExpressionOfImplicitInvoke.kt")
   public void testQualifiedCalleeExpressionOfImplicitInvoke() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedCalleeExpressionOfImplicitInvoke.kt");
+  }
+
+  @Test
+  @TestMetadata("qualifiedReferenceSelector.kt")
+  public void testQualifiedReferenceSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedReferenceSelector.kt");
+  }
+
+  @Test
+  @TestMetadata("qualifiedWholeCall.kt")
+  public void testQualifiedWholeCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedWholeCall.kt");
+  }
+
+  @Test
+  @TestMetadata("qualifiedWholeReferenceSelector.kt")
+  public void testQualifiedWholeReferenceSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedWholeReferenceSelector.kt");
   }
 
   @Test
@@ -1118,6 +1142,30 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   @TestMetadata("RetentionValue.kt")
   public void testRetentionValue() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/RetentionValue.kt");
+  }
+
+  @Test
+  @TestMetadata("safeQualifiedCallSelector.kt")
+  public void testSafeQualifiedCallSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/safeQualifiedCallSelector.kt");
+  }
+
+  @Test
+  @TestMetadata("safeQualifiedReferenceSelector.kt")
+  public void testSafeQualifiedReferenceSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/safeQualifiedReferenceSelector.kt");
+  }
+
+  @Test
+  @TestMetadata("safeQualifiedWholeCall.kt")
+  public void testSafeQualifiedWholeCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/safeQualifiedWholeCall.kt");
+  }
+
+  @Test
+  @TestMetadata("safeQualifiedWholeReferenceSelector.kt")
+  public void testSafeQualifiedWholeReferenceSelector() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/safeQualifiedWholeReferenceSelector.kt");
   }
 
   @Test

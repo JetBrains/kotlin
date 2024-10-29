@@ -1,0 +1,3 @@
+KtNameReferenceExpression(50,51): 'y'
+  KtSimpleNameReference:
+    (in A) fun y(a: kotlin.Int)
