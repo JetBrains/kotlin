@@ -109,6 +109,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
     }
 
     @Test
+    @TestMetadata("inheritranceFromJavaUtilProperties.kt")
+    public void testInheritranceFromJavaUtilProperties() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/inheritranceFromJavaUtilProperties.kt");
+    }
+
+    @Test
     @TestMetadata("kt36984.kt")
     public void testKt36984() {
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/kt36984.kt");
