@@ -516,9 +516,45 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("qualifiedReferenceSelector.kt")
+    public void testQualifiedReferenceSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedReferenceSelector.kt");
+    }
+
+    @Test
     @TestMetadata("qualifiedWholeCall.kt")
     public void testQualifiedWholeCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedWholeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedWholeReferenceSelector.kt")
+    public void testQualifiedWholeReferenceSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedWholeReferenceSelector.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedCallSelector.kt")
+    public void testSafeQualifiedCallSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedCallSelector.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedReferenceSelector.kt")
+    public void testSafeQualifiedReferenceSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedReferenceSelector.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedWholeCall.kt")
+    public void testSafeQualifiedWholeCall() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedWholeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedWholeReferenceSelector.kt")
+    public void testSafeQualifiedWholeReferenceSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedWholeReferenceSelector.kt");
     }
 
     @Test
