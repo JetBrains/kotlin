@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -32,7 +33,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      * Please replace with [indexInOldValueParameters],
      * or migrate to new parameter API with [indexInParameters].
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var index: Int = -1
         @DelicateIrParameterIndexSetter
         set
@@ -49,7 +50,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var indexInOldValueParameters: Int by ::index
         @DelicateIrParameterIndexSetter
         set

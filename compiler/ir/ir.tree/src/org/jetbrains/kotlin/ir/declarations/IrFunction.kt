@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -87,7 +88,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
          *
          * Details on the API migration: KT-68003
          */
-        @DeprecatedCompilerApi
+        @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
         set(value) {
             setReceiverParameter(IrParameterKind.DispatchReceiver, value)
         }
@@ -103,7 +104,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var extensionReceiverParameter: IrValueParameter?
         get() = _parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
         set(value) {
@@ -167,7 +168,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var contextReceiverParametersCount: Int
         get() = _contextReceiverParametersCount
         set(value) {
@@ -193,7 +194,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var valueParameters: List<IrValueParameter>
         get() = _parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         set(value) {

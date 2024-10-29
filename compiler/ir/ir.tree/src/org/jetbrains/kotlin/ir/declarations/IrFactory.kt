@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
@@ -395,7 +396,7 @@ open class IrFactory(
     /**
      * Please use [createValueParameter] overload that takes [IrParameterKind] parameter.
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,
@@ -458,7 +459,7 @@ open class IrFactory(
     /**
      * Please use the overload accepting `kind` argument.
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     @Suppress("unused") // Deprecated, parameter [index] is ignored. Kept for backward compatibility only.
     fun createValueParameter(
         startOffset: Int,

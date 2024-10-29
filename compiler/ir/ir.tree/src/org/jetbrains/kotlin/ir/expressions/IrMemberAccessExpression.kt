@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -199,7 +200,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     val valueArgumentsCount: Int
         get() = targetRegularParameterCount + targetContextParameterCount
 
@@ -273,7 +274,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var extensionReceiver: IrExpression?
         get() {
             return if (targetHasExtensionReceiver) {
@@ -405,7 +406,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun getValueArgument(index: Int): IrExpression? {
         val actualIndex = getRealValueArgumentIndex(index)
         checkArgumentSlotAccess("value", actualIndex, this.arguments.size)
@@ -433,7 +434,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * Details on the API migration: KT-68003
      */
-    @DeprecatedCompilerApi
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         val actualIndex = getRealValueArgumentIndex(index)
         checkArgumentSlotAccess("value", actualIndex, this.arguments.size)
