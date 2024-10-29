@@ -32,6 +32,19 @@ internal object LLStatisticsScopes : LLStatisticsScope("kotlin.analysis") {
     }
 
     object SymbolProviders : LLStatisticsScope("$name.symbolProviders") {
+        // The number of uniquely computed "classifier names in package" sets per `KaModule`.
+        // How to calculate: Keep a global "`KaModule` -> package name" map and record a hit when a classifier name set is computed (in any
+        // symbol provider). Every new module/package name combination leads to one count increment.
+        object UniqueClassifierNameSets : LLStatisticsScope("$name.uniqueClassifierNameSets")
+
+        object Module : LLStatisticsScope("$name.module") {
+            // NOTE: These are symbol provider hits themselves, i.e. "does the symbol provider return non-null here?"
+            // Not to be confused with cache hits/misses, which need much clearer naming.
+            object ClassHits : LLStatisticsScope("$name.classHits")
+            object ClassMisses : LLStatisticsScope("$name.classMisses")
+            object NestedClassMisses : LLStatisticsScope("$name.nestedClassMisses")
+        }
+
         object Combined : LLStatisticsScope("$name.combined"), LLCaffeineStatisticsScope {
             object Hits : LLStatisticsScope("$name.hits")
             object Misses : LLStatisticsScope("$name.misses")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains
 
+import io.opentelemetry.api.metrics.LongCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLCaffeineStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsScopes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
@@ -17,4 +18,8 @@ internal class LLSymbolProviderStatistics(statisticsService: LLStatisticsService
      * A global [Caffeine stats counter][com.github.benmanes.caffeine.cache.stats.StatsCounter] for combined symbol provider caches.
      */
     val combinedSymbolProviderCacheStatsCounter = LLCaffeineStatsCounter(meter, LLStatisticsScopes.SymbolProviders.Combined)
+
+    val moduleClassHits: LongCounter = meter.counterBuilder(LLStatisticsScopes.SymbolProviders.Module.ClassHits.name).build()
+    val moduleClassMisses: LongCounter = meter.counterBuilder(LLStatisticsScopes.SymbolProviders.Module.ClassMisses.name).build()
+    val moduleNestedClassMisses: LongCounter = meter.counterBuilder(LLStatisticsScopes.SymbolProviders.Module.NestedClassMisses.name).build()
 }

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
@@ -34,6 +37,11 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
     val providers: List<FirSymbolProvider>,
     val dependencyProvider: LLFirDependenciesSymbolProvider,
 ) : FirSymbolProvider(session) {
+    @KaCachedService
+    private val symbolProviderStatistics by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLStatisticsService.getInstance(session.llFirModuleData.ktModule.project)?.symbolProviders
+    }
+
     /**
      * This symbol names provider is not used directly by [LLFirModuleWithDependenciesSymbolProvider], because in the IDE, Java symbol
      * providers currently cannot provide name sets (see KTIJ-24642). So in most cases, name sets would be `null` anyway.
@@ -53,9 +61,24 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         )
     }
 
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        getClassLikeSymbolByClassIdWithoutDependencies(classId)
-            ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        val symbol =
+            getClassLikeSymbolByClassIdWithoutDependencies(classId)
+                ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
+
+        symbolProviderStatistics?.let { statistics ->
+            if (symbol != null) {
+                statistics.moduleClassHits.add(1)
+            } else {
+                statistics.moduleClassMisses.add(1)
+                if (classId.isNestedClass) {
+                    statistics.moduleNestedClassMisses.add(1)
+                }
+            }
+        }
+
+        return symbol
+    }
 
     fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
