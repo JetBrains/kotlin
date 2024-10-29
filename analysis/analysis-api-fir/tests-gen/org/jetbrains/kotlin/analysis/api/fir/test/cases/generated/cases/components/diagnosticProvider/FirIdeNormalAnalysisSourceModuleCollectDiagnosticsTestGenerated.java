@@ -293,6 +293,24 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
       }
 
       @Test
+      @TestMetadata("declarations.kt")
+      public void testDeclarations() {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/codeFragments/fileLike/declarations.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExpression.kt")
+      public void testTopLevelExpression() {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/codeFragments/fileLike/topLevelExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExpressionsMultiple.kt")
+      public void testTopLevelExpressionsMultiple() {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/codeFragments/fileLike/topLevelExpressionsMultiple.kt");
+      }
+
+      @Test
       @TestMetadata("topLevelPropertyWithAccessors.kt")
       public void testTopLevelPropertyWithAccessors() {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/codeFragments/fileLike/topLevelPropertyWithAccessors.kt");
