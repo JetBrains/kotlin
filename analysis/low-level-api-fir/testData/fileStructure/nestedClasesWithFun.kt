@@ -1,7 +1,7 @@
-class A {/* ClassDeclarationStructureElement */
-    fun y() {/* DeclarationStructureElement */}
+class A {
+    fun y() {}
 
-    class B {/* ClassDeclarationStructureElement */
-        fun x() {/* DeclarationStructureElement */}
+    class B {
+        fun x() {}
     }
 }

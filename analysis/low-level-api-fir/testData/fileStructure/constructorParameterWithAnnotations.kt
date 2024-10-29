@@ -5,6 +5,6 @@ class A(
     @field:Ann
     @property:Ann
     var x: Int
-)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+)
 
-annotation class Ann/* ClassDeclarationStructureElement */
+annotation class Ann

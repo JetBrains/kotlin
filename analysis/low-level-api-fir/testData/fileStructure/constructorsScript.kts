@@ -1,9 +1,9 @@
-/* RootScriptStructureElement */class A
+class A
 
-    (val a: Int)/* DeclarationStructureElement */
+    (val a: Int)
 
-{/* ClassDeclarationStructureElement */
-    constructor() : this(1) {/* DeclarationStructureElement */
+{
+    constructor() : this(1) {
 
     }
 }

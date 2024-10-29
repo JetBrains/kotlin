@@ -1,51 +1,51 @@
-open class A(init: A.() -> Unit)/* DeclarationStructureElement */ {/* ClassDeclarationStructureElement */
-    val prop: String = ""/* DeclarationStructureElement */
+open class A(init: A.() -> Unit) {
+    val prop: String = ""
 }
 
-object B : A({})/* ClassDeclarationStructureElement */
+object B : A({})
 
 object C : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* ClassDeclarationStructureElement */
+)
 
 class D : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* ClassDeclarationStructureElement */
+)
 
-class E()/* DeclarationStructureElement */ : A(
+class E() : A(
     {
         fun foo() = B.prop.toString()
     }
-)/* ClassDeclarationStructureElement */
+)
 
 class F : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* ClassDeclarationStructureElement */
-    constructor()/* DeclarationStructureElement */
+) {
+    constructor()
 }
 
 class G : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* ClassDeclarationStructureElement */
+) {
     constructor() : super(
         {
             fun foo() = B.prop.toString()
         }
-    )/* DeclarationStructureElement */
+    )
 }
 
-class H : A {/* ClassDeclarationStructureElement */
+class H : A {
     constructor() : super(
         {
             fun foo() = B.prop.toString()
         }
-    )/* DeclarationStructureElement */
+    )
 }

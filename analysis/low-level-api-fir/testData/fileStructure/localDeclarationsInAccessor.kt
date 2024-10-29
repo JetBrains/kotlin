@@ -1,5 +1,5 @@
-class Outer {/* ClassDeclarationStructureElement */
-    val i: Int = 1/* DeclarationStructureElement */
+class Outer {
+    val i: Int = 1
         get() {
             class Inner {
                 var i: Int = 2
@@ -20,7 +20,7 @@ class Outer {/* ClassDeclarationStructureElement */
             return field
         }
 
-    val j: Int = 4/* DeclarationStructureElement */
+    val j: Int = 4
         get() {
             fun local() {
                 field++

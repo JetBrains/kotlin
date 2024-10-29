@@ -1,14 +1,14 @@
-class Foo {/* ClassDeclarationStructureElement */
+class Foo {
     @Suppress("") @MustBeDocumented
 }
-class Bar {/* ClassDeclarationStructureElement */
+class Bar {
     @Suppress("") @MustBeDocumented
 }
-class Outer {/* ClassDeclarationStructureElement */
-    class Inner {/* ClassDeclarationStructureElement */
+class Outer {
+    class Inner {
         @Suppress("") @MustBeDocumented
     }
-    fun foo() {/* DeclarationStructureElement */
+    fun foo() {
         class Local {
             @Suppress("") @MustBeDocumented
         }

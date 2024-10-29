@@ -1,14 +1,14 @@
-abstract class Foo {/* ClassDeclarationStructureElement */
-    abstract var id: Int/* DeclarationStructureElement */
+abstract class Foo {
+    abstract var id: Int
         protected set
 }
 
-class Bar : Foo() {/* ClassDeclarationStructureElement */
-    override var id: Int = 1/* DeclarationStructureElement */
+class Bar : Foo() {
+    override var id: Int = 1
     public set
 }
 
-fun test() {/* DeclarationStructureElement */
+fun test() {
     val bar = Bar()
     bar.id = 1
 }

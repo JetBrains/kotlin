@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */var x: Int = 0/* DeclarationStructureElement */
+var x: Int = 0
 
 if (true) {
     class LocalClass {
@@ -11,4 +11,4 @@ if (true) {
     x = foo(prop)
 }
 
-val rv = x/* DeclarationStructureElement */
+val rv = x

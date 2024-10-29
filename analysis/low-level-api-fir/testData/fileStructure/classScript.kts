@@ -1,6 +1,6 @@
-/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
-    fun x() {/* DeclarationStructureElement */
+class A {
+    fun x() {
 
     }
-    fun y(): Int = 10/* DeclarationStructureElement */
+    fun y(): Int = 10
 }

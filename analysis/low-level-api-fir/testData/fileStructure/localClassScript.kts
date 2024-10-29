@@ -1,9 +1,9 @@
-/* RootScriptStructureElement */fun a() {/* DeclarationStructureElement */
+fun a() {
     class X
 }
 
-class Y {/* ClassDeclarationStructureElement */
-    fun b() {/* DeclarationStructureElement */
+class Y {
+    fun b() {
         class Z
     }
 }

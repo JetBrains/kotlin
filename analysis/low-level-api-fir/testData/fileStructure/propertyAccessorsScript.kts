@@ -1,11 +1,11 @@
-/* RootScriptStructureElement */var x: Int = 10/* DeclarationStructureElement */
+var x: Int = 10
     get() = field
     set(value) {
         field = value
     }
 
-class X {/* ClassDeclarationStructureElement */
-    var y: Int = 10/* DeclarationStructureElement */
+class X {
+    var y: Int = 10
         get() = field
         set(value) {
             field = value

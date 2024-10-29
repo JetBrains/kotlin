@@ -1,16 +1,16 @@
-/* RootScriptStructureElement */open class A
-    (init: A.() -> Unit)/* DeclarationStructureElement */
-{/* ClassDeclarationStructureElement */
-    val prop: String = ""/* DeclarationStructureElement */
+open class A
+    (init: A.() -> Unit)
+{
+    val prop: String = ""
 }
 
-class B()/* DeclarationStructureElement */ : A()/* ClassDeclarationStructureElement */
+class B() : A()
 
 object C : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* ClassDeclarationStructureElement */
+) {
 
 }
 
@@ -20,16 +20,16 @@ val f = object : A(
     }
 ) {
 
-}/* DeclarationStructureElement */
+}
 
 class D : A(
     {
         fun foo() = B.prop.toString()
     }
-) {/* ClassDeclarationStructureElement */
+) {
     constructor(): super(
         {
             fun boo() = prop.toString()
         }
-    )/* DeclarationStructureElement */
+    )
 }

@@ -1,4 +1,4 @@
-annotation class MyAnn/* ClassDeclarationStructureElement */
+annotation class MyAnn
 
-@MyAnn/* DeclarationStructureElement */
-fin class Foo/* ClassDeclarationStructureElement */
+@MyAnn
+fin class Foo

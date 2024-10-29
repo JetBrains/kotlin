@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */fun foo(): Int {/* DeclarationStructureElement */
+fun foo(): Int {
     println("")
     return 10
 }

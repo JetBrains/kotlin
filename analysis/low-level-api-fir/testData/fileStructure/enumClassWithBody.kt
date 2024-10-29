@@ -1,13 +1,13 @@
-enum class A {/* ClassDeclarationStructureElement */
-    X {/* DeclarationStructureElement */
+enum class A {
+    X {
         fun localInX() = 1
     },
-    Y {/* DeclarationStructureElement */
+    Y {
         override fun foo() {}
     },
     Z,
 
-    ;/* DeclarationStructureElement */
+    ;
 
-    open fun foo() {/* DeclarationStructureElement */}
+    open fun foo() {}
 }

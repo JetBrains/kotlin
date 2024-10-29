@@ -9,33 +9,33 @@ package myPack
     AnnotationTarget.EXPRESSION,
 )
 @Retention(AnnotationRetention.SOURCE)
-annotation class Anno(val number: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+annotation class Anno(val number: Int)
 
 @Anno(functionProperty)
-const val functionProperty = 42/* DeclarationStructureElement */
+const val functionProperty = 42
 
 @Anno(parameterProperty)
-const val parameterProperty = 42/* DeclarationStructureElement */
+const val parameterProperty = 42
 
 @Anno(defaultValueProperty)
-const val defaultValueProperty = 42/* DeclarationStructureElement */
+const val defaultValueProperty = 42
 
 @Anno(receiverProperty)
-const val receiverProperty = 42/* DeclarationStructureElement */
+const val receiverProperty = 42
 
 @Anno(receiverTypeProperty)
-const val receiverTypeProperty = 42/* DeclarationStructureElement */
+const val receiverTypeProperty = 42
 
 @Anno(typeParameterProperty)
-const val typeParameterProperty = 42/* DeclarationStructureElement */
+const val typeParameterProperty = 42
 
 @Anno(valueParameterTypeProperty)
-const val valueParameterTypeProperty = 42/* DeclarationStructureElement */
+const val valueParameterTypeProperty = 42
 
 @Anno(expressionProperty)
-const val expressionProperty = 42/* DeclarationStructureElement */
+const val expressionProperty = 42
 
-fun topLevelFun() {/* DeclarationStructureElement */
+fun topLevelFun() {
     class LocalClass {
         fun first() = 42.function()
 

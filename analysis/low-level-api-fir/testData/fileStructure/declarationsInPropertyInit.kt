@@ -1,11 +1,11 @@
-class A {/* ClassDeclarationStructureElement */
+class A {
     val a = myRun {
         class X()
 
         val y = 10
-    }/* DeclarationStructureElement */
+    }
 }
 
-inline fun <R> myRun(block: () -> R): R {/* DeclarationStructureElement */
+inline fun <R> myRun(block: () -> R): R {
     return block()
 }

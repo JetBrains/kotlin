@@ -1,9 +1,9 @@
-fun bar(a: Int, b: (Boolean) -> Unit) {/* DeclarationStructureElement */
+fun bar(a: Int, b: (Boolean) -> Unit) {
 
 }
 
-class A {/* ClassDeclarationStructureElement */
-    fun foo(x: String, y: () -> String) {/* DeclarationStructureElement */
+class A {
+    fun foo(x: String, y: () -> String) {
 
     }
 }

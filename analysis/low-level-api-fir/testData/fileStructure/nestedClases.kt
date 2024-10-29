@@ -1,10 +1,10 @@
-class A {/* ClassDeclarationStructureElement */
-    class B {/* ClassDeclarationStructureElement */
+class A {
+    class B {
 
     }
 
-    object C {/* ClassDeclarationStructureElement */
-        class D {/* ClassDeclarationStructureElement */
+    object C {
+        class D {
 
         }
     }

@@ -1,1 +1,1 @@
-typealias A = 10/* DeclarationStructureElement */
+typealias A = 10

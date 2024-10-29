@@ -1,4 +1,4 @@
-fun x() {/* DeclarationStructureElement */
+fun x() {
     class Local {
         fun foo(){}
     }

@@ -1,4 +1,4 @@
-fun foo() {/* DeclarationStructureElement */
+fun foo() {
     fun local() {
         println("local")
     }

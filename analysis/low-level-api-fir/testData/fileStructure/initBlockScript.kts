@@ -1,5 +1,5 @@
-/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
-    init {/* DeclarationStructureElement */
+class A {
+    init {
         val x = 10
         class B
     }

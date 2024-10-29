@@ -1,11 +1,11 @@
-open class A(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+open class A(x: () -> Unit)
 
-class B : A {/* ClassDeclarationStructureElement */
+class B : A {
     constructor(i: Int) : super(
         {
             foo(i)
         }
-    )/* DeclarationStructureElement */
+    )
 }
 
-fun foo(any: Any) {/* DeclarationStructureElement */}
+fun foo(any: Any) {}

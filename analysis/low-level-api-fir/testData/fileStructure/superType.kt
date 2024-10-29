@@ -1,7 +1,7 @@
-interface A<T>/* ClassDeclarationStructureElement */
+interface A<T>
 
-typealias AS = A<String>/* DeclarationStructureElement */
+typealias AS = A<String>
 
-class C : AS {/* ClassDeclarationStructureElement */
-    constructor()/* DeclarationStructureElement */
+class C : AS {
+    constructor()
 }

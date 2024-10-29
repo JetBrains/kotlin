@@ -1,3 +1,3 @@
-class A {/* ClassDeclarationStructureElement */
-    typealias X = Int/* DeclarationStructureElement */
+class A {
+    typealias X = Int
 }

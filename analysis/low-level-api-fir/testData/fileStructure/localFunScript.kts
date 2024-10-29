@@ -1,11 +1,11 @@
-/* RootScriptStructureElement */fun x() {/* DeclarationStructureElement */
+fun x() {
     fun y() {
 
     }
 }
 
-class A {/* ClassDeclarationStructureElement */
-    fun z() {/* DeclarationStructureElement */
+class A {
+    fun z() {
         fun q() {
 
         }

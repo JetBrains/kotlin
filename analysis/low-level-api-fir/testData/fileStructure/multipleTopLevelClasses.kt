@@ -1,15 +1,15 @@
-class A {/* ClassDeclarationStructureElement */
+class A {
 
 }
 
-class B {/* ClassDeclarationStructureElement */
+class B {
 
 }
 
-class C {/* ClassDeclarationStructureElement */
+class C {
 
 }
 
-class D {/* ClassDeclarationStructureElement */
+class D {
 
 }

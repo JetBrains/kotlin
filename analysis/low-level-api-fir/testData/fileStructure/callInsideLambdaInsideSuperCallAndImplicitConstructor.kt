@@ -1,7 +1,7 @@
-open class B(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+open class B(x: () -> Unit)
 
 class A : B(1, {
     foo()
-})/* ClassDeclarationStructureElement */
+})
 
-fun foo() {/* DeclarationStructureElement */}
+fun foo() {}

@@ -1,8 +1,8 @@
-/* RootScriptStructureElement */var a = -1/* DeclarationStructureElement */
-var b = 0/* DeclarationStructureElement */
+var a = -1
+var b = 0
 
-data class MyPair(val i: Int, val b: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+data class MyPair(val i: Int, val b: Int)
 
-val pair = MyPair(a, b)/* DeclarationStructureElement */
+val pair = MyPair(a, b)
 
-val (first/* DeclarationStructureElement */, last/* DeclarationStructureElement */) = pair/* DeclarationStructureElement */
+val (first, last) = pair

@@ -1,27 +1,27 @@
-/* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
+fun (a: Int = 1): String = "str"
 
-fun () {/* DeclarationStructureElement */
+fun () {
 
 }
 
-val : Int = 4/* DeclarationStructureElement */
+val : Int = 4
 
-var : Int/* DeclarationStructureElement */
+var : Int
     get() = 4
     set(value) {
 
     }
 
-class A {/* ClassDeclarationStructureElement */
-    fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
+class A {
+    fun (a: Int = 1): String = "str"
 
-    fun () {/* DeclarationStructureElement */
+    fun () {
 
     }
 
-    val : Int = 4/* DeclarationStructureElement */
+    val : Int = 4
 
-    var : Boolean/* DeclarationStructureElement */
+    var : Boolean
         get() = true
         set(value) {
 

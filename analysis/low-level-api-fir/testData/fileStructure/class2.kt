@@ -1,8 +1,8 @@
-class B {/* ClassDeclarationStructureElement */
-    fun q(): C {/* DeclarationStructureElement */}
-    private val y = q()/* DeclarationStructureElement */
+class B {
+    fun q(): C {}
+    private val y = q()
 
     fun foo(a: A) = with(a) {
         bar("a", y)
-    }/* DeclarationStructureElement */
+    }
 }

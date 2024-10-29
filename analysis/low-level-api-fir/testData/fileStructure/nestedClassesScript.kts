@@ -1,16 +1,16 @@
-/* RootScriptStructureElement */class A {/* ClassDeclarationStructureElement */
-    class B {/* ClassDeclarationStructureElement */
-        fun x() {/* DeclarationStructureElement */
+class A {
+    class B {
+        fun x() {
         }
 
-        class C {/* ClassDeclarationStructureElement */
+        class C {
 
         }
     }
 
-    class E {/* ClassDeclarationStructureElement */
+    class E {
 
     }
 
-    fun y(): Int = 10/* DeclarationStructureElement */
+    fun y(): Int = 10
 }

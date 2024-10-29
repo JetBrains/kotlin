@@ -1,15 +1,15 @@
-fun foo1() {/* DeclarationStructureElement */
+fun foo1() {
     println("foo1")
 }
 
-fun foo2() {/* DeclarationStructureElement */
+fun foo2() {
     println("foo2")
 }
 
-fun foo3() {/* DeclarationStructureElement */
+fun foo3() {
     println("foo3")
 }
 
-fun foo4() {/* DeclarationStructureElement */
+fun foo4() {
     println("foo4")
 }

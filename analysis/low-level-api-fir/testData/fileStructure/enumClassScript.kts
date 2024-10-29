@@ -1,13 +1,13 @@
-/* RootScriptStructureElement */enum class A {/* ClassDeclarationStructureElement */
-    X,/* DeclarationStructureElement */
-    Y,/* DeclarationStructureElement */
+enum class A {
+    X,
+    Y,
     Z
 
-    ;/* DeclarationStructureElement */
+    ;
 
-    fun foo(){/* DeclarationStructureElement */}
+    fun foo(){}
 
-    val x = 10/* DeclarationStructureElement */
+    val x = 10
 
-    fun bar() = 10/* DeclarationStructureElement */
+    fun bar() = 10
 }

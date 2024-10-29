@@ -1,14 +1,14 @@
-/* RootScriptStructureElement */fun foo() {/* DeclarationStructureElement */
+fun foo() {
     var x: Int
 }
-class A {/* ClassDeclarationStructureElement */
-    fun q() {/* DeclarationStructureElement */
+class A {
+    fun q() {
         val y = 42
     }
 }
-class B {/* ClassDeclarationStructureElement */
-    class C {/* ClassDeclarationStructureElement */
-        fun u() {/* DeclarationStructureElement */
+class B {
+    class C {
+        fun u() {
             var z: Int = 15
         }
     }

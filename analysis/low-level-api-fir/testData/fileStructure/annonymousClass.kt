@@ -1,4 +1,4 @@
-fun x() {/* DeclarationStructureElement */
+fun x() {
     val x = object: Any() {
         fun foo(){}
     }

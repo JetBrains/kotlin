@@ -1,1 +1,1 @@
-@Suppress("") @MustBeDocumented/* DeclarationStructureElement */
+@Suppress("") @MustBeDocumented

@@ -1,3 +1,3 @@
-fun foo() {/* DeclarationStructureElement */
+fun foo() {
     fun local() = 0
 }

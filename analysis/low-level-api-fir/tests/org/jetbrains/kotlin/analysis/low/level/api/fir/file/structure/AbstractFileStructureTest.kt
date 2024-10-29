@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -100,12 +100,10 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
                         append(it)
                     }
                 }
-
-                override fun visitComment(comment: PsiComment) {}
             })
         }
 
-        KotlinTestUtils.assertEqualsToFile(testDataPath, text)
+        testServices.assertions.assertEqualsToTestDataFileSibling(text, extension = ".structure.txt")
     }
 
     private fun FileStructureElement.createComment(): String {

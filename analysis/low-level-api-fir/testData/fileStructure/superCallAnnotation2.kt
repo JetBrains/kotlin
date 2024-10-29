@@ -1,6 +1,6 @@
 @Target(AnnotationTarget.TYPE)
-annotation class Anno/* ClassDeclarationStructureElement */
+annotation class Anno
 
-interface A/* ClassDeclarationStructureElement */
+interface A
 
-class B : @Anno A/* ClassDeclarationStructureElement */
+class B : @Anno A

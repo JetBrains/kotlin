@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */var x: Int = 0/* DeclarationStructureElement */
+var x: Int = 0
 
 if (true) {
     class LocalClass {

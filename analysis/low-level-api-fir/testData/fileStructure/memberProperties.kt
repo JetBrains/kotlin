@@ -1,7 +1,7 @@
-class A {/* ClassDeclarationStructureElement */
-    fun foo1() = 10/* DeclarationStructureElement */
+class A {
+    fun foo1() = 10
 
-    fun foo2() {/* DeclarationStructureElement */
+    fun foo2() {
 
     }
 }
