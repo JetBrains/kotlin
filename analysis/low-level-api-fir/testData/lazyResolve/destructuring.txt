@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructuring.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuring.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -612,4 +612,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val last: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-

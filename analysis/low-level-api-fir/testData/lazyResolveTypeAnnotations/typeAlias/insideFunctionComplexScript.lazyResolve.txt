@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplexScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -338,4 +338,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] insideFunctionComplexScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  @R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  {@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
-

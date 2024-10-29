@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsPropagationScript.
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -239,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -476,4 +476,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsPropagationSc
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: value> = <Unresolved name: value>#
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: value>
-

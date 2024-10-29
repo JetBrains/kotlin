@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashWithAnnotationScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashWithAnnotationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -794,4 +794,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashWithAnnotationScript.kts
             }
 
         }
-

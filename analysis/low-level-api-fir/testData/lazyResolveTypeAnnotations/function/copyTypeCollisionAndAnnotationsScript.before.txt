@@ -24,7 +24,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -82,4 +82,3 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
             public? final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(TYPES)] prop2: R|@R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
-

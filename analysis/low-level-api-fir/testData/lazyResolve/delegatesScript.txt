@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -464,4 +464,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
-

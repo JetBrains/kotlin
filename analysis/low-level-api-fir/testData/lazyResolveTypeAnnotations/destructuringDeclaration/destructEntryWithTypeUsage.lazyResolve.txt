@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructEntryWithTypeUsage.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithTypeUsage.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithTypeUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -724,4 +724,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntryWithTypeUsage.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
-

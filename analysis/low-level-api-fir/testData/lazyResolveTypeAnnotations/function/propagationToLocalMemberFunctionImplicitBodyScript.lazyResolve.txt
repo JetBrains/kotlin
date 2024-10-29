@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationToLocalMemberFunctionImplicitBodyScript.k
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationToLocalMemberFunctionImplicitBodyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -495,4 +495,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
             }
             )
         }
-

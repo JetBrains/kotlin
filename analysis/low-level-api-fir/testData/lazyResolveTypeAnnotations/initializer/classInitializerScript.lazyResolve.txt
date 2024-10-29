@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(RAW_FIR)] classInitializerScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classInitializerScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-classInitializerScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -512,4 +512,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classInitializerScript.kts
             }
 
         }
-

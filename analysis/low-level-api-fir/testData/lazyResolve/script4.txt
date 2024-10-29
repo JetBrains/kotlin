@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] script4.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script4.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script4.kts>] class Builder : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] script4.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script4.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script4.kts>] class Builder : R|kotlin/Any| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-script4.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script4.kts>] class Builder : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-script4.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script4.kts>] class Builder : R|kotlin/Any| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] script4.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-script4.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script4.kts>] class Builder : R|kotlin/Any| {
@@ -370,4 +370,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script4.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = @R|kotlin/Suppress|[Types](names = vararg(String(abc))) @R|kotlin/Deprecated|[Types](message = String(it is deprecated)) R|/builder|.<Unresolved name: execute>#()
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
-

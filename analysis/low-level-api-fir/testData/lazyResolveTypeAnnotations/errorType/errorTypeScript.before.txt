@@ -20,7 +20,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-errorTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-errorTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -37,4 +37,3 @@ FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(TYPES)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
-

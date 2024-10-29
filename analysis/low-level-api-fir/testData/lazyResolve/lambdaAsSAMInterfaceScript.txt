@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] lambdaAsSAMInterfaceScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaAsSAMInterfaceScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
@@ -350,4 +350,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lambdaAsSAMInterfaceScript.kts
             }
             ))
         }
-

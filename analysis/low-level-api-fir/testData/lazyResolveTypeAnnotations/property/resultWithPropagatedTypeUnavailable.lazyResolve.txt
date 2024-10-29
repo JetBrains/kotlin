@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(RAW_FIR)] resultWithPropagatedTypeUnavailable.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithPropagatedTypeUnavailable.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedTypeUnavailable.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -454,4 +454,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultWithPropagatedTypeUnavailable.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>|
-

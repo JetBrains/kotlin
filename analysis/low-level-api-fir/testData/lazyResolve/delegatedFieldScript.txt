@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-delegatedFieldScript.kts>] class Boo : R|kotlin/Any| {
@@ -417,4 +417,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldScript.kts
             }
 
         }
-

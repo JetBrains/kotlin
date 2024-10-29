@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataClassCopyScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol one.<script-dataClassCopyScript.kts>] class DataClass : R|kotlin/Any| {
@@ -360,4 +360,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopyScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
-

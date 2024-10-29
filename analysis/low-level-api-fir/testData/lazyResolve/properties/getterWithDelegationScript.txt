@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] getterWithDelegationScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Intby LAZY_EXPRESSION
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Intby LAZY_EXPRESSION
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] val one: Intby LAZY_EXPRESSION
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int|by LAZY_EXPRESSION
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-getterWithDelegationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
@@ -270,4 +270,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegationScript.kts
             }
 
         }
-

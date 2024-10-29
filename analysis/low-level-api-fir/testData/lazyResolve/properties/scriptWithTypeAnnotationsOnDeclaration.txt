@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithTypeAnnotationsOnDeclaration.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptWithTypeAnnotationsOnDeclaration.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithTypeAnnotationsOnDeclaration.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithTypeAnnotationsOnDeclaration.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithTypeAnnotationsOnDeclaration.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithTypeAnnotationsOnDeclaration.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -306,4 +306,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptWithTypeAnnotationsOnDeclaration.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| {
             ^explicitType Int(0)
         }
-

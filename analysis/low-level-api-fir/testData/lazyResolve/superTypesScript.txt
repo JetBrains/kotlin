@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypesScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesScript.kts>] class A : R|kotlin/Any| {
@@ -388,4 +388,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesScript.kts
             }
 
         }
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithTargetScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationWithTargetScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-annotationWithTargetScript.kts>] annotation class ResolveMe : R|kotlin/Annotation| {
@@ -374,4 +374,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTargetScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
-

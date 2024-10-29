@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithImplicitTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: <implicit>
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: <implicit>
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] val prop: <implicit>
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] val prop: <implicit>
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] val prop: <implicit>
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyGetterWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <implicit>
@@ -148,4 +148,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyGetterWithImplicitTypeScript.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(42)
             }
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -314,4 +314,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnTypeScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
             ^foo this@R|/foo|
         }
-

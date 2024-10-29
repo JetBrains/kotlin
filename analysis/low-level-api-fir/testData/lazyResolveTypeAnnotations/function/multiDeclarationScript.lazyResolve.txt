@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(RAW_FIR)] multiDeclarationScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -851,4 +851,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] multiDeclarationScript.kts
             }
             )
         }
-

@@ -32,7 +32,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] nestedErrorReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedErrorReturnTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-nestedErrorReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -49,4 +49,3 @@ FILE: [ResolvedTo(IMPORTS)] nestedErrorReturnTypeScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] F : R|@R|lowlevel/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested bound ), prop#))  ERROR CLASS: Symbol not found for ASF>|> R|@R|lowlevel/Anno|(<strcat>(String(receiver ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested receiver ), prop#))  ERROR CLASS: Symbol not found for Abc>|.function([ResolvedTo(TYPES)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): R|@R|lowlevel/Anno|(<strcat>(String(return ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return ), prop#))  ERROR CLASS: Symbol not found for Type3>| { LAZY_BLOCK }
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypesLoopScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesLoopScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
@@ -486,4 +486,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoopScript.kts
             }
 
         }
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -340,4 +340,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedAliasWithNestedAnnotationInLocalClassScri
             }
 
         }
-

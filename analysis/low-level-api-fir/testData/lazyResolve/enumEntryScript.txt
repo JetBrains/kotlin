@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntryScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumEntryScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -442,4 +442,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntryScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
-

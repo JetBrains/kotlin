@@ -12,7 +12,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] insideFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-insideFunctionScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -31,4 +31,3 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionScript.kts
         public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  {MyTypeAlias=} kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
-

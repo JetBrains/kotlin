@@ -33,7 +33,7 @@ Tower Data Context:
             FirScriptSymbol SCRIPT: <script-statement.kts>
                 <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-            
+
                 public final? class ScriptClass : R|kotlin/Any|
                 public final fun scriptFunction(): R|kotlin/Int|
                 public? final? fun unusedScriptFunction(p: String): <implicit>

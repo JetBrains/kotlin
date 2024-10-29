@@ -12,7 +12,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] simpleScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-simpleScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -29,4 +29,3 @@ FILE: [ResolvedTo(IMPORTS)] simpleScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(TYPES)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAliasScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTypeAliasScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -220,4 +220,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTypeAliasScript.kts
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclarationWithBigBody.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
@@ -214,4 +214,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] syntheticResultDeclarationWithBigBody.kts
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
-

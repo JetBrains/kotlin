@@ -5,7 +5,7 @@ TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [
 
 FILE: [ResolvedTo(IMPORTS)] implicitPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -56,7 +56,7 @@ TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [
 
 FILE: [ResolvedTo(IMPORTS)] implicitPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -410,4 +410,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitPropertyScript.kts
                 @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?|): R|kotlin/Unit|
 
         }
-

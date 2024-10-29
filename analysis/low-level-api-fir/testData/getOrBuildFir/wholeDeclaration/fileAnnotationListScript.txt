@@ -9,5 +9,5 @@ FIR FILE:
 FILE: [ResolvedTo(RAW_FIR)] fileAnnotationListScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationListScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

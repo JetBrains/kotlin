@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3Script.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -469,7 +469,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -547,7 +547,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClass3Script.kts>] interface Foo1 : R|kotlin/Any| {
@@ -1091,4 +1091,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClass3Script.kts
             }
 
         }
-

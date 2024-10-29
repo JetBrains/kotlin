@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -388,4 +388,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeScript.kts
             }
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
             }
-

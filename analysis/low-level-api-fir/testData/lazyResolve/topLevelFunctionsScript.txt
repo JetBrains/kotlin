@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] topLevelFunctionsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelFunctionsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -196,4 +196,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunctionsScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
-

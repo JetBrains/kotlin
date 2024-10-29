@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashImplicitConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashImplicitConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
@@ -388,4 +388,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashImplicitConstructorScript
             }
 
         }
-

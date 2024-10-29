@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] contractScript2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript2.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] contractScript2.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript2.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-contractScript2.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-contractScript2.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-contractScript2.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
@@ -136,4 +136,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contractScript2.kts
 
             R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
-

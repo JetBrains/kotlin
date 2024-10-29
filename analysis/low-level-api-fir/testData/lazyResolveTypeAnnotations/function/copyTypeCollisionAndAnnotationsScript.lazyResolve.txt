@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotationsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -379,7 +379,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -442,7 +442,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-copyTypeCollisionAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-copyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -878,4 +878,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotationsScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(BODY_RESOLVE)] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
-

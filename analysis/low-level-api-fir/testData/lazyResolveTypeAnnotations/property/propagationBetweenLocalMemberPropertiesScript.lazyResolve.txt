@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationBetweenLocalMemberPropertiesScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propagationBetweenLocalMemberPropertiesScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -430,4 +430,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberPropertiesScript.k
             }
 
         }
-

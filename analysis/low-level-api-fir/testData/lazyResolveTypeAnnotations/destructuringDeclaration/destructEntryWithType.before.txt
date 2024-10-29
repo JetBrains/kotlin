@@ -24,7 +24,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithType.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryWithType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -68,4 +68,3 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
-

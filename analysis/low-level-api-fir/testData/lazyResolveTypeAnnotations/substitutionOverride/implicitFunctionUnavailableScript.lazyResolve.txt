@@ -3,7 +3,7 @@ TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedT
 
 FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitFunctionUnavailableScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -50,7 +50,7 @@ TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedT
 
 FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitFunctionUnavailableScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -390,4 +390,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitFunctionUnavailableScript.kts
             }
 
         }
-

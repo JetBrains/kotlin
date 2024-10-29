@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -456,4 +456,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
             }
 
         }
-

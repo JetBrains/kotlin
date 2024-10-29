@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var prop: <implicit> = LAZY_EXPRESSION
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertySetterScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var prop: <implicit> = LAZY_EXPRESSION
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var prop: <implicit> = LAZY_EXPRESSION
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] var prop: <implicit> = LAZY_EXPRESSION
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] var prop: <implicit> = LAZY_EXPRESSION
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] var prop: <implicit> = LAZY_EXPRESSION
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] var prop: <implicit> = LAZY_EXPRESSION
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertySetterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var prop: <implicit> = LAZY_EXPRESSION
@@ -156,4 +156,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertySetterScript.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
             }
-

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] component1TypeCollisionScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-component1TypeCollisionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionScript.kts>] class MyClass : R|kotlin/Any| {
@@ -486,4 +486,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] component1TypeCollisionScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
-

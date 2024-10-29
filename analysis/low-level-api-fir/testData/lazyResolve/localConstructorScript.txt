@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-localConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -363,4 +363,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
             }
 
         }
-

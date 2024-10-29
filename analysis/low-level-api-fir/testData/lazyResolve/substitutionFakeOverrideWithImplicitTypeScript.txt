@@ -4,7 +4,7 @@ TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTy
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideWithImplicitTypeScript.kts>] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -33,7 +33,7 @@ TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCall
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideWithImplicitTypeScript.kts>] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -225,4 +225,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideWithImplicitTypeScript.
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|T|
 
         }
-

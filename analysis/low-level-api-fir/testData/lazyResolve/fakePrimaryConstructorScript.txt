@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fakePrimaryConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-fakePrimaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
@@ -221,4 +221,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakePrimaryConstructorScript.kts
             }
 
         }
-

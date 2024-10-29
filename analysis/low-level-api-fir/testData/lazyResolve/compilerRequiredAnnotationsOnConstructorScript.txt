@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -374,4 +374,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnConstructorScript.
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
         }
-

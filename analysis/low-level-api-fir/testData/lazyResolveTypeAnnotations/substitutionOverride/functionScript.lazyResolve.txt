@@ -3,7 +3,7 @@ TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public abstract override [Resolv
 
 FILE: [ResolvedTo(IMPORTS)] functionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-functionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -41,7 +41,7 @@ TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public abstract override [Resolv
 
 FILE: [ResolvedTo(IMPORTS)] functionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-functionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -298,4 +298,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionScript.kts
             @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public abstract [ResolvedTo(BODY_RESOLVE)] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  T>>|.resolveMe([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  T>>|): R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  T>>|
 
         }
-

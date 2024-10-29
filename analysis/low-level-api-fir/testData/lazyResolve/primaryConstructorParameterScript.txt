@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] primaryConstructorParameterScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorParameterScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
@@ -222,4 +222,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorParameterScript.kts
             }
 
         }
-

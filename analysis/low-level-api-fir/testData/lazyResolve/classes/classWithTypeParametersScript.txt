@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] classWithTypeParametersScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> : R|kotlin/Any| {
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> : R|kotlin/Any| {
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> : R|kotlin/Any| {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> : R|kotlin/Any| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> : R|kotlin/Any| {
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-classWithTypeParametersScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> : R|kotlin/Any| {
@@ -192,4 +192,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classWithTypeParametersScript.kts
             }
 
         }
-

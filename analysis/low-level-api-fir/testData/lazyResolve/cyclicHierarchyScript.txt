@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : A, ResolveMe {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchyScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : A, ResolveMe {
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : A, ResolveMe {
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : A, ResolveMe {
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
@@ -346,4 +346,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicHierarchyScript.kts
 
         public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicHierarchyScript.kts>] interface NonLoopedInterface : R|C| {
         }
-

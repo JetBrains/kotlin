@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(RAW_FIR)] statement.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
@@ -503,4 +503,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/builder|.R|/Builder.version| = String()
         }
-

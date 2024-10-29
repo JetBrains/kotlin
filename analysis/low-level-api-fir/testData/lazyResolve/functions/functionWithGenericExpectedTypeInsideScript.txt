@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionWithGenericExpectedTypeInsideScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionWithGenericExpectedTypeInsideScript.kts>] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -362,4 +362,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithGenericExpectedTypeInsideScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>| = R|/bar|()
         }
-

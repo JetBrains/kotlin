@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeAndAnnotationsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -295,7 +295,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithImplicitTypeAndAnnotationsScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -608,4 +608,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndAnnotationsScript.kt
             @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
-

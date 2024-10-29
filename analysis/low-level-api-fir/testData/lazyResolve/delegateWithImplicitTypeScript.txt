@@ -3,7 +3,7 @@ TARGET: public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTyp
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -26,7 +26,7 @@ TARGET: public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCalla
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithImplicitTypeScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -188,4 +188,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeScript.kts
             }
 
         }
-

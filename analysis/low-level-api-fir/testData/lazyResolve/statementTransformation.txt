@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] statementTransformation.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statementTransformation.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] statementTransformation.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statementTransformation.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-statementTransformation.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-statementTransformation.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-statementTransformation.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
@@ -209,4 +209,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statementTransformation.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
-

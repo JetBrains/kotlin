@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] lazyPropertyScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lazyPropertyScript.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -510,4 +510,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyPropertyScript.kts
                 }
 
         }
-

@@ -33,7 +33,7 @@ Tower Data Context:
             FirScriptSymbol SCRIPT: <script-statement.kts>
                 <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-            
+
                 public final? class ScriptClass : R|kotlin/Any|
                 public final fun scriptFunction(): R|kotlin/Int|
                 public? final? fun unusedScriptFunction(p: String): <implicit>
@@ -49,7 +49,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
-        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {
