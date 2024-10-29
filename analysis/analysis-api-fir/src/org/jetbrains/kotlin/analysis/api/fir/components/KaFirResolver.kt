@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.utils.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
-import org.jetbrains.kotlin.analysis.api.platform.utils.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -407,7 +407,7 @@ internal class KaFirResolver(
         val binaryExpression = parentOfType<KtBinaryExpression>() ?: return null
         if (binaryExpression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
         val leftOfBinary = deparenthesize(binaryExpression.left)
-        if (leftOfBinary != lhs && !(leftOfBinary is KtDotQualifiedExpression && leftOfBinary.selectorExpression == lhs)) return null
+        if (leftOfBinary != lhs && !(leftOfBinary is KtQualifiedExpression && leftOfBinary.selectorExpression == lhs)) return null
         val firBinaryExpression = binaryExpression.getOrBuildFir(analysisSession.firResolveSession)
         if (firBinaryExpression is FirFunctionCall) {
             if (firBinaryExpression.origin == FirFunctionCallOrigin.Operator &&
@@ -434,13 +434,12 @@ internal class KaFirResolver(
     }
 
     /**
-     * When resolving selector expression of a [KtDotQualifiedExpression], we instead resolve the containing qualified expression. This way
-     * the corresponding FIR element is the `FirFunctionCall` or `FirPropertyAccessExpression`, etc.
+     * When resolving selector expression of a [KtQualifiedExpression], we instead resolve the containing qualified expression. This way
+     * the corresponding FIR element is the [FirFunctionCall] or [FirPropertyAccessExpression], etc.
      */
     private fun KtElement.getContainingDotQualifiedExpressionForSelectorExpression(): KtQualifiedExpression? {
         val parent = parent
-        if (parent is KtDotQualifiedExpression && parent.selectorExpression == this) return parent
-        if (parent is KtSafeQualifiedExpression && parent.selectorExpression == this) return parent
+        if (parent is KtQualifiedExpression && parent.selectorExpression == this) return parent
         return null
     }
 
@@ -800,7 +799,7 @@ internal class KaFirResolver(
         typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
         compoundOperationProvider: (KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>) -> KaCompoundOperation,
     ): KaCall? {
-        if (fir !is FirVariableAssignment || accessExpression !is KtDotQualifiedExpression && accessExpression !is KtNameReferenceExpression) {
+        if (fir !is FirVariableAssignment || accessExpression !is KtQualifiedExpression && accessExpression !is KtNameReferenceExpression) {
             return null
         }
 
