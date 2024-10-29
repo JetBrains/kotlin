@@ -235,3 +235,7 @@
           value = 1
         typeArgumentsMapping = {}
       isInBestCandidates = true
+
+<caret_10>:
+  KtNameReferenceExpression(280,289): 'something'
+    NO_CANDIDATES

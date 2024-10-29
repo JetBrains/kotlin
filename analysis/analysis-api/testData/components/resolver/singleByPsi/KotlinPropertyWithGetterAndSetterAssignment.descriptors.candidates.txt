@@ -234,3 +234,23 @@
           value = 1
         typeArgumentsMapping = {}
       isInBestCandidates = true
+
+<caret_10>:
+  KtNameReferenceExpression(280,289): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = a
+            isSafeNavigation = true
+            type = A
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            callableId = /A.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true

@@ -226,3 +226,7 @@
         simpleAccess = Write:
           value = 1
         typeArgumentsMapping = {}
+
+<caret_10>:
+  KtNameReferenceExpression(280,289): 'something'
+    null

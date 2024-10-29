@@ -15,4 +15,8 @@ fun A.foo(a: A) {
     (<caret_7>something)++
     (<caret_8>something) = 1
     (a.<caret_9>something) = 1
+
+    a?.<caret_10>something += 1
 }
+
+operator fun Int?.plus(i: Int): Int = 0

@@ -84,3 +84,14 @@
     
     SyntheticPropertyAccessorReference:
       Nothing (Unresolved reference)
+
+<caret_10>:
+  KtNameReferenceExpression(280,289): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
