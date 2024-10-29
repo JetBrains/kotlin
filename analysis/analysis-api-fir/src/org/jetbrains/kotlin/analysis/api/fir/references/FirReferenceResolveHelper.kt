@@ -37,10 +37,12 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -110,7 +112,11 @@ internal object FirReferenceResolveHelper {
                 listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
             is FirResolvedCallableReference, is FirResolvedNamedReference -> {
-                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
+                // For constructors used via typealiases, the current behavior is to resolve ONLY to the typealias.
+                // See KTIJ-28763 about changing this behavior.
+                val targetSymbol = (resolvedSymbol as? FirConstructorSymbol)?.typeAliasForConstructor ?: resolvedSymbol
+
+                listOfNotNull(targetSymbol.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
                 val boundSymbol = boundSymbol
@@ -295,6 +301,8 @@ internal object FirReferenceResolveHelper {
             // a special `TypeAliasConstructorDescriptor` for this case. For FIR there is
             // FirConstructor.originalConstructorIfTypeAlias but that doesn't seem to help here as it
             // is null for the constructors we get.
+            //
+            // See KTIJ-28763 about changing this behavior.
             val constructedType = fir.constructedTypeRef.coneType.abbreviatedTypeOrSelf
             val constructorReturnType = fir.calleeReference.toResolvedConstructorSymbol()?.resolvedReturnTypeRef?.coneType
             if (constructedType.classId != constructorReturnType?.classId) {

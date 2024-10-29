@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -129,9 +130,15 @@ internal class KaFe10Resolver(
         }
 
         val bindingContext = analysisContext.analyze(reference.element, AnalysisMode.PARTIAL)
-        return reference.getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
-            descriptor.toKtSymbol(analysisContext)
-        }
+        return reference.getTargetDescriptors(bindingContext)
+            .map { descriptor ->
+                // For constructors used via typealiases, the current behavior is to resolve ONLY to the typealias.
+                // See KTIJ-28763 about changing this behavior.
+                (descriptor as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor ?: descriptor
+            }
+            .mapNotNull { descriptor ->
+                descriptor.toKtSymbol(analysisContext)
+            }
     }
 
     override fun doResolveCall(psi: KtElement): KaCallInfo? {

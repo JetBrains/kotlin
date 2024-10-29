@@ -1,3 +1,0 @@
-KtNameReferenceExpression(56,58): 'CA'
-  KtSimpleNameReference:
-    (in test.C) constructor()

@@ -1,1 +1,2 @@
-constructor(p0: kotlin.collections.(Mutable)Collection<out E!>!)
+@kotlin.SinceKotlin(version = "1.1")
+typealias ArrayList<E> = java.util.ArrayList<E>
