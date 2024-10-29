@@ -80,6 +80,10 @@ sourceSets {
     }
 }
 
+base {
+    archivesName = "kotlin-compose-compiler-plugin"
+}
+
 publish {
     artifactId = "kotlin-compose-compiler-plugin"
     pom {

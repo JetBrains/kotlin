@@ -22,9 +22,6 @@ publish {
     }
 }
 
-base {
-    archivesName = "compose-compiler"
-}
 runtimeJarWithRelocation {
     relocate("com.intellij", "org.jetbrains.kotlin.com.intellij")
 }
