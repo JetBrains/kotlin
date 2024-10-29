@@ -14,6 +14,8 @@ import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Executes test cases on Firebase Test Lab for iOS arm64 devices.
@@ -114,11 +116,18 @@ class FirebaseCloudXCTestExecutor(
             ?: error("Unable to match URL against pattern, the input was: \"$firebaseStderrString\"")
 
         // Fetch results from the storage
-        hostExecutor.execute(
+        hostExecutor.executeWithRepeatOnTimeout(
             ExecuteRequest(
                 executableAbsolutePath = "gsutil",
                 workingDirectory = projectDir.toFile(),
                 args = mutableListOf("-m", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
+            ),
+            // This command sometimes just hangs on certain agents, see KT-72581.
+            // Let's try repeating.
+            timeouts = listOf(
+                10.seconds, // 3 seconds is always enough, so let's make it 10 just in case.
+                1.minutes, // Is 10 seconds not enough? Not typical, but I'll allow it.
+                2.minutes, // Ok, give it one last chance.
             )
         ).assertSuccess()
         val executionLog = projectDir.listDirectoryEntries("iphone*")
