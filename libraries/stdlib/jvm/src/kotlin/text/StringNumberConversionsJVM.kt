@@ -9,9 +9,6 @@
 
 package kotlin.text
 
-import kotlin.Char
-import kotlin.code
-
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
  *
