@@ -348,7 +348,7 @@ class FirCallCompletionResultsWriterTransformer(
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, context.file.source)
 
-        result.addNonFatalDiagnostics(calleeReference)
+        result.addNonFatalDiagnostics(subCandidate)
         return result
     }
 
@@ -395,7 +395,7 @@ class FirCallCompletionResultsWriterTransformer(
             return arrayOfCallTransformer.transformFunctionCall(result, session)
         }
 
-        result.addNonFatalDiagnostics(calleeReference)
+        result.addNonFatalDiagnostics(subCandidate)
         return result
     }
 
@@ -470,16 +470,6 @@ class FirCallCompletionResultsWriterTransformer(
         if (this !is FirSyntheticFunctionSymbol) return false
 
         return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
-    }
-
-    private fun FirQualifiedAccessExpression.addNonFatalDiagnostics(calleeReference: FirNamedReferenceWithCandidate) {
-        if (calleeReference.candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
-            addNonFatalDiagnostic(ConeResolutionResultOverridesOtherToPreserveCompatibility)
-        }
-
-        if (CallToDeprecatedOverrideOfHidden in calleeReference.candidate.diagnostics) {
-            addNonFatalDiagnostic(ConeCallToDeprecatedOverrideOfHidden)
-        }
     }
 
     private fun FirCall.transformArgumentList(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
@@ -722,7 +712,7 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(resolvedReference)
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
-            addNonFatalDiagnostics(calleeReference)
+            addNonFatalDiagnostics(subCandidate)
         }
     }
 
@@ -1274,8 +1264,23 @@ fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType
 internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(): Boolean =
     ResolutionResultOverridesOtherToPreserveCompatibility in diagnostics
 
-internal fun FirQualifiedAccessExpression.addNonFatalDiagnostic(diagnostic: ConeDiagnostic) {
-    replaceNonFatalDiagnostics(nonFatalDiagnostics + listOf(diagnostic))
+internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
+    val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
+
+    if (candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
+        newNonFatalDiagnostics += ConeResolutionResultOverridesOtherToPreserveCompatibility
+    }
+
+    for (diagnostic in candidate.diagnostics) {
+        when (diagnostic) {
+            is CallToDeprecatedOverrideOfHidden -> newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
+            else -> null
+        }
+    }
+
+    if (newNonFatalDiagnostics.isNotEmpty()) {
+        replaceNonFatalDiagnostics(nonFatalDiagnostics + newNonFatalDiagnostics)
+    }
 }
 
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
