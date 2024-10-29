@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
@@ -34,10 +35,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         val reportedNotAllowed = checkContractNotAllowed(declaration, contractDescription, context, reporter)
         if (reportedNotAllowed) return
         checkUnresolvedEffects(contractDescription, context, reporter)
+        checkDuplicateCallsInPlace(contractDescription, context, reporter)
         if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
             reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
         }
-        checkDuplicateCallsInPlace(contractDescription, context, reporter)
+        if (contractDescription.diagnostic == ConeContractMayNotHaveLabel) {
+            reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, ConeContractMayNotHaveLabel.reason, context)
+        }
     }
 
     private fun checkUnresolvedEffects(

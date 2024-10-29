@@ -91,6 +91,10 @@ object ConeContractShouldBeFirstStatement : ConeDiagnostic {
     override val reason: String get() = "Contract should be the first statement."
 }
 
+object ConeContractMayNotHaveLabel : ConeDiagnostic {
+    override val reason: String get() = "Contract call may not have a label."
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

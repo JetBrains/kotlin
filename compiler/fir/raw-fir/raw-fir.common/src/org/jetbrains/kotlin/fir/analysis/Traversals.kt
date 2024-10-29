@@ -31,3 +31,14 @@ inline fun <T> isCallTheFirstStatement(
     }
     return false
 }
+
+inline fun <T> firstFunctionCallInBlockHasLambdaArgumentWithLabel(
+    root: T,
+    getElementType: (T) -> IElementType,
+    getChildren: (T) -> List<T>,
+): Boolean {
+    val functionCall = getChildren(root).firstOrNull { getElementType(it) == KtNodeTypes.CALL_EXPRESSION } ?: return false
+    val lambda = getChildren(functionCall).firstOrNull { getElementType(it) == KtNodeTypes.LAMBDA_ARGUMENT } ?: return false
+    val expr = getChildren(lambda).singleOrNull() ?: return false
+    return getElementType(expr) == KtNodeTypes.LABELED_EXPRESSION
+}
