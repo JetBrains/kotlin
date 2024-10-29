@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithMultiFieldValueClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): T
 
     }
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=foo, underlyingType=pack/Foo<kotlin/Int>)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(foo, pack/Foo<kotlin/Int>)])] class MyValueClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyValueClass.foo] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass| {
             super<R|kotlin/Any|>()
         }

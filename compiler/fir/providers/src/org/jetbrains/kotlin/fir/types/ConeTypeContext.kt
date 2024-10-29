@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -24,7 +21,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
@@ -534,9 +534,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {
-        val firClass = toFirRegularClass() ?: return null
-        // NB: [FirRegularClass.valueClassRepresentation] is updated by [FirStatusResolveTransformer].
-        return firClass.valueClassRepresentation?.underlyingPropertyNamesToTypes
+        val firClass = toClassLikeSymbol()?.fullyExpandedClass(session)?.fir ?: return null
+        if (!firClass.isInline) return null
+        return firClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.name to it.resolvedReturnType as RigidTypeMarker }
     }
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean {

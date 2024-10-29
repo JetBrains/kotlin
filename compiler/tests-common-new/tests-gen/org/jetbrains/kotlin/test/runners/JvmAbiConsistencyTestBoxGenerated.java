@@ -58942,6 +58942,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("kt54897.kt")
+    public void testKt54897() {
+      runTest("compiler/testData/codegen/box/valueClasses/kt54897.kt");
+    }
+
+    @Test
     @TestMetadata("kt59079.kt")
     public void testKt59079() {
       runTest("compiler/testData/codegen/box/valueClasses/kt59079.kt");
