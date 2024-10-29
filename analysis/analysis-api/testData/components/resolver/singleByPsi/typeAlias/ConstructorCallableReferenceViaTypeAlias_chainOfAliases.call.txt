@@ -1,0 +1,2 @@
+KtNameReferenceExpression(149,161): 'TypeAliasTwo'
+  null

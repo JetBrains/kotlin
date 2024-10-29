@@ -1,0 +1,6 @@
+KtNameReferenceExpression(107,116): 'TypeAlias'
+  KtSimpleNameReference:
+    (in OriginalClass) constructor()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

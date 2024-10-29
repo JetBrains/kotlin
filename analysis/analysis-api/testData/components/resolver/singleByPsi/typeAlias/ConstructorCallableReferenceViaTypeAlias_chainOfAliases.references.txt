@@ -1,0 +1,3 @@
+KtNameReferenceExpression(149,161): 'TypeAliasTwo'
+  KtSimpleNameReference:
+    (in OriginalClass) constructor()

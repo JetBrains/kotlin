@@ -4464,6 +4464,30 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("ConstructorCallableReferenceViaTypeAlias.kt")
+    public void testConstructorCallableReferenceViaTypeAlias() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/ConstructorCallableReferenceViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("ConstructorCallableReferenceViaTypeAlias_chainOfAliases.kt")
+    public void testConstructorCallableReferenceViaTypeAlias_chainOfAliases() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/ConstructorCallableReferenceViaTypeAlias_chainOfAliases.kt");
+    }
+
+    @Test
+    @TestMetadata("ConstructorViaTypeAlias.kt")
+    public void testConstructorViaTypeAlias() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/ConstructorViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("ConstructorViaTypeAlias_chainOfAliases.kt")
+    public void testConstructorViaTypeAlias_chainOfAliases() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/ConstructorViaTypeAlias_chainOfAliases.kt");
+    }
+
+    @Test
     @TestMetadata("TypeAlias.kt")
     public void testTypeAlias() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAlias.kt");

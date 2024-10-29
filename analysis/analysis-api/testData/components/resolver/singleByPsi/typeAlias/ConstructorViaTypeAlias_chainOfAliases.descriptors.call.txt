@@ -1,0 +1,15 @@
+KtNameReferenceExpression(147,159): 'TypeAliasTwo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = TypeAliasTwo
+          symbol = <constructor>(): OriginalClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
