@@ -8,7 +8,7 @@ expect annotation class Ann()
 // MODULE: m2-jvm
 // FILE: some/my/Ann.java
 
-package some.my.Ann;
+package some.my;
 
 public @interface Ann {}
 
