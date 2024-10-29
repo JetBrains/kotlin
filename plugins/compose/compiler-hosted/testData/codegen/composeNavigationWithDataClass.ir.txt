@@ -191,7 +191,8 @@ MODULE_FRAGMENT
               CALL 'public final fun NavHost (navController: androidx.navigation.NavHostController, startDestination: kotlin.String, modifier: androidx.compose.ui.Modifier?, builder: @[ExtensionFunctionType] kotlin.Function1<androidx.navigation.NavGraphBuilder, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in androidx.navigation.compose' type=kotlin.Unit origin=null
                 navController: GET_VAR 'navController: androidx.navigation.NavHostController declared in home.ReplyNavHost' type=androidx.navigation.NavHostController origin=null
                 startDestination: GET_VAR 'inbox: kotlin.String declared in home.ReplyNavHost' type=kotlin.String origin=null
-                modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.ReplyNavHost' type=androidx.compose.ui.Modifier origin=null
+                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.ReplyNavHost' type=androidx.compose.ui.Modifier? origin=null
                 builder: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<androidx.navigation.NavGraphBuilder, kotlin.Unit> origin=null
                   BLOCK type=kotlin.Unit origin=null
                     CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
