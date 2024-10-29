@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -53,9 +52,9 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
             // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
             mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
 
-            val firFile = mainFile.getOrBuildFirOfType<FirFile>(firResolveSession)
+            val firDeclaration = mainFile.getOrBuildFirOfType<FirDeclaration>(firResolveSession)
 
-            val errorElements = collectErrorElements(firFile)
+            val errorElements = collectErrorElements(firDeclaration)
 
             if (errorElements.isNotEmpty()) {
                 val zeroElements = errorElements.filter { it.second == 0 }
@@ -82,10 +81,10 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
         }
     }
 
-    private fun collectErrorElements(firFile: FirFile): List<Pair<FirElement, Int>> {
-        val handler = firFile.llFirSession.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
+    private fun collectErrorElements(firDeclaration: FirDeclaration): List<Pair<FirElement, Int>> {
+        val handler = firDeclaration.llFirSession.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
         val errorElements = mutableListOf<Pair<FirElement, Int>>()
-        val nonDuplicatingElements = findNonDuplicatingFirElements(firFile).filter { element ->
+        val nonDuplicatingElements = findNonDuplicatingFirElements(firDeclaration).filter { element ->
             when {
                 element is FirTypeRef && element.source?.kind != KtRealSourceElementKind -> {
                     // AbstractDiagnosticCollectorVisitor do not visit such elements
@@ -97,7 +96,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
             }
         }
 
-        firFile.accept(object : FirVisitorVoid() {
+        firDeclaration.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element !in nonDuplicatingElements) return
                 val visitedTimes = handler.visitedTimes[element] ?: 0
