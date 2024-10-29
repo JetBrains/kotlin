@@ -10448,6 +10448,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt22694_1_3.kt");
       }
 
+      @TestMetadata("kt72464.kt")
+      public void testKt72464() {
+        runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt72464.kt");
+      }
+
       @TestMetadata("labeledWhile.kt")
       public void testLabeledWhile() {
         runTest("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
