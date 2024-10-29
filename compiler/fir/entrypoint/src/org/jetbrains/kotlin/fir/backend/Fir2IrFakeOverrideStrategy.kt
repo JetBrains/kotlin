@@ -463,9 +463,21 @@ class Fir2IrDelegatedMembersGenerationStrategy(
          * Type of delegate field may be a local class that captures type parameters of outer function, so we need to take only first
          *   arguments, which correspond to type parameters of actual class declaration
          */
+        val typeArgumentsForSubstitutor = typeOfDelegatedField.arguments
+            .take(typeParametersOfClassOfDelegateField.size)
+            .mapIndexed { index, argument ->
+                when (argument) {
+                    is IrStarProjection -> {
+                        val parameter = typeParametersOfClassOfDelegateField[index]
+                        parameter.owner.superTypes.first()
+                    }
+                    else -> argument
+                }
+            }
+
         val substitutor = IrTypeSubstitutor(
             typeParametersOfClassOfDelegateField,
-            typeOfDelegatedField.arguments.take(typeParametersOfClassOfDelegateField.size),
+            typeArgumentsForSubstitutor,
             allowEmptySubstitution = true
         )
         return DelegatedFunctionBodyInfo(

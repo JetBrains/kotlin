@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-72585
 
 interface A<out T : Any> {
