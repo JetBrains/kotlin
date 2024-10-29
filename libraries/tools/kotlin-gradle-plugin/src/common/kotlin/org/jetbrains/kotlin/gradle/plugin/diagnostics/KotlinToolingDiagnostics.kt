@@ -10,7 +10,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
-import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -1025,6 +1024,29 @@ object KotlinToolingDiagnostics {
                 However Kotlin Multiplatform can't process such dependency with enabled Project Isolation support.
                 Please consider upgrading Kotlin Version to the latest one in '$includedProjectPath' project.                               
             """.trimIndent()
+        )
+    }
+
+    object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(
+            componentName: String,
+            publicationName: String,
+        ): ToolingDiagnostic = build(
+            """
+                Android Publication '$publicationName' for variant '$componentName' was not configured properly:
+                
+                To avoid this warning, please create and configure Android publication variant with name '$componentName'.
+                Example:
+
+                    android {
+                        publishing {
+                            singleVariant("$componentName") {}
+                        }
+                    }
+                    
+                See https://kotl.in/oe70nr for more details
+            """.trimIndent(),
+            throwable = Throwable()
         )
     }
 
