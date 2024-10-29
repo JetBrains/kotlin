@@ -17,7 +17,3 @@ annotation class Anno(val klass: KClass<*>)
 @com  /* ??? */ . example /* ???? */ . // ???
   /* ??? */ XYZ ("param")
 class FullyQualifiedMissingAnnotation
-
-// EXPECTED_ERROR: (kotlin:12:1) cannot find symbol
-// EXPECTED_ERROR: (kotlin:6:1) cannot find symbol
-// EXPECTED_ERROR: (kotlin:9:1) cannot find symbol

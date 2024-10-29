@@ -1,26 +1,77 @@
-import kotlin.reflect.KClass;
-
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
- * public final class Test : kotlin/Any {
+ * public final annotation class RootAnnotation : kotlin/Annotation {
  *
  *   // signature: <init>()V
  *   public constructor()
- *
- *   // signature: a(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
- *   public final fun a(a: error/NonExistentClass, b: error/NonExistentClass): kotlin/Unit
  *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-public final class Test {
+public abstract @interface RootAnnotation {
+}
 
-    public Test() {
+////////////////////
+
+
+/**
+ * public final class RootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RootClass {
+
+    public RootClass() {
         super();
     }
+}
 
-    public final void a(@org.jetbrains.annotations.NotNull()
-    ABC a, @org.jetbrains.annotations.NotNull()
-    BCD b) {
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: f()LRootClass;
+ *   public final fun f(): RootClass?
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class BKt {
+
+    @org.jetbrains.annotations.Nullable()
+    public static final RootClass f() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@RootAnnotation()
+/**
+ * public final class test/C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
     }
 }

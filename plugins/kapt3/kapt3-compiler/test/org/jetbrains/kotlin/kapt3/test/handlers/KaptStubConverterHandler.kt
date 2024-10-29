@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt3.test.handlers
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
-import java.util.*
+import java.util.Locale
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     companion object {
@@ -31,10 +32,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
         val kaptContext = info.kaptContext
-        val expectedErrors = (
-                module.directives[EXPECTED_ERROR] +
-                        module.directives[if (module.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
-                ).sorted()
 
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 
@@ -45,6 +42,31 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
+
+        checkErrors(module, kaptContext, actual)
+
+        val isFir = module.frontendKind == FrontendKinds.FIR
+        val testDataFile = module.files.first().originalFile
+        val firFile = testDataFile.withExtension("fir.txt")
+        val txtFile = testDataFile.withExtension("txt")
+        val expectedFile = if (isFir && firFile.exists()) firFile else txtFile
+
+        assertions.assertEqualsToFile(expectedFile, actual)
+
+        if (isFir && firFile.exists() && txtFile.exists() && txtFile.readText() == firFile.readText()) {
+            assertions.fail { ".fir.txt and .txt golden files are identical. Remove $firFile." }
+        }
+    }
+
+    private fun KaptStubConverterHandler.checkErrors(
+        module: TestModule,
+        kaptContext: KaptContextForStubGeneration,
+        actualStubs: String,
+    ) {
+        val expectedErrors = (
+                module.directives[EXPECTED_ERROR] +
+                        module.directives[if (module.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
+                ).sorted()
 
         val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
@@ -66,33 +88,20 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
         log.flush()
 
-        if (actualErrors.isNotEmpty()) {
-            val lineSeparator = System.getProperty("line.separator")
-            val actualErrorsStr = actualErrors.joinToString(lineSeparator) { it.toDirectiveView() }
+        val actualErrorsStr = actualErrors.joinToString(System.lineSeparator()) { it.toDirectiveView() }
 
-            if (expectedErrors.isEmpty()) {
-                assertions.fail { "There were errors during analysis:\n$actualErrorsStr\n\nStubs:\n\n$actual" }
-            } else {
-                val expectedErrorsStr = expectedErrors.joinToString(lineSeparator) { it.toDirectiveView() }
-                if (expectedErrorsStr != actualErrorsStr) {
-                    assertions.assertEquals(expectedErrorsStr, actualErrorsStr) {
-                        System.err.println(testServices.messageCollectorProvider.getErrorStream(module).toString("UTF8"))
-                        "Expected error matching failed"
-                    }
+        if (expectedErrors.isNotEmpty() && actualErrorsStr.isEmpty()) {
+            assertions.fail { "Kapt finished successfully but errors were expected." }
+        } else if (expectedErrors.isEmpty() && actualErrorsStr.isNotEmpty()) {
+            assertions.fail { "There were errors during kapt:\n$actualErrorsStr\n\nStubs:\n\n$actualStubs" }
+        } else {
+            val expectedErrorsStr = expectedErrors.joinToString(System.lineSeparator()) { it.toDirectiveView() }
+            if (expectedErrorsStr != actualErrorsStr) {
+                assertions.assertEquals(expectedErrorsStr, actualErrorsStr) {
+                    System.err.println(testServices.messageCollectorProvider.getErrorStream(module).toString("UTF8"))
+                    "Expected error matching failed"
                 }
             }
-        }
-
-        val isFir = module.frontendKind == FrontendKinds.FIR
-        val testDataFile = module.files.first().originalFile
-        val firFile = testDataFile.withExtension("fir.txt")
-        val txtFile = testDataFile.withExtension("txt")
-        val expectedFile = if (isFir && firFile.exists()) firFile else txtFile
-
-        assertions.assertEqualsToFile(expectedFile, actual)
-
-        if (isFir && firFile.exists() && txtFile.exists() && txtFile.readText() == firFile.readText()) {
-            assertions.fail { ".fir.txt and .txt golden files are identical. Remove $firFile." }
         }
     }
 

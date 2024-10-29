@@ -1,14 +1,24 @@
-// CORRECT_ERROR_TYPES
-// JAVAC_OPTION -Xmaxerrs=1
+// STRICT
+// JAVAC_OPTIONS: -Xmaxerrs=1
 
-@file:Suppress("UNRESOLVED_REFERENCE")
-import kotlin.reflect.KClass
-
-class Test {
-    fun a(a: ABC, b: BCD) {}
-}
-
-// There are two errors (unresolved identifier ABC, BCD) actually.
+// There are two errors actually.
 // But we specified the max error count, so the error output is limited.
 
-// EXPECTED_ERROR: (kotlin:7:5) cannot find symbol
+// EXPECTED_ERROR: (other:-1:-1) test.C: Can't reference type 'RootAnnotation' from default package in Java stub.
+
+// FILE: a.kt
+
+class RootClass
+
+annotation class RootAnnotation
+
+// FILE: b.kt
+package test
+
+import RootClass
+import RootAnnotation
+
+fun f(): RootClass? = null
+
+@RootAnnotation
+class C

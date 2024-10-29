@@ -1,7 +1,6 @@
 // STRICT
 
-// EXPECTED_ERROR: (other:-1:-1) test.M1: Can't reference type 'RootClass' from default package in Java stub.
-// EXPECTED_ERROR_K2: (other:-1:-1) test.M1: Can't reference type 'AnotherRootClass' from default package in Java stub.
+// Errors should be reported in this test, but they aren't because of KT-72659.
 
 // FILE: a.kt
 

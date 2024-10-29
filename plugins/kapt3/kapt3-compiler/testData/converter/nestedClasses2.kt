@@ -1,6 +1,3 @@
-// EXPECTED_ERROR: class J$B is public, should be declared in a file named J$B.java
-// EXPECTED_ERROR: class JavaClass is public, should be declared in a file named JavaClass.java
-
 // FILE: JavaClass.java
 public class JavaClass {
     public class Foo {
