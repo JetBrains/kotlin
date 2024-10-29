@@ -9,6 +9,7 @@
 
 package kotlin.text
 
+import kotlin.Char
 import kotlin.code
 
 /**
@@ -280,7 +281,7 @@ private fun isValidFloat(s: String): Boolean {
     // Implementation notes:
     //     - The pattern "myChar.code or 0x20 == 'x'.code" is used to perform a case-insensitive
     //       comparison of a character. Adding the 0x20 bit turns an upper case ASCII letter into
-    //       a lower case one. This is encapsulated in the toAsciiLowerCase() extension
+    //       a lower case one. This is encapsulated in the asciiLetterToLowerCaseCode() extension
 
     var start = 0
     var endInclusive = s.length - 1
@@ -308,7 +309,7 @@ private fun isValidFloat(s: String): Boolean {
         if (start > endInclusive) return true
 
         // Test for [xX] to see if we truly have a hex string
-        if (s[start].toAsciiLowerCase() == 'x'.code) {
+        if (s[start].asciiLetterToLowerCaseCode() == 'x'.code) {
             start++
 
             start = s.advanceAndValidateMantissa(start, endInclusive, true) { it.isAsciiDigit() || it.isHexLetter() }
@@ -339,7 +340,7 @@ private fun isValidFloat(s: String): Boolean {
     // Look for an exponent:
     //     - Mandatory for hexadecimal strings (marked by a p or P)
     //     - Optional for "regular" strings (marked by an e or E)
-    var l = s[start++].toAsciiLowerCase()
+    var l = s[start++].asciiLetterToLowerCaseCode()
     if (l != if (isHex) 'p'.code else 'e'.code) {
         // We're here if the exponent character is not valid, but if the string is a "regular"
         // string, it could be a valid f/F/d/D suffix, so check for that (it must be the last
@@ -364,7 +365,7 @@ private fun isValidFloat(s: String): Boolean {
 
     // We may have an optional fFdD suffix
     if (start == endInclusive) {
-        l = s[start].toAsciiLowerCase()
+        l = s[start].asciiLetterToLowerCaseCode()
         return l == 'f'.code || l == 'd'.code
     }
 
@@ -396,13 +397,32 @@ private inline fun guessNamedFloatConstant(start: Int, endInclusive: Int): Strin
 }
 
 @kotlin.internal.InlineOnly
-private inline fun Char.isAsciiDigit() = (this - '0').toChar().code < 10
+private inline fun Char.isAsciiDigit(): Boolean {
+    // "and 0xFFFF" wraps negative values
+    return (this - '0') and 0xFFFF < 10
+}
 
 @kotlin.internal.InlineOnly
-private inline fun Char.isHexLetter() = (toAsciiLowerCase() - 'a'.code).toChar().code < 6
+private inline fun Char.isHexLetter(): Boolean {
+    // "and 0xFFFF" wraps negative values
+    return (asciiLetterToLowerCaseCode() - 'a'.code) and 0xFFFF < 6
+}
 
+/**
+ * Speculatively transforms an upper-case ASCII character into its lower-case counterpart
+ * and returns resulting code unit.
+ *
+ * The transformation is based on the fact that a difference between codes of
+ * upper- and lower-case representations of the same ASCII letter is exactly 32.
+ * So an upper-case letter could be transformed to a lower-case by adding 32.
+ *
+ * If [this] character lies outside the 'A'..'Z' range, a resulting code unit will not make much sense.
+ * This function is not a general purpose solution for a case transformation,
+ * and it is intended for use in conjunction with comparison,
+ * like `'R'.asciiLetterToLowerCaseCode() == 'r'`.
+ */
 @kotlin.internal.InlineOnly
-private inline fun Char.toAsciiLowerCase() = this.code or 0x20
+private inline fun Char.asciiLetterToLowerCaseCode(): Int = this.code or 0x20
 
 @kotlin.internal.InlineOnly
 private inline fun String.advanceWhile(start: Int, endInclusive: Int, predicate: (Char) -> Boolean): Int {
