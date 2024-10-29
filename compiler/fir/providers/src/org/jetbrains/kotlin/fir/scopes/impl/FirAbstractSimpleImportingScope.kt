@@ -25,6 +25,12 @@ abstract class FirAbstractSimpleImportingScope(
 
     override fun isExcluded(import: FirResolvedImport, name: Name): Boolean = false
 
+    override fun mayHaveClassName(import: FirResolvedImport, name: Name): Boolean {
+        // Simple imported names are always assumed to exist. This is generally true unless we have red code, which we don't want to
+        // optimize for.
+        return true
+    }
+
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
         processClassifiersFromImportsByName(name = null, imports) { symbol ->

@@ -48,6 +48,9 @@ abstract class FirAbstractImportingScope(
 
     protected abstract fun isExcluded(import: FirResolvedImport, name: Name): Boolean
 
+    // TODO (marco): Document.
+    protected abstract fun mayHaveClassName(import: FirResolvedImport, name: Name): Boolean
+
     protected fun processClassifiersFromImportsByName(
         name: Name?,
         imports: List<FirResolvedImport>,
@@ -56,6 +59,8 @@ abstract class FirAbstractImportingScope(
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
             if (isExcluded(import, importedName)) continue
+            if (!mayHaveClassName(import, importedName)) continue
+
             val classId = import.resolvedParentClassId?.createNestedClassId(importedName)
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue

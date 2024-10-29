@@ -33,6 +33,22 @@ abstract class FirAbstractStarImportingScope(
         return false
     }
 
+    override fun mayHaveClassName(import: FirResolvedImport, name: Name): Boolean {
+        // TODO (marco): Describe classifier names check on client-side.
+        // TODO (marco): Accesses for nested classes are still speculative! But we currently don't have a mechanism to deflect them.
+        // It only makes sense to check the classifier name set if `name` represents a top-level class, as we can be sure that the
+        // `resolvedParentClassId` is precise (unless we have red code). For example, in `import org.jetbrains.kotlin.fir.FirSession.*`,
+        // we know for sure that `org.jetbrains.kotlin.fir.FirSession` exists (unless, again, we have red code, which we don't need to
+        // optimize for).
+        if (import.resolvedParentClassId == null) {
+            // TODO (marco): Instead of doing this, we should use the normal speculative symbol provider access. Copying this kind of code
+            //               to every use site is error-prone.
+            val classifierNames = provider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(import.packageFqName) ?: return true
+            return name in classifierNames
+        }
+        return true
+    }
+
     private val absentClassifierNames = mutableSetOf<Name>()
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
