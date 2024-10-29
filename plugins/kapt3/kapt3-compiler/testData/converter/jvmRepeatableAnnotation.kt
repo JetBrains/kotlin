@@ -1,10 +1,15 @@
-// EXPECTED_ERROR: This class does not have a constructor (1,2)
+// FULL_JDK
 
-//import kotlin.jvm.JvmRepeatable
+@Repeatable
+annotation class C(val c: String)
 
-//@JvmRepeatable
-annotation class Condition(val condition: String)
+@JvmRepeatable(DContainer::class)
+annotation class D(val d: String)
 
-@Condition(condition = "value1")
-@Condition(condition = "value2")
+annotation class DContainer(val value: Array<D>)
+
+@C(c = "c1")
+@D(d = "d1")
+@C(c = "c2")
+@D(d = "d2")
 class A
