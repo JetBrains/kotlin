@@ -107,10 +107,10 @@ internal object FirReferenceResolveHelper {
     ): Collection<KaSymbol> {
         return when (this) {
             is FirBackingFieldReference -> {
-                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
+                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
             is FirResolvedCallableReference -> {
-                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
+                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
             is FirResolvedNamedReference -> {
                 listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
@@ -120,14 +120,14 @@ internal object FirReferenceResolveHelper {
                 when {
                     !isInLabelReference && boundSymbol is FirCallableSymbol<*> ->
                         symbolBuilder.callableBuilder.buildExtensionReceiverSymbol(boundSymbol)
-                    else -> boundSymbol?.fir?.buildSymbol(symbolBuilder)
+                    else -> boundSymbol?.buildSymbol(symbolBuilder)
                 }.let { listOfNotNull(it) }
             }
             is FirSuperReference -> {
                 listOfNotNull((superTypeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
             }
             is FirErrorNamedReference -> {
-                getCandidateSymbols().map { it.fir.buildSymbol(symbolBuilder) }
+                getCandidateSymbols().map { it.buildSymbol(symbolBuilder) }
             }
             else -> emptyList()
         }
