@@ -284,9 +284,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedStderr = """script.kts:1:1: error: unresolved reference 'println'.
 println(42)
 ^
-script.kts:1:1: error: unresolved reference 'kotlin.script'.
-println(42)
-^
 """
         )
     }
