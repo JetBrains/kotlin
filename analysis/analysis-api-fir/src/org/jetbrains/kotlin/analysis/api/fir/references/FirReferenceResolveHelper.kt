@@ -109,10 +109,7 @@ internal object FirReferenceResolveHelper {
             is FirBackingFieldReference -> {
                 listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
-            is FirResolvedCallableReference -> {
-                listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
-            }
-            is FirResolvedNamedReference -> {
+            is FirResolvedCallableReference, is FirResolvedNamedReference -> {
                 listOfNotNull(resolvedSymbol.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
