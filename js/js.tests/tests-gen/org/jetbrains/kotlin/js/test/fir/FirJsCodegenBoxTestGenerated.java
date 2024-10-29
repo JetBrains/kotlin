@@ -4974,6 +4974,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("delegationToStarProjectedType.kt")
+    public void testDelegationToStarProjectedType() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToStarProjectedType.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToTypeParameter.kt")
     public void testDelegationToTypeParameter() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
