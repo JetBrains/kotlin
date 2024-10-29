@@ -253,6 +253,11 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
         override val reason: String
             get() = "type parameter '${symbol.name}' is not reified"
     }
+
+    object ErasedIsCheck : ConeContractDescriptionError() {
+        override val reason: String
+            get() = "instance check for erased type"
+    }
 }
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {
