@@ -32,7 +32,7 @@ class IrLazyValueParameter(
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-    override val isAssignable: Boolean,
+    override var isAssignable: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), IrLazyDeclarationBase {
