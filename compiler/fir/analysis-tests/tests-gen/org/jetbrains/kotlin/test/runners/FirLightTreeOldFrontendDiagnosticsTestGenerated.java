@@ -24904,6 +24904,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("twoInheritedContains.kt")
+        public void testTwoInheritedContains() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/twoInheritedContains.kt");
+        }
+
+        @Test
         @TestMetadata("weirdCharBuffers.kt")
         public void testWeirdCharBuffers() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/weirdCharBuffers.kt");
