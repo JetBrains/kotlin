@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
+import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.libname
 import org.jetbrains.kotlin.tools.obj
 import org.jetbrains.kotlin.tools.solib
@@ -12,13 +13,66 @@ plugins {
     kotlin("jvm")
     id("native-interop-plugin")
     id("native")
-    id("native-dependencies")
 }
 
-val stubsName = "clangstubs"
-val library = solib(stubsName)
-val objFile = obj(stubsName)
-val cFile = "$stubsName.c"
+val defFileName = "clang.def"
+val usePrebuiltSources = true
+val implementationDependencies = listOf(
+        ":kotlin-native:libclangext",
+)
+val commonCompilerArgs = emptyList<String>()
+val cCompilerArgs = listOf("-std=c99")
+val cppCompilerArgs = listOf("-std=c++11")
+val selfHeaders = emptyList<String>()
+val systemIncludeDirs = listOf("${nativeDependencies.llvmPath}/include")
+val linkerArgs = buildList {
+    if (PlatformInfo.isMac()) {
+        addAll(listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names"))
+        // Let some symbols be undefined to avoid linking unnecessary parts.
+        listOf(
+                "_futimens",
+                "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
+                "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
+                "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
+                "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
+                "__ZN4llvm7remarks14RemarkStreamer13matchesFilterENS_9StringRefE",
+                "__ZN4llvm7remarks14RemarkStreamer9setFilterENS_9StringRefE",
+                "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS_8OptionalINS_9StringRefEEE",
+                "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseE",
+                "__ZN4llvm3omp28getOpenMPContextTraitSetNameENS0_8TraitSetE",
+                "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+                "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+                "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyE",
+                "__ZN4llvm3omp33getOpenMPContextTraitSelectorNameENS0_13TraitSelectorE",
+                "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
+                "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
+                "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
+                "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
+                "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
+        ).mapTo(this) { "-Wl,-U,$it" }
+        addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
+    }
+}
+val additionalLinkedStaticLibraries = buildList {
+    val libclang = if (HostManager.hostIsMingw) {
+        "lib/libclang.lib"
+    } else {
+        "lib/${System.mapLibraryName("clang")}"
+    }
+    add("${nativeDependencies.llvmPath}/$libclang")
+    if (PlatformInfo.isMac()) {
+        listOf(
+                "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
+                "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",
+                "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
+                "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
+                "clangToolingCore",
+                "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
+                "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
+                "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
+        ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
+    }
+}
 
 val cppImplementation by configurations.creating {
     isCanBeConsumed = false
@@ -39,92 +93,59 @@ val cppLink by configurations.creating {
 }
 
 dependencies {
-    cppImplementation(project(":kotlin-native:libclangext"))
-    cppLink(project(":kotlin-native:libclangext"))
+    implementationDependencies.forEach {
+        cppImplementation(project(it))
+        cppLink(project(it))
+    }
 }
 
-val libclang = if (HostManager.hostIsMingw) {
-    "lib/libclang.lib"
-} else {
-    "lib/${System.mapLibraryName("clang")}"
+val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
+
+kotlinNativeInterop {
+    create("main") {
+        defFile(defFileName)
+        val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
+        compilerOpts(cflags)
+        genTask.configure {
+            includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
+        }
+    }
 }
 
-val commonCompilerFlags = buildList {
-    add("-I${nativeDependencies.llvmPath}/include")
-    addAll(cppImplementation.files.map { "-I${it.absolutePath}" })
-    addAll(nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni)
-}
-val cflags = listOf("-std=c99") + commonCompilerFlags
-val cxxflags = listOf("-std=c++11") + commonCompilerFlags
+val prebuiltRoot = layout.projectDirectory.dir("gen/main")
+val generatedRoot = kotlinNativeInterop["main"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/main").get() }
 
-val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang")
-cppLink.files.forEach {
-    ldflags.add("-L${it.parentFile.absolutePath}")
-    ldflags.add("-l${libname(it)}")
-}
+val bindingsRoot = if (usePrebuiltSources) provider { prebuiltRoot } else generatedRoot
 
-if (PlatformInfo.isMac()) {
-    // Let some symbols be undefined to avoid linking unnecessary parts.
-    val unnecessarySymbols = setOf(
-            "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
-            "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
-            "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
-            "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
-            "__ZN4llvm7remarks14RemarkStreamer13matchesFilterENS_9StringRefE",
-            "__ZN4llvm7remarks14RemarkStreamer9setFilterENS_9StringRefE",
-            "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS_8OptionalINS_9StringRefEEE",
-            "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseE",
-            "__ZN4llvm3omp28getOpenMPContextTraitSetNameENS0_8TraitSetE",
-            "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
-            "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
-            "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyE",
-            "__ZN4llvm3omp33getOpenMPContextTraitSelectorNameENS0_13TraitSelectorE",
-            "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
-            "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
-            "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
-            "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
-            "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
-    )
-    ldflags.addAll(
-            listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names", "-Wl,-U,_futimens") +
-                    unnecessarySymbols.map { "-Wl,-U,$it" }
-    )
+val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
+val library = solib(stubsName)
 
-    val llvmLibs = listOf(
-            "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
-            "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",
-            "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
-            "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
-            "clangToolingCore",
-            "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
-            "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
-            "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
-    ).map { "${nativeDependencies.llvmPath}/lib/lib${it}.a" }
-
-    ldflags.addAll(llvmLibs)
-    ldflags.addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
-}
+val linkedStaticLibraries = project.files(cppLink.incoming.artifactView {
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
+    }
+}.files, *additionalLinkedStaticLibraries.toTypedArray())
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-            flags(*cflags.toTypedArray(),
-                    "-c", "-o", ruleOut(), ruleInFirst())
+            val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" } + nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
+            flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
         (".cpp" to ".$obj") {
-            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+            tool(*hostPlatform.clang.clangCXX("").toTypedArray())
+            val cxxflags = cppCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
-
     }
     sourceSet {
         "main-c" {
-            dir("prebuilt/nativeInteropStubs/c")
+            file(bindingsRoot.get().file("c/$stubsName.c").asFile.toRelativeString(layout.projectDirectory.asFile))
         }
         "main-cpp" {
-            dir("src/nativeInteropStubs/cpp")
+            dir("src/main/cpp")
         }
     }
     val objSet = arrayOf(sourceSets["main-c"]!!.transform(".c" to ".$obj"),
@@ -132,30 +153,25 @@ native {
 
     target(library, *objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
-        flags(
-                "-shared",
-                "-o", ruleOut(), *ruleInAll(),
-                *ldflags.toTypedArray())
-    }
-}
-
-kotlinNativeInterop {
-    this.create("clang") {
-        defFile("clang.def")
-        compilerOpts(cflags)
-        skipNatives()
-        genTask.configure {
-            cppImplementation.files.forEach { inputs.dir(it) }
+        val ldflags = buildList {
+            addAll(linkedStaticLibraries.map { it.absolutePath })
+            cppLink.incoming.artifactView {
+                attributes {
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
+                }
+            }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
+            addAll(linkerArgs)
         }
+        flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
     }
 }
 
-native.sourceSets["main-c"]!!.implicitTasks()
 tasks.named(library).configure {
-    inputs.files(cppLink)
+    inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
 }
-tasks.named(objFile).configure {
-    cppImplementation.files.forEach { inputs.dir(it) }
+tasks.named(obj(stubsName)).configure {
+    inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency
+    includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
 }
 
 dependencies {
@@ -165,7 +181,7 @@ dependencies {
 
 sourceSets {
     "main" {
-        kotlin.srcDir("prebuilt/nativeInteropStubs/kotlin")
+        kotlin.srcDir(bindingsRoot.map { it.dir("kotlin") })
     }
 }
 
@@ -199,22 +215,13 @@ val cppRuntimeElements by configurations.creating {
 }
 
 artifacts {
+    selfHeaders.forEach { add(cppApiElements.name, layout.projectDirectory.dir(it)) }
     add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
     add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }
 
 val updatePrebuilt by tasks.registering(Sync::class) {
-    dependsOn("genClangInteropStubs")
-
-    into(layout.projectDirectory.dir("prebuilt/nativeInteropStubs"))
-
-    from(layout.buildDirectory.dir("nativeInteropStubs/clang/kotlin")) {
-        include("clang/clang.kt")
-        into("kotlin")
-    }
-
-    from(layout.buildDirectory.dir("interopTemp")) {
-        include(cFile)
-        into("c")
-    }
+    enabled = usePrebuiltSources
+    into(prebuiltRoot)
+    from(generatedRoot)
 }

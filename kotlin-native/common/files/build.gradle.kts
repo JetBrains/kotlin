@@ -3,71 +3,125 @@ import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
+import org.jetbrains.kotlin.tools.libname
 import org.jetbrains.kotlin.tools.obj
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
-    id("compile-to-bitcode")
     kotlin("jvm")
     id("native-interop-plugin")
     id("native")
 }
 
-val stubsName = "orgjetbrainskotlinbackendkonanfilesstubs"
-val library = solib(stubsName)
-val objFile = obj(stubsName)
-val cFile = "$stubsName.c"
+val defFileName = "files.konan.backend.kotlin.jetbrains.org.def"
+val usePrebuiltSources = false
+val implementationDependencies = emptyList<String>()
+val commonCompilerArgs = listOf("-Wall", "-O2")
+val cCompilerArgs = listOf("-std=c99")
+val cppCompilerArgs = listOf("-std=c++11")
+val selfHeaders = listOf("src/main/headers")
+val systemIncludeDirs = emptyList<String>()
+val linkerArgs = emptyList<String>()
+val additionalLinkedStaticLibraries = emptyList<String>()
 
-bitcode {
-    hostTarget {
-        module("files") {
-            srcRoot.set(layout.projectDirectory.dir("src"))
-            headersDirs.from(srcRoot.dir("headers"))
-            sourceSets {
-                main {}
-            }
+val cppImplementation by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLink by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+dependencies {
+    implementationDependencies.forEach {
+        cppImplementation(project(it))
+        cppLink(project(it))
+    }
+}
+
+val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
+
+kotlinNativeInterop {
+    create("main") {
+        defFile(defFileName)
+        val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
+        compilerOpts(cflags)
+        genTask.configure {
+            includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
         }
     }
 }
 
-val cflags = listOf("-I${layout.projectDirectory.dir("src/headers").asFile}", *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni)
+val prebuiltRoot = layout.projectDirectory.dir("gen/main")
+val generatedRoot = kotlinNativeInterop["main"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/main").get() }
 
-val ldflags = listOf(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get().outputFile.get().asFile.absolutePath)
+val bindingsRoot = if (usePrebuiltSources) provider { prebuiltRoot } else generatedRoot
+
+val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
+val library = solib(stubsName)
+
+val linkedStaticLibraries = project.files(cppLink.incoming.artifactView {
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
+    }
+}.files, *additionalLinkedStaticLibraries.toTypedArray())
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
+            val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" } + nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
             flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
+        }
+        (".cpp" to ".$obj") {
+            tool(*hostPlatform.clang.clangCXX("").toTypedArray())
+            val cxxflags = cppCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
+            flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
     sourceSet {
-        "main" {
-            file(layout.buildDirectory.file("interopTemp/$cFile").get().asFile.toRelativeString(layout.projectDirectory.asFile))
+        "main-c" {
+            file(bindingsRoot.get().file("c/$stubsName.c").asFile.toRelativeString(layout.projectDirectory.asFile))
+        }
+        "main-cpp" {
+            dir("src/main/cpp")
         }
     }
+    val objSet = arrayOf(sourceSets["main-c"]!!.transform(".c" to ".$obj"),
+            sourceSets["main-cpp"]!!.transform(".cpp" to ".$obj"))
 
-    target(library, sourceSets["main"]!!.transform(".c" to ".$obj")) {
+    target(library, *objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+        val ldflags = buildList {
+            addAll(linkedStaticLibraries.map { it.absolutePath })
+            cppLink.incoming.artifactView {
+                attributes {
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
+                }
+            }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
+            addAll(linkerArgs)
+        }
         flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
     }
 }
 
-kotlinNativeInterop {
-    create("files") {
-        pkg("org.jetbrains.kotlin.backend.konan.files")
-        headers(layout.projectDirectory.files("src/headers/Files.h"))
-        skipNatives()
-    }
-}
-
-native.sourceSets["main"]!!.implicitTasks()
 tasks.named(library).configure {
-    inputs.file(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.map { it.outputFile })
+    inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
 }
-tasks.named(objFile).configure {
-    inputs.file(kotlinNativeInterop["files"].genTask.map { layout.buildDirectory.file("interopTemp/$cFile") })
+tasks.named(obj(stubsName)).configure {
+    inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency
+    includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
 }
 
 dependencies {
@@ -77,7 +131,7 @@ dependencies {
 
 sourceSets {
     "main" {
-        kotlin.srcDir(kotlinNativeInterop["files"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/files/kotlin") })
+        kotlin.srcDir(bindingsRoot.map { it.dir("kotlin") })
     }
 }
 
@@ -111,7 +165,13 @@ val cppRuntimeElements by configurations.creating {
 }
 
 artifacts {
-    add(cppApiElements.name, layout.projectDirectory.dir("src/headers"))
+    selfHeaders.forEach { add(cppApiElements.name, layout.projectDirectory.dir(it)) }
     add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
     add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+}
+
+val updatePrebuilt by tasks.registering(Sync::class) {
+    enabled = usePrebuiltSources
+    into(prebuiltRoot)
+    from(generatedRoot)
 }

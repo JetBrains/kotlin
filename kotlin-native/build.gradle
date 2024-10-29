@@ -118,8 +118,6 @@ dependencies {
     distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
-    compilationDatabase project(":kotlin-native:common:env")
-    compilationDatabase project(":kotlin-native:common:files")
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")

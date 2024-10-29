@@ -128,12 +128,6 @@ class NamedNativeInteropConfig(
         }
     }
 
-    private var skipNatives = false
-
-    fun skipNatives() {
-        skipNatives = true
-    }
-
     init {
         genTask.configure {
             notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
@@ -153,9 +147,6 @@ class NamedNativeInteropConfig(
             environment(mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1"))
 
             outputs.dir(generatedSrcDir)
-            if (!skipNatives) {
-                outputs.dir(nativeLibsDir)
-            }
             outputs.dir(temporaryFilesDir)
 
             // defer as much as possible
@@ -169,9 +160,6 @@ class NamedNativeInteropConfig(
                 linkerOpts.addAll(linkFiles.files.map { it.absolutePath })
 
                 args("-generated", generatedSrcDir)
-                if (!skipNatives) {
-                    args("-natives", nativeLibsDir)
-                }
                 args("-Xtemporary-files-dir", temporaryFilesDir)
                 args("-flavor", "jvm")
 
@@ -223,7 +211,7 @@ class NamedNativeInteropConfig(
         get() = project.layout.buildDirectory.dir("nativeInteropStubs/$name/kotlin").get().asFile
 
     private val temporaryFilesDir: File
-        get() = project.layout.buildDirectory.dir("interopTemp").get().asFile
+        get() = project.layout.buildDirectory.dir("nativeInteropStubs/$name/c").get().asFile
 
     val llvmDir: String
         get() = project.extensions.getByType<NativeDependenciesExtension>().llvmPath
