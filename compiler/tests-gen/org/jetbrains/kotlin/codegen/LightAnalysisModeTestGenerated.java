@@ -5672,6 +5672,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/classDelegation/delegationToOutTypeParameter.kt");
     }
 
+    @TestMetadata("delegationToStarProjectedType.kt")
+    public void testDelegationToStarProjectedType() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToStarProjectedType.kt");
+    }
+
     @TestMetadata("delegationToTypeParameter.kt")
     public void testDelegationToTypeParameter() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
