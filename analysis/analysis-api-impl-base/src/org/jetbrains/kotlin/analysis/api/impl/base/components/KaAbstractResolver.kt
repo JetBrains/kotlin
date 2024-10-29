@@ -87,7 +87,7 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         is KtBinaryExpression -> ktElement.operationToken !in nonCallBinaryOperator
         is KtCallElement -> true
         is KtConstructorCalleeExpression -> true
-        is KtDotQualifiedExpression -> true
+        is KtQualifiedExpression -> true
         is KtNameReferenceExpression -> true
         is KtOperationExpression -> true
         is KtArrayAccessExpression -> true

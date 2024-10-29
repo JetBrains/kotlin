@@ -56,7 +56,38 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   NO_CANDIDATES
 
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        this -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = other
+          isSafeNavigation = true
+          type = kotlin.Any
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(79,84): 'other'
   KaApplicableCallCandidateInfo:

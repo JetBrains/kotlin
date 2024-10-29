@@ -590,7 +590,38 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
     isInBestCandidates = true
 
 KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        4.bar(5).bar(6) -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = 1.foo(2).bar(3) as? Int
+          isSafeNavigation = true
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Int
+          symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtParenthesizedExpression(100,125): '(1.foo(2).bar(3) as? Int)'
   NO_CANDIDATES
