@@ -41125,6 +41125,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("kt57527.kt")
+      public void testKt57527() {
+        runTest("compiler/testData/diagnostics/tests/valueClasses/kt57527.kt");
+      }
+
+      @Test
       @TestMetadata("lateinitValueClasses.kt")
       public void testLateinitValueClasses() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/lateinitValueClasses.kt");
