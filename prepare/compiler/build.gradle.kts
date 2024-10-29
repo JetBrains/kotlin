@@ -129,7 +129,7 @@ val distCompilerPluginProjects = listOf(
     ":kotlin-lombok-compiler-plugin",
     ":kotlin-assignment-compiler-plugin",
     ":kotlin-scripting-compiler",
-    ":plugins:compose-compiler-plugin:compiler",
+    ":plugins:compose-compiler-plugin:compiler-hosted",
 )
 val distCompilerPluginProjectsCompat = listOf(
     ":kotlinx-serialization-compiler-plugin",
