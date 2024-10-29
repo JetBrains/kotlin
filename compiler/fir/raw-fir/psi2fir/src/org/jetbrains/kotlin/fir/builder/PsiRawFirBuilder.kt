@@ -2300,14 +2300,7 @@ open class PsiRawFirBuilder(
                     for (annotationEntry in annotationEntries) {
                         propertyAnnotations += annotationEntry.convert<FirAnnotationCall>()
                     }
-
-                    val behavesLikeNonLocal = run {
-                        val codeFragmentSymbol = context.containerSymbol as? FirCodeFragmentSymbol ?: return@run false
-                        val codeFragmentPsi = codeFragmentSymbol.fir.psi as? KtCodeFragment ?: return@run false
-                        codeFragmentPsi.context == null
-                    }
-
-                    if (this@toFirProperty.isLocal && !behavesLikeNonLocal) {
+                    if (this@toFirProperty.isLocal) {
                         isLocal = true
                         symbol = propertySymbol
 
