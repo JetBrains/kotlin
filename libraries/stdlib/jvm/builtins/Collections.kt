@@ -3,6 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+@file:kotlin.internal.SuppressBytecodeGeneration
+
 package kotlin.collections
 
 import kotlin.internal.PlatformDependent
@@ -195,7 +198,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return `true` if the list was changed as the result of the operation.
      */
-    override fun addAll(elements: Collection<E>): Boolean
+    actual override fun addAll(elements: Collection<E>): Boolean
 
     /**
      * Inserts all of the elements of the specified collection [elements] into this list at the specified [index].
@@ -326,7 +329,7 @@ public actual interface Map<K, out V> {
      */
     @SinceKotlin("1.1")
     @PlatformDependent
-    public actual fun getOrDefault(key: K, defaultValue: @UnsafeVariance V): V {
+    public fun getOrDefault(key: K, defaultValue: @UnsafeVariance V): V {
         // See default implementation in JDK sources
         throw NotImplementedError()
     }
@@ -395,7 +398,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      */
     @SinceKotlin("1.1")
     @PlatformDependent
-    public actual fun remove(key: K, value: V): Boolean {
+    public fun remove(key: K, value: V): Boolean {
         // See default implementation in JDK sources
         return true
     }

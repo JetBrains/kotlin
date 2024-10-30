@@ -5,7 +5,6 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -13,7 +12,6 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-@ActualizeByJvmBuiltinProvider
 public expect open class Throwable {
     public open val message: String?
     public open val cause: Throwable?

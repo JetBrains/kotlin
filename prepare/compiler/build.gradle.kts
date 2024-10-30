@@ -29,6 +29,8 @@ val fatJarContentsStripVersions by configurations.creating
 
 val compilerVersion by configurations.creating
 
+val builtinsMetadata by configurations.creating
+
 // JPS build assumes fat jar is built from embedded configuration,
 // but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -217,9 +219,6 @@ dependencies {
 
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        fatJarContents(kotlinBuiltins())
-    }
     fatJarContents(commonDependency("javax.inject"))
     fatJarContents(commonDependency("org.jline", "jline"))
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
@@ -236,7 +235,7 @@ dependencies {
     fatJarContents(libs.intellij.asm) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }
     //Gson is needed for kotlin-build-statistics. Build statistics could be enabled for JPS and Gradle builds. Gson will come from inteliij or KGP.
-    proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false}
+    proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
 
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
@@ -245,6 +244,8 @@ dependencies {
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
+
+    builtinsMetadata(kotlinStdlib())
 }
 
 val librariesKotlinTestFiles = files(
@@ -295,7 +296,17 @@ val packCompiler by task<Jar> {
     dependsOn(fatJarContentsStripVersions)
     from {
         fatJarContentsStripVersions.files.map {
-            zipTree(it).matching { exclude("META-INF/versions/**") }
+            zipTree(it).matching {
+                includeEmptyDirs = false
+                exclude("META-INF/versions/**")
+            }
+        }
+    }
+
+    dependsOn(builtinsMetadata)
+    from {
+        builtinsMetadata.files.map {
+            zipTree(it).matching { include("**/*.kotlin_builtins") }
         }
     }
 }

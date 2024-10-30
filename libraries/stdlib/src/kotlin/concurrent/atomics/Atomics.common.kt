@@ -10,8 +10,6 @@
 
 package kotlin.concurrent.atomics
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
-
 /**
  * An [Int] value that may be updated atomically.
  *
@@ -27,7 +25,6 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicInt public constructor(value: Int) {
     /**
      * Atomically loads the value from this [AtomicInt].
@@ -163,7 +160,6 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
  * For JS and Wasm [AtomicLong] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
  */
 @SinceKotlin("2.1")
-@ActualizeByJvmBuiltinProvider
 @ExperimentalAtomicApi
 public expect class AtomicLong public constructor(value: Long) {
     /**
@@ -301,7 +297,6 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicBoolean public constructor(value: Boolean) {
     /**
      * Atomically loads the value from this [AtomicBoolean].
@@ -368,7 +363,6 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-@ActualizeByJvmBuiltinProvider
 public expect class AtomicReference<T> public constructor(value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
