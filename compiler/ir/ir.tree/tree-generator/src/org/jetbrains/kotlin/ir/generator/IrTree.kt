@@ -62,6 +62,7 @@ object IrTree : AbstractTreeBuilder() {
             nullable = nullable,
         ) {
             optInAnnotation = obsoleteDescriptorBasedApiAnnotation
+            deepCopyExcludeFromApply = true
         }
 
     private fun declarationWithLateBinding(symbol: Symbol, initializer: Element.() -> Unit) = element(Declaration) {
@@ -115,7 +116,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(mutableAnnotationContainer)
 
         +descriptor("DeclarationDescriptor")
-        +field("origin", type(Packages.declarations, "IrDeclarationOrigin"))
+        +field("origin", type(Packages.declarations, "IrDeclarationOrigin")) {
+            deepCopyExcludeFromApply = true
+        }
         +factory
 
         generationCallback = {
@@ -155,13 +158,15 @@ object IrTree : AbstractTreeBuilder() {
         +declaredSymbol(IrSymbolTree.rootElement)
     }
     val metadataSourceOwner: Element by element(Declaration) {
-        val metadataField = +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true) {
-            kDoc = """
-            The arbitrary metadata associated with this IR node.
-            
-            @see ${render()}
-            """.trimIndent()
-        }
+        val metadataField =
+            +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true) {
+                kDoc = """
+                The arbitrary metadata associated with this IR node.
+                
+                @see ${render()}
+                """.trimIndent()
+                deepCopyExcludeFromApply = true
+            }
         kDoc = """
         An [${rootElement.render()}] capable of holding something which backends can use to write
         as the metadata for the declaration.
@@ -321,9 +326,13 @@ object IrTree : AbstractTreeBuilder() {
               idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer, isChild = false)
+        +field("attributeOwnerId", attributeContainer, isChild = false) {
+            deepCopyExcludeFromApply = true
+        }
         // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false)
+        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
+            deepCopyExcludeFromApply = true
+        }
     }
     val mutableAnnotationContainer: Element by element(Declaration) {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
@@ -512,17 +521,23 @@ object IrTree : AbstractTreeBuilder() {
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
         // TODO: consider removing from here and handle appropriately in the lowering
         +field("thisReceiver", valueParameter, nullable = true) // K1
-        +field("baseClass", irTypeType, nullable = true) // K1
+        +field("baseClass", irTypeType, nullable = true) {
+            deepCopyExcludeFromApply = true
+        } // K1
         +listField("explicitCallParameters", variable, mutability = Var)
         +listField("implicitReceiversParameters", valueParameter, mutability = Var)
-        +referencedSymbolList("providedProperties", propertySymbol)
+        +referencedSymbolList("providedProperties", propertySymbol) {
+            deepCopyExcludeFromApply = true
+        }
         +listField("providedPropertiesParameters", valueParameter, mutability = Var)
         +referencedSymbol("resultProperty", propertySymbol, nullable = true)
         +field("earlierScriptsParameter", valueParameter, nullable = true)
         +referencedSymbolList("importedScripts", scriptSymbol, nullable = true)
         +referencedSymbolList("earlierScripts", scriptSymbol, nullable = true)
         +referencedSymbol("targetClass", classSymbol, nullable = true)
-        +field("constructor", constructor, nullable = true, isChild = false) // K1
+        +field("constructor", constructor, nullable = true, isChild = false) {
+            deepCopyExcludeFromApply = true
+        } // K1
     }
     val simpleFunction: Element by element(Declaration) {
         parent(function)
@@ -598,13 +613,15 @@ object IrTree : AbstractTreeBuilder() {
     val file: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         parent(packageFragment)
         parent(mutableAnnotationContainer)
         parent(metadataSourceOwner)
 
         +declaredSymbol(fileSymbol)
-        +field("module", moduleFragment, isChild = false)
+        +field("module", moduleFragment, isChild = false) {
+            deepCopyExcludeFromApply = true
+        }
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }
 
@@ -657,15 +674,29 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true)
-        +field("extensionReceiver", expression, nullable = true)
+        +field("dispatchReceiver", expression, nullable = true) {
+            deepCopyExcludeFromApply = true
+        }
+        +field("extensionReceiver", expression, nullable = true) {
+            deepCopyExcludeFromApply = true
+        }
         +referencedSymbol(s, mutable = false)
         +field("origin", statementOriginType, nullable = true)
-        +listField("valueArguments", expression.copy(nullable = true), mutability = Array) {
+        +listField(
+            name = "valueArguments",
+            baseType = expression.copy(nullable = true),
+            mutability = Array,
+        ) {
             visibility = Visibility.PROTECTED
+            deepCopyExcludeFromConstructor = true
         }
-        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
+        +listField(
+            name = "typeArguments",
+            baseType = irTypeType.copy(nullable = true),
+            mutability = Array,
+        ) {
             visibility = Visibility.PROTECTED
+            deepCopyExcludeFromConstructor = true
         }
     }
     val functionAccessExpression: Element by sealedElement(Expression) {
@@ -681,7 +712,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +referencedSymbol(constructorSymbol)
-        +field("source", type<SourceElement>())
+        +field("source", type<SourceElement>()) {
+            deepCopyExcludeFromConstructor = true
+        }
         +field("constructorTypeArgumentsCount", int)
     }
     val getSingletonValue: Element by element(Expression) {

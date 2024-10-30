@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.SimpleTypeRemapper
 import org.jetbrains.kotlin.ir.util.withinScope
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * Wraps top level inline function to access through them from inline functions (legacy lowering).
@@ -118,14 +119,14 @@ class LegacySyntheticAccessorLowering(private val context: CommonBackendContext)
             }
 
             private fun IrSimpleFunction.transformFunctionChildren(declaration: IrSimpleFunction) {
-                copyTypeParametersFrom(declaration)
+                typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
                 typeRemapper.withinScope(this) {
                     assert(declaration.dispatchReceiverParameter == null) { "Top level functions do not have dispatch receiver" }
                     extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()?.also {
                         it.parent = this
                     }
                     returnType = typeRemapper.remapType(declaration.returnType)
-                    valueParameters = declaration.valueParameters.transform()
+                    valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
                     valueParameters.forEach { it.parent = this }
                     typeParameters.forEach { it.parent = this }
                 }

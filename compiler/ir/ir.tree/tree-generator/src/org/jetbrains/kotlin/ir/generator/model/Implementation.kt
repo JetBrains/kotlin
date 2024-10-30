@@ -16,6 +16,7 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
 
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 
+    var hasConstructorIndicator = false
     var bindOwnedSymbol = true
     override var doPrint = true
 

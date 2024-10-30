@@ -100,6 +100,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(variable) {
             implementation.isConstructorPublic = false
+            implementation.hasConstructorIndicator = true
             defaultNull("initializer")
             default("factory") {
                 value = "error(\"Create IrVariableImpl directly\")"
@@ -444,6 +445,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             for (implementation in element.implementations) {
                 if (element.category == Element.Category.Expression) {
                     implementation.isConstructorPublic = false
+                    implementation.hasConstructorIndicator = true
                 }
             }
         }

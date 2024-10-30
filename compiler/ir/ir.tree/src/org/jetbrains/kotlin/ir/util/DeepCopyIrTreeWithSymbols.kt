@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
-    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper
+    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper,
 ): T {
     return (deepCopyImpl(createTypeRemapper) as T).patchDeclarationParents(initialParent)
 }
@@ -26,4 +30,35 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
     acceptVoid(symbolRemapper)
     val typeRemapper = createTypeRemapper(symbolRemapper)
     return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null)
+}
+
+abstract class IrDeepCopyBase : IrElementTransformerVoid() {
+    protected abstract fun IrType.remapType(): IrType
+
+    protected open fun <D : IrAttributeContainer> D.processAttributes(other: IrAttributeContainer?): D =
+        copyAttributes(other)
+
+    protected inline fun <reified T : IrElement> T.transform() =
+        transform(this@IrDeepCopyBase, null) as T
+
+    protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
+        annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
+    }
+
+    protected fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
+        assert(typeArgumentsCount == other.typeArgumentsCount) {
+            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+        }
+        for (i in 0 until typeArgumentsCount) {
+            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
+        }
+    }
+
+    protected fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
+        dispatchReceiver = original.dispatchReceiver?.transform()
+        extensionReceiver = original.extensionReceiver?.transform()
+        for (i in 0 until original.valueArgumentsCount) {
+            putValueArgument(i, original.getValueArgument(i)?.transform())
+        }
+    }
 }

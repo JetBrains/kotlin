@@ -25,10 +25,22 @@ sealed class Field(
 
     override var isFinal: Boolean = false
 
+    /**
+     * Indicates whether the field is always excluded from constructor arguments when generating `DeepCopyIrTreeWithSymbols`.
+     */
+    var deepCopyExcludeFromConstructor: Boolean = false
+
+    /**
+     * Indicates whether the field is always excluded from apply operations when generating `DeepCopyIrTreeWithSymbols`.
+     */
+    var deepCopyExcludeFromApply: Boolean = false
+
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.customSetter = customSetter
         copy.symbolFieldRole = symbolFieldRole
+        copy.deepCopyExcludeFromConstructor = deepCopyExcludeFromConstructor
+        copy.deepCopyExcludeFromApply = deepCopyExcludeFromApply
     }
 }
 
@@ -56,10 +68,15 @@ class ListField(
     name: String,
     override var baseType: TypeRef,
     private val isNullable: Boolean,
-    override val listType: ClassRef<PositionTypeParameterRef>,
-    mutable: Boolean,
+    val mutability: Mutability,
     override val isChild: Boolean,
-) : Field(name, mutable), AbstractListField {
+) : Field(name, mutability == Mutability.Var), AbstractListField {
+
+    override val listType: ClassRef<PositionTypeParameterRef> = when (mutability) {
+        Mutability.MutableList -> StandardTypes.mutableList
+        Mutability.Array -> StandardTypes.array
+        Mutability.Var -> StandardTypes.list
+    }
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
@@ -74,7 +91,8 @@ class ListField(
         baseType = baseType.substitute(map)
     }
 
-    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
+    override fun internalCopy() =
+        ListField(name, baseType, isNullable, mutability, isChild)
 
     enum class Mutability {
         Var,

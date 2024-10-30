@@ -54,23 +54,13 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         mutability: ListField.Mutability,
         isChild: Boolean = true,
         initializer: ListField.() -> Unit = {}
-    ): ListField {
-        val listType = when (mutability) {
-            ListField.Mutability.MutableList -> StandardTypes.mutableList
-            ListField.Mutability.Array -> StandardTypes.array
-            else -> StandardTypes.list
-        }
-        return ListField(
-            name = name,
-            baseType = baseType,
-            listType = listType,
-            isNullable = nullable,
-            mutable = mutability == ListField.Mutability.Var,
-            isChild = isChild,
-        ).apply(initializer).apply {
-            initializer()
-        }
-    }
+    ): ListField = ListField(
+        name = name,
+        baseType = baseType,
+        isNullable = nullable,
+        mutability = mutability,
+        isChild = isChild,
+    ).apply(initializer)
 
     /**
      * Constructs a field that represents the element's own symbol, i.e., for which
@@ -90,7 +80,12 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         nullable: Boolean = false,
         mutable: Boolean = true,
         initializer: SimpleField.() -> Unit = {},
-    ) = field(name, type, nullable, mutable) {
+    ) = field(
+        name = name,
+        type = type,
+        nullable = nullable,
+        mutable = mutable,
+    ) {
         symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
         initializer()
     }
@@ -103,7 +98,7 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         nullable: Boolean = false,
         mutable: Boolean = true,
         initializer: SimpleField.() -> Unit = {},
-    ) = referencedSymbol("symbol", type, nullable, mutable, initializer)
+    ) = referencedSymbol("symbol", type, nullable, mutable, initializer = initializer)
 
     /**
      * Constructs a field that represents a list of symbols that the element references but not owns.
@@ -114,7 +109,12 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         nullable: Boolean = false,
         mutability: ListField.Mutability = ListField.Mutability.Var,
         initializer: ListField.() -> Unit = {},
-    ) = listField(name, baseType, nullable, mutability) {
+    ) = listField(
+        name = name,
+        baseType = baseType,
+        nullable = nullable,
+        mutability = mutability,
+    ) {
         symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
         initializer()
     }
