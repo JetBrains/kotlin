@@ -58,19 +58,28 @@ class LlvmCallable(val functionType: LLVMTypeRef, val returnsObjectType: Boolean
         DIFunctionAddSubprogram(llvmValue, subprogram)
     }
 
-    fun createBridgeFunctionDebugInfo(builder: DIBuilderRef, scope: DIScopeOpaqueRef, file: DIFileRef, lineNo: Int, type: DISubroutineTypeRef, isLocal: Int, isDefinition: Int, scopeLine: Int) =
-        DICreateBridgeFunction(
-                builder = builder,
-                scope = scope,
-                function = llvmValue,
-                file = file,
-                lineNo = lineNo,
-                type = type,
-                isLocal = isLocal,
-                isDefinition = isDefinition,
-                scopeLine = scopeLine,
-                isTransparentStepping = 0,
-        )!!
+    fun createBridgeFunctionDebugInfo(
+            builder: DIBuilderRef,
+            scope: DIScopeOpaqueRef,
+            file: DIFileRef,
+            lineNo: Int,
+            type: DISubroutineTypeRef,
+            isLocal: Int,
+            isDefinition: Int,
+            scopeLine: Int,
+            isTransparentStepping: Boolean,
+    ) = DICreateBridgeFunction(
+            builder = builder,
+            scope = scope,
+            function = llvmValue,
+            file = file,
+            lineNo = lineNo,
+            type = type,
+            isLocal = isLocal,
+            isDefinition = isDefinition,
+            scopeLine = scopeLine,
+            isTransparentStepping = if (isTransparentStepping) 1 else 0,
+    )!!
 
     fun param(i: Int) : LLVMValueRef {
         require(i in 0 until numParams)

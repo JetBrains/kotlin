@@ -319,7 +319,8 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
-            scopeLine = 0
+            scopeLine = 0,
+            isTransparentStepping = generationState.config.enableDebugTransparentStepping,
     ).reinterpret()
 
     return LocationInfo(scope, 1, 0)

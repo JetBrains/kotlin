@@ -36,11 +36,23 @@ import java.io.File
 class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
     @Test
-    fun stepInFromObjCToKotlin___WithDisabledStopHook___StopsAtABridgingRoutine() {
+    fun stepInFromObjCToKotlin___WithoutTransparentStepping___StopsAtABridgingRoutine() {
+        // `settings set target.enable-trampoline-support false` works wrong in that case:
+        // instead of stepping into the bridge, lldb just skips the call entirely.
+        // In other words, the effect of this setting is different from not generating
+        // the transparent stepping attribute at all.
+        //
+        // This addition might be the cause:
+        // https://github.com/llvm/llvm-project/blob/2af4818d8de2fd1ae2d8c274470b8c0cab2e26ca/lldb/source/Target/ThreadPlanStepThrough.cpp#L36-L39
+        //
+        // In any case, it is not too bad: even if `settings set target.enable-trampoline-support false`
+        // doesn't disable the transparent stepping attribute in some cases, there is still an option
+        // to do so with the compiler flag:
+        val additionalKotlinCompilerArgs = listOf("-Xbinary=enableDebugTransparentStepping=false")
+
         testSteppingFromObjcToKotlin(
             """
             > b ${CLANG_FILE_NAME}:4
-            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
             > run
             > thread step-in
             [..] stop reason = step in
@@ -49,18 +61,18 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToKotlin___WithDisabledStopHook___StopsAtABridgingRoutine.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToKotlin___WithoutTransparentStepping___StopsAtABridgingRoutine.name}",
+            additionalKotlinCompilerArgs = additionalKotlinCompilerArgs
         )
     }
 
     @Test
-    fun stepInFromObjCToKotlin___WithStopHook___StepsThroughToKotlinCode() {
+    fun stepInFromObjCToKotlin___WithTransparentStepping___StepsThroughToKotlinCode() {
         testSteppingFromObjcToKotlin(
             """
             > b ${CLANG_FILE_NAME}:3
             > run
             > thread step-in
-            [..] stop reason = Python thread plan implemented by class konan_lldb.KonanStepIn.
             [..]`kfun:#bar(){} at lib.kt:1:1
             -> 1   	fun bar() {
                     ^
@@ -70,16 +82,16 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToKotlin___WithStopHook___StepsThroughToKotlinCode.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToKotlin___WithTransparentStepping___StepsThroughToKotlinCode.name}"
         )
     }
 
     @Test
-    fun stepOutFromKotlinToObjC___WithDisabledStopHook___StopsAtABridgingRoutine() {
+    fun stepOutFromKotlinToObjC___WithoutTransparentStepping___StopsAtABridgingRoutine() {
         testSteppingFromObjcToKotlin(
             """
             > b ${KOTLIN_FILE_NAME}:2
-            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
+            > settings set target.enable-trampoline-support false
             > run
             > thread step-out
             [..] stop reason = step out
@@ -88,18 +100,17 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOutFromKotlinToObjC___WithDisabledStopHook___StopsAtABridgingRoutine.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOutFromKotlinToObjC___WithoutTransparentStepping___StopsAtABridgingRoutine.name}"
         )
     }
 
     @Test
-    fun stepOutFromKotlinToObjC___WithStopHook___StepsOutToObjCCode() {
+    fun stepOutFromKotlinToObjC___WithTransparentStepping___StepsOutToObjCCode() {
         testSteppingFromObjcToKotlin(
             """
             > b ${KOTLIN_FILE_NAME}:2
             > run
             > thread step-out
-            [..] stop reason = Python thread plan implemented by class konan_lldb.KonanStepOut.
             [..]`main at main.m:5:5
                2   	void landing() {}
                3   	int main() {
@@ -111,16 +122,16 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOutFromKotlinToObjC___WithStopHook___StepsOutToObjCCode.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOutFromKotlinToObjC___WithTransparentStepping___StepsOutToObjCCode.name}"
         )
     }
 
     @Test
-    fun stepOverFromKotlinToObjC___WithDisabledStopHook___StopsAtABridgingRoutine() {
+    fun stepOverFromKotlinToObjC___WithoutTransparentStepping___StopsAtABridgingRoutine() {
         testSteppingFromObjcToKotlin(
             """
             > b ${KOTLIN_FILE_NAME}:3
-            > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
+            > settings set target.enable-trampoline-support false
             > run
             > thread step-over
             [..] stop reason = step over
@@ -129,18 +140,17 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOverFromKotlinToObjC___WithDisabledStopHook___StopsAtABridgingRoutine.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOverFromKotlinToObjC___WithoutTransparentStepping___StopsAtABridgingRoutine.name}"
         )
     }
 
     @Test
-    fun stepOverFromKotlinToObjC___WithStopHook___StepsOverToObjCCode() {
+    fun stepOverFromKotlinToObjC___WithTransparentStepping___StepsOverToObjCCode() {
         testSteppingFromObjcToKotlin(
             """
             > b ${KOTLIN_FILE_NAME}:3
             > run
             > thread step-over
-            [..] stop reason = Python thread plan implemented by class konan_lldb.KonanStepOver.
             [..]`main at main.m:5:5
                2   	void landing() {}
                3   	int main() {
@@ -152,7 +162,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             """.trimIndent(),
             CLANG_FILE_NAME,
             KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOverFromKotlinToObjC___WithStopHook___StepsOverToObjCCode.name}"
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepOverFromKotlinToObjC___WithTransparentStepping___StepsOverToObjCCode.name}"
         )
     }
 
@@ -161,6 +171,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         clangFileName: String,
         kotlinFileName: String,
         testName: String,
+        additionalKotlinCompilerArgs: List<String> = emptyList(),
     ) {
         // FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
         if (targets.testTarget != KonanTarget.MACOS_ARM64) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
@@ -189,6 +200,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             clangFileName = clangFileName,
             lldbSpec = lldbSpec,
             testName = testName,
+            additionalKotlinCompilerArgs = additionalKotlinCompilerArgs,
         )
     }
 
@@ -200,6 +212,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         clangFileName: String,
         lldbSpec: String,
         testName: String,
+        additionalKotlinCompilerArgs: List<String>,
     ) {
         // 1. Create sources
         val sourceDirectory = buildDir.resolve("sources")
@@ -210,7 +223,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
         // 2. Build Kotlin framework
         val freeCompilerArgs = TestCompilerArgs(
-            testRunSettings.get<PipelineType>().compilerFlags + listOf(
+            testRunSettings.get<PipelineType>().compilerFlags + additionalKotlinCompilerArgs + listOf(
                 "-Xstatic-framework",
                 "-Xbinary=bundleId=stub",
                 "-module-name", kotlinFrameworkName
