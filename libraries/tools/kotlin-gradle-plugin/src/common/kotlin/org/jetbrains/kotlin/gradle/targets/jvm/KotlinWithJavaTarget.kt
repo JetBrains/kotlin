@@ -9,16 +9,39 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
+
+@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
+    project: Project,
+    targetName: String = "",
+): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> = newInstance(
+    KotlinWithJavaTarget::class.java,
+    project,
+    KotlinPlatformType.jvm,
+    targetName,
+    {
+        object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
+            override val options: KotlinJvmCompilerOptions =
+                project.objects.KotlinJvmCompilerOptionsDefault(project)
+        }
+    },
+    { compilerOptions: KotlinJvmCompilerOptions ->
+        object : KotlinJvmOptions {
+            override val options: KotlinJvmCompilerOptions get() = compilerOptions
+        }
+    }
+) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
 
 @Suppress("DEPRECATION")
 abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(

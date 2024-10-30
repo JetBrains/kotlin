@@ -13,6 +13,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTargetForJvm
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
@@ -67,11 +69,17 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     }
 
     override fun createKotlinJvmExtension(): KotlinJvmExtension {
-        return myProject.objects.newInstance(KotlinJvmProjectExtension::class.java, myProject)
+        return myProject.objects.newInstance(KotlinJvmProjectExtension::class.java, myProject).also { extension ->
+            val target = myProject.objects.KotlinWithJavaTargetForJvm(myProject)
+            extension.targetFuture.complete(target)
+        }
     }
 
     override fun createKotlinAndroidExtension(): KotlinAndroidExtension {
-        return myProject.objects.newInstance(KotlinAndroidProjectExtension::class.java, myProject)
+        return myProject.objects.newInstance(KotlinAndroidProjectExtension::class.java, myProject).also { extension ->
+            val target = myProject.objects.KotlinAndroidTarget(myProject)
+            extension.targetFuture.complete(target)
+        }
     }
 
     override val kaptExtension: KaptExtension by lazy {

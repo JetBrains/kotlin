@@ -35,7 +35,7 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
          */
         project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
 
-        return project.objects.newInstance(KotlinAndroidTarget::class.java, name, project, true).apply {
+        return project.objects.KotlinAndroidTarget(project, name, true).apply {
             preset = this@KotlinAndroidTargetPreset
             project.dynamicallyApplyWhenAndroidPluginIsApplied({ this })
         }

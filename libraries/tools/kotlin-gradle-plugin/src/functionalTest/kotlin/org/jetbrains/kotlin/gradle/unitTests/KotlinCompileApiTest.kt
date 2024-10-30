@@ -201,6 +201,8 @@ class KotlinCompileApiTest {
         jvmExtension.compilerOptions.javaParameters.set(true)
         jvmExtension.explicitApi = ExplicitApiMode.Strict
         jvmExtension.sourceSets.register("main")
+        jvmExtension.target.withSourcesJar(false)
+        jvmExtension.target.compilations.register("main")
 
         project.evaluate()
 
@@ -235,6 +237,8 @@ class KotlinCompileApiTest {
         androidExtension.compilerOptions.javaParameters.set(true)
         androidExtension.explicitApi = ExplicitApiMode.Strict
         androidExtension.sourceSets.register("main")
+        androidExtension.target.withSourcesJar(false)
+        androidExtension.target.compilations.register("main")
 
         project.evaluate()
 
