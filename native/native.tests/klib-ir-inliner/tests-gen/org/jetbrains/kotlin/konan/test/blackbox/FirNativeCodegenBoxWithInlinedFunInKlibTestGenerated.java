@@ -20908,6 +20908,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("defaultArgsLowering.kt")
+      public void testDefaultArgsLowering() {
+        runTest("compiler/testData/codegen/box/inline/defaultArgsLowering.kt");
+      }
+
+      @Test
       @TestMetadata("defaultArgsMultipleModules.kt")
       public void testDefaultArgsMultipleModules() {
         runTest("compiler/testData/codegen/box/inline/defaultArgsMultipleModules.kt");

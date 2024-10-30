@@ -21528,6 +21528,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inline/defaultArgs.kt");
     }
 
+    @TestMetadata("defaultArgsLowering.kt")
+    public void testDefaultArgsLowering() {
+      runTest("compiler/testData/codegen/box/inline/defaultArgsLowering.kt");
+    }
+
     @TestMetadata("defaultArgsMultipleModules.kt")
     public void testDefaultArgsMultipleModules() {
       runTest("compiler/testData/codegen/box/inline/defaultArgsMultipleModules.kt");
