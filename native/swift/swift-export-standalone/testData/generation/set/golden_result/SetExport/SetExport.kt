@@ -1,3 +1,5 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
@@ -91,3 +93,4 @@ public fun __root___testSetString__TypesOfArguments__Swift_Set_Swift_String___(s
     val _result = testSetString(__s)
     return _result.objcPtr()
 }
+

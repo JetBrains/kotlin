@@ -309,6 +309,7 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
 private object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
     override fun kotlinFqName(type: SirType): String {
+        if (type is SirUnsupportedType) return "Nothing"
         require(type is SirNominalType)
 
         return when(val declaration = type.typeDeclaration) {

@@ -1,3 +1,5 @@
+@file:kotlin.Suppress("DEPRECATION_ERROR")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
@@ -49,3 +51,4 @@ public fun __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_S
     val _result = testMapStringInt(__m)
     return _result.objcPtr()
 }
+
