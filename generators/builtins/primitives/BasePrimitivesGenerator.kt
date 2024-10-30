@@ -229,12 +229,19 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
     open fun PrimitiveType.shouldGenerate(): Boolean = true
 
+    protected open val fileAnnotations: List<String> = emptyList()
+
     override fun generate() {
         writer.print(generateFile().build())
     }
 
     private fun generateFile(): FileBuilder {
-        return file(this::class) { generateClasses() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) {
+            for (fileAnnotation in fileAnnotations) {
+                annotate(fileAnnotation)
+            }
+            generateClasses()
+        }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClasses() {
