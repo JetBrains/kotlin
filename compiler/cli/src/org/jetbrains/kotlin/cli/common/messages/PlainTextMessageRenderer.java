@@ -32,19 +32,20 @@ import java.util.Set;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public abstract class PlainTextMessageRenderer implements MessageRenderer {
-    private static final boolean IS_STDERR_A_TTY;
+    private static final boolean COLOR_ENABLED;
 
     static {
         boolean isStderrATty = false;
         // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
-        if (!PropertiesKt.isWindows() && "true".equals(CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.getValue())) {
+        String kotlinColorsEnabled = CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.getValue();
+        if (!PropertiesKt.isWindows() && "true".equals(kotlinColorsEnabled)) {
             try {
                 isStderrATty = CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
             }
             catch (UnsatisfiedLinkError ignored) {
             }
         }
-        IS_STDERR_A_TTY = isStderrATty;
+        COLOR_ENABLED = isStderrATty || "always".equals(kotlinColorsEnabled);
     }
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -54,7 +55,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     private final boolean colorEnabled;
 
     public PlainTextMessageRenderer() {
-        this(IS_STDERR_A_TTY);
+        this(COLOR_ENABLED);
     }
 
     // This constructor can be used in a compilation server to still be able to generate colored output, even if stderr is not a TTY.

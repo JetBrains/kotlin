@@ -633,4 +633,21 @@ Caused by: java.lang.AssertionError: assert
 """.trimStart()
         )
     }
+
+    fun testColorAlwaysProperty() {
+        val testKt = tmpdir.resolve("test.kt").apply {
+            writeText("val result: String = 42")
+        }
+        runProcess(
+            "kotlinc", "-Dkotlin.colors.enabled=always", testKt.absolutePath, K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            expectedExitCode = 1,
+            expectedStdout = "",
+            expectedStderr = """
+                ${"\$TMP_DIR\$"}/test.kt:1:22: [1;31merror: [0;1minitializer type mismatch: expected 'kotlin.String', actual 'kotlin.Int'.[m
+                val result: String = 42
+                                     ^^
+                
+            """.trimIndent(),
+        )
+    }
 }
