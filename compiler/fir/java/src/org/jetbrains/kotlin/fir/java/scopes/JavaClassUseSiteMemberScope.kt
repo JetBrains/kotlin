@@ -917,7 +917,7 @@ class JavaClassUseSiteMemberScope(
         // See compiler/testData/diagnostics/tests/rawTypes/rawTypeOverrides.kt.
         if (!this.isJavaOrEnhancement) return false
 
-        val valueParameter = fir.valueParameters.first()
+        val valueParameter = fir.valueParameters.firstOrNull() ?: return false
         val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(
             session, typeParameterStack, valueParameter.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         )
