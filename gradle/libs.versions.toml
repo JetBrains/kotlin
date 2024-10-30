@@ -48,6 +48,7 @@ wasmedge = "0.14.0"
 vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
+protobuf = "4.28.2"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -98,6 +99,10 @@ junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", ver
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+protobuf-java-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
+protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
+protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 
 android-gradle-plugin-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle-plugin" }
 android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }

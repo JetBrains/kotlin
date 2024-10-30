@@ -4,12 +4,13 @@ plugins {
 }
 
 dependencies {
-    implementation("com.google.protobuf:protobuf-javalite:3.21.9")
+    implementation(libs.protobuf.java.lite)
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.9"
+        val protocVersion = libs.versions.protobuf.get()
+        artifact = "com.google.protobuf:protoc:$protocVersion"
     }
 
     generateProtoTasks.all().configureEach {
