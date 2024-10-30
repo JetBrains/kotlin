@@ -65,7 +65,13 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val contextReceiver: Element by element(Declaration) {
+        parent(declaration)
+
+        +declaredSymbol(receiverParameterSymbolType)
         +field(typeRef, withReplace = true, withTransform = true)
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
+        }
         +field("customLabelName", nameType, nullable = true)
         +field("labelNameFromTypeRef", nameType, nullable = true)
     }
@@ -645,9 +651,13 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val receiverParameter: Element by element(Declaration) {
-        parent(annotationContainer)
+        parent(declaration)
 
+        +declaredSymbol(receiverParameterSymbolType)
         +field(typeRef, withReplace = true, withTransform = true)
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
+        }
         +annotations
     }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
@@ -72,7 +73,7 @@ public class SimpleFunctionBuildingContext(
                 generateTypeParameter(it, symbol)
             }
             initTypeParameterBounds(typeParameters, typeParameters)
-            produceContextReceiversTo(contextReceivers, typeParameters)
+            produceContextReceiversTo(contextReceivers, typeParameters, origin, symbol)
 
             this@SimpleFunctionBuildingContext.valueParameters.mapTo(valueParameters) {
                 generateValueParameter(it, symbol, typeParameters)
@@ -81,6 +82,10 @@ public class SimpleFunctionBuildingContext(
             extensionReceiverTypeProvider?.invoke(typeParameters)?.let {
                 receiverParameter = buildReceiverParameter {
                     typeRef = it.toFirResolvedTypeRef()
+                    symbol = FirReceiverParameterSymbol()
+                    moduleData = session.moduleData
+                    origin = key.origin
+                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
                 }
             }
         }

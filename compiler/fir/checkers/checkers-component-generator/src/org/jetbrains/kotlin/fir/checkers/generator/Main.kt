@@ -225,6 +225,8 @@ fun main(args: Array<String>) {
             alias<FirEnumEntry>("EnumEntryChecker")
             alias<FirAnonymousObject>("AnonymousObjectChecker")
             alias<FirAnonymousInitializer>("AnonymousInitializerChecker")
+            alias<FirReceiverParameter>("ReceiverParameterChecker")
+            alias<FirContextReceiver>("ContextReceiverChecker")
 
             additional(
                 fieldName = "controlFlowAnalyserCheckers",

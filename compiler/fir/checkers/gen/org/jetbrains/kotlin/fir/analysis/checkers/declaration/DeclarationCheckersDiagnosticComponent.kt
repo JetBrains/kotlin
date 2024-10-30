@@ -111,6 +111,14 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allAnonymousInitializerCheckers.check(anonymousInitializer, data)
     }
 
+    override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: CheckerContext) {
+        checkers.allReceiverParameterCheckers.check(receiverParameter, data)
+    }
+
+    override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: CheckerContext) {
+        checkers.allContextReceiverCheckers.check(contextReceiver, data)
+    }
+
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: CheckerContext) {
         checkers.allBasicDeclarationCheckers.check(danglingModifierList, data)
     }

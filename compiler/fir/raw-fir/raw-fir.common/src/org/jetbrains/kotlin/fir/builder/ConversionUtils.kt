@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -672,8 +674,10 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
         }
     }
 
-// TODO: avoid mutability KT-55002
-fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
+fun FirTypeRef.convertToReceiverParameter(
+    moduleData: FirModuleData,
+    containingCallableSymbol: FirCallableSymbol<*>,
+): FirReceiverParameter {
     val typeRef = this
     @Suppress("UNCHECKED_CAST")
     return buildReceiverParameter {
@@ -684,12 +688,23 @@ fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
             typeRef.replaceAnnotations(filteredTypeRefAnnotations)
         }
         this.typeRef = typeRef
+        symbol = FirReceiverParameterSymbol()
+        this.moduleData = moduleData
+        origin = FirDeclarationOrigin.Source
+        this.containingDeclarationSymbol = containingCallableSymbol
     }
 }
 
-fun KtSourceElement.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
+fun KtSourceElement.asReceiverParameter(
+    moduleData: FirModuleData,
+    containingCallableSymbol: FirCallableSymbol<*>,
+): FirReceiverParameter = buildReceiverParameter {
     source = this@asReceiverParameter.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
     typeRef = FirImplicitTypeRefImplWithoutSource
+    symbol = FirReceiverParameterSymbol()
+    this.moduleData = moduleData
+    origin = FirDeclarationOrigin.Source
+    this.containingDeclarationSymbol = containingCallableSymbol
 }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {

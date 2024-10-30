@@ -11,21 +11,37 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 internal class FirScriptReceiverParameterImpl(
     override val source: KtSourceElement?,
+    resolvePhase: FirResolvePhase,
+    override val moduleData: FirModuleData,
+    override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
+    override val symbol: FirReceiverParameterSymbol,
+    override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var typeRef: FirTypeRef,
     override val isBaseClassReceiver: Boolean,
 ) : FirScriptReceiverParameter() {
+
+    init {
+        symbol.bind(this)
+        resolveState = resolvePhase.asResolveState()
+    }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

@@ -57,6 +57,8 @@ internal object LLFirResolveDesignationCollector {
             target is FirBackingField -> getFirDesignationToResolve(target.propertySymbol.fir)
             target is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             target is FirValueParameter -> getFirDesignationToResolve(target.containingFunctionSymbol.fir)
+            target is FirReceiverParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+            target is FirContextReceiver -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             else -> target.tryCollectDesignation()
         }
     }

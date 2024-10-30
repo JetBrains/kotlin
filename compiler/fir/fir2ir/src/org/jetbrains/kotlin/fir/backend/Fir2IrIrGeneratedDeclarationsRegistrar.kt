@@ -539,6 +539,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     ?.toSymbol(session)
                     ?.fir
                 is FirScript -> this
+                is FirReceiverParameter -> containingDeclarationSymbol.fir.topmostParent(session)
+                is FirContextReceiver -> containingDeclarationSymbol.fir.topmostParent(session)
                 else -> error("Unsupported declaration type: $this")
             } ?: this
         }

@@ -180,7 +180,7 @@ class LightTreeRawFirExpressionBuilder(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = implicitType
-            receiverParameter = expressionSource.asReceiverParameter()
+            receiverParameter = expressionSource.asReceiverParameter(moduleData, functionSymbol)
             symbol = functionSymbol
             isLambda = true
             hasExplicitParameterList = hasArrow

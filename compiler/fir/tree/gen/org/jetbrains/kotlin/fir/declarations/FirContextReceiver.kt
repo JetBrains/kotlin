@@ -10,7 +10,10 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -19,9 +22,15 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.contextReceiver]
  */
-abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
+abstract class FirContextReceiver : FirDeclaration() {
     abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
+    abstract override val moduleData: FirModuleData
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val symbol: FirReceiverParameterSymbol
     abstract val typeRef: FirTypeRef
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract val customLabelName: Name?
     abstract val labelNameFromTypeRef: Name?
 
@@ -32,7 +41,11 @@ abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformContextReceiver(this, data) as E
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContextReceiver
 
     abstract fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver
 }

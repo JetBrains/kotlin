@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -395,6 +396,10 @@ class FirCallCompleter(
                             typeRef = buildResolvedTypeRef {
                                 coneType = contextReceiverType
                             }
+                            symbol = FirReceiverParameterSymbol()
+                            moduleData = session.moduleData
+                            origin = FirDeclarationOrigin.Source
+                            containingDeclarationSymbol = lambda.symbol
                         }
                     }
                 )

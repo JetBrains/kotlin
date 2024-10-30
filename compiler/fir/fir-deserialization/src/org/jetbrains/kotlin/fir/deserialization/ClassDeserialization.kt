@@ -213,7 +213,7 @@ fun deserializeClassToSymbol(
 
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
-        contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto))
+        contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto, origin, symbol))
     }.apply {
         if (isSealed) {
             val inheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->

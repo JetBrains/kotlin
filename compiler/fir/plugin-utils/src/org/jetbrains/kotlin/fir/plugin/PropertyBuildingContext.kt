@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
@@ -91,10 +92,14 @@ public class PropertyBuildingContext(
             extensionReceiverTypeProvider?.invoke(typeParameters)?.let {
                 receiverParameter = buildReceiverParameter {
                     typeRef = it.toFirResolvedTypeRef()
+                    symbol = FirReceiverParameterSymbol()
+                    moduleData = session.moduleData
+                    origin = key.origin
+                    containingDeclarationSymbol = this@buildProperty.symbol
                 }
             }
 
-            produceContextReceiversTo(contextReceivers, typeParameters)
+            produceContextReceiversTo(contextReceivers, typeParameters, origin, symbol)
 
             isVar = !isVal
             getter = FirDefaultPropertyGetter(

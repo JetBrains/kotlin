@@ -9,10 +9,11 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -20,9 +21,14 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.receiverParameter]
  */
-abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationContainer {
+abstract class FirReceiverParameter : FirDeclaration() {
     abstract override val source: KtSourceElement?
+    abstract override val moduleData: FirModuleData
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val symbol: FirReceiverParameterSymbol
     abstract val typeRef: FirTypeRef
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

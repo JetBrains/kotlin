@@ -1,6 +1,6 @@
 @A()
 owner -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.receiverArgument
-context -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.receiverArgument
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.receiverArgument
 
 @A()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameter

@@ -39,6 +39,8 @@ abstract class DeclarationCheckers {
     open val enumEntryCheckers: Set<FirEnumEntryChecker> = emptySet()
     open val anonymousObjectCheckers: Set<FirAnonymousObjectChecker> = emptySet()
     open val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker> = emptySet()
+    open val receiverParameterCheckers: Set<FirReceiverParameterChecker> = emptySet()
+    open val contextReceiverCheckers: Set<FirContextReceiverChecker> = emptySet()
 
     open val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = emptySet()
     open val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = emptySet()
@@ -63,4 +65,6 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allEnumEntryCheckers: Array<FirEnumEntryChecker> by lazy { (enumEntryCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allAnonymousObjectCheckers: Array<FirAnonymousObjectChecker> by lazy { (anonymousObjectCheckers + classCheckers + classLikeCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allAnonymousInitializerCheckers: Array<FirAnonymousInitializerChecker> by lazy { (anonymousInitializerCheckers + basicDeclarationCheckers).toTypedArray() }
+    @CheckersComponentInternal internal val allReceiverParameterCheckers: Array<FirReceiverParameterChecker> by lazy { (receiverParameterCheckers + basicDeclarationCheckers).toTypedArray() }
+    @CheckersComponentInternal internal val allContextReceiverCheckers: Array<FirContextReceiverChecker> by lazy { (contextReceiverCheckers + basicDeclarationCheckers).toTypedArray() }
 }

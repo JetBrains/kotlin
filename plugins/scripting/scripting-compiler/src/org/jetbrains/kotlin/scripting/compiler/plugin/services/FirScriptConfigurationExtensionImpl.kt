@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -72,10 +73,16 @@ class FirScriptConfiguratorExtensionImpl(
             val baseClassTypeRef =
                 tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass, source?.fakeElement(KtFakeSourceElementKind.ScriptBaseClass))
 
-            receivers.add(buildScriptReceiverParameter {
-                typeRef = baseClassTypeRef
-                isBaseClassReceiver = true
-            })
+            receivers.add(
+                buildScriptReceiverParameter {
+                    typeRef = baseClassTypeRef
+                    isBaseClassReceiver = true
+                    symbol = FirReceiverParameterSymbol()
+                    moduleData = session.moduleData
+                    origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+                    containingDeclarationSymbol = this@configure.symbol
+                }
+            )
 
             if (baseClassTypeRef is FirResolvedTypeRef) {
                 baseClassTypeRef.toRegularClassSymbol(session)?.fir?.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
@@ -102,6 +109,10 @@ class FirScriptConfiguratorExtensionImpl(
                 buildScriptReceiverParameter {
                     typeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver)
                     isBaseClassReceiver = false
+                    symbol = FirReceiverParameterSymbol()
+                    moduleData = session.moduleData
+                    origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                    containingDeclarationSymbol = this@configure.symbol
                 }
             )
         }

@@ -59,6 +59,10 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         get() = _anonymousObjectCheckers
     override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
         get() = _anonymousInitializerCheckers
+    override val receiverParameterCheckers: Set<FirReceiverParameterChecker>
+        get() = _receiverParameterCheckers
+    override val contextReceiverCheckers: Set<FirContextReceiverChecker>
+        get() = _contextReceiverCheckers
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
@@ -84,6 +88,8 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
     private val _enumEntryCheckers: MutableSet<FirEnumEntryChecker> = mutableSetOf()
     private val _anonymousObjectCheckers: MutableSet<FirAnonymousObjectChecker> = mutableSetOf()
     private val _anonymousInitializerCheckers: MutableSet<FirAnonymousInitializerChecker> = mutableSetOf()
+    private val _receiverParameterCheckers: MutableSet<FirReceiverParameterChecker> = mutableSetOf()
+    private val _contextReceiverCheckers: MutableSet<FirContextReceiverChecker> = mutableSetOf()
     private val _controlFlowAnalyserCheckers: MutableSet<FirControlFlowChecker> = mutableSetOf()
     private val _variableAssignmentCfaBasedCheckers: MutableSet<AbstractFirPropertyInitializationChecker> = mutableSetOf()
 
@@ -109,6 +115,8 @@ class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         checkers.enumEntryCheckers.filterTo(_enumEntryCheckers, predicate)
         checkers.anonymousObjectCheckers.filterTo(_anonymousObjectCheckers, predicate)
         checkers.anonymousInitializerCheckers.filterTo(_anonymousInitializerCheckers, predicate)
+        checkers.receiverParameterCheckers.filterTo(_receiverParameterCheckers, predicate)
+        checkers.contextReceiverCheckers.filterTo(_contextReceiverCheckers, predicate)
         checkers.controlFlowAnalyserCheckers.filterTo(_controlFlowAnalyserCheckers, predicate)
         checkers.variableAssignmentCfaBasedCheckers.filterTo(_variableAssignmentCfaBasedCheckers, predicate)
     }

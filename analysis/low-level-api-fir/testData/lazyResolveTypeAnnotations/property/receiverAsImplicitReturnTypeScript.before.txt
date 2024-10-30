@@ -11,15 +11,15 @@
   anchor -> [FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
-  context -> FirPropertySymbol /foo
+  context -> FirReceiverParameterSymbol
   anchor -> [FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
-  context -> FirPropertySymbol /foo
+  context -> FirReceiverParameterSymbol
   anchor -> [FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
-  context -> FirPropertySymbol /foo
+  context -> FirReceiverParameterSymbol
   anchor -> [FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>

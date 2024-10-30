@@ -11,7 +11,7 @@
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<ERROR CLASS: Incomplete code>
-  context -> FirPropertySymbol myPack/variableToResolve
+  context -> FirReceiverParameterSymbol
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>

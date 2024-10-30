@@ -670,7 +670,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextReceivers.addAll(convertContextReceivers(classNode))
+                        contextReceivers.addAll(convertContextReceivers(classNode, classSymbol))
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }
@@ -1068,7 +1068,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextReceivers.addAll(convertContextReceivers(classNode))
+                this.contextReceivers.addAll(convertContextReceivers(classNode, constructorSymbol))
             }
 
             return PrimaryConstructor(
@@ -1179,7 +1179,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!))
+                this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol))
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
@@ -1375,7 +1375,7 @@ class LightTreeRawFirDeclarationBuilder(
                 name = propertyName
                 this.isVar = isVar
 
-                receiverParameter = receiverType?.convertToReceiverParameter()
+                receiverParameter = receiverType?.convertToReceiverParameter(moduleData, propertySymbol)
                 initializer = propertyInitializer
 
                 //probably can do this for delegateExpression itself
@@ -1472,7 +1472,9 @@ class LightTreeRawFirDeclarationBuilder(
                                 }
                             } else null
 
-                        status = FirDeclarationStatusImpl(propertyVisibility, calculatedModifiers.getModality(isClassOrObject = false)).apply {
+                        status = FirDeclarationStatusImpl(
+                            propertyVisibility, calculatedModifiers.getModality(isClassOrObject = false)
+                        ).apply {
                             isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
                             isActual = calculatedModifiers.hasActual()
                             isOverride = calculatedModifiers.hasOverride()
@@ -1495,7 +1497,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextReceivers.addAll(convertContextReceivers(property))
+                contextReceivers.addAll(convertContextReceivers(property, propertySymbol))
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1892,7 +1894,7 @@ class LightTreeRawFirDeclarationBuilder(
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverType?.convertToReceiverParameter()
+                    receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
                     isLambda = false
                     hasExplicitParameterList = true
@@ -1909,7 +1911,7 @@ class LightTreeRawFirDeclarationBuilder(
                 target = FirFunctionTarget(labelName, isLambda = false)
                 FirSimpleFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverType?.convertToReceiverParameter()
+                    receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
                     name = functionName
                     status = FirDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(),
@@ -1928,7 +1930,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextReceivers.addAll(convertContextReceivers(functionDeclaration))
+                    contextReceivers.addAll(convertContextReceivers(functionDeclaration, functionSymbol))
                 }
             }
 
@@ -2624,7 +2626,10 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
-    private fun convertContextReceivers(container: LighterASTNode): List<FirContextReceiver> {
+    private fun convertContextReceivers(
+        container: LighterASTNode,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): List<FirContextReceiver> {
         val receivers = container.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER) ?: emptyList()
         return receivers.map { contextReceiverElement ->
             buildContextReceiver {
@@ -2645,6 +2650,11 @@ class LightTreeRawFirDeclarationBuilder(
                 typeReference?.let {
                     this.typeRef = convertType(it)
                 }
+
+                this.symbol = FirReceiverParameterSymbol()
+                this.moduleData = baseModuleData
+                this.origin = FirDeclarationOrigin.Source
+                this.containingDeclarationSymbol = containingDeclarationSymbol
             }
         }
     }

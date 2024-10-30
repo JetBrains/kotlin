@@ -386,6 +386,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
+                    this.symbol = FirReceiverParameterSymbol()
+                    this.moduleData = c.moduleData
+                    this.origin = FirDeclarationOrigin.Library
+                    containingDeclarationSymbol = symbol
                 }
             }
 
@@ -471,7 +475,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 else -> null
             }
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) { loadContextReceiver(it, local) }
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) {
+                loadContextReceiver(it, local, FirDeclarationOrigin.Library, symbol)
+            }
         }.apply {
             when (val initializer = initializer) {
                 /**
@@ -500,17 +506,30 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    private fun loadContextReceiver(proto: ProtoBuf.Type, context: FirDeserializationContext): FirContextReceiver {
+    private fun loadContextReceiver(
+        proto: ProtoBuf.Type,
+        context: FirDeserializationContext,
+        origin: FirDeclarationOrigin,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirContextReceiver {
         val typeRef = proto.toTypeRef(context)
         return buildContextReceiver {
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
             this.typeRef = typeRef
+            symbol = FirReceiverParameterSymbol()
+            moduleData = c.moduleData
+            this.origin = origin
+            this.containingDeclarationSymbol = containingDeclarationSymbol
         }
     }
 
-    internal fun createContextReceiversForClass(classProto: ProtoBuf.Class): List<FirContextReceiver> =
-        classProto.contextReceiverTypes(c.typeTable).map { loadContextReceiver(it, c) }
+    internal fun createContextReceiversForClass(
+        classProto: ProtoBuf.Class,
+        origin: FirDeclarationOrigin,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): List<FirContextReceiver> =
+        classProto.contextReceiverTypes(c.typeTable).map { loadContextReceiver(it, c, origin, containingDeclarationSymbol) }
 
     fun loadFunction(
         proto: ProtoBuf.Function,
@@ -543,6 +562,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
+                    this.symbol = FirReceiverParameterSymbol()
+                    this.moduleData = c.moduleData
+                    this.origin = deserializationOrigin
+                    containingDeclarationSymbol = symbol
                 }
             }
 
@@ -580,7 +603,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)
             this.containerSource = c.containerSource
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) { loadContextReceiver(it, local) }
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) {
+                loadContextReceiver(it, local, deserializationOrigin, symbol)
+            }
         }.apply {
             this.versionRequirements = versionRequirements
             setLazyPublishedVisibility(c.session)
@@ -664,7 +689,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextReceivers.addAll(createContextReceiversForClass(classProto))
+            contextReceivers.addAll(createContextReceiversForClass(classProto, FirDeclarationOrigin.Library, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             this.versionRequirements = VersionRequirement.create(proto, c)

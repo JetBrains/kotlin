@@ -165,6 +165,7 @@ object FirFakeOverrideGenerator {
         receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
             buildReceiverParameterCopy(receiverParameter) {
                 typeRef = receiverParameter.typeRef.withReplacedConeType(null)
+                symbol = FirReceiverParameterSymbol()
             }
         }
 
@@ -302,6 +303,7 @@ object FirFakeOverrideGenerator {
             receiverParameter = baseFunction.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
                     typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
+                    symbol = FirReceiverParameterSymbol()
                 }
             }
         }
@@ -324,6 +326,7 @@ object FirFakeOverrideGenerator {
         ) { contextReceiver, newType ->
             buildContextReceiverCopy(contextReceiver) {
                 typeRef = contextReceiver.typeRef.withReplacedConeType(newType)
+                symbol = FirReceiverParameterSymbol()
             }
         }
     }
@@ -690,6 +693,7 @@ object FirFakeOverrideGenerator {
             receiverParameter = baseVariable.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
                     typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
+                    symbol = FirReceiverParameterSymbol()
                 }
             }
         }
@@ -699,6 +703,7 @@ object FirFakeOverrideGenerator {
         ) { contextReceiver, newType ->
             buildContextReceiverCopy(contextReceiver) {
                 typeRef = contextReceiver.typeRef.withReplacedConeType(newType)
+                symbol = FirReceiverParameterSymbol()
             }
         }
     }

@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.java.enhancement.enhance
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
@@ -426,6 +423,10 @@ class FirSignatureEnhancement(
                             typeRef = receiverType
                             annotations += firMethod.valueParameters.first().annotations
                             source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+                            symbol = FirReceiverParameterSymbol()
+                            moduleData = this@FirSignatureEnhancement.moduleData
+                            origin = declarationOrigin
+                            containingDeclarationSymbol = this@apply.symbol
                         }
                     }
                     typeParameters.replaceTypeParameterBounds(typeParameterSubstitutor)

@@ -3,7 +3,7 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(receiver ), prop#))  ERROR CLASS: Symbol not found for Abc
-  context -> FirNamedFunctionSymbol lowlevel/function
+  context -> FirReceiverParameterSymbol
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(param ), prop#))  ERROR CLASS: Symbol not found for Type1

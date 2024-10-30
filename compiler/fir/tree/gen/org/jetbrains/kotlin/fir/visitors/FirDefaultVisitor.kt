@@ -26,6 +26,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R =
         visitTypeParameterRefsOwner(typeParametersOwner, data)
 
+    override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R =
+        visitDeclaration(contextReceiver, data)
+
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R =
         visitMemberDeclaration(callableDeclaration, data)
 
@@ -114,7 +117,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
         visitDelegatedConstructorCall(multiDelegatedConstructorCall, data)
 
     override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): R =
-        visitAnnotationContainer(receiverParameter, data)
+        visitDeclaration(receiverParameter, data)
 
     override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): R =
         visitReceiverParameter(scriptReceiverParameter, data)

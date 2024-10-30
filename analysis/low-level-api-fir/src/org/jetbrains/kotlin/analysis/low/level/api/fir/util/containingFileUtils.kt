@@ -42,6 +42,8 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
             moduleComponents.cache.getCachedFirFile(ktFile)
                 ?: error("Fir file for dandling modifier list cannot be null")
         }
+        is FirReceiverParameter -> containingDeclarationSymbol.fir.getContainingFile()
+        is FirContextReceiver -> containingDeclarationSymbol.fir.getContainingFile()
         else -> errorWithFirSpecificEntries("Unsupported declaration ${this::class}", fir = this)
     }
 }

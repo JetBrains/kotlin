@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -110,9 +111,20 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
         contextReceiverTypeProviders += typeProvider
     }
 
-    protected fun produceContextReceiversTo(destination: MutableList<FirContextReceiver>, typeParameters: List<FirTypeParameterRef>) {
+    protected fun produceContextReceiversTo(
+        destination: MutableList<FirContextReceiver>,
+        typeParameters: List<FirTypeParameterRef>,
+        origin: FirDeclarationOrigin,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ) {
         contextReceiverTypeProviders.mapTo(destination) {
-            buildContextReceiver { typeRef = it.invoke(typeParameters).toFirResolvedTypeRef() }
+            buildContextReceiver {
+                typeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
+                symbol = FirReceiverParameterSymbol()
+                moduleData = session.moduleData
+                this.origin = origin
+                this.containingDeclarationSymbol = containingDeclarationSymbol
+            }
         }
     }
 

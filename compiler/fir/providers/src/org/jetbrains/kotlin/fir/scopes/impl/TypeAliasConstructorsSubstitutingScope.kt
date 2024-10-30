@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -90,6 +91,10 @@ class TypeAliasConstructorsSubstitutingScope(
                         receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
                             buildReceiverParameter {
                                 typeRef = it
+                                symbol = FirReceiverParameterSymbol()
+                                moduleData = originalConstructorSymbol.moduleData
+                                origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                                containingDeclarationSymbol = this@buildConstructorCopy.symbol
                             }
                         }
                     }

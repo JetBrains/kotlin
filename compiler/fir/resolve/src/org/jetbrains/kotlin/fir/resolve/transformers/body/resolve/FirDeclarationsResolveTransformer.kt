@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1187,6 +1188,10 @@ open class FirDeclarationsResolveTransformer(
                         this.typeRef = buildResolvedTypeRef {
                             coneType = receiverType
                         }
+                        symbol = FirReceiverParameterSymbol()
+                        moduleData = session.moduleData
+                        origin = FirDeclarationOrigin.Source
+                        containingDeclarationSymbol = lambda.symbol
                     }
                 }.orEmpty()
         )

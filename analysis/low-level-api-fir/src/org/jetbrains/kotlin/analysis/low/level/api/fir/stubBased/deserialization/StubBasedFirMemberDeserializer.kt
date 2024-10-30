@@ -325,6 +325,10 @@ internal class StubBasedFirMemberDeserializer(
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
+                    this.symbol = FirReceiverParameterSymbol()
+                    moduleData = c.moduleData
+                    origin = initialOrigin
+                    containingDeclarationSymbol = symbol
                 }
             }
 
@@ -409,7 +413,7 @@ internal class StubBasedFirMemberDeserializer(
                 isUnsigned = returnTypeRef.coneType.isUnsignedType
             )
 
-            property.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+            property.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers) { loadContextReceiver(it, symbol) }
         }.apply {
             setLazyPublishedVisibility(c.session)
             this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
@@ -419,18 +423,25 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun loadContextReceiver(typeReference: KtTypeReference): FirContextReceiver {
+    private fun loadContextReceiver(typeReference: KtTypeReference, containingDeclarationSymbol: FirBasedSymbol<*>): FirContextReceiver {
         val typeRef = typeReference.toTypeRef(c)
         return buildContextReceiver {
             source = KtRealPsiSourceElement(typeReference)
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
             this.typeRef = typeRef
+            symbol = FirReceiverParameterSymbol()
+            moduleData = c.moduleData
+            origin = initialOrigin
+            this.containingDeclarationSymbol = containingDeclarationSymbol
         }
     }
 
-    internal fun createContextReceiversForClass(classOrObject: KtClassOrObject): List<FirContextReceiver> =
-        classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map(::loadContextReceiver)
+    internal fun createContextReceiversForClass(
+        classOrObject: KtClassOrObject,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): List<FirContextReceiver> =
+        classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map { loadContextReceiver(it, containingDeclarationSymbol) }
 
     fun loadFunction(
         function: KtNamedFunction,
@@ -460,6 +471,10 @@ internal class StubBasedFirMemberDeserializer(
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
+                    this.symbol = FirReceiverParameterSymbol()
+                    moduleData = c.moduleData
+                    origin = initialOrigin
+                    containingDeclarationSymbol = symbol
                 }
             }
 
@@ -493,7 +508,7 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
+            function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers) { loadContextReceiver(it, symbol) }
         }.apply {
             setLazyPublishedVisibility(c.session)
         }
@@ -570,7 +585,7 @@ internal class StubBasedFirMemberDeserializer(
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextReceivers.addAll(createContextReceiversForClass(classOrObject))
+            contextReceivers.addAll(createContextReceiversForClass(classOrObject, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)
