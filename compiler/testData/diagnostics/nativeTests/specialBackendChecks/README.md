@@ -8,9 +8,9 @@ This testsuit is run differently for K1 and K2 frontends:
 - K2/N manual: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`,
 - K2/N tests are also run in scope of `FirLightTreeOldFrontendNativeDiagnosticsTestGenerated` and `FirPsiOldFrontendNativeDiagnosticsTestGenerated`.
 
-Reference output for K1/N manual run is provided below.
+Reference output for K2/N manual run is provided below.
 
-Reference output for K2/N manual run is slightly different for newly-migrated Fir checks: source lines are displayed.
+Reference output for K1/N manual run is slightly different for newly-migrated Fir checks: source lines are not displayed.
 For not yet migrated checks, the output must be the same as below.
 
 ```text
@@ -89,13 +89,14 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t15.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t16.kt
 /tmp/t16.kt:8:26: error: type <root>.Z  is not supported here: doesn't correspond to any C type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t17.kt
-/tmp/t17.kt:8:15: error: super calls to Objective-C protocols are not allowed
+/tmp/t17.kt:16:15: error: super calls to Objective-C protocols are not allowed
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t18.kt
 /tmp/t18.kt:8:19: error: super calls to Objective-C meta classes are not supported yet
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t2.kt
-/tmp/t2.kt:8:5: error: 'handleFailureInFunction' overrides nothing
+/tmp/t2.kt:8:5: error: 'handleFailureInFunction' overrides nothing. Potential signatures for overriding:
+fun handleFailureInFunction(functionName: String, file: String, lineNumber: Long, description: String?, vararg args: Any?): Unit
     override fun handleFailureInFunction(functionName: String, file: String, lineNumber: NSInteger /* = Long */, description: String?, vararg args: Any?) { }
-    ^
+    ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t20.kt
 /tmp/t20.kt:6:1: error: only classes are supported as subtypes of Objective-C types
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t21.kt
@@ -107,43 +108,61 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t23.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t24.kt
 /tmp/t24.kt:6:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t25.kt
-/tmp/t25.kt:7:14: error: can't override 'toString', override 'description' instead
+/tmp/t25.kt:7:5: error: can't override 'toString', override 'description' instead
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t26.kt
-/tmp/t26.kt:11:9: error: @kotlinx.cinterop.ObjCAction method must not have extension receiver
+/tmp/t26.kt:11:9: error: '@kotlinx.cinterop.ObjCAction method' must not have extension receiver.
+    fun String.foo() = println(this)
+        ^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t27.kt
-/tmp/t27.kt:11:13: error: unexpected @kotlinx.cinterop.ObjCAction method parameter type: kotlin.String
-Only Objective-C object types are supported here
+/tmp/t27.kt:11:13: error: unexpected @kotlinx.cinterop.ObjCAction method parameter type: 'kotlin.String'
+Only Objective-C object types are supported here.
+    fun foo(x: String) = println(x)
+            ^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t28.kt
-/tmp/t28.kt:10:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: kotlin.Int
-Only 'Unit' is supported here
+/tmp/t28.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: 'kotlin.Int'
+Only 'Unit' is supported here.
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t29.kt
-/tmp/t29.kt:9:5: error: @kotlinx.cinterop.ObjCOutlet property must be var
+/tmp/t29.kt:9:5: error: '@kotlinx.cinterop.ObjCOutlet' property must be var.
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t30.kt
-/tmp/t30.kt:10:9: error: @kotlinx.cinterop.ObjCOutlet must not have extension receiver
+/tmp/t30.kt:10:9: error: '@kotlinx.cinterop.ObjCOutlet' must not have extension receiver.
+    var NSObject.x: NSObject
+        ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t31.kt
-/tmp/t31.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCOutlet type: kotlin.String
-Only Objective-C object types are supported here
+/tmp/t31.kt:10:12: error: unexpected @kotlinx.cinterop.ObjCOutlet type: 'kotlin.String'
+Only Objective-C object types are supported here.
+    var x: String
+           ^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t32.kt
-/tmp/t32.kt:10:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit doesn't override any super class constructor.
+/tmp/t32.kt:8:5: error: constructor with '@kotlinx.cinterop.ObjCObjectBase.OverrideInit' doesn't override any super class constructor.
 It must completely match by parameter names and types.
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t33.kt
-/tmp/t33.kt:10:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit overrides initializer that is already overridden explicitly
+/tmp/t33.kt:8:5: error: constructor with '@kotlinx.cinterop.ObjCObjectBase.OverrideInit' overrides initializer that is already overridden explicitly.
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t34.kt
-/tmp/t34.kt:10:5: error: only 0, 1 or 2 parameters are supported here
+/tmp/t34.kt:8:5: error: only 0, 1 or 2 parameters are supported here.
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t35.kt
 /tmp/t35.kt:7:13: error: unable to call non-designated initializer as super constructor
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t4.kt
 /tmp/t4.kt:6:21: error: callable references to variadic Objective-C methods are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
-/tmp/t5.kt:6:83: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
+/tmp/t5.kt:6:81: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
-/tmp/t6.kt:6:97: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
+/tmp/t6.kt:6:95: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
 /tmp/t61.kt:5:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.kt
 /tmp/t62.kt:4:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
-/tmp/t7.kt:6:41: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
+/tmp/t7.kt:6:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
 /tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt

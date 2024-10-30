@@ -9,4 +9,4 @@ FILTERED_FILE=/tmp/$(basename $1)
 # Remove diagnostic directives from test source
 cat $1 | sed -e 's/<![a-zA-Z_!]*!>//g' | sed -e 's/<!>//g' > $FILTERED_FILE
 shift
-konanc -opt-in=kotlin.native.internal.InternalForKotlinNative "$FILTERED_FILE" "$@"
+konanc -opt-in=kotlin.native.internal.InternalForKotlinNative,kotlinx.cinterop.ExperimentalForeignApi "$FILTERED_FILE" "$@"
