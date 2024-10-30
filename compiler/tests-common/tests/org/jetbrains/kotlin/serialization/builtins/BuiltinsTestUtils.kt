@@ -10,6 +10,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.lazy.createResolveSessionForFiles
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -19,11 +20,14 @@ object BuiltinsTestUtils {
     fun compileBuiltinsModule(environment: KotlinCoreEnvironment): ModuleDescriptor {
         val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
-                allFilesUnder("libraries/stdlib/jvm/builtins"),
-                allFilesUnder("core/builtins/build/src/common"),
-                allFilesUnder("core/builtins/build/src/reflect"),
+                allFilesUnder("libraries/stdlib/jvm/"),
+                allFilesUnder("libraries/stdlib/src/")
             )
-        )
+        ).filter {
+            it.annotationEntries.any { annotation ->
+                annotation.shortName == StandardClassIds.Annotations.JvmBuiltin.shortClassName
+            }
+        }
         return createResolveSessionForFiles(environment.project, files, false).moduleDescriptor
     }
 

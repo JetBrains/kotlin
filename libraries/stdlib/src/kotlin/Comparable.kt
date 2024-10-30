@@ -5,12 +5,10 @@
 
 package kotlin
 
-import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Classes which inherit from this interface have a defined total ordering between their instances.
  */
-@ActualizeByJvmBuiltinProvider
 public expect interface Comparable<in T> {
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal

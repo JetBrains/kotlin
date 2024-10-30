@@ -3,6 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+@file:kotlin.internal.SuppressBytecodeGeneration
+@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+
 package kotlin.concurrent
 
 /**
@@ -12,7 +16,7 @@ package kotlin.concurrent
  */
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
-public actual class AtomicInt(value: Int) {
+public actual class AtomicInt public actual constructor(value: Int) {
     /**
      * Atomically loads the value from this [AtomicInt].
      *
@@ -87,7 +91,7 @@ public actual class AtomicInt(value: Int) {
  */
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
-public actual class AtomicLong(value: Long) {
+public actual class AtomicLong public actual constructor(value: Long) {
     /**
      * Atomically loads the value from this [AtomicLong].
      *
@@ -162,7 +166,7 @@ public actual class AtomicLong(value: Long) {
  */
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
-public actual class AtomicBoolean (value: Boolean) {
+public actual class AtomicBoolean public actual constructor(value: Boolean) {
     /**
      * Atomically loads the value from this [AtomicBoolean].
      *
@@ -223,7 +227,7 @@ public actual class AtomicBoolean (value: Boolean) {
  */
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
-public actual class AtomicReference<T> (value: T) {
+public actual class AtomicReference<T> public actual constructor(value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
      *

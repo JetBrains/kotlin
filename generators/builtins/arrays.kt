@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import java.io.PrintWriter
 
 abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Boolean) : BuiltInsGenerator {
+
+    protected open val fileAnnotations: List<String> = emptyList()
+
     override fun generate() {
         writer.print(generateFile().build())
     }
 
     private fun generateFile(): FileBuilder {
-        return file(this::class) { generateClasses() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) {
+            for (fileAnnotation in fileAnnotations) annotate(fileAnnotation)
+            generateClasses()
+        }.apply { this.modifyGeneratedFile() }
     }
 
     internal abstract class ArrayBuilder(val kind: PrimitiveType?) {
@@ -82,11 +88,13 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                         type = arrayTypeName
                     }
                 }
-                classBody("""
+                classBody(
+                    """
                     private var index = 0
                     override fun hasNext() = index < array.size
                     override fun next${kind?.capitalized ?: ""}() = if (index < array.size) array[index++] else throw NoSuchElementException("${'$'}index")
-                """.trimIndent())
+                """.trimIndent()
+                )
             }
         }
 
@@ -209,22 +217,34 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
 
 class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
-    override fun FileBuilder.modifyGeneratedFile() {
-        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
-    }
 
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
         override fun ClassBuilder.modifyGeneratedClass() {
-            annotations += "ActualizeByJvmBuiltinProvider"
             expectActual = ExpectActualModifier.Expect
         }
     }
 }
 
 class GenerateJvmArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
+
+    override val fileAnnotations = listOf(
+        "kotlin.internal.JvmBuiltin",
+        "kotlin.internal.SuppressBytecodeGeneration",
+        """Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "WRONG_MODIFIER_TARGET",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT"
+)"""
+    )
+
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
         override fun ClassBuilder.modifyGeneratedClass() {
-            expectActual = ExpectActualModifier.Unspecified
+            expectActual = ExpectActualModifier.Actual
+        }
+
+        override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
+            annotations.clear()
         }
     }
 }
@@ -292,7 +312,8 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 name = "storage"
                 type = storageArrayType
             }
-            classBody("""
+            classBody(
+                """
                 init {
                     if (size < 0) throw IllegalArgumentException("Negative array size")
                     storage = $storageArrayType(size)
@@ -301,7 +322,8 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 @WasmPrimitiveConstructor
                 @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
                 internal constructor(storage: $storageArrayType)
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
@@ -314,12 +336,12 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
             """
                 rangeCheck(index, storage.len())
                 ${
-                    when (kind) {
-                        null -> "@Suppress(\"UNCHECKED_CAST\") return storage.get(index) as T"
-                        PrimitiveType.BOOLEAN -> "return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()"
-                        else -> "return storage.get(index)"
-                    }
+                when (kind) {
+                    null -> "@Suppress(\"UNCHECKED_CAST\") return storage.get(index) as T"
+                    PrimitiveType.BOOLEAN -> "return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()"
+                    else -> "return storage.get(index)"
                 }
+            }
             """.trimIndent().setAsBlockBody()
         }
 

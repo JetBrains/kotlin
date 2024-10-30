@@ -6,6 +6,8 @@ package kotlin.concurrent
 @kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicArray<T> {
     public constructor(array: kotlin.Array<T>) { /* compiled code */ }
 
+    private final val array: kotlin.Array<T> /* compiled code */
+
     public final val size: kotlin.Int /* compiled code */
 
     public final fun loadAt(index: kotlin.Int): T { /* compiled code */ }
@@ -58,6 +60,8 @@ package kotlin.concurrent
 
     public constructor(array: kotlin.IntArray) { /* compiled code */ }
 
+    private final val array: kotlin.IntArray /* compiled code */
+
     public final val size: kotlin.Int /* compiled code */
         public final get
 
@@ -100,6 +104,8 @@ package kotlin.concurrent
     public constructor(size: kotlin.Int) { /* compiled code */ }
 
     public constructor(array: kotlin.LongArray) { /* compiled code */ }
+
+    private final val array: kotlin.LongArray /* compiled code */
 
     public final val size: kotlin.Int /* compiled code */
         public final get

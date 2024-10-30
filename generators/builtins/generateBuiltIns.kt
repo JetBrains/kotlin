@@ -23,7 +23,7 @@ fun assertExists(file: File) {
 }
 
 val BUILT_INS_COMMON_DIR = File("libraries/stdlib/src/kotlin")
-val BUILT_INS_NATIVE_DIR_JVM = File("libraries/stdlib/jvm/builtins/")
+val BUILT_INS_NATIVE_DIR_JVM = File("libraries/stdlib/jvm/builtins")
 val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
 val BUILT_INS_NATIVE_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/")
@@ -35,7 +35,7 @@ interface BuiltInsGenerator {
     fun generate()
 }
 
-abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator {
+abstract class BuiltInsSourceGenerator(val out: PrintWriter, private val annotateAsBuiltinWithBytecode: Boolean = false) : BuiltInsGenerator {
     protected abstract fun generateBody(): Unit
 
     protected open fun getPackage(): String = "kotlin"
@@ -53,6 +53,9 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator
         getMultifileClassName()?.let { name ->
             out.println("@file:kotlin.jvm.JvmName(\"$name\")")
             out.println("@file:kotlin.jvm.JvmMultifileClass")
+        }
+        if (annotateAsBuiltinWithBytecode) {
+            out.println("@file:kotlin.internal.JvmBuiltin")
         }
         out.print("package ${getPackage()}")
         out.println()

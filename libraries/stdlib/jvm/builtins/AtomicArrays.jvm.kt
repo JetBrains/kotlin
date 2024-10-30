@@ -3,6 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.JvmBuiltin
+@file:kotlin.internal.SuppressBytecodeGeneration
+@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
+
 package kotlin.concurrent
 
 /**
@@ -13,6 +17,9 @@ package kotlin.concurrent
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicIntArray {
+
+    private val array: IntArray
+
     /**
      * Creates a new [AtomicIntArray] of the given [size], with all elements initialized to zero.
      *
@@ -121,6 +128,9 @@ public actual class AtomicIntArray {
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicLongArray {
+
+    private val array: LongArray
+
     /**
      * Creates a new [AtomicLongArray] of the given [size], with all elements initialized to zero.
      *
@@ -229,6 +239,9 @@ public actual class AtomicLongArray {
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicArray<T> {
+
+    private val array: Array<T>
+
     /**
      * Creates a new [AtomicArray]<T> filled with elements of the given [array].
      */
