@@ -38,6 +38,22 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
         return getDependentModulesImpl(module.friendDependencies)
     }
 
+    fun getDependentFriendSourceModulesRecursively(module: TestModule): List<FirModuleData> {
+
+        fun getFriendTestModules(module: TestModule): List<TestModule> =
+            module.friendDependencies
+                .filter { it.kind == DependencyKind.Source }
+                .map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+
+        val allModules = LinkedHashSet<TestModule>()
+        var newModules = getFriendTestModules(module)
+        while (newModules.isNotEmpty()) {
+            allModules += newModules
+            newModules = newModules.flatMap { getFriendTestModules(testServices.dependencyProvider.getTestModule(it.name)) }
+        }
+        return allModules.map { getCorrespondingModuleData(it) }
+    }
+
     fun getDependentDependsOnSourceModules(module: TestModule): List<FirModuleData> {
         return getDependentModulesImpl(module.dependsOnDependencies)
     }

@@ -98,6 +98,7 @@ class ModuleStructureExtractorImpl(
         private var filesOfCurrentModule = mutableListOf<TestFile>()
 
         private var currentFileName: String? = null
+        private var currentSnippetNumber: Int = 1
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
         private var endLineNumberOfLastFile = -1
@@ -195,6 +196,26 @@ class ModuleStructureExtractorImpl(
                     }
                     dependsOn.mapTo(dependenciesOfCurrentModule) { name ->
                         DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
+                    }
+                }
+                ModuleStructureDirectives.SNIPPET -> {
+                    fun snippetName() = "snippet_${"%03d".format(currentSnippetNumber)}"
+
+                    val previousModuleName = currentModuleName ?: snippetName().also {
+                        currentModuleName = it
+                        currentFileName = "$it.kts"
+                    }
+                    if (linesOfCurrentFile.all { it.isBlank() }) {
+                        finishGlobalDirectives()
+                    } else {
+                        finishModule(lineNumber)
+
+                        dependenciesOfCurrentModule.add(
+                            DependencyDescription(previousModuleName, DependencyKind.Source, DependencyRelation.FriendDependency)
+                        )
+                        currentSnippetNumber++
+                        currentModuleName = snippetName()
+                        currentFileName = "$currentModuleName.kts"
                     }
                 }
                 ModuleStructureDirectives.DEPENDENCY,
