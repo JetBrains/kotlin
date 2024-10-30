@@ -68,7 +68,8 @@ class LlvmCallable(val functionType: LLVMTypeRef, val returnsObjectType: Boolean
                 type = type,
                 isLocal = isLocal,
                 isDefinition = isDefinition,
-                scopeLine = scopeLine
+                scopeLine = scopeLine,
+                isTransparentStepping = 0,
         )!!
 
     fun param(i: Int) : LLVMValueRef {

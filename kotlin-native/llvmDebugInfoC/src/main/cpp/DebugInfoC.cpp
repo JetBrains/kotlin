@@ -85,15 +85,25 @@ static DISubprogramRef DICreateFunctionShared(DIBuilderRef builderRef, DIScopeOp
                                               llvm::StringRef name, llvm::StringRef linkageName,
                                               DIFileRef file, unsigned lineNo,
                                               DISubroutineTypeRef type, int isLocal,
-                                              int isDefinition, unsigned scopeLine) {
+                                              int isDefinition, unsigned scopeLine, int isTransparentStepping) {
   auto builder = llvm::unwrap(builderRef);
+  auto spFlags = llvm::DISubprogram::toSPFlags(false, true, false);
+
+  if (isTransparentStepping != 0) {
+#ifdef __APPLE__
+    spFlags |= llvm::DISubprogram::SPFlagIsTransparentStepping;
+#else
+    assert(false);
+#endif
+  }
+
   auto subprogram = builder->createFunction(llvm::unwrap(scope),
                                             name,
                                             linkageName,
                                             llvm::unwrap(file),
                                             lineNo,
                                             llvm::unwrap(type),
-                                            scopeLine, llvm::DINode::DIFlags::FlagZero, llvm::DISubprogram::toSPFlags(false, true, false));
+                                            scopeLine, llvm::DINode::DIFlags::FlagZero, spFlags);
   auto tmp = subprogram->getRetainedNodes().get();
   if (!tmp && tmp->isTemporary())
     llvm::MDTuple::deleteTemporary(tmp);
@@ -106,18 +116,20 @@ DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope
                                  const char* name, const char *linkageName,
                                  DIFileRef file, unsigned lineNo,
                                  DISubroutineTypeRef type, int isLocal,
-                                 int isDefinition, unsigned scopeLine) {
-  return DICreateFunctionShared(builderRef, scope, name, linkageName, file, lineNo, type, isLocal, isDefinition, scopeLine);
+                                 int isDefinition, unsigned scopeLine, int isTransparentStepping) {
+  return DICreateFunctionShared(builderRef, scope, name, linkageName, file, lineNo, type, isLocal, isDefinition, scopeLine,
+                                isTransparentStepping);
 }
 
 DISubprogramRef DICreateBridgeFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
                                        LLVMValueRef function,
                                        DIFileRef file, unsigned lineNo,
                                        DISubroutineTypeRef type, int isLocal,
-                                       int isDefinition, unsigned scopeLine) {
+                                       int isDefinition, unsigned scopeLine, int isTransparentStepping) {
   auto fn = llvm::cast<llvm::Function>(llvm::unwrap(function));
   auto name = fn->getName();
-  auto subprogram = DICreateFunctionShared(builderRef, scope, name, name, file, lineNo, type, isLocal, isDefinition, scopeLine);
+  auto subprogram = DICreateFunctionShared(builderRef, scope, name, name, file, lineNo, type, isLocal, isDefinition, scopeLine,
+                                           isTransparentStepping);
   fn->setSubprogram(llvm::unwrap(subprogram));
   return subprogram;
 }

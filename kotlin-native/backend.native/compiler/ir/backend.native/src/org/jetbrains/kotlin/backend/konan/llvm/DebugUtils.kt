@@ -202,7 +202,8 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             //TODO: need more investigations.
             isLocal = 0,
             isDefinition = 1,
-            scopeLine = 0
+            scopeLine = 0,
+            isTransparentStepping = 0,
     )!!
 
     private fun dwarfPointerType(type: DITypeOpaqueRef): DITypeOpaqueRef =
