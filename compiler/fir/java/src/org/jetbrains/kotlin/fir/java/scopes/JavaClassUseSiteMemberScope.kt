@@ -563,6 +563,24 @@ class JavaClassUseSiteMemberScope(
                 it.fir.initialSignatureAttr ?: it
             }
 
+        val symbolToBeCollected = processOverridesForFunctionsWithErasedValueParameterIfDeclaredFunctionParametersAreErased(
+            name, explicitlyDeclaredFunction, relevantFunctionFromSupertypes, relevantFunctionFromSupertypesUnwrapped,
+        ) ?: return false
+
+        destination += symbolToBeCollected
+        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
+        for ((member, _) in resultOfIntersection.overriddenMembers) {
+            overrideByBase[member] = symbolToBeCollected
+        }
+        return true
+    }
+
+    private fun processOverridesForFunctionsWithErasedValueParameterIfDeclaredFunctionParametersAreErased(
+        name: Name,
+        explicitlyDeclaredFunction: FirNamedFunctionSymbol?,
+        relevantFunctionFromSupertypes: FirNamedFunctionSymbol,
+        relevantFunctionFromSupertypesUnwrapped: FirNamedFunctionSymbol,
+    ): FirNamedFunctionSymbol? {
         // E.g. contains(Object) from Java
         val explicitlyDeclaredFunctionWithErasedValueParameters =
             declaredMemberScope.getFunctions(name).firstOrNull { declaredFunction ->
@@ -572,7 +590,7 @@ class JavaClassUseSiteMemberScope(
                             relevantFunctionFromSupertypesUnwrapped.fir,
                             declaredFunction.fir
                         )
-            } ?: return false // No declared functions with erased parameters => no additional processing needed
+            } ?: return null // No declared functions with erased parameters => no additional processing needed
 
         /**
          * See the comment to [shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters] function
@@ -601,7 +619,7 @@ class JavaClassUseSiteMemberScope(
         }.symbol
 
         if (allParametersAreAny) {
-            return false
+            return null
         }
 
         // E.g. contains(String) from Java, if any
@@ -628,12 +646,7 @@ class JavaClassUseSiteMemberScope(
             // Collect synthetic function which is a hidden copy of declared one with unerased parameters
             accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
         }
-        destination += symbolToBeCollected
-        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
-        for ((member, _) in resultOfIntersection.overriddenMembers) {
-            overrideByBase[member] = symbolToBeCollected
-        }
-        return true
+        return symbolToBeCollected
     }
 
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
