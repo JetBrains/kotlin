@@ -616,7 +616,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         contextReceiver: FirContextReceiver,
         index: Int,
     ): IrValueParameter = convertCatching(contextReceiver) {
-        val type = contextReceiver.typeRef.toIrType(c)
+        val type = contextReceiver.returnTypeRef.toIrType(c)
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
             IrFactoryImpl.createValueParameter(
                 startOffset = startOffset,

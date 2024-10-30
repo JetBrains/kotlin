@@ -325,7 +325,7 @@ object FirFakeOverrideGenerator {
             newContextReceiverTypes ?: List(baseFunction.contextReceivers.size) { null }
         ) { contextReceiver, newType ->
             buildContextReceiverCopy(contextReceiver) {
-                typeRef = contextReceiver.typeRef.withReplacedConeType(newType)
+                returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirReceiverParameterSymbol()
             }
         }
@@ -649,7 +649,7 @@ object FirFakeOverrideGenerator {
         val copiedContextReceiverTypes = newContextReceiverTypes?.map {
             it?.let(substitutor::substituteOrNull)
         } ?: baseCallable.contextReceivers.map {
-            substitutor.substituteOrNull(it.typeRef.coneType)
+            substitutor.substituteOrNull(it.returnTypeRef.coneType)
         }
 
         val copiedReturnType = newReturnType?.let {
@@ -702,7 +702,7 @@ object FirFakeOverrideGenerator {
             newContextReceiverTypes ?: List(baseVariable.contextReceivers.size) { null }
         ) { contextReceiver, newType ->
             buildContextReceiverCopy(contextReceiver) {
-                typeRef = contextReceiver.typeRef.withReplacedConeType(newType)
+                returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirReceiverParameterSymbol()
             }
         }

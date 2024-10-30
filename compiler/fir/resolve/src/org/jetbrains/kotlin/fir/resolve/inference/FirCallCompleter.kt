@@ -393,7 +393,7 @@ class FirCallCompleter(
                 lambda.replaceContextReceivers(
                     contextReceivers.map { contextReceiverType ->
                         buildContextReceiver {
-                            typeRef = buildResolvedTypeRef {
+                            returnTypeRef = buildResolvedTypeRef {
                                 coneType = contextReceiverType
                             }
                             symbol = FirReceiverParameterSymbol()

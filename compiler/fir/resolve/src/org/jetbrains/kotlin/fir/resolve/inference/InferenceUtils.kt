@@ -95,7 +95,7 @@ fun extractLambdaInfoFromFunctionType(
         when {
             contextReceiversNumber == 0 -> emptyList()
             lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
-            else -> lambda.contextReceivers.map { it.typeRef.coneType }
+            else -> lambda.contextReceivers.map { it.returnTypeRef.coneType }
         }
 
     return ConeResolvedLambdaAtom(

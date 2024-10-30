@@ -172,7 +172,7 @@ class JavaClassUseSiteMemberScope(
             val key = SyntheticPropertiesCacheKey(
                 name,
                 overriddenProperty.chosenSymbol.receiverParameter?.typeRef?.coneType,
-                overriddenProperty.chosenSymbol.resolvedContextReceivers.ifNotEmpty { map { it.typeRef.coneType } } ?: emptyList()
+                overriddenProperty.chosenSymbol.resolvedContextReceivers.ifNotEmpty { map { it.returnTypeRef.coneType } } ?: emptyList()
             )
             val overrideInClass = syntheticPropertyCache.getValue(key, this to overriddenProperty)
 
@@ -283,7 +283,7 @@ class JavaClassUseSiteMemberScope(
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
 
         for (contextReceiver in this.resolvedContextReceivers) {
-            if (contextReceiver.typeRef.coneType.computeJvmDescriptorRepresentation() !=
+            if (contextReceiver.returnTypeRef.coneType.computeJvmDescriptorRepresentation() !=
                 candidate.valueParameters[parameterIndex++].returnTypeRef
                     .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
                     .computeJvmDescriptorRepresentation()

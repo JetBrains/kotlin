@@ -256,7 +256,7 @@ class Fir2IrClassifierStorage(
                     name = Name.identifier("contextReceiverField$index"),
                     visibility = DescriptorVisibilities.PRIVATE,
                     symbol = IrFieldSymbolImpl(),
-                    type = contextReceiver.typeRef.toIrType(c),
+                    type = contextReceiver.returnTypeRef.toIrType(c),
                     isFinal = true,
                     isStatic = false,
                     isExternal = false,

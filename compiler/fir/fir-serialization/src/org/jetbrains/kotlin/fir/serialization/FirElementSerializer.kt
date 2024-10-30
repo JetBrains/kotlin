@@ -304,11 +304,11 @@ class FirElementSerializer private constructor(
 
         if (klass is FirRegularClass) {
             for (contextReceiver in klass.contextReceivers) {
-                val typeRef = contextReceiver.typeRef
+                val typeRef = contextReceiver.returnTypeRef
                 if (useTypeTable()) {
                     builder.addContextReceiverTypeId(typeId(typeRef))
                 } else {
-                    builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
+                    builder.addContextReceiverType(typeProto(contextReceiver.returnTypeRef))
                 }
             }
         }
@@ -584,11 +584,11 @@ class FirElementSerializer private constructor(
         }
 
         for (contextReceiver in property.contextReceivers) {
-            val typeRef = contextReceiver.typeRef
+            val typeRef = contextReceiver.returnTypeRef
             if (useTypeTable()) {
                 builder.addContextReceiverTypeId(local.typeId(typeRef))
             } else {
-                builder.addContextReceiverType(local.typeProto(contextReceiver.typeRef))
+                builder.addContextReceiverType(local.typeProto(contextReceiver.returnTypeRef))
             }
         }
 
@@ -672,11 +672,11 @@ class FirElementSerializer private constructor(
         }
 
         for (contextReceiver in function.contextReceivers) {
-            val typeRef = contextReceiver.typeRef
+            val typeRef = contextReceiver.returnTypeRef
             if (useTypeTable()) {
                 builder.addContextReceiverTypeId(local.typeId(typeRef))
             } else {
-                builder.addContextReceiverType(local.typeProto(contextReceiver.typeRef))
+                builder.addContextReceiverType(local.typeProto(contextReceiver.returnTypeRef))
             }
         }
 

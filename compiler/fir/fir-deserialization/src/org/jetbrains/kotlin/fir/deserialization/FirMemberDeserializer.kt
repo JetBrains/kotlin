@@ -516,7 +516,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return buildContextReceiver {
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
-            this.typeRef = typeRef
+            this.returnTypeRef = typeRef
             symbol = FirReceiverParameterSymbol()
             moduleData = c.moduleData
             this.origin = origin

@@ -306,7 +306,7 @@ class FirRenderer(
                 print(it.asString() + "@")
             }
 
-            contextReceiver.typeRef.accept(this)
+            contextReceiver.returnTypeRef.accept(this)
         }
 
         override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {

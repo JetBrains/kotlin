@@ -29,7 +29,7 @@ abstract class FirContextReceiver : FirDeclaration() {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val symbol: FirReceiverParameterSymbol
-    abstract val typeRef: FirTypeRef
+    abstract val returnTypeRef: FirTypeRef
     abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract val customLabelName: Name?
     abstract val labelNameFromTypeRef: Name?
@@ -43,9 +43,9 @@ abstract class FirContextReceiver : FirDeclaration() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
+    abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContextReceiver
 
-    abstract fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver
+    abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver
 }

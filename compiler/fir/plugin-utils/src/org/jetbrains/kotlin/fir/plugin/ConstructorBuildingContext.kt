@@ -63,7 +63,7 @@ public class ConstructorBuildingContext(
             if (owner is FirRegularClassSymbol) {
                 owner.resolvedContextReceivers.mapTo(contextReceivers) {
                     buildContextReceiver {
-                        typeRef = it.typeRef.coneType.toFirResolvedTypeRef()
+                        returnTypeRef = it.returnTypeRef.coneType.toFirResolvedTypeRef()
                         symbol = FirReceiverParameterSymbol()
                         moduleData = session.moduleData
                         origin = key.origin

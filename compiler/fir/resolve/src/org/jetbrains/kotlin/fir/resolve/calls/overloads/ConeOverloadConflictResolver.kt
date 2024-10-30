@@ -530,7 +530,7 @@ class ConeOverloadConflictResolver(
                         TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
                     }
             } else {
-                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.prepareType(session, call)) }
+                called.contextReceivers.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
                 if (call.argumentMappingInitialized) {
                     call.argumentMapping.mapTo(this) { (argument, parameter) ->
                         parameter.toTypeWithConversion(argument, session, call)

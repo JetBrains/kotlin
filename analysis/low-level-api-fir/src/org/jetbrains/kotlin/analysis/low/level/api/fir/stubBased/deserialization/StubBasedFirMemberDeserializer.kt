@@ -429,7 +429,7 @@ internal class StubBasedFirMemberDeserializer(
             source = KtRealPsiSourceElement(typeReference)
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
-            this.typeRef = typeRef
+            this.returnTypeRef = typeRef
             symbol = FirReceiverParameterSymbol()
             moduleData = c.moduleData
             origin = initialOrigin

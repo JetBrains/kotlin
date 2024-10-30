@@ -399,7 +399,7 @@ internal object ArgumentCheckingProcessor {
         }
 
         val contextReceivers = lambda.contextReceivers.mapIndexed { i, it ->
-            it.typeRef.coneTypeSafe<ConeKotlinType>()
+            it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?: defaultType
                 ?: ConeTypeVariableForLambdaParameterType("_C$i").apply { csBuilder.registerVariable(this) }.defaultType
         }

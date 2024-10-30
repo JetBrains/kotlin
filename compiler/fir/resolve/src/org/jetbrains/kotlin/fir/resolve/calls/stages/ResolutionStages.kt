@@ -205,7 +205,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 object CheckContextReceivers : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val contextReceiverExpectedTypes = (candidate.symbol as? FirCallableSymbol<*>)?.fir?.contextReceivers?.map {
-            candidate.substitutor.substituteOrSelf(it.typeRef.coneType)
+            candidate.substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }?.takeUnless { it.isEmpty() } ?: return
 
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {

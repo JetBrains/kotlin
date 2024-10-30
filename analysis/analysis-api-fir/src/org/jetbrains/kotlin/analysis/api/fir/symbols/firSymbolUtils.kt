@@ -75,7 +75,7 @@ private fun createContextReceiver(
     builder: KaSymbolByFirBuilder,
     contextReceiver: FirContextReceiver
 ) = KaBaseContextReceiver(
-    builder.typeBuilder.buildKtType(contextReceiver.typeRef),
+    builder.typeBuilder.buildKtType(contextReceiver.returnTypeRef),
     contextReceiver.customLabelName,
     builder.token
 )

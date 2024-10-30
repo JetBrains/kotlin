@@ -24,7 +24,7 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         val source = declaration.source?.findContextReceiverListSource() ?: return
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-            if (checkSubTypes(contextReceivers.map { it.typeRef.coneType }, context)) {
+            if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
                 reporter.reportOn(
                     source,
                     FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,

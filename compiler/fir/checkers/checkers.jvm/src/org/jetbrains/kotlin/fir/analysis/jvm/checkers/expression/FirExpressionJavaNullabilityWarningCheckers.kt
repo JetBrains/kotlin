@@ -55,7 +55,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
 
         for ((contextArgument, contextParameter) in expression.contextReceiverArguments.zip(symbol.resolvedContextReceivers)) {
             contextArgument.checkExpressionForEnhancedTypeMismatch(
-                expectedType = substitutor.substituteOrSelf(contextParameter.typeRef.coneType),
+                expectedType = substitutor.substituteOrSelf(contextParameter.returnTypeRef.coneType),
                 reporter,
                 context,
                 FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS

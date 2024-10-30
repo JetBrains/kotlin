@@ -119,7 +119,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
     ) {
         contextReceiverTypeProviders.mapTo(destination) {
             buildContextReceiver {
-                typeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
+                returnTypeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
                 symbol = FirReceiverParameterSymbol()
                 moduleData = session.moduleData
                 this.origin = origin

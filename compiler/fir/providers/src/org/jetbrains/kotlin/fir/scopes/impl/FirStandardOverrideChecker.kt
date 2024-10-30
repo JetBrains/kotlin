@@ -157,7 +157,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             baseDeclaration.receiverParameter?.typeRef,
             substitutor
         ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
-            isEqualTypes(memberParam.typeRef, selfParam.typeRef, substitutor)
+            isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }
 

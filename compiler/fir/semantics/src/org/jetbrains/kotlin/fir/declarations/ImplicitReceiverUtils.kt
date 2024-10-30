@@ -60,7 +60,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
     val thisReceiver = ImplicitDispatchReceiverValue(owner.symbol, defaultType, session, scopeSession)
     val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.mapIndexed { index, receiver ->
         ContextReceiverValueForClass(
-            owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession,
+            owner.symbol, receiver.returnTypeRef.coneType, receiver.labelName, session, scopeSession,
             contextReceiverNumber = index,
         )
     }.orEmpty()
@@ -313,7 +313,7 @@ fun FirCallableDeclaration.createContextReceiverValues(
 ): List<ContextReceiverValueForCallable> =
     contextReceivers.mapIndexed { index, receiver ->
         ContextReceiverValueForCallable(
-            symbol, receiver.typeRef.coneType, receiver.labelName, sessionHolder.session, sessionHolder.scopeSession,
+            symbol, receiver.returnTypeRef.coneType, receiver.labelName, sessionHolder.session, sessionHolder.scopeSession,
             contextReceiverNumber = index,
         )
     }

@@ -33,7 +33,7 @@ class FirContextReceiverBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var symbol: FirReceiverParameterSymbol
-    lateinit var typeRef: FirTypeRef
+    lateinit var returnTypeRef: FirTypeRef
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
     var customLabelName: Name? = null
     var labelNameFromTypeRef: Name? = null
@@ -47,7 +47,7 @@ class FirContextReceiverBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             symbol,
-            typeRef,
+            returnTypeRef,
             containingDeclarationSymbol,
             customLabelName,
             labelNameFromTypeRef,
@@ -76,7 +76,7 @@ inline fun buildContextReceiverCopy(original: FirContextReceiver, init: FirConte
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeRef = original.typeRef
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
     copyBuilder.customLabelName = original.customLabelName
     copyBuilder.labelNameFromTypeRef = original.labelNameFromTypeRef

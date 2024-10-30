@@ -1185,7 +1185,7 @@ open class FirDeclarationsResolveTransformer(
             lambda.contextReceivers.takeIf { it.isNotEmpty() }
                 ?: resolvedLambdaAtom?.contextReceiverTypes?.map { receiverType ->
                     buildContextReceiver {
-                        this.typeRef = buildResolvedTypeRef {
+                        this.returnTypeRef = buildResolvedTypeRef {
                             coneType = receiverType
                         }
                         symbol = FirReceiverParameterSymbol()

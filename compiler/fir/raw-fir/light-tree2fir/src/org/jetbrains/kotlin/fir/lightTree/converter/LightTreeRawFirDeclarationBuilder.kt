@@ -2650,7 +2650,7 @@ class LightTreeRawFirDeclarationBuilder(
             buildContextReceiver {
                 this.source = valueParameter.source
                 this.customLabelName = valueParameter.name
-                this.typeRef = valueParameter.returnTypeRef
+                this.returnTypeRef = valueParameter.returnTypeRef
 
                 this.symbol = FirReceiverParameterSymbol()
                 this.moduleData = baseModuleData
@@ -2677,7 +2677,7 @@ class LightTreeRawFirDeclarationBuilder(
                     ?.getReferencedNameAsName()
 
                 typeReference?.let {
-                    this.typeRef = convertType(it)
+                    this.returnTypeRef = convertType(it)
                 }
 
                 this.symbol = FirReceiverParameterSymbol()

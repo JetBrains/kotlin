@@ -150,7 +150,7 @@ private class CodeFragmentCapturedValueVisitor(
                                         .ContextReceiver(contextReceiverNumber, labelName, isCrossingInlineBounds)
                                     register(
                                         CodeFragmentCapturedSymbol(
-                                            capturedValue, contextReceiver.symbol, contextReceiver.typeRef
+                                            capturedValue, contextReceiver.symbol, contextReceiver.returnTypeRef
                                         )
                                     )
                                 }

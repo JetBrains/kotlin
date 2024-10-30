@@ -125,7 +125,7 @@ private fun FirSimpleFunction.substituteOrNull(
     var isEnhanced = false
 
     val newParameterTypes = valueParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newContextReceiverTypes = contextReceivers.map { substitutor.substituteOrNull(it.typeRef.coneType)?.also { isEnhanced = true } }
+    val newContextReceiverTypes = contextReceivers.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
     val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }
@@ -167,7 +167,7 @@ private fun FirProperty.substituteOrNull(
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 
-    val newContextReceiverTypes = contextReceivers.map { substitutor.substituteOrNull(it.typeRef.coneType)?.also { isEnhanced = true } }
+    val newContextReceiverTypes = contextReceivers.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
     val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }

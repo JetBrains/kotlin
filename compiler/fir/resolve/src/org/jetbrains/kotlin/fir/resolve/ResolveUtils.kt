@@ -226,7 +226,7 @@ fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLooku
 
     return createFunctionType(
         kind ?: FunctionTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
-        contextReceivers = contextReceivers.map { it.typeRef.coneType }
+        contextReceivers = contextReceivers.map { it.returnTypeRef.coneType }
     )
 }
 

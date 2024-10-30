@@ -34,7 +34,7 @@ internal class FirContextReceiverImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val symbol: FirReceiverParameterSymbol,
-    override var typeRef: FirTypeRef,
+    override var returnTypeRef: FirTypeRef,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override val customLabelName: Name?,
     override val labelNameFromTypeRef: Name?,
@@ -47,12 +47,12 @@ internal class FirContextReceiverImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        typeRef.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContextReceiverImpl {
         transformAnnotations(transformer, data)
-        transformTypeRef(transformer, data)
+        transformReturnTypeRef(transformer, data)
         return this
     }
 
@@ -61,8 +61,8 @@ internal class FirContextReceiverImpl(
         return this
     }
 
-    override fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiverImpl {
-        typeRef = typeRef.transform(transformer, data)
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiverImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -70,7 +70,7 @@ internal class FirContextReceiverImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
     }
 }

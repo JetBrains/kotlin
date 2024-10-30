@@ -68,7 +68,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(declaration)
 
         +declaredSymbol(receiverParameterSymbolType)
-        +field(typeRef, withReplace = true, withTransform = true)
+        +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
         +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
             withBindThis = false
         }

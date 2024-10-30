@@ -1536,7 +1536,7 @@ open class PsiRawFirBuilder(
                 buildContextReceiver {
                     this.source = valueParameter.source
                     this.customLabelName = valueParameter.name
-                    this.typeRef = valueParameter.returnTypeRef
+                    this.returnTypeRef = valueParameter.returnTypeRef
 
                     this.symbol = FirReceiverParameterSymbol()
                     this.moduleData = baseModuleData
@@ -1552,7 +1552,7 @@ open class PsiRawFirBuilder(
                     this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
 
                     contextReceiverElement.typeReference()?.toFirType()?.let {
-                        this.typeRef = it
+                        this.returnTypeRef = it
                     }
 
                     this.symbol = FirReceiverParameterSymbol()
