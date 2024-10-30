@@ -1008,4 +1008,19 @@ class JavaClassUseSiteMemberScope(
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope
         )
     }
+
+    override fun isOverriddenFunction(
+        overrideCandidate: FirNamedFunctionSymbol,
+        baseDeclaration: FirNamedFunctionSymbol,
+        baseScope: FirTypeScope?,
+    ): Boolean {
+        if (!super.isOverriddenFunction(overrideCandidate, baseDeclaration, baseScope)) return false
+        if (baseScope == null) return true
+        val baseHasOriginWithErasedParameters = BuiltinMethodsWithSpecialGenericSignature
+            .getOverriddenBuiltinFunctionWithErasedValueParametersInJava(baseDeclaration, baseScope) != null
+        if (baseHasOriginWithErasedParameters && !overrideCandidate.hasErasedParameters()) {
+            return false
+        }
+        return true
+    }
 }

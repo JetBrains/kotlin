@@ -57,7 +57,9 @@ class FirClassUseSiteMemberScope(
     private fun computeDirectOverriddenForDeclaredProperty(declaredPropertySymbol: FirPropertySymbol): List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> {
         val result = mutableListOf<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>()
         for (resultOfIntersection in getPropertiesAndFieldsFromSupertypesByName(declaredPropertySymbol.name).first) {
-            resultOfIntersection.collectDirectOverriddenForDeclared(declaredPropertySymbol, result, overrideChecker::isOverriddenProperty)
+            resultOfIntersection.collectDirectOverriddenForDeclared(declaredPropertySymbol, result) { overrideCandidate, baseProperty, _ ->
+                overrideChecker.isOverriddenProperty(overrideCandidate, baseProperty)
+            }
         }
         return result
     }
