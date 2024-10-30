@@ -30,6 +30,7 @@ abstract class DeclarationCheckers {
     open val constructorCheckers: Set<FirConstructorChecker> = emptySet()
     open val fileCheckers: Set<FirFileChecker> = emptySet()
     open val scriptCheckers: Set<FirScriptChecker> = emptySet()
+    open val replSnippetCheckers: Set<FirReplSnippetChecker> = emptySet()
     open val typeParameterCheckers: Set<FirTypeParameterChecker> = emptySet()
     open val typeAliasCheckers: Set<FirTypeAliasChecker> = emptySet()
     open val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = emptySet()
@@ -56,6 +57,7 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allConstructorCheckers: Array<FirConstructorChecker> by lazy { (constructorCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allFileCheckers: Array<FirFileChecker> by lazy { (fileCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allScriptCheckers: Array<FirScriptChecker> by lazy { (scriptCheckers + basicDeclarationCheckers).toTypedArray() }
+    @CheckersComponentInternal internal val allReplSnippetCheckers: Array<FirReplSnippetChecker> by lazy { (replSnippetCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allTypeParameterCheckers: Array<FirTypeParameterChecker> by lazy { (typeParameterCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allTypeAliasCheckers: Array<FirTypeAliasChecker> by lazy { (typeAliasCheckers + classLikeCheckers + basicDeclarationCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Array<FirAnonymousFunctionChecker> by lazy { (anonymousFunctionCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers).toTypedArray() }
