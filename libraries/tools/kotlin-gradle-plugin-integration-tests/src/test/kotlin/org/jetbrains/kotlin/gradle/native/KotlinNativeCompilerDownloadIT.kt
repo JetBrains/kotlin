@@ -67,7 +67,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
 
     @DisplayName("KT-58303: Kotlin Native must not be downloaded when konan home is overridden")
     @GradleTest
-    fun shouldNotDownloadKotlinNativeWithCustomKonanHome(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+    fun shouldNotDownloadKotlinNativeWithCustomKonanHome(gradleVersion: GradleVersion) {
         val kotlinNativeVersion = System.getProperty("kotlinNativeVersion")
         // When a Kotlin Native version has not been passed means that there was not common test directory with a preinstalled kotlin native bundle
         if (kotlinNativeVersion != null) {
@@ -78,9 +78,12 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 gradleVersion,
                 buildOptions = defaultBuildOptions.copy(
                     freeArgs = listOf("-Pkotlin.native.home=$customKonanHome"),
+                    // when both `konan.data.dir` and `kotlin.native.home` properties are set the `konan.data.dir` one has priority,
+                    // that is why we are disabling it `konan.data.dir` here.
+                    konanDataDir = null
                 ),
             ) {
-                build("assemble") {
+                build(":commonizeNativeDistribution") {
                     assertOutputContains("A user-provided Kotlin/Native distribution configured: ${customKonanHome}. Disabling Kotlin Native Toolchain auto-provisioning.")
                     assertOutputDoesNotContain(UNPUCK_KONAN_FINISHED_LOG)
                     assertOutputDoesNotContain("Please wait while Kotlin/Native")
