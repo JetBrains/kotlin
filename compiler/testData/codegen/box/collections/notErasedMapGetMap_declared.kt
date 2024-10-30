@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
 // ISSUE: KT-72345
 
 // FILE: MyMap.java
@@ -15,9 +14,9 @@ public class MyMap<V> extends HashMap<String, V> {
 // FILE: main.kt
 fun box(): String {
     val test2 = MyMap<String>()
-    return <!RETURN_TYPE_MISMATCH!>try {
+    return try {
         test2.get("test")
     } catch (e: RuntimeException) {
         e.message!!
-    }<!>
+    }
 }
