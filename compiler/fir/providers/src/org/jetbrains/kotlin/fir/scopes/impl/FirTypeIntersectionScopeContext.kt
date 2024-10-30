@@ -46,16 +46,14 @@ class FirTypeIntersectionScopeContext(
 
     sealed class ResultOfIntersection<D : FirCallableSymbol<*>>(
         val overriddenMembers: List<MemberWithBaseScope<D>>,
-        // This member is for debug-purposes only
-        private val containingScope: FirTypeScope?
     ) {
         abstract val chosenSymbol: D
 
         class SingleMember<D : FirCallableSymbol<*>>(
             override val chosenSymbol: D,
             overriddenMembers: List<MemberWithBaseScope<D>>,
-            containingScope: FirTypeScope?
-        ) : ResultOfIntersection<D>(overriddenMembers, containingScope) {
+            val scopeOfChosenSymbol: FirTypeScope,
+        ) : ResultOfIntersection<D>(overriddenMembers) {
             constructor(
                 chosenSymbol: D,
                 overriddenMember: MemberWithBaseScope<D>
@@ -66,9 +64,8 @@ class FirTypeIntersectionScopeContext(
             val context: FirTypeIntersectionScopeContext,
             val mostSpecific: List<MemberWithBaseScope<D>>,
             overriddenMembers: List<MemberWithBaseScope<D>>,
-            containingScope: FirTypeScope?,
             val containsMultipleNonSubsumed: Boolean,
-        ) : ResultOfIntersection<D>(overriddenMembers, containingScope) {
+        ) : ResultOfIntersection<D>(overriddenMembers) {
             override val chosenSymbol: D by lazy {
                 @Suppress("UNCHECKED_CAST")
                 context.intersectionOverrides.getValue(keySymbol, this).member as D
@@ -180,7 +177,6 @@ class FirTypeIntersectionScopeContext(
                 result += ResultOfIntersection.NonTrivial(
                     this, mostSpecific,
                     overriddenMembers = group,
-                    containingScope = null,
                     containsMultipleNonSubsumed = when {
                         forClassUseSiteScope -> group.getNonSubsumedNonPhantomOverriddenSymbols().size > 1
                         else -> mostSpecific.getNonSubsumedNonPhantomOverriddenSymbols().size > 1
