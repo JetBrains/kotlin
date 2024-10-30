@@ -17,7 +17,7 @@ public final class ComposableSingletons%TestKt {
   public final getLambda-1%test_module()Lkotlin/jvm/functions/Function2;
   static <clinit>()V
   public final static LComposableSingletons%TestKt; INSTANCE
-  public static Lkotlin/jvm/functions/Function2; lambda-1
+  private static Lkotlin/jvm/functions/Function2; lambda-1
   final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
 }
 final class ComposableSingletons%TestKt%lambda-1%1 implements kotlin/jvm/functions/Function2 {

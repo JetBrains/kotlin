@@ -3,7 +3,7 @@ MODULE_FRAGMENT
     CLASS OBJECT name:ComposableSingletons$MainKt modality:FINAL visibility:internal superTypes:[]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:home.ComposableSingletons$MainKt
       PROPERTY name:lambda-1 visibility:internal modality:FINAL [val]
-        FIELD name:lambda-1 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:internal [static]
+        FIELD name:lambda-1 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [static]
           EXPRESSION_BODY
             CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
               key: CONST Int type=kotlin.Int value=-1263890955
@@ -57,7 +57,7 @@ MODULE_FRAGMENT
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:home.ComposableSingletons$MainKt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='internal final fun <get-lambda-1> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in home.ComposableSingletons$MainKt'
-              GET_FIELD 'FIELD name:lambda-1 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:internal [static] declared in home.ComposableSingletons$MainKt' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+              GET_FIELD 'FIELD name:lambda-1 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> visibility:private [static] declared in home.ComposableSingletons$MainKt' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
                 receiver: GET_VAR '<this>: home.ComposableSingletons$MainKt declared in home.ComposableSingletons$MainKt.<get-lambda-1>' type=home.ComposableSingletons$MainKt origin=null
       CONSTRUCTOR visibility:public <> () returnType:home.ComposableSingletons$MainKt [primary]
         BLOCK_BODY

@@ -859,7 +859,7 @@ abstract class AbstractComposeLowering(
             isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = if (context.platform.isJvm()) DescriptorVisibilities.PUBLIC else DescriptorVisibilities.PRIVATE
         }
     }
 
