@@ -11,8 +11,14 @@ import java.io.PrintWriter
 class JvmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `${thisKind.name.lowercase()}`.")
-        expectActual = ExpectActualModifier.Unspecified
+        expectActual = ExpectActualModifier.Actual
     }
+
+    override val fileAnnotations = listOf(
+        "kotlin.internal.JvmBuiltin",
+        "kotlin.internal.SuppressBytecodeGeneration",
+        "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\", \"OVERRIDE_DEPRECATION\", \"DIVISION_BY_ZERO\")"
+    )
 
     override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
         noBody()

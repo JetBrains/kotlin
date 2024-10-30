@@ -79,12 +79,17 @@ internal abstract class AnnotatedAndDocumented {
 
 internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
     private val suppresses: MutableList<String> = mutableListOf()
+    private val annotations: MutableList<String> = mutableListOf()
     private val imports: MutableList<String> = mutableListOf()
     private val fileComments: MutableList<String> = mutableListOf()
     private val topLevelDeclarations: MutableList<PrimitiveBuilder> = mutableListOf()
 
     fun suppress(suppress: String) {
         suppresses += suppress
+    }
+
+    fun annotate(annotation: String) {
+        annotations += annotation
     }
 
     fun import(newImport: String) {
@@ -117,6 +122,13 @@ internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
 
             if (suppresses.isNotEmpty()) {
                 appendLine(suppresses.joinToString(separator = ", ", prefix = "@file:Suppress(", postfix = ")") { "\"$it\"" })
+                appendLine()
+            }
+
+            if (annotations.isNotEmpty()) {
+                for (annotation in annotations) {
+                    appendLine("@file:$annotation")
+                }
                 appendLine()
             }
 

@@ -116,3 +116,17 @@ internal annotation class ContractsDsl
  */
 @OptionalExpectation
 internal expect annotation class ActualizeByJvmBuiltinProvider()
+
+/**
+ * Specifies that all file declarations are builtins and should be serialized to .kotlin_metadata
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class JvmBuiltin
+
+/**
+ * Do not generate bytecode for declarations in the file (and therefore do not lower them)
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class SuppressBytecodeGeneration
