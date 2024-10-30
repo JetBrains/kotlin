@@ -1360,6 +1360,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/Throwable;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KonanHomeConflictDeclaration : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KonanHomeConflictDeclaration;
+	public final fun invoke (Ljava/io/File;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$Kotlin12XMppDeprecation : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$Kotlin12XMppDeprecation;
 	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;

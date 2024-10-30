@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -953,6 +954,16 @@ object KotlinToolingDiagnostics {
             build(
                 "The Kotlin/Native distribution ($kotlinNativeHomePropertyValue) used in this build does not provide required subdirectories." +
                         " Make sure that the '$kotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution.",
+            )
+    }
+
+    object KonanHomeConflictDeclaration : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(konanDataDirPropertyValue: File?, kotlinNativeHomeProperty: String?): ToolingDiagnostic =
+            build(
+                """
+                Both ${NativeProperties.KONAN_DATA_DIR.name}=${konanDataDirPropertyValue} and ${NativeProperties.NATIVE_HOME.name}=${kotlinNativeHomeProperty} are declared.
+                The ${NativeProperties.KONAN_DATA_DIR.name}=${konanDataDirPropertyValue} path will be given the highest priority.
+                """.trimIndent()
             )
     }
 

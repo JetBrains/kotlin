@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal.properties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties.Companion.KONAN_DATA_DIR
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -54,6 +55,14 @@ internal interface NativeProperties {
          */
         internal val NATIVE_HOME = PropertiesBuildService.NullableStringGradleProperty(
             name = "kotlin.native.home"
+        )
+
+        /**
+         * Allows the user to specify a custom location for the Kotlin/Native distribution.
+         * This property takes precedence over the 'KONAN_DATA_DIR' environment variable.
+         */
+        internal val KONAN_DATA_DIR = PropertiesBuildService.NullableStringGradleProperty(
+            name = "konan.data.dir"
         )
     }
 }
@@ -176,13 +185,6 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
             defaultValue = false
         )
 
-        /**
-         * Allows the user to specify a custom location for the Kotlin/Native distribution.
-         * This property takes precedence over the 'KONAN_DATA_DIR' environment variable.
-         */
-        private val KONAN_DATA_DIR = PropertiesBuildService.NullableStringGradleProperty(
-            name = "konan.data.dir"
-        )
 
         private val NATIVE_HOME_DEPRECATED = PropertiesBuildService.NullableStringGradleProperty(
             name = "org.jetbrains.kotlin.native.home"
