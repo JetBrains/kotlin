@@ -1,0 +1,4 @@
+ExtensionReceiver[name: boo; isMutated: false; displayText: this@boo]
+    val R|Aaa|.boo: R|kotlin/String|
+        get(): R|kotlin/String|
+    R|Aaa|
