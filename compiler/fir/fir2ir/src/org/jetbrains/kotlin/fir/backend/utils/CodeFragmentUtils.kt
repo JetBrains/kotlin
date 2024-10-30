@@ -18,6 +18,6 @@ class CodeFragmentConversionData(
     val injectedValues: List<InjectedValue>,
 )
 
-class InjectedValue(val symbol: FirBasedSymbol<*>, val contextReceiverNumber: Int, val typeRef: FirTypeRef, val isMutated: Boolean) {
+class InjectedValue(val symbol: FirBasedSymbol<*>, val typeRef: FirTypeRef, val isMutated: Boolean) {
     val irParameterSymbol: IrValueParameterSymbol = IrValueParameterSymbolImpl()
 }

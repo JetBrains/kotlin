@@ -1,3 +1,3 @@
 ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
-    with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+    <explicit receiver parameter>: R|kotlin/String|
     R|kotlin/String|

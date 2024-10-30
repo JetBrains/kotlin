@@ -44,10 +44,9 @@ class CodeFragmentCapturedSymbol(
     val value: CodeFragmentCapturedValue,
     val symbol: FirBasedSymbol<*>,
     val typeRef: FirTypeRef,
-    val contextReceiverNumber: Int = -1
 )
 
-data class CodeFragmentCapturedId(val symbol: FirBasedSymbol<*>, val contextReceiverNumber: Int = -1)
+data class CodeFragmentCapturedId(val symbol: FirBasedSymbol<*>)
 
 object CodeFragmentCapturedValueAnalyzer {
     fun analyze(resolveSession: LLFirResolveSession, codeFragment: FirCodeFragment): CodeFragmentCapturedValueData {
@@ -135,7 +134,7 @@ private class CodeFragmentCapturedValueVisitor(
                                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                                 val capturedValue = CodeFragmentCapturedValue.ContainingClass(symbol.classId, isCrossingInlineBounds)
                                 val typeRef = buildResolvedTypeRef { coneType = symbol.defaultType() }
-                                register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef, contextReceiverNumber))
+                                register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef))
                             }
                         }
                         is FirFunctionSymbol<*>, is FirPropertySymbol -> {
@@ -150,7 +149,9 @@ private class CodeFragmentCapturedValueVisitor(
                                     val capturedValue = CodeFragmentCapturedValue
                                         .ContextReceiver(contextReceiverNumber, labelName, isCrossingInlineBounds)
                                     register(
-                                        CodeFragmentCapturedSymbol(capturedValue, symbol, contextReceiver.typeRef, contextReceiverNumber)
+                                        CodeFragmentCapturedSymbol(
+                                            capturedValue, contextReceiver.symbol, contextReceiver.typeRef
+                                        )
                                     )
                                 }
                             } else {
@@ -158,10 +159,13 @@ private class CodeFragmentCapturedValueVisitor(
                                     ?: (symbol as? FirAnonymousFunctionSymbol)?.label?.name
                                     ?: symbol.name.asString()
 
-                                val typeRef = symbol.receiverParameter?.typeRef ?: error("Receiver parameter not found")
+                                val receiverParameter = symbol.receiverParameter ?: error("Receiver parameter not found")
+                                val typeRef = receiverParameter.typeRef
                                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                                 val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds)
-                                register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef, contextReceiverNumber))
+                                register(
+                                    CodeFragmentCapturedSymbol(capturedValue, receiverParameter.symbol, typeRef)
+                                )
                             }
                         }
                     }
@@ -225,7 +229,7 @@ private class CodeFragmentCapturedValueVisitor(
     }
 
     private fun register(mapping: CodeFragmentCapturedSymbol) {
-        val id = CodeFragmentCapturedId(mapping.symbol, mapping.contextReceiverNumber)
+        val id = CodeFragmentCapturedId(mapping.symbol)
         val previousMapping = collectedMappings[id]
 
         if (previousMapping != null) {

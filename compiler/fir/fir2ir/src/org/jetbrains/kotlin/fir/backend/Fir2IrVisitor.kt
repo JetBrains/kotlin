@@ -805,6 +805,8 @@ class Fir2IrVisitor(
         firCallableSymbol: FirCallableSymbol<*>
     ): IrElement? {
         val calleeReference = thisReceiverExpression.calleeReference
+        callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
+
         val irFunction = when (firCallableSymbol) {
             is FirFunctionSymbol -> {
                 val functionSymbol = declarationStorage.getIrFunctionSymbol(firCallableSymbol)
