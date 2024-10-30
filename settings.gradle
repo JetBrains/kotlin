@@ -44,7 +44,6 @@ dependencyResolutionManagement {
                         version {
                             it.require(versionProperties['versions.gson'])
                         }
-                        because("Force using same gson version because of https://github.com/google/gson/pull/1991")
                     }
                 }
             }

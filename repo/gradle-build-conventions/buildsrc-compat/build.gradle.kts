@@ -3,16 +3,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
-
-    val gsonVersion = libs.versions.gson.get()
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(gsonVersion)
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-            }
-        }
-    }
 }
 
 logger.info("buildSrcKotlinVersion: " + project.getKotlinPluginVersion())

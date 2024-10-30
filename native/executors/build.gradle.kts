@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
     dependencies {
-        classpath("com.google.code.gson:gson:2.8.9")
+        classpath(libs.gson)
     }
 }
 
@@ -24,16 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.8.9")
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion("2.8.9")
-                because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-            }
-        }
-    }
-
+    implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.core)
 
     // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
