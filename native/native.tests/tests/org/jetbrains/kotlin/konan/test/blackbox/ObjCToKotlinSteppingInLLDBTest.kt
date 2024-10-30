@@ -87,6 +87,52 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode() {
+        val clangMainSources = """
+            @import ${kotlinFrameworkName};
+            void landing() {}
+            int main() {
+                id<${kotlinFrameworkName}Foo> foo = [${kotlinFrameworkName}LibKt createFoo];
+                [foo foo];
+                landing();
+            }
+        """.trimIndent()
+        val kotlinLibrarySources = """
+            interface Foo {
+                fun foo()
+            }
+            fun createFoo(): Foo = Bar()
+            private class Bar : Foo {
+                override fun foo() {
+                    print("")
+                }
+            }
+        """.trimIndent()
+        testSteppingFromObjcToKotlin(
+            """
+            > b ${CLANG_FILE_NAME}:5
+            > run
+            > thread step-in
+            [..]`kfun:Bar.foo#internal(_this=[]) at lib.kt:6:5
+               3   	}
+               4   	fun createFoo(): Foo = Bar()
+               5   	private class Bar : Foo {
+            -> 6   	    override fun foo() {
+                	    ^
+               7   	        print("")
+               8   	    }
+               9   	}
+            > c
+            """.trimIndent(),
+            CLANG_FILE_NAME,
+            KOTLIN_FILE_NAME,
+            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode.name}",
+            clangMainSources = clangMainSources,
+            kotlinLibrarySources = kotlinLibrarySources,
+        )
+    }
+
+    @Test
     fun stepOutFromKotlinToObjC___WithoutTransparentStepping___StopsAtABridgingRoutine() {
         testSteppingFromObjcToKotlin(
             """
@@ -166,31 +212,30 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         )
     }
 
+    private val kotlinFrameworkName: String = "Kotlin"
+
     private fun testSteppingFromObjcToKotlin(
         lldbSpec: String,
         clangFileName: String,
         kotlinFileName: String,
         testName: String,
         additionalKotlinCompilerArgs: List<String> = emptyList(),
-    ) {
-        // FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
-        if (targets.testTarget != KonanTarget.MACOS_ARM64) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
-
-        val kotlinFrameworkName = "Kotlin"
-        val clangMainSources = """
+        clangMainSources: String = """
             @import ${kotlinFrameworkName};
             void landing() {}
             int main() {
                 [${kotlinFrameworkName}LibKt bar];
                 landing();
             }
-        """.trimIndent()
-
-        val kotlinLibrarySources = """
+        """.trimIndent(),
+        kotlinLibrarySources: String = """
             fun bar() {
                 print("")
             }
-        """.trimIndent()
+        """.trimIndent(),
+    ) {
+        // FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
+        if (targets.testTarget != KonanTarget.MACOS_ARM64) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
 
         runTestWithLLDB(
             kotlinLibrarySources = kotlinLibrarySources,
