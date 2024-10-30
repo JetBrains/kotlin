@@ -221,15 +221,13 @@ class Fir2IrConverter(
                 addAll(klass.generatedMembers(session))
                 addAll(klass.generatedNestedClassifiers(session))
             }
-            if (session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
-                // For kotlin classes mapped to JDK classes, we must create IR for 'enhanced' functions
-                // They might be queried as owners of overridden symbols
-                if (JavaToKotlinClassMap.mapKotlinToJava(klass.classId.asSingleFqName().toUnsafe()) != null) {
-                    klass.unsubstitutedScope(c).processAllFunctions {
-                        // additional check to add IR declarations only in declaring class
-                        if (it.origin == FirDeclarationOrigin.Enhancement && it.callableId.classId == klass.classId) {
-                            add(it.fir)
-                        }
+            // For kotlin classes mapped to JDK classes, we must create IR for 'enhanced' functions
+            // They might be queried as owners of overridden symbols
+            if (JavaToKotlinClassMap.mapKotlinToJava(klass.classId.asSingleFqName().toUnsafe()) != null) {
+                klass.unsubstitutedScope(c).processAllFunctions {
+                    // additional check to add IR declarations only in declaring class
+                    if (it.origin == FirDeclarationOrigin.Enhancement && it.callableId.classId == klass.classId) {
+                        add(it.fir)
                     }
                 }
             }

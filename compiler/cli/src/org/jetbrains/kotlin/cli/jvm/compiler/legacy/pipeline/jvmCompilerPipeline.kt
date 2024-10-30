@@ -114,18 +114,11 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
-        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
-            && configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)
-        ) {
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
             { emptyList() }
         } else {
-            {
-                listOfNotNull(
-                    FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
-                    FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
-                )
-            }
-        }
+            { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
+        },
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
