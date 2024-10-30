@@ -1402,11 +1402,11 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     }
                 }
 
-                if (allowPrecompiledHeaders) {
-                    findMacros(nativeIndex, compilation as CompilationWithPCH, unitsToProcess, ownHeaders)
-                } else {
-                    findMacros(nativeIndex, compilation.withPrecompiledHeader(translationUnit), unitsToProcess, ownHeaders)
-                }
+                val compilationWithPCH = if (allowPrecompiledHeaders)
+                    compilation as CompilationWithPCH
+                else
+                    compilation.withPrecompiledHeader(translationUnit)
+                findMacros(nativeIndex, compilationWithPCH, unitsToProcess, ownHeaders)
 
                 return compilation
             }
