@@ -25,27 +25,22 @@ internal open class KotlinAndroidPlugin(
     override fun apply(project: Project) {
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
-                project.objects.newInstance(
-                    KotlinAndroidTarget::class.java,
-                    "",
-                    project,
-                    false,
-                ).also { target ->
-                    val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
-                    kotlinAndroidExtension.targetFuture.complete(target)
-                    project.configureCompilerOptionsForTarget(
-                        kotlinAndroidExtension.compilerOptions,
-                        target.compilerOptions
-                    )
-                    kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
+                val target = project.objects.KotlinAndroidTarget(project)
+                val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
+                kotlinAndroidExtension.targetFuture.complete(target)
+                project.configureCompilerOptionsForTarget(
+                    kotlinAndroidExtension.compilerOptions,
+                    target.compilerOptions
+                )
+                kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
 
-                    @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
-                        override val options: KotlinJvmCompilerOptions
-                            get() = kotlinAndroidExtension.compilerOptions
-                    }
-                    val ext = project.extensions.getByName("android") as BaseExtension
-                    ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
+                @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
+                    override val options: KotlinJvmCompilerOptions
+                        get() = kotlinAndroidExtension.compilerOptions
                 }
+                val ext = project.extensions.getByName("android") as BaseExtension
+                ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
+                target
             }
         ) { androidTarget ->
             registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))

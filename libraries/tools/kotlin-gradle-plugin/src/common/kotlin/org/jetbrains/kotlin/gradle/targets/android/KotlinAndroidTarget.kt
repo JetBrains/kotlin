@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.*
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
@@ -25,6 +26,12 @@ import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
+
+internal fun ObjectFactory.KotlinAndroidTarget(
+    project: Project,
+    targetName: String = "",
+    isMultiplatformProject: Boolean = false,
+): KotlinAndroidTarget = newInstance(targetName, project, isMultiplatformProject)
 
 abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
