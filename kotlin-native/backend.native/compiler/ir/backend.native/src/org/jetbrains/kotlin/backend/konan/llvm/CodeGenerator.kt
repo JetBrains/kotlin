@@ -345,7 +345,13 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                 }
                 val diFunctionScope = fileEntry?.let {
                     with(generationState.debugInfo) {
-                        irFunction.diFunctionScope(it, proto.name, it.line(offset!!), false)
+                        irFunction.diFunctionScope(
+                                it,
+                                proto.name,
+                                it.line(offset!!),
+                                false,
+                                isTransparentStepping = generationState.config.enableDebugTransparentStepping
+                        )
                     }
                 }
                 @Suppress("UNCHECKED_CAST") val location = diFunctionScope?.let {

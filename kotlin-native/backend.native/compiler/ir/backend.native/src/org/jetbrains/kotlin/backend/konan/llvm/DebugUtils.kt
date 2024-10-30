@@ -182,7 +182,16 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             linkageName: String,
             startLine: Int,
             nodebug: Boolean,
-    ) = diFunctionScope(fileEntry, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
+            isTransparentStepping: Boolean = false,
+    ) = diFunctionScope(
+            fileEntry,
+            name.asString(),
+            linkageName,
+            startLine,
+            subroutineType(llvmTargetData),
+            nodebug,
+            isTransparentStepping = isTransparentStepping,
+    )
 
     fun diFunctionScope(
             fileEntry: IrFileEntry,
@@ -191,6 +200,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             startLine: Int,
             subroutineType: DISubroutineTypeRef,
             nodebug: Boolean,
+            isTransparentStepping: Boolean = false,
     ) = DICreateFunction(
             builder = builder,
             scope = compilationUnit,
@@ -203,7 +213,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0,
-            isTransparentStepping = 0,
+            isTransparentStepping = if (isTransparentStepping) 1 else 0,
     )!!
 
     private fun dwarfPointerType(type: DITypeOpaqueRef): DITypeOpaqueRef =

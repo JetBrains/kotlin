@@ -1,0 +1,27 @@
+> b main.kt:7
+> r
+[..] stop reason = breakpoint 1.1
+[..] at main.kt:7:18
+
+> s
+[..] stop reason = step in
+[..] at main.kt:16:[..]
+
+> s
+[..] stop reason = step in
+[..] at main.kt:17:16
+
+> s
+[..] stop reason = step in
+[..] at main.kt:18:6
+
+> s
+[..] stop reason = step in
+[..] at main.kt:7:[..]
+
+> s
+[..] stop reason = step in
+[..] at main.kt:8:13
+
+> q
+

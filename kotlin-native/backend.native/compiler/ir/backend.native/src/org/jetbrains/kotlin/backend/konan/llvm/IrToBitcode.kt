@@ -2239,7 +2239,10 @@ internal class CodeGeneratorVisitor(
             val nodebug = f.originalConstructor != null && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
-                    diFunctionScope(fileEntry(), functionLlvmValue.name!!, startLine, nodebug).also {
+                    // Also enable transparent stepping if this function is a bridge:
+                    val isTransparentStepping = generationState.config.enableDebugTransparentStepping && f.bridgeTarget != null
+
+                    diFunctionScope(fileEntry(), functionLlvmValue.name!!, startLine, nodebug, isTransparentStepping).also {
                         if (!this@scope.isInline)
                             functionLlvmValue.addDebugInfoSubprogram(it)
                     }
