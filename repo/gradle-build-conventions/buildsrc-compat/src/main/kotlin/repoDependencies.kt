@@ -111,12 +111,6 @@ fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any 
     }
 }
 
-fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)
-
-fun Project.kotlinBuiltins(forJvm: Boolean): Any =
-    if (kotlinBuildProperties.useBootstrapStdlib) "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
-    else dependencies.project(":core:builtins", configuration = "runtimeElementsJvm".takeIf { forJvm })
-
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 
 enum class JpsDepScope {

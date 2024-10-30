@@ -58,7 +58,6 @@
 /compiler/backend.common.jvm/ "Kotlin JVM"
 /compiler/backend-common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/build-tools/ "Kotlin Build Tools"
-/compiler/builtins-serializer/ "Kotlin Frontend"
 /compiler/cli/ "Kotlin Frontend"
 /compiler/cli/cli-js/ "Kotlin Common Backend" "Kotlin Wasm"
 /compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
@@ -228,7 +227,6 @@
 /compiler/util-klib-abi/ "Kotlin Common Backend"
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
-/core/builtins/ "Kotlin Frontend"
 /core/compiler.common/ "Kotlin Frontend"
 /core/compiler.common.jvm/ "Kotlin Frontend"
 /core/compiler.common.js/ "Kotlin Frontend"
