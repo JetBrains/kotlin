@@ -43077,6 +43077,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testElvisRHSRemainsNullable() {
         runTest("compiler/testData/diagnostics/tests/unitCoercion/elvisRHSRemainsNullable.kt");
       }
+
+      @Test
+      @TestMetadata("elvisRHSRemainsNullableDisabledFeature.kt")
+      public void testElvisRHSRemainsNullableDisabledFeature() {
+        runTest("compiler/testData/diagnostics/tests/unitCoercion/elvisRHSRemainsNullableDisabledFeature.kt");
+      }
     }
 
     @Nested
