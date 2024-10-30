@@ -25346,6 +25346,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("runWithSamArgumentAndIfInside.kt")
+        public void testRunWithSamArgumentAndIfInside() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/runWithSamArgumentAndIfInside.kt");
+        }
+
+        @Test
         @TestMetadata("samOnTypeParameter.kt")
         public void testSamOnTypeParameter() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/samOnTypeParameter.kt");
