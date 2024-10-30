@@ -31,7 +31,7 @@ private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
 @Suppress("INVISIBLE_REFERENCE")
 fun SimpleCol.asDataColumn(): DataColumn<*> {
     val column = when (this) {
-        is SimpleDataColumn -> DataColumn.createUnsafe(this.name, listOf(this.type))
+        is SimpleDataColumn -> DataColumn.createByType(this.name, listOf(this.type))
         is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()) as ColumnGroupImpl<*>
         is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, listOf(this.columns().map()))
     }
