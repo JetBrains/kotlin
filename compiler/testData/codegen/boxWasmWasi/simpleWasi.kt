@@ -1,3 +1,3 @@
-fun box(): String {
+fun box(): Int {
     return "OK"
 }

@@ -16,7 +16,7 @@ fun runBoxTest(): Boolean {
 @kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
 private external fun wasiProcExit(code: Int)
 
-@kotlin.wasm.WasmExport
+@kotlin.wasm.WasmExport("_start")
 fun startTest() {
     try {
         if (!runBoxTest()) {

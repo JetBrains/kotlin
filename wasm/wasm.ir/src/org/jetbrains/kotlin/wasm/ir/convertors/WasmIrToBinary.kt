@@ -59,7 +59,7 @@ class WasmIrToBinary(
     val moduleName: String,
     val emitNameSection: Boolean,
     private val debugInformationGenerator: DebugInformationGenerator? = null,
-    private val optimizeInstructionFlow: Boolean = true
+    private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
@@ -74,6 +74,7 @@ class WasmIrToBinary(
                 b.writeString(it.name)
                 when (it.data) {
                     is DebugData.StringData -> b.writeString(it.data.value)
+                    is DebugData.RawBytes -> b.writeBytes(it.data.value)
                 }
             }
         }
@@ -254,7 +255,7 @@ class WasmIrToBinary(
 
     private fun appendInstr(instr: WasmInstr) {
         instr.location?.let {
-            debugInformationGenerator?.addSourceLocation(SourceLocationMappingToBinary(it, offsets + Box(b.written)))
+            debugInformationGenerator?.addSourceLocation(getCurrentSourceLocationMapping(it))
         }
 
         val opcode = instr.operator.opcode
@@ -273,6 +274,9 @@ class WasmIrToBinary(
             appendImmediate(it)
         }
     }
+
+    private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
+        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written))
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
@@ -561,6 +565,8 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
+        debugInformationGenerator?.startFunction(getCurrentSourceLocationMapping(function.location), function.name)
+
         withVarUInt32PayloadSizePrepended {
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
@@ -572,6 +578,8 @@ class WasmIrToBinary(
 
             appendExpr(function.instructions)
         }
+
+        debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.location))
     }
 
     private fun appendData(wasmData: WasmData) {
@@ -632,13 +640,13 @@ class WasmIrToBinary(
     }
 }
 
-abstract class ByteWriter {
-    abstract val written: Int
+interface ByteWriter {
+    val written: Int
 
-    abstract fun write(v: ByteWriter)
-    abstract fun writeByte(v: Byte)
-    abstract fun writeBytes(v: ByteArray)
-    abstract fun createTemp(): ByteWriter
+    fun write(v: ByteWriter)
+    fun writeByte(v: Byte)
+    fun writeBytes(v: ByteArray)
+    fun createTemp(): ByteWriter
 
     fun writeUByte(v: UByte) {
         writeByte(v.toByte())
@@ -667,6 +675,15 @@ abstract class ByteWriter {
         writeByte((v shr 56).toByte())
     }
 
+    fun writeUInt64(v: ULong, size: Int) =
+        when (size) {
+            1 -> writeUByte(v.toUByte())
+            2 -> writeUInt16(v.toUShort())
+            4 -> writeUInt32(v.toUInt())
+            8 -> writeUInt64(v)
+            else -> error("Unsupported size $size")
+        }
+
     fun writeVarInt7(v: Byte) {
         writeSignedLeb128(v.toLong())
     }
@@ -689,6 +706,10 @@ abstract class ByteWriter {
 
     fun writeVarUInt32(v: UInt) {
         writeUnsignedLeb128(v)
+    }
+
+    fun writeBoolean(value: Boolean) {
+        writeByte(if (value) 1 else 0)
     }
 
     private fun writeUnsignedLeb128(v: UInt) {
@@ -722,7 +743,7 @@ abstract class ByteWriter {
         }
     }
 
-    class OutputStream(val os: java.io.OutputStream) : ByteWriter() {
+    class OutputStream(val os: java.io.OutputStream) : ByteWriter {
         override var written = 0; private set
 
         override fun write(v: ByteWriter) {

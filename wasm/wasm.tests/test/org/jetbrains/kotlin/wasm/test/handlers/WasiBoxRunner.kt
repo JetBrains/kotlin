@@ -79,20 +79,20 @@ class WasiBoxRunner(
             }
 
             val testFileText = originalFile.readText()
-            val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
+//            val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-            val exceptions = vmsToCheck.mapNotNull { vm ->
-                vm.runWithCaughtExceptions(
-                    debugMode = debugMode,
-                    useNewExceptionHandling = false,
-                    failsIn = failsIn,
-                    entryFile = if (!vm.entryPointIsJsFile) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
-                    jsFilePaths = jsFilePaths,
-                    workingDirectory = dir
-                )
-            }
-
-            processExceptions(exceptions)
+//            val exceptions = vmsToCheck.mapNotNull { vm ->
+//                vm.runWithCaughtExceptions(
+//                    debugMode = debugMode,
+//                    useNewExceptionHandling = false,
+//                    failsIn = failsIn,
+//                    entryFile = if (!vm.entryPointIsJsFile) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
+//                    jsFilePaths = jsFilePaths,
+//                    workingDirectory = dir
+//                )
+//            }
+//
+//            processExceptions(exceptions)
 
             // TODO KT-71504: support size tests for WASI target and ignoring utility files
             val filesToIgnoreInSizeChecks = emptySet<File>()

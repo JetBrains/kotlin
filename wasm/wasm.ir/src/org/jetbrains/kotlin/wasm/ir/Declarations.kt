@@ -39,20 +39,23 @@ sealed class WasmNamedModuleField {
 
 sealed class WasmFunction(
     override val name: String,
-    val type: WasmSymbolReadOnly<WasmFunctionType>
+    val type: WasmSymbolReadOnly<WasmFunctionType>,
+    val location: SourceLocation
 ) : WasmNamedModuleField() {
     class Defined(
         name: String,
         type: WasmSymbolReadOnly<WasmFunctionType>,
         val locals: MutableList<WasmLocal> = mutableListOf(),
-        val instructions: MutableList<WasmInstr> = mutableListOf()
-    ) : WasmFunction(name, type)
+        val instructions: MutableList<WasmInstr> = mutableListOf(),
+        location: SourceLocation = SourceLocation.NoLocation("No location for the defined function $name")
+    ) : WasmFunction(name, type, location)
 
     class Imported(
         name: String,
         type: WasmSymbolReadOnly<WasmFunctionType>,
-        val importPair: WasmImportDescriptor
-    ) : WasmFunction(name, type)
+        val importPair: WasmImportDescriptor,
+        location: SourceLocation = SourceLocation.NoLocation("No location for the imported function $name")
+    ) : WasmFunction(name, type, location)
 }
 
 class WasmMemory(

@@ -5,27 +5,24 @@
 
 package org.jetbrains.kotlin.backend.wasm.dwarf.entries
 
-import org.jetbrains.kotlin.backend.wasm.dwarf.DW_AT
-import org.jetbrains.kotlin.backend.wasm.dwarf.DW_TAG
-import org.jetbrains.kotlin.backend.wasm.dwarf.DwAttribute
-import org.jetbrains.kotlin.backend.wasm.dwarf.DwTag
-
 @DW_TAG(DwTag.COMPILE_UNIT)
 data class CompileUnit(
-    @DW_AT(DwAttribute.LOW_PC)
-    val lowProgramCounter: Int,
-
-    @DW_AT(DwAttribute.HIGH_PC)
-    var highProgramCounter: Int,
-
     @DW_AT(DwAttribute.NAME)
     val name: String,
-) : DebugInformationEntry {
+) : DebuggingInformationEntry {
     @DW_AT(DwAttribute.LANGUAGE)
     val language = 0x0026 // DW_LANG_Kotlin - https://dwarfstd.org/languages.html
 
     @DW_AT(DwAttribute.PRODUCER)
     val producer = "Kotlin/Wasm Compiler"
 
-    val children = mutableListOf<DebugInformationEntry>()
+    @DW_AT(DwAttribute.LOW_PC)
+    val lowProgramCounter: Int = 0
+
+    @DW_AT(DwAttribute.HIGH_PC)
+    val highProgramCounter: Int by lazy {
+        children.lastOrNull()?.highProgramCounter ?: 0
+    }
+
+    val children = mutableListOf<SubprogramEntry>()
 }

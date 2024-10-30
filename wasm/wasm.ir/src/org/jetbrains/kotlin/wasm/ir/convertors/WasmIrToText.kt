@@ -62,6 +62,7 @@ class WasmIrToText(
             stringBuilder.append(it.name)
             when (it.data) {
                 is DebugData.StringData -> stringBuilder.append(" \"${it.data.value}\"")
+                else -> error("Unsupported debug data type ${it.data::class}")
             }
             stringBuilder.append(" ;)")
         }

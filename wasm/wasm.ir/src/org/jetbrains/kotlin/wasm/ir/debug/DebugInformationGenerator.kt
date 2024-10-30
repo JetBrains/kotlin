@@ -10,4 +10,7 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 interface DebugInformationGenerator {
     fun addSourceLocation(location: SourceLocationMapping)
     fun generateDebugInformation(): DebugInformation
+
+    fun startFunction(location: SourceLocationMapping, name: String) {}
+    fun endFunction(location: SourceLocationMapping) {}
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -186,7 +187,7 @@ fun compileWasm(
             linkedModule,
             moduleName,
             emitNameSection,
-            sourceMapGeneratorForBinary
+            DwarfGenerator()
         )
 
     wasmIrToBinary.appendWasmModule()

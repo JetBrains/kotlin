@@ -3,6 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.wasm.dwarf.entries
+package org.jetbrains.kotlin.backend.wasm.dwarf
 
-sealed interface DebugInformationEntry
+enum class DwForm(val opcode: UInt) {
+    STRP(0x0eu),
+    U_DATA(0x0fu)
+}

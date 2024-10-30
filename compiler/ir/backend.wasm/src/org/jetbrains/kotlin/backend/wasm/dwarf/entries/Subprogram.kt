@@ -5,31 +5,35 @@
 
 package org.jetbrains.kotlin.backend.wasm.dwarf.entries
 
-import org.jetbrains.kotlin.backend.wasm.dwarf.DW_AT
-import org.jetbrains.kotlin.backend.wasm.dwarf.DW_TAG
-import org.jetbrains.kotlin.backend.wasm.dwarf.DwAttribute
-import org.jetbrains.kotlin.backend.wasm.dwarf.DwTag
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 
 @DW_TAG(DwTag.SUBPROGRAM)
-data class Subprogram(
-    @DW_AT(DwAttribute.LOW_PC)
-    val lowProgramCounter: Int,
-
-    @DW_AT(DwAttribute.HIGH_PC)
-    var highProgramCounter: Int,
-
+data class SubprogramEntry(
     @DW_AT(DwAttribute.NAME)
     val name: String,
 
     @DW_AT(DwAttribute.EXTERNAL)
     val isPublic: Boolean,
 
+    val startGeneratedLocation: SourceLocationMapping
+) : DebuggingInformationEntry {
+    lateinit var endGeneratedLocation: SourceLocationMapping
+
+    private val sourceLocation = startGeneratedLocation.sourceLocation as SourceLocation.Location
+
+    @DW_AT(DwAttribute.LOW_PC)
+    val lowProgramCounter: Int by lazy { startGeneratedLocation.generatedLocation.column }
+
+    @DW_AT(DwAttribute.HIGH_PC)
+    val highProgramCounter: Int by lazy { endGeneratedLocation.generatedLocation.column }
+
     @DW_AT(DwAttribute.DECL_FILE)
-    val file: Int,
+    val file: Int = 0 // by lazy { sourceLocation.file }
 
     @DW_AT(DwAttribute.DECL_LINE)
-    val line: Int,
+    val line: Int by lazy { sourceLocation.line }
 
     @DW_AT(DwAttribute.DECL_COLUMN)
-    val column: Int,
-)
+    val column: Int by lazy { sourceLocation.column }
+}
