@@ -181,6 +181,28 @@ fun ushort_rangeUntil3() {
     require(ints == (0..<65535 step 3).toList()) { ints.toString() }
 }
 
+fun uint_rangeTo() {
+    var counter = 0
+    val values = mutableListOf<UInt>()
+    for (b in 4294967294U..UInt.MAX_VALUE) {
+        values.add(b)
+        if (++counter > 3) error("Something went wrong")
+    }
+    require(counter == 2)
+    require(values == listOf(4294967294U, 4294967295U)) { values.toString() }
+}
+
+fun ulong_rangeTo() {
+    var counter = 0
+    val values = mutableListOf<ULong>()
+    for (b in 18446744073709551614U..ULong.MAX_VALUE) {
+        values.add(b)
+        if (++counter > 3) error("Something went wrong")
+    }
+    require(counter == 2)
+    require(values == listOf(18446744073709551614U, 18446744073709551615U)) { values.toString() }
+}
+
 fun box(): String {
     ubyte_rangeTo()
     ubyte_downTo()
@@ -206,6 +228,9 @@ fun box(): String {
     ushort_rangeTo3()
     ushort_downTo3()
     ushort_rangeUntil3()
-    
+
+    uint_rangeTo()
+    ulong_rangeTo()
+
     return "OK"
 }
