@@ -31,23 +31,26 @@ private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
 @Suppress("INVISIBLE_REFERENCE")
 fun SimpleCol.asDataColumn(): DataColumn<*> {
     val column = when (this) {
-        is SimpleDataColumn -> DataColumn.create(this.name, listOf(this.type))
+        is SimpleDataColumn -> DataColumn.createByType(this.name, listOf(this.type))
         is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()) as ColumnGroupImpl<*>
         is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, listOf(this.columns().map()))
     }
     return column
 }
 
-private fun List<AnyCol>.mapBack(): List<SimpleCol> = map {
-    when (it) {
-        is ColumnGroup<*> -> {
-            SimpleColumnGroup(it.name(), it.columns().mapBack())
-        }
-        is FrameColumn<*> -> {
-            SimpleFrameColumn(it.name(), it[0].columns().mapBack())
-        }
-        else -> {
-            SimpleDataColumn(it.name(), it[0] as TypeApproximation)
+private fun List<AnyCol>.mapBack(): List<SimpleCol> =
+    map {
+        when (it) {
+            is ColumnGroup<*> -> {
+                SimpleColumnGroup(it.name(), it.columns().mapBack())
+            }
+
+            is FrameColumn<*> -> {
+                SimpleFrameColumn(it.name(), it[0].columns().mapBack())
+            }
+
+            else -> {
+                SimpleDataColumn(it.name(), it[0] as TypeApproximation)
+            }
         }
     }
-}
