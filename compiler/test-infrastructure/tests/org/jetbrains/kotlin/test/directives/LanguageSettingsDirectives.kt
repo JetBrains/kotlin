@@ -89,6 +89,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val STDLIB_COMPILATION by directive(
+        description = "Enables special features which are relevant only for stdlib compilation."
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
     val JVM_DEFAULT_MODE by enumDirective(

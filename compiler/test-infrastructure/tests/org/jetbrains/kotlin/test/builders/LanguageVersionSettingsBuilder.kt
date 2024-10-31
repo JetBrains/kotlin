@@ -108,6 +108,7 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.allowKotlinPackage, trueOrNull(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in directives)),
             analysisFlag(AnalysisFlags.muteExpectActualClassesWarning, trueOrNull(LanguageSettingsDirectives.ENABLE_EXPECT_ACTUAL_CLASSES_WARNING in directives) != true),
             analysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, trueOrNull(LanguageSettingsDirectives.DONT_WARN_ON_ERROR_SUPPRESSION in directives)),
+            analysisFlag(AnalysisFlags.stdlibCompilation, trueOrNull(LanguageSettingsDirectives.STDLIB_COMPILATION in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
