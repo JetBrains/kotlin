@@ -82,6 +82,8 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor

@@ -101,7 +101,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
         +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
-        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true)
+        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
     }
 
     val function: Element by sealedElement(Declaration) {
@@ -525,7 +525,6 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeParametersOwner)
         parent(controlFlowGraphOwner)
 
-        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
         +declaredSymbol(propertySymbolType)
         +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
         +field("isLocal", boolean)

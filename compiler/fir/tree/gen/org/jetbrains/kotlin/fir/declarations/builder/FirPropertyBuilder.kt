@@ -40,6 +40,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
+    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var delegate: FirExpression? = null
@@ -48,7 +49,6 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var setter: FirPropertyAccessor? = null
     override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -68,6 +68,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
+            contextReceivers.toMutableOrEmpty(),
             name,
             initializer,
             delegate,
@@ -76,7 +77,6 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             setter,
             backingField,
             annotations.toMutableOrEmpty(),
-            contextReceivers.toMutableOrEmpty(),
             symbol,
             delegateFieldSymbol,
             isLocal,
@@ -112,6 +112,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
     copyBuilder.delegate = original.delegate
@@ -120,7 +121,6 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.setter = original.setter
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
     copyBuilder.isLocal = original.isLocal
     copyBuilder.bodyResolveState = original.bodyResolveState

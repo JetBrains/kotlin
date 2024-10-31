@@ -8100,6 +8100,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         }
 
         @Test
+        @TestMetadata("resolutionByName.kt")
+        public void testResolutionByName() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/resolutionByName.kt");
+        }
+
+        @Test
         @TestMetadata("subtypingBetweenContextReceivers.kt")
         public void testSubtypingBetweenContextReceivers() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/subtypingBetweenContextReceivers.kt");

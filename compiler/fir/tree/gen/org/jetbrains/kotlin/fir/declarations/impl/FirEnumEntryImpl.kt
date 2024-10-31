@@ -79,6 +79,7 @@ internal class FirEnumEntryImpl(
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformContextReceivers(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
@@ -101,6 +102,11 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -132,7 +138,6 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

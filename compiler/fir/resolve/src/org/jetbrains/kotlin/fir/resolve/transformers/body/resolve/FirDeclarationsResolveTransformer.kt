@@ -711,6 +711,12 @@ open class FirDeclarationsResolveTransformer(
                 accessor.replaceReturnTypeRef(propertyTypeRef)
             }
 
+            for (parameter in owner.contextReceivers) {
+                if (parameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
+                    context.storeVariable(parameter, session)
+                }
+            }
+
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
                 transformFunction(accessor, ResolutionMode.ContextIndependent, shouldResolveEverything)
             } else {
@@ -987,7 +993,11 @@ open class FirDeclarationsResolveTransformer(
         if (shouldResolveEverything) {
             // Annotations here are required only in the case of a local class member function.
             // Separate annotation transformers are responsible in the case of non-local functions.
-            function.transformReturnTypeRef(this, data).transformValueParameters(this, data).transformAnnotations(this, data)
+            function
+                .transformReturnTypeRef(this, data)
+                .transformContextReceivers(this, data)
+                .transformValueParameters(this, data)
+                .transformAnnotations(this, data)
         }
 
         if (!bodyResolved) {

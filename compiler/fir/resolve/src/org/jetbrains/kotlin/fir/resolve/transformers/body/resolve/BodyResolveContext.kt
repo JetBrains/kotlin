@@ -749,6 +749,11 @@ class BodyResolveContext(
                 // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
+                for (contextParameter in function.contextReceivers) {
+                    if (contextParameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
+                        storeVariable(contextParameter, holder.session)
+                    }
+                }
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
@@ -882,7 +887,7 @@ class BodyResolveContext(
         session: FirSession,
         f: () -> T
     ): T {
-        if (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+        if ((!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) && valueParameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
             storeVariable(valueParameter, session)
         }
         return withContainer(valueParameter, f)

@@ -85,6 +85,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirCon
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirConstructor
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirConstructor
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
 
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirConstructor

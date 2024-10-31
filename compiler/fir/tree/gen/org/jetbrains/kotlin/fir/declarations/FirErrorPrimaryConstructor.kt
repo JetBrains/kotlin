@@ -88,6 +88,8 @@ abstract class FirErrorPrimaryConstructor : FirConstructor(), FirDiagnosticHolde
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructor
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructor
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructor
 
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructor

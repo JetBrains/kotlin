@@ -73,7 +73,7 @@ internal class FirErrorFunctionImpl(
         transformAnnotations(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        contextReceivers.transformInplace(transformer, data)
+        transformContextReceivers(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         return this
@@ -99,6 +99,11 @@ internal class FirErrorFunctionImpl(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 

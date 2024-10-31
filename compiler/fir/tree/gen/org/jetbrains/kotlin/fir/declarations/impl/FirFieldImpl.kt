@@ -83,6 +83,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformContextReceivers(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
@@ -105,6 +106,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -136,7 +142,6 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this

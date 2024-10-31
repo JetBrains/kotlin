@@ -78,6 +78,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
+        transformContextReceivers(transformer, data)
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
@@ -96,6 +97,11 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         receiverParameter = receiverParameter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -140,7 +146,6 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
-        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

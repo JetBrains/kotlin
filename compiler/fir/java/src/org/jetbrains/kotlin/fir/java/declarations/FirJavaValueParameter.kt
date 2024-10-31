@@ -134,6 +134,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirValueParameter {
+        return this
+    }
+
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }

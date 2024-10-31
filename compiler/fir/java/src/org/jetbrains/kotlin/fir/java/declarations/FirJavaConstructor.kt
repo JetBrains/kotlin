@@ -117,6 +117,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirConstructor {
+        return this
+    }
+
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirConstructor {
         return this
     }

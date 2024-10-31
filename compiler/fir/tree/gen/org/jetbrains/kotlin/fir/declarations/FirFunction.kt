@@ -80,6 +80,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirFunction
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFunction
+
     abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction

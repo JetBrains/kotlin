@@ -105,6 +105,10 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         notSupported()
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
+        notSupported()
+    }
+
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         notSupported()
     }

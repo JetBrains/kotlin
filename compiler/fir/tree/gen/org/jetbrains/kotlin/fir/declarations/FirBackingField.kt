@@ -82,6 +82,8 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirBackingField
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirBackingField
+
     abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirBackingField
 
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirBackingField

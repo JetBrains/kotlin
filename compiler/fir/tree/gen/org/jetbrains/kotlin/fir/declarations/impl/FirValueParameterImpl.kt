@@ -112,6 +112,10 @@ internal class FirValueParameterImpl(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        return this
+    }
+
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         return this
     }

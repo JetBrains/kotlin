@@ -88,6 +88,8 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirField
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirField
+
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField

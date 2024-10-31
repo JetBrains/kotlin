@@ -81,6 +81,7 @@ internal class FirErrorPropertyImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformContextReceivers(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -101,6 +102,11 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -131,7 +137,6 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

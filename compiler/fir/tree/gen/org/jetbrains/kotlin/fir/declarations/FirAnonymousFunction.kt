@@ -94,6 +94,8 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction

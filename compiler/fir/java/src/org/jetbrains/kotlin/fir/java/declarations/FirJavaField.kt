@@ -118,6 +118,10 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }

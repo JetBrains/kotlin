@@ -116,6 +116,10 @@ internal class FirDefaultSetterValueParameter(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        return this
+    }
+
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         return this
     }

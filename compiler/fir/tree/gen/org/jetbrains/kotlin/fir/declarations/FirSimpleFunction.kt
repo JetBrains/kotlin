@@ -80,6 +80,8 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction

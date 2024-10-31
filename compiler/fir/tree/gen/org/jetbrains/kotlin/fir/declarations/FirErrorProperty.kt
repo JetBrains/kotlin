@@ -86,6 +86,8 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorProperty
+
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirErrorProperty

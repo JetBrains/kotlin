@@ -79,7 +79,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
-        contextReceivers.transformInplace(transformer, data)
+        transformContextReceivers(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformContractDescription(transformer, data)
@@ -106,6 +106,11 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         receiverParameter = receiverParameter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 

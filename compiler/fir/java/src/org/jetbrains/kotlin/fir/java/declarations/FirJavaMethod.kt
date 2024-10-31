@@ -125,6 +125,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+        return this
+    }
+
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
         valueParameters.transformInplace(transformer, data)
         return this

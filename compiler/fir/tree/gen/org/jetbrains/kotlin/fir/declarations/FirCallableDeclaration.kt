@@ -66,4 +66,6 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
     abstract fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
+
+    abstract fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 }

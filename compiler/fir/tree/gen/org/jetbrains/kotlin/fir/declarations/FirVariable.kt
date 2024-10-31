@@ -84,6 +84,8 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirVariable
 
+    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirVariable
+
     abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable
 
     abstract fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable

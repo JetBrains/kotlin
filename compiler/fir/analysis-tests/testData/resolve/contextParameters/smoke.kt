@@ -8,26 +8,32 @@ class C {
 }
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
-fun f(): String = <!UNRESOLVED_REFERENCE!>s<!> + this@s
+fun f(): String = s + this@s
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(_: String)
 val p: String get() = f()
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
 var p2: String
-    get() = <!UNRESOLVED_REFERENCE!>s<!> + this@s
+    get() = s + this@s
     set(value) {
-        <!UNRESOLVED_REFERENCE!>s<!> + this@s
+        s + this@s
     }
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: Any)
 val p3: String
-    get() = if (<!UNRESOLVED_REFERENCE!>s<!> is String) <!UNRESOLVED_REFERENCE!>s<!> else ""
+    get() = if (s is String) s else ""
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
 fun f2() {
     length
 }
+
+<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
+fun f3() = s.length
+
+<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
+val p4 get() = s
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(`_`: Any)
 fun escapedBackTick() {}
