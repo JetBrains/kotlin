@@ -12,7 +12,7 @@ final class home/ComposableSingletons$MainKt$lambda-1$1 {
 public final class home/ComposableSingletons$MainKt {
     // source: 'main.kt'
     public final static field INSTANCE: home.ComposableSingletons$MainKt
-    public static field lambda-1: kotlin.jvm.functions.Function2
+    private static field lambda-1: kotlin.jvm.functions.Function2
     inner (anonymous) class home/ComposableSingletons$MainKt$lambda-1$1
     static method <clinit>(): void
     public method <init>(): void

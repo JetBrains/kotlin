@@ -751,7 +751,7 @@ class ComposerLambdaMemoization(
                 endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier(lambdaName)
                 type = lambdaType
-                visibility = DescriptorVisibilities.INTERNAL
+                visibility = DescriptorVisibilities.PRIVATE
                 isStatic = context.platform.isJvm()
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
