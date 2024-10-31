@@ -194,7 +194,7 @@ internal class KaFirCompilerFacility(
                     targetFiles = ktFiles,
                     codeFragmentMappings = null,
                     codegenFactory = codegenFactory,
-                    generateClassFilter = SingleFileGenerateClassFilter(dependencyFile, compilationPeerData.inlinedClasses),
+                    generateClassFilter = SingleFileGenerateClassFilter(listOf(dependencyFile), compilationPeerData.inlinedClasses),
                     diagnosticReporter = diagnosticReporter,
                     jvmGeneratorExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer),
                     allowedErrorFilter = allowedErrorFilter,
@@ -265,7 +265,7 @@ internal class KaFirCompilerFacility(
             targetFiles,
             codeFragmentMappings,
             codegenFactory,
-            SingleFileGenerateClassFilter(file, compilationPeerData.inlinedClasses),
+            SingleFileGenerateClassFilter(targetFiles, compilationPeerData.inlinedClasses),
             diagnosticReporter,
             jvmGeneratorExtensions,
             allowedErrorFilter,
@@ -610,13 +610,13 @@ internal class KaFirCompilerFacility(
     }
 
     private class SingleFileGenerateClassFilter(
-        private val file: KtFile,
+        private val files: List<KtFile>,
         private val inlinedClasses: Set<KtClassOrObject>
     ) : GenerationState.GenerateClassFilter() {
         private val filesWithInlinedClasses = inlinedClasses.mapTo(mutableSetOf()) { it.containingKtFile }
 
         override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean {
-            return file === ktFile || ktFile in filesWithInlinedClasses
+            return files.any { it === ktFile } || ktFile in filesWithInlinedClasses
         }
 
         override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
@@ -624,12 +624,12 @@ internal class KaFirCompilerFacility(
         }
 
         override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
-            return processingClassOrObject.containingKtFile === file ||
+            return processingClassOrObject.containingKtFile.let { files.any { file -> it === file } } ||
                     processingClassOrObject is KtObjectDeclaration && processingClassOrObject in inlinedClasses
         }
 
         override fun shouldGenerateScript(script: KtScript): Boolean {
-            return script.containingKtFile === file
+            return script.containingKtFile.let { files.any { file -> it === file } }
         }
 
         override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false

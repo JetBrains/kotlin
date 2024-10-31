@@ -178,6 +178,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/sourceLibModuleInlinePropertyGetter.kt");
   }
 
+  @Test
+  @TestMetadata("twoTargetFiles.kt")
+  public void testTwoTargetFiles() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/twoTargetFiles.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments")
   @TestDataPath("$PROJECT_ROOT")
