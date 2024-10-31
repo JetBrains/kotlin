@@ -160,19 +160,15 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             body = context.createJvmIrBuilder(symbol).run {
                 val boundReceiver = backingField?.let { irGetField(dispatchReceiverParameter?.let(::irGet), it) }
                     ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)
-                irExprBody(with(delegate) {
-                    val origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
-                    IrPropertyReferenceImplWithShape(
-                        startOffset, endOffset, type, symbol,
-                        targetHasDispatchReceiver, targetHasExtensionReceiver,
-                        typeArgumentsCount, field, getter, setter, origin
-                    )
-                }.apply {
-                    when {
-                        delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
-                        delegate.extensionReceiver != null -> extensionReceiver = boundReceiver
+                irExprBody(
+                    delegate.deepCopyWithSymbols().apply {
+                        origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
+                        when {
+                            delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
+                            delegate.extensionReceiver != null -> extensionReceiver = boundReceiver
+                        }
                     }
-                })
+                )
             }
         }
         // When the receiver is inlined, it can have side effects in form of class initialization, so it should be evaluated here.
