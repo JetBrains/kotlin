@@ -9,7 +9,7 @@ dependencies {
 
     testImplementation(libs.jackson.dataformat.xml)
     testImplementation(libs.jackson.module.kotlin)
-    testImplementation("com.fasterxml.woodstox:woodstox-core:6.5.1")
+    testImplementation(libs.woodstox.core)
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 
@@ -23,10 +23,11 @@ sourceSets {
     }
 }
 
-projectTest() {
+projectTest {
     dependsOn(":dist")
     workingDir = rootDir
-    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 }
 
 testsJar()

@@ -49,6 +49,7 @@ vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
 protobuf = "4.28.2"
+woodstox-core = "7.1.0"
 http-client = "4.5.14"
 json = "20231013"
 
@@ -69,6 +70,7 @@ kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", v
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
+woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
