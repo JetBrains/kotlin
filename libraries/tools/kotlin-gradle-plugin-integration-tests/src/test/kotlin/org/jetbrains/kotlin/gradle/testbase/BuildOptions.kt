@@ -63,6 +63,12 @@ data class BuildOptions(
     val compilerArgumentsLogLevel: String? = "info",
     val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
     val fileLeaksReportFile: File? = null,
+    /**
+     * Override the directory to store flag files indicating "daemon process is alive" controlled by Kotlin Daemon.
+     *
+     * @see [KGPDaemonsBaseTest]
+     */
+    val customKotlinDaemonRunFilesDirectory: File? = null,
 ) {
     enum class ConfigurationCacheValue {
 

@@ -132,6 +132,7 @@ tasks.register<Delete>("cleanTestKitCache") {
     description = "Deletes temporary Gradle TestKit cache"
 
     delete(layout.buildDirectory.dir("testKitCache"))
+    delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
 val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
