@@ -51,7 +51,7 @@
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
         <selenium.version>2.53.1</selenium.version>
         <htmlunit.version>2.24</htmlunit.version>
-        <maven.version>3.8.6</maven.version>
+        <maven.version>3.9.9</maven.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>

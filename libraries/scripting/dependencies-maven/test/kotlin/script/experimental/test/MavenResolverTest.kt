@@ -158,8 +158,8 @@ class MavenResolverTest : ResolversTestBase() {
         assertEquals(1, result.reports.size)
         val diagnostic = result.reports.single()
         assertEquals(
-            "ArtifactResolutionException: Could not transfer artifact com.jetbrains:fake-space-sdk:pom:1.0-dev " +
-                    "from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
+            "ArtifactResolutionException: The following artifacts could not be resolved: com.jetbrains:fake-space-sdk:pom:1.0-dev (absent): " +
+                    "Could not transfer artifact com.jetbrains:fake-space-sdk:pom:1.0-dev from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
                     "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/fake-space-sdk/1.0-dev/fake-space-sdk-1.0-dev.pom, " +
                     "status: 401 Unauthorized",
             diagnostic.message
