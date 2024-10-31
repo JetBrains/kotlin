@@ -49,6 +49,8 @@ vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
 protobuf = "4.28.2"
+http-client = "4.5.14"
+json = "20231013"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
