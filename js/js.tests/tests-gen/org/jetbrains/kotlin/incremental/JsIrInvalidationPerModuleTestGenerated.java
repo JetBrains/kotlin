@@ -129,6 +129,12 @@ public class JsIrInvalidationPerModuleTestGenerated extends AbstractJsIrInvalida
   }
 
   @Test
+  @TestMetadata("defaultParamMethod")
+  public void testDefaultParamMethod() {
+    runTest("js/js.translator/testData/incremental/invalidation/defaultParamMethod/");
+  }
+
+  @Test
   @TestMetadata("eagerInitialization")
   public void testEagerInitialization() {
     runTest("js/js.translator/testData/incremental/invalidation/eagerInitialization/");

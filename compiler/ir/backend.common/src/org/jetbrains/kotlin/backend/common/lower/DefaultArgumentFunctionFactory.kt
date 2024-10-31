@@ -185,25 +185,28 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
     ): IrFunction {
         val newFunction = when (declaration) {
             is IrConstructor ->
-                declaration.factory.buildConstructor {
-                    updateFrom(declaration)
-                    origin = newOrigin
-                    isExternal = false
-                    isPrimary = false
-                    isExpect = false
-                    visibility = newVisibility
+                context.irFactory.stageController.restrictTo(declaration) {
+                    declaration.factory.buildConstructor {
+                        updateFrom(declaration)
+                        origin = newOrigin
+                        isExternal = false
+                        isPrimary = false
+                        isExpect = false
+                        visibility = newVisibility
+                    }
                 }
-
             is IrSimpleFunction ->
-                declaration.factory.buildFun {
-                    updateFrom(declaration)
-                    name = declaration.generateDefaultArgumentsFunctionName()
-                    origin = newOrigin
-                    this.isFakeOverride = isFakeOverride
-                    modality = Modality.FINAL
-                    isExternal = false
-                    isTailrec = false
-                    visibility = newVisibility
+                context.irFactory.stageController.restrictTo(declaration) {
+                    declaration.factory.buildFun {
+                        updateFrom(declaration)
+                        name = declaration.generateDefaultArgumentsFunctionName()
+                        origin = newOrigin
+                        this.isFakeOverride = isFakeOverride
+                        modality = Modality.FINAL
+                        isExternal = false
+                        isTailrec = false
+                        visibility = newVisibility
+                    }
                 }
         }
 

@@ -130,6 +130,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   }
 
   @Test
+  @TestMetadata("defaultParamMethod")
+  public void testDefaultParamMethod() {
+    runTest("js/js.translator/testData/incremental/invalidation/defaultParamMethod/");
+  }
+
+  @Test
   @TestMetadata("eagerInitialization")
   public void testEagerInitialization() {
     runTest("js/js.translator/testData/incremental/invalidation/eagerInitialization/");
