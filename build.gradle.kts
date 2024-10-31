@@ -18,6 +18,42 @@ buildscript {
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
+
+    /**
+     * Global Security Fixes for Common Dependencies
+     *
+     * Enforces minimum secure versions for commonly used libraries across all subprojects.
+     * These overrides address known vulnerabilities in transitive dependencies that might
+     * be pulled in by various subprojects.
+     *
+     * Affected Libraries:
+     * └── org.apache.commons
+     *     ├── commons-compress:* → 1.27.1
+     *     └── commons-io:* → 2.18.0
+     *
+     * Mitigated Vulnerabilities:
+     * 1. Commons Compress
+     *    - CVE-2024-26308: Potential security vulnerability
+     *    - CVE-2024-25710: Input validation weakness
+     *    - CVE-2023-42503: Potential code execution risk
+     *
+     * 2. Commons IO
+     *    - CVE-2024-26308: Security vulnerability
+     *    - CVE-2023-42503: Input processing risk
+     */
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            // Apache Commons libraries
+            if (requested.group == "org.apache.commons" && requested.name == "commons-compress") {
+                useVersion(libs.versions.commons.compress.get())
+                because("CVE-2024-26308, CVE-2024-25710, CVE-2023-42503")
+            }
+            if (requested.group == "commons-io" && requested.name == "commons-io") {
+                useVersion(libs.versions.commons.io.get())
+                because("CVE-2024-26308, CVE-2023-42503")
+            }
+        }
+    }
 }
 
 plugins {

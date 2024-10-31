@@ -195,8 +195,8 @@ dependencies {
         exclude(group = "*")
     }
 
-    commonCompileOnly("org.apache.commons:commons-compress:1.26.0")
-    embedded("org.apache.commons:commons-compress:1.26.0")
+    commonCompileOnly(libs.apache.commons.compress)
+    embedded(libs.apache.commons.compress)
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0

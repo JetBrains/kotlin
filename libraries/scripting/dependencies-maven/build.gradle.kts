@@ -17,7 +17,7 @@ dependencies {
     implementation("org.apache.maven.resolver:maven-resolver-transport-file:1.9.2")
     implementation("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.2")
     implementation("org.apache.maven.resolver:maven-resolver-impl:1.9.2")
-    implementation("commons-io:commons-io:2.11.0")
+    implementation(libs.apache.commons.io)
 
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
     testImplementation(libs.junit4)

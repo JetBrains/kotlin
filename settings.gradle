@@ -42,7 +42,31 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("com.google.code.gson:gson") {
                         version {
-                            it.require(versionProperties['versions.gson'])
+                            it.require(versionProperties['versions.gson'] as String)
+                        }
+                    }
+                }
+            }
+        }
+
+        withModule("org.apache.commons:commons-compress") {
+            allVariants {
+                withDependencies {
+                    add("org.apache.commons:commons-compress") {
+                        version {
+                            it.require(versionProperties['versions.commons-compress'] as String)
+                        }
+                    }
+                }
+            }
+        }
+
+        withModule("commons-io:commons-io") {
+            allVariants {
+                withDependencies {
+                    add("commons-io:commons-io") {
+                        version {
+                            it.require(versionProperties['versions.commons-io'] as String)
                         }
                     }
                 }

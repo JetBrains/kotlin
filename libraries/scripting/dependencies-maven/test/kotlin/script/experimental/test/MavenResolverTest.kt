@@ -193,7 +193,7 @@ class MavenResolverTest : ResolversTestBase() {
             DependenciesResolverOptionsName.EXTENSION to "jar",
         )
         val multipleDependencies = listOf(
-            "commons-io:commons-io:2.11.0",
+            "commons-io:commons-io:2.18.0",
             "org.jetbrains.kotlin:kotlin-reflect:1.8.20",
             "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20",
         ).map { ArtifactWithLocation(it, null) }
