@@ -523,7 +523,8 @@ MODULE_FRAGMENT
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (): home.DominantColorState declared in home.rememberDominantColorState'
                         CONSTRUCTOR_CALL 'public constructor <init> (defaultColor: home.Color) [primary] declared in home.DominantColorState' type=home.DominantColorState origin=null
-                          defaultColor: GET_VAR 'defaultColor: home.Color? [assignable] declared in home.rememberDominantColorState' type=home.Color origin=null
+                          defaultColor: TYPE_OP type=home.Color origin=IMPLICIT_CAST typeOperand=home.Color
+                            GET_VAR 'defaultColor: home.Color? [assignable] declared in home.rememberDominantColorState' type=home.Color? origin=null
             CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
               $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
             GET_VAR 'val tmp_3: home.DominantColorState [val] declared in home.rememberDominantColorState' type=home.DominantColorState origin=null

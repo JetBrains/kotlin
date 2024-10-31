@@ -149,7 +149,8 @@ MODULE_FRAGMENT
                     CONST String type=kotlin.String value="!"
                   other: CALL 'public abstract fun invoke (): R of kotlin.reflect.KFunction0 [operator] declared in kotlin.reflect.KFunction0' type=kotlin.String origin=INVOKE
                     $this: GET_VAR 'val ref: kotlin.reflect.KFunction0<kotlin.String> [val] declared in home.Greeting' type=kotlin.reflect.KFunction0<kotlin.String> origin=VARIABLE_AS_FUNCTION
-                modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier origin=null
+                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
                 $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
                 $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                   $this: CONST Int type=kotlin.Int value=112

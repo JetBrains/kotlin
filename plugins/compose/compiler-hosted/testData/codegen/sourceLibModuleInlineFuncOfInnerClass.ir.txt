@@ -121,7 +121,8 @@ MODULE_FRAGMENT
                     CONST String type=kotlin.String value="!"
                   other: CALL 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule.Inner' type=kotlin.String origin=null
                     $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.myModule.OtherModule.Inner' type=com.example.myModule.OtherModule.Inner origin=null
-                modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier origin=null
+                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
                 $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
                 $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                   $this: CONST Int type=kotlin.Int value=112

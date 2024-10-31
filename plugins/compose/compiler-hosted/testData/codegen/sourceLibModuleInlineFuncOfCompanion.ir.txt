@@ -127,7 +127,8 @@ MODULE_FRAGMENT
                       $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Named modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=com.example.myModule.OtherModule.Named
                   other: CALL 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.Another' type=kotlin.String origin=null
                     $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Another modality:FINAL visibility:public superTypes:[kotlin.Any]' type=com.example.myModule.Another
-                modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier origin=null
+                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
                 $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
                 $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                   $this: CONST Int type=kotlin.Int value=112

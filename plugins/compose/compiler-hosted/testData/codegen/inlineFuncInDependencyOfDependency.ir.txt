@@ -117,7 +117,8 @@ MODULE_FRAGMENT
               CALL 'public final fun Text (text: kotlin.String, modifier: androidx.compose.ui.Modifier, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
                 text: CALL 'public final fun foo (name: kotlin.String): kotlin.String declared in com.example.moduleWithoutInline.FooKt' type=kotlin.String origin=null
                   name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
-                modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier origin=null
+                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
                 $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
                 $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                   $this: CONST Int type=kotlin.Int value=112
