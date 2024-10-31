@@ -64,18 +64,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
     }
 
-    val contextReceiver: Element by element(Declaration) {
-        parent(declaration)
-
-        +declaredSymbol(receiverParameterSymbolType)
-        +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
-        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
-            withBindThis = false
-        }
-        +field("customLabelName", nameType, nullable = true)
-        +field("labelNameFromTypeRef", nameType, nullable = true)
-    }
-
     val elementWithResolveState: Element by element(Other) {
         kind = ImplementationKind.AbstractClass
 
@@ -113,7 +101,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
         +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
-        +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true)
+        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true)
     }
 
     val function: Element by sealedElement(Declaration) {
@@ -439,7 +427,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("hasLazyNestedClassifiers", boolean)
         +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
         +listField("superTypeRefs", typeRef, withReplace = true)
-        +listField(contextReceiver, useMutableOrEmpty = true)
+        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withTransform = true)
     }
 
     val anonymousObject: Element by element(Declaration) {
@@ -537,7 +525,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeParametersOwner)
         parent(controlFlowGraphOwner)
 
-        +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true, withTransform = true)
+        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
         +declaredSymbol(propertySymbolType)
         +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
         +field("isLocal", boolean)
@@ -648,6 +636,7 @@ object FirTree : AbstractFirTreeBuilder() {
             withBindThis = false
         }
         generateBooleanFields("crossinline", "noinline", "vararg")
+        +field("valueParameterKind", valueParameterKindType)
     }
 
     val receiverParameter: Element by element(Declaration) {

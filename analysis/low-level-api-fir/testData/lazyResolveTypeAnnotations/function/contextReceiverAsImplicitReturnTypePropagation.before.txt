@@ -1,6 +1,6 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

@@ -1,0 +1,95 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] contextParametersProperty.kt
+    context([ResolvedTo(RAW_FIR)] <unused var>: String)
+    public? final? [ResolvedTo(RAW_FIR)] val bar: String
+        public? [ResolvedTo(RAW_FIR)] get(): String { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(RAW_FIR)] <unused var>: String)
+    public? final? [ResolvedTo(RAW_FIR)] val bar: String
+        public? [ResolvedTo(RAW_FIR)] get(): String { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <unused var>: String)
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val bar: String
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): String { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(COMPANION_GENERATION)] <unused var>: String)
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val bar: String
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): String { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(SUPER_TYPES)] <unused var>: String)
+    public? final? [ResolvedTo(SUPER_TYPES)] val bar: String
+        public? [ResolvedTo(SUPER_TYPES)] get(): String { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(TYPES)] <unused var>: R|kotlin/String|)
+    public? final? [ResolvedTo(TYPES)] val bar: R|kotlin/String|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(STATUS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(STATUS)] val bar: R|kotlin/String|
+        public [ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val bar: R|kotlin/String|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(CONTRACTS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(CONTRACTS)] val bar: R|kotlin/String|
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
+            ^ String()
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val bar: R|kotlin/String|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ String()
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(CONSTANT_EVALUATION)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val bar: R|kotlin/String|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
+            ^ String()
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val bar: R|kotlin/String|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+            ^ String()
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParametersProperty.kt
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ String()
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParametersProperty.kt
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ String()
+        }

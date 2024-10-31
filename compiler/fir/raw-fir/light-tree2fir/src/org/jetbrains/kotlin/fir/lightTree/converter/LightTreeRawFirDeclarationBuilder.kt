@@ -2607,6 +2607,7 @@ class LightTreeRawFirDeclarationBuilder(
             source = valueParameterSource,
             moduleData = baseModuleData,
             isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
+            isContextParameter = valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER,
             additionalAnnotations = additionalAnnotations,
             name = name,
             defaultValue = firExpression,
@@ -2635,36 +2636,28 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
-    private fun MutableList<FirContextReceiver>.addContextReceivers(
+    private fun MutableList<FirValueParameter>.addContextReceivers(
         container: LighterASTNode,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ) {
         val contextList = container.getChildNodeByType(CONTEXT_RECEIVER_LIST) ?: return
 
         contextList.getChildNodesByType(VALUE_PARAMETER).mapTo(this) { contextParameterElement ->
-            val valueParameter = convertValueParameter(
+            convertValueParameter(
                 valueParameter = contextParameterElement,
                 containingDeclarationSymbol = containingDeclarationSymbol,
                 valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
             ).firValueParameter
-
-            buildContextReceiver {
-                this.source = valueParameter.source
-                this.customLabelName = valueParameter.name
-                this.returnTypeRef = valueParameter.returnTypeRef
-
-                this.symbol = FirReceiverParameterSymbol()
-                this.moduleData = baseModuleData
-                this.origin = FirDeclarationOrigin.Source
-                this.containingDeclarationSymbol = containingDeclarationSymbol
-            }
         }
 
         // Legacy context receivers
         contextList.getChildNodesByType(CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
-            buildContextReceiver {
+            buildValueParameter {
                 this.source = contextReceiverElement.toFirSourceElement()
-                this.customLabelName =
+                this.moduleData = baseModuleData
+                this.origin = FirDeclarationOrigin.Source
+
+                val customLabelName =
                     contextReceiverElement
                         .getChildNodeByType(LABEL_QUALIFIER)
                         ?.getChildNodeByType(LABEL)
@@ -2673,20 +2666,21 @@ class LightTreeRawFirDeclarationBuilder(
 
                 val typeReference = contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)
 
-                this.labelNameFromTypeRef = typeReference?.getChildNodeByType(USER_TYPE)
+                val labelNameFromTypeRef = typeReference?.getChildNodeByType(USER_TYPE)
                     ?.getChildNodeByType(REFERENCE_EXPRESSION)
                     ?.getReferencedNameAsName()
 
-                this.symbol = FirReceiverParameterSymbol()
-                withContainerSymbol(this.symbol) {
-                    typeReference?.let {
-                        this.returnTypeRef = convertType(it)
-                    }
-                }
+                // We're abusing the value parameter name for the label/type name of legacy context receivers.
+                // Luckily, legacy context receivers are getting removed soon.
+                this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
-                this.moduleData = baseModuleData
-                this.origin = FirDeclarationOrigin.Source
+                this.symbol = FirValueParameterSymbol(name)
+                withContainerSymbol(this.symbol) {
+                    this.returnTypeRef = typeReference?.let { convertType(it) }
+                        ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+                }
                 this.containingDeclarationSymbol = containingDeclarationSymbol
+                this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
             }
         }
     }

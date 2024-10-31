@@ -318,13 +318,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += loopJumpBuilder
         }
 
-        builder(contextReceiver) {
-            withCopy()
-        }
-
         builder(valueParameter, type = "FirValueParameterImpl") {
             openBuilder()
             withCopy()
+            defaultFalse("isCrossinline", "isNoinline", "isVararg")
+            default("valueParameterKind", "FirValueParameterKind.Regular")
         }
 
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {

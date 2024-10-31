@@ -80,7 +80,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
-    override val contextReceivers: List<FirContextReceiver>
+    override val contextReceivers: List<FirValueParameter>
         get() = emptyList()
 
     init {
@@ -173,6 +173,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass {
+        return this
+    }
+
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirRegularClass {
         return this
     }
 

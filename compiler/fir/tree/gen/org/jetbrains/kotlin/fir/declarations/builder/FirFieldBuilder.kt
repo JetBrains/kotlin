@@ -40,7 +40,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

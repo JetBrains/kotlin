@@ -22,7 +22,7 @@ Tower Data Context:
                 Type: test.MyClass<T>
     Element 8
         Context receivers:
-            FirReceiverParameterSymbol R|test/ContextReceiver|
+            FirValueParameterSymbol R|test/ContextReceiver|
                 Type: test.ContextReceiver
                 Label: ContextReceiver
 

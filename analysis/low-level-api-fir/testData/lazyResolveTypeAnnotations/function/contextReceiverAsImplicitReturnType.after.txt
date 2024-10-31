@@ -1,10 +1,10 @@
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
   context -> FirNamedFunctionSymbol /foo
-  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo
-  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
+  context -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /foo
+  anchor -> [FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

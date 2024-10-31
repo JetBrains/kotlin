@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
   context -> FirPropertySymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

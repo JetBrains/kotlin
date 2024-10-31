@@ -122,6 +122,7 @@ val coneUnreportedDuplicateDiagnosticType = generatedType("diagnostics", "ConeUn
 val firImplementationDetailType = generatedType("FirImplementationDetail")
 val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin")
 val declarationAttributesType = generatedType("declarations", "FirDeclarationAttributes")
+val valueParameterKindType = generatedType("declarations", "FirValueParameterKind")
 
 val exhaustivenessStatusType = generatedType("expressions", "ExhaustivenessStatus")
 

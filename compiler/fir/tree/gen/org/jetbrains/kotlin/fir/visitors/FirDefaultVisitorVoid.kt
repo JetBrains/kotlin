@@ -23,10 +23,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitTypeParameterRefsOwner(typeParametersOwner)
     }
 
-    override fun visitContextReceiver(contextReceiver: FirContextReceiver) {
-        visitDeclaration(contextReceiver)
-    }
-
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
         visitMemberDeclaration(callableDeclaration)
     }

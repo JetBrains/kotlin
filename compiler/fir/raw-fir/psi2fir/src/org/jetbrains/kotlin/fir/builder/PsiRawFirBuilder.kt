@@ -699,6 +699,11 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
+                valueParameterKind = if (valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER) {
+                    FirValueParameterKind.ContextParameter
+                } else {
+                    FirValueParameterKind.Regular
+                }
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 annotations += additionalAnnotations
             }
@@ -1625,46 +1630,37 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun MutableList<FirContextReceiver>.addContextReceivers(
+        private fun MutableList<FirValueParameter>.addContextReceivers(
             contextList: KtContextReceiverList?,
             containingDeclarationSymbol: FirBasedSymbol<*>,
         ) {
             if (contextList == null) return
             contextList.contextParameters().mapTo(this) { contextParameterElement ->
-                val valueParameter = contextParameterElement.toFirValueParameter(
+                contextParameterElement.toFirValueParameter(
                     defaultTypeRef = null,
                     containingDeclarationSymbol = containingDeclarationSymbol,
                     valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
                 )
-
-                buildContextReceiver {
-                    this.source = valueParameter.source
-                    this.customLabelName = valueParameter.name
-                    this.returnTypeRef = valueParameter.returnTypeRef
-
-                    this.symbol = FirReceiverParameterSymbol()
-                    this.moduleData = baseModuleData
-                    this.origin = FirDeclarationOrigin.Source
-                    this.containingDeclarationSymbol = containingDeclarationSymbol
-                }
             }
 
             contextList.contextReceivers().mapTo(this) { contextReceiverElement ->
-                buildContextReceiver {
+                buildValueParameter {
                     this.source = contextReceiverElement.toFirSourceElement()
-                    this.customLabelName = contextReceiverElement.labelNameAsName()
-                    this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
-
-                    this.symbol = FirReceiverParameterSymbol()
-                    withContainerSymbol(this.symbol) {
-                        contextReceiverElement.typeReference()?.toFirType()?.let {
-                            this.returnTypeRef = it
-                        }
-                    }
-
                     this.moduleData = baseModuleData
                     this.origin = FirDeclarationOrigin.Source
+
+                    val customLabelName = contextReceiverElement.labelNameAsName()
+                    val labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
+
+                    // We're abusing the value parameter name for the label/type name of legacy context receivers.
+                    // Luckily, legacy context receivers are getting removed soon.
+                    this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                    this.symbol = FirValueParameterSymbol(name)
+                    withContainerSymbol(this.symbol) {
+                        this.returnTypeRef = contextReceiverElement.typeReference().toFirOrErrorType()
+                    }
                     this.containingDeclarationSymbol = containingDeclarationSymbol
+                    this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
                 }
             }
         }

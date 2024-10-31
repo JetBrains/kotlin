@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
@@ -52,6 +51,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
@@ -1073,15 +1073,6 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    override fun transformContextReceiver(
-        contextReceiver: FirContextReceiver,
-        data: ResolutionMode,
-    ): FirContextReceiver = whileAnalysing(session, contextReceiver) {
-        context.withContextReceiver(contextReceiver) {
-            transformDeclarationContent(contextReceiver, data) as FirContextReceiver
-        }
-    }
-
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: ResolutionMode
@@ -1226,14 +1217,17 @@ open class FirDeclarationsResolveTransformer(
         lambda.replaceContextReceivers(
             lambda.contextReceivers.takeIf { it.isNotEmpty() }
                 ?: resolvedLambdaAtom?.contextReceiverTypes?.map { receiverType ->
-                    buildContextReceiver {
-                        this.returnTypeRef = buildResolvedTypeRef {
-                            coneType = receiverType
-                        }
-                        symbol = FirReceiverParameterSymbol()
+                    buildValueParameter {
+                        resolvePhase = FirResolvePhase.BODY_RESOLVE
+                        source = lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                        containingDeclarationSymbol = lambda.symbol
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
-                        containingDeclarationSymbol = lambda.symbol
+                        name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                        symbol = FirValueParameterSymbol(name)
+                        returnTypeRef = receiverType
+                            .toFirResolvedTypeRef(lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                        valueParameterKind = FirValueParameterKind.ContextParameter
                     }
                 }.orEmpty()
         )

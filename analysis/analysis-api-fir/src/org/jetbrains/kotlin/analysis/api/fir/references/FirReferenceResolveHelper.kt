@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -120,11 +121,12 @@ internal object FirReferenceResolveHelper {
                     listOfNotNull(
                         when (val boundSymbol = boundSymbol) {
                             is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
-                            else -> boundSymbol
+                            is FirValueParameterSymbol -> boundSymbol.containingDeclarationSymbol
+                            else -> boundSymbol as FirBasedSymbol<*>?
                         }?.buildSymbol(symbolBuilder)
                     )
                 } else {
-                    listOfNotNull(boundSymbol?.buildSymbol(symbolBuilder))
+                    listOfNotNull((boundSymbol as FirBasedSymbol<*>?)?.buildSymbol(symbolBuilder))
                 }
             }
             is FirSuperReference -> {

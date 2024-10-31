@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
@@ -350,7 +351,7 @@ private fun rebindThisRef(
     ) {
         withFirSymbolEntry("newTarget", newTarget)
         withFirSymbolEntry("oldTarget", oldTarget)
-        boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol) }
+        boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol as FirBasedSymbol<*>) }
     }
 
     requireWithAttachment(
@@ -361,7 +362,7 @@ private fun rebindThisRef(
     ) {
         withFirSymbolEntry("newTarget", newTarget)
         withFirSymbolEntry("oldTarget", oldTarget)
-        boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol) }
+        boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol as FirBasedSymbol<*>) }
     }
 
     expression.replaceCalleeReference(buildImplicitThisReference {

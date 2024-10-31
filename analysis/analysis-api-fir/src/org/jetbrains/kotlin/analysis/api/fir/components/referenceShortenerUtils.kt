@@ -46,7 +46,7 @@ internal fun areReceiversEquivalent(existingCall: FirQualifiedAccessExpression, 
  * It may be a class, an object, an anonymous function with extension receiver, and so on.
  */
 private fun FirExpression.boundSymbolForReceiverExpression(): FirBasedSymbol<*>? = when (this) {
-    is FirThisReceiverExpression -> calleeReference.boundSymbol
+    is FirThisReceiverExpression -> calleeReference.boundSymbol as FirBasedSymbol<*>
 
     is FirResolvedQualifier -> {
         if (resolvedToCompanionObject) {

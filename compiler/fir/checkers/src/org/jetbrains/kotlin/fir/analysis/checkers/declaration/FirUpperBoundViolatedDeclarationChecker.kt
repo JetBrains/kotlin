@@ -39,10 +39,6 @@ object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppC
             declaration.receiverParameter?.typeRef?.let { receiverTypeRef ->
                 checkUpperBoundViolated(receiverTypeRef, context, reporter)
             }
-
-            for (receiver in declaration.contextReceivers) {
-                checkUpperBoundViolated(receiver.returnTypeRef, context, reporter)
-            }
         }
     }
 }

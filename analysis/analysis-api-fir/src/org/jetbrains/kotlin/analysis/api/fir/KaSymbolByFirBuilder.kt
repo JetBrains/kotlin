@@ -104,9 +104,7 @@ internal class KaSymbolByFirBuilder(
     fun buildReceiverParameterSymbol(firSymbol: FirReceiverParameterSymbol): KaDeclarationSymbol {
         val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol
         return when (containingDeclarationSymbol) {
-            is FirCallableSymbol -> if (firSymbol.fir is FirReceiverParameter) {
-                callableBuilder.buildExtensionReceiverSymbol(firSymbol)!!
-            } else callableBuilder.buildCallableSymbol(containingDeclarationSymbol)
+            is FirCallableSymbol -> callableBuilder.buildExtensionReceiverSymbol(firSymbol)!!
             is FirClassSymbol -> classifierBuilder.buildClassLikeSymbol(containingDeclarationSymbol)
             else -> throwUnexpectedElementError(containingDeclarationSymbol)
         }
@@ -313,6 +311,7 @@ internal class KaSymbolByFirBuilder(
             return KaFirSyntheticJavaPropertySymbol(firSymbol, analysisSession)
         }
 
+        // TODO(KT-72639) support context parameters
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KaValueParameterSymbol {
             val functionSymbol = firSymbol.containingDeclarationSymbol
 
@@ -396,9 +395,8 @@ internal class KaSymbolByFirBuilder(
             else -> throwUnexpectedElementError(firSymbol)
         }
 
+
         fun buildExtensionReceiverSymbol(firSymbol: FirReceiverParameterSymbol): KaReceiverParameterSymbol? {
-            // TODO: KT-73112 we shouldn't return extension receiver in case our receiver parameter symbol points to a context receiver
-            //if (firSymbol.fir !is FirReceiverParameter) return null
             val referencedSymbol = firSymbol.containingDeclarationSymbol
             if (referencedSymbol is FirCallableSymbol && referencedSymbol.fir.receiverParameter != null) {
                 return buildCallableSymbol(referencedSymbol).receiverParameter

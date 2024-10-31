@@ -35,7 +35,7 @@ interface FirVariableBuilder : FirDeclarationBuilder {
     abstract var deprecationsProvider: DeprecationsProvider
     abstract var containerSource: DeserializedContainerSource?
     abstract var dispatchReceiverType: ConeSimpleKotlinType?
-    abstract val contextReceivers: MutableList<FirContextReceiver>
+    abstract val contextReceivers: MutableList<FirValueParameter>
     abstract var name: Name
     abstract var initializer: FirExpression?
     abstract var delegate: FirExpression?

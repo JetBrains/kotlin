@@ -21,7 +21,7 @@ Tower Data Context:
                 FirValueParameterSymbol param: R|kotlin/String|
     Element 8
         Context receivers:
-            FirReceiverParameterSymbol R|test/ContextReceiver|
+            FirValueParameterSymbol R|test/ContextReceiver|
                 Type: test.ContextReceiver
                 Label: ContextReceiver
     Element 9

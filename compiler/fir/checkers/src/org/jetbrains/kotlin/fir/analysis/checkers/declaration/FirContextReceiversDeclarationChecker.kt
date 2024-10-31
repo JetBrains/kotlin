@@ -42,7 +42,7 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         )
     }
 
-    private fun FirDeclaration.getContextReceiver(): List<FirContextReceiver> {
+    private fun FirDeclaration.getContextReceiver(): List<FirValueParameter> {
         return when (this) {
             is FirCallableDeclaration -> contextReceivers
             is FirRegularClass -> contextReceivers

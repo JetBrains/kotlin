@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -511,16 +512,17 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         context: FirDeserializationContext,
         origin: FirDeclarationOrigin,
         containingDeclarationSymbol: FirBasedSymbol<*>,
-    ): FirContextReceiver {
+    ): FirValueParameter {
         val typeRef = proto.toTypeRef(context)
-        return buildContextReceiver {
-            val type = typeRef.coneType
-            this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
-            this.returnTypeRef = typeRef
-            symbol = FirReceiverParameterSymbol()
-            moduleData = c.moduleData
+        return buildValueParameter {
+            this.moduleData = context.moduleData
             this.origin = origin
+            this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.symbol = FirValueParameterSymbol(name)
+            this.returnTypeRef = typeRef
             this.containingDeclarationSymbol = containingDeclarationSymbol
+            this.valueParameterKind = FirValueParameterKind.ContextParameter
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }
     }
 
@@ -528,7 +530,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         classProto: ProtoBuf.Class,
         origin: FirDeclarationOrigin,
         containingDeclarationSymbol: FirBasedSymbol<*>,
-    ): List<FirContextReceiver> =
+    ): List<FirValueParameter> =
         classProto.contextReceiverTypes(c.typeTable).map { loadContextReceiver(it, c, origin, containingDeclarationSymbol) }
 
     fun loadFunction(

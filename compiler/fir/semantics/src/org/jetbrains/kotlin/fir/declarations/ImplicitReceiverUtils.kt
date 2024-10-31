@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.labelName
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -60,7 +59,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
     val thisReceiver = ImplicitDispatchReceiverValue(owner.symbol, defaultType, session, scopeSession)
     val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.map { receiver ->
         ContextReceiverValue(
-            receiver.symbol, receiver.returnTypeRef.coneType, receiver.labelName, session, scopeSession,
+            receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, session, scopeSession,
         )
     }.orEmpty()
 
@@ -312,6 +311,6 @@ fun FirCallableDeclaration.createContextReceiverValues(
 ): List<ContextReceiverValue> =
     contextReceivers.map { receiver ->
         ContextReceiverValue(
-            receiver.symbol, receiver.returnTypeRef.coneType, receiver.labelName, sessionHolder.session, sessionHolder.scopeSession,
+            receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, sessionHolder.session, sessionHolder.scopeSession,
         )
     }

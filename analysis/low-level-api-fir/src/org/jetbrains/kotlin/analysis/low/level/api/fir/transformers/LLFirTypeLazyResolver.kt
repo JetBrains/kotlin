@@ -37,7 +37,6 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
         when (target) {
             is FirCallableDeclaration -> checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)
             is FirReceiverParameter -> checkTypeRefIsResolved(target.typeRef, "receiver type reference", target)
-            is FirContextReceiver -> checkTypeRefIsResolved(target.returnTypeRef, "context receiver type reference", target)
             is FirTypeParameter -> {
                 for (bound in target.bounds) {
                     checkTypeRefIsResolved(bound, "type parameter bound", target)

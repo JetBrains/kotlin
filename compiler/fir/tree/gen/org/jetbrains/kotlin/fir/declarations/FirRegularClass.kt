@@ -42,7 +42,7 @@ abstract class FirRegularClass : FirClass() {
     abstract val hasLazyNestedClassifiers: Boolean
     abstract val companionObjectSymbol: FirRegularClassSymbol?
     abstract override val superTypeRefs: List<FirTypeRef>
-    abstract val contextReceivers: List<FirContextReceiver>
+    abstract val contextReceivers: List<FirValueParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitRegularClass(this, data)
@@ -72,4 +72,6 @@ abstract class FirRegularClass : FirClass() {
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass
+
+    abstract fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirRegularClass
 }

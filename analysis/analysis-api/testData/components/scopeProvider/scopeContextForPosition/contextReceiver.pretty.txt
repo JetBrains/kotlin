@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: Context
-  owner symbol: KaFirNamedFunctionSymbol
+  owner symbol: KaFirValueParameterSymbol
 
 scopes:
   LocalScope, index = 0
@@ -44,7 +44,7 @@ scopes:
     classifiers: 1
       class Context
     callables: 1
-      context(Context)
+      context(Context@Context)
       fun test()
     constructors: 0
 

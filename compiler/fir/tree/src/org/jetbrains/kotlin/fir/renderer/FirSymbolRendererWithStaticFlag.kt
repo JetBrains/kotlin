@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 
 class FirSymbolRendererWithStaticFlag : FirSymbolRenderer() {
     override fun renderReference(symbol: FirBasedSymbol<*>): String {
-        if (symbol !is FirCallableSymbol) return super.renderReference(symbol)
-        return symbol.callableId.toString() + if (symbol !is FirEnumEntrySymbol && symbol.isStatic) "*s" else ""
+        return super.renderReference(symbol).let {
+            if (symbol is FirCallableSymbol && symbol !is FirEnumEntrySymbol && symbol.isStatic) "$it*s" else it
+        }
     }
 }

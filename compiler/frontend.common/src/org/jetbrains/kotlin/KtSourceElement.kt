@@ -347,6 +347,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ItLambdaParameter : KtFakeSourceElementKind()
 
     /**
+     * For function type `context(Foo) () -> Unit`,
+     * the context parameter with type `Foo` of the anonymous function.
+     */
+    object LambdaContextParameter : KtFakeSourceElementKind()
+
+    /**
      * While it doesn't have an explicit source, it still has a type that might be a ConeErrorType
      */
     object LambdaReceiver : KtFakeSourceElementKind()

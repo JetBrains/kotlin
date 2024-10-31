@@ -119,10 +119,6 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allReceiverParameterCheckers.check(receiverParameter, data)
     }
 
-    override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: CheckerContext) {
-        checkers.allContextReceiverCheckers.check(contextReceiver, data)
-    }
-
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: CheckerContext) {
         checkers.allBasicDeclarationCheckers.check(danglingModifierList, data)
     }

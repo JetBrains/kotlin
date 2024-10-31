@@ -601,7 +601,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     }
 
     fun addContextReceiverParametersTo(
-        contextReceivers: List<FirContextReceiver>,
+        contextReceivers: List<FirValueParameter>,
         parent: IrFunction,
         result: MutableList<IrValueParameter>,
     ) {
@@ -613,7 +613,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     }
 
     private fun createIrParameterFromContextReceiver(
-        contextReceiver: FirContextReceiver,
+        contextReceiver: FirValueParameter,
         index: Int,
     ): IrValueParameter = convertCatching(contextReceiver) {
         val type = contextReceiver.returnTypeRef.toIrType(c)

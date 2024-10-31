@@ -44,9 +44,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): R =
         visitElement(controlFlowGraphOwner, data)
 
-    open fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R =
-        visitElement(contextReceiver, data)
-
     open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): R =
         visitElement(elementWithResolveState, data)
 

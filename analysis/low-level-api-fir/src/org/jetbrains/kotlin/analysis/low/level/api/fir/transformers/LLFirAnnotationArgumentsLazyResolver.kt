@@ -42,7 +42,6 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
         when (target) {
             is FirCallableDeclaration -> checkAnnotationsAreResolved(target, target.returnTypeRef)
             is FirReceiverParameter -> checkAnnotationsAreResolved(target, target.typeRef)
-            is FirContextReceiver -> checkAnnotationsAreResolved(target, target.returnTypeRef)
             is FirTypeParameter -> {
                 for (bound in target.bounds) {
                     checkAnnotationsAreResolved(target, bound)

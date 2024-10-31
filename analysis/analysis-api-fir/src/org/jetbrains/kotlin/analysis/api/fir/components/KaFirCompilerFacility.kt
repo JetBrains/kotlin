@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -570,7 +571,7 @@ internal class KaFirCompilerFacility(
             val id = when (calleeReference) {
                 is FirThisReference -> when (val boundSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol -> CodeFragmentCapturedId(boundSymbol)
-                    is FirReceiverParameterSymbol -> when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
+                    is FirReceiverParameterSymbol, is FirValueParameterSymbol -> when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
                         // Specific (deprecated) case for a class context receiver
                         // TODO: remove with KT-72994
                         is FirClassSymbol -> CodeFragmentCapturedId(referencedSymbol)

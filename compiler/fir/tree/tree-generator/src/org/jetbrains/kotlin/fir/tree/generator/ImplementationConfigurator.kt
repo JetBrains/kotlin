@@ -588,6 +588,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("name", "Name.identifier(\"value\")")
             defaultNull("defaultValue", "initializer", "delegate", withGetter = true)
             defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar", withGetter = true)
+            default("valueParameterKind", "FirValueParameterKind.Regular", withGetter = true)
         }
 
         impl(simpleFunction)
@@ -679,7 +680,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirCheckedSafeCallSubjectImpl",
             "FirArrayLiteralImpl",
             "FirIntegerLiteralOperatorCallImpl",
-            "FirContextReceiverImpl",
             "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",
             "FirGetClassCallImpl",

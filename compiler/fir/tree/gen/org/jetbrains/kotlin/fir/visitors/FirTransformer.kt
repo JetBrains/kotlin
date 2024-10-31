@@ -83,14 +83,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformControlFlowGraphOwner(controlFlowGraphOwner, data)
     }
 
-    open fun transformContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
-        return transformElement(contextReceiver, data)
-    }
-
-    final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
-        return transformContextReceiver(contextReceiver, data)
-    }
-
     open fun transformElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): FirElementWithResolveState {
         return transformElement(elementWithResolveState, data)
     }

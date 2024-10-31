@@ -5,7 +5,7 @@ FILE: contextReceiversSubtyping.kt
     }
     public abstract interface D2 : R|kotlin/Any| {
     }
-    context(R|T|, R|D2|)
+    context(T@R|T|, R|D2|)
     public final fun <T : R|D1|, R|D2|> foo(): R|kotlin/Unit| {
     }
     public abstract interface Cov<out T> : R|kotlin/Any| {

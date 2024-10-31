@@ -128,7 +128,10 @@ class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntr
         get() = (fir.initializer as? FirAnonymousObjectExpression)?.anonymousObject?.symbol
 }
 
-class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)), ValueParameterSymbolMarker {
+class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)),
+    ValueParameterSymbolMarker,
+    // TODO(KT-72994) stop extending FirThisOwnerSymbol when context receivers are removed
+    FirThisOwnerSymbol<FirValueParameter> {
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
 
@@ -148,29 +151,21 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
         get() = fir.containingDeclarationSymbol
 }
 
-sealed class FirThisOwnerSymbol<out E : FirDeclaration> : FirBasedSymbol<E>()
+// TODO(KT-72994) convert to class extending FirBasedSymbol when context receivers are removed
+sealed interface FirThisOwnerSymbol<out E : FirDeclaration> {
+    val fir: E
+    val source: KtSourceElement?
+}
 
-class FirReceiverParameterSymbol : FirThisOwnerSymbol<FirDeclaration>() {
+class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirThisOwnerSymbol<FirReceiverParameter> {
     val containingDeclarationSymbol: FirBasedSymbol<*>
-        get() = when (val fir = fir) {
-            is FirReceiverParameter -> fir.containingDeclarationSymbol
-            is FirContextReceiver -> fir.containingDeclarationSymbol
-            else -> errorWithAttachment("Unexpected receiver parameter: ${fir::class.simpleName}") {
-                withFirEntry("fir", fir)
-            }
-        }
+        get() = fir.containingDeclarationSymbol
 
     val resolvedType: ConeKotlinType
         get() = calculateResolvedTypeRef().coneType
 
     private fun receiverTypeRef(): FirTypeRef {
-        return when (val fir = fir) {
-            is FirReceiverParameter -> fir.typeRef
-            is FirContextReceiver -> fir.returnTypeRef
-            else -> errorWithAttachment(message = "Unexpected declaration in FirReceiverParameterSymbol ${fir::class.simpleName}") {
-                withFirEntry(name = "FIR", fir = fir)
-            }
-        }
+        return fir.typeRef
     }
 
     private fun calculateResolvedTypeRef(): FirResolvedTypeRef {

@@ -129,7 +129,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
             addAll(listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString))
         }
 
-        module.directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE)?.let {
+        module.directives[LanguageSettingsDirectives.LANGUAGE].forEach {
             add("-XXLanguage:$it")
         }
 

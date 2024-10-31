@@ -48,7 +48,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var setter: FirPropertyAccessor? = null
     override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

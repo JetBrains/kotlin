@@ -11,18 +11,21 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
 public sealed class DeclarationBuildingContext<T : FirDeclaration>(
@@ -112,18 +115,20 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
     }
 
     protected fun produceContextReceiversTo(
-        destination: MutableList<FirContextReceiver>,
+        destination: MutableList<FirValueParameter>,
         typeParameters: List<FirTypeParameterRef>,
         origin: FirDeclarationOrigin,
-        containingDeclarationSymbol: FirBasedSymbol<*>,
+        containingDeclarationSymbol: FirCallableSymbol<*>,
     ) {
         contextReceiverTypeProviders.mapTo(destination) {
-            buildContextReceiver {
-                returnTypeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
-                symbol = FirReceiverParameterSymbol()
-                moduleData = session.moduleData
+            buildValueParameter {
+                this.moduleData = session.moduleData
                 this.origin = origin
+                this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                this.symbol = FirValueParameterSymbol(name)
+                this.returnTypeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
                 this.containingDeclarationSymbol = containingDeclarationSymbol
+                this.valueParameterKind = FirValueParameterKind.ContextParameter
             }
         }
     }

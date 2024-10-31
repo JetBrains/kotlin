@@ -365,7 +365,6 @@ private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
         is FirCallableDeclaration -> fir.symbol.callableId.asFqNameForDebugInfo()
         is FirCodeFragment -> FqName.topLevel(Name.special("<fragment>"))
         is FirDanglingModifierList -> FqName.topLevel(Name.special("<dangling>"))
-        is FirContextReceiver -> FqName.topLevel(Name.special("<context-receiver-parameter>"))
         is FirReceiverParameter -> FqName.topLevel(Name.special("<extension-receiver-parameter>"))
     }
 }

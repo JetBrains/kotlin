@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -724,9 +725,10 @@ private fun createContextReceiver(
     contextReceiver: ReceiverParameterDescriptor,
     analysisContext: Fe10AnalysisContext
 ): KaBaseContextReceiver {
+    val type = contextReceiver.value.type.toKtType(analysisContext)
     return KaBaseContextReceiver(
-        contextReceiver.value.type.toKtType(analysisContext),
-        (contextReceiver.value as ImplicitContextReceiver).customLabelName,
+        type,
+        (contextReceiver.value as ImplicitContextReceiver).customLabelName ?: type.symbol?.name,
         analysisContext.token
     )
 }

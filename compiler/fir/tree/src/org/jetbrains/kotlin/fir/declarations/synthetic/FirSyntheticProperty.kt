@@ -82,7 +82,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val bodyResolveState: FirPropertyBodyResolveState
         get() = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
 
-    override val contextReceivers: List<FirContextReceiver>
+    override val contextReceivers: List<FirValueParameter>
         get() = getter.contextReceivers
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -178,7 +178,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         notSupported()
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
         notSupported()
     }
 

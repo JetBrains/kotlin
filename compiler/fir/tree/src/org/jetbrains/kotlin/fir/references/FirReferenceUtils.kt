@@ -13,7 +13,7 @@ import kotlin.contracts.contract
 
 val FirReference.symbol: FirBasedSymbol<*>?
     get() = when (this) {
-        is FirThisReference -> boundSymbol
+        is FirThisReference -> boundSymbol as FirBasedSymbol<*>?
         is FirResolvedNamedReference -> resolvedSymbol
         is FirNamedReferenceWithCandidateBase -> candidateSymbol
         else -> null

@@ -94,7 +94,7 @@ class ImplicitReceiverStack private constructor(
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     @OptIn(ImplicitReceiverValue.ImplicitReceiverInternals::class)
     fun replaceReceiverType(symbol: FirBasedSymbol<*>, type: ConeKotlinType) {
-        val index = indexesPerSymbol[symbol] ?: return
+        val index = indexesPerSymbol[symbol as FirThisOwnerSymbol<*>] ?: return
         stack[index].updateTypeFromSmartcast(type)
     }
 

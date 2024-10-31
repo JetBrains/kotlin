@@ -25,6 +25,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("contextReceivers.kt")
+  public void testContextReceivers() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextReceivers.kt");
+  }
+
+  @Test
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/dataClass.kt");

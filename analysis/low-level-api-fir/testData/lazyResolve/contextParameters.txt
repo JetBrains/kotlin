@@ -1,0 +1,75 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] contextParameters.kt
+    context([ResolvedTo(RAW_FIR)] <unused var>: String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(RAW_FIR)] <unused var>: String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <unused var>: String)
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(COMPANION_GENERATION)] <unused var>: String)
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(SUPER_TYPES)] <unused var>: String)
+    public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(TYPES)] <unused var>: R|kotlin/String|)
+    public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(STATUS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(CONTRACTS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(CONSTANT_EVALUATION)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParameters.kt
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }

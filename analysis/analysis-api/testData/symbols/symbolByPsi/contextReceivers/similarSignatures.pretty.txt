@@ -1,13 +1,13 @@
-context(A)
+context(A@A)
 fun tooo()
 
-context(B)
+context(B@B)
 fun tooo()
 
-context(A, B)
+context(A@A, B@B)
 fun tooo()
 
-context(B, A)
+context(B@B, A@A)
 fun tooo()
 
 class A

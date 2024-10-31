@@ -377,6 +377,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             regularClass,
             transformChildren = {
                 regularClass.transformDeclarations(this, data)
+                regularClass.transformContextReceivers(this, data)
             },
             afterChildrenTransform = {
                 calculateDeprecations(regularClass)

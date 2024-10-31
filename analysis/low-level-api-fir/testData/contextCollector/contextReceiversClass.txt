@@ -18,7 +18,7 @@ Tower Data Context:
                 Type: Test
     Element 7
         Context receivers:
-            FirReceiverParameterSymbol R|Foo|
+            FirValueParameterSymbol R|Foo|
                 Type: Foo
                 Label: Foo
     Element 8

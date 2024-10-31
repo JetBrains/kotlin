@@ -41,9 +41,10 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
     open lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    open var isCrossinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    open var isNoinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    open var isVararg: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    open var isCrossinline: Boolean = false
+    open var isNoinline: Boolean = false
+    open var isVararg: Boolean = false
+    open var valueParameterKind: FirValueParameterKind = FirValueParameterKind.Regular
 
     override fun build(): FirValueParameter {
         return FirValueParameterImpl(
@@ -63,6 +64,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             isCrossinline,
             isNoinline,
             isVararg,
+            valueParameterKind,
         )
     }
 
@@ -97,5 +99,6 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.isCrossinline = original.isCrossinline
     copyBuilder.isNoinline = original.isNoinline
     copyBuilder.isVararg = original.isVararg
+    copyBuilder.valueParameterKind = original.valueParameterKind
     return copyBuilder.apply(init).build()
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -145,7 +146,7 @@ class FirRenderer(
         }
     }
 
-    private fun renderContexts(contextReceivers: List<FirContextReceiver>) {
+    private fun renderContexts(contextReceivers: List<FirValueParameter>) {
         if (contextReceivers.isEmpty()) return
         print("context(")
         renderSeparated(contextReceivers, visitor)
@@ -297,16 +298,6 @@ class FirRenderer(
             callableSignatureRenderer?.renderReturnTypePrefix()
             callableSignatureRenderer?.renderCallableType(callableDeclaration)
             contractRenderer?.render(callableDeclaration)
-        }
-
-        override fun visitContextReceiver(contextReceiver: FirContextReceiver) {
-            renderPhaseAndAttributes(contextReceiver)
-
-            contextReceiver.customLabelName?.let {
-                print(it.asString() + "@")
-            }
-
-            contextReceiver.returnTypeRef.accept(this)
         }
 
         override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
@@ -987,7 +978,7 @@ class FirRenderer(
             when {
                 symbol != null -> {
                     print("@R|")
-                    referencedSymbolRenderer.printReference(symbol)
+                    referencedSymbolRenderer.printReference(symbol as FirBasedSymbol<*>)
                     print("|")
                 }
                 labelName != null -> print("@$labelName#")

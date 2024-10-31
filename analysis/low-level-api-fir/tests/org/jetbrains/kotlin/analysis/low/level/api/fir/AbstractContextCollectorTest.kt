@@ -103,7 +103,7 @@ internal object ElementContextRenderer {
 
                     towerDataElement.implicitReceiver?.let { implicitReceiver ->
                         appendBlock("Implicit receiver:") {
-                            appendSymbol(implicitReceiver.boundSymbol).appendLine()
+                            appendSymbol(implicitReceiver.boundSymbol as FirBasedSymbol<*>).appendLine()
 
                             appendBlock {
                                 append("Type: ").appendType(implicitReceiver.type).appendLine()

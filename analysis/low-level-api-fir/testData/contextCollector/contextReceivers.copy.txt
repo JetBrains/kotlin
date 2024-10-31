@@ -15,10 +15,10 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Context receivers:
-            FirReceiverParameterSymbol R|Foo|
+            FirValueParameterSymbol R|Foo|
                 Type: Foo
                 Label: Foo
-            FirReceiverParameterSymbol R|Bar|
+            FirValueParameterSymbol R|Bar|
                 Type: Bar
                 Label: Bar
     Element 8

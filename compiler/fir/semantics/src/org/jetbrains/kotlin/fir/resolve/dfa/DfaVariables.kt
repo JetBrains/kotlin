@@ -63,7 +63,7 @@ class RealVariable(
             RealVariable(symbol, isReceiver = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
 
         fun receiver(symbol: FirThisOwnerSymbol<*>, type: ConeKotlinType): RealVariable =
-            RealVariable(symbol, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type)
+            RealVariable(symbol as FirBasedSymbol<*>, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type)
     }
 
     // `originalType` cannot be included into equality comparisons because it can be a captured type.

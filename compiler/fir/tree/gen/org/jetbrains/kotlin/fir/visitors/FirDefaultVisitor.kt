@@ -23,9 +23,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R =
         visitTypeParameterRefsOwner(typeParametersOwner, data)
 
-    override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R =
-        visitDeclaration(contextReceiver, data)
-
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R =
         visitMemberDeclaration(callableDeclaration, data)
 

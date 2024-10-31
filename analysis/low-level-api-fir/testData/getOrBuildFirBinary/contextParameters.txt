@@ -1,0 +1,30 @@
+KT element: KtClass
+KT element text:
+context(kotlin.String) public final class C {
+    public constructor() { /* compiled code */ }
+
+    public constructor(a: kotlin.Any) { /* compiled code */ }
+
+    context(kotlin.String) public final val bar: kotlin.String /* compiled code */
+        public final get
+
+    context(kotlin.String) public final fun foo(): kotlin.Unit { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|)
+public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class C : R|kotlin/Any| {
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>@R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>@R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/String|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): R|C|
+
+}

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -54,6 +55,7 @@ class ValueParameter(
     val source: KtSourceElement,
     private val moduleData: FirModuleData,
     private val isFromPrimaryConstructor: Boolean,
+    private val isContextParameter: Boolean,
     private val additionalAnnotations: List<FirAnnotation>,
     val name: Name,
     val defaultValue: FirExpression?,
@@ -91,6 +93,7 @@ class ValueParameter(
             defaultValue = this@ValueParameter.defaultValue
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
+            valueParameterKind = if (isContextParameter) FirValueParameterKind.ContextParameter else FirValueParameterKind.Regular
             containingDeclarationSymbol = this@ValueParameter.containingDeclarationSymbol
                 ?: error("containingFunctionSymbol should present when converting ValueParameter to a FirValueParameter")
 

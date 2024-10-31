@@ -324,9 +324,9 @@ object FirFakeOverrideGenerator {
         contextReceivers += baseFunction.contextReceivers.zip(
             newContextReceiverTypes ?: List(baseFunction.contextReceivers.size) { null }
         ) { contextReceiver, newType ->
-            buildContextReceiverCopy(contextReceiver) {
+            buildValueParameterCopy(contextReceiver) {
+                symbol = FirValueParameterSymbol(name)
                 returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
-                symbol = FirReceiverParameterSymbol()
             }
         }
     }
@@ -701,9 +701,9 @@ object FirFakeOverrideGenerator {
         contextReceivers += baseVariable.contextReceivers.zip(
             newContextReceiverTypes ?: List(baseVariable.contextReceivers.size) { null }
         ) { contextReceiver, newType ->
-            buildContextReceiverCopy(contextReceiver) {
+            buildValueParameterCopy(contextReceiver) {
+                symbol = FirValueParameterSymbol(name)
                 returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
-                symbol = FirReceiverParameterSymbol()
             }
         }
     }

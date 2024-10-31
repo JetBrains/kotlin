@@ -83,14 +83,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(controlFlowGraphOwner)
     }
 
-    final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {
-        visitContextReceiver(contextReceiver)
-    }
-
-    open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
-        visitElement(contextReceiver)
-    }
-
     final override fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: Nothing?) {
         visitElementWithResolveState(elementWithResolveState)
     }

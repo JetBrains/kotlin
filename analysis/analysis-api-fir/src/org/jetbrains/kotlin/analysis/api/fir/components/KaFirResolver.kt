@@ -1042,6 +1042,11 @@ internal class KaFirResolver(
                     is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
                     is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
                         ?: return null
+                    // TODO: KT-73112 we shouldn't return extension receiver in case our receiver parameter symbol points to a context receiver
+                    is FirValueParameterSymbol -> (partiallyAppliedSymbol.containingDeclarationSymbol as? FirCallableSymbol)
+                        ?.receiverParameter?.symbol
+                        ?.let(firSymbolBuilder.callableBuilder::buildExtensionReceiverSymbol)
+                        ?: return null
                     is FirTypeAliasSymbol, is FirTypeParameterSymbol -> errorWithFirSpecificEntries(
                         message = "Unexpected FirThisOwnerSymbol ${partiallyAppliedSymbol::class.simpleName}",
                         fir = partiallyAppliedSymbol.fir

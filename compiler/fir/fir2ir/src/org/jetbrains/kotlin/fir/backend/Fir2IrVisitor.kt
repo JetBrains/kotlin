@@ -700,7 +700,7 @@ class Fir2IrVisitor(
         // If not a context receiver of a class
         // TODO: after KT-72994 injectGetValueCall can be used unconditionally
         // TODO: add tests, currently can be replaced with if (false) without breaking anything
-        if (boundSymbol !is FirReceiverParameterSymbol || boundSymbol.containingDeclarationSymbol.fir !is FirClass) {
+        if (boundSymbol !is FirValueParameterSymbol || boundSymbol.containingDeclarationSymbol.fir !is FirClass) {
             callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
         }
 
@@ -760,9 +760,10 @@ class Fir2IrVisitor(
             } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
 
             val referencedFir = calleeReference.boundSymbol?.fir
-            if (referencedFir !is FirContextReceiver) {
+            if (referencedFir !is FirValueParameter) {
                 return thisRef
             }
+            // TODO(KT-72994) remove everything below when context receivers are removed
             val contextReceiverNumber = (firClass as FirRegularClass).contextReceivers.indexOf(referencedFir)
 
             val constructorForCurrentlyGeneratedDelegatedConstructor =

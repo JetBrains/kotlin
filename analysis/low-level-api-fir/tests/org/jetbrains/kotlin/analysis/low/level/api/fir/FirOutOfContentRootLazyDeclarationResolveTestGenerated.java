@@ -205,6 +205,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersProperty.kt")
+  public void testContextParametersProperty() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/contextParametersProperty.kt");
+  }
+
+  @Test
   @TestMetadata("cyclicHierarchy.kt")
   public void testCyclicHierarchy() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy.kt");

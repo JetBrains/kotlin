@@ -264,13 +264,13 @@ class InaccessibleImplicitReceiverValue(
 }
 
 class ContextReceiverValue(
-    boundSymbol: FirReceiverParameterSymbol,
+    boundSymbol: FirValueParameterSymbol,
     type: ConeKotlinType,
     val labelName: Name?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirReceiverParameterSymbol>(
+) : ImplicitReceiverValue<FirValueParameterSymbol>(
     boundSymbol, type, useSiteSession, scopeSession, mutable,
 ) {
     override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue =
@@ -308,5 +308,5 @@ class ImplicitReceiverValueForScriptOrSnippet(
 val ImplicitReceiverValue<*>.referencedMemberSymbol: FirBasedSymbol<*>
     get() = when (val boundSymbol = boundSymbol) {
         is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
-        else -> boundSymbol
+        else -> boundSymbol as FirBasedSymbol<*>
     }

@@ -63,7 +63,7 @@ KaNamedClassSymbol:
   compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
-      label: null
+      label: Int
       type: KaUsualClassType:
         annotations: []
         typeArguments: []

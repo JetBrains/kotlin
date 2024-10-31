@@ -895,12 +895,6 @@ class BodyResolveContext(
     ): T = withContainer(valueParameter, f)
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> withContextReceiver(
-        valueParameter: FirContextReceiver,
-        f: () -> T
-    ): T = withContainer(valueParameter, f)
-
-    @OptIn(PrivateForInline::class)
     inline fun <T> withProperty(
         property: FirProperty,
         f: () -> T

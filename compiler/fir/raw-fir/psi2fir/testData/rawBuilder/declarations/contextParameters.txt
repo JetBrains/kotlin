@@ -1,21 +1,21 @@
 FILE: contextParameters.kt
-    context(s@String)
+    context(s: String)
     public final? class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
     }
-    context(s@String)
+    context(s: String)
     public? final? fun f(): String {
         ^f s#.plus#(this@s#)
     }
-    context(<unused var>@String)
+    context(<unused var>: String)
     public? final? val p: String
         public? get(): String {
             ^ f#()
         }
-    context(s@String)
+    context(s: String)
     public? final? var p2: String
         public? get(): String {
             ^ s#.plus#(this@s#)
@@ -23,6 +23,6 @@ FILE: contextParameters.kt
         public? set(value: String): R|kotlin/Unit| {
             s#.plus#(this@s#)
         }
-    context(<unused var>@Any)
+    context(<unused var>: Any)
     public? final? fun escapedBackTick(): R|kotlin/Unit| {
     }

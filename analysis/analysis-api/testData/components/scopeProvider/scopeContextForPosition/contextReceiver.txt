@@ -4,7 +4,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: Context
-  owner symbol: KaFirNamedFunctionSymbol
+  owner symbol: KaFirValueParameterSymbol
 
 scopes:
   LocalScope, index = 0
@@ -263,7 +263,7 @@ scopes:
         compilerVisibility: Public
         contextReceivers: [
           KtContextReceiver:
-            label: null
+            label: Context
             type: KaUsualClassType:
               annotations: []
               typeArguments: []

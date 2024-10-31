@@ -1,6 +1,6 @@
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirReceiverParameterSymbol from FirConstructorSymbol /Foo.Foo
-  anchor -> [FirReceiverParameterSymbol from FirConstructorSymbol /Foo.Foo]
+  context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo
+  anchor -> [FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

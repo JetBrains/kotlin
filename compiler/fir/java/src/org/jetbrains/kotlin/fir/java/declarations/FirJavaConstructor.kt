@@ -79,7 +79,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         }
     }
 
-    override val contextReceivers: List<FirContextReceiver>
+    override val contextReceivers: List<FirValueParameter>
         get() = emptyList()
 
     internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
@@ -167,7 +167,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
         error("Context receivers cannot be replaced for FirJavaConstructor")
     }
 
