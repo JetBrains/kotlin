@@ -1,3 +1,0 @@
-KtNameReferenceExpression(409,420): 'MutableList'
-  KtSimpleNameReference:
-    (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
