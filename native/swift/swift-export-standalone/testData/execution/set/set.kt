@@ -11,7 +11,7 @@ class Box(val x: Int) {
     override fun toString(): String = "Box($x)"
 }
 
-fun <T> Set<T>.recollect(): Set<T> {
+private fun <T> Set<T>.recollect(): Set<T> {
     val result = mutableSetOf<T>()
     this.forEach { result += it }
     return result.toSet()

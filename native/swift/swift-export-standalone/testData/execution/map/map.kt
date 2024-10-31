@@ -11,7 +11,7 @@ class Box(val x: Int) {
     override fun toString(): String = "Box($x)"
 }
 
-fun <K, V> Map<K, V>.inversed(): Map<V, Set<K>> {
+private fun <K, V> Map<K, V>.inversed(): Map<V, Set<K>> {
     return entries.groupBy({ it.value }) { it.key }.mapValues { it.value.toSet() }
 }
 
