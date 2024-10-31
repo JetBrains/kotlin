@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.exclude
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -221,7 +222,9 @@ class SwiftExportUnitTests {
         val subProject3 = projects[3]
 
         val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
-        val projectLibraries = linkTask.libraries.filter { it.name.contains("stdlib").not() }
+        val projectLibraries = linkTask.libraries
+            .exclude(linkTask.excludeOriginalPlatformLibraries)
+            .filter { it.name.contains("stdlib").not() }
 
         val mainProjectLibrary = project.layout.buildDirectory
             .file("classes/kotlin/iosSimulatorArm64/main/klib/shared").get().asFile
