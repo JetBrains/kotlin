@@ -1,3 +1,73 @@
+## 2.1.0-RC
+
+### Backend. Wasm
+
+- [`KT-72297`](https://youtrack.jetbrains.com/issue/KT-72297) [Wasm] Unused associated object class lead to compiler fail
+
+### Compiler
+
+- [`KT-72281`](https://youtrack.jetbrains.com/issue/KT-72281) K/N: "Failed to wait for cache to be built"
+- [`KT-72238`](https://youtrack.jetbrains.com/issue/KT-72238)  Argument type mismatch in builder inside extension function after ?:
+- [`KT-71751`](https://youtrack.jetbrains.com/issue/KT-71751) K2: Skipping code in last statement of lambda
+- [`KT-72552`](https://youtrack.jetbrains.com/issue/KT-72552) AutoboxingTransformer fails on during linkage on nested lambdas with cinteroped types
+- [`KT-71649`](https://youtrack.jetbrains.com/issue/KT-71649) K2: Put operator on  mutableMap<T?, V>() causes crashes on null key
+- [`KT-71508`](https://youtrack.jetbrains.com/issue/KT-71508) JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS isn't reported when java class is inherited from an effectively private class
+- [`KT-72178`](https://youtrack.jetbrains.com/issue/KT-72178) K2: "Unexpected FirPlaceholderProjectionImpl" exception when using "_" as key type in EnumMap
+- [`KT-72302`](https://youtrack.jetbrains.com/issue/KT-72302) K2: no error on type operator in annotation parameter default value
+- [`KT-72173`](https://youtrack.jetbrains.com/issue/KT-72173) K2: simple object names from root package are resolved without imports in non-root packages when used as values
+
+### Compose compiler
+
+- [`b/376058538`](https://issuetracker.google.com/issues/376058538) Fix stack overflow when inferring stability of indirect generic loop
+- [`b/339322843`](https://issuetracker.google.com/issues/339322843) Transform @Composable property delegate references
+
+### IR. Inlining
+
+- [`KT-72521`](https://youtrack.jetbrains.com/issue/KT-72521) Kotlin/Native: java.lang.AssertionError: kfun:androidx.compose.runtime#access$<get-androidx_compose_runtime_ProvidedValue$stable>$p$tComposerKt(){}kotlin.Int
+- [`KT-72623`](https://youtrack.jetbrains.com/issue/KT-72623) Don't generate synthetic accessors in files other than the one being lowered
+
+### IR. Interpreter
+
+- [`KT-72356`](https://youtrack.jetbrains.com/issue/KT-72356) K2 Native: IllegalStateException when annotation has the same source range as a constant in another file
+
+### Native. Runtime. Memory
+
+- [`KT-71401`](https://youtrack.jetbrains.com/issue/KT-71401) K/N: CMS barrier can be executed on an unregisterred thread
+
+### Tools. CLI
+
+- [`KT-72311`](https://youtrack.jetbrains.com/issue/KT-72311) KotlinCliJavaFileManagerImpl caches empty result and broke repeated analyses
+
+### Tools. Daemon
+
+- [`KT-72530`](https://youtrack.jetbrains.com/issue/KT-72530) The daemon has terminated unexpectedly on startup attempt #1 with error code: Unknown
+
+### Tools. Gradle
+
+- [`KT-72467`](https://youtrack.jetbrains.com/issue/KT-72467) kotlin.sourceSets extension not added for KotlinBaseApiPlugin.createKotlinAndroidExtension()
+- [`KT-72495`](https://youtrack.jetbrains.com/issue/KT-72495) Warn about kotlin-compiler-embeddable loaded along KGP
+- [`KT-72387`](https://youtrack.jetbrains.com/issue/KT-72387) KGP 2.1.0-RC-227 changes cause KSP to crash calling produceUnpackedKlib
+- [`KT-72303`](https://youtrack.jetbrains.com/issue/KT-72303) KGP 2.1.0-Beta2 broke compatibility with KSP
+- - [`KT-72651`](https://youtrack.jetbrains.com/issue/KT-72651) Unable to use `target` for KotlinBaseApiPlugin.createKotlin(Jvm/Android)Extension()
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-72454`](https://youtrack.jetbrains.com/issue/KT-72454) Revert changes made in KT-69899 i.e. make kotlin.android.buildTypeAttribute.keep = false by default again
+
+### Tools. Gradle. Native
+
+- [`KT-72366`](https://youtrack.jetbrains.com/issue/KT-72366) KGP 2.1.0-Beta2 doesn't download `kotlin-native-prebuilt` when running Dokka
+- [`KT-71051`](https://youtrack.jetbrains.com/issue/KT-71051) K/N dependencies are re-downloaded multiple times on Windows
+
+### Tools. JPS
+
+- [`KT-68565`](https://youtrack.jetbrains.com/issue/KT-68565) K2: IllegalStateException: Source classes should be created separately before referencing
+
+### Tools. Kapt
+
+- [`KT-71776`](https://youtrack.jetbrains.com/issue/KT-71776) K2 Kapt in 2.1.0-Beta1 fails with `e: java.lang.IllegalStateException: FIR symbol "class org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol" is not supported in constant evaluation`
+
+
 ## 2.1.0-Beta2
 
 ### Analysis API. Caches and Invalidation
