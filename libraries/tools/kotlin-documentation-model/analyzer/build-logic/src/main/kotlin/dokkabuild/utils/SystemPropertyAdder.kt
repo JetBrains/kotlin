@@ -4,7 +4,6 @@
 package dokkabuild.utils
 
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
@@ -12,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskInputFilePropertyBuilder
 import org.gradle.api.tasks.TaskInputPropertyBuilder
+import org.gradle.api.tasks.TaskOutputFilePropertyBuilder
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.findByType
@@ -39,9 +39,10 @@ abstract class SystemPropertyAdder @Inject internal constructor(
 ) {
     private val objects: ObjectFactory = task.project.objects
 
+    @JvmName("inputDirectoryProvider")
     fun inputDirectory(
         key: String,
-        value: DirectoryProperty,
+        value: Provider<out Directory>,
     ): TaskInputFilePropertyBuilder {
         task.jvmArgumentProviders.add(
             SystemPropertyArgumentProvider(key, value) {
@@ -52,6 +53,7 @@ abstract class SystemPropertyAdder @Inject internal constructor(
             .withPropertyName("SystemProperty input directory $key")
     }
 
+    @JvmName("inputDirectoryFile")
     fun inputDirectory(
         key: String,
         value: Provider<File>,
@@ -60,9 +62,49 @@ abstract class SystemPropertyAdder @Inject internal constructor(
 
     fun inputDirectory(
         key: String,
+        value: File,
+    ): TaskInputFilePropertyBuilder =
+        inputDirectory(key, objects.directoryProperty().fileValue(value))
+
+    fun inputDirectory(
+        key: String,
         value: Directory,
     ): TaskInputFilePropertyBuilder =
         inputDirectory(key, objects.directoryProperty().apply { set(value) })
+
+
+    @JvmName("outputDirectoryProvider")
+    fun outputDirectory(
+        key: String,
+        value: Provider<out Directory>,
+    ): TaskOutputFilePropertyBuilder {
+        task.jvmArgumentProviders.add(
+            SystemPropertyArgumentProvider(key, value) {
+                it.get().asFile.invariantSeparatorsPath
+            }
+        )
+        return task.outputs.dir(value)
+            .withPropertyName("SystemProperty input directory $key")
+    }
+
+    @JvmName("outputDirectoryFile")
+    fun outputDirectory(
+        key: String,
+        value: Provider<File>,
+    ): TaskOutputFilePropertyBuilder =
+        outputDirectory(key, objects.directoryProperty().fileProvider(value))
+
+    fun outputDirectory(
+        key: String,
+        value: File,
+    ): TaskOutputFilePropertyBuilder =
+        outputDirectory(key, objects.directoryProperty().fileValue(value))
+
+    fun outputDirectory(
+        key: String,
+        value: Directory,
+    ): TaskOutputFilePropertyBuilder =
+        outputDirectory(key, objects.directoryProperty().apply { set(value) })
 
     fun inputFile(
         key: String,
