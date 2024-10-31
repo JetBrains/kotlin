@@ -336,9 +336,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {
-            defaultNull("defaultValue", "initializer", "delegate", "receiverParameter", "getter", "setter")
-            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar")
-            defaultTrue("isVal")
         }
 
         builder(simpleFunction) {

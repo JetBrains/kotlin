@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -37,10 +36,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var returnTypeRef: FirTypeRef
     open var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     open var containerSource: DeserializedContainerSource? = null
-    open var dispatchReceiverType: ConeSimpleKotlinType? = null
-    open val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     open lateinit var name: Name
-    open var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
@@ -59,10 +55,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             returnTypeRef,
             deprecationsProvider,
             containerSource,
-            dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
             name,
-            backingField,
             annotations.toMutableOrEmpty(),
             symbol,
             defaultValue,
@@ -97,10 +90,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.name = original.name
-    copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.defaultValue = original.defaultValue
     copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol

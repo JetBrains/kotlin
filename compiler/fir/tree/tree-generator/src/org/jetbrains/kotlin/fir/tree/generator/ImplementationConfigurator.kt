@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.declaration
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.Field
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
+import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
@@ -569,14 +572,22 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(implicitNothingTypeRefType)
         }
 
-        impl(valueParameter) {
+        fun AbstractImplementationConfigurator<Implementation, Element, Field>.ImplementationContext.configureCommonValueParameter() {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", withGetter = true)
+            defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", "dispatchReceiverType", "backingField", withGetter = true)
+            defaultEmptyList("contextReceivers", withGetter = true)
+        }
+
+        impl(valueParameter) {
+            configureCommonValueParameter()
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {
+            configureCommonValueParameter()
             default("name", "Name.identifier(\"value\")")
+            defaultNull("defaultValue", "initializer", "delegate", withGetter = true)
+            defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar", withGetter = true)
         }
 
         impl(simpleFunction)

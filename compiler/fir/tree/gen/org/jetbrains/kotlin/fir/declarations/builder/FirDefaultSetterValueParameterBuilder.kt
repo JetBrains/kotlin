@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -34,25 +32,11 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
-    var receiverParameter: FirReceiverParameter? = null
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
-    var initializer: FirExpression? = null
-    var delegate: FirExpression? = null
-    var isVar: Boolean = false
-    var isVal: Boolean = true
-    var getter: FirPropertyAccessor? = null
-    var setter: FirPropertyAccessor? = null
-    var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
-    var defaultValue: FirExpression? = null
     lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
-    var isCrossinline: Boolean = false
-    var isNoinline: Boolean = false
-    var isVararg: Boolean = false
 
     override fun build(): FirValueParameter {
         return FirDefaultSetterValueParameter(
@@ -62,25 +46,11 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
-            receiverParameter,
             deprecationsProvider,
             containerSource,
-            dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
-            initializer,
-            delegate,
-            isVar,
-            isVal,
-            getter,
-            setter,
-            backingField,
             annotations.toMutableOrEmpty(),
             symbol,
-            defaultValue,
             containingFunctionSymbol,
-            isCrossinline,
-            isNoinline,
-            isVararg,
         )
     }
 
