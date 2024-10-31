@@ -54,11 +54,14 @@ dependencies {
     proguardLibraryJars(project(":kotlin-compiler"))
 
     relocatedJarContents(mainSourceSet.output)
+
+    testImplementation(project(":kotlin-scripting-dependencies"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { }
+    "test" { projectDefault() }
 }
 
 publish()

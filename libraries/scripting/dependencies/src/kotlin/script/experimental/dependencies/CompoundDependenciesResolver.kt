@@ -9,7 +9,7 @@ import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
-class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenciesResolver>) : ExternalDependenciesResolver {
+class CompoundDependenciesResolver(val resolvers: List<ExternalDependenciesResolver>) : ExternalDependenciesResolver {
 
     constructor(vararg resolvers: ExternalDependenciesResolver) : this(resolvers.toList())
 
