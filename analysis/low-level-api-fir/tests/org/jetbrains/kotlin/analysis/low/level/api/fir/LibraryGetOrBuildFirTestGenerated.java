@@ -79,6 +79,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("parameterNullableSuspendLambda.kt")
+  public void testParameterNullableSuspendLambda() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterNullableSuspendLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterSuspendLambda.kt")
+  public void testParameterSuspendLambda() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterSuspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/secondaryConstructor.kt");
