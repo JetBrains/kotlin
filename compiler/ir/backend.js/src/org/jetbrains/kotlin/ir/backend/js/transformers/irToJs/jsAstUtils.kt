@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.isGeneratorFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -680,16 +681,20 @@ private val nameMappingOriginAllowList = setOf(
 private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
     val currentFunction = context.currentFunction ?: return false
 
+    if (this == null || !context.staticContext.backendContext.es6mode || superClass.isInterface || isInner || isLocal) return false
+
     // Account for lambda expressions as well.
-    val currentFunctionsIncludingParents = currentFunction.parentDeclarationsWithSelf.filterIsInstance<IrFunction>()
+    val currentFunctionsIncludingParents = currentFunction.parentDeclarationsWithSelf.filterIsInstance<IrFunction>().toList()
+
+    if (currentFunctionsIncludingParents.size > 1 &&
+        !context.staticContext.backendContext.configuration.getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
+    ) {
+        // super is not allowed inside anonymous functions that are not arrows.
+        return false
+    }
 
     fun IrFunction.isCoroutine(): Boolean =
         parentClassOrNull?.superClass?.symbol == context.staticContext.backendContext.coroutineSymbols.coroutineImpl
 
-    return this != null &&
-            context.staticContext.backendContext.es6mode &&
-            !superClass.isInterface &&
-            !isInner &&
-            !isLocal &&
-            currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.isCoroutine() }
+    return currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.isCoroutine() }
 }

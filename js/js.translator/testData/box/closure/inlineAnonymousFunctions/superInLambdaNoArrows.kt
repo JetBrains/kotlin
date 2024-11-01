@@ -1,6 +1,5 @@
 // ISSUE: KT-72732
 // DISABLE_ES6_ARROWS
-// IGNORE_BACKEND: JS_IR_ES6
 
 // This test contains the same code as superInLambda.kt. Please keep them in sync!
 
@@ -19,7 +18,7 @@ class B : A() {
     }
 
     fun baz(x: String): () -> String {
-        // CHECK_SUPER_COUNT: function=baz_8yhxfl_k$ count=2 includeNestedDeclarations=true TARGET_BACKENDS=JS_IR_ES6
+        // CHECK_SUPER_COUNT: function=baz_8yhxfl_k$ count=0 includeNestedDeclarations=true TARGET_BACKENDS=JS_IR_ES6
         return {
             super.foo + x + ({ super.foo + x + "!" }).invoke()
         }
