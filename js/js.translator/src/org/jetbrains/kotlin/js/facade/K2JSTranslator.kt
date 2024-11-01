@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
 import org.jetbrains.kotlin.js.inline.JsInliner
 import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
-import org.jetbrains.kotlin.js.inline.clean.transformLabeledBlockToDoWhile
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNamesInAllScopes
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.translate.general.SourceFileTranslationResult
@@ -171,9 +170,6 @@ class K2JSTranslator @JvmOverloads constructor(
             translationResult
         ).process()
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
-        checkCanceled()
-
-        transformLabeledBlockToDoWhile(translationResult.newFragments)
         checkCanceled()
 
         transformCoroutines(translationResult.newFragments)
