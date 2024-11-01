@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -439,5 +440,25 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
             tags = testInfo.tags
         )
+    }
+
+    fun RegisteredDirectives.suppressIf(suppressionDirective: StringDirective, filter: (Throwable) -> Boolean, action: () -> Unit) {
+        val hasSuppressionDirective = suppressionDirective in this
+        var exception: Throwable? = null
+        try {
+            action()
+        } catch (e: Throwable) {
+            exception = e
+        }
+
+        if (exception != null) {
+            if (!filter(exception) || !hasSuppressionDirective) {
+                throw exception
+            }
+
+            return
+        } else if (hasSuppressionDirective) {
+            throw AssertionError("'${suppressionDirective.name}' directive present but no exception thrown. Please remove directive")
+        }
     }
 }

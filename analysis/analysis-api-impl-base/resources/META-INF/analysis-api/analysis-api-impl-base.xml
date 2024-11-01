@@ -52,5 +52,12 @@
         key="kotlin.decompiled.light.classes.check.inconsistency"
         restartRequired="false"
     />
+
+    <registryKey
+        defaultValue="false"
+        description="Allow a KaSymbol creation in an incorrect context"
+        key="kotlin.analysis.unrelatedSymbolCreation.allowed"
+        restartRequired="false"
+    />
   </extensions>
 </idea-plugin>

@@ -35,13 +35,13 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtFile.symbol: KaFileSymbol
-        get() = withValidityAssertion { KaFe10FileSymbol(this, this@KaFe10SymbolProvider.analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10FileSymbol(this, this@KaFe10SymbolProvider.analysisContext) }
 
     override val KtScript.symbol: KaScriptSymbol
-        get() = withValidityAssertion { KaFe10PsiScriptSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiScriptSymbol(this, analysisContext) }
 
     override val KtParameter.symbol: KaVariableSymbol
-        get() = withValidityAssertion {
+        get() = createPsiBasedSymbolWithValidityAssertion {
             when {
                 isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
                 isLoopParameter -> KaFe10PsiLoopParameterLocalVariableSymbol(this, analysisContext)
@@ -50,8 +50,8 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtNamedFunction.symbol: KaFunctionSymbol
-        get() = withValidityAssertion {
-            return if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
+        get() = createPsiBasedSymbolWithValidityAssertion {
+            if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
                 KaFe10PsiAnonymousFunctionSymbol(this, analysisContext)
             } else {
                 KaFe10PsiNamedFunctionSymbol(this, analysisContext)
@@ -59,23 +59,23 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtConstructor<*>.symbol: KaConstructorSymbol
-        get() = withValidityAssertion { KaFe10PsiConstructorSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiConstructorSymbol(this, analysisContext) }
 
     override val KtTypeParameter.symbol: KaTypeParameterSymbol
-        get() = withValidityAssertion { KaFe10PsiTypeParameterSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiTypeParameterSymbol(this, analysisContext) }
 
     override val KtTypeAlias.symbol: KaTypeAliasSymbol
-        get() = withValidityAssertion { KaFe10PsiTypeAliasSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiTypeAliasSymbol(this, analysisContext) }
 
     override val KtEnumEntry.symbol: KaEnumEntrySymbol
-        get() = withValidityAssertion { KaFe10PsiEnumEntrySymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiEnumEntrySymbol(this, analysisContext) }
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
-        get() = withValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
 
     override val KtProperty.symbol: KaVariableSymbol
-        get() = withValidityAssertion {
-            return if (isLocal) {
+        get() = createPsiBasedSymbolWithValidityAssertion {
+            if (isLocal) {
                 KaFe10PsiLocalVariableSymbol(this, analysisContext)
             } else {
                 KaFe10PsiKotlinPropertySymbol(this, analysisContext)
@@ -83,10 +83,10 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
-        get() = withValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
 
     override val KtObjectDeclaration.symbol: KaClassSymbol
-        get() = withValidityAssertion {
+        get() = createPsiBasedSymbolWithValidityAssertion {
             if (isObjectLiteral())
                 KaFe10PsiAnonymousObjectSymbol(this, analysisContext)
             else
@@ -94,7 +94,7 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtClassOrObject.classSymbol: KaClassSymbol?
-        get() = withValidityAssertion {
+        get() = createPsiBasedSymbolWithValidityAssertion {
             when (this) {
                 is KtEnumEntry -> null
                 is KtObjectDeclaration -> symbol
@@ -103,17 +103,17 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
-        get() = withValidityAssertion {
+        get() = createPsiBasedSymbolWithValidityAssertion {
             if (this is KtEnumEntry || nameIdentifier == null) {
                 return null
             }
 
-            return KaFe10PsiNamedClassSymbol(this, analysisContext)
+            KaFe10PsiNamedClassSymbol(this, analysisContext)
         }
 
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
-        get() = withValidityAssertion {
-            return if (isGetter) {
+        get() = createPsiBasedSymbolWithValidityAssertion {
+            if (isGetter) {
                 KaFe10PsiPropertyGetterSymbol(this, analysisContext)
             } else {
                 KaFe10PsiPropertySetterSymbol(this, analysisContext)
@@ -121,22 +121,22 @@ internal class KaFe10SymbolProvider(
         }
 
     override val KtClassInitializer.symbol: KaClassInitializerSymbol
-        get() = withValidityAssertion { KaFe10PsiClassInitializerSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiClassInitializerSymbol(this, analysisContext) }
 
     override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
-        get() = withValidityAssertion { KaFe10PsiLocalVariableSymbol(this, analysisContext) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiLocalVariableSymbol(this, analysisContext) }
 
     override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
-        get() = withValidityAssertion { KaFe10PsiDestructuringDeclarationSymbol(this, analysisSession) }
+        get() = createPsiBasedSymbolWithValidityAssertion { KaFe10PsiDestructuringDeclarationSymbol(this, analysisSession) }
 
     override fun findClass(classId: ClassId): KaClassSymbol? = withValidityAssertion {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return null
-        return descriptor.toKaClassSymbol(analysisContext)
+        descriptor.toKaClassSymbol(analysisContext)
     }
 
     override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = withValidityAssertion {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findTypeAliasAcrossModuleDependencies(classId) ?: return null
-        return descriptor.toKtClassifierSymbol(analysisContext) as? KaTypeAliasSymbol
+        descriptor.toKtClassifierSymbol(analysisContext) as? KaTypeAliasSymbol
     }
 
     override fun findClassLike(classId: ClassId): KaClassLikeSymbol? = withValidityAssertion {
@@ -146,7 +146,7 @@ internal class KaFe10SymbolProvider(
 
     override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = withValidityAssertion {
         val packageViewDescriptor = analysisContext.resolveSession.moduleDescriptor.getPackage(packageFqName)
-        return packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
+        packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
             .asSequence()
             .filter { it.name == name }
             .mapNotNull { it.toKtSymbol(analysisContext) as? KaCallableSymbol }
@@ -154,6 +154,6 @@ internal class KaFe10SymbolProvider(
 
     override fun findPackage(fqName: FqName): KaPackageSymbol? = withValidityAssertion {
         if (analysisContext.resolveSession.packageFragmentProvider.isEmpty(fqName)) return null
-        return KaFe10PackageSymbol(fqName, analysisContext)
+        KaFe10PackageSymbol(fqName, analysisContext)
     }
 }

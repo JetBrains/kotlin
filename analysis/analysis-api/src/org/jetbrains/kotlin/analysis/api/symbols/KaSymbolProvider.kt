@@ -10,6 +10,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
+/**
+ * Provides a mapping between a PSI element and the corresponding [KaSymbol].
+ *
+ * **Note**: symbols can be created only for elements which are a part of the current [KaSession]
+ * ([KaAnalysisScopeProvider.canBeAnalysed][org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider.canBeAnalysed]
+ * is **true** for them).
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
+ */
 public interface KaSymbolProvider {
     public val KtDeclaration.symbol: KaDeclarationSymbol
 

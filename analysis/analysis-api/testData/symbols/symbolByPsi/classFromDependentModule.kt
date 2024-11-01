@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE
+// ILLEGAL_PSI
 // MODULE: dep
 // FILE: dependency.kt
 class Dep<caret_context>

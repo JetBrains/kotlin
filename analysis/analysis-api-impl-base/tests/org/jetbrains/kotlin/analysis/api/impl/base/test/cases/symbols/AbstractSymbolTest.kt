@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
@@ -35,9 +36,11 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.opentest4j.AssertionFailedError
+import java.util.concurrent.ExecutionException
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
@@ -63,8 +66,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     abstract fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = false)
-        doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+        testServices.moduleStructure.allDirectives.suppressIf(
+            suppressionDirective = SymbolTestDirectives.ILLEGAL_PSI,
+            filter = Throwable::isIllegalPsiException,
+        ) {
+            doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = false)
+            doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+        }
     }
 
     private fun doTestByMainFile(
@@ -181,7 +189,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun KaSession.checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
-        val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty { it.symbol }
+        val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty {
+            it.takeIf { it.canBeAnalysed() }?.symbol
+        }
 
         for (symbol in symbols) {
             if (symbol.origin != KaSymbolOrigin.SOURCE) continue
@@ -373,6 +383,8 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
 
     val TARGET_FILE_NAME by stringDirective(description = "The name of the main file")
+
+    val ILLEGAL_PSI by stringDirective(description = "Symbol should not be created for this PSI element")
 }
 
 enum class PrettyRendererOption(val transformation: (KaDeclarationRenderer) -> KaDeclarationRenderer) {
@@ -511,3 +523,10 @@ private fun KaSymbol.dropBackingPsi() {
     // Drop backing PSI to trigger non-psi implementation
     field.set(this, null)
 }
+
+private val Throwable.isIllegalPsiException: Boolean
+    get() = when (this) {
+        is KaBaseSymbolProvider.KaBaseIllegalPsiException -> true
+        is ExecutionException -> cause?.isIllegalPsiException == true
+        else -> false
+    }
