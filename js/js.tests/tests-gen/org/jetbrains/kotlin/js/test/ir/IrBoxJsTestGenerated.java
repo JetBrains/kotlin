@@ -731,6 +731,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       }
 
       @Test
+      @TestMetadata("superInLambdaNoArrows.kt")
+      public void testSuperInLambdaNoArrows() {
+        runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/superInLambdaNoArrows.kt");
+      }
+
+      @Test
       @TestMetadata("twiceRegeneratedAnonymousObject.kt")
       public void testTwiceRegeneratedAnonymousObject() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/twiceRegeneratedAnonymousObject.kt");

@@ -1,6 +1,8 @@
-// ISSUE: KT-67355
+// ISSUE: KT-72732
+// DISABLE_ES6_ARROWS
+// IGNORE_BACKEND: JS_IR_ES6
 
-// This test contains the same code as superInLambdaNoArrows.kt. Please keep them in sync!
+// This test contains the same code as superInLambda.kt. Please keep them in sync!
 
 open class A {
     open val foo: String = "1"
