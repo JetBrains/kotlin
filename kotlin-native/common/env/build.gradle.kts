@@ -1,5 +1,6 @@
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
@@ -51,19 +52,15 @@ dependencies {
 
 val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
 
-kotlinNativeInterop {
-    create("main") {
-        genTask.configure {
-            defFile.set(project.file(defFileName))
-            compilerOpts.set(cCompilerArgs + commonCompilerArgs)
-            headersDirs.from(selfHeaders, cppImplementation)
-            headersDirs.systemFrom(systemIncludeDirs)
-        }
-    }
+val genTask = tasks.named<KonanJvmInteropTask>("genInteropStubs") {
+    defFile.set(project.file(defFileName))
+    compilerOpts.set(cCompilerArgs + commonCompilerArgs)
+    headersDirs.from(selfHeaders, cppImplementation)
+    headersDirs.systemFrom(systemIncludeDirs)
 }
 
 val prebuiltRoot = layout.projectDirectory.dir("gen/main")
-val generatedRoot = kotlinNativeInterop["main"].genTask.map { it.outputDirectory.get() }
+val generatedRoot = genTask.map { it.outputDirectory.get() }
 
 val bindingsRoot = if (usePrebuiltSources) provider { prebuiltRoot } else generatedRoot
 

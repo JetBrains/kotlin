@@ -9,9 +9,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.from
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.utils.capitalized
+import kotlin.text.set
 
 open class NativeInteropPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -35,9 +40,13 @@ open class NativeInteropPlugin : Plugin<Project> {
             interopStubGeneratorCppRuntime(project(":kotlin-native:Interop:Runtime"))
         }
 
-        target.extensions.add("kotlinNativeInterop", target.objects.domainObjectContainer(NamedNativeInteropConfig::class.java) {
-            NamedNativeInteropConfig(target, it)
-        })
+        target.tasks.register<KonanJvmInteropTask>("genInteropStubs") {
+            dependsOn(target.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
+            dependsOn(target.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
+            interopStubGeneratorClasspath.from(interopStubGenerator)
+            interopStubGeneratorNativeLibraries.from(interopStubGeneratorCppRuntime)
+            outputDirectory.set(project.layout.buildDirectory.dir("nativeInteropStubs"))
+        }
     }
 
     companion object {
