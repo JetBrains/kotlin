@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -71,6 +73,11 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         testServices: TestServices,
         disablePsiBasedLogic: Boolean,
     ) {
+        val markerProvider = testServices.expressionMarkerProvider
+        val analyzeContext = testServices.ktTestModuleStructure.allMainKtFiles.firstNotNullOfOrNull {
+            markerProvider.getElementOfTypeAtCaretOrNull<KtElement>(it, "context")
+        }
+
         val directives = mainModule.testModule.directives
         val directiveToIgnore = directives.doNotCheckNonPsiSymbolRestoreDirective()?.takeIf { disablePsiBasedLogic }
             ?: directives.doNotCheckSymbolRestoreDirective()
@@ -99,7 +106,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
-            analyseForTest(mainFile) {
+            analyseForTest(analyzeContext ?: mainFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices).also {
                     if (disablePsiBasedLogic) {
                         it.dropBackingPsi()
@@ -160,6 +167,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             testServices = testServices,
             directives = directives,
             disablePsiBasedLogic = disablePsiBasedLogic,
+            analyzeContext = analyzeContext,
         )
     }
 
@@ -255,11 +263,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         testServices: TestServices,
         directives: RegisteredDirectives,
         disablePsiBasedLogic: Boolean,
+        analyzeContext: KtElement?,
     ) {
         var failed = false
         val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         try {
-            val restored = analyseForTest(ktFile) {
+            val restored = analyseForTest(analyzeContext ?: ktFile) {
                 pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered) ->
                     val pointer = pointer ?: error("Symbol pointer for $expectedRender was not created")
                     val restored = restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Symbol $expectedRender was not restored")
@@ -286,7 +295,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         if (!failed) {
-            compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic)
+            compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
         }
 
         if (failed || directiveToIgnore == null) return
@@ -304,10 +313,11 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         testServices: TestServices,
         ktFile: KtFile,
         disablePsiBasedLogic: Boolean,
+        analyzeContext: KtElement?,
     ) {
         if (restoredPointers.isEmpty()) return
 
-        analyseForTest(ktFile) {
+        analyseForTest(analyzeContext ?: ktFile) {
             val symbolsToPointersMap = restoredPointers.groupByTo(mutableMapOf()) {
                 restoreSymbol(it, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
             }

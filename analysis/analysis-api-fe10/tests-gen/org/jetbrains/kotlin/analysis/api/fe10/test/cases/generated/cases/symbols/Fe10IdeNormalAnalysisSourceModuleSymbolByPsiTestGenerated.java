@@ -71,6 +71,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("classFromDependencyModule.kt")
+  public void testClassFromDependencyModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classFromDependencyModule.kt");
+  }
+
+  @Test
+  @TestMetadata("classFromDependentModule.kt")
+  public void testClassFromDependentModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classFromDependentModule.kt");
+  }
+
+  @Test
   @TestMetadata("classInitializer.kt")
   public void testClassInitializer() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classInitializer.kt");
@@ -197,6 +209,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("functionFromDependencyModule.kt")
+  public void testFunctionFromDependencyModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionFromDependencyModule.kt");
+  }
+
+  @Test
+  @TestMetadata("functionFromDependentModule.kt")
+  public void testFunctionFromDependentModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionFromDependentModule.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithTypeAlias.kt")
   public void testFunctionWithTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionWithTypeAlias.kt");
@@ -284,6 +308,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   @TestMetadata("propertiesFromCompanion.kt")
   public void testPropertiesFromCompanion() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertiesFromCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromDependencyModule.kt")
+  public void testPropertyFromDependencyModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertyFromDependencyModule.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromDependentModule.kt")
+  public void testPropertyFromDependentModule() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertyFromDependentModule.kt");
   }
 
   @Test
