@@ -89,6 +89,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val DISABLE_ES6_ARROWS by directive(
+        description = "Translate lambdas to ordinary anonymous functions instead of ES6 arrows",
+        applicability = DirectiveApplicability.Global
+    )
+
     val GENERATE_STRICT_IMPLICIT_EXPORT by directive(
         description = "enable strict implicitly exported entities types inside d.ts files",
         applicability = DirectiveApplicability.Global
