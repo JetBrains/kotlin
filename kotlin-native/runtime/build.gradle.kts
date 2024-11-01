@@ -592,6 +592,13 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
     ))
 
+    // TODO(KT-72747): Make it compatible with CC
+    notCompatibleWithConfigurationCache("""
+        Could not load the value of field `values` of `org.gradle.api.internal.collections.SortedSetElementSource` bean
+        found in field `store` of `org.gradle.api.internal.FactoryNamedDomainObjectContainer` bean
+        found in field `sourceSets` of task `:kotlin-native:runtime:stdlibBuildTask` of type `org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask`.
+    """.trimIndent())
+
     val common by sourceSets.creating {
         srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
         srcDir(project(":kotlin-stdlib").file("common/src/generated"))
