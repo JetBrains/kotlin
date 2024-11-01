@@ -10,7 +10,6 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -110,20 +109,22 @@ open class ClangFrontend @Inject constructor(
     val arguments: ListProperty<String> = objects.listProperty(String::class.java)
 
     /**
-     * Locations to search for headers.
-     *
-     * Will be passed to the compiler as `-I…` and will also be used to compute task dependencies: recompile if the headers change.
-     */
-    @get:Internal("Used to compute headers")
-    val headersDirs: ConfigurableFileCollection = objects.fileCollection()
-
-    /**
      * Working directory for [compiler].
      *
      * All inputs will be passed to the compiler as relative paths to this directory.
      */
     @get:Internal("Used to compute workUnits and headersPathsRelativeToWorkingDir")
     val workingDirectory: DirectoryProperty = objects.directoryProperty()
+
+    /**
+     * Locations to search for headers.
+     *
+     * Will be passed to the compiler as `-I…` and will also be used to compute task dependencies: recompile if the headers change.
+     */
+    @get:Nested
+    val headersDirs: CppHeadersSet = objects.cppHeadersSet().apply {
+        workingDir.set(this@ClangFrontend.workingDirectory)
+    }
 
     /**
      * [WorkUnit]s for [compiler].
@@ -135,41 +136,6 @@ open class ClangFrontend @Inject constructor(
         files.map {
             val relativePath = it.asFile.toRelativeString(base.asFile)
             WorkUnit(relativePath, out.file(relativePath.replaceAfterLast(".", "bc")))
-        }
-    }
-
-    /**
-     * Computed header files used for task dependencies tracking.
-     */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.NONE) // manually computed: [headersPathsRelativeToWorkingDir]
-    protected val headers = inputFiles.elements.zip(headersDirs.elements) { sourceFiles, headerDirs ->
-        // Not using clang's -M* flags because there's a problem with our current include system:
-        // We allow includes relative to the current directory and also pass -I for each imported module
-        // Given file tree:
-        // a:
-        //  header.hpp
-        // b:
-        //  impl.cpp
-        // Assume module b adds a to its include path.
-        // If b/impl.cpp has #include "header.hpp", it'll be included from a/header.hpp. If we add another file
-        // header.hpp into b/, the next compilation of b/impl.cpp will include b/header.hpp. -M flags, however,
-        // won't generate a dependency on b/header.hpp, so incremental compilation will be broken.
-        // TODO: Apart from dependency generation this also makes it awkward to have two files with
-        //       the same name (e.g. Utils.h) in directories a/ and b/: For the b/impl.cpp to include a/header.hpp
-        //       it needs to have #include "../a/header.hpp"
-
-        // Add the sources, as clang by default adds directory with the source to the include path.
-        layout.files(sourceFiles, headerDirs).asFileTree.matching {
-            include("**/*.h", "**/*.hpp")
-        }
-    }
-
-    @get:Input
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val headersPathsRelativeToWorkingDir: Provider<List<String>> = workingDirectory.zip(headers) { base, headers ->
-        headers.files.map {
-            it.toRelativeString(base.asFile)
         }
     }
 
@@ -195,10 +161,10 @@ open class ClangFrontend @Inject constructor(
     }
 
     companion object {
-        internal fun defaultCompilerFlags(headersDirs: FileCollection): List<String> = buildList {
+        internal fun defaultCompilerFlags(headersDirs: CppHeadersSet): List<String> = buildList {
             add("-c")
             add("-emit-llvm")
-            headersDirs.mapTo(this) { "-I${it.absolutePath}" }
+            addAll(headersDirs.asCompilerArguments.get())
         }
     }
 }

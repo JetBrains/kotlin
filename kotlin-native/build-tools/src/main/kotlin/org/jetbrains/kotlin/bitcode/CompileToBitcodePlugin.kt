@@ -25,6 +25,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.cpp.*
+import org.jetbrains.kotlin.cpp.ClangFrontend
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -244,6 +245,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.targetName.set(target.name)
             this.compiler.set(module.compiler)
             this.arguments.set(allCompilerArgs)
+            // Add the sources, as clang by default adds directory with the source to the include path.
+            this.headersDirs.from(this@SourceSet.inputFiles.dir)
             this.headersDirs.from(this@SourceSet.headersDirs)
             this.inputFiles.from(this@SourceSet.inputFiles)
             this.workingDirectory.set(module.compilerWorkingDirectory)
@@ -264,7 +267,12 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     directory.set(module.compilerWorkingDirectory)
                     files.setFrom(this@SourceSet.inputFiles)
                     arguments.set(listOf(execClang.resolveExecutable(module.compiler.get())))
-                    arguments.addAll(ClangFrontend.defaultCompilerFlags(this@SourceSet.headersDirs))
+                    val headers = project.objects.cppHeadersSet().apply {
+                        workingDir.set(module.compilerWorkingDirectory)
+                        from(this@SourceSet.inputFiles.dir)
+                        from(this@SourceSet.headersDirs)
+                    }
+                    arguments.addAll(ClangFrontend.defaultCompilerFlags(headers))
                     arguments.addAll(allCompilerArgs)
                     arguments.addAll(execClang.clangArgsForCppRuntime(target.name))
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
