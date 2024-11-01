@@ -324,12 +324,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("leakingPrivateClassConstructor.kt")
-      public void testLeakingPrivateClassConstructor() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateClassConstructor.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
       public void testLeakingPrivateCompanionThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
@@ -574,12 +568,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
-
-      @Test
-      @TestMetadata("usePrivateFunInterfaceFromInlineFun.kt")
-      public void testUsePrivateFunInterfaceFromInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateFunInterfaceFromInlineFun.kt");
-      }
     }
 
     @Nested
@@ -631,12 +619,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
       public void testLeakingLateinitIsInitializedFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassConstructor.kt")
-      public void testLeakingPrivateClassConstructor() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateClassConstructor.kt");
       }
 
       @Test
@@ -884,12 +866,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
-
-      @Test
-      @TestMetadata("usePrivateFunInterfaceFromInlineFun.kt")
-      public void testUsePrivateFunInterfaceFromInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateFunInterfaceFromInlineFun.kt");
-      }
     }
 
     @Nested
@@ -1102,24 +1078,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("leakingPrivateClassThroughtKlass.kt")
-      public void testLeakingPrivateClassThroughtKlass() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtKlass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFun.kt")
-      public void testLeakingPrivateClassThroughtPrivateTopLevelFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtPrivateTopLevelFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtTypecheck.kt")
-      public void testLeakingPrivateClassThroughtTypecheck() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtTypecheck.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateExtensionFun.kt")
       public void testLeakingPrivateExtensionFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionFun.kt");
@@ -1298,24 +1256,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("leakingPrivateClassThroughtKlass.kt")
-      public void testLeakingPrivateClassThroughtKlass() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtKlass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFun.kt")
-      public void testLeakingPrivateClassThroughtPrivateTopLevelFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtPrivateTopLevelFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtTypecheck.kt")
-      public void testLeakingPrivateClassThroughtTypecheck() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtTypecheck.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateExtensionFun.kt")
       public void testLeakingPrivateExtensionFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateExtensionFun.kt");
@@ -1451,12 +1391,6 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       @TestMetadata("potentiallyClashingFunAccessors.kt")
       public void testPotentiallyClashingFunAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingFunAccessors.kt");
-      }
-
-      @Test
-      @TestMetadata("potentiallyClashingPrivateClassAccessors.kt")
-      public void testPotentiallyClashingPrivateClassAccessors() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingPrivateClassAccessors.kt");
       }
 
       @Test

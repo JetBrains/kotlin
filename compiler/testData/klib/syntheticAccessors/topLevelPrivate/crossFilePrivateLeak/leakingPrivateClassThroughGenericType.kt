@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: ANY
 // ^^^ Muted because a private type is leaked from the declaring file, and the visibility validator detects this.
-//     This test should be converted to a test that checks reporting private types exposure. To be done in KT-69681.
+//     This test should be converted to a test that checks reporting private types exposure. To be done in KT-69681 and KT-71416.
 
 // FILE: a.kt
 private class Private
