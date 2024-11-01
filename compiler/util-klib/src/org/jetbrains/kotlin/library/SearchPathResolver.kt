@@ -315,7 +315,10 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         // Please, don't add checks for other versions here. For example, check for the metadata version should be
         // implemented in KlibDeserializedContainerSource.incompatibility
         if (candidateAbiVersion?.isCompatible() != true) {
-            logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. Incompatible ABI version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library was produced by '$candidateCompilerVersion' compiler.")
+            logger.strongWarning("KLIB resolver: Skipping '$candidatePath' having incompatible ABI version '${candidateAbiVersion}'. " +
+                        "The library was produced by '$candidateCompilerVersion' compiler.\n" +
+                        "The current Kotlin compiler can consume libraries having ABI version <= '${KotlinAbiVersion.CURRENT}'.\n" +
+                        "Please upgrade your Kotlin compiler version to consume this library.")
             return false
         }
 

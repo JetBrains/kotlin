@@ -101,7 +101,7 @@ fun assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
         assertions, compilerOutput, missingLibrary, baseDir,
         listOf(
             { "error: KLIB resolver: Could not find \"<path>$it\"" },
-            { "warning: KLIB resolver: Skipping '<path>$it'. Incompatible ABI version" },
+            { "warning: KLIB resolver: Skipping '<path>$it' having incompatible ABI version" },
         )
     )
 }
