@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 val IrDeclaration.isReal: Boolean get() = !isFakeOverride
@@ -26,6 +28,12 @@ val IrFunction.target: IrFunction
         is IrSimpleFunction -> this.target
         is IrConstructor -> this
     }
+
+val IrFunctionAccessExpression.isVirtualCall: Boolean
+    get() = this is IrCall && this.superQualifierSymbol == null && this.symbol.owner.isOverridable
+
+val IrFunctionAccessExpression.target: IrFunction
+    get() = this.symbol.owner.let { (it as? IrSimpleFunction)?.takeUnless { this.isVirtualCall }?.target ?: it }
 
 fun <T : IrOverridableDeclaration<*>> T.collectRealOverrides(
     toSkip: (T) -> Boolean = { false },

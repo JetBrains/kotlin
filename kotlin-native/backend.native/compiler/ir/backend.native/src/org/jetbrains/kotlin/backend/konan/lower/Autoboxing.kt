@@ -108,7 +108,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             is IrGetField -> this.symbol.owner.type
             is IrCall -> when (this.symbol) {
                 symbols.reinterpret -> this.getTypeArgument(1)!!
-                else -> this.callTarget.returnType
+                else -> this.target.returnType
             }
             is IrTypeOperatorCall -> when (this.operator) {
                 IrTypeOperator.CAST -> context.irBuiltIns.anyNType
@@ -123,21 +123,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         else
             this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
-
-    private val IrFunctionAccessExpression.target: IrFunction
-        get() = when (this) {
-            is IrCall -> this.callTarget
-            is IrDelegatingConstructorCall -> this.symbol.owner
-            is IrConstructorCall -> this.symbol.owner
-            is IrEnumConstructorCall -> compilationException("IrEnumConstructorCall is not supported here", this)
-        }
-
-    private val IrCall.callTarget: IrFunction
-        get() = if (this.isVirtualCall) {
-            symbol.owner
-        } else {
-            symbol.owner.target
-        }
 
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
         val target = expression.target
