@@ -121,7 +121,46 @@ open class SpecialGenericSignatures {
                 javaLang("Number").method("toDouble", "", JvmPrimitiveType.DOUBLE.desc) to Name.identifier("doubleValue"),
                 REMOVE_AT_NAME_AND_SIGNATURE to Name.identifier("remove"),
                 javaLang("CharSequence")
-                    .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt")
+                    .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt"),
+
+                javaUtilConcurrentAtomic("AtomicInteger").method("load", "", "I") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("store", "I", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("exchange", "I", "I") to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndAdd", "I", "I") to Name.identifier("getAndAdd"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("addAndFetch", "I", "I") to Name.identifier("addAndGet"),
+
+                javaUtilConcurrentAtomic("AtomicLong").method("load", "", "J") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicLong").method("store", "J", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicLong").method("exchange", "J", "J") to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicLong").method("fetchAndAdd", "J", "J") to Name.identifier("getAndAdd"),
+                javaUtilConcurrentAtomic("AtomicLong").method("addAndFetch", "J", "J") to Name.identifier("addAndGet"),
+
+                javaUtilConcurrentAtomic("AtomicBoolean").method("load", "", "Z") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicBoolean").method("store", "Z", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicBoolean").method("exchange", "Z", "Z") to Name.identifier("getAndSet"),
+
+                javaUtilConcurrentAtomic("AtomicReference").method("load", "", "Ljava/lang/Object;") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicReference").method("store", "Ljava/lang/Object;", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicReference").method("exchange", "Ljava/lang/Object;", "Ljava/lang/Object;") to Name.identifier("getAndSet"),
+
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("loadAt", "I", "I") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("storeAt", "II", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("exchangeAt", "II", "I") to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("compareAndSetAt", "III", "Z") to Name.identifier("compareAndSet"),
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("fetchAndAddAt", "II", "I") to Name.identifier("getAndAdd"),
+                javaUtilConcurrentAtomic("AtomicIntegerArray").method("addAndFetchAt", "II", "I") to Name.identifier("addAndGet"),
+
+                javaUtilConcurrentAtomic("AtomicLongArray").method("loadAt", "I", "J") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicLongArray").method("storeAt", "IJ", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicLongArray").method("exchangeAt", "IJ", "J") to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicLongArray").method("compareAndSetAt", "IJJ", "Z") to Name.identifier("compareAndSet"),
+                javaUtilConcurrentAtomic("AtomicLongArray").method("fetchAndAddAt", "IJ", "J") to Name.identifier("getAndAdd"),
+                javaUtilConcurrentAtomic("AtomicLongArray").method("addAndFetchAt", "IJ", "J") to Name.identifier("addAndGet"),
+
+                javaUtilConcurrentAtomic("AtomicReferenceArray").method("loadAt", "I", "Ljava/lang/Object;") to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicReferenceArray").method("storeAt", "ILjava/lang/Object;", "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicReferenceArray").method("exchangeAt", "ILjava/lang/Object;", "Ljava/lang/Object;") to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicReferenceArray").method("compareAndSetAt", "ILjava/lang/Object;Ljava/lang/Object;", "Z") to Name.identifier("compareAndSet"),
             )
         }
 

@@ -15,6 +15,7 @@ class NonExportedPackagesTest {
     @Test
     fun stdlib() {
         checkNonExportedPackages("kotlin-stdlib", setOf(
+            "kotlin.concurrent.internal",
             "kotlin.collections.builders",
             "kotlin.js",
             "kotlin.jvm.internal.unsafe",

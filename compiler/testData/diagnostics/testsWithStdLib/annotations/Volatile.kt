@@ -4,7 +4,7 @@
 // MODULE: common
 // FILE: common.kt
 // TARGET_PLATFORM: Common
-import kotlin.<!UNRESOLVED_REFERENCE!>concurrent<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Volatile<!>
+import kotlin.concurrent.<!UNRESOLVED_REFERENCE!>Volatile<!>
 import kotlin.<!UNRESOLVED_REFERENCE!>properties<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Delegates<!>
 
 class ConcurrentVolatile(@<!UNRESOLVED_REFERENCE!>Volatile<!> val s: Int) {

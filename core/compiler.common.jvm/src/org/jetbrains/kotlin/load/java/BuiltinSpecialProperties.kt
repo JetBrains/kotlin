@@ -20,7 +20,10 @@ object BuiltinSpecialProperties {
         StandardNames.FqNames.charSequence.childSafe("length") to Name.identifier("length"),
         StandardNames.FqNames.map.child("keys") to Name.identifier("keySet"),
         StandardNames.FqNames.map.child("values") to Name.identifier("values"),
-        StandardNames.FqNames.map.child("entries") to Name.identifier("entrySet")
+        StandardNames.FqNames.map.child("entries") to Name.identifier("entrySet"),
+        StandardNames.FqNames.atomicIntArray.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicLongArray.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicArray.child("size") to Name.identifier("length"),
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =

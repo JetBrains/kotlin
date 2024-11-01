@@ -2934,6 +2934,16 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
+public final class kotlin/concurrent/internal/AtomicIntrinsicsKt {
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicBoolean;ZZ)Z
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicInteger;II)I
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicIntegerArray;III)I
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicLong;JJ)J
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicLongArray;IJJ)J
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicReference;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicReferenceArray;ILjava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/Effect {
 }
 

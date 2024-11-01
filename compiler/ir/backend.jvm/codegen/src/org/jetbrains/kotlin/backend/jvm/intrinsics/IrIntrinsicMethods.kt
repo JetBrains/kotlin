@@ -38,6 +38,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val arrayFqn = StandardNames.FqNames.array.toSafe()
     private val cloneableFqn = StandardNames.FqNames.cloneable.toSafe()
     private val intFqn = StandardNames.FqNames._int.toSafe()
+    private val longFqn = StandardNames.FqNames._long.toSafe()
+    private val booleanFqn = StandardNames.FqNames._boolean.toSafe()
     private val kClassFqn = StandardNames.FqNames.kClass.toSafe()
     private val stringFqn = StandardNames.FqNames.string.toSafe()
 
@@ -120,7 +122,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ) +
 
-                    intrinsicsThatShouldHaveBeenLowered()
+                    intrinsicsThatShouldHaveBeenLowered() +
+                    atomicIntrinsicsForJdk8()
             )
 
     private val intrinsicsMap = hashMapOf<String, MutableMap<FqName?, MutableMap<Key, IntrinsicMethod>>>()
@@ -191,6 +194,18 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
                 arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+
+    private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
+        listOf(
+            Key(StandardNames.FqNames.atomicInt, null, "compareAndExchange", listOf(intFqn, intFqn)) to AtomicCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLong, null, "compareAndExchange", listOf(longFqn, longFqn)) to AtomicCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicBoolean, null, "compareAndExchange", listOf(booleanFqn, booleanFqn)) to AtomicCompareAndExchange(Type.BOOLEAN),
+            Key(StandardNames.FqNames.atomicReference, null, "compareAndExchange", listOf(FqName("T"), FqName("T"))) to AtomicCompareAndExchange(Type.OBJECT),
+
+            Key(StandardNames.FqNames.atomicIntArray, null, "compareAndExchangeAt", listOf(intFqn, intFqn, intFqn)) to AtomicArrayCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLongArray, null, "compareAndExchangeAt", listOf(intFqn, longFqn, longFqn)) to AtomicArrayCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicArray, null, "compareAndExchangeAt", listOf(intFqn, FqName("T"), FqName("T"))) to AtomicArrayCompareAndExchange(Type.OBJECT),
+        )
 
     private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
         listOf(
