@@ -68,10 +68,6 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "suspend functions are not supported yet.")
             return false
         }
-        if (isExtension && !isTopLevel) {
-            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "member extension functions are not supported yet.")
-            return false
-        }
         if (isOperator) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "operators are not supported yet.")
             return false

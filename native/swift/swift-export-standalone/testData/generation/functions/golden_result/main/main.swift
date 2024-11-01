@@ -13,6 +13,11 @@ public final class Foo : KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
+    public func ext(
+        receiver: Swift.String
+    ) -> Swift.Void {
+        return Foo_ext__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
+    }
 }
 public func foo(
     receiver: Swift.Int32

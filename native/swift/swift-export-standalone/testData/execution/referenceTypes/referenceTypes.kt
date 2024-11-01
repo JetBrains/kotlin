@@ -41,6 +41,8 @@ class Foo(var x: Int) {
         x = newX
         return oldX
     }
+
+    fun Int.memberExt(): Int = x + this
 }
 
 fun getX(foo: Foo) = foo.x

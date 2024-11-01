@@ -5,6 +5,13 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@ExportedBridge("Foo_ext__TypesOfArguments__Swift_String__")
+public fun Foo_ext__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, receiver: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    val __receiver = interpretObjCPointer<kotlin.String>(receiver)
+    __self.run { __receiver.ext() }
+}
+
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
