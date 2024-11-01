@@ -180,16 +180,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     private fun findMainFileByMarkers(testServices: TestServices): ModuleWithMainFile? {
-        return testServices.ktTestModuleStructure.mainModules.singleOrZeroValue(
-            transformer = { module ->
-                // We don't want to accept one-file modules without additional checks as it can be some intermediate
-                // module that is not intended to be the main
-                findMainFile(module, testServices, acceptSingleFileWithoutAdditionalChecks = false)?.let { mainFile ->
-                    ModuleWithMainFile(mainFile, module)
-                }
-            },
-            ambiguityValueRenderer = { "'${it.module.testModule.name}' with '${it.mainFile?.name}'" },
-        )
+        return testServices.ktTestModuleStructure.mainModules.mapNotNull { module ->
+            // We don't want to accept one-file modules without additional checks as it can be some intermediate
+            // module that is not intended to be the main
+            findMainFile(module, testServices, acceptSingleFileWithoutAdditionalChecks = false)?.let { mainFile ->
+                ModuleWithMainFile(mainFile, module)
+            }
+        }.singleOrNull()
     }
 
     protected fun findMainModule(testServices: TestServices): KtTestModule? {
