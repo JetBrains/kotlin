@@ -1,5 +1,0 @@
-Caused by: java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirUninitializedEnumChecker.check(FirUninitializedEnumChecker.kt:89)
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirUninitializedEnumChecker.check(FirUninitializedEnumChecker.kt:31)
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent.visitPropertyAccessExpression(ExpressionCheckersDiagnosticComponent.kt:323)
-	... 52 more

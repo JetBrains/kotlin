@@ -85,8 +85,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
 
         // Local enum class are prohibited
         // So report error on access of local enum entry
-        if (enumClassSymbol.visibility == Visibilities.Local) {
-            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeSymbol as FirEnumEntrySymbol, context)
+        if (enumClassSymbol.visibility == Visibilities.Local && calleeSymbol is FirEnumEntrySymbol) {
+            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeSymbol, context)
         }
 
         // An accessed context within the enum class of interest. We should look up until either enum members or enum entries are found,
