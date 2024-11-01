@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
+import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.LATEST_RELEASE
@@ -213,10 +213,8 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
     }
 
     private fun executeAndCheckBinaries(mainModuleName: String, dependencies: Collection<File>) {
-        val checker = V8IrJsTestChecker
-
         val filePaths = dependencies.map { it.canonicalPath }
-        checker.check(filePaths, mainModuleName, null, BOX_FUN_FQN, "OK", withModuleSystem = false)
+        V8JsTestChecker.check(filePaths, mainModuleName, null, BOX_FUN_FQN, "OK", withModuleSystem = false)
     }
 
     companion object {

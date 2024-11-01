@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
+import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -26,7 +26,7 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
         val mainJsFile = File(parentDir, "${originalFileName}_v5.js").path
         val libJsFile = File(parentDir, "$originalFileName-kotlin_lib_v5.js").path
         try {
-            V8IrJsTestChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
+            V8JsTestChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
         } catch (e: RuntimeException) {
             testServices.assertions.assertTrue(e is IllegalStateException)
             val message = e.message!!

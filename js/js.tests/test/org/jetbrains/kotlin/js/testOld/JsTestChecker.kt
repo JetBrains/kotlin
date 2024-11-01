@@ -53,7 +53,7 @@ fun ScriptEngine.runTestFunction(
     return eval(script)
 }
 
-abstract class AbstractJsTestChecker {
+object V8JsTestChecker {
     fun check(
         files: List<String>,
         testModuleName: String?,
@@ -121,38 +121,7 @@ abstract class AbstractJsTestChecker {
 
     private fun String.normalize() = StringUtil.convertLineSeparators(this)
 
-    protected abstract fun run(files: List<String>, f: ScriptEngine.() -> String): String
-
-    private var engineUsageCnt = AtomicInteger(0)
-    protected fun periodicScriptEngineRecreate(doCleanup: () -> Unit) {
-        if (engineUsageCnt.getAndIncrement() > SCRIPT_ENGINE_REUSAGE_LIMIT) {
-            engineUsageCnt.set(0)
-            doCleanup()
-        }
-    }
-
-    companion object {
-        private const val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
-    }
-}
-
-const val GET_KOTLIN_OUTPUT = "main.get_output().buffer_1"
-
-private val JS_IR_OUTPUT_REWRITE = """
-    set_output(new BufferedOutput())
-    _.get_output = get_output
-""".trimIndent()
-
-object V8IrJsTestChecker : AbstractJsTestChecker() {
-    private val engineTL = object : ThreadLocal<ScriptEngineV8>() {
-        override fun initialValue() = ScriptEngineV8()
-        override fun remove() {
-            get().release()
-            super.remove()
-        }
-    }
-
-    override fun run(files: List<String>, f: ScriptEngine.() -> String): String {
+    fun run(files: List<String>, f: ScriptEngine.() -> String): String {
         periodicScriptEngineRecreate { engineTL.remove() }
 
         val engine = engineTL.get()
@@ -163,4 +132,30 @@ object V8IrJsTestChecker : AbstractJsTestChecker() {
             engine.reset()
         }
     }
+
+    private var engineUsageCnt = AtomicInteger(0)
+
+    private val engineTL = object : ThreadLocal<ScriptEngineV8>() {
+        override fun initialValue() = ScriptEngineV8()
+        override fun remove() {
+            get().release()
+            super.remove()
+        }
+    }
+
+    private fun periodicScriptEngineRecreate(doCleanup: () -> Unit) {
+        if (engineUsageCnt.getAndIncrement() > SCRIPT_ENGINE_REUSAGE_LIMIT) {
+            engineUsageCnt.set(0)
+            doCleanup()
+        }
+    }
+
+    private const val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
 }
+
+const val GET_KOTLIN_OUTPUT = "main.get_output().buffer_1"
+
+private val JS_IR_OUTPUT_REWRITE = """
+    set_output(new BufferedOutput())
+    _.get_output = get_output
+""".trimIndent()

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.getJsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
+import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
@@ -155,7 +155,7 @@ abstract class JsAbstractInvalidationTest(
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsFiles: List<String>) {
             try {
-                V8IrJsTestChecker.checkWithTestFunctionArgs(
+                V8JsTestChecker.checkWithTestFunctionArgs(
                     files = jsFiles,
                     testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
                     testPackageName = null,
