@@ -616,6 +616,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("falsePropertyAmongEnums.kt")
+    public void testFalsePropertyAmongEnums() {
+      runTest("compiler/testData/diagnostics/tests/falsePropertyAmongEnums.kt");
+    }
+
+    @Test
     @TestMetadata("fileDependencyRecursion.kt")
     public void testFileDependencyRecursion() {
       runTest("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
