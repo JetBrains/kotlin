@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSuperTypeList
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtUserType
 
 fun KtSuperTypeList.findEntry(fqNameToFind: String): KtSuperTypeListEntry? =
     entries.find { it.typeAsUserType?.fqName == fqNameToFind }

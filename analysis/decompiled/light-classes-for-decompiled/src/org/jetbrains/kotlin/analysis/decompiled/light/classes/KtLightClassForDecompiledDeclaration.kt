@@ -19,12 +19,8 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.ClassContentFinderCache
-import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
-import org.jetbrains.kotlin.asJava.classes.getEnumValueOfPsiMethod
-import org.jetbrains.kotlin.asJava.classes.getEnumValuesPsiMethod
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -35,7 +31,7 @@ internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
 ): T = CachedValuesManager.getCachedValue(this) {
     CachedValueProvider.Result.createSingleDependency(
         computer(),
-        KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker,
+        KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this),
     )
 }
 
@@ -52,7 +48,7 @@ open class KtLightClassForDecompiledDeclaration(
     private val contentFinderCache by lazyPub {
         ClassContentFinderCache(
             extensibleClass = this,
-            modificationTrackers = listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
+            modificationTrackers = listOf(KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)),
         )
     }
 

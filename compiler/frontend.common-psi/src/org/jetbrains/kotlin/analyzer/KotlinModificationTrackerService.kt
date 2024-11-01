@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.psi.KtFile
 
+@Suppress("DEPRECATION")
+@Deprecated("Use 'KotlinModificationTrackerFactory' instead")
 open class KotlinModificationTrackerService {
     open val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
     open val outOfBlockModificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED

@@ -12,7 +12,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 abstract class KtLightClassBase protected constructor(
@@ -27,7 +27,7 @@ abstract class KtLightClassBase protected constructor(
     }
 
     protected open fun cacheDependencies(): List<Any> = listOf(
-        KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker
+        KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
     )
 
     override fun getDelegate() =

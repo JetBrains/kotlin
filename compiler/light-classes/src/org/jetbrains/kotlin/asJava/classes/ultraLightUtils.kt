@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -546,14 +546,11 @@ internal fun List<KtAnnotationEntry>.toLightAnnotations(
     }
 
 internal fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
-    val trackerService = KotlinModificationTrackerService.getInstance(project)
-    return with(trackerService) {
-        when {
-            !isLocal -> listOf(outOfBlockModificationTracker)
-            else -> when (val file = containingFile) {
-                is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
-                else -> listOf(outOfBlockModificationTracker)
-            }
-        }
+    val outOfBlockTracker = KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
+    return if (isLocal) {
+        val file = containingKtFile
+        listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
+    } else {
+        listOf(outOfBlockTracker)
     }
 }
