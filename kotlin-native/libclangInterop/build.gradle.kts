@@ -103,17 +103,17 @@ val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.
 
 kotlinNativeInterop {
     create("main") {
-        defFile(defFileName)
-        val cflags = cCompilerArgs + commonCompilerArgs + includeDirs.map { "-I${it.absolutePath}" }
-        compilerOpts(cflags)
         genTask.configure {
-            includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
+            defFile.set(project.file(defFileName))
+            compilerOpts.set(cCompilerArgs + commonCompilerArgs)
+            headersDirs.from(selfHeaders, cppImplementation)
+            headersDirs.systemFrom(systemIncludeDirs)
         }
     }
 }
 
 val prebuiltRoot = layout.projectDirectory.dir("gen/main")
-val generatedRoot = kotlinNativeInterop["main"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/main").get() }
+val generatedRoot = kotlinNativeInterop["main"].genTask.map { it.outputDirectory.get() }
 
 val bindingsRoot = if (usePrebuiltSources) provider { prebuiltRoot } else generatedRoot
 
