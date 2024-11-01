@@ -1,0 +1,4 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirLiteralExpressionImpl' to be resolved
+	at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.getResolvedType(FirTypeUtils.kt:214)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirRecursiveProblemChecker.check(FirRecursiveProblemChecker.kt:43)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent.visitLiteralExpression(ExpressionCheckersDiagnosticComponent.kt:760)

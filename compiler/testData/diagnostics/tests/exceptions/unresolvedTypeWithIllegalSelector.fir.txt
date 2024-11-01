@@ -1,0 +1,4 @@
+FILE: unresolvedTypeWithIllegalSelector.fir.kt
+    public final fun foo(b: R|kotlin/Boolean|, block: R|kotlin/Int.() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(ERROR_EXPR(The expression cannot be a selector (occur after a dot))Int(1))
+    }
