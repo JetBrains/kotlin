@@ -244,7 +244,6 @@ fun Test.setUpJsBoxTests(tags: String?) {
         tags?.let { includeTags(it) }
     }
 
-    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     setUpBoxTests()
 }
 

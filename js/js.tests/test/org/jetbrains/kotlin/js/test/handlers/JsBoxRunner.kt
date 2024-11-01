@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.js.test.utils.*
+import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -47,7 +48,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
         testPackage: String?,
         withModuleSystem: Boolean
     ) {
-        getTestChecker(testServices)
+        V8IrJsTestChecker
             .check(
                 jsFiles,
                 testModuleName,

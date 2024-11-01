@@ -272,17 +272,6 @@ fun extractEntryModulePath(
             ?.let { getModeOutputFilePath(testServices, it, mode) }
     }
 
-
-fun getTestChecker(testServices: TestServices): AbstractJsTestChecker {
-    val runTestInNashorn = java.lang.Boolean.getBoolean("kotlin.js.useNashorn")
-    val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: TargetBackend.JS_IR
-    return if (targetBackend.isIR) {
-        if (runTestInNashorn) NashornIrJsTestChecker else V8IrJsTestChecker
-    } else {
-        if (runTestInNashorn) NashornJsTestChecker else V8JsTestChecker
-    }
-}
-
 internal const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
 
 internal fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleKind, moduleId: String): String {
