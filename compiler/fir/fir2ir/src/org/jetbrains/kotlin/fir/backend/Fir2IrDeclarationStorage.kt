@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FILLED_FOR_UNBOUND_SYMBOL
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.irFlag
@@ -1232,6 +1233,7 @@ class Fir2IrDeclarationStorage(
             is FirNamedFunctionSymbol -> createAndCacheIrFunction(
                 originalSymbol.fir,
                 irParent,
+                predefinedOrigin = FILLED_FOR_UNBOUND_SYMBOL,
                 fakeOverrideOwnerLookupTag = null
             )
 

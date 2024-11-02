@@ -616,7 +616,7 @@ internal class KaFirCompilerFacility(
         private val filesWithInlinedClasses = inlinedClasses.mapTo(mutableSetOf()) { it.containingKtFile }
 
         override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean {
-            return files.any { it === ktFile } || ktFile in filesWithInlinedClasses
+            return ktFile in files || ktFile in filesWithInlinedClasses
         }
 
         override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
@@ -624,13 +624,11 @@ internal class KaFirCompilerFacility(
         }
 
         override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
-            return processingClassOrObject.containingKtFile.let { files.any { file -> it === file } } ||
+            return processingClassOrObject.containingKtFile in files ||
                     processingClassOrObject is KtObjectDeclaration && processingClassOrObject in inlinedClasses
         }
 
-        override fun shouldGenerateScript(script: KtScript): Boolean {
-            return script.containingKtFile.let { files.any { file -> it === file } }
-        }
+        override fun shouldGenerateScript(script: KtScript): Boolean = script.containingKtFile in files
 
         override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
     }

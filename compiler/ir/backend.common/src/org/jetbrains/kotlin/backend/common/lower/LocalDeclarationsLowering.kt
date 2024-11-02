@@ -658,6 +658,10 @@ open class LocalDeclarationsLowering(
                 createLiftedDeclaration(it)
             }
 
+            // After lifting local functions, local functions created for unbound symbols are duplicates of the lifted local functions.
+            // They cause exceptions, because they do not have function bodies. We have to clean them up here.
+            container.fileOrNull?.let { cleanUpLocalFunctionsForUnboundSymbols(it) }
+
             localClasses.values.forEach {
                 it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
                 it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
@@ -667,6 +671,23 @@ open class LocalDeclarationsLowering(
 
             localClassConstructors.values.forEach {
                 createTransformedConstructorDeclaration(it)
+            }
+        }
+
+        /**
+         * This function removes [IrFunction]s created by `Fir2IrDeclarationStorage.fillUnboundSymbols()` to handle the code fragment
+         * in the middle of code compiler of `KaCompilerFacility`. This function assumes two things about such [IrFunction]
+         *  1. It is added to [IrClass] with [IrDeclarationOrigin.FILE_CLASS], [IrDeclarationOrigin.JVM_MULTIFILE_CLASS],
+         *   or [IrDeclarationOrigin.SYNTHETIC_FILE_CLASS], so [IrDeclarationParent.isFacadeClass] is `true`.
+         *  2. It has [IrDeclarationOrigin.FILLED_FOR_UNBOUND_SYMBOL] for its origin.
+         */
+        private fun cleanUpLocalFunctionsForUnboundSymbols(irFile: IrFile) {
+            val fileClass = irFile.declarations.singleOrNull { it is IrClass && it.isFacadeClass } as? IrClass ?: return
+
+            // Drop local functions with `IrDeclarationOrigin.FILLED_FOR_UNBOUND_SYMBOL`.
+            fileClass.declarations.removeAll { declaration ->
+                declaration is IrFunction && declaration.origin == IrDeclarationOrigin.FILLED_FOR_UNBOUND_SYMBOL
+                        && declaration.visibility == DescriptorVisibilities.LOCAL
             }
         }
 
