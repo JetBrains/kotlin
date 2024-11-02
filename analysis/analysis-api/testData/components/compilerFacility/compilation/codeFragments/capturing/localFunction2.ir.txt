@@ -3,6 +3,14 @@ MODULE_FRAGMENT
     FUN FILLED_FOR_UNBOUND_SYMBOL name:call visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.String) returnType:kotlin.Unit
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       VALUE_PARAMETER name:b index:1 type:kotlin.String
+    FUN name:call visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.String) returnType:kotlin.Unit
+      VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      VALUE_PARAMETER name:b index:1 type:kotlin.String
+      BLOCK_BODY
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          message: CALL 'public final fun repeat (n: kotlin.Int): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
+            $receiver: GET_VAR 'b: kotlin.String declared in <root>.call' type=kotlin.String origin=null
+            n: GET_VAR 'a: kotlin.Int declared in <root>.call' type=kotlin.Int origin=null
     FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
       BLOCK_BODY
         FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.String) returnType:kotlin.Unit

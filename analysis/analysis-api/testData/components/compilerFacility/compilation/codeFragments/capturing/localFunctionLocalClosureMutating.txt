@@ -5,4 +5,9 @@ public final class CodeFragment {
     public final inner class kotlin/jvm/internal/Ref$IntRef
 }
 
-public final class ContextKt
+public final class ContextKt {
+    // source: 'context.kt'
+    private final static method test$call(p0: kotlin.jvm.internal.Ref$IntRef): void
+    public final static method test(): void
+    public final inner class kotlin/jvm/internal/Ref$IntRef
+}

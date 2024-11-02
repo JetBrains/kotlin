@@ -6,6 +6,7 @@ public final class CodeFragment {
 
 public final class ContextKt {
     // source: 'context.kt'
+    public final static method call(p0: int, p1: java.lang.String): void
     private final static method test$call(p0: int, p1: java.lang.String): void
     public final static method test(): void
 }

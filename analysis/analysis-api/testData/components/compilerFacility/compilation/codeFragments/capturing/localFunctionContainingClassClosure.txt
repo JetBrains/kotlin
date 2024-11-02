@@ -4,6 +4,14 @@ public final class CodeFragment {
     public final static method run(p0: Foo): void
 }
 
-public final class ContextKt
+public final class ContextKt {
+    // source: 'context.kt'
+    public final static method consume(p0: Foo): void
+}
 
-public final class Foo
+public final class Foo {
+    // source: 'context.kt'
+    public method <init>(): void
+    private final static method test$call(p0: Foo): void
+    public final method test(): void
+}

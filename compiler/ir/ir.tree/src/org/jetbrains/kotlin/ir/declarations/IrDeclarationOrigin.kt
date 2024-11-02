@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -102,6 +101,12 @@ interface IrDeclarationOrigin {
          * or `super` calls from lambdas and inline functions.
          */
         val SYNTHETIC_ACCESSOR by IrDeclarationOriginImpl.Synthetic
+
+        /**
+         * Created by `Fir2IrDeclarationStorage.fillUnboundSymbols()` to handle the code fragment
+         * in the middle of code compile of `KaCompilerFacility`.
+         */
+        val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl
     }
 
     /**
