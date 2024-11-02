@@ -279,14 +279,18 @@ internal class StubBasedFirTypeDeserializer(
     private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
         simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
 
-    private fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
-        getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
+    private fun KtFunctionType.isSuspend(): Boolean {
+        val parent = parent as? KtElementImplStub<*>
+            ?: error("Expected parent of KtTypeElement to have type KtElementImplStub<*>, but actual $parent")
+        val modifiers = parent.getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
+        return modifiers.any { it.hasSuspendModifier() }
+    }
 
     private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
         val typeElement = typeReference.typeElement?.unwrapNullability()
         if (typeElement is KtFunctionType) {
             val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
-            val isSuspend = typeReference.getAllModifierLists().any { it.hasSuspendModifier() }
+            val isSuspend = typeElement.isSuspend()
             val functionClassId = if (isSuspend) StandardNames.getSuspendFunctionClassId(arity) else StandardNames.getFunctionClassId(arity)
             return computeClassifier(functionClassId)
         }
