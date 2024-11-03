@@ -362,6 +362,7 @@ object FirErrors {
     val OPT_IN_MARKER_ON_WRONG_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OPT_IN_MARKER_ON_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OPT_IN_MARKER_ON_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_ON_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OPT_IN_MARKER_ON_OVERRIDE_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_ON_OVERRIDE_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtClassLiteralExpression::class)
     val SUBCLASS_OPT_IN_INAPPLICABLE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SUBCLASS_OPT_IN_INAPPLICABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtClassLiteralExpression::class)
 

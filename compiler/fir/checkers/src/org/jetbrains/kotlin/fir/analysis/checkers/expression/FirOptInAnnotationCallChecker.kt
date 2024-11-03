@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.getSourceForIsMarkerDiagnostic
-import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
-import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
@@ -88,6 +87,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             classSymbols.forEachIndexed { index, classSymbol ->
                 val source = expression.getSourceForIsMarkerDiagnostic(index)
                 checkOptInArgumentIsMarker(classSymbol, classId, source, reporter, context)
+                checkSubclassOptInArgumentWithWrongTarget(classSymbol, classId, source, reporter, context)
             }
         }
     }
@@ -109,6 +109,19 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in optInFqNames
         ) {
             reporter.reportOn(element, FirErrors.OPT_IN_IS_NOT_ENABLED, context)
+        }
+    }
+
+    private fun checkSubclassOptInArgumentWithWrongTarget(
+        classSymbol: FirRegularClassSymbol,
+        annotationClassId: ClassId,
+        source: KtSourceElement?,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val allowedAnnotationTargets = classSymbol.getAllowedAnnotationTargets(context.session)
+        if (KotlinTarget.CLASS !in allowedAnnotationTargets) {
+            reporter.reportOn(source, FirErrors.SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET, classSymbol.classId, context)
         }
     }
 

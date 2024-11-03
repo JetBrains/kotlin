@@ -1172,6 +1172,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OptInMarkerOnOverrideWarning::class
     }
 
+    interface SubclassOptInMarkerOnWrongTarget : KaFirDiagnostic<KtClassLiteralExpression> {
+        override val diagnosticClass get() = SubclassOptInMarkerOnWrongTarget::class
+        val markerClassId: ClassId
+    }
+
     interface SubclassOptInInapplicable : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = SubclassOptInInapplicable::class
         val target: String

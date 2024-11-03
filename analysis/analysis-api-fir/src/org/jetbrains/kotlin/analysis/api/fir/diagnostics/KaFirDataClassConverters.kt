@@ -1642,6 +1642,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET) { firDiagnostic ->
+        SubclassOptInMarkerOnWrongTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE) { firDiagnostic ->
         SubclassOptInInapplicableImpl(
             firDiagnostic.a,

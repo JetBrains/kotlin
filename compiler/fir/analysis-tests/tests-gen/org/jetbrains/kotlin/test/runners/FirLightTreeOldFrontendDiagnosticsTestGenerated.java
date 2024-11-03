@@ -43852,6 +43852,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("IncorrectTargetApplicability.kt")
+        public void testIncorrectTargetApplicability() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/IncorrectTargetApplicability.kt");
+        }
+
+        @Test
         @TestMetadata("InheritingByLocalClassifiers.kt")
         public void testInheritingByLocalClassifiers() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/InheritingByLocalClassifiers.kt");

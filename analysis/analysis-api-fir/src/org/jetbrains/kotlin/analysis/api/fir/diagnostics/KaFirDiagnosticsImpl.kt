@@ -1408,6 +1408,12 @@ internal class OptInMarkerOnOverrideWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.OptInMarkerOnOverrideWarning
 
+internal class SubclassOptInMarkerOnWrongTargetImpl(
+    override val markerClassId: ClassId,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassLiteralExpression>(firDiagnostic, token), KaFirDiagnostic.SubclassOptInMarkerOnWrongTarget
+
 internal class SubclassOptInInapplicableImpl(
     override val target: String,
     firDiagnostic: KtPsiDiagnostic,

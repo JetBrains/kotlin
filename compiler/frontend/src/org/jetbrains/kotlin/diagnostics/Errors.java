@@ -359,6 +359,7 @@ public interface Errors {
 
     DiagnosticFactory1<KtAnnotationEntry, String> SUBCLASS_OPT_IN_INAPPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, FqName> SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtExpression, FqName> SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);

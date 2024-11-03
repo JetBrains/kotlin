@@ -141,6 +141,24 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
             }
         }
         checkArgumentsAreMarkers(annotationClasses, trace, entry, annotationFqName)
+        checkArgumentsHaveApplicableTarget(annotationClasses, trace, entry)
+    }
+
+    private fun checkArgumentsHaveApplicableTarget(
+        annotationClasses: List<ConstantValue<*>>,
+        trace: BindingTrace,
+        entry: KtAnnotationEntry,
+    ) {
+        for ((index, annotationClass) in annotationClasses.withIndex()) {
+            val classDescriptor =
+                (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
+                    ?: continue
+            val targets = AnnotationChecker.applicableTargetSet(classDescriptor)
+            val source = entry.valueArguments[index].getArgumentExpression() ?: return
+            if (CLASS !in targets) {
+                trace.report(Errors.SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET.on(source, classDescriptor.fqNameSafe))
+            }
+        }
     }
 
     private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry, annotationFqName: FqName) {

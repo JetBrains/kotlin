@@ -218,6 +218,7 @@ public class DefaultErrorMessages {
 
         MAP.put(SUBCLASS_OPT_IN_INAPPLICABLE, "@SubclassOptInRequired is inapplicable on {0}", STRING);
         MAP.put(SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not annotated with ''@RequiresOptIn''.", TO_STRING);
+        MAP.put(SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET, "Annotation ''{0}'' cannot be used in ''@SubclassOptInRequired''.", TO_STRING);
 
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "{0}", STRING);
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "{0}", STRING);

@@ -635,6 +635,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SPREAD_OF_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPES_FOR_ANNOTATION_CLASS
@@ -1225,6 +1226,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Opt-in requirement marker annotation on override. It's recommended to add the same annotation to the base declaration."
         )
         map.put(SUBCLASS_OPT_IN_INAPPLICABLE, "''@SubclassOptInRequired'' is not applicable to ''{0}''.", STRING)
+        map.put(SUBCLASS_OPT_IN_MARKER_ON_WRONG_TARGET, "Annotation ''{0}'' cannot be used in ''@SubclassOptInRequired''.", CLASS_ID)
         map.put(
             SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER,
             "Annotation ''{0}'' is not annotated with ''@RequiresOptIn''.",
