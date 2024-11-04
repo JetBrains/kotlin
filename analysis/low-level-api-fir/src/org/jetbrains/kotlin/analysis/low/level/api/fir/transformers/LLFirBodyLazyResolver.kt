@@ -329,7 +329,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     ): FirTowerDataElement = FirTowerDataElement(
         scope?.withReplacedSessionOrNull(session, scopeSession) ?: scope,
         implicitReceiver?.withReplacedSessionOrNull(session, scopeSession),
-        contextReceiverGroup,
+        contextReceiverGroup?.map { it.withReplacedSessionOrNull(session, scopeSession) },
         isLocal,
         staticScopeOwnerSymbol
     )
