@@ -16,64 +16,77 @@ plugins {
     id("native")
 }
 
-val defFileName = "clang.def"
-val usePrebuiltSources = true
-val implementationDependencies = listOf(
-        ":kotlin-native:libclangext",
-)
-val commonCompilerArgs = emptyList<String>()
-val cCompilerArgs = listOf("-std=c99")
-val cppCompilerArgs = listOf("-std=c++11")
-val selfHeaders = emptyList<String>()
-val systemIncludeDirs = listOf("${nativeDependencies.llvmPath}/include")
-val linkerArgs = buildList {
-    if (PlatformInfo.isMac()) {
-        addAll(listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names"))
-        // Let some symbols be undefined to avoid linking unnecessary parts.
-        listOf(
-                "_futimens",
-                "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
-                "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
-                "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
-                "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
-                "__ZN4llvm7remarks14RemarkStreamer13matchesFilterENS_9StringRefE",
-                "__ZN4llvm7remarks14RemarkStreamer9setFilterENS_9StringRefE",
-                "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS_8OptionalINS_9StringRefEEE",
-                "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseE",
-                "__ZN4llvm3omp28getOpenMPContextTraitSetNameENS0_8TraitSetE",
-                "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
-                "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
-                "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyE",
-                "__ZN4llvm3omp33getOpenMPContextTraitSelectorNameENS0_13TraitSelectorE",
-                "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
-                "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
-                "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
-                "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
-                "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
-        ).mapTo(this) { "-Wl,-U,$it" }
-        addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
-    }
+nativeInteropPlugin {
+    defFileName.set("clang.def")
+    usePrebuiltSources.set(true)
+    implementationDependencies.set(listOf(
+            ":kotlin-native:libclangext",
+    ))
+    commonCompilerArgs.set(emptyList<String>())
+    cCompilerArgs.set(listOf("-std=c99"))
+    cppCompilerArgs.set(listOf("-std=c++11"))
+    selfHeaders.set(emptyList<String>())
+    systemIncludeDirs.set(listOf("${nativeDependencies.llvmPath}/include"))
+    linkerArgs.set(buildList {
+        if (PlatformInfo.isMac()) {
+            addAll(listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names"))
+            // Let some symbols be undefined to avoid linking unnecessary parts.
+            listOf(
+                    "_futimens",
+                    "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
+                    "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
+                    "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
+                    "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
+                    "__ZN4llvm7remarks14RemarkStreamer13matchesFilterENS_9StringRefE",
+                    "__ZN4llvm7remarks14RemarkStreamer9setFilterENS_9StringRefE",
+                    "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS_8OptionalINS_9StringRefEEE",
+                    "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseE",
+                    "__ZN4llvm3omp28getOpenMPContextTraitSetNameENS0_8TraitSetE",
+                    "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+                    "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+                    "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyE",
+                    "__ZN4llvm3omp33getOpenMPContextTraitSelectorNameENS0_13TraitSelectorE",
+                    "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
+                    "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
+                    "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
+                    "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
+                    "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
+            ).mapTo(this) { "-Wl,-U,$it" }
+            addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
+        }
+    })
+    additionalLinkedStaticLibraries.set(buildList {
+        val libclang = if (HostManager.hostIsMingw) {
+            "lib/libclang.lib"
+        } else {
+            "lib/${System.mapLibraryName("clang")}"
+        }
+        add("${nativeDependencies.llvmPath}/$libclang")
+        if (PlatformInfo.isMac()) {
+            listOf(
+                    "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
+                    "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",
+                    "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
+                    "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
+                    "clangToolingCore",
+                    "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
+                    "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
+                    "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
+            ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
+        }
+    })
 }
-val additionalLinkedStaticLibraries = buildList {
-    val libclang = if (HostManager.hostIsMingw) {
-        "lib/libclang.lib"
-    } else {
-        "lib/${System.mapLibraryName("clang")}"
-    }
-    add("${nativeDependencies.llvmPath}/$libclang")
-    if (PlatformInfo.isMac()) {
-        listOf(
-                "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
-                "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",
-                "clangRewrite", "clangRewriteFrontend", "clangStaticAnalyzerFrontend",
-                "clangStaticAnalyzerCheckers", "clangStaticAnalyzerCore", "clangSerialization",
-                "clangToolingCore",
-                "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
-                "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
-                "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
-        ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
-    }
-}
+
+val defFileName = nativeInteropPlugin.defFileName.get()
+val usePrebuiltSources = nativeInteropPlugin.usePrebuiltSources.get()
+val implementationDependencies = nativeInteropPlugin.implementationDependencies.get()
+val commonCompilerArgs = nativeInteropPlugin.commonCompilerArgs.get()
+val cCompilerArgs = nativeInteropPlugin.cCompilerArgs.get()
+val cppCompilerArgs = nativeInteropPlugin.cppCompilerArgs.get()
+val selfHeaders = nativeInteropPlugin.selfHeaders.get()
+val systemIncludeDirs = nativeInteropPlugin.systemIncludeDirs.get()
+val linkerArgs = nativeInteropPlugin.linkerArgs.get()
+val additionalLinkedStaticLibraries = nativeInteropPlugin.additionalLinkedStaticLibraries.get()
 
 val cppImplementation by configurations.creating {
     isCanBeConsumed = false

@@ -14,16 +14,29 @@ plugins {
     id("native")
 }
 
-val defFileName = "files.konan.backend.kotlin.jetbrains.org.def"
-val usePrebuiltSources = false
-val implementationDependencies = emptyList<String>()
-val commonCompilerArgs = listOf("-Wall", "-O2")
-val cCompilerArgs = listOf("-std=c99")
-val cppCompilerArgs = listOf("-std=c++11")
-val selfHeaders = listOf("src/main/headers")
-val systemIncludeDirs = emptyList<String>()
-val linkerArgs = emptyList<String>()
-val additionalLinkedStaticLibraries = emptyList<String>()
+nativeInteropPlugin {
+    defFileName.set("files.konan.backend.kotlin.jetbrains.org.def")
+    usePrebuiltSources.set(false)
+    implementationDependencies.set(emptyList<String>())
+    commonCompilerArgs.set(listOf("-Wall", "-O2"))
+    cCompilerArgs.set(listOf("-std=c99"))
+    cppCompilerArgs.set(listOf("-std=c++11"))
+    selfHeaders.set(listOf("src/main/headers"))
+    systemIncludeDirs.set(emptyList<String>())
+    linkerArgs.set(emptyList<String>())
+    additionalLinkedStaticLibraries.set(emptyList<String>())
+}
+
+val defFileName = nativeInteropPlugin.defFileName.get()
+val usePrebuiltSources = nativeInteropPlugin.usePrebuiltSources.get()
+val implementationDependencies = nativeInteropPlugin.implementationDependencies.get()
+val commonCompilerArgs = nativeInteropPlugin.commonCompilerArgs.get()
+val cCompilerArgs = nativeInteropPlugin.cCompilerArgs.get()
+val cppCompilerArgs = nativeInteropPlugin.cppCompilerArgs.get()
+val selfHeaders = nativeInteropPlugin.selfHeaders.get()
+val systemIncludeDirs = nativeInteropPlugin.systemIncludeDirs.get()
+val linkerArgs = nativeInteropPlugin.linkerArgs.get()
+val additionalLinkedStaticLibraries = nativeInteropPlugin.additionalLinkedStaticLibraries.get()
 
 val cppImplementation by configurations.creating {
     isCanBeConsumed = false

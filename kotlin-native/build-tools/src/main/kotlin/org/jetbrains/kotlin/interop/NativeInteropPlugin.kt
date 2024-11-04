@@ -22,6 +22,8 @@ open class NativeInteropPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.apply<NativeDependenciesPlugin>()
 
+        target.extensions.create<NativeInteropExtension>("nativeInteropPlugin")
+
         val interopStubGenerator = target.configurations.create(INTEROP_STUB_GENERATOR_CONFIGURATION)
         val interopStubGeneratorCppRuntime = target.configurations.create(INTEROP_STUB_GENERATOR_CPP_RUNTIME_CONFIGURATION) {
             isCanBeConsumed = false
