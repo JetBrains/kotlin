@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -34,7 +35,14 @@ private operator fun <T> Pair<*, T>?.component2(): T? = this?.second
 internal enum class ConstructorFilter(val acceptInner: Boolean, val acceptNested: Boolean) {
     OnlyInner(acceptInner = true, acceptNested = false),
     OnlyNested(acceptInner = false, acceptNested = true),
-    Both(acceptInner = true, acceptNested = true),
+    Both(acceptInner = true, acceptNested = true);
+
+    fun accepts(memberDeclaration: FirMemberDeclaration): Boolean {
+        return when (memberDeclaration.isInner) {
+            true -> acceptInner
+            false -> acceptNested
+        }
+    }
 }
 
 private fun FirScope.processConstructorsByName(
@@ -91,12 +99,7 @@ private fun FirScope.getFirstClassifierOrNull(
     fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
         val classifierDeclaration = symbol.fir
         if (classifierDeclaration is FirClassLikeDeclaration) {
-            val acceptedByFilter = when (classifierDeclaration.isInner) {
-                true -> constructorFilter.acceptInner
-                false -> constructorFilter.acceptNested
-            }
-
-            if (acceptedByFilter) {
+            if (constructorFilter.accepts(classifierDeclaration)) {
                 collector.processCandidate(symbol, substitutor)
             }
         }
@@ -173,11 +176,7 @@ private fun processConstructors(
         }
 
         scope?.processDeclaredConstructors {
-            val shouldProcess = when (it.fir.isInner) {
-                true -> constructorFilter.acceptInner
-                false -> constructorFilter.acceptNested
-            }
-            if (shouldProcess) {
+            if (constructorFilter.accepts(it.fir)) {
                 processor(it)
             }
         }
