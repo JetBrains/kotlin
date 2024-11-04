@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
-import org.jetbrains.kotlin.backend.wasm.utils.DisjointUnions
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -37,17 +36,12 @@ class WasmCompiledFileFragment(
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
-    val classITableGcType: ReferencableElements<IdSignature, WasmTypeDeclaration> = ReferencableElements(),
-    val classITableInterfaceSlot: ReferencableElements<IdSignature, Int> = ReferencableElements(),
-    val classITableInterfaceTableSize: ReferencableElements<IdSignature, Int> = ReferencableElements(),
-    val classITableInterfaceHasImplementors: ReferencableElements<IdSignature, Int> = ReferencableElements(),
     val typeInfo: MutableMap<IdSignature, ConstantDataElement> = mutableMapOf(),
     val classIds: ReferencableElements<IdSignature, Int> = ReferencableElements(),
     val interfaceIds: ReferencableElements<IdSignature, Int> = ReferencableElements(),
     val stringLiteralAddress: ReferencableElements<String, Int> = ReferencableElements(),
     val stringLiteralPoolId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
-    val interfaceUnions: MutableList<List<IdSignature>> = mutableListOf(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
     val jsModuleImports: MutableMap<IdSignature, String> = mutableMapOf(),
     val exports: MutableList<WasmExport<*>> = mutableListOf(),
@@ -121,75 +115,6 @@ class WasmCompiledModuleFragment(
             elements += wasm
             defined[ir] = wasm
             wasmToIr[wasm] = ir
-        }
-    }
-
-    fun createInterfaceTablesAndLinkTableSymbols() {
-        val disjointUnions = DisjointUnions<IdSignature>()
-        for (fileFragment in wasmCompiledFileFragments) {
-            for (iFaces in fileFragment.interfaceUnions) {
-                disjointUnions.addUnion(iFaces)
-            }
-        }
-
-        disjointUnions.compress()
-
-        val iSlots = mutableMapOf<IdSignature, Int>()
-        val iTableGcType = mutableMapOf<IdSignature, WasmStructDeclaration>()
-
-        val iTableGcTypesRefs = ReferencableElements<IdSignature, WasmTypeDeclaration>()
-
-        for (union in disjointUnions.allUnions()) {
-            val fields = union.mapIndexed { index, unionIFace ->
-                iSlots[unionIFace] = index
-                WasmStructFieldDeclaration(
-                    name = "${unionIFace.packageFqName().asString()}.itable",
-                    type = WasmRefNullType(WasmHeapType.Type(iTableGcTypesRefs.reference(unionIFace))),
-                    isMutable = false
-                )
-            }
-
-            val struct = WasmStructDeclaration(
-                name = "classITable",
-                fields = fields,
-                superType = null,
-                isFinal = true,
-            )
-
-            union.forEach {
-                iTableGcType[it] = struct
-            }
-        }
-
-        // Binding iTable structures
-        for (fileFragment in wasmCompiledFileFragments) {
-            for (unbound in fileFragment.classITableInterfaceHasImplementors.unbound) {
-                unbound.value.bind(if (unbound.key in disjointUnions) 1 else 0)
-            }
-            for (unbound in fileFragment.classITableInterfaceTableSize.unbound) {
-                if (unbound.key in disjointUnions) {
-                    unbound.value.bind(disjointUnions[unbound.key].size)
-                }
-            }
-            for (unbound in fileFragment.classITableInterfaceSlot.unbound) {
-                val iSlot = iSlots[unbound.key]
-                if (iSlot != null) {
-                    unbound.value.bind(iSlot)
-                }
-            }
-            for (unbound in fileFragment.classITableGcType.unbound) {
-                val gcType = iTableGcType[unbound.key]
-                if (gcType != null) {
-                    unbound.value.bind(gcType)
-                }
-            }
-
-            for (unbound in iTableGcTypesRefs.unbound) {
-                val vTable = fileFragment.vTableGcTypes.defined[unbound.key]
-                if (vTable != null) {
-                    unbound.value.bind(vTable)
-                }
-            }
         }
     }
 
@@ -314,9 +239,6 @@ class WasmCompiledModuleFragment(
 
         val recGroupTypes = sequence {
             yieldAll(vTablesAndGcTypes)
-            wasmCompiledFileFragments.forEach { fragment ->
-                yieldAll(fragment.classITableGcType.unbound.values.mapNotNull { it.takeIf { it.isBound() }?.owner })
-            }
             yieldAll(canonicalFunctionTypes.values)
         }
 

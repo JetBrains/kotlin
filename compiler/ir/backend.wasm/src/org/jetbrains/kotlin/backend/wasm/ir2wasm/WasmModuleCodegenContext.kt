@@ -60,10 +60,6 @@ class WasmFileCodegenContext(
         wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
-    fun addInterfaceUnion(interfaces: List<IrClassSymbol>) {
-        wasmFileFragment.interfaceUnions.add(interfaces.map { idSignatureRetriever.declarationSignature(it.owner)!! })
-    }
-
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         wasmFileFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
     }
@@ -93,23 +89,6 @@ class WasmFileCodegenContext(
 
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
         wasmFileFragment.vTableGcTypes.reference(irClass.getReferenceKey())
-
-    fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.classITableGcType.reference(irClass.getSignature())
-
-    fun referenceClassITableInterfaceTableSize(irInterface: IrClassSymbol): WasmSymbol<Int> =
-        wasmFileFragment.classITableInterfaceTableSize.reference(irInterface.getSignature())
-
-    fun referenceClassITableInterfaceHasImplementors(irInterface: IrClassSymbol): WasmSymbol<Int> =
-        wasmFileFragment.classITableInterfaceHasImplementors.reference(irInterface.getSignature())
-
-    fun referenceClassITableInterfaceSlot(irClass: IrClassSymbol): WasmSymbol<Int> {
-        val type = irClass.defaultType
-        require(!type.isNothing()) {
-            "Can't reference Nothing type"
-        }
-        return wasmFileFragment.classITableInterfaceSlot.reference(irClass.getSignature())
-    }
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
