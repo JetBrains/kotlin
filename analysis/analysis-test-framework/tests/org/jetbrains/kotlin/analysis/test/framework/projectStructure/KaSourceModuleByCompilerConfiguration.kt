@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -127,6 +129,10 @@ class KaSourceModuleByCompilerConfiguration(
 
     override val contentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
+
+    @KaExperimentalApi
+    override val psiRoots: List<PsiFileSystemItem>
+        get() = psiFiles
 }
 
 class KaScriptModuleByCompilerConfiguration(
