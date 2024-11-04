@@ -24,16 +24,40 @@ import org.gradle.api.tasks.Internal
 import java.io.File
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents an option for a Kotlin compiler plugin, defined by a key and a value.
+ *
+ * All options are mapped to the following Kotlin compiler argument format:
+ *
+ * ```
+ * "plugin:$pluginId:$key=$value"
+ * ```
+ * 
+ * `pluginId` is the [KotlinCompilerPluginSupportPlugin.getCompilerPluginId].
+ *
+ * Options are added to the relevant compilation task inputs. To exclude options from task inputs, use the [InternalSubpluginOption].
+ * For options that provide file paths, add the file paths to the [FilesSubpluginOption].
+ *
+ * @constructor Creates an instance of option with the given key and lazy-initialized value.
+ * @param key The key associated with this option.
+ * @param lazyValue The lazily-initialized value associated with the key.
  */
 open class SubpluginOption(val key: String, private val lazyValue: Lazy<String>) {
     constructor(key: String, value: String) : this(key, lazyOf(value))
 
+    /**
+     * The value of this option.
+     *
+     * The [lazyValue] is realized on first access.
+     */
     val value: String get() = lazyValue.value
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents a Kotlin compiler plugin option that provides paths to one or many [files][File].
+ *
+ * @param files the [Iterable] of [files][File] to pass as a Kotlin compiler plugin option.
+ * They are passed as an absolute path separated by [File.pathSeparator].
+ * @param kind Configures how files are treated in Gradle input/output checks.
  */
 class FilesSubpluginOption(
     key: String,
@@ -51,7 +75,15 @@ class FilesSubpluginOption(
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents a Kotlin compiler plugin option where the [key] accepts multiple values. For example:
+ *
+ * ```
+ * plugin:plugin_id:composite_key=value1;value2;value3
+ * ```
+ *
+ * @param lazyValue The combined value for this [key]. From the example above, this is `value1;value2;value3`.
+ * @param originalOptions The content of [lazyValue] as a list of [SubpluginOptions][SubpluginOption]
+ * which are used for Gradle task input/output checks.
  */
 class CompositeSubpluginOption(
     key: String,
@@ -62,11 +94,14 @@ class CompositeSubpluginOption(
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * Defines how the files option should be handled with regard to Gradle model
+  * Defines how the [FilesSubpluginOption] is used for Gradle task input/output checks.
  */
 enum class FilesOptionKind {
-    /** The files option is an implementation detail and should not be treated as an input or an output.  */
+    /**
+     * This option is an implementation detail and should not be treated as an input or output of the task.
+     *
+     * It is similar to the Gradle [Internal][org.gradle.api.tasks.Internal] annotation.
+     */
     INTERNAL
 
     // More options might be added when use cases appear for them,
@@ -74,25 +109,35 @@ enum class FilesOptionKind {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * Defines a subplugin option that should be excluded from Gradle input/output checks
+ * Represents a Kotlin compiler plugin option that is excluded from Gradle task input/output checks.
  */
 open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * Keeps one or more compiler options for one of more compiler plugins.
+ * Represents a container containing all the settings for a specific Kotlin compiler plugin.
+ *
+ * This container is available for all Kotlin compilation tasks as a [org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile.pluginOptions] input.
  */
 open class CompilerPluginConfig {
+
     @get:Internal
     protected val optionsByPluginId = mutableMapOf<String, MutableList<SubpluginOption>>()
 
+    /**
+     * Retrieves all options grouped by their corresponding plugin IDs.
+     */
     fun allOptions(): Map<String, List<SubpluginOption>> = optionsByPluginId
 
+    /**
+     * Adds a Kotlin compiler plugin option to the collection of options associated with the given plugin ID.
+     */
     fun addPluginArgument(pluginId: String, option: SubpluginOption) {
         optionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
     }
 
+    /**
+     * Combines all options for Kotlin compiler plugins into a single map of input arguments for the task.
+     */
     @Input
     fun getAsTaskInputArgs(): Map<String, String> {
         val result = mutableMapOf<String, String>()
@@ -133,39 +178,65 @@ open class CompilerPluginConfig {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
  * Gradle plugin implementing support for a Kotlin compiler plugin.
  *
- * In order to be discovered, it should be applied to the project as an ordinary Gradle [Plugin] before the
- * Kotlin plugin inspects the project model in an afterEvaluate handler.
+ * All supplemental Gradle plugins for Kotlin compiler plugins must implement this interface and be applied
+ * to the project as a regular Gradle [Plugin] before the Kotlin plugin inspects the project model
+ * in an [afterEvaluate][org.gradle.api.Project.afterEvaluate] handler.
  *
- * The default implementation of [apply]
- * doesn't do anything, but it can be overridden.
- *
- * Then its [isApplicable] is checked against compilations of the project, and if it returns true,
- * then [applyToCompilation] may be called later.
+ * The Kotlin Gradle plugin then uses the [isApplicable] method to check
+ * if the Kotlin compiler plugin works for the [KotlinCompilations][KotlinCompilation] of the project.
+ * For applicable [KotlinCompilations][KotlinCompilation], the Kotlin Gradle plugin calls [applyToCompilation] later
+ * during the configuration phase.
  */
 interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
+
+    /**
+     * Apply this plugin to the given target [Project].
+     *
+     * The default implementation does nothing.
+     */
     override fun apply(target: Project) = Unit
 
+    /**
+     * Determines if the Kotlin compiler plugin is applicable for the provided [kotlinCompilation].
+     *
+     * @return `true` if the plugin is applicable to the provided compilation unit, `false` otherwise.
+     */
     fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean
 
     /**
-     * Configures the compiler plugin to be incorporated into a specific [kotlinCompilation].
-     * This function is only called on [kotlinCompilation]s approved by [isApplicable].
-     * The [Provider] returned from this function may never get queried if the compilation is avoided in the current build.
+     * Applies this Kotlin compiler plugin to the specified applicable [kotlinCompilation] compilation
+     * with the provided compiler plugin options.
+     *
+     * @return A provider for a list of Kotlin compiler plugin options that affect the Kotlin compilation process.
+     * The [Provider][org.gradle.api.provider.Provider] returned by this function may not be queried
+     * if the compilation is skipped in the current build.
      */
     fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
     ): Provider<List<SubpluginOption>>
 
+    /**
+     * Retrieves the unique identifier for the Kotlin compiler plugin configuration options.
+     *
+     * This unique identifier is used to pass Kotlin compiler plugin-specific configuration options to the Kotlin compilation process
+     * via the `-P` compiler argument.
+     */
     fun getCompilerPluginId(): String
+
+    /**
+     * Retrieves the Maven coordinates of the Kotlin compiler plugin associated with this supplemental Gradle plugin.
+     *
+     * The Kotlin Gradle plugin adds this artifact to the relevant Gradle configurations so it can be automatically provided
+     * for compilation.
+     */
     fun getPluginArtifact(): SubpluginArtifact
 
     /**
-     * Legacy Kotlin/Native-specific plugin artifact.
+     * Retrieves the Maven coordinates of the legacy Kotlin/Native-specific compiler plugin associated with this supplemental Gradle plugin.
      *
-     * It is used only if Gradle is configured not to use Kotlin/Native embeddable compiler jar
+     * It's used only if Gradle is configured not to use the Kotlin/Native embeddable compiler JAR file.
      * (with `kotlin.native.useEmbeddableCompilerJar=false` project property).
      *
      * Otherwise, [getPluginArtifact] is used by default.
@@ -174,17 +245,23 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents Maven coordinates for the Kotlin compiler plugin artifact.
+ *
+ * @property groupId The Maven group ID of the artifact.
+ * @property artifactId The Maven artifact name.
+ * @property version The optional version of the artifact. The default value is `null`. In this case, the version of the Kotlin Gradle plugin is used.
+ *
+ * @see [KotlinCompilerPluginSupportPlugin.getPluginArtifact]
  */
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * @suppress this class should not be a part of KGP-API
  */
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * @suppress
  * Marker interface left here for backward compatibility with older plugin versions.
  * Remove once minimal supported Gradle version will use Kotlin 1.7+.
  */
