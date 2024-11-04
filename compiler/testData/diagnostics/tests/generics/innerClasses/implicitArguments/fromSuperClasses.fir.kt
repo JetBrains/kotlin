@@ -2,7 +2,7 @@
 // CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    typealias Alias<W> = Map<W, X>
+    typealias Alias<W> = Map<W, <!UNRESOLVED_REFERENCE!>X<!>>
 }
 
 class Derived : Outer<String, Int>() {

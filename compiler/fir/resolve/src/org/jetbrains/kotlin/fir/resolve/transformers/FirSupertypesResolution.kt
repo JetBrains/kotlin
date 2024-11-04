@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -339,7 +338,7 @@ open class FirSupertypeResolverVisitor(
 
         val result = when {
             classId.isLocal -> {
-                // Local classes should be treated specially and supplied with localClassesNavigationInfo, normally
+                // Typically, local class-like declarations (class, typealias) should be treated specially and supplied with localClassesNavigationInfo.
                 // But it seems to be too strict to add an assertion here
                 if (localClassesNavigationInfo == null) return persistentListOf()
 
@@ -356,8 +355,7 @@ open class FirSupertypeResolverVisitor(
             }
             classId.isNestedClass -> {
                 val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
-                // TypeAliases are treated as inner classes even though they are technically not allowed
-                val isStatic = !classLikeDeclaration.isInner && classLikeDeclaration !is FirTypeAlias
+                val isStatic = !classLikeDeclaration.isInner
                 prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf(), isStatic || forStaticNestedClass)
             }
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()

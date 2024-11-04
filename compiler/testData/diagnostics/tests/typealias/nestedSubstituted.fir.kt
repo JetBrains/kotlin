@@ -3,7 +3,7 @@
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 
 class C<T> {
-    typealias P2 = Pair<T, Int>
+    typealias P2 = Pair<<!UNRESOLVED_REFERENCE!>T<!>, Int>
 }
 
 val p1: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.P2 = Pair("", 1)

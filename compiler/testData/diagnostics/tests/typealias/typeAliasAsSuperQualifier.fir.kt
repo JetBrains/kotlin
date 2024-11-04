@@ -28,13 +28,13 @@ class TestSuperForBase : B() {
 }
 
 class TestSuperForGenericBase<T> : GB<T>() {
-    typealias MyBase = GB<T>
+    typealias MyBase = GB<<!UNRESOLVED_REFERENCE!>T<!>>
     typealias MyBaseInt = GB<Int>
 
     override fun foo() {
         super<GenericBase>.foo()
         super<GB>.foo()
-        super<MyBase>.foo()
+        super<<!NOT_A_SUPERTYPE!>MyBase<!>>.foo()
         super<<!NOT_A_SUPERTYPE!>MyBaseInt<!>>.foo() // Type arguments don't matter here
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }

@@ -5,8 +5,8 @@ class C<T> {
 
     typealias DA = D
     typealias SDA = C<Int>.D
-    typealias TSDA = C<T>.D
-    typealias TC = C<T>
+    typealias TSDA = C<<!UNRESOLVED_REFERENCE!>T<!>>.D
+    typealias TC = C<<!UNRESOLVED_REFERENCE!>T<!>>
     typealias SSDA = C<*>.D
     typealias SSC = C<*>
 }
