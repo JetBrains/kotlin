@@ -3,7 +3,7 @@
 // CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, <!UNRESOLVED_REFERENCE!>X<!>>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, X>
 }
 
 open class BaseDerived1<E, F> : Outer<F, E>()
@@ -16,5 +16,5 @@ class Derived : BaseDerived2<Int>() {
 
 fun foo() {
     Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
-    Derived().baz() checkType { _<Map<Char, Int>>() }
+    Derived().baz() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <E> CheckTypeInv<E>._(): Unit")!>_<!><Map<Char, Int>>() }
 }

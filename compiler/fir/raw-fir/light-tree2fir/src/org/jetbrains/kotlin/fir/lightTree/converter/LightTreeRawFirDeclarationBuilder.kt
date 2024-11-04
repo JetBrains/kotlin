@@ -1300,6 +1300,7 @@ class LightTreeRawFirDeclarationBuilder(
                     ).apply {
                         isExpect = typeAliasIsExpect
                         isActual = calculatedModifiers.hasActual()
+                        this.isInner = calculatedModifiers.isInner()
                     }
 
                     symbol = typeAliasSymbol

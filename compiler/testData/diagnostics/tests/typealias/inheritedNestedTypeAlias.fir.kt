@@ -8,7 +8,7 @@ interface ICell<T> {
 class Cell<T>(override val x: T): ICell<T>
 
 open class Base<T> {
-    <!WRONG_MODIFIER_TARGET!>inner<!> typealias CT = Cell<<!UNRESOLVED_REFERENCE!>T<!>>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias CT = Cell<T>
     inner class InnerCell(override val x: T): ICell<T>
 }
 
@@ -16,6 +16,6 @@ class Derived : Base<Int>() {
     val x1: InnerCell = InnerCell(42)
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
-    val test1: CT = Cell(42)
-    val test2: Base<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.CT = Cell(42)
+    val test1: CT = <!TYPE_MISMATCH("T (of class Base<T>); kotlin.Int"), TYPE_MISMATCH("T (of class Base<T>); kotlin.Int")!>Cell(42)<!>
+    val test2: Base<Int>.CT = <!TYPE_MISMATCH("T (of class Base<T>); kotlin.Int"), TYPE_MISMATCH("T (of class Base<T>); kotlin.Int")!>Cell(42)<!>
 }
