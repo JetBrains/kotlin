@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
-    project.extensions.extraProperties["kotlin.build.report.output"] = null
 
     val gsonVersion = libs.versions.gson.get()
     configurations.all {
@@ -15,7 +14,6 @@ buildscript {
     }
 }
 
-logger.info("buildSrcKotlinVersion: " + project.getKotlinPluginVersion())
 
 configurations {
     fun NamedDomainObjectProvider<Configuration>.printResolvedDependencyVersion(formatString: String, group: String, name: String) {
@@ -64,6 +62,7 @@ gradlePlugin {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     google()
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")

@@ -6,6 +6,7 @@ pluginManagement {
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
     repositories {
+        mavenLocal()
         maven {
             url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
             content {
@@ -28,6 +29,7 @@ plugins {
     id "develocity"
     id "jvm-toolchain-provisioning"
     id "kotlin-daemon-config"
+    id "common-settings-setup"
 }
 
 File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")

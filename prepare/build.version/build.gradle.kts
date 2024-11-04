@@ -4,12 +4,10 @@ import java.io.File
 
 val buildVersionFilePath = layout.buildDirectory.file("build.txt")
 val buildVersion by configurations.creating
-val buildNumber: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
 
 val writeBuildNumber by tasks.registering {
     val versionFile = buildVersionFilePath
-    val buildNumber = buildNumber
+    val buildNumber = "202929"
     inputs.property("version", buildNumber)
     outputs.file(versionFile)
     doLast {
@@ -27,7 +25,7 @@ artifacts.add(buildVersion.name, buildVersionFilePath) {
 
 
 val writeStdlibVersion by tasks.registering {
-    val kotlinVersionLocal = kotlinVersion
+    val kotlinVersionLocal = "2.0-SNAPSHOT"
     val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
     inputs.property("version", kotlinVersionLocal)
     outputs.file(versionFile)

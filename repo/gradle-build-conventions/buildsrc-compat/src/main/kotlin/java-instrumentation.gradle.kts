@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-allprojects {
-    afterEvaluate {
-        configureJavaInstrumentation()
-    }
-}
+//allprojects {
+//    afterEvaluate {
+//        configureJavaInstrumentation()
+//    }
+//}
 
 // Hide window of instrumentation tasks
 val headlessOldValue: String? = System.setProperty("java.awt.headless", "true")

@@ -68,7 +68,7 @@ compilerTests {
     withAnnotations()
     withScriptingPlugin()
     withStdlibJsRuntime()
-    withTestJsRuntime()
+//    withTestJsRuntime()
 }
 
 projectTest(

@@ -35,7 +35,7 @@ class KotlinBuildProperties(
     }
 
     fun getOrNull(key: String): Any? =
-        localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
+        localProperties.getProperty(key) ?: rootProperties.getProperty(key)
 
     fun getBoolean(key: String, default: Boolean = false): Boolean {
         val value = this.getOrNull(key)?.toString() ?: return default
@@ -117,10 +117,7 @@ class ProjectProperties(val project: Project) : PropertiesProvider {
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
-    get() = rootProject.extensions.findByName(extensionName) as KotlinBuildProperties?
-        ?: KotlinBuildProperties(ProjectProperties(rootProject)).also {
-            rootProject.extensions.add(extensionName, it)
-        }
+    get() = KotlinBuildProperties(ProjectProperties(project))
 
 class SettingsProperties(val settings: Settings) : PropertiesProvider {
     override val rootProjectDir: File

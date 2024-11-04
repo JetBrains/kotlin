@@ -163,15 +163,15 @@ fun Project.configureDefaultPublishing(
                     else -> repo
                 }
 
-                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"] ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
+//                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"] ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
 
-                val sonatypeSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/".takeIf { repo == "sonatype-nexus-snapshots" }
+//                val sonatypeSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/".takeIf { repo == "sonatype-nexus-snapshots" }
 
-                val repoUrl: String by extra(
-                    (deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${
-                        project.rootProject.layout.buildDirectory.dir("repo").get().asFile
-                    }").toString()
-                )
+//                val repoUrl: String by extra(
+//                    (deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${
+//                        project.rootProject.layout.buildDirectory.dir("repo").get().asFile
+//                    }").toString()
+//                )
 
                 val username: String? by extra(
                     project.properties["kotlin.build.deploy-username"]?.toString() ?: project.properties["kotlin.${repoProvider}.user"]?.toString()
@@ -180,7 +180,7 @@ fun Project.configureDefaultPublishing(
                     project.properties["kotlin.build.deploy-password"]?.toString() ?: project.properties["kotlin.${repoProvider}.password"]?.toString()
                 )
 
-                setUrl(repoUrl)
+                setUrl("kdsgjisdajgisdajg")
                 if (url.scheme != "file" && username != null && password != null) {
                     credentials {
                         this.username = username

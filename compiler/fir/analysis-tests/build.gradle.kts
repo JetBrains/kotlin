@@ -74,7 +74,7 @@ projectTest(
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+//    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 testsJar()

@@ -9,15 +9,15 @@ import org.gradle.kotlin.dsl.develocity
 import org.gradle.kotlin.dsl.withType
 
 fun Project.configureTestRetriesForTestTasks() {
-    val testRetryMaxRetries = findProperty("kotlin.build.testRetry.maxRetries")
-        ?.toString()?.toInt()
-        ?: (if (kotlinBuildProperties.isTeamcityBuild) 3 else 0)
+//    val testRetryMaxRetries = findProperty("kotlin.build.testRetry.maxRetries")
+//        ?.toString()?.toInt()
+//        ?: (if (kotlinBuildProperties.isTeamcityBuild) 3 else 0)
 
-    tasks.withType<Test>().configureEach {
-        develocity.testRetry {
-            maxRetries.set(testRetryMaxRetries)
-            maxFailures.set(20)
-            failOnPassedAfterRetry.set(false)
-        }
-    }
+//    tasks.withType<Test>().configureEach {
+//        develocity.testRetry {
+//            maxRetries.set(testRetryMaxRetries)
+//            maxFailures.set(20)
+//            failOnPassedAfterRetry.set(false)
+//        }
+//    }
 }

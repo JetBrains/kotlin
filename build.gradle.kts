@@ -50,6 +50,7 @@ plugins {
     }
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
+    id("common-configuration") apply false
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -87,7 +88,7 @@ extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
 
-rootProject.apply {
+project.apply {
     from(rootProject.file("gradle/versions.gradle.kts"))
     from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
     from(rootProject.file("gradle/checkCacheability.gradle.kts"))
@@ -545,134 +546,75 @@ val dependencyOnSnapshotReflectWhitelist = setOf(
     ":tools:kotlin-stdlib-gen",
 )
 
-allprojects {
-    if (!project.path.startsWith(":kotlin-ide.")) {
-        pluginManager.apply("common-configuration")
-    }
+pluginManager.apply("common-configuration")
 
-    if (kotlinBuildProperties.isInIdeaSync) {
-        afterEvaluate {
-            configurations.all {
-                // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
-                if (dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }) {
-                    logger.warn("Removed :kotlin-compiler project dependency from $this")
-                }
-            }
-        }
-    }
-
-    configurations.all {
-        val configuration = this
-        if (name != "compileClasspath") {
-            return@all
-        }
-        resolutionStrategy.eachDependency {
-            if (requested.group != "org.jetbrains.kotlin") {
-                return@eachDependency
-            }
-
-            val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
-            // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
-            // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
-            if (project.path in @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerModules"] as Array<String>)) {
-                val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
-                if (isReflect) {
-                    check(requested.version == expectedReflectVersion) {
-                        """
-                            $configuration: 'kotlin-reflect' should have '$expectedReflectVersion' version. But it was '${requested.version}'
-                            Suggestions:
-                                1. Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
-                                2. Avoid 'kotlin-reflect' leakage from transitive dependencies with 'exclude("org.jetbrains.kotlin")'
-                        """.trimIndent()
-                    }
-                }
-                if (requested.name.startsWith("kotlin-stdlib")) {
-                    check(requested.version != expectedReflectVersion) {
-                        """
-                            $configuration: '${requested.name}' has a wrong version. It's not allowed to be '$expectedReflectVersion'
-                            Suggestions:
-                                1. Most likely, it leaked from 'kotlin-reflect' transitive dependencies. Use 'isTransitive = false' for
-                                   'kotlin-reflect' dependencies
-                                2. Avoid '${requested.name}' leakage from other transitive dependencies with 'exclude("org.jetbrains.kotlin")'
-                        """.trimIndent()
-                    }
-                }
-            }
-            if (isReflect && project.path !in dependencyOnSnapshotReflectWhitelist) {
-                check(requested.version != kotlinVersion) {
-                    """
-                        $configuration: 'kotlin-reflect' is not allowed to have '$kotlinVersion' version.
-                        Suggestion: Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
-                    """.trimIndent()
-                }
-            }
-        }
-    }
-    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
-
-    repositories {
-        when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
-            null -> {}
-            "master" -> {
-                maven { setUrl("https://www.jetbrains.com/intellij-repository/snapshots") }
-            }
-
-            else -> {
-                kotlinBuildLocalRepo(project)
-            }
-        }
-
-        mirrorRepo?.let(::maven)
-
-        maven(intellijRepo) {
-            content {
-                includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
-            }
-        }
-
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
-            content {
-                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
-                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
-                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
-                includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
-            }
-        }
-
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
-            content {
-                includeModule("org.jetbrains.dukat", "dukat")
-                includeModule("org.jetbrains.kotlin", "android-dx")
-                includeModule("org.jetbrains.kotlin", "jcabi-aether")
-                includeModule("org.jetbrains.kotlin", "kotlin-build-gradle-plugin")
-                includeModule("org.jetbrains.kotlin", "protobuf-lite")
-                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
-                includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
-            }
-        }
-
-        maven("https://download.jetbrains.com/teamcity-repository") {
-            content {
-                includeModule("org.jetbrains.teamcity", "serviceMessages")
-                includeModule("org.jetbrains.teamcity.idea", "annotations")
-            }
-        }
-
-        maven("https://dl.google.com/dl/android/maven2") {
-            content {
-                includeGroup("com.android.tools")
-                includeGroup("com.android.tools.build")
-                includeGroup("com.android.tools.layoutlib")
-                includeGroup("com.android")
-                includeGroup("androidx.test")
-                includeGroup("androidx.annotation")
-            }
-        }
-
-        mavenCentral()
-    }
-}
+//allprojects {
+//    if (!project.path.startsWith(":kotlin-ide.")) {
+//        pluginManager.apply("common-configuration")
+//    }
+//
+//    if (kotlinBuildProperties.isInIdeaSync) {
+//        afterEvaluate {
+//            configurations.all {
+//                // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
+//                if (dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }) {
+//                    logger.warn("Removed :kotlin-compiler project dependency from $this")
+//                }
+//            }
+//        }
+//    }
+//
+//    configurations.all {
+//        val configuration = this
+//        if (name != "compileClasspath") {
+//            return@all
+//        }
+//        resolutionStrategy.eachDependency {
+//            if (requested.group != "org.jetbrains.kotlin") {
+//                return@eachDependency
+//            }
+//
+//            val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
+//            // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
+//            // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
+//            if (project.path in @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerModules"] as Array<String>)) {
+//                val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
+//                if (isReflect) {
+//                    check(requested.version == expectedReflectVersion) {
+//                        """
+//                            $configuration: 'kotlin-reflect' should have '$expectedReflectVersion' version. But it was '${requested.version}'
+//                            Suggestions:
+//                                1. Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+//                                2. Avoid 'kotlin-reflect' leakage from transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+//                        """.trimIndent()
+//                    }
+//                }
+//                if (requested.name.startsWith("kotlin-stdlib")) {
+//                    check(requested.version != expectedReflectVersion) {
+//                        """
+//                            $configuration: '${requested.name}' has a wrong version. It's not allowed to be '$expectedReflectVersion'
+//                            Suggestions:
+//                                1. Most likely, it leaked from 'kotlin-reflect' transitive dependencies. Use 'isTransitive = false' for
+//                                   'kotlin-reflect' dependencies
+//                                2. Avoid '${requested.name}' leakage from other transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+//                        """.trimIndent()
+//                    }
+//                }
+//            }
+//            if (isReflect && project.path !in dependencyOnSnapshotReflectWhitelist) {
+//                check(requested.version != kotlinVersion) {
+//                    """
+//                        $configuration: 'kotlin-reflect' is not allowed to have '$kotlinVersion' version.
+//                        Suggestion: Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+//                    """.trimIndent()
+//                }
+//            }
+//        }
+//    }
+//    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
+//
+//
+//}
 
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"

@@ -3,6 +3,7 @@ pluginManagement {
     apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {
+        mavenLocal()
         maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         mavenCentral()
         gradlePluginPortal()
@@ -34,6 +35,7 @@ include(":develocity")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
+include(":common-settings-setup")
 
 // Sync below to the content of develocity settings plugin
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)

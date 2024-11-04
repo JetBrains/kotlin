@@ -6,6 +6,7 @@ plugins {
 description = "Binary Compatibility Validator compat - track ABI changes"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     gradlePluginPortal()
 }

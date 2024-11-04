@@ -76,6 +76,10 @@ val commonTestOptIns = listOf(
     "kotlin.uuid.ExperimentalUuidApi",
 )
 
+val prepareCommonSources by tasks.registering {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
+}
+
 kotlin {
     val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
     val diagnosticNamesArg = if (renderDiagnosticNames) "-Xrender-internal-diagnostic-names" else null
@@ -342,9 +346,7 @@ kotlin {
             kotlin.setSrcDirs(emptyList<File>())
         }
         commonMain {
-            val prepareCommonSources by tasks.registering {
-                dependsOn(":prepare:build.version:writeStdlibVersion")
-            }
+
             kotlin {
                 srcDir("common/src")
                 srcDir(files("src").builtBy(prepareCommonSources))

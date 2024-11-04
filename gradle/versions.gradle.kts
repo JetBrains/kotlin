@@ -35,7 +35,7 @@ if (intellijVersionDelimiterIndex == -1) {
 val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
-rootProject.extra["versions.platform"] = platform
+project.extra["versions.platform"] = platform
 
 
 for (jar in gradleJars) {
