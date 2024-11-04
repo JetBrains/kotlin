@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // SKIP_TXT
 // LANGUAGE: +ContextReceivers
@@ -9,13 +8,13 @@ fun <T> test2(actionWithArg: context(T) (T) -> Unit) {}
 
 fun main() {
     test<String> {
-        length
+        <!UNRESOLVED_REFERENCE!>length<!>
     }
     test<Int> {
-        toDouble()
+        <!UNRESOLVED_REFERENCE!>toDouble<!>()
     }
     test2<String> { a ->
-        length
+        <!UNRESOLVED_REFERENCE!>length<!>
         a.length
     }
 }

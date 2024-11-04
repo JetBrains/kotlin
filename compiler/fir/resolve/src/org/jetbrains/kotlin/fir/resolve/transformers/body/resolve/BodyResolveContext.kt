@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ContextParameterValue
+import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScriptOrSnippet
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -262,7 +265,20 @@ class BodyResolveContext(
         additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
-        replaceTowerDataContext(towerDataContext.addContextReceiverGroup(owner.createContextReceiverValues(holder)))
+        val contextReceivers = mutableListOf<ContextReceiverValue>()
+        val contextParameters = mutableListOf<ContextParameterValue>()
+
+        owner.contextReceivers.forEach { receiver ->
+            if (receiver.valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+                contextReceivers += ContextReceiverValue(
+                    receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
+                )
+            } else {
+                contextParameters += ContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
+            }
+        }
+
+        replaceTowerDataContext(towerDataContext.addContextGroups(contextReceivers, contextParameters))
 
         if (type != null) {
             val receiver = ImplicitExtensionReceiverValue(
@@ -513,7 +529,7 @@ class BodyResolveContext(
 
         val forMembersResolution = forConstructorHeader
             .addReceiver(labelName, towerElementsForClass.thisReceiver)
-            .addContextReceiverGroup(towerElementsForClass.contextReceivers)
+            .addContextGroups(towerElementsForClass.contextReceivers, emptyList())
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header

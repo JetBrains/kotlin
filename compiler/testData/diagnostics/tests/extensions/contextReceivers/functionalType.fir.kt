@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 
@@ -46,24 +45,24 @@ fun f6(g: (context(C) () -> Unit)?) {
 fun test() {
     val lf1: context(C) R.(Param) -> Unit = { _ ->
         r
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf2: @MyAnnotation context(C) R.(Param) -> Unit = { _ ->
         r
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf3: context(C) (Param) -> Unit = { _ ->
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf4: context(C) R.() -> Unit = {
         r
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf5: context(C) () -> Unit = {
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
     val lf6: (context(C) () -> Unit)? = {
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
 
     with(C()) {

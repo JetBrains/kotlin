@@ -57,10 +57,15 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
     }
 
     val thisReceiver = ImplicitDispatchReceiverValue(owner.symbol, defaultType, session, scopeSession)
-    val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.map { receiver ->
-        ContextReceiverValue(
-            receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, session, scopeSession,
-        )
+    val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.mapNotNull { receiver ->
+        if (receiver.valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+            ContextReceiverValue(
+                receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, session, scopeSession,
+            )
+        } else {
+            // We don't support context parameters on classes
+            null
+        }
     }.orEmpty()
 
     return TowerElementsForClass(
@@ -148,9 +153,18 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun addContextReceiverGroup(contextReceiverGroup: ContextReceiverGroup): FirTowerDataContext {
-        if (contextReceiverGroup.isEmpty()) return this
-        val element = contextReceiverGroup.asTowerDataElement()
+    fun addContextGroups(
+        contextReceiverGroup: ContextReceiverGroup,
+        contextParameterGroup: ContextParameterGroup,
+    ): FirTowerDataContext {
+        if (contextReceiverGroup.isEmpty() && contextParameterGroup.isEmpty()) return this
+        val element = FirTowerDataElement(
+            scope = null,
+            implicitReceiver = null,
+            contextReceiverGroup = contextReceiverGroup,
+            contextParameterGroup = contextParameterGroup,
+            isLocal = false
+        )
 
         return FirTowerDataContext(
             towerDataElements.add(element),
@@ -237,19 +251,39 @@ class FirTowerDataContext private constructor(
     }
 }
 
-// Each FirTowerDataElement has exactly one non-null value among values of properties: scope, implicitReceiver and contextReceiverGroup.
+/**
+ * Each FirTowerDataElement has exactly one non-null value among [scope], [implicitReceiver], and [contextReceiverGroup].
+ *
+ * If [contextReceiverGroup] is not-null, then [contextParameterGroup] is not-null as well.
+ * In that case, one of them will be non-empty.
+ *
+ */
 class FirTowerDataElement(
     val scope: FirScope?,
     val implicitReceiver: ImplicitReceiverValue<*>?,
     val contextReceiverGroup: ContextReceiverGroup? = null,
+    val contextParameterGroup: ContextParameterGroup? = null,
     val isLocal: Boolean,
-    val staticScopeOwnerSymbol: FirRegularClassSymbol? = null
+    val staticScopeOwnerSymbol: FirRegularClassSymbol? = null,
 ) {
+    init {
+        require((contextReceiverGroup != null) == (contextParameterGroup != null)) {
+            "contextReceiverGroup and contextParameterGroup must either be both null or both not-null"
+        }
+    }
+
+    val implicitContextGroup: List<ImplicitValue>? = if (contextReceiverGroup != null && contextParameterGroup != null) {
+        contextReceiverGroup + contextParameterGroup
+    } else {
+        null
+    }
+
     fun createSnapshot(keepMutable: Boolean): FirTowerDataElement =
         FirTowerDataElement(
             scope,
             implicitReceiver?.createSnapshot(keepMutable),
             contextReceiverGroup?.map { it.createSnapshot(keepMutable) },
+            contextParameterGroup?.map { it.createSnapshot(keepMutable) },
             isLocal,
             staticScopeOwnerSymbol
         )
@@ -285,9 +319,6 @@ class FirTowerDataElement(
 fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
     FirTowerDataElement(scope = null, implicitReceiver = this, isLocal = false)
 
-fun ContextReceiverGroup.asTowerDataElement(): FirTowerDataElement =
-    FirTowerDataElement(scope = null, implicitReceiver = null, contextReceiverGroup = this, isLocal = false)
-
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = isLocal)
 
@@ -304,13 +335,5 @@ fun FirClass.staticScope(session: FirSession, scopeSession: ScopeSession): FirCo
     scopeProvider.getStaticScope(this, session, scopeSession)
 
 typealias ContextReceiverGroup = List<ContextReceiverValue>
+typealias ContextParameterGroup = List<ContextParameterValue>
 typealias FirLocalScopes = PersistentList<FirLocalScope>
-
-fun FirCallableDeclaration.createContextReceiverValues(
-    sessionHolder: SessionHolder,
-): List<ContextReceiverValue> =
-    contextReceivers.map { receiver ->
-        ContextReceiverValue(
-            receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, sessionHolder.session, sessionHolder.scopeSession,
-        )
-    }

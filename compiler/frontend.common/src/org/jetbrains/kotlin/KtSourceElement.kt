@@ -52,6 +52,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ImplicitThisReceiverExpression : KtFakeSourceElementKind()
 
     /**
+     * for implicit context parameter arguments of calls.
+     */
+    object ImplicitContextParameterArgument : KtFakeSourceElementKind()
+
+    /**
      * for type arguments that were inferred as opposed to specified
      * explicitly via `<>`
      */

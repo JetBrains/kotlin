@@ -8,7 +8,7 @@ FILE: smoke.kt
     }
     context(s: R|kotlin/String|)
     public final fun f(): R|kotlin/String| {
-        ^f R|<local>/s|.R|kotlin/String.plus|(this@R|<local>/s|)
+        ^f R|<local>/s|.R|kotlin/String.plus|(this@s#)
     }
     context(<unused var>: R|kotlin/String|)
     public final val p: R|kotlin/String|
@@ -18,17 +18,17 @@ FILE: smoke.kt
     context(s: R|kotlin/String|)
     public final var p2: R|kotlin/String|
         public get(): R|kotlin/String| {
-            ^ R|<local>/s|.R|kotlin/String.plus|(this@R|<local>/s|)
+            ^ R|<local>/s|.R|kotlin/String.plus|(this@s#)
         }
         public set(value: R|kotlin/String|): R|kotlin/Unit| {
-            R|<local>/s|.R|kotlin/String.plus|(this@R|<local>/s|)
+            R|<local>/s|.R|kotlin/String.plus|(this@s#)
         }
     context(s: R|kotlin/Any|)
     public final val p3: R|kotlin/String|
         public get(): R|kotlin/String| {
             ^ when () {
                 (R|<local>/s| is R|kotlin/String|) ->  {
-                    R|<local>/s|
+                    R|<local>/s|.R|kotlin/String.plus|(R|/f<Inapplicable(INAPPLICABLE): /f>#|())
                 }
                 else ->  {
                     String()
@@ -38,7 +38,7 @@ FILE: smoke.kt
         }
     context(s: R|kotlin/String|)
     public final fun f2(): R|kotlin/Unit| {
-        this@R|<local>/s|.R|kotlin/String.length|
+        <Unresolved name: length>#
     }
     context(s: R|kotlin/String|)
     public final fun f3(): R|kotlin/Int| {

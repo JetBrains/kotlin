@@ -53,7 +53,9 @@ internal class TowerDataElementsForName(
 
     val contextReceiverGroups by lazy(LazyThreadSafetyMode.NONE) {
         nonLocalTowerDataElements.mapIndexedNotNull { index, towerDataElement ->
-            towerDataElement.contextReceiverGroup?.let { receiver -> IndexedValue(index, receiver) }
+            // Context receiver group can be not-null but empty (if we have a non-empty context parameter group).
+            // In that case we want to return null.
+            towerDataElement.contextReceiverGroup?.takeUnless { it.isEmpty() }?.let { receiver -> IndexedValue(index, receiver) }
         }
     }
 }

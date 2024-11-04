@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
@@ -263,14 +264,19 @@ class Candidate(
         if (this !is ConeSimpleLeafResolutionAtom) return this
 
         fun FirExpression.tryToSetSourceForImplicitReceiver(): FirExpression? {
-            return when {
-                this is FirSmartCastExpression -> {
+            return when (this) {
+                is FirSmartCastExpression -> {
                     val newOriginal = this.originalExpression.tryToSetSourceForImplicitReceiver() ?: return null
                     this.apply { replaceOriginalExpression(newOriginal) }
                 }
-                this is FirThisReceiverExpression && isImplicit -> {
+                is FirThisReceiverExpression if isImplicit -> {
                     buildThisReceiverExpressionCopy(this) {
                         source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+                    }
+                }
+                is FirPropertyAccessExpression if source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument -> {
+                    buildPropertyAccessExpressionCopy(this) {
+                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
                     }
                 }
                 else -> null

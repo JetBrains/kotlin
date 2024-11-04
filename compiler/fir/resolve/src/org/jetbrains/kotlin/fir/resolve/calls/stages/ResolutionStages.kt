@@ -216,7 +216,7 @@ object CheckContextReceivers : ResolutionStage() {
         val receiverGroups: List<List<FirExpression>> =
             context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
                 towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
-                    ?: towerDataElement.contextReceiverGroup?.map { it.receiverExpression }
+                    ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
             }
 
         val resultingContextReceiverArguments = mutableListOf<ConeResolutionAtom>()

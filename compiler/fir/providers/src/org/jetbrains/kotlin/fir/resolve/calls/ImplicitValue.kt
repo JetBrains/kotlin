@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -91,4 +94,23 @@ sealed class ImplicitValue(
     }
 
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue
+}
+
+class ContextParameterValue(
+    private val symbol: FirValueParameterSymbol,
+    type: ConeKotlinType,
+    mutable: Boolean = true,
+) : ImplicitValue(type, mutable) {
+    override val originalExpression: FirExpression = buildPropertyAccessExpression {
+        source = symbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
+        calleeReference = buildResolvedNamedReference {
+            name = symbol.name
+            resolvedSymbol = symbol
+        }
+        coneTypeOrNull = type
+    }
+
+    override fun createSnapshot(keepMutable: Boolean): ContextParameterValue {
+        return ContextParameterValue(symbol, type, keepMutable)
+    }
 }

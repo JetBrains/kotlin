@@ -161,6 +161,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(propertyAccessExpression) {
             parents += qualifiedAccessExpressionBuilder
             defaultNoReceivers()
+            withCopy()
         }
 
         builder(callableReferenceAccess) {

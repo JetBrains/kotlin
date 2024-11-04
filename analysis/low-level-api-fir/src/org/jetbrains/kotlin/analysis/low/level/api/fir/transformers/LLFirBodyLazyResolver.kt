@@ -330,6 +330,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         scope?.withReplacedSessionOrNull(session, scopeSession) ?: scope,
         implicitReceiver?.withReplacedSessionOrNull(session, scopeSession),
         contextReceiverGroup?.map { it.withReplacedSessionOrNull(session, scopeSession) },
+        contextParameterGroup,
         isLocal,
         staticScopeOwnerSymbol
     )
