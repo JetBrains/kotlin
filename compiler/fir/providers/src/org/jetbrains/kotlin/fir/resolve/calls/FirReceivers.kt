@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -26,18 +22,35 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.SmartcastStability
 
-abstract class ReceiverValue {
-    abstract val type: ConeKotlinType
+/**
+ * A type of value that is in scope and can be used as a dispatch or extension receiver of a qualified access expression.
+ *
+ * ### Implementors
+ *
+ * [ExpressionReceiverValue]: An explicit expression like a [FirQualifiedAccessExpression] or
+ * [FirThisReceiverExpression] (explicitly written like `this` or `this@label`).
+ *
+ * [ImplicitReceiverValue]: An implicit [FirThisReceiverExpression]
+ * - [ImplicitDispatchReceiverValue] references a dispatch receiver
+ * - [ImplicitExtensionReceiverValue] references an extension receiver
+ * - [ImplicitReceiverValueForScript] references a receiver in scripts
+ * - [InaccessibleImplicitReceiverValue] references a dispatch receiver that's not available, e.g., in delegated constructor calls
+ * - [ContextReceiverValue]: references a context receiver
+ *
+ * [ImplicitReceiverValue] is part of the [ImplicitValue] hierarchy, but [ExpressionReceiverValue] is **not**.
+ *
+ * See [ImplicitValue] KDoc for an explanation of its semantic.
+ */
+sealed interface ReceiverValue {
+    val type: ConeKotlinType
 
-    abstract val receiverExpression: FirExpression
+    val receiverExpression: FirExpression
 
-    open fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
         useSiteSession = useSiteSession,
         scopeSession = scopeSession,
         callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
@@ -45,7 +58,7 @@ abstract class ReceiverValue {
     )
 }
 
-class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue() {
+class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue {
     override val type: ConeKotlinType
         get() = receiverExpression.resolvedType
 
@@ -74,21 +87,17 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
     }
 }
 
-sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
+sealed class ImplicitReceiverValue<S>(
     val boundSymbol: S,
     type: ConeKotlinType,
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
-    protected val mutable: Boolean,
-    inaccessibleReceiver: Boolean = false
-) : ReceiverValue() {
-    final override var type: ConeKotlinType = type
-        private set
+    mutable: Boolean,
+    inaccessibleReceiver: Boolean = false,
+) : ImplicitValue(type, mutable), ReceiverValue
+        where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
     abstract val isContextReceiver: Boolean
-
-    // Type before smart cast
-    val originalType: ConeKotlinType = type
 
     var implicitScope: FirTypeScope? =
         type.scope(
@@ -99,61 +108,17 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
         )
         private set
 
+    override val originalExpression: FirExpression =
+        receiverExpression(boundSymbol, type, inaccessibleReceiver)
+
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
-    private var receiverIsSmartcasted: Boolean = false
-    private var originalReceiverExpression: FirExpression =
-        receiverExpression(boundSymbol, type, inaccessibleReceiver)
-    private var _receiverExpression: FirExpression? = null
-
-    private fun computeReceiverExpression(): FirExpression {
-        _receiverExpression?.let { return it }
-        val actualReceiverExpression = if (receiverIsSmartcasted) {
-            buildSmartCastExpression {
-                originalExpression = originalReceiverExpression
-                smartcastType = buildResolvedTypeRef {
-                    source = originalReceiverExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-                    coneType = this@ImplicitReceiverValue.type
-                }
-                typesFromSmartCast = listOf(this@ImplicitReceiverValue.type)
-                smartcastStability = SmartcastStability.STABLE_VALUE
-                coneTypeOrNull = this@ImplicitReceiverValue.type
-            }
-        } else {
-            originalReceiverExpression
-        }
-        _receiverExpression = actualReceiverExpression
-        return actualReceiverExpression
-    }
-
-    /**
-     * The idea of receiver expression for implicit receivers is following:
-     *   - Implicit receivers are mutable because of smartcasts
-     *   - Expression of implicit receiver may be used during call resolution and then stored for later. This implies necesserity
-     *      to keep receiver expression independent of state of corresponding implicit value
-     *   - In the same time we don't want to create new receiver expression for each access in sake of performance
-     * All those statements lead to the current implementation:
-     *   - original receiver expression (without smartcast) always stored inside receiver value and can not be changed (TODO: except builder inference)
-     *   - we keep information about was there smartcast or not in [receiverIsSmartcasted] field
-     *   - we cache computed receiver expression in [_receiverExpression] field
-     *   - if type of receiver value was changed this cache is dropped
-     */
     final override val receiverExpression: FirExpression
-        get() = computeReceiverExpression()
+        get() = computeExpression()
 
-    @RequiresOptIn
-    annotation class ImplicitReceiverInternals
-
-    /*
-     * Should be called only in ImplicitReceiverStack
-     */
-    @ImplicitReceiverInternals
-    fun updateTypeFromSmartcast(type: ConeKotlinType) {
-        if (type == this.type) return
-        if (!mutable) error("Cannot mutate an immutable ImplicitReceiverValue")
-        this.type = type
-        receiverIsSmartcasted = type != this.originalType
-        _receiverExpression = null
+    @ImplicitValueInternals
+    override fun updateTypeFromSmartcast(type: ConeKotlinType) {
+        super.updateTypeFromSmartcast(type)
         implicitScope = type.scope(
             useSiteSession = useSiteSession,
             scopeSession = scopeSession,
@@ -162,7 +127,7 @@ sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
         )
     }
 
-    abstract fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>
+    abstract override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>
 
     @DelicateScopeAPI
     abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValue<S>

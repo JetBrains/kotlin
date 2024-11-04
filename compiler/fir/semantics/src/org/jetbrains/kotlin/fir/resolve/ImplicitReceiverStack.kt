@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
@@ -92,7 +93,7 @@ class ImplicitReceiverStack private constructor(
 
     // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
-    @OptIn(ImplicitReceiverValue.ImplicitReceiverInternals::class)
+    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     fun replaceReceiverType(symbol: FirBasedSymbol<*>, type: ConeKotlinType) {
         val index = indexesPerSymbol[symbol as FirThisOwnerSymbol<*>] ?: return
         stack[index].updateTypeFromSmartcast(type)
