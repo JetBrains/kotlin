@@ -105,7 +105,7 @@ internal class PhaseEngine<C : LoggingContext>(
         return action(newEngine)
     }
 
-    fun <Input, Output, P : AbstractNamedCompilerPhase<C, Input, Output>> runPhase(
+    fun <Input, Output, P : NamedCompilerPhase<C, Input, Output>> runPhase(
             phase: P,
             input: Input,
             disable: Boolean = false
@@ -118,7 +118,7 @@ internal class PhaseEngine<C : LoggingContext>(
     }
 
 
-    fun <Output, P : AbstractNamedCompilerPhase<C, Unit, Output>> runPhase(
+    fun <Output, P : NamedCompilerPhase<C, Unit, Output>> runPhase(
             phase: P,
     ): Output = runPhase(phase, Unit)
 }

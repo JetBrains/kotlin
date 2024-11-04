@@ -30,7 +30,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         return result as Output
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
 
     override val stickyPostconditions get() = phases.last().stickyPostconditions
@@ -49,7 +49,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     name: String,
     preactions: Set<Action<Input, Context>> = emptySet(),
     postactions: Set<Action<Output, Context>> = emptySet(),
-    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
     op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
@@ -71,7 +71,7 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     name: String,
     preactions: Set<Action<Input, Context>> = emptySet(),
     postactions: Set<Action<Input, Context>> = emptySet(),
-    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     op: (Context, Input) -> Unit
 ): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(
     name,
@@ -90,7 +90,7 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
 fun <Context : CommonBackendContext> makeIrModulePhase(
     lowering: (Context) -> ModuleLoweringPass,
     name: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
     postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
 ): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =

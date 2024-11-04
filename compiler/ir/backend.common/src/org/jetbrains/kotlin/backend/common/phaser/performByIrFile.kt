@@ -109,6 +109,6 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         return input
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         lower.flatMap { it.getNamedSubphases(startDepth) }
 }

@@ -49,7 +49,7 @@ interface CompilerPhase<in Context : LoggingContext, Input, Output> {
      */
     fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
-    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> = emptyList()
+    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> = emptyList()
 
     // In phase trees, `stickyPostconditions` is inherited along the right edge to be used in `then`.
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
@@ -66,7 +66,7 @@ interface SameTypeCompilerPhase<in Context : LoggingContext, Data> : CompilerPha
 // A failing checker should just throw an exception.
 typealias Checker<Data> = (Data) -> Unit
 
-typealias AnyNamedPhase = AbstractNamedCompilerPhase<*, *, *>
+typealias AnyNamedPhase = NamedCompilerPhase<*, *, *>
 
 enum class BeforeOrAfter { BEFORE, AFTER }
 
@@ -85,10 +85,9 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-// TODO: A better name would be just `NamedCompilerPhase`, but it is already used (see below).
-abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
+abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
-    val prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+    val prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     val preconditions: Set<Checker<Input>> = emptySet(),
     val postconditions: Set<Checker<Output>> = emptySet(),
     protected val nlevels: Int = 0
@@ -147,14 +146,14 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
 
 class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
     preconditions: Set<Checker<Data>> = emptySet(),
     postconditions: Set<Checker<Data>> = emptySet(),
     override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
     private val actions: Set<Action<Data, Context>> = emptySet(),
     nlevels: Int = 0
-) : AbstractNamedCompilerPhase<Context, Data, Data>(
+) : NamedCompilerPhase<Context, Data, Data>(
     name, prerequisite, preconditions, postconditions, nlevels
 ) {
     override fun phaseBody(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, input: Data): Data =
@@ -188,24 +187,24 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
         }
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 }
 
 /**
- * [AbstractNamedCompilerPhase] with different [Input] and [Output] types (unlike [SameTypeNamedCompilerPhase]).
- * Preffered when data should be explicitly passed between phases.
+ * [NamedCompilerPhase] with different [Input] and [Output] types (unlike [SameTypeNamedCompilerPhase]).
+ * Preferred when data should be explicitly passed between phases.
  * Actively used in a new dynamic Kotlin/Native driver.
  */
 abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     preconditions: Set<Checker<Input>> = emptySet(),
     postconditions: Set<Checker<Output>> = emptySet(),
     private val preactions: Set<Action<Input, Context>> = emptySet(),
     private val postactions: Set<Action<Pair<Input, Output>, Context>> = emptySet(),
     nlevels: Int = 0,
-) : AbstractNamedCompilerPhase<Context, Input, Output>(
+) : NamedCompilerPhase<Context, Input, Output>(
     name,
     prerequisite,
     preconditions,
@@ -242,6 +241,6 @@ abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Outp
         }
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         listOf(startDepth to this)
 }
