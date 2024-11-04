@@ -540,6 +540,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("kt47779.kt")
+  public void testKt47779() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt47779.kt");
+  }
+
+  @Test
   @TestMetadata("kt61729.kt")
   public void testKt61729() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt61729.kt");
