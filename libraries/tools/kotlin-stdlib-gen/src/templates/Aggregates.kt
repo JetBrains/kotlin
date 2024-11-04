@@ -334,11 +334,11 @@ object Aggregates : TemplateGroupBase() {
 
                 val isFloat = primitive?.isFloatingPoint() == true
                 val isUnsigned = family == ArraysOfUnsigned
+                val isGeneric = family in listOf(Iterables, Sequences, ArraysOfObjects)
 
                 if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
                 if (legacy) {
                     deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
-                    val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
                     if (isFloat && isGeneric) {
                         since("1.1")
                     }
@@ -354,13 +354,28 @@ object Aggregates : TemplateGroupBase() {
                 if (!nullable) since("1.7")
 
                 doc {
-                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." +
-                    if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`." else ""
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
+                    """
+                    Returns the ${if (isMax) "largest" else "smallest"} ${f.element}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
+                    """ +
+                    """
+                    If there are multiple equal ${if (isMax) "maximal" else "minimal"} $elements, this function returns the first of those $elements.
+                    """.ifOrEmpty(isGeneric && primitive == null) +
+                    """
+                    If any of $elements is `NaN`, this function returns `NaN`.
+                    """.ifOrEmpty(isFloat)
                 }
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
+                val sampleFun = "maxMin" + when {
+                    isFloat -> "Floating"
+                    isGeneric -> "Generic"
+                    else -> "Primitive"
+                }
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 val acc = op
                 val cmpBlock = if (isFloat)
@@ -560,10 +575,15 @@ object Aggregates : TemplateGroupBase() {
                 val isFloat = selectorType != "R"
 
                 doc {
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
                     """
-                    Returns the ${if (op == "max") "largest" else "smallest"} value among all values produced by [selector] function 
-                    applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    Returns the ${if (isMax) "largest" else "smallest"} value among all values produced by [selector] function 
+                    applied to each ${f.element} in the ${f.collection}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
                     """ +
+                    """
+                    If multiple $elements produce the ${if (isMax) "maximal" else "minimal"} value, this function returns the first of those values.
+                    """.ifOrEmpty(!isFloat) +
                     """
                     If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
                     """.ifOrEmpty(isFloat)
@@ -571,6 +591,12 @@ object Aggregates : TemplateGroupBase() {
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                 }
+                val sampleFun = "maxOfMinOf" + when {
+                    isFloat -> "FloatingResult"
+                    primitive != null -> "Primitive"
+                    else -> "Generic"
+                }
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 if (!isFloat) typeParam("R : Comparable<R>")
                 returns(selectorType + "?".ifOrEmpty(nullable))
@@ -632,14 +658,20 @@ object Aggregates : TemplateGroupBase() {
                 annotation("@OverloadResolutionByLambdaReturnType")
 
                 doc {
+                    val isMax = op == "max"
+                    val elements = f.element.pluralize()
                     """
-                    Returns the ${if (op == "max") "largest" else "smallest"} value according to the provided [comparator] 
-                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    Returns the ${if (isMax) "largest" else "smallest"} value according to the provided [comparator] 
+                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if the ${f.collection} is empty".ifOrEmpty(nullable)}.
+
+                    If multiple $elements produce the ${if (isMax) "maximal" else "minimal"} value, this function returns the first of those values.
                     """ +
                     """
                     @throws NoSuchElementException if the ${f.collection} is empty.
                     """.ifOrEmpty(!nullable)
                 }
+                val sampleFun = "maxOfWithMinOfWith" + if (primitive != null) "Primitive" else "Generic"
+                sample("samples.collections.Collections.Aggregates.$sampleFun")
 
                 typeParam(selectorType)
                 returns(selectorType + "?".ifOrEmpty(nullable))

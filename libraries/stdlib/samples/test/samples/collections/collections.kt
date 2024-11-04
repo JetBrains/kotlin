@@ -6,6 +6,7 @@
 package samples.collections
 
 import samples.*
+import kotlin.math.*
 import kotlin.test.*
 
 
@@ -692,6 +693,181 @@ class Collections {
 
             val emptyList = emptyList<Int>()
             assertFalse(emptyList.any { true })
+        }
+
+        @Sample
+        fun maxMinPrimitive() {
+            // The largest and smallest elements in the array
+            val numbers = intArrayOf(3, 7, 2, 6)
+            assertPrints(numbers.max(), "7")
+            assertPrints(numbers.min(), "2")
+
+            val emptyArray = intArrayOf()
+
+            // max() and min() throw if the array is empty
+            assertFailsWith<NoSuchElementException> { emptyArray.max() }
+            assertFailsWith<NoSuchElementException> { emptyArray.min() }
+
+            // maxOrNull() and minOrNull() return null if the array is empty
+            assertPrints(emptyArray.maxOrNull(), "null")
+            assertPrints(emptyArray.minOrNull(), "null")
+        }
+
+        @Sample
+        fun maxMinFloating() {
+            // The largest and smallest elements in the array
+            val numbers = doubleArrayOf(3.0, 7.2, 2.4, 6.5)
+            assertPrints(numbers.max(), "7.2")
+            assertPrints(numbers.min(), "2.4")
+
+            // max() and min() return `NaN` if any of elements is `NaN`
+            val numbersWithNaN = doubleArrayOf(3.0, Double.NaN, 7.2, 2.4, 6.5)
+            assertPrints(numbersWithNaN.max(), "NaN")
+            assertPrints(numbersWithNaN.min(), "NaN")
+
+            val emptyArray = doubleArrayOf()
+
+            // max() and min() throw if the array is empty
+            assertFailsWith<NoSuchElementException> { emptyArray.max() }
+            assertFailsWith<NoSuchElementException> { emptyArray.min() }
+
+            // maxOrNull() and minOrNull() return null if the array is empty
+            assertPrints(emptyArray.maxOrNull(), "null")
+            assertPrints(emptyArray.minOrNull(), "null")
+        }
+
+        @Sample
+        fun maxMinGeneric() {
+            // The largest and smallest elements according to String.compareTo
+            val names = listOf("Alice", "Bob", "Carol")
+            assertPrints(names.max(), "Carol")
+            assertPrints(names.min(), "Alice")
+
+            val emptyList = emptyList<Int>()
+
+            // max() and min() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.max() }
+            assertFailsWith<NoSuchElementException> { emptyList.min() }
+
+            // maxOrNull() and minOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxOrNull(), "null")
+            assertPrints(emptyList.minOrNull(), "null")
+        }
+
+        @Sample
+        fun maxOfMinOfPrimitive() {
+            // The largest and smallest last digits in the array
+            val numbers = intArrayOf(13, 7, 22, 64)
+            assertPrints(numbers.maxOf { it % 10 }, "7")
+            assertPrints(numbers.minOf { it % 10 }, "2")
+
+            val emptyArray = intArrayOf()
+
+            // maxOf() and minOf() throw if the array is empty
+            assertFailsWith<NoSuchElementException> { emptyArray.maxOf { it % 10 } }
+            assertFailsWith<NoSuchElementException> { emptyArray.minOf { it % 10 } }
+
+            // maxOfOrNull() and minOfOrNull() return null if the array is empty
+            assertPrints(emptyArray.maxOfOrNull { it % 10 }, "null")
+            assertPrints(emptyArray.minOfOrNull { it % 10 }, "null")
+        }
+
+        @Sample
+        fun maxOfMinOfGeneric() {
+            // The length of the longest and shortest names
+            val names = listOf("Alice", "Bob", "Carol")
+            assertPrints(names.maxOf { it.length }, "5")
+            assertPrints(names.minOf { it.length }, "3")
+
+            val emptyList = emptyList<String>()
+
+            // maxOf() and minOf() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxOf { it.length } }
+            assertFailsWith<NoSuchElementException> { emptyList.minOf { it.length } }
+
+            // maxOfOrNull() and minOfOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxOfOrNull { it.length }, "null")
+            assertPrints(emptyList.minOfOrNull { it.length }, "null")
+        }
+
+        @Sample
+        fun maxOfMinOfFloatingResult() {
+            data class Rectangle(val width: Double, val height: Double) {
+                val aspectRatio: Double get() = if (height != 0.0) width / height else Double.NaN
+            }
+
+            // The largest and smallest width-to-height ratios
+            val rectangles = listOf(
+                Rectangle(15.0, 10.0),
+                Rectangle(25.0, 20.0),
+                Rectangle(40.0, 30.0),
+            )
+            assertPrints(rectangles.maxOf { it.aspectRatio }, "1.5")
+            assertPrints(rectangles.minOf { it.aspectRatio }, "1.25")
+
+            // Aspect ratio of a point (0.0 by 0.0) is NaN, hence the result is NaN
+            val rectanglesAndPoint = rectangles + Rectangle(0.0, 0.0)
+            assertPrints(rectanglesAndPoint.maxOf { it.aspectRatio }, "NaN")
+            assertPrints(rectanglesAndPoint.minOf { it.aspectRatio }, "NaN")
+
+            val emptyList = emptyList<Rectangle>()
+
+            // maxOf() and minOf() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxOf { it.aspectRatio } }
+            assertFailsWith<NoSuchElementException> { emptyList.minOf { it.aspectRatio } }
+
+            // maxOfOrNull() and minOfOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxOfOrNull { it.aspectRatio }, "null")
+            assertPrints(emptyList.minOfOrNull { it.aspectRatio }, "null")
+        }
+
+        @Sample
+        fun maxOfWithMinOfWithPrimitive() {
+            // A custom Comparator that orders numbers by their absolute values
+            val absComparator = compareBy<Int> { it.absoluteValue }
+
+            // The largest and smallest cubic values when compared by absolute value
+            val numbers = intArrayOf(-2, 3, -4, 1)
+            assertPrints(numbers.maxOfWith(absComparator) { it * it * it }, "-64")
+            assertPrints(numbers.minOfWith(absComparator) { it * it * it }, "1")
+
+            val emptyArray = intArrayOf()
+
+            // maxOfWith() and minOfWith() throw if the array is empty
+            assertFailsWith<NoSuchElementException> { emptyArray.maxOfWith(absComparator) { it * it * it } }
+            assertFailsWith<NoSuchElementException> { emptyArray.minOfWith(absComparator) { it * it * it } }
+
+            // maxOfWithOrNull() and minOfWithOrNull() return null if the array is empty
+            assertPrints(emptyArray.maxOfWithOrNull(absComparator) { it * it * it }, "null")
+            assertPrints(emptyArray.minOfWithOrNull(absComparator) { it * it * it }, "null")
+        }
+
+        @Sample
+        fun maxOfWithMinOfWithGeneric() {
+            data class Book(val title: String, val publishYear: Int, val rating: Double)
+
+            // A custom Comparator that orders strings by their length
+            val lengthComparator = compareBy<String> { it.length }
+
+            // The longest and shortest book titles
+            val books = listOf(
+                Book("Red Sand", 2004, 3.5),
+                Book("Silver Bullet", 2009, 4.4),
+                Book("Clear Water", 2018, 4.1),
+                Book("Night Sky", 2023, 3.8)
+            )
+            assertPrints(books.maxOfWith(lengthComparator) { it.title }, "Silver Bullet")
+            assertPrints(books.minOfWith(lengthComparator) { it.title }, "Red Sand")
+
+            val emptyList = listOf<Book>()
+
+            // maxOfWith() and minOfWith() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxOfWith(lengthComparator) { it.title } }
+            assertFailsWith<NoSuchElementException> { emptyList.minOfWith(lengthComparator) { it.title } }
+
+            // maxOfWithOrNull() and minOfWithOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxOfWithOrNull(lengthComparator) { it.title }, "null")
+            assertPrints(emptyList.minOfWithOrNull(lengthComparator) { it.title }, "null")
         }
 
         @Sample
