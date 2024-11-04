@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -41,7 +41,7 @@ internal class KaFe10Session(
     visibilityChecker = KaFe10VisibilityChecker(analysisSessionProvider),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider),
-    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, resolutionScope),
+    analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, resolutionScope),
     signatureSubstitutor = KaFe10SignatureSubstitutor(analysisSessionProvider),
     resolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(analysisSessionProvider),
     compilerPluginGeneratedDeclarationsProvider = KaFe10CompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider),
