@@ -1163,7 +1163,7 @@ open class PsiRawFirBuilder(
                     isActual = this@toFirConstructor?.hasActualModifier() == true || isImplicitlyActual
 
                     // a warning about inner script class is reported on the class itself
-                    isInner = owner.parent.parent !is KtScript && owner.hasModifier(INNER_KEYWORD)
+                    isInner = owner.parent.parent !is KtScript && owner.hasInnerModifier()
                     isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                     isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
@@ -1196,7 +1196,7 @@ open class PsiRawFirBuilder(
         }
 
         private fun KtClassOrObject.obtainDispatchReceiverForConstructor(): ConeClassLikeType? =
-            if (hasModifier(INNER_KEYWORD)) dispatchReceiverForInnerClassConstructor() else null
+            if (hasInnerModifier()) dispatchReceiverForInnerClassConstructor() else null
 
         override fun visitKtFile(file: KtFile, data: FirElement?): FirElement {
             context.packageFqName = when (mode) {
@@ -1693,7 +1693,7 @@ open class PsiRawFirBuilder(
                     ).apply {
                         isExpect = classIsExpect
                         isActual = classOrObject.hasActualModifier()
-                        isInner = classOrObject.hasModifier(INNER_KEYWORD) && classOrObject.parent.parent !is KtScript
+                        isInner = classOrObject.hasInnerModifier() && classOrObject.parent.parent !is KtScript
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
                         isInline = classOrObject.hasModifier(INLINE_KEYWORD) || classOrObject.hasModifier(VALUE_KEYWORD)
@@ -1880,6 +1880,7 @@ open class PsiRawFirBuilder(
             return withChildClassName(typeAlias.nameAsSafeName, isExpect = typeAliasIsExpect) {
                 buildTypeAlias {
                     symbol = FirTypeAliasSymbol(context.currentClassId)
+                    val isInner = typeAlias.hasInnerModifier()
                     withContainerSymbol(symbol) {
                         source = typeAlias.toFirSourceElement()
                         moduleData = baseModuleData
@@ -1892,11 +1893,15 @@ open class PsiRawFirBuilder(
                         ).apply {
                             isExpect = typeAliasIsExpect
                             isActual = typeAlias.hasActualModifier()
-                            isInner = typeAlias.hasInnerModifier()
+                            this.isInner = isInner
                         }
                         expandedTypeRef = typeAlias.getTypeReference().toFirOrErrorType()
                         typeAlias.extractAnnotationsTo(this)
                         typeAlias.extractTypeParametersTo(this, symbol)
+
+                        if (isInner || isLocal) {
+                            context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+                        }
                     }
                 }
             }
@@ -2159,7 +2164,7 @@ open class PsiRawFirBuilder(
                     status = FirDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
                         isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                         isActual = hasActualModifier()
-                        isInner = owner.hasModifier(INNER_KEYWORD)
+                        isInner = owner.hasInnerModifier()
                         isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                         isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                     }

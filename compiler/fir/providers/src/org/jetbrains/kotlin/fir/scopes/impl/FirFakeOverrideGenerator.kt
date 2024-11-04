@@ -112,7 +112,7 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean = baseFunction.isExpect,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newParameterTypes: List<ConeKotlinType?>? = null,
-        newTypeParameters: List<FirTypeParameter>? = null,
+        newTypeParameters: List<FirTypeParameterRef>? = null,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,

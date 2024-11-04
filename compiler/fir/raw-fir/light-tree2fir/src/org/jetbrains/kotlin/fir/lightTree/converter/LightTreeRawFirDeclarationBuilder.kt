@@ -1288,6 +1288,7 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                 }
 
+                val isInner = calculatedModifiers.isInner()
                 buildTypeAlias {
                     source = typeAlias.toFirSourceElement()
                     moduleData = baseModuleData
@@ -1300,13 +1301,17 @@ class LightTreeRawFirDeclarationBuilder(
                     ).apply {
                         isExpect = typeAliasIsExpect
                         isActual = calculatedModifiers.hasActual()
-                        this.isInner = calculatedModifiers.isInner()
+                        this.isInner = isInner
                     }
 
                     symbol = typeAliasSymbol
                     expandedTypeRef = firType
                     annotations += aliasAnnotations
                     typeParameters += firTypeParameters
+
+                    if (isInner || isLocal) {
+                        context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+                    }
                 }
             }
         }

@@ -396,6 +396,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val classLikeDeclaration: Element by sealedElement(Declaration) {
         parent(memberDeclaration)
         parent(statement)
+        parent(typeParameterRefsOwner)
 
         +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
@@ -406,7 +407,6 @@ object FirTree : AbstractFirTreeBuilder() {
     val klass: Element by sealedElement(Declaration, name = "Class") {
         parent(classLikeDeclaration)
         parent(statement)
-        parent(typeParameterRefsOwner)
         parent(controlFlowGraphOwner)
 
         +declaredSymbol(classSymbolType.withArgs(klass))
@@ -444,9 +444,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val typeAlias: Element by element(Declaration) {
         parent(classLikeDeclaration)
-        parent(typeParametersOwner)
 
-        +typeParameters
         +FieldSets.name
         +declaredSymbol(typeAliasSymbolType)
         +field("expandedTypeRef", typeRef, withReplace = true, withTransform = true)
