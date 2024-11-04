@@ -15,6 +15,7 @@ import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.impl.compiled.ClsDecompilerImpl
 import com.intellij.psi.stubs.BinaryFileStubBuilders
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
@@ -45,5 +46,10 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
             )
             registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
         }
+
+        application.registerService(
+            KotlinDeclarationInCompiledFileSearcher::class.java,
+            KotlinDeclarationInCompiledFileSearcher()
+        )
     }
 }
