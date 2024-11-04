@@ -145,10 +145,7 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
     override fun toString() = "Compiler Phase @$name"
 }
 
-// TODO: This class should be named `SameTypeNamedCompilerPhase`,
-//  but it would be a breaking change (e.g. there are usages in IntelliJ repo),
-//  so we introduce a typealias instead as a temporary solution.
-class NamedCompilerPhase<in Context : LoggingContext, Data>(
+class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
     prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
@@ -194,9 +191,6 @@ class NamedCompilerPhase<in Context : LoggingContext, Data>(
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 }
-
-
-typealias SameTypeNamedCompilerPhase<Context, Data> = NamedCompilerPhase<Context, Data>
 
 /**
  * [AbstractNamedCompilerPhase] with different [Input] and [Output] types (unlike [SameTypeNamedCompilerPhase]).

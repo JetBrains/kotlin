@@ -872,7 +872,7 @@ fun getJsLowerings(
 
 fun getJsPhases(
     configuration: CompilerConfiguration
-): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
+): SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     lower = getJsLowerings(configuration).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,

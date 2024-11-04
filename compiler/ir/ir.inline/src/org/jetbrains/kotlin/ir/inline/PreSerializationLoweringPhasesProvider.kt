@@ -23,7 +23,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendCon
 
     // TODO: The commented out lowerings must be copied here from the second compilation stage in scope of KT-71415
     fun lowerings(configuration: CompilerConfiguration): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
-        NamedCompilerPhase(
+        SameTypeNamedCompilerPhase(
             name = "PreSerializationLowerings",
             actions = DEFAULT_IR_ACTIONS,
             nlevels = 1,
