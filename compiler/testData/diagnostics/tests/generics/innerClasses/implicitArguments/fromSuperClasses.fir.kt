@@ -3,7 +3,7 @@
 // CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, <!UNRESOLVED_REFERENCE!>X<!>>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias Alias<W> = Map<W, X>
 }
 
 class Derived : Outer<String, Int>() {
@@ -21,7 +21,7 @@ class A : Outer<Double, Short>() {
 
 fun foo() {
     Derived().foo() checkType { _<Outer<String, Int>.Inner<Char>>() }
-    Derived().baz() checkType { _<Map<Char, String>>() }
+    Derived().baz() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <E> CheckTypeInv<E>._(): Unit")!>_<!><Map<Char, String>>() }
     A.B().bar() checkType { _<Outer<Float, Long>.Inner<String>>() }
-    A.B().x() checkType { _<Map<String, Float>>() }
+    A.B().x() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <E> CheckTypeInv<E>._(): Unit")!>_<!><Map<String, Float>>() }
 }

@@ -1892,6 +1892,7 @@ open class PsiRawFirBuilder(
                         ).apply {
                             isExpect = typeAliasIsExpect
                             isActual = typeAlias.hasActualModifier()
+                            isInner = typeAlias.hasInnerModifier()
                         }
                         expandedTypeRef = typeAlias.getTypeReference().toFirOrErrorType()
                         typeAlias.extractAnnotationsTo(this)

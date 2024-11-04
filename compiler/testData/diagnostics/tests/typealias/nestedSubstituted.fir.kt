@@ -4,7 +4,7 @@
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 
 class C<T> {
-    <!WRONG_MODIFIER_TARGET!>inner<!> typealias P2 = Pair<<!UNRESOLVED_REFERENCE!>T<!>, Int>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias P2 = Pair<T, Int>
 }
 
-val p1: C<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.P2 = Pair("", 1)
+val p1: C<String>.P2 = <!TYPE_MISMATCH("T (of class C<T>); kotlin.String"), TYPE_MISMATCH("T (of class C<T>); kotlin.String")!>Pair("", 1)<!>
