@@ -10,6 +10,6 @@ FILE: innerTypeAlias.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner typealias TA = R|A<T>|
+        public final inner typealias TA<Outer(T)> = R|A<T>|
 
     }

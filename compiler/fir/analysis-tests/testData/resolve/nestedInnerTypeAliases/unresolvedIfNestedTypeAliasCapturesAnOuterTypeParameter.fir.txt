@@ -12,6 +12,6 @@ FILE: unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt
 
         public final typealias NestedTA = R|A<T>|
 
-        public final inner typealias InnerTA = R|A<T>|
+        public final inner typealias InnerTA<Outer(T)> = R|A<T>|
 
     }

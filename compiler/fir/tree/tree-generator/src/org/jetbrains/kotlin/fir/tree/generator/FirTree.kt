@@ -456,9 +456,8 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val typeAlias: Element by element(Declaration) {
         parent(classLikeDeclaration)
-        parent(typeParametersOwner)
+        parent(typeParameterRefsOwner)
 
-        +typeParameters
         +FieldSets.name
         +declaredSymbol(typeAliasSymbolType)
         +field("expandedTypeRef", typeRef, withReplace = true, withTransform = true)
