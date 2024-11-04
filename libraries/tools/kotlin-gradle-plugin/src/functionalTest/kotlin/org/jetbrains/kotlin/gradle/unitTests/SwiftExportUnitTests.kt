@@ -251,15 +251,18 @@ class SwiftExportUnitTests {
 
     @Test
     fun `test swift export exported modules`() {
-        val projects = multiModuleSwiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+        val projects = multiModuleSwiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
 
-            binaries {
-                linkTaskProvider.configure {
-                    freeCompilerArgs += "-opt-in=some.value"
+                compilerOptions {
+                    freeCompilerArgs.add("-opt-in=some.value")
                 }
+            },
+            code = {
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
-        }
+        )
 
         projects.forEach { it.evaluate() }
         val project = projects.first()
@@ -486,9 +489,9 @@ class SwiftExportUnitTests {
 private fun multiModuleSwiftExportProject(
     mainProjectName: String = "shared",
     subprojects: List<String> = listOf("subproject"),
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
     code: SwiftExportExtension.() -> Unit = {},
 ): List<ProjectInternal> {
-    val multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() }
     val project = buildProject(
         projectBuilder = {
             withName(mainProjectName)
