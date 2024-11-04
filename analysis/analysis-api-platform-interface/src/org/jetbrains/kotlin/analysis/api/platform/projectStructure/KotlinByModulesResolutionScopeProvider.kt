@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.utils.topologicalSort
 
 public class KotlinByModulesResolutionScopeProvider : KotlinResolutionScopeProvider {
@@ -19,6 +20,10 @@ public class KotlinByModulesResolutionScopeProvider : KotlinResolutionScopeProvi
             }
         }
 
-        return GlobalSearchScope.union(allModules.map { it.contentScope })
+        val scope = GlobalSearchScope.union(allModules.map { it.contentScope })
+
+        // workaround for KT-72988
+        val builtinsScope = BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(module.project)
+        return scope.uniteWith(builtinsScope)
     }
 }
