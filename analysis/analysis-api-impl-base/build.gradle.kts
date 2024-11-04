@@ -12,6 +12,7 @@ dependencies {
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(project(":compiler:backend-common"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())

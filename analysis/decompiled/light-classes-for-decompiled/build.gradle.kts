@@ -20,7 +20,6 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(project(":analysis:decompiled:light-classes-for-decompiled-fe10"))
 
     testImplementation(kotlinTest("junit"))
     testCompileOnly(toolsJarApi())

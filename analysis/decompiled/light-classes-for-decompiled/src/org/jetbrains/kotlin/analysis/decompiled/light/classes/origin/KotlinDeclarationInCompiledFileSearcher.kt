@@ -31,27 +31,14 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-abstract class KotlinDeclarationInCompiledFileSearcher {
-    abstract fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration?
+open class KotlinDeclarationInCompiledFileSearcher {
     fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember): KtDeclaration? {
-        val signature = when (member) {
-            is PsiField -> {
-                val desc = MapPsiToAsmDesc.typeDesc(member.type)
-                MemberSignature.fromFieldNameAndDesc(member.name, desc)
-            }
+        val relativeClassName = generateSequence(member.containingClass) { it.containingClass }.toList().dropLast(1).reversed()
+            .map { Name.identifier(it.name!!) }
 
-            is PsiMethod -> {
-                val desc = MapPsiToAsmDesc.methodDesc(member)
-                val name = if (member.isConstructor) "<init>" else member.name
-                MemberSignature.fromMethodNameAndDesc(name, desc)
-            }
-
-            else -> null
-        } ?: return null
-
+        val memberName = member.name ?: return null
         val multifileClassFile = findMainClassOfMultifilePartClass(file)
-
-        return findDeclarationInCompiledFile(multifileClassFile ?: file, member, signature)
+        return findByStubs(multifileClassFile ?: file, relativeClassName, member, memberName)
     }
 
     /**

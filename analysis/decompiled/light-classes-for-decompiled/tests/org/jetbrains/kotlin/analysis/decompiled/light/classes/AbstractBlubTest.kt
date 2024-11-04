@@ -16,7 +16,6 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.impl.PsiManagerEx
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.StandaloneModeBinaryTestConfigurator
-import org.jetbrains.kotlin.analysis.decompiled.light.classes.fe10.KotlinDeclarationInCompiledFileSearcherFE10Impl
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -40,16 +38,10 @@ abstract class AbstractBlubTest : AbstractAnalysisApiBasedTest() {
             override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
                 get() = super.serviceRegistrars + object : AnalysisApiTestServiceRegistrar() {
                     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-                        application.registerService(
-                            KotlinDeclarationInCompiledFileSearcher::class.java,
-                            KotlinDeclarationInCompiledFileSearcherFE10Impl()
-                        )
-                    }
-
-                    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-                        project.registerService(PsiManagerEx::class.java)
-
-                        testServices.environmentManager.getApplication()
+//                        application.registerService(
+//                            KotlinDeclarationInCompiledFileSearcher::class.java,
+//                            KotlinDeclarationInCompiledFileSearcher()
+//                        )
                     }
                 }
 
