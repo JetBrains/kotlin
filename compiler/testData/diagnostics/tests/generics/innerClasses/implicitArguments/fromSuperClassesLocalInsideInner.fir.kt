@@ -44,7 +44,7 @@ class Outer<T> {
             x = foobar<String>()
 
             x().foo().a() checkType { _<A<T, F, String, Double, Short, Long>>() }
-            x().bar() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<T, F, String, Double, Short, Char>>() }
+            x().bar() checkType { _<A<T, F, String, Double, Short, Char>>() }
 
             x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
             x = <!ASSIGNMENT_TYPE_MISMATCH!>z.foobar<String>()<!>
@@ -53,7 +53,7 @@ class Outer<T> {
             y = noParameters()
 
             y().foo().a() checkType { _<A<T, F, Any, Double, Short, Long>>() }
-            y().bar() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<T, F, Any, Double, Short, Char>>() }
+            y().bar() checkType { _<A<T, F, Any, Double, Short, Char>>() }
         }
     }
 }

@@ -31,9 +31,9 @@ internal class FirTypeAliasImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override var deprecationsProvider: DeprecationsProvider,
-    override val typeParameters: MutableList<FirTypeParameter>,
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef,
@@ -46,27 +46,27 @@ internal class FirTypeAliasImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         expandedTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        transformStatus(transformer, data)
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         transformExpandedTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        typeParameters.transformInplace(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        status = status.transform(transformer, data)
         return this
     }
 

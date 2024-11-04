@@ -115,6 +115,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(anonymousObjectExpression)
     }
 
+    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+        visitClassLikeDeclaration(typeAlias)
+    }
+
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
         visitExpression(anonymousFunctionExpression)
     }

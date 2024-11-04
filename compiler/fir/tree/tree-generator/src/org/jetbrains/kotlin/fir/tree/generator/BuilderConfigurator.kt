@@ -117,7 +117,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(typeAlias) {
             parents += declarationBuilder
-            parents += typeParametersOwnerBuilder
+            parents += typeParameterRefsOwnerBuilder
             withCopy()
         }
 

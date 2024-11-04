@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
+            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number, [ResolvedTo(RAW_FIR)] Outer(T)> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
 
         }
 
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
+            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number, [ResolvedTo(RAW_FIR)] Outer(T)> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
 
         }
 
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
+            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number, [ResolvedTo(RAW_FIR)] Outer(T)> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
 
         }
 
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
+            @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number, [ResolvedTo(RAW_FIR)] Outer(T)> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
 
         }
 
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
+            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
 
         }
 
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
+            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
 
         }
 
