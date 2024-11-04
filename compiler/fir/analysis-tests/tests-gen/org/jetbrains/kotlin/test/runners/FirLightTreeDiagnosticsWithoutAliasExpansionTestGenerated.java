@@ -271,6 +271,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
       }
+
+      @Test
+      @TestMetadata("unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt")
+      public void testUnresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt");
+      }
     }
 
     @Nested

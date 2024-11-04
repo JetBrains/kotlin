@@ -1,0 +1,17 @@
+FILE: unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt
+    public final class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B<T> : R|kotlin/Any| {
+        public constructor<T>(): R|B<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias NestedTA = R|A<T>|
+
+        public final inner typealias InnerTA = R|A<T>|
+
+    }
