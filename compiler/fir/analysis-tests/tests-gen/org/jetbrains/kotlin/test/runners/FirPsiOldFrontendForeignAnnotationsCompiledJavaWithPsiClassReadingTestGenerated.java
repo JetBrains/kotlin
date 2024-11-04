@@ -1065,6 +1065,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("forkPointCausedByWarnAnnotation.kt")
+        public void testForkPointCausedByWarnAnnotation() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
