@@ -1,0 +1,45 @@
+{
+  "resources":{
+  "includes":[{
+    "pattern":"\\QMETA-INF/allow-configuring-from-environment\\E"
+  }, {
+    "pattern":"\\QMETA-INF/compiler.version\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.nio.file.spi.FileSystemProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.apache.xerces.xni.parser.XMLParserConfiguration\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.jetbrains.kotlin.builtins.BuiltInsLoader\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.jetbrains.kotlin.util.ModuleVisibilityHelper\\E"
+  }, {
+    "pattern":"\\Qkotlin/annotation/annotation.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/collections/collections.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/coroutines/coroutines.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/internal/internal.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/kotlin.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/ranges/ranges.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/reflect/reflect.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qorg/jetbrains/kotlin/cli/jvm/compiler/KotlinCoreEnvironment$Companion.class\\E"
+  }, {
+    "pattern":"\\Qorg/jetbrains/kotlin/utils/PathUtil.class\\E"
+  }, {
+    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfc.nrm\\E"
+  }]},
+  "bundles":[]
+}

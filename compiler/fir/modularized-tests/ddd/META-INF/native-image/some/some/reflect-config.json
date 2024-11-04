@@ -1,0 +1,1629 @@
+[
+{
+  "name":"[Lcom.intellij.lang.jvm.facade.JvmElementProvider;"
+},
+{
+  "name":"[Lcom.intellij.openapi.editor.event.DocumentListener;"
+},
+{
+  "name":"[Lcom.intellij.psi.JavaModuleSystem;"
+},
+{
+  "name":"[Lcom.intellij.psi.JavaResolveResult;"
+},
+{
+  "name":"[Lcom.intellij.psi.PsiClass;"
+},
+{
+  "name":"[Lcom.intellij.psi.PsiDirectory;"
+},
+{
+  "name":"[Lcom.intellij.psi.PsiElementFinder;"
+},
+{
+  "name":"[Lcom.intellij.psi.PsiMethod;"
+},
+{
+  "name":"[Lcom.intellij.psi.augment.PsiAugmentProvider;"
+},
+{
+  "name":"[Lcom.intellij.psi.impl.cache.TypeInfo;"
+},
+{
+  "name":"[Lcom.intellij.util.KeyedLazyInstanceEP;"
+},
+{
+  "name":"[Ljava.lang.Object;"
+},
+{
+  "name":"[Ljava.lang.String;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.extensions.CompilerConfigurationExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtAnnotation;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtAnnotationEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtBackingField;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtBlockStringTemplateEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtClass;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtClassBody;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtClassInitializer;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtClassLiteralExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtCollectionLiteralExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtConstantExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtConstructorCalleeExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtContextReceiver;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtContextReceiverList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtContractEffect;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtContractEffectList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtDeclarationModifierList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtDotQualifiedExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtDynamicType;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtFileAnnotationList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtFunctionType;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtFunctionTypeReceiver;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtImportAlias;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtImportDirective;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtImportList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtInitializerList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtIntersectionType;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtLambdaArgument;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtNameReferenceExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtNamedFunction;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtNullableType;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtObjectDeclaration;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtPackageDirective;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtParameter;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtParameterList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtPrimaryConstructor;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtProperty;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtPropertyAccessor;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtScript;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtSecondaryConstructor;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtStringTemplateExpression;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtSuperTypeCallEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtSuperTypeEntry;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtSuperTypeList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeAlias;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeArgumentList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeConstraint;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeConstraintList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeParameter;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeParameterList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeProjection;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtTypeReference;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtUserType;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtValueArgument;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtValueArgumentList;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.psi.KtValueArgumentName;"
+},
+{
+  "name":"[Lorg.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor;"
+},
+{
+  "name":"com.intellij.codeInsight.ContainerProvider"
+},
+{
+  "name":"com.intellij.lang.jvm.facade.JvmElementProvider"
+},
+{
+  "name":"com.intellij.openapi.application.ApplicationManager",
+  "fields":[{"name":"ourApplication"}]
+},
+{
+  "name":"com.intellij.openapi.application.impl.ModalityStateEx",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers",
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.openapi.util.SimpleModificationTracker",
+  "fields":[{"name":"myCounter"}]
+},
+{
+  "name":"com.intellij.openapi.vfs.PersistentFSConstants",
+  "fields":[{"name":"ourMaxIntellisenseFileSize"}]
+},
+{
+  "name":"com.intellij.psi.JavaModuleSystem"
+},
+{
+  "name":"com.intellij.psi.LanguageSubstitutors",
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.psi.PsiElementFinder"
+},
+{
+  "name":"com.intellij.psi.SingleRootFileViewProvider",
+  "fields":[{"name":"myPsiFile"}]
+},
+{
+  "name":"com.intellij.psi.augment.PsiAugmentProvider"
+},
+{
+  "name":"com.intellij.psi.compiled.ClassFileDecompilers",
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.psi.compiled.ClassFileDecompilers$Decompiler"
+},
+{
+  "name":"com.intellij.psi.impl.JavaClassSupersImpl",
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.psi.impl.source.JavaFileElementType",
+  "methods":[{"name":"getExternalId","parameterTypes":[] }]
+},
+{
+  "name":"com.intellij.psi.impl.source.tree.CompositeElement",
+  "fields":[{"name":"myWrapper"}]
+},
+{
+  "name":"com.intellij.psi.stubs.StubBase",
+  "fields":[{"name":"myPsi"}]
+},
+{
+  "name":"com.intellij.util.ConcurrentLongObjectHashMap",
+  "fields":[{"name":"baseCount"}, {"name":"cellsBusy"}, {"name":"sizeCtl"}, {"name":"transferIndex"}]
+},
+{
+  "name":"com.intellij.util.ConcurrentLongObjectHashMap$CounterCell",
+  "fields":[{"name":"value"}]
+},
+{
+  "name":"com.intellij.util.KeyedLazyInstanceEP"
+},
+{
+  "name":"com.intellij.util.QueryExecutor"
+},
+{
+  "name":"com.intellij.util.containers.ConcurrentIntObjectHashMap",
+  "fields":[{"name":"baseCount"}, {"name":"cellsBusy"}, {"name":"sizeCtl"}, {"name":"transferIndex"}]
+},
+{
+  "name":"com.intellij.util.containers.ConcurrentIntObjectHashMap$CounterCell",
+  "fields":[{"name":"value"}]
+},
+{
+  "name":"java.io.DeleteOnExitHook",
+  "allDeclaredFields":true
+},
+{
+  "name":"java.lang.Boolean",
+  "fields":[{"name":"TRUE"}]
+},
+{
+  "name":"java.lang.Byte"
+},
+{
+  "name":"java.lang.CharSequence"
+},
+{
+  "name":"java.lang.Character"
+},
+{
+  "name":"java.lang.Cloneable"
+},
+{
+  "name":"java.lang.Comparable"
+},
+{
+  "name":"java.lang.Double"
+},
+{
+  "name":"java.lang.Enum"
+},
+{
+  "name":"java.lang.Float"
+},
+{
+  "name":"java.lang.Integer"
+},
+{
+  "name":"java.lang.Iterable"
+},
+{
+  "name":"java.lang.Long"
+},
+{
+  "name":"java.lang.Number"
+},
+{
+  "name":"java.lang.Object"
+},
+{
+  "name":"java.lang.Runtime",
+  "methods":[{"name":"version","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Runtime$Version",
+  "methods":[{"name":"build","parameterTypes":[] }, {"name":"major","parameterTypes":[] }, {"name":"minor","parameterTypes":[] }, {"name":"pre","parameterTypes":[] }, {"name":"security","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Short"
+},
+{
+  "name":"java.lang.String"
+},
+{
+  "name":"java.lang.Throwable",
+  "fields":[{"name":"backtrace"}]
+},
+{
+  "name":"java.lang.Void"
+},
+{
+  "name":"java.lang.annotation.Annotation"
+},
+{
+  "name":"java.lang.annotation.ElementType"
+},
+{
+  "name":"java.lang.annotation.RetentionPolicy"
+},
+{
+  "name":"java.security.SecureRandomParameters"
+},
+{
+  "name":"java.util.Collection"
+},
+{
+  "name":"java.util.Iterator"
+},
+{
+  "name":"java.util.List"
+},
+{
+  "name":"java.util.ListIterator"
+},
+{
+  "name":"java.util.Map"
+},
+{
+  "name":"java.util.Map.Entry"
+},
+{
+  "name":"java.util.Optional",
+  "methods":[{"name":"isPresent","parameterTypes":[] }, {"name":"orElse","parameterTypes":["java.lang.Object"] }]
+},
+{
+  "name":"java.util.Set"
+},
+{
+  "name":"java.util.concurrent.atomic.AtomicBoolean",
+  "fields":[{"name":"value"}]
+},
+{
+  "name":"java.util.concurrent.atomic.AtomicReference",
+  "fields":[{"name":"value"}]
+},
+{
+  "name":"javax.swing.KeyboardManager",
+  "methods":[{"name":"getCurrentManager","parameterTypes":[] }]
+},
+{
+  "name":"junit.framework.TestCase",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"kotlin.SafePublicationLazyImpl",
+  "fields":[{"name":"_value"}]
+},
+{
+  "name":"kotlin.jvm.internal.BooleanCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.ByteCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.CharCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.DefaultConstructorMarker"
+},
+{
+  "name":"kotlin.jvm.internal.DoubleCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.EnumCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.FloatCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.IntCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.LongCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.ShortCompanionObject"
+},
+{
+  "name":"kotlin.jvm.internal.StringCompanionObject"
+},
+{
+  "name":"kotlin.reflect.KCallable",
+  "methods":[{"name":"getName","parameterTypes":[] }]
+},
+{
+  "name":"kotlin.reflect.KFunction",
+  "methods":[{"name":"getName","parameterTypes":[] }]
+},
+{
+  "name":"kotlin.reflect.KProperty1",
+  "methods":[{"name":"getName","parameterTypes":[] }]
+},
+{
+  "name":"kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"kotlinx.coroutines.EventLoopImplBase",
+  "fields":[{"name":"_delayed"}, {"name":"_isCompleted"}, {"name":"_queue"}]
+},
+{
+  "name":"kotlinx.coroutines.JobSupport",
+  "fields":[{"name":"_parentHandle"}, {"name":"_state"}]
+},
+{
+  "name":"kotlinx.coroutines.internal.DispatchedContinuation",
+  "fields":[{"name":"_reusableCancellableContinuation"}]
+},
+{
+  "name":"kotlinx.coroutines.internal.LimitedDispatcher",
+  "fields":[{"name":"runningWorkers"}]
+},
+{
+  "name":"kotlinx.coroutines.internal.LockFreeTaskQueue",
+  "fields":[{"name":"_cur"}]
+},
+{
+  "name":"kotlinx.coroutines.internal.LockFreeTaskQueueCore",
+  "fields":[{"name":"_next"}, {"name":"_state"}]
+},
+{
+  "name":"kotlinx.coroutines.scheduling.CoroutineScheduler",
+  "fields":[{"name":"_isTerminated"}, {"name":"controlState"}, {"name":"parkedWorkersStack"}]
+},
+{
+  "name":"org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.apache.xerces.parsers.XIncludeAwareParserConfiguration",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.KtPsiSourceElement",
+  "fields":[{"name":"_lighterASTNode"}, {"name":"_treeStructure"}]
+},
+{
+  "name":"org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter",
+  "methods":[{"name":"getExtensions","parameterTypes":["com.intellij.openapi.project.Project"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors",
+  "allDeclaredFields":true,
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments",
+  "allDeclaredFields":true,
+  "methods":[{"name":"getCommonSources","parameterTypes":[] }, {"name":"getOptIn","parameterTypes":[] }, {"name":"getPluginClasspaths","parameterTypes":[] }, {"name":"getPluginOptions","parameterTypes":[] }, {"name":"setAllowKotlinPackage","parameterTypes":["boolean"] }, {"name":"setApiVersion","parameterTypes":["java.lang.String"] }, {"name":"setCommonSources","parameterTypes":["java.lang.String[]"] }, {"name":"setContextReceivers","parameterTypes":["boolean"] }, {"name":"setExplicitApi","parameterTypes":["java.lang.String"] }, {"name":"setIncrementalCompilation","parameterTypes":["java.lang.Boolean"] }, {"name":"setInlineClasses","parameterTypes":["boolean"] }, {"name":"setLanguageVersion","parameterTypes":["java.lang.String"] }, {"name":"setMultiPlatform","parameterTypes":["boolean"] }, {"name":"setNewInference","parameterTypes":["boolean"] }, {"name":"setOptIn","parameterTypes":["java.lang.String[]"] }, {"name":"setPluginClasspaths","parameterTypes":["java.lang.String[]"] }, {"name":"setPluginOptions","parameterTypes":["java.lang.String[]"] }, {"name":"setReportOutputFiles","parameterTypes":["boolean"] }, {"name":"setSkipMetadataVersionCheck","parameterTypes":["boolean"] }, {"name":"setSkipPrereleaseCheck","parameterTypes":["boolean"] }, {"name":"setSuppressVersionWarnings","parameterTypes":["boolean"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments",
+  "allDeclaredFields":true,
+  "methods":[{"name":"getErrors","parameterTypes":[] }, {"name":"getFreeArgs","parameterTypes":[] }, {"name":"getInternalArguments","parameterTypes":[] }, {"name":"setAllWarningsAsErrors","parameterTypes":["boolean"] }, {"name":"setErrors","parameterTypes":["org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors"] }, {"name":"setFreeArgs","parameterTypes":["java.util.List"] }, {"name":"setInternalArguments","parameterTypes":["java.util.List"] }, {"name":"setVersion","parameterTypes":["boolean"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.Freezable",
+  "allDeclaredFields":true
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.InternalArgument",
+  "allDeclaredFields":true,
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments",
+  "allDeclaredFields":true,
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"getFriendPaths","parameterTypes":[] }, {"name":"getJavaSourceRoots","parameterTypes":[] }, {"name":"getJsr305","parameterTypes":[] }, {"name":"getScriptResolverEnvironment","parameterTypes":[] }, {"name":"getScriptTemplates","parameterTypes":[] }, {"name":"setAllowNoSourceFiles","parameterTypes":["boolean"] }, {"name":"setClasspath","parameterTypes":["java.lang.String"] }, {"name":"setDestination","parameterTypes":["java.lang.String"] }, {"name":"setFriendPaths","parameterTypes":["java.lang.String[]"] }, {"name":"setInheritMultifileParts","parameterTypes":["boolean"] }, {"name":"setJavaParameters","parameterTypes":["boolean"] }, {"name":"setJavaSourceRoots","parameterTypes":["java.lang.String[]"] }, {"name":"setJdkHome","parameterTypes":["java.lang.String"] }, {"name":"setJsr305","parameterTypes":["java.lang.String[]"] }, {"name":"setJvmDefault","parameterTypes":["java.lang.String"] }, {"name":"setJvmTarget","parameterTypes":["java.lang.String"] }, {"name":"setModuleName","parameterTypes":["java.lang.String"] }, {"name":"setNoReflect","parameterTypes":["boolean"] }, {"name":"setNoStdlib","parameterTypes":["boolean"] }, {"name":"setScriptResolverEnvironment","parameterTypes":["java.lang.String[]"] }, {"name":"setScriptTemplates","parameterTypes":["java.lang.String[]"] }, {"name":"setSuppressDeprecatedJvmTargetWarning","parameterTypes":["boolean"] }, {"name":"setUseOldInlineClassesManglingScheme","parameterTypes":["boolean"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.cli.common.extensions.ShellExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.codegen.binding.CodegenBinding",
+  "allPublicFields":true
+},
+{
+  "name":"org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings",
+  "allPublicFields":true
+},
+{
+  "name":"org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.extensions.CompilerConfigurationExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
+},
+{
+  "name":"org.jetbrains.kotlin.fir.AbstractFullPipelineModularizedTest",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.jetbrains.kotlin.fir.AbstractModularizedTest",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.jetbrains.kotlin.fir.FullPipelineModularizedTest",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["java.lang.String"] }, {"name":"testTotalKotlin","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+},
+{
+  "name":"org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl",
+  "fields":[{"name":"resolutionResult"}]
+},
+{
+  "name":"org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory",
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtAnnotatedExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtAnnotation",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtAnnotationEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtArrayAccessExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtBackingField",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtBinaryExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtBreakExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtCallExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtCallableReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtCatchClause",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtClass",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinClassStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtClassBody",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtClassInitializer",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtClassLiteralExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtCollectionLiteralExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtConstantExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtConstructorCalleeExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtConstructorDelegationCall",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContainerNode",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContainerNodeForControlStructureBody",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContextReceiver",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContextReceiverList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContinueExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContractEffect",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtContractEffectList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDeclarationModifierList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDestructuringDeclaration",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDoWhileExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDotQualifiedExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtDynamicType",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtFileAnnotationList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtFinallySection",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtForExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtFunctionLiteral",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtFunctionType",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtFunctionTypeReceiver",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtIfExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtImportAlias",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtImportDirective",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtImportList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtInitializerList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtIntersectionType",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtIsExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtLabelReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtLabeledExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtLambdaArgument",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtNameReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtNamedFunction",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtNullableType",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtObjectDeclaration",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinObjectStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtObjectLiteralExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtOperationReferenceExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPackageDirective",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtParameter",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinParameterStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtParameterList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtParenthesizedExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPostfixExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPrefixExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPrimaryConstructor",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtProperty",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPropertyAccessor",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtPropertyDelegate",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtReturnExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSafeQualifiedExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtScript",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinScriptStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtScriptInitializer",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSecondaryConstructor",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtStringTemplateExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSuperExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSuperTypeCallEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSuperTypeEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtSuperTypeList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtThisExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtThrowExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTryExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeAlias",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeArgumentList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeConstraint",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeConstraintList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeParameter",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeParameterList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeProjection",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtTypeReference",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtUserType",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtValueArgument",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtValueArgumentList",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtValueArgumentName",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }, {"name":"<init>","parameterTypes":["org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenConditionInRange",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenConditionIsPattern",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenConditionWithExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenEntry",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenEntryGuard",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhenExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.KtWhileExpression",
+  "methods":[{"name":"<init>","parameterTypes":["com.intellij.lang.ASTNode"] }]
+},
+{
+  "name":"org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType",
+  "methods":[{"name":"getExternalId","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.renderer.DescriptorRendererOptionsImpl",
+  "allDeclaredFields":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.AbstractClassInstantiationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ApiVersionCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.AssigningNamedArgumentToVarargChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.BuilderFunctionsCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.BuilderInferenceAssignmentChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CallReturnsArrayOfNothingChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CallableReferenceCompatibilityChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CapturingInClosureChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CompanionInParenthesesLHSCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ConstructorHeaderCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ContractNotAllowedCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CoroutineSuspendCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.CustomEnumEntriesMigrationCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.DeprecatedCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.EnumEntriesUnsupportedChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.EnumEntryVsCompanionPriorityCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.EqualityCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.FunInterfaceConstructorReferenceChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ImplicitNothingAsTypeParameterCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.IncorrectCapturedApproximationCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.InfixCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.InlineCheckerWrapper",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.LambdaWithSuspendModifierCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.NamedFunAsExpressionChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.NullableVarargArgumentCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ProtectedConstructorCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ReferencingToUnderscoreNamedParameterOfCatchBlockChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ResolutionToPrivateConstructorOfSealedClassChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.ResultTypeWithNullableOperatorsChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.SafeCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.SelfCallInNestedObjectConstructorChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.SuspendConversionCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.SynchronizedByValueChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.UnderscoreUsageChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.UnitConversionCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.UnsupportedUntilOperatorChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.UnsupportedUntilRangeDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.UselessElvisCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.calls.checkers.VarargWrongExecutionOrderChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ActualTypealiasToSpecialAnnotationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.AnnotationClassTargetAndRetentionChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ApiVersionClassifierUsageChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ConstModifierChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ContextualDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ContractDescriptionBlockChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.CyclicAnnotationsChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DataClassDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DataObjectContentChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DelegationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DeprecatedClassifierUsageChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DeprecatedSinceKotlinAnnotationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DeprecationInheritanceChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.DynamicReceiverChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.EnumCompanionInEnumConstructorCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.EnumEntriesRedeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ExpectActualClassifiersAreInBetaChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ExpectActualInTheSameModuleChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ExplicitApiDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.FunInterfaceDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.InfixModifierChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.InlineParameterChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.InnerClassInsideValueClass",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.KClassWithIncorrectTypeArgumentChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.LocalVariableTypeParametersChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker$ClassifierUsage",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker$ForCalls",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker$ForDeclarations",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.MultiFieldValueClassAnnotationsChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.NullableExtensionOperatorWithSafeCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.OptionalExpectationUsageChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.PrivateInlineFunctionsReturningAnonymousObjectsChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.PropertiesWithBackingFieldsInsideValueClass",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ReifiedTypeParameterAnnotationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.RequireKotlinAnnotationValueChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ReservedMembersAndConstructsForValueClass",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ResultClassInReturnTypeChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSamePackageChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SealedInterfaceAllowedChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SinceKotlinAnnotationValueChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.StubForBuilderInferenceParameterTypeChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SubtypingBetweenContextReceiversChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SuspendFunctionAsSupertypeChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.SuspendLimitationsChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.TailrecFunctionChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.TrailingCommaCallChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.TrailingCommaDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ValueClassDeclarationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.ValueParameterUsageInDefaultArgumentChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.checkers.VolatileAnnotationChecker",
+  "queryAllPublicMethods":true,
+  "queryAllPublicConstructors":true
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
+},
+{
+  "name":"org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"
+},
+{
+  "name":"org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginOptions",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.misc.Unsafe",
+  "allDeclaredFields":true,
+  "methods":[{"name":"arrayBaseOffset","parameterTypes":["java.lang.Class"] }, {"name":"arrayIndexScale","parameterTypes":["java.lang.Class"] }, {"name":"compareAndSwapInt","parameterTypes":["java.lang.Object","long","int","int"] }, {"name":"compareAndSwapLong","parameterTypes":["java.lang.Object","long","long","long"] }, {"name":"compareAndSwapObject","parameterTypes":["java.lang.Object","long","java.lang.Object","java.lang.Object"] }, {"name":"copyMemory","parameterTypes":["java.lang.Object","long","java.lang.Object","long","long"] }, {"name":"getAndAddInt","parameterTypes":["java.lang.Object","long","int"] }, {"name":"getObjectVolatile","parameterTypes":["java.lang.Object","long"] }, {"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }, {"name":"objectFieldOffset","parameterTypes":["java.lang.reflect.Field"] }, {"name":"putObjectVolatile","parameterTypes":["java.lang.Object","long","java.lang.Object"] }]
+},
+{
+  "name":"sun.security.provider.MD5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.NativePRNG",
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

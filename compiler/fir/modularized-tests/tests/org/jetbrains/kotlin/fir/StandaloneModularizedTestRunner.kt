@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
 object StandaloneModularizedTestRunner {
     @JvmStatic
     fun main(args: Array<String>) {
-        val runner = JUnit38ClassRunner(FirResolveModularizedTotalKotlinTest::class.java)
+        val runner = JUnit38ClassRunner(FullPipelineModularizedTest::class.java)
         var ok = true
         runner.run(
             RunNotifier().apply {
