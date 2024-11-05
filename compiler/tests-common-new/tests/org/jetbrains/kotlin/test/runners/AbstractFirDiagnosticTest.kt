@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.testTierExceptionInverter
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -60,6 +63,13 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         configureDiagnosticTest(parser)
+
+        forTestsMatching(
+            "compiler/testData/diagnostics/tests/*" or
+                    "compiler/testData/diagnostics/testsWithStdLib/*"
+        ) {
+            useAfterAnalysisCheckers(::PartialTestTierChecker)
+        }
     }
 }
 
@@ -90,6 +100,33 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
         }
     }
 }
+
+abstract class AbstractTieredFrontendJvmTest(val parser: FirParser) : AbstractKotlinCompilerTest() {
+    override fun TestConfigurationBuilder.configuration() {
+        configureTieredFrontendJvmTest(parser)
+
+        configureFirHandlersStep {
+            useHandlers(
+                testTierExceptionInverter(TestTierLabel.FRONTEND) { NoFirCompilationErrorsHandler(it, failureDisablesNextSteps = false) },
+                testTierExceptionInverter(TestTierLabel.FRONTEND, ::NoLightTreeParsingErrorsHandler),
+            )
+        }
+
+        useAfterAnalysisCheckers(
+            { TestTierChecker(TestTierLabel.FRONTEND, numberOfMarkerHandlersPerModule = 2, it) },
+        )
+    }
+}
+
+fun TestConfigurationBuilder.configureTieredFrontendJvmTest(parser: FirParser) {
+    configureDiagnosticTest(parser)
+
+    if (parser == FirParser.LightTree) {
+        useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
+    }
+}
+
+open class AbstractTieredFrontendJvmLightTreeTest : AbstractTieredFrontendJvmTest(FirParser.LightTree)
 
 class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
     val reporter = SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)

@@ -262,6 +262,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 init = model(allowKts = false)
             )
 
+            testClass<AbstractTieredFrontendJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
+            )
+
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated",
                 init = model(allowKts = false)
