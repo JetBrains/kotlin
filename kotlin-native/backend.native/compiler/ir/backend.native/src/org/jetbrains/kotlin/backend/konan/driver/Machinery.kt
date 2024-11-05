@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -31,13 +32,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
-
-    /**
-     * Called by [PhaseEngine.useContext] after action completion to cleanup resources.
-     */
-    fun dispose()
-}
+internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext
 
 internal open class BasicPhaseContext(
         override val config: KonanConfig,
@@ -87,7 +82,9 @@ internal class PhaseEngine<C : LoggingContext>(
     /**
      * Switch to a more specific phase engine.
      */
-    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<T>) -> R): R {
+    inline fun <NewContext, R> useContext(newContext: NewContext, action: (PhaseEngine<NewContext>) -> R): R
+            where NewContext : DisposableContext,
+                  NewContext : LoggingContext {
         val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
         try {
             return action(newEngine)
