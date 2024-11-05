@@ -1,6 +1,5 @@
 {
   "version": "1.0",
-  "timeout": "24h",
   "builds": [
     {
       "teamcity": {
