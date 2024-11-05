@@ -55,29 +55,12 @@ internal open class BasicPhaseContext(
  * * [useContext] creates a child engine with a more specific [PhaseContext] that will be cleanup at the end of the call.
  * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
  */
-internal class PhaseEngine<C : LoggingContext>(
+class PhaseEngine<C : LoggingContext>(
         val phaseConfig: PhaseConfigurationService,
         val phaserState: PhaserState<Any>,
         val context: C
 ) {
-    companion object {
-        fun startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
-            val phaserState = PhaserState<Any>()
-            val phaseConfig = config.flexiblePhaseConfig
-            val context = BasicPhaseContext(config)
-            val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
-                override fun phaseBody(context: PhaseContext, input: Any) {
-                    val engine = PhaseEngine(phaseConfig, phaserState, context)
-                    body(engine)
-                }
-
-                override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
-                    error("Compiler was disabled")
-                }
-            }
-            topLevelPhase.invoke(phaseConfig, phaserState, context, Unit)
-        }
-    }
+    companion object;
 
     /**
      * Switch to a more specific phase engine.
@@ -118,4 +101,21 @@ internal class PhaseEngine<C : LoggingContext>(
     fun <Output, P : NamedCompilerPhase<C, Unit, Output>> runPhase(
             phase: P,
     ): Output = runPhase(phase, Unit)
+}
+
+internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
+    val phaserState = PhaserState<Any>()
+    val phaseConfig = config.flexiblePhaseConfig
+    val context = BasicPhaseContext(config)
+    val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
+        override fun phaseBody(context: PhaseContext, input: Any) {
+            val engine = PhaseEngine(phaseConfig, phaserState, context)
+            body(engine)
+        }
+
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
+            error("Compiler was disabled")
+        }
+    }
+    topLevelPhase.invoke(phaseConfig, phaserState, context, Unit)
 }
