@@ -61,8 +61,6 @@ import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.utils.IDEAPlatforms
-import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 open class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
@@ -73,28 +71,6 @@ open class JvmIrCodegenFactory(
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) : CodegenFactory {
-
-    @IDEAPluginsCompatibilityAPI(IDEAPlatforms._221, message = "Please migrate to the other constructor", plugins = "Android Studio")
-    constructor(
-        configuration: CompilerConfiguration,
-        phaseConfig: PhaseConfig?,
-        externalMangler: JvmDescriptorMangler? = null,
-        externalSymbolTable: SymbolTable? = null,
-        jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
-        @Suppress("UNUSED_PARAMETER")
-        prefixPhases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>? = null,
-        evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
-        shouldStubAndNotLinkUnboundSymbols: Boolean = false,
-    ) : this(
-        configuration,
-        phaseConfig,
-        externalMangler,
-        externalSymbolTable,
-        jvmGeneratorExtensions,
-        evaluatorFragmentInfoForPsi2Ir,
-        IdeCodegenSettings(shouldStubAndNotLinkUnboundSymbols = shouldStubAndNotLinkUnboundSymbols),
-    )
-
     /**
      * @param shouldStubAndNotLinkUnboundSymbols
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
