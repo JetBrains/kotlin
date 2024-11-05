@@ -8,10 +8,10 @@ FILE: main.kt
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Int.toString|()
         }
         ))
-        Q|JavaUsage|.R|/JavaUsage.foo2*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#|(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/CharSequence!| <inline=Unknown>  {
+        Q|JavaUsage|.R|/JavaUsage.foo2*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#|(<L> = SAM(foo2@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/CharSequence!| <inline=Unknown>  {
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
-        )
+        ))
         Q|JavaUsage|.R|/JavaUsage.foo3*s|<R|kotlin/Int!|, R|kotlin/String!|>(SAM(foo3@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toString|()
         }

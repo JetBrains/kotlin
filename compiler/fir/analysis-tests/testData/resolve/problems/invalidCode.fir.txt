@@ -22,7 +22,7 @@ FILE: c.kt
 
     public abstract interface I : R|kotlin/Any| {
         public open fun <T : R|kotlin/String|> f(x: R|T?|): R|T| {
-            ^f R|<local>/x| ?: String(OK).<Unresolved name: strip>#()?.{ $subj$.<Unresolved name: substringBeforeLast>#(Char(61334), R|c/C.C|().R|c/I.f<Inapplicable(INAPPLICABLE): c/I.f>#|<R|kotlin/Long|>(Int(-62))) }!!
+            ^f R|<local>/x| ?: String(OK).<Unresolved name: strip>#()?.{ $subj$.<Unresolved name: substringBeforeLast>#(Char(61334), R|c/C.C|().R|c/I.f<Inapplicable(INAPPLICABLE): c/I.f>#|<R|kotlin/Long|>(Long(-62))) }!!
         }
 
     }
