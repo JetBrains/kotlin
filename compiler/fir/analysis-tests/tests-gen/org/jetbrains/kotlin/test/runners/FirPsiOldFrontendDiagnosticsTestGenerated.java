@@ -44014,6 +44014,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("differentDiagnosticsOnSameMarker.kt")
+        public void testDifferentDiagnosticsOnSameMarker() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/differentDiagnosticsOnSameMarker.kt");
+        }
+
+        @Test
         @TestMetadata("Experimentality.kt")
         public void testExperimentality() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/Experimentality.kt");

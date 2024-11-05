@@ -67,6 +67,7 @@ object FirOptInUsageBaseChecker {
             if (annotationClassId != other.annotationClassId) return false
             if (severity != other.severity) return false
             if (message != other.message) return false
+            if (fromSupertype != other.fromSupertype) return false
 
             return true
         }
@@ -75,6 +76,7 @@ object FirOptInUsageBaseChecker {
             var result = annotationClassId.hashCode()
             result = 31 * result + severity.hashCode()
             result = 31 * result + (message?.hashCode() ?: 0)
+            result = 31 * result + fromSupertype.hashCode()
             return result
         }
     }
