@@ -1013,6 +1013,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("forkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions.kt")
+        public void testForkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions.kt");
+        }
+
+        @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
