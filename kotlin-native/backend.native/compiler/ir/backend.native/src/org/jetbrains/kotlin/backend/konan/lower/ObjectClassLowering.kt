@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -117,7 +116,6 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
             isFinal = true
             isStatic = true
             type = declaration.defaultType
-            visibility = DescriptorVisibilities.PRIVATE
         }.also { field ->
             val primaryConstructor = declaration.constructors.single { it.isPrimary }
             require(primaryConstructor.valueParameters.isEmpty())

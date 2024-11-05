@@ -184,6 +184,7 @@ inline fun IrProperty.addBackingField(builder: IrFieldBuilder.() -> Unit = {}): 
     IrFieldBuilder().run {
         name = this@addBackingField.name
         origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
+        visibility = DescriptorVisibilities.PRIVATE
         builder()
         factory.buildField(this).also { field ->
             this@addBackingField.backingField = field
