@@ -42,10 +42,6 @@ class ImplicitValueStack private constructor(
         return receivers.fold(this) { acc, value -> acc.addImplicitReceiver(name = null, value) }
     }
 
-    fun addAllContextReceivers(receivers: List<ContextReceiverValue>): ImplicitValueStack {
-        return receivers.fold(this) { acc, value -> acc.addContextReceiver(value) }
-    }
-
     fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitValueStack {
         val stack = implicitReceiverStack.add(value)
         val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
@@ -58,22 +54,29 @@ class ImplicitValueStack private constructor(
         )
     }
 
+
+    fun addAllContexts(
+        contextReceivers: List<ContextReceiverValue>,
+        contextParameters: List<ContextParameterValue>,
+    ): ImplicitValueStack {
+        if (contextReceivers.isEmpty() && contextParameters.isEmpty()) {
+            return this
+        }
+
+        // Not adding context receivers to implicitValuesBySymbol is a bug that leads to smart-casts not working.
+        // However, we're leaving it broken because context receivers are getting removed anyway.
+        return ImplicitValueStack(
+            implicitReceiverStack,
+            contextReceivers.fold(implicitReceiversByLabel) { acc, value -> acc.putIfNameIsNotNull(value.labelName, value) },
+            contextParameters.fold(implicitValuesBySymbol) { acc, value -> acc.put(value.boundSymbol, value) },
+        )
+    }
+
     private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiverValue<*>) =
         if (name != null)
             put(name, value)
         else
             this
-
-    private fun addContextReceiver(value: ContextReceiverValue): ImplicitValueStack {
-        val labelName = value.labelName ?: return this
-
-        val receiversPerLabel = implicitReceiversByLabel.put(labelName, value)
-        return ImplicitValueStack(
-            implicitReceiverStack,
-            receiversPerLabel,
-            implicitValuesBySymbol,
-        )
-    }
 
     operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
         if (name == null) return implicitReceiverStack.lastOrNull()?.let(::setOf).orEmpty()

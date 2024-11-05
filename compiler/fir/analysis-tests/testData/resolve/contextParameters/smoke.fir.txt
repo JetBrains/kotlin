@@ -28,7 +28,7 @@ FILE: smoke.kt
         public get(): R|kotlin/String| {
             ^ when () {
                 (R|<local>/s| is R|kotlin/String|) ->  {
-                    R|<local>/s|.R|kotlin/String.plus|(R|/f<Inapplicable(INAPPLICABLE): /f>#|())
+                    R|<local>/s|.R|kotlin/String.plus|(R|/f|())
                 }
                 else ->  {
                     String()

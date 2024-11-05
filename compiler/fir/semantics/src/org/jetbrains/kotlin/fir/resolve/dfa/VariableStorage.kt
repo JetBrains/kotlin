@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -46,7 +46,8 @@ class VariableStorage(private val session: FirSession) {
         unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
     ): DataFlowVariable? {
         val unwrapped = fir.unwrapElement() ?: return null
-        val isImplicit = unwrapped is FirThisReceiverExpression
+        val isImplicit = unwrapped is FirThisReceiverExpression ||
+                unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
             is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.symbol
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)

@@ -22,7 +22,7 @@ var p2: String
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: Any)
 val p3: String
-    get() = if (s is String) s + <!NO_CONTEXT_RECEIVER!>f<!>() else ""
+    get() = if (s is String) s + f() else ""
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)
 fun f2() {

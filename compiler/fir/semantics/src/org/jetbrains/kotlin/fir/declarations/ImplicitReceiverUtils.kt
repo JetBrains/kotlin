@@ -125,7 +125,10 @@ class FirTowerDataContext private constructor(
             towerDataElements.addAll(newElements),
             implicitValueStack
                 .addAllImplicitReceivers(newElements.mapNotNull { it.implicitReceiver })
-                .addAllContextReceivers(newElements.flatMap { it.contextReceiverGroup.orEmpty() }),
+                .addAllContexts(
+                    newElements.flatMap { it.contextReceiverGroup.orEmpty() },
+                    newElements.flatMap { it.contextParameterGroup.orEmpty() }
+                ),
             classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.addAll(newElements)
@@ -168,7 +171,7 @@ class FirTowerDataContext private constructor(
 
         return FirTowerDataContext(
             towerDataElements.add(element),
-            implicitValueStack.addAllContextReceivers(contextReceiverGroup),
+            implicitValueStack.addAllContexts(contextReceiverGroup, contextParameterGroup),
             classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.add(element)
