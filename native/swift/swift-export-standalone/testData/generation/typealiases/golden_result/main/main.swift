@@ -9,6 +9,7 @@ public typealias abstractClss = main.ABSTRACT_CLASS
 public typealias dataClass = main.DATA_CLASS
 public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
+public typealias enumClass = main.ENUM
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
@@ -120,6 +121,40 @@ public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
     }
     public func toString() -> Swift.String {
         return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
+    }
+}
+public final class ENUM : KotlinRuntime.KotlinBase {
+    public final class INSIDE_ENUM : KotlinRuntime.KotlinBase {
+        public override init() {
+            let __kt = ENUM_INSIDE_ENUM_init_allocate()
+            super.init(__externalRCRef: __kt)
+            ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public static var A: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_A_get())
+        }
+    }
+    public static var B: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_B_get())
+        }
+    }
+    public static var C: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_C_get())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
     }
 }
 public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {

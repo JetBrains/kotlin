@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
@@ -24,7 +23,7 @@ import org.jetbrains.sir.lightclasses.utils.overridableCandidates
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
-internal class SirVariableFromKtSymbol(
+internal abstract class SirAbstractVariableFromKtSymbol(
     override val ktSymbol: KaVariableSymbol,
     override val ktModule: KaModule,
     override val sirSession: SirSession,
@@ -47,7 +46,7 @@ internal class SirVariableFromKtSymbol(
                 SirGetterFromKtSymbol(it, ktModule, sirSession)
             }
         } ?: buildGetter()).also {
-            it.parent = this@SirVariableFromKtSymbol
+            it.parent = this@SirAbstractVariableFromKtSymbol
         }
     }
     override val setter: SirSetter? by lazy {
@@ -56,7 +55,7 @@ internal class SirVariableFromKtSymbol(
                 SirSetterFromKtSymbol(it, ktModule, sirSession)
             }
         } ?: ktSymbol.isVal.ifFalse { buildSetter() })?.also {
-            it.parent = this@SirVariableFromKtSymbol
+            it.parent = this@SirAbstractVariableFromKtSymbol
         }
     }
     override val documentation: String? by lazy {
@@ -78,11 +77,25 @@ internal class SirVariableFromKtSymbol(
             this.isInstance == it.isInstance
         }
 
-    override val isInstance: Boolean
-        get() = !ktSymbol.isTopLevel
-
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
+}
+
+internal class SirVariableFromKtSymbol(
+    ktSymbol: KaVariableSymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+    override val isInstance: Boolean
+        get() = !ktSymbol.isTopLevel
+}
+
+internal class SirEnumCaseFromKtSymbol(
+    ktSymbol: KaEnumEntrySymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+    override val isInstance: Boolean = false
 }
 
 internal class SirGetterFromKtSymbol(

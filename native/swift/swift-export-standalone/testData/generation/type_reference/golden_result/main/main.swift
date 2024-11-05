@@ -531,8 +531,20 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public static func produce_ENUM() -> Swift.Never {
-        fatalError()
+    public final class ENUM : KotlinRuntime.KotlinBase {
+        public static var A: ExportedKotlinPackages.ignored.ENUM {
+            get {
+                return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_ENUM_A_get())
+            }
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
+        return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_produce_ENUM())
     }
     public static func produce_INTERFACE() -> Swift.Never {
         fatalError()
@@ -541,9 +553,9 @@ public extension ExportedKotlinPackages.ignored {
         fatalError()
     }
     public static func receive_ENUM(
-        x: Swift.Never
+        x: ExportedKotlinPackages.ignored.ENUM
     ) -> Swift.Void {
-        fatalError()
+        return ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(x.__externalRCRef())
     }
     public static func receive_INTERFACE(
         x: Swift.Never

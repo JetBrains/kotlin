@@ -60,6 +60,10 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(): Boolean {
+        if (isStatic) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "static functions are not supported yet.")
+            return false
+        }
         if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "${origin.name.lowercase()} origin is not supported yet.")
             return false
@@ -80,6 +84,10 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaVariableSymbol.isConsumableBySirBuilder(): Boolean {
+        if (this is KaPropertySymbol && isStatic) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "static properties are not supported yet.")
+            return false
+        }
         if (isExtension) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "extension properties are not supported yet.")
             return false
@@ -89,7 +97,7 @@ public class SirVisibilityCheckerImpl(
 
     private fun KaNamedClassSymbol.isConsumableBySirBuilder(ktAnalysisSession: KaSession): Boolean =
         with(ktAnalysisSession) {
-            if (classKind != KaClassKind.CLASS && classKind != KaClassKind.OBJECT && classKind != KaClassKind.COMPANION_OBJECT) {
+            if (classKind != KaClassKind.CLASS && classKind != KaClassKind.OBJECT && classKind != KaClassKind.COMPANION_OBJECT && classKind != KaClassKind.ENUM_CLASS) {
                 unsupportedDeclarationReporter
                     .report(this@isConsumableBySirBuilder, "${classKind.name.lowercase()} classifiers are not supported yet.")
                 return@with false
@@ -98,12 +106,15 @@ public class SirVisibilityCheckerImpl(
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
                 return@with false
             }
+            if (classKind == KaClassKind.ENUM_CLASS) {
+                return@with true
+            }
             if (superTypes.any { it.symbol.let { it?.classId != DefaultTypeClassIds.ANY && it?.sirVisibility(ktAnalysisSession) != SirVisibility.PUBLIC } }) {
                 unsupportedDeclarationReporter
                     .report(this@isConsumableBySirBuilder, "inheritance from non-classes is not supported yet.")
                 return@with false
             }
-            if (!typeParameters.isEmpty() || superTypes.any { (it as? KaClassType)?.typeArguments?.isEmpty() == false }) {
+            if (typeParameters.isNotEmpty() || superTypes.any { (it as? KaClassType)?.typeArguments?.isEmpty() == false }) {
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "generics are not supported yet.")
                 return@with false
             }

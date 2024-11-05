@@ -54,6 +54,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("enums")
+  public void testEnums() {
+    runTest("native/swift/swift-export-standalone/testData/generation/enums/");
+  }
+
+  @Test
   @TestMetadata("functionAndClassWithSameName")
   public void testFunctionAndClassWithSameName() {
     runTest("native/swift/swift-export-standalone/testData/generation/functionAndClassWithSameName/");

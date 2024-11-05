@@ -37,6 +37,16 @@ int32_t DATA_CLASS_hashCode(uintptr_t self);
 
 NSString * DATA_CLASS_toString(uintptr_t self);
 
+uintptr_t ENUM_A_get();
+
+uintptr_t ENUM_B_get();
+
+uintptr_t ENUM_C_get();
+
+uintptr_t ENUM_INSIDE_ENUM_init_allocate();
+
+void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
 uintptr_t Foo_Companion_get();
 
 _Bool Foo_Companion_my_func(uintptr_t self);

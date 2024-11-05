@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ignored.ENUM::class, "22ExportedKotlinPackages7ignoredO4mainE4ENUMC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_CLASS::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC12INNER_OBJECTC")
@@ -516,6 +517,24 @@ public fun __root___var_object_wp_get(): kotlin.native.internal.NativePtr {
 public fun __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as namespace.deeper.Object_with_package
     var_object_wp = __newValue
+}
+
+@ExportedBridge("ignored_ENUM_A_get")
+public fun ignored_ENUM_A_get(): kotlin.native.internal.NativePtr {
+    val _result = ignored.ENUM.A
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ignored_produce_ENUM")
+public fun ignored_produce_ENUM(): kotlin.native.internal.NativePtr {
+    val _result = ignored.produce_ENUM()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__")
+public fun ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ignored.ENUM
+    ignored.receive_ENUM(__x)
 }
 
 @ExportedBridge("namespace_deeper_Class_with_package_INNER_CLASS_init_allocate")

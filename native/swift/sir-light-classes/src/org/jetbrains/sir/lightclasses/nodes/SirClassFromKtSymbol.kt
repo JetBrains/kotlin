@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
@@ -71,7 +72,10 @@ internal class SirClassFromKtSymbol(
             .mapNotNull { it.symbol as? KaClassSymbol }
             .firstOrNull { it.classKind == KaClassKind.CLASS }
             ?.let {
-                if (it.classId == DefaultTypeClassIds.ANY) {
+                if (
+                    it.classId == DefaultTypeClassIds.ANY
+                    || it.isEnumSuperclass /* TODO: this check will become obsolete with the KT-66855 */
+                ) {
                     SirNominalType(KotlinRuntimeModule.kotlinBase).also {
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
                     }
@@ -123,6 +127,9 @@ internal class SirClassFromKtSymbol(
 
         else -> listOf(kotlinBaseInitDeclaration())
     }
+
+    private val KaClassSymbol.isEnumSuperclass: Boolean
+        get() = classId == StandardClassIds.Enum
 }
 
 internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {

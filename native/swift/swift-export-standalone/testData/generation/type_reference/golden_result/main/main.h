@@ -153,6 +153,12 @@ uintptr_t __root___var_object_wp_get();
 
 void __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(uintptr_t newValue);
 
+uintptr_t ignored_ENUM_A_get();
+
+uintptr_t ignored_produce_ENUM();
+
+void ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(uintptr_t x);
+
 uintptr_t namespace_deeper_Class_with_package_INNER_CLASS_init_allocate();
 
 void namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);

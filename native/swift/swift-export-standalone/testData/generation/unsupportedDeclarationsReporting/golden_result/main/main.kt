@@ -1,6 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Nested::class, "4main3FooC6NestedC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(a.b.c.E::class, "4main1aO1bO1cO4mainE1EC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -27,5 +28,23 @@ public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Foo())
+}
+
+@ExportedBridge("a_b_c_E_A_get")
+public fun a_b_c_E_A_get(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.A
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_E_B_get")
+public fun a_b_c_E_B_get(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.B
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_E_C_get")
+public fun a_b_c_E_C_get(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.C
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

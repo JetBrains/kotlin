@@ -153,6 +153,40 @@ public final class DATA_CLASS_WITH_REF : KotlinRuntime.KotlinBase {
         return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
+public final class ENUM : KotlinRuntime.KotlinBase {
+    public final class INSIDE_ENUM : KotlinRuntime.KotlinBase {
+        public override init() {
+            let __kt = ENUM_INSIDE_ENUM_init_allocate()
+            super.init(__externalRCRef: __kt)
+            ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public static var A: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_A_get())
+        }
+    }
+    public static var B: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_B_get())
+        }
+    }
+    public static var C: main.ENUM {
+        get {
+            return main.ENUM(__externalRCRef: ENUM_C_get())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class Foo : KotlinRuntime.KotlinBase {
     public final class Companion : KotlinRuntime.KotlinBase {
         public var my_value_inner: Swift.UInt32 {

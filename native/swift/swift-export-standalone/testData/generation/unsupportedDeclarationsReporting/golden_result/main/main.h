@@ -9,3 +9,9 @@ uintptr_t __root___Foo_init_allocate();
 
 void __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
+uintptr_t a_b_c_E_A_get();
+
+uintptr_t a_b_c_E_B_get();
+
+uintptr_t a_b_c_E_C_get();
+

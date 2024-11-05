@@ -29,6 +29,16 @@ int32_t DATA_OBJECT_WITH_PACKAGE_variable_get(uintptr_t self);
 
 void DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(uintptr_t self, int32_t newValue);
 
+uintptr_t ENUM_A_get();
+
+uintptr_t ENUM_B_get();
+
+uintptr_t ENUM_C_get();
+
+uintptr_t ENUM_INSIDE_ENUM_init_allocate();
+
+void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
 uintptr_t __root___DATA_CLASS_WITH_REF_init_allocate();
 
 void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(uintptr_t __kt, uintptr_t o);

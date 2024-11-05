@@ -3,11 +3,15 @@
 
 int32_t ClassWithFactoryWithoutParameters_value_get(uintptr_t self);
 
+uintptr_t EnumWithFactory_ONE_get();
+
 uintptr_t __root___ClassWithFactoryWithoutParameters();
 
 uintptr_t __root___ClassWithFactoryWithoutParameters_init_allocate();
 
 void __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(uintptr_t __kt, int32_t value);
+
+uintptr_t __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(int32_t x);
 
 uintptr_t __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(float f);
 

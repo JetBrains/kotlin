@@ -68,16 +68,19 @@ typealias TypealiasWithFactoryWithoutParameters2 = ClassWithFactoryWithoutParame
 //fun TypealiasWithFactoryWithoutParameters2(): ClassWithFactoryWithoutParameters =
 //    TypealiasWithFactoryWithoutParameters2(321)
 
-// FILE: unsupported.kt
-// These cases should work fine once the declarations get supported.
-interface InterfaceWithFactory
-fun InterfaceWithFactory(): InterfaceWithFactory = TODO()
-fun InterfaceWithFactory(arg: Any): InterfaceWithFactory = TODO()
+// FILE: enum.kt
 
 enum class EnumWithFactory {
     ONE
 }
 fun EnumWithFactory(x: Int): EnumWithFactory = EnumWithFactory.ONE
+
+
+// FILE: unsupported.kt
+// These cases should work fine once the declarations get supported.
+interface InterfaceWithFactory
+fun InterfaceWithFactory(): InterfaceWithFactory = TODO()
+fun InterfaceWithFactory(arg: Any): InterfaceWithFactory = TODO()
 
 annotation class AnnotationWithFactory
 fun AnnotationWithFactory(arg: Any) = AnnotationWithFactory()

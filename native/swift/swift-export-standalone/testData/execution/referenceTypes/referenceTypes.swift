@@ -403,6 +403,22 @@ func dataClassesShouldWork() throws {
     try assertEquals(actual: one.hashValue, expected: 128)
 }
 
+
+func testEnums() throws {
+    let en = Enum.a
+    try assertEquals(actual: en.print(), expected: "1 - str")
+    en.i = 3
+    try assertEquals(actual: en.print(), expected: "3 - str")
+    try assertEquals(actual: Enum.a.print(), expected: "3 - str")
+
+    try assertEquals(actual: Enum.b.print(), expected: "rts - 5")
+
+    switch en {
+    case .a: break;
+    default: try fail("switch over kotlin enum class should work")
+    }
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -445,6 +461,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWork)),
             TestCase(name: "overridesShouldWorkAcrossModules", method: withAutorelease(overridesShouldWorkAcrossModules)),
             TestCase(name: "dataClassesShouldWork", method: withAutorelease(dataClassesShouldWork)),
+            TestCase(name: "testEnums", method: withAutorelease(testEnums)),
         ]
     }
 }

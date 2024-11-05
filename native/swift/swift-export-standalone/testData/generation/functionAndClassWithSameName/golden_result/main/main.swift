@@ -23,6 +23,18 @@ public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase 
         __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
     }
 }
+public final class EnumWithFactory : KotlinRuntime.KotlinBase {
+    public static var ONE: main.EnumWithFactory {
+        get {
+            return main.EnumWithFactory(__externalRCRef: EnumWithFactory_ONE_get())
+        }
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class ObjectWithFactory : KotlinRuntime.KotlinBase {
     public static var shared: main.ObjectWithFactory {
         get {
@@ -65,8 +77,8 @@ public func classWithFactoryWithoutParameters() -> main.ClassWithFactoryWithoutP
 }
 public func enumWithFactory(
     x: Swift.Int32
-) -> Swift.Never {
-    fatalError()
+) -> main.EnumWithFactory {
+    return main.EnumWithFactory(__externalRCRef: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x))
 }
 public func interfaceWithFactory() -> Swift.Never {
     fatalError()

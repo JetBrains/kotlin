@@ -47,6 +47,11 @@ func testAbstractClassPrivateSubclass() throws {
     try assertNil(getAbstractClassPrivateSubclassName())
 }
 
+func testEnums() throws {
+    try testType(getEnumClassName(), Enum.self)
+}
+
+
 class ClassMappingsTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -61,6 +66,7 @@ class ClassMappingsTests : TestProvider {
             TestCase(name: "testPrivateClass", method: withAutorelease(testPrivateClass)),
             TestCase(name: "testAbstractClass", method: withAutorelease(testAbstractClass)),
             TestCase(name: "testAbstractClassPrivateSubclass", method: withAutorelease(testAbstractClassPrivateSubclass)),
+            TestCase(name: "testEnums", method: withAutorelease(testEnums)),
         ]
     }
 }

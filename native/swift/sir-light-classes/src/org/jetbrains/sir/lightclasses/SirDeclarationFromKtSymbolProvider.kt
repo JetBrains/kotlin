@@ -8,6 +8,7 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirVariable
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.sir.lightclasses.nodes.*
@@ -41,11 +42,7 @@ public class SirDeclarationFromKtSymbolProvider(
                 )
             }
             is KaVariableSymbol -> {
-                SirVariableFromKtSymbol(
-                    ktSymbol = ktSymbol,
-                    ktModule = ktModule,
-                    sirSession = sirSession,
-                )
+                ktSymbol.toSirVariable()
             }
             is KaTypeAliasSymbol -> {
                 SirTypealiasFromKtSymbol(
@@ -56,5 +53,18 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
+    }
+
+    private fun KaVariableSymbol.toSirVariable() = when (this) {
+        is KaEnumEntrySymbol -> SirEnumCaseFromKtSymbol(
+            ktSymbol = this,
+            ktModule = ktModule,
+            sirSession = sirSession,
+        )
+        else -> SirVariableFromKtSymbol(
+            ktSymbol = this,
+            ktModule = ktModule,
+            sirSession = sirSession,
+        )
     }
 }

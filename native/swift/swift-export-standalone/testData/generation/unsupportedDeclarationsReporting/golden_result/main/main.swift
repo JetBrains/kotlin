@@ -25,10 +25,42 @@ public final class Foo : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public extension main.a.b.c {
+    public final class E : KotlinRuntime.KotlinBase {
+        public static var A: main.a.b.c.E {
+            get {
+                return main.a.b.c.E(__externalRCRef: a_b_c_E_A_get())
+            }
+        }
+        public static var B: main.a.b.c.E {
+            get {
+                return main.a.b.c.E(__externalRCRef: a_b_c_E_B_get())
+            }
+        }
+        public static var C: main.a.b.c.E {
+            get {
+                return main.a.b.c.E(__externalRCRef: a_b_c_E_C_get())
+            }
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+}
+public enum a {
+    public enum b {
+        public enum c {
+        }
+    }
+}
 // Can't export extProp: extension properties are not supported yet.
 // Can't export foo: inline functions are not supported yet.
 // Can't export MyInterface: interface classifiers are not supported yet.
-// Can't export a.b.c.E: enum_class classifiers are not supported yet.
 // Can't export Foo.extPropMember: extension properties are not supported yet.
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.
+// Can't export a.b.c.E.values: static functions are not supported yet.
+// Can't export a.b.c.E.valueOf: static functions are not supported yet.
+// Can't export a.b.c.E.entries: static properties are not supported yet.
