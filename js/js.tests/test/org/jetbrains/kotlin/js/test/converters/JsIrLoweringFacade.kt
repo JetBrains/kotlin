@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -19,12 +17,12 @@ import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
+import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -113,21 +111,7 @@ class JsIrLoweringFacade(
             ).dump(module, firstTimeCompilation)
         }
 
-        val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
-        val jsPhases = getJsPhases(configuration)
-        val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
-            val dumpOutputDir = File(
-                JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),
-                JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
-            )
-            PhaseConfig(
-                jsPhases,
-                dumpToDirectory = dumpOutputDir.path,
-                toDumpStateAfter = jsPhases.toPhaseMap().values.toSet()
-            )
-        } else {
-            PhaseConfig(jsPhases)
-        }
+        val phaseConfig = createTestPhaseConfig(testServices, module, getJsPhases(configuration))
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
             .run { if (shouldBeGenerated()) arguments() else null }
