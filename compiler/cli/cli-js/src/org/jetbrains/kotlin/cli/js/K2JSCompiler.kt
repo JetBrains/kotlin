@@ -11,7 +11,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.CompilationException
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
@@ -722,10 +725,22 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
+            val phaseConfig = createPhaseConfig(
+                JsPreSerializationLoweringPhasesProvider.lowerings(configuration),
+                arguments,
+                messageCollector,
+            )
+
+            val transformedResult = PhaseEngine(
+                phaseConfig,
+                PhaserState(),
+                PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
+            ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
+
             serializeFirKlib(
                 moduleStructure = moduleStructure,
                 firOutputs = analyzedOutput.output,
-                fir2IrActualizedResult = fir2IrActualizedResult,
+                fir2IrActualizedResult = transformedResult,
                 outputKlibPath = outputKlibPath,
                 nopack = arguments.irProduceKlibDir,
                 messageCollector = messageCollector,

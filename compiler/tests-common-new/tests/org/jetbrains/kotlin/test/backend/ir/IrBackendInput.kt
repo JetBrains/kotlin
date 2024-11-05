@@ -56,7 +56,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
     sealed class JsIrBackendInput : IrBackendInput()
 
-    class JsIrAfterFrontendBackendInput(
+    data class JsIrAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         val icData: List<KotlinFileSerializedData>,
