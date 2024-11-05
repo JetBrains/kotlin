@@ -63,6 +63,11 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsKlibSyntheticAccessorInPhase2Test> {
                 model()
             }
+            testClass<AbstractFirJsCodegenBoxWithInlinedFunInKlibTest>(
+                suiteTestClassName = "FirJsKlibSyntheticAccessorsBoxTestGenerated"
+            ) {
+                model()
+            }
         }
 
         testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {

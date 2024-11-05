@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -919,6 +920,16 @@ internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     try {
         val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
         return isIgnoredTarget(extTestDataFileStructure.directives)
+    } finally {
+        Disposer.dispose(disposable)
+    }
+}
+
+internal fun Settings.isIgnoredWith(testDataFile: File, directive: ValueDirective<TargetBackend>): Boolean {
+    val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredWith")
+    try {
+        val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
+        return extTestDataFileStructure.directives[directive].containsNativeOrAny
     } finally {
         Disposer.dispose(disposable)
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
@@ -35,7 +37,9 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.util.classNameAndMessage
 import java.lang.Boolean.getBoolean
 
 
@@ -246,6 +250,27 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
             +KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
             if (narrowedAccessorVisibility) +KlibIrInlinerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
         }
+    }
+
+    override fun runTest(filePath: String) {
+        val isMuted = InTextDirectivesUtils.isIgnoredTarget(
+            TargetBackend.JS_IR,
+            java.io.File(filePath),
+            true, // includeAny
+            "${CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}:",
+        )
+        val testRunOrFailure = runCatching { super.runTest(filePath) }
+        testRunOrFailure.exceptionOrNull()?.let { exception ->
+            if (exception is IrValidationError && isMuted){
+                println("There was an expected failure: IrValidationError: ${exception.message}")
+                return
+            } else
+                throw exception
+        } ?: require (!isMuted) {
+            "Test passed unexpectedly: $filePath. Please remove ${TargetBackend.JS_IR.name} from values of test directive " +
+                    "`${CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
+        }
+
     }
 }
 

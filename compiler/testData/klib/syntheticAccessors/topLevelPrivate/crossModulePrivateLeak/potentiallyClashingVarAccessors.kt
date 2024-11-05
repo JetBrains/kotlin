@@ -1,3 +1,5 @@
+// KT-72862: No function found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib1
 // FILE: file1.kt
 package org.sample

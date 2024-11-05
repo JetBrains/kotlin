@@ -1,4 +1,10 @@
+// KT-72862: <missing declarations>
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// IGNORE_LIGHT_ANALYSIS
+
 // MODULE: lib
+// KT-72840: java.lang.NoSuchFieldError: $f
+// IGNORE_INLINER: BYTECODE
 // FILE: A.kt
 internal inline fun internalInlineMethod(crossinline f: () -> String) = object {
     private inline fun impl() = privateMethod() + f()

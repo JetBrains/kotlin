@@ -1,3 +1,5 @@
+// KT-72862: No property accessor found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: Outer.kt
 class Outer {

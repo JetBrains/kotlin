@@ -4,6 +4,9 @@
 //     - `translateCall(IrCall, ...): JsExpression` processes `super.x()` call and attempts to
 //       obtain a dispatch receiver, which is missing for top level declaration.
 
+// KT-72862: No function found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+
 // MODULE: lib
 // FILE: A.kt
 open class Parent {

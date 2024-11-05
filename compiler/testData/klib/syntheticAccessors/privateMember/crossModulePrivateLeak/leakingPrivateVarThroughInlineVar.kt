@@ -1,3 +1,5 @@
+// KT-72862: <missing declarations>
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: A.kt
 class A {
@@ -19,6 +21,6 @@ fun box(): String {
         inlineVar = 1
         result += inlineVar
     }
-    if (result != 13) return result.toString()
+    if (result != 1) return result.toString()
     return "OK"
 }

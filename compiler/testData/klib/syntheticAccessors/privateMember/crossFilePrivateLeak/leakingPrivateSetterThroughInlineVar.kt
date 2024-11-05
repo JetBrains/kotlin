@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF
 // FILE: A.kt
 class A {
     var privateVar = 12
@@ -18,6 +19,6 @@ fun box(): String {
         inlineVar = 1
         result += inlineVar
     }
-    if (result != 13) return result.toString()
+    if (result != 1) return result.toString()
     return "OK"
 }

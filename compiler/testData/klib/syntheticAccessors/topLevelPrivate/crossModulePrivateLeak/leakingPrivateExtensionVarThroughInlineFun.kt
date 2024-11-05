@@ -1,3 +1,5 @@
+// KT-72862: No function found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: a.kt
 private var _privateVar = 21
@@ -20,6 +22,6 @@ fun box(): String {
     result += customGetVar()
     customSetVar(1)
     result += customGetVar()
-    if (result != 13) return result.toString()
+    if (result != 22) return result.toString()
     return "OK"
 }

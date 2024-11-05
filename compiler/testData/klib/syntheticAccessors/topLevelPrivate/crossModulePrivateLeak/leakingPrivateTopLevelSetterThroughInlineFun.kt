@@ -1,3 +1,6 @@
+// KT-72862: No property accessor found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// JVM_ABI_K1_K2_DIFF
 // MODULE: lib
 // FILE: a.kt
 var privateSetterVarA = 0
@@ -25,6 +28,6 @@ fun box(): String {
     customSetVarA(42)
     customSetVarB(21)
     result += privateSetterVarA
-    if (result != 84) return result.toString()
+    if (result != 42) return result.toString()
     return "OK"
 }

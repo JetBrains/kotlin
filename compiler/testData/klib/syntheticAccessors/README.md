@@ -15,5 +15,9 @@ To ensure that all the needed synthetic accessors are indeed generated, we use t
 Tests in this directory include various combinations and corner cases to verify the synthetic accessor generation logic in
 [SyntheticAccessorLowering](../../../ir/ir.inline/src/org/jetbrains/kotlin/ir/inline/SyntheticAccessorLowering.kt).
 
-**NOTE:** We only compile these tests up to and including the last IR lowering, which means that we don't run LLVM (on Kotlin/Native)
+**NOTE:** 
+* Test runners `*KlibSyntheticAccessorsInPhase*TestGenerated` only compile these tests up to and including the last IR lowering, which means that we don't run LLVM (on Kotlin/Native)
 and obviously don't run the executable (on Kotlin/Native there is no executable).
+* Test runners `*KlibSyntheticAccessorsBoxTestGenerated` perform usual codegen/box tests, which check
+  * general IR Inliner's correctness,
+  * correct generation of synthetic accessors in 2nd compilation stage for native caches.
