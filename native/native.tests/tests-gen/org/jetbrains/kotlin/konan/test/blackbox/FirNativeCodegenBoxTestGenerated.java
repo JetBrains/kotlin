@@ -17897,6 +17897,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         runTest("compiler/testData/codegen/box/funInterface/suspendFunInterfaceConversionCodegen.kt");
       }
 
+      @Test
+      @TestMetadata("typealiasedFunInterface.kt")
+      public void testTypealiasedFunInterface() {
+        runTest("compiler/testData/codegen/box/funInterface/typealiasedFunInterface.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
       @TestDataPath("$PROJECT_ROOT")

@@ -26,9 +26,9 @@ FILE: typealiasedFunInterface.kt
     public final var tb: R|{pack/TB=} pack/AliasedB| = R|pack/AliasedB.AliasedB|()
         public get(): R|{pack/TB=} pack/AliasedB|
         public set(value: R|{pack/TB=} pack/AliasedB|): R|kotlin/Unit|
-    public final var tc: R|pack/AliasedC| = R|pack/AliasedC|(<L> = TC@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    public final var tc: R|{pack/TC=} pack/AliasedC| = R|pack/TC|(<L> = TC@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         ^@TC Unit
     }
     )
-        public get(): R|pack/AliasedC|
-        public set(value: R|pack/AliasedC|): R|kotlin/Unit|
+        public get(): R|{pack/TC=} pack/AliasedC|
+        public set(value: R|{pack/TC=} pack/AliasedC|): R|kotlin/Unit|

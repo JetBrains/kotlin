@@ -1,1 +1,1 @@
-MyInterface(function: () -> kotlin.Unit): MyInterface
+MyTypeAlias(function: () -> kotlin.Unit): MyTypeAlias /* = MyInterface */

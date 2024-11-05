@@ -1,6 +1,6 @@
 KaSamConstructorSymbol:
   annotations: []
-  callableId: /MyInterface
+  callableId: /MyTypeAlias
   compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
@@ -9,13 +9,13 @@ KaSamConstructorSymbol:
   isExtension: false
   location: TOP_LEVEL
   modality: FINAL
-  name: MyInterface
+  name: MyTypeAlias
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: MyInterface
+    type: {MyTypeAlias=} MyInterface
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:

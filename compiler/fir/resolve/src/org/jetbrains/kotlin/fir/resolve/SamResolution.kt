@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
+import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -237,16 +239,11 @@ class FirSamResolver(
         // we need to replace are owned by it, not by the class (see the substitutor in `buildSamConstructor`
         // for `FirRegularClass` above).
         val substitutor = samConstructorForClass.buildSubstitutorWithUpperBounds(session, type)
-            ?: return samConstructorForClass.symbol
-        val newReturnType = substitutor.substituteOrNull(samConstructorForClass.returnTypeRef.coneType)
         val newParameterTypes = samConstructorForClass.valueParameters.map {
-            substitutor.substituteOrNull(it.returnTypeRef.coneType)
+            substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }
         val newContextReceiverTypes = samConstructorForClass.contextReceivers.map {
-            substitutor.substituteOrNull(it.returnTypeRef.coneType)
-        }
-        if (newReturnType == null && newParameterTypes.all { it == null } && newContextReceiverTypes.all { it == null }) {
-            return samConstructorForClass.symbol
+            substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }
 
         return FirFakeOverrideGenerator.createCopyForFirFunction(
@@ -256,10 +253,13 @@ class FirSamResolver(
             newDispatchReceiverType = null,
             newReceiverType = null,
             newContextReceiverTypes = newContextReceiverTypes,
-            newReturnType = newReturnType,
+            newReturnType = type.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType())),
             newParameterTypes = newParameterTypes,
             newTypeParameters = typeAliasSymbol.fir.typeParameters,
-        ).symbol
+        ).also {
+            it.originalConstructorIfTypeAlias = samConstructorForClass
+            it.typeAliasForConstructor = typeAliasSymbol
+        }.symbol
     }
 
     private fun FirClassLikeSymbol<*>.createSyntheticConstructorSymbol() =
@@ -299,8 +299,8 @@ class FirSamResolver(
  *
  * See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
  */
-private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
-    if (typeParameters.isEmpty()) return null
+private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: FirSession, type: ConeClassLikeType): ConeSubstitutor {
+    if (typeParameters.isEmpty()) return ConeSubstitutor.Empty
 
     var containsNonSubstitutedArguments = false
 

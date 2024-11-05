@@ -7,24 +7,17 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirSamConstructorSymbolPointer(
     private val ownerClassId: ClassId,
 ) : KaSymbolPointer<KaSamConstructorSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaSamConstructorSymbol? {
-        require(analysisSession is KaFirSession)
-        val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass ?: return null
-        val classSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(owner.symbol)
-        with(analysisSession) {
-            return classSymbol.samConstructor
-        }
+    override fun restoreSymbol(analysisSession: KaSession): KaSamConstructorSymbol? = with(analysisSession) {
+        analysisSession.findClassLike(ownerClassId)?.samConstructor
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

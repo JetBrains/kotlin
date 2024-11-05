@@ -16910,6 +16910,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       runTest("compiler/testData/codegen/box/funInterface/suspendFunInterfaceConversionCodegen.kt");
     }
 
+    @Test
+    @TestMetadata("typealiasedFunInterface.kt")
+    public void testTypealiasedFunInterface() {
+      runTest("compiler/testData/codegen/box/funInterface/typealiasedFunInterface.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
     @TestDataPath("$PROJECT_ROOT")

@@ -25,11 +25,11 @@ fun test1(): KFunction1<Function0<Unit>, KRunnable> {
 
 fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
-    local fun KRunnable(function: Function0<Unit>): KRunnable {
+    local fun KR(function: Function0<Unit>): KRunnable {
       return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
 
-    ::KRunnable
+    ::KR
   }
 }
 

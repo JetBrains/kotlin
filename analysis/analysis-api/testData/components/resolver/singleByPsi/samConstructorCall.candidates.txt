@@ -15,8 +15,8 @@ KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = java.util.Comparator<kotlin.Int!>
-          symbol = kotlin/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
+          returnType = {kotlin.Comparator<kotlin.Int!>=} java.util.Comparator<kotlin.Int!>
+          symbol = kotlin/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): {kotlin.Comparator<T>=} java.util.Comparator<T>
           valueParameters = [
             KaVariableSignature:
               name = function

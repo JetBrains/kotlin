@@ -70,15 +70,15 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1a (): kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KR visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a'
+              RETURN type=kotlin.Nothing from='local final fun KR (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a'
                 TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=EXCLEXCL
                     <T0>: kotlin.Function0<kotlin.Unit>
-                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KR' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun KR (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KRunnable>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1b (): kotlin.reflect.KFunction<<root>.KRunnable> declared in <root>'
