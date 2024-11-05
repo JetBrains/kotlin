@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigBuilder
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile
@@ -73,9 +72,7 @@ open class WasmCompilerWithIC(
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val wasmPhases = getWasmPhases(true)
-        val phaseConfig = PhaseConfigBuilder(wasmPhases).also { lowerings ->
-            lowerings.enabled.addAll(wasmPhases.toPhaseMap().values)
-        }.build()
+        val phaseConfig = PhaseConfig(wasmPhases)
 
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
