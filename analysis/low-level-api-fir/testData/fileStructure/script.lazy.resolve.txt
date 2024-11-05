@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
         }
 
         [ResolvedTo(BODY_RESOLVE)] init {
-            R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|/Builder.version| = String(123)
                 local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
             )
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )

@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] fun @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] fun @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(COMPANION_GENERATION)] fun @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun [ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(SUPER_TYPES)] fun @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun [ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo(): <implicit> { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(TYPES)] fun R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun [ResolvedTo(TYPES)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] fun R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun [ResolvedTo(CONSTANT_EVALUATION)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
@@ -214,6 +214,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
         ^foo this@R|/foo|
     }

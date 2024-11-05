@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] thisExpression_plusAssign_this.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] foo@fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/A.plusAssign|(Int(1))
         }
         )

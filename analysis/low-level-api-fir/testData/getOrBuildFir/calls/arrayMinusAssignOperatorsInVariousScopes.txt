@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayMinusAssignOperatorsInVariousScopes.kt
         }
 
     }
-    private final operator [ResolvedTo(CONTRACTS)] fun R|kotlin/Any|.set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+    private final operator [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/Any|.set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun usageFoo(): R|kotlin/Unit| {
          {

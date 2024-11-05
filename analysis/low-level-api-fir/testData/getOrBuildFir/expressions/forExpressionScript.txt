@@ -13,7 +13,7 @@ while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterato
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] forExpressionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-forExpressionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {

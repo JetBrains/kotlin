@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptWithResultWithPropagatedType.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(COMPANION_GENERATION)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(SUPER_TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(STATUS)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(STATUS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(STATUS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(CONTRACTS)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(CONTRACTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONTRACTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(CONSTANT_EVALUATION)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONSTANT_EVALUATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithResultWithPropagatedType.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] scriptWithResultWithPropagatedType.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptWithResultWithPropagatedType.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol foo.<script-scriptWithResultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -350,3 +350,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptWithResultWithPropagatedType.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|
+

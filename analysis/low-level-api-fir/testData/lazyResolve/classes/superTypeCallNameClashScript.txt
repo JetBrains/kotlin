@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClashScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-superTypeCallNameClashScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashScript.kts>] class Base : R|kotlin/Any| {
@@ -388,3 +388,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashScript.kts
             }
 
         }
+

@@ -8,7 +8,7 @@ R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConventionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-compoundAssignWithArrayAccessConventionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compoundAssignWithArrayAccessConventionScript.kts>] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {

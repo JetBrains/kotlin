@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] var [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] receiverAsImplicitReturnTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] var [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] var @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
+        public? final? [ResolvedTo(COMPANION_GENERATION)] var [ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
             public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(SUPER_TYPES)] var @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
+        public? final? [ResolvedTo(SUPER_TYPES)] var [ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>.foo: <implicit>
             public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(TYPES)] var R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public? final? [ResolvedTo(TYPES)] var [ResolvedTo(TYPES)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
             public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] var R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(STATUS)] var [ResolvedTo(STATUS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
             public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] var R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(CONTRACTS)] var [ResolvedTo(CONTRACTS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ this#
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
@@ -247,7 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] var R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] var [ResolvedTo(CONSTANT_EVALUATION)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] var R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
+        public final [ResolvedTo(BODY_RESOLVE)] var [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-receiverAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -344,9 +344,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnTypeScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] var R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
+        public final [ResolvedTo(BODY_RESOLVE)] var [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|): R|kotlin/Unit| {
             }
+

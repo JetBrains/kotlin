@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructuringSecondEntry.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -397,7 +397,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -441,7 +441,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -485,7 +485,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -529,7 +529,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -573,7 +573,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringSecondEntry.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] destructuringSecondEntry.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-destructuringSecondEntry.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -612,3 +612,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringSecondEntry.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val last: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+

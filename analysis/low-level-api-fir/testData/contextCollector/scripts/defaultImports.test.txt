@@ -33,7 +33,7 @@ Tower Data Context:
             FirScriptSymbol SCRIPT: <script-defaultImports.test.kts>
                 <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
                 lval args: R|kotlin/Array<out kotlin/String>|
-
+            
                 public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
                     public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
                 Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
@@ -48,10 +48,10 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] defaultImports.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-defaultImports.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/sequences/Sequence<kotlin/String!>| = Q|java/util/stream/Stream|.R|java/util/stream/Stream.of|<R|kotlin/String!|>(String(foo)).R|kotlin/streams/asSequence|<R|kotlin/String!|>().R|kotlin/apply|<R|kotlin/sequences/Sequence<kotlin/String!>|>(<L> = [ResolvedTo(BODY_RESOLVE)] apply@fun R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/sequences/Sequence<kotlin/String!>| = Q|java/util/stream/Stream|.R|java/util/stream/Stream.of|<R|kotlin/String!|>(String(foo)).R|kotlin/streams/asSequence|<R|kotlin/String!|>().R|kotlin/apply|<R|kotlin/sequences/Sequence<kotlin/String!>|>(<L> = [ResolvedTo(BODY_RESOLVE)] apply@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|kotlin/sequences/contains|<R|kotlin/String!|>(String(bar))
         }
         )

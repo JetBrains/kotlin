@@ -33,22 +33,22 @@ Tower Data Context:
             FirScriptSymbol SCRIPT: <script-topLevelDestructuring_after.kts>
                 <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-
+            
                 public final data class TwoValues : R|kotlin/Any|
                 lval <destruct>: R|TwoValues|
                 public final val one: R|kotlin/Int|
                     public get(): R|kotlin/Int|
-
+            
                 public final val two: <implicit>
                     public get(): <implicit>
-
+            
                 public final val $$result: R|kotlin/Int|
                     public get(): R|kotlin/Int|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_after.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelDestructuring_after.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] class TwoValues : R|kotlin/Any| {

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(COMPANION_GENERATION)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(SUPER_TYPES)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(TYPES)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(STATUS)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(CONTRACTS)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by LAZY_EXPRESSION
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -346,7 +346,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
@@ -358,7 +358,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -388,7 +388,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> [ResolvedTo(CONSTANT_EVALUATION)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
             @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -430,7 +430,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
             @PROPERTY_GETTER:R|Anno|[Types](position = <strcat>(String(get ), R|/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
@@ -442,7 +442,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
             @PROPERTY_GETTER:R|Anno|[Types](position = <strcat>(String(get ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
@@ -484,7 +484,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-propertyWithExplicitTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithExplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -514,10 +514,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|)) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
             @PROPERTY_GETTER:R|Anno|[Types](position = <strcat>(String(get ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

@@ -26,7 +26,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndFunctionInside.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFun(): R|kotlin/Unit| {
         ^topLevelFun R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) local final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
+            @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) local final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
                 ^function @R|myPack/Anno|[Types](number = R|myPack/expressionProperty|) String(str)
             }
 

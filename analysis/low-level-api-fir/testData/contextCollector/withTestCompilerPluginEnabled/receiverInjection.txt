@@ -25,7 +25,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] receiverInjection.kt
     public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public abstract operator [ResolvedTo(CONTRACTS)] fun R|T|.plus([ResolvedTo(CONTRACTS)] other: R|T|): R|T|
+        public abstract operator [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|T|.plus([ResolvedTo(CONTRACTS)] other: R|T|): R|T|
 
     }
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {

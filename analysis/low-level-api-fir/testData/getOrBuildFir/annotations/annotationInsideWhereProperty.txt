@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> R|T|.foo: R|T|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
             ^ this@R|/foo|
         }

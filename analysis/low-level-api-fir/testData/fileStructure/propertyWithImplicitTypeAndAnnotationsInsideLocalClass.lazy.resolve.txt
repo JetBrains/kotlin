@@ -32,7 +32,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndAnnotationsInsideLoc
                 ^first (this@R|<local>/LocalClass|, Int(42)).R|<local>/variableToResolve|<R|kotlin/Int|>
             }
 
-            @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  T|.variableToResolve: R|kotlin/String|
+            @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  T|.variableToResolve: R|kotlin/String|
                 @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                     ^ String(str)
                 }

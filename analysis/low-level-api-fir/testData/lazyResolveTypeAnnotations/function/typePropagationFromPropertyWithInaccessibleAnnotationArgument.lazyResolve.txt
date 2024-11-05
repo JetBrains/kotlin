@@ -213,7 +213,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(CONTRACTS)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 <strcat>(String( (), it#, String()))
             }
             ) } ?: String()
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 <strcat>(String( (), it#, String()))
             }
             ) } ?: String()
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 <strcat>(String( (), it#, String()))
             }
             ) } ?: String()
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 <strcat>(String( (), it#, String()))
             }
             ) } ?: String()

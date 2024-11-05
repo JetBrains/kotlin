@@ -35,10 +35,10 @@ FILE: [ResolvedTo(RAW_FIR)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -95,10 +95,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -155,10 +155,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -215,10 +215,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -275,10 +275,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(SUPER_TYPES)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -335,10 +335,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final? [ResolvedTo(RAW_FIR)] fun asString([ResolvedTo(RAW_FIR)] convertPrimitiveToWrapper: Boolean): String { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] val Class<*>.arrayClassName: <implicit>
+        private final? [ResolvedTo(RAW_FIR)] val [ResolvedTo(RAW_FIR)] Class<*>.arrayClassName: <implicit>
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final? [ResolvedTo(RAW_FIR)] fun KTypeProjection.asString(): String { LAZY_BLOCK }
+        private final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] KTypeProjection.asString(): String { LAZY_BLOCK }
 
         internal final? companion [ResolvedTo(TYPES)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -395,10 +395,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -455,10 +455,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -515,10 +515,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -575,10 +575,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -635,10 +635,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -695,10 +695,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -755,10 +755,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
         private final [ResolvedTo(STATUS)] fun asString([ResolvedTo(STATUS)] convertPrimitiveToWrapper: R|kotlin/Boolean|): R|kotlin/String| { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] val R|java/lang/Class<*>|.arrayClassName: <implicit>
+        private final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|java/lang/Class<*>|.arrayClassName: <implicit>
             private [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): <implicit> { LAZY_BLOCK }
 
-        private final [ResolvedTo(STATUS)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
+        private final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| { LAZY_BLOCK }
 
         internal final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/jvm/internal/TypeReference.Companion| {
@@ -895,7 +895,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
 
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] val R|java/lang/Class<*>|.arrayClassName: R|kotlin/String|
+        private final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|java/lang/Class<*>|.arrayClassName: R|kotlin/String|
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/String| {
                 ^ when (this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
                     ==($subj$, <getClass>(Q|kotlin/BooleanArray|).R|kotlin/jvm/java|<R|kotlin/BooleanArray|>) ->  {
@@ -929,7 +929,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
 
             }
 
-        private final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| {
+        private final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/reflect/KTypeProjection|.asString(): R|kotlin/String| {
             when () {
                 ==(this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|, Null(null)) ->  {
                     ^asString String(*)

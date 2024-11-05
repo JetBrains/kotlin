@@ -7,6 +7,6 @@ this@R|/foo|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] thisExpression_regular_this.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Int|.foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.foo(): R|kotlin/Unit| {
         this@R|/foo|
     }

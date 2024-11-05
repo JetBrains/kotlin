@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-superClassCallScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
-                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                         ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                     }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val f: R|A| = object : R|A| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
-                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/String| {
                         ^bar Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                     }
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class D : R|A| {
             public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|D| {
-                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                         ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                     }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
             }
 
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|D| {
-                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun boo(): R|kotlin/String| {
                         ^boo this@R|special/anonymous|.R|/A.prop|.R|kotlin/String.toString|()
                     }

@@ -46,4 +46,4 @@ FILE: [ResolvedTo(IMPORTS)] argumentAsReceiver.kt
         }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun Bar.consume([ResolvedTo(RAW_FIR)] obj: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] Bar.consume([ResolvedTo(RAW_FIR)] obj: Foo): R|kotlin/Unit| { LAZY_BLOCK }

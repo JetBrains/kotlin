@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(RAW_FIR)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(RAW_FIR)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(RAW_FIR)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(RAW_FIR)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(COMPANION_GENERATION)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> [ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(COMPANION_GENERATION)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(SUPER_TYPES)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) ASF> [ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) Abc.function([ResolvedTo(SUPER_TYPES)] param: @Anno[Unresolved](LAZY_EXPRESSION) Type1<@Anno[Unresolved](LAZY_EXPRESSION) Type2>): @Anno[Unresolved](LAZY_EXPRESSION) Type3 { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(TYPES)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(TYPES)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(TYPES)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(STATUS)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(STATUS)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(STATUS)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONTRACTS)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(CONTRACTS)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONTRACTS)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
 CONSTANT_EVALUATION:
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONSTANT_EVALUATION)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(CONSTANT_EVALUATION)] @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONSTANT_EVALUATION)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
 ANNOTATION_ARGUMENTS:
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
 BODY_RESOLVE:
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(BODY_RESOLVE)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(BODY_RESOLVE)] @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(BODY_RESOLVE)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
 FILE RAW TO BODY:
@@ -211,5 +211,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] errorType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(BODY_RESOLVE)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(BODY_RESOLVE)] @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(BODY_RESOLVE)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
     }

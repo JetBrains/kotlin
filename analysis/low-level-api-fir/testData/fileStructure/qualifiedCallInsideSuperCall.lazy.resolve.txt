@@ -10,7 +10,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] object B : R|A| {
         private [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
             )
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
         private [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] class D : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|D| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] class E : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|E| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] class F : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|F| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|G| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
         }
 
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|G| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] class H : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|H| {
-            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
                 }

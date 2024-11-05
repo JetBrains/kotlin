@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] whenConditionInRange.kt
         }
 
     }
-    public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> R|T|.contains([ResolvedTo(CONTRACTS)] int: R|kotlin/Int|): R|kotlin/Boolean| {
+    public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> [ResolvedTo(CONTRACTS)] R|T|.contains([ResolvedTo(CONTRACTS)] int: R|kotlin/Int|): R|kotlin/Boolean| {
         ^contains Boolean(true)
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {

@@ -21,7 +21,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] receiverInjection_before.kt
     public final? [ResolvedTo(RAW_FIR)] interface Algebra<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? final? operator [ResolvedTo(RAW_FIR)] fun T.plus([ResolvedTo(RAW_FIR)] other: T): T
+        public? final? operator [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] T.plus([ResolvedTo(RAW_FIR)] other: T): T
 
     }
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {

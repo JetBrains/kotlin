@@ -128,7 +128,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-multiDeclarationScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {

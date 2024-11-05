@@ -10,7 +10,7 @@ public final [ResolvedTo(BODY_RESOLVE)] fun build([ResolvedTo(BODY_RESOLVE)] act
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] function.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-function.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-function.kts>] class Builder : R|kotlin/Any| {

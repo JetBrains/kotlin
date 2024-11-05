@@ -9,7 +9,7 @@ public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberPropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-memberPropertyScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-memberPropertyScript.kts>] class Y : R|kotlin/Any| {

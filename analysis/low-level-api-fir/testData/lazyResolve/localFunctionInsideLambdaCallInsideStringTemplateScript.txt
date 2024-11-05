@@ -1,7 +1,7 @@
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScr
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideLambdaCallInsideStringTemplateScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>] class ClassWithParameter : R|kotlin/Any| {

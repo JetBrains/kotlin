@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_delegate.kt
         }
 
     }
-    @R|Refine|[Types]() public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(CONTRACTS)] T, [ResolvedTo(CONTRACTS)] R> R|DataFrame<T>|.add([ResolvedTo(CONTRACTS)] columnName: R|kotlin/String|, [ResolvedTo(CONTRACTS)] expression: R|() -> R|): R|DataFrame<kotlin/Any?>| { LAZY_BLOCK }
+    @R|Refine|[Types]() public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(CONTRACTS)] T, [ResolvedTo(CONTRACTS)] R> [ResolvedTo(CONTRACTS)] R|DataFrame<T>|.add([ResolvedTo(CONTRACTS)] columnName: R|kotlin/String|, [ResolvedTo(CONTRACTS)] expression: R|() -> R|): R|DataFrame<kotlin/Any?>| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] df: R|DataFrame<*>?|): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval df1: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|DataFrame<<local>/DataFrameType>| <inline=Unknown>  {
             ^ R|<local>/df|.R|kotlin/let|<R|DataFrame<*>?|, R|DataFrame<<local>/DataFrameType>|>(<L> = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|DataFrame<*>?|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {

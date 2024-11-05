@@ -26,7 +26,7 @@ public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSym
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] class.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-class.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-class.kts>] class Builder : R|kotlin/Any| {

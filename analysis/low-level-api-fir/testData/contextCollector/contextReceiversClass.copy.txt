@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int
 
     }
-    context(Foo)
+    context([ResolvedTo(RAW_FIR)] Foo)
     public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>

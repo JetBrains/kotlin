@@ -28,7 +28,7 @@ Tower Data Context:
             FirScriptSymbol SCRIPT: <script-insideClassBody.kts>
                 <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-
+            
                 public final class Foo : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
     Element 11
@@ -38,7 +38,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(RAW_FIR)] insideClassBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideClassBody.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {

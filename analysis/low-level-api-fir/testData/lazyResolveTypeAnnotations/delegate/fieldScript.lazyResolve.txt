@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(RAW_FIR)] fieldScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -378,7 +378,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fieldScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fieldScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -402,3 +402,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fieldScript.kts
             private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| = R|<local>/prop|
 
         }
+

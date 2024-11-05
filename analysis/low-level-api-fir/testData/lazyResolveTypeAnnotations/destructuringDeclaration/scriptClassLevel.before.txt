@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptClassLevel.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -50,3 +50,4 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
             }
 
         }
+

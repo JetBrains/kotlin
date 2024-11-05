@@ -4,14 +4,14 @@ FILE: danglingAnnotationsClassLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        [ContainingClassKey=A] @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final? class B : R|kotlin/Any| {
         public? [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        [ContainingClassKey=B] @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final? class Outer : R|kotlin/Any| {
         public? [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -23,7 +23,7 @@ FILE: danglingAnnotationsClassLevel.kt
                 super<R|kotlin/Any|>()
             }
 
-            @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+            [ContainingClassKey=Inner] @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public? final? fun withLocal(): R|kotlin/Unit| {
@@ -32,7 +32,7 @@ FILE: danglingAnnotationsClassLevel.kt
                     super<R|kotlin/Any|>()
                 }
 
-                @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+                [ContainingClassKey=Local] @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
             }
 
             lval r: I = object : I {
@@ -40,7 +40,7 @@ FILE: danglingAnnotationsClassLevel.kt
                     super<<implicit>>()
                 }
 
-                @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+                [ContainingClassKey=<anonymous>] @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
             }
 
         }

@@ -21,7 +21,7 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] extensionFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String|.test(): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.test(): R|kotlin/Unit| {
         R|/consume|(this@R|/test|)
     }
     public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] obj: Any): R|kotlin/Unit| { LAZY_BLOCK }

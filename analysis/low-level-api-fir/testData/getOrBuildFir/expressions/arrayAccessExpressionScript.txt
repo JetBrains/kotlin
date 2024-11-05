@@ -8,7 +8,7 @@ R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayAccessExpressionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-arrayAccessExpressionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {

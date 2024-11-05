@@ -1,9 +1,9 @@
 STATUS:
-TARGET: public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(STATUS)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(STATUS)] R|kotlin/Int|.resolveMe([ResolvedTo(STATUS)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -18,17 +18,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
 
         }
 
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/Int|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -43,17 +43,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun R|T|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|T|): R|T|
+            public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|T|): R|T|
 
         }
 
 
 CONTRACTS:
-TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(CONTRACTS)] R|kotlin/Int|.resolveMe([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -68,17 +68,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(CONTRACTS)] fun R|T|.resolveMe([ResolvedTo(CONTRACTS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|T|.resolveMe([ResolvedTo(CONTRACTS)] param: R|T|): R|T|
 
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/Int|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -93,17 +93,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun R|T|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|T|): R|T|
+            public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|T|): R|T|
 
         }
 
 
 CONSTANT_EVALUATION:
-TARGET: public abstract override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/Int|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -118,17 +118,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(CONSTANT_EVALUATION)] fun R|T|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|T|): R|T|
+            public abstract [ResolvedTo(CONSTANT_EVALUATION)] fun [ResolvedTo(CONSTANT_EVALUATION)] R|T|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|T|): R|T|
 
         }
 
 
 ANNOTATION_ARGUMENTS:
-TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/Int|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -143,17 +143,17 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
 
         }
 
 
 BODY_RESOLVE:
-TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/Int|.resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
 
         }
 
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-substitutionFakeOverrideFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-substitutionFakeOverrideFunctionScript.kts>] class SubClass : R|second/AbstractClass<kotlin/Int>| {
@@ -191,6 +191,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public abstract [ResolvedTo(BODY_RESOLVE)] fun R|T|.resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|T|): R|T|
+            public abstract [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|T|.resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|T|): R|T|
 
         }
+

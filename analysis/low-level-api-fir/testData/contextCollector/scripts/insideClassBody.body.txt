@@ -40,7 +40,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-insideClassBody.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {

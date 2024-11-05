@@ -12,7 +12,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] destruct.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destruct.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destruct.kts>] annotation class Anno : R|kotlin/Annotation| {

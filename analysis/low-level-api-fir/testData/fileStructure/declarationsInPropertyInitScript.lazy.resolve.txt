@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInitScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-declarationsInPropertyInitScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -8,7 +8,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInitScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Unit| = this@R|/A|.R|kotlin/run|<R|A|, R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Unit| = this@R|/A|.R|kotlin/run|<R|A|, R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun [ResolvedTo(BODY_RESOLVE)] R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/X| {
                         super<R|kotlin/Any|>()

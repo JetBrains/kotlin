@@ -18,7 +18,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInside.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): <ERROR TYPE REF: Unresolved name: run> {
         ^topLevelFunction <Unresolved name: run>#(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty|) [ResolvedTo(BODY_RESOLVE)] lvar @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty|) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty|) String(str)
+            @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty|) [ResolvedTo(BODY_RESOLVE)] lvar [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty|) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty|) String(str)
         }
         )
     }

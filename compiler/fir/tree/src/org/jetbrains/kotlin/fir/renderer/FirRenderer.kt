@@ -189,6 +189,10 @@ class FirRenderer(
         print("|")
     }
 
+    private fun renderPhaseAndAttributes(declaration: FirDeclaration) {
+        declarationRenderer?.renderPhaseAndAttributes(declaration) ?: resolvePhaseRenderer?.render(declaration)
+    }
+
     inner class Visitor internal constructor() : FirVisitorVoid() {
 
         override fun visitElement(element: FirElement) {
@@ -197,7 +201,7 @@ class FirRenderer(
 
         override fun visitFile(file: FirFile) {
             printer.print("FILE: ")
-            resolvePhaseRenderer?.render(file)
+            renderPhaseAndAttributes(file)
             printer.println(file.name)
 
             printer.pushIndent()
@@ -211,7 +215,7 @@ class FirRenderer(
         override fun visitScript(script: FirScript) {
             annotationRenderer?.render(script)
             printer.print("SCRIPT: ")
-            declarationRenderer?.renderPhaseAndAttributes(script) ?: resolvePhaseRenderer?.render(script)
+            renderPhaseAndAttributes(script)
             printer.println(script.name)
 
             printer.pushIndent()
@@ -236,8 +240,9 @@ class FirRenderer(
         }
 
         override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
-            print("<script receiver parameter>: ")
+            renderPhaseAndAttributes(scriptReceiverParameter)
             annotationRenderer?.render(scriptReceiverParameter)
+            print("<script receiver parameter>: ")
             scriptReceiverParameter.typeRef.accept(this)
         }
 
@@ -267,13 +272,13 @@ class FirRenderer(
                 }
             }
             visitMemberDeclaration(callableDeclaration)
-            val receiverParameter = callableDeclaration.receiverParameter
             if (callableDeclaration !is FirProperty || callableDeclaration.isCatchParameter != true) {
                 print(" ")
             }
+
+            val receiverParameter = callableDeclaration.receiverParameter
             if (receiverParameter != null) {
-                annotationRenderer?.render(receiverParameter, AnnotationUseSiteTarget.RECEIVER)
-                receiverParameter.typeRef.accept(this)
+                renderReceiverParameter(receiverParameter, isExplicit = false)
                 print(".")
             }
             when (callableDeclaration) {
@@ -295,6 +300,8 @@ class FirRenderer(
         }
 
         override fun visitContextReceiver(contextReceiver: FirContextReceiver) {
+            renderPhaseAndAttributes(contextReceiver)
+
             contextReceiver.customLabelName?.let {
                 print(it.asString() + "@")
             }
@@ -391,8 +398,19 @@ class FirRenderer(
         }
 
         override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
-            print("<explicit receiver parameter>: ")
-            annotationRenderer?.render(receiverParameter)
+            renderReceiverParameter(receiverParameter, isExplicit = true)
+        }
+
+        fun renderReceiverParameter(receiverParameter: FirReceiverParameter, isExplicit: Boolean) {
+            renderPhaseAndAttributes(receiverParameter)
+
+            if (isExplicit) {
+                annotationRenderer?.render(receiverParameter)
+                print("<explicit receiver parameter>: ")
+            } else {
+                annotationRenderer?.render(receiverParameter, AnnotationUseSiteTarget.RECEIVER)
+            }
+
             receiverParameter.typeRef.accept(this)
         }
 
@@ -448,7 +466,7 @@ class FirRenderer(
             print(" ")
             val receiverParameter = anonymousFunction.receiverParameter
             if (receiverParameter != null) {
-                receiverParameter.typeRef.accept(this)
+                renderReceiverParameter(receiverParameter, isExplicit = false)
                 print(".")
             }
             print("<anonymous>")
@@ -476,14 +494,14 @@ class FirRenderer(
         }
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
-            resolvePhaseRenderer?.render(anonymousInitializer)
+            renderPhaseAndAttributes(anonymousInitializer)
             annotationRenderer?.render(anonymousInitializer)
             print("init")
             bodyRenderer?.renderBody(anonymousInitializer.body)
         }
 
         override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) {
-            resolvePhaseRenderer?.render(danglingModifierList)
+            renderPhaseAndAttributes(danglingModifierList)
             annotationRenderer?.render(danglingModifierList)
             print("<DANGLING MODIFIER: ${danglingModifierList.diagnostic.reason}>")
         }
@@ -506,7 +524,7 @@ class FirRenderer(
         private fun renderTypeParameter(typeParameter: FirTypeParameter, forOuterTypeRef: Boolean = false) {
             annotationRenderer?.render(typeParameter)
             modifierRenderer?.renderModifiers(typeParameter)
-            resolvePhaseRenderer?.render(typeParameter)
+            renderPhaseAndAttributes(typeParameter)
             typeParameter.variance.renderVariance()
 
             if (!forOuterTypeRef) {

@@ -2039,11 +2039,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun longArrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray| {
     }
-    public final operator [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String?|.plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/String| {
+    public final operator [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String?|.plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/String| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun shortArrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Any?|.toString(): R|kotlin/String| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Any?|.toString(): R|kotlin/String| {
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Annotation : R|kotlin/Any| {
     }

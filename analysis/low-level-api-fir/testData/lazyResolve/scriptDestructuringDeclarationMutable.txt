@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptDestructuringDeclarationMutable.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -351,7 +351,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -386,7 +386,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -456,7 +456,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] scriptDestructuringDeclarationMutable.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptDestructuringDeclarationMutable.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-scriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
@@ -486,3 +486,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptDestructuringDeclarationMutable.kts
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+

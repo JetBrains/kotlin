@@ -8,7 +8,7 @@ this@R|special/anonymous|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] thisExpression_anonymous_this.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|kotlin/Int.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>] foo@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>] foo@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|
         }
         )

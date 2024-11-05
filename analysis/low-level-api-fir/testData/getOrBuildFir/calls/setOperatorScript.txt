@@ -10,7 +10,7 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
     package test
 
     SCRIPT: [ResolvedTo(TYPES)] <script-setOperatorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol test.<script-setOperatorScript.kts>] class B : R|kotlin/Any| {

@@ -8,10 +8,10 @@ R|T|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] receiverTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T> R|T|.test(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.test(): R|kotlin/Unit| {
         }
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverTypeScript.kts>] annotation class A : R|kotlin/Annotation| {

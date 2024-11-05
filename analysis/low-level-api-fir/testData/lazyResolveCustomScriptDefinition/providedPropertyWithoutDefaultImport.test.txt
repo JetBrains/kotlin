@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(RAW_FIR)] lval fileParameter: File
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] providedPropertyWithoutDefaultImport.test.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(RAW_FIR)] lval fileParameter: File
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval fileParameter: File
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(COMPANION_GENERATION)] lval fileParameter: File
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(SUPER_TYPES)] lval fileParameter: File
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(TYPES)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(STATUS)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: String
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(CONTRACTS)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(CONSTANT_EVALUATION)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(BODY_RESOLVE)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
@@ -157,10 +157,11 @@ FILE: [ResolvedTo(IMPORTS)] providedPropertyWithoutDefaultImport.test.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] providedPropertyWithoutDefaultImport.test.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-providedPropertyWithoutDefaultImport.test.kts>
-        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(BODY_RESOLVE)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(BODY_RESOLVE)] lval fileParameter: <ERROR TYPE REF: Symbol not found for File>
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.<Unresolved name: path>#)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+

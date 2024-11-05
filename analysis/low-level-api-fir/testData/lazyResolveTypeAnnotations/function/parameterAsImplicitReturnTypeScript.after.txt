@@ -24,7 +24,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterAsImplicitReturnTypeScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-parameterAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {

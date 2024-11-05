@@ -923,8 +923,11 @@ class LightTreeRawFirDeclarationBuilder(
                 DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
             }
         }
+
         for (node in modifierLists) {
-            firDeclarations += buildErrorTopLevelDeclarationForDanglingModifierList(node)
+            firDeclarations += buildErrorTopLevelDeclarationForDanglingModifierList(node).apply {
+                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+            }
         }
         return firDeclarations
     }

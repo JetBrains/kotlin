@@ -1,7 +1,7 @@
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] interface Interface : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localParameterInsideSuperEntryCallScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localParameterInsideSuperEntryCallScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localParameterInsideSuperEntryCallScript.kts>] interface Interface : R|kotlin/Any| {

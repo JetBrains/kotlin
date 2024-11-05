@@ -12,7 +12,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-withMissedArgumentsScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {

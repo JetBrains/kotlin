@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotationsInLocalClassScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                         ^ IntegerLiteral(1)
                     }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                         ^ IntegerLiteral(1)
                     }
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                         ^ IntegerLiteral(1)
                     }
@@ -258,7 +258,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+                @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                         ^ IntegerLiteral(1)
                     }
@@ -293,7 +293,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
+                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int| {
                         ^ Int(1)
                     }
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterAnnotationsInLocalClassScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotationsInLocalClassScript.kts
                 public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
+                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int| {
                         ^ Int(1)
                     }
@@ -358,3 +358,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotationsInLocalClassScript.kts
             }
 
         }
+

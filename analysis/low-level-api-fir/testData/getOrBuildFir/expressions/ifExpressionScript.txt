@@ -15,7 +15,7 @@ when () {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ifExpressionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-ifExpressionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/String| {

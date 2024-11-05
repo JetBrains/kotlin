@@ -44,6 +44,6 @@ FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_fun.kt
         }
 
     }
-    context(R|test/ContextReceiver|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> R|test/Receiver|.test([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|T| {
+    context([ResolvedTo(BODY_RESOLVE)] R|test/ContextReceiver|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|test/Receiver|.test([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|T| {
     }

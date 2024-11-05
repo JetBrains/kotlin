@@ -8,7 +8,7 @@ super<R|B|>(Int(1))
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorDelegationSuperCallScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-constructorDelegationSuperCallScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorDelegationSuperCallScript.kts>] class B : R|kotlin/Any| {

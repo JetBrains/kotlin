@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -425,7 +425,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -479,7 +479,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -533,7 +533,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -587,7 +587,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -641,7 +641,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -695,7 +695,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationArgumentsMixScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -744,3 +744,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
 
         @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
+

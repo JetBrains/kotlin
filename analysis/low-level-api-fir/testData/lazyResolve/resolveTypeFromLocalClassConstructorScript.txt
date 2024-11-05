@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalClassConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -283,7 +283,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -357,7 +357,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-resolveTypeFromLocalClassConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveTypeFromLocalClassConstructorScript.kts>] class UnusedClass : R|kotlin/Any| {
@@ -426,3 +426,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalClassConstructorScript.kts
             }
 
         }
+

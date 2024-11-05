@@ -22,13 +22,13 @@ FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class I : R|A| {
     public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
-    public open [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Int|.smth(): R|kotlin/Short|
+    public open [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(RAW_FIR)] R|kotlin/Int|.smth(): R|kotlin/Short|
 
     public open [ResolvedTo(BODY_RESOLVE)] var bar: R|kotlin/Long|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Long|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Long|): R|kotlin/Unit|
 
-    public open [ResolvedTo(BODY_RESOLVE)] val R|kotlin/Int|.doo: R|kotlin/String|
+    public open [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(RAW_FIR)] R|kotlin/Int|.doo: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
     public open [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int|
@@ -37,7 +37,7 @@ public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] clas
     private final [ResolvedTo(BODY_RESOLVE)] val p: R|A|
         private [ResolvedTo(BODY_RESOLVE)] get(): R|A|
 
-    public open [ResolvedTo(BODY_RESOLVE)] var R|kotlin/Int|.zoo: R|kotlin/Unit|
+    public open [ResolvedTo(BODY_RESOLVE)] var [ResolvedTo(RAW_FIR)] R|kotlin/Int|.zoo: R|kotlin/Unit|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Unit|): R|kotlin/Unit|
 

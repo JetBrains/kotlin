@@ -8,10 +8,10 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnReceiverFunctionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
             ^check Int(1)
         }
 

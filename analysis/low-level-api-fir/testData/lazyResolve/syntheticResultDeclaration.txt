@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclaration.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
@@ -123,7 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-syntheticResultDeclaration.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
@@ -174,3 +174,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] syntheticResultDeclaration.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/foo|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+

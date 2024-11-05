@@ -8,7 +8,7 @@ this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|Subs
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromMemberFunction.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-argsFromMemberFunction.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-argsFromMemberFunction.kts>] class A : R|kotlin/Any| {

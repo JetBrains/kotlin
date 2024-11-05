@@ -34,8 +34,8 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] extensionLambdas.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        R|/block|<R|kotlin/String|>(String(foo), <L> = [ResolvedTo(BODY_RESOLVE)] foo@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/block|<R|kotlin/Int|>(Int(42), <L> = [ResolvedTo(BODY_RESOLVE)] num@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/block|<R|kotlin/String|>(String(foo), <L> = [ResolvedTo(BODY_RESOLVE)] foo@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/block|<R|kotlin/Int|>(Int(42), <L> = [ResolvedTo(BODY_RESOLVE)] num@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 R|/consume|(this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.plus|(this@R|special/anonymous|))
             }
             )

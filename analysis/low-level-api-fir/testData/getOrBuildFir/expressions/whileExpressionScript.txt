@@ -9,7 +9,7 @@ while(Boolean(true)) {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whileExpressionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-whileExpressionScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {

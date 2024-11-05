@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] T> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] T> [ResolvedTo(COMPANION_GENERATION)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] T> @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] T> [ResolvedTo(SUPER_TYPES)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) Int.function([ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) param: @Anno[Unresolved](LAZY_EXPRESSION) Int = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T> [ResolvedTo(TYPES)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(STATUS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> [ResolvedTo(STATUS)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(STATUS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -239,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(CONTRACTS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] T> [ResolvedTo(CONTRACTS)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(CONTRACTS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
         ^function String(str)
     }
 
@@ -295,7 +295,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] T> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(CONSTANT_EVALUATION)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] T> [ResolvedTo(CONSTANT_EVALUATION)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(receiverTypeProperty#)  kotlin/Int|.function([ResolvedTo(CONSTANT_EVALUATION)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) param: R|@R|myPack/Anno|(valueParameterTypeProperty#)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
         ^function String(str)
     }
 
@@ -324,7 +324,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueParameterTypeProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = defaultValueProperty#): R|kotlin/String| {
         ^function String(str)
     }
 
@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueParameterTypeProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
         ^function String(str)
     }
 
@@ -382,6 +382,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndAnnotations.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](number = R|myPack/valueParameterTypeProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val valueParameterTypeProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/functionProperty|) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty|) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty|) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty|)  kotlin/Int|.function([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/parameterProperty|) param: R|@R|myPack/Anno|(number = R|myPack/valueParameterTypeProperty|)  kotlin/Int| = R|myPack/defaultValueProperty|): R|kotlin/String| {
         ^function String(str)
     }

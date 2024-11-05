@@ -46,5 +46,5 @@ FILE: [ResolvedTo(IMPORTS)] argumentAsReceiver.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun R|Bar|.consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|Bar|.consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
     }

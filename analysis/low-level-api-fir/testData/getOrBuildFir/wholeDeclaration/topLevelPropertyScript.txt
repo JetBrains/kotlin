@@ -9,7 +9,7 @@ public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] topLevelPropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-topLevelPropertyScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)

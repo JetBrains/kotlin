@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                     ^ IntegerLiteral(1)
                 }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                     ^ IntegerLiteral(1)
                 }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                     ^ IntegerLiteral(1)
                 }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
             public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
 
-            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
                     ^ IntegerLiteral(1)
                 }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
+            @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int| {
                     ^ Int(1)
                 }
@@ -267,7 +267,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotationsInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
+            @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int| {
                     ^ Int(1)
                 }

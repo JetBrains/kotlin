@@ -55,7 +55,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] topLevel.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-topLevel.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.myToInt(): Int { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
+    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.myToInt(): R|kotlin/Int| {
         ^myToInt IntegerLiteral(42)
     }
 
@@ -266,6 +266,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorParameter.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.myToInt(): R|kotlin/Int| {
         ^myToInt Int(42)
     }

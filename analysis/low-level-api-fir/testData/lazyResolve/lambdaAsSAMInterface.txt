@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )

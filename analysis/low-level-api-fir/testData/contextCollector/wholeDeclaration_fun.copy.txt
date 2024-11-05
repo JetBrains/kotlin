@@ -25,5 +25,5 @@ FILE: [ResolvedTo(RAW_FIR)] wholeDeclaration_fun.kt
         }
 
     }
-    context(ContextReceiver)
-    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> Receiver.test([ResolvedTo(RAW_FIR)] param: String): T { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] ContextReceiver)
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> [ResolvedTo(RAW_FIR)] Receiver.test([ResolvedTo(RAW_FIR)] param: String): T { LAZY_BLOCK }

@@ -8,7 +8,7 @@ R|/foo|()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts>] class B : R|kotlin/Any| {

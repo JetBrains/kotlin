@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceivers.kt
         public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Int|
 
     }
-    context(R|Foo|, R|Bar|)
+    context([ResolvedTo(BODY_RESOLVE)] R|Foo|, [ResolvedTo(BODY_RESOLVE)] R|Bar|)
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         this@R|/test|.R|/Foo.foo|().R|kotlin/Int.plus|(this@R|/test|.R|/Bar.bar|())
     }
