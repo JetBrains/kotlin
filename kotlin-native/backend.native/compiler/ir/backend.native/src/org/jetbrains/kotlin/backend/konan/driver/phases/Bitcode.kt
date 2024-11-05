@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,17 +9,13 @@ import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.checkLlvmModuleExternalCalls
-import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
-import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads

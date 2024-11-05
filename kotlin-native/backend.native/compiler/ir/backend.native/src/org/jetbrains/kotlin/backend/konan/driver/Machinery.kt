@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.konan.driver
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.common.phaser.PhaserState
+import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -45,62 +48,6 @@ internal open class BasicPhaseContext(
     override fun dispose() {
 
     }
-}
-
-/**
- * PhaseEngine is a heart of dynamic compiler driver. Unlike old static compiler driver that relies on predefined list of phases,
- * dynamic one requires user to write a sequence of phases by hand (thus "dynamic"). PhaseEngine provides a framework for that by tracking
- * phase configuration and state under the hood and exposing two methods:
- * * [runPhase], well, executes a given phase.
- * * [useContext] creates a child engine with a more specific [PhaseContext] that will be cleanup at the end of the call.
- * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
- */
-class PhaseEngine<C : LoggingContext>(
-        val phaseConfig: PhaseConfigurationService,
-        val phaserState: PhaserState<Any>,
-        val context: C
-) {
-    companion object;
-
-    /**
-     * Switch to a more specific phase engine.
-     */
-    inline fun <NewContext, R> useContext(newContext: NewContext, action: (PhaseEngine<NewContext>) -> R): R
-            where NewContext : DisposableContext,
-                  NewContext : LoggingContext {
-        val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
-        try {
-            return action(newEngine)
-        } finally {
-            newContext.dispose()
-        }
-    }
-
-    /**
-     * Create a new PhaseEngine instance for an existing context that should not be disposed after the action.
-     * This is useful for creating engines for a sub/super context type.
-     */
-    inline fun <T : LoggingContext, R> newEngine(newContext: T, action: (PhaseEngine<T>) -> R): R {
-        val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
-        return action(newEngine)
-    }
-
-    fun <Input, Output, P : NamedCompilerPhase<C, Input, Output>> runPhase(
-            phase: P,
-            input: Input,
-            disable: Boolean = false
-    ): Output {
-        if (disable) {
-            return phase.outputIfNotEnabled(phaseConfig, phaserState.changePhaserStateType(), context, input)
-        }
-        // We lose sticky postconditions here, but it should be ok, since type is changed.
-        return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
-    }
-
-
-    fun <Output, P : NamedCompilerPhase<C, Unit, Output>> runPhase(
-            phase: P,
-    ): Output = runPhase(phase, Unit)
 }
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {

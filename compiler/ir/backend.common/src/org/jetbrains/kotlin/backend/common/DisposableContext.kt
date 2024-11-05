@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+
 interface DisposableContext {
 
     /**
