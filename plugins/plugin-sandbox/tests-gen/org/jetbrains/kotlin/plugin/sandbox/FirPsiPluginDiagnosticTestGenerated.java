@@ -86,6 +86,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("customKindInIncompleteCall.kt")
+    public void testCustomKindInIncompleteCall() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/functionalTypes/customKindInIncompleteCall.kt");
+    }
+
+    @Test
     @TestMetadata("dependencyWithoutFunctionalKindPlugin.kt")
     public void testDependencyWithoutFunctionalKindPlugin() {
       runTest("plugins/plugin-sandbox/testData/diagnostics/functionalTypes/dependencyWithoutFunctionalKindPlugin.kt");
