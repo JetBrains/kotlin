@@ -33,6 +33,7 @@ data class SourceFile(
     val irFile: IrFile,
 ) {
     private val source = irFile.readSourceText()
+        .replace("\r\n", "\n") // Normalize line endings in the same way the compiler does.
 
     fun getSourceRangeInfo(element: IrElement): SourceRangeInfo {
         var range = element.startOffset..element.endOffset
