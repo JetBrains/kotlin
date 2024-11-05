@@ -19,8 +19,9 @@ dependencies {
 
     // FIXME: Stop embedding Analysis API after KT-61404
     val lowLevelApiFir = ":analysis:low-level-api-fir"
+    val analysisApiFir = ":analysis:analysis-api-fir"
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-fir")) { isTransitive = false }
+    embedded(project(analysisApiFir)) { isTransitive = false }
     embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
@@ -35,9 +36,12 @@ dependencies {
     projectsToInheritDependenciesFrom.dependencies.addAll(
         listOf(
             dependencies.create(project(lowLevelApiFir)),
+            dependencies.create(project(analysisApiFir)),
         )
     )
     val dependenciesToInherit = mapOf(
+        // analysis-api-fir uses OpenTelemetry
+        "io.opentelemetry" to "opentelemetry-api",
         // low-level-api-fir uses the caffeine cache
         "com.github.ben-manes.caffeine" to "caffeine",
         // These are the dependencies of caffeine. By explicitly specifying them in runtimeClasspath we inherit the versions that are
