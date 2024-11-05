@@ -14,7 +14,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
@@ -60,6 +63,30 @@ private val isMultiplatformSupportAvailable: Boolean
  *
  * The method is designed to be used only for UAST (see https://plugins.jetbrains.com/docs/intellij/uast.html) in Android Lint.
  */
+@KaNonPublicApi
+@RequiresReadLock
+fun <T> withMultiplatformLightClassSupport(project: Project, block: () -> T): T {
+    if (isMultiplatformSupportAvailable) {
+        // Allow reentrant access
+        return block()
+    }
+
+    val modificationTracker = KotlinModificationTrackerFactory.getInstance(project).createProjectWideOutOfBlockModificationTracker()
+    val token = KotlinLifetimeTokenFactory.getInstance(project).create(project, modificationTracker)
+    token.assertIsValidAndAccessible()
+
+    try {
+        KMP_CACHE.set(WeakHashMap())
+        return block()
+    } finally {
+        KMP_CACHE.set(null)
+    }
+}
+
+@Deprecated(
+    "Use withMultiplatformLightClassSupport(project, block) instead",
+    ReplaceWith("withMultiplatformLightClassSupport(project, block)")
+)
 @KaNonPublicApi
 @RequiresReadLock
 fun <T> withMultiplatformLightClassSupport(block: () -> T): T {
