@@ -38,6 +38,7 @@ internal object LLFirPhaseUpdater {
 
     private fun updateFunctionLocalElements(target: FirFunction) {
         target.body?.accept(LocalElementPhaseUpdatingTransformer)
+        target.valueParameters.forEach { it.defaultValue?.accept(LocalElementPhaseUpdatingTransformer) }
     }
 
     private fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase, isTargetDeclaration: Boolean) {
