@@ -139,6 +139,9 @@ fun Project.projectTest(
     return getOrCreateTask<Test>(taskName) {
         dependsOn(":createIdeaHomeForTests")
         inputs.dir(File(rootDir, "build/ideaHomeForTests")).withPathSensitivity(PathSensitivity.RELATIVE)
+        if (jUnitMode == JUnitMode.JUnit5) {
+            systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+        }
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
