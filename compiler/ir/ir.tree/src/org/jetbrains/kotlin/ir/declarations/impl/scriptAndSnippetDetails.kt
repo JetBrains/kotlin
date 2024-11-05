@@ -9,3 +9,5 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
 internal val SCRIPT_ORIGIN = IrDeclarationOriginImpl("SCRIPT")
 val SCRIPT_K2_ORIGIN = IrDeclarationOriginImpl("SCRIPT_K2")
+
+val REPL_SNIPPET_ORIGIN = IrDeclarationOriginImpl("REPL_SNIPPET")

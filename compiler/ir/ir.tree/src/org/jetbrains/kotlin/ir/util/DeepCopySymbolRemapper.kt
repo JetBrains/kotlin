@@ -22,6 +22,7 @@ open class DeepCopySymbolRemapper(
 
     protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
     protected val scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
+    protected val replSnippets = hashMapOf<IrReplSnippetSymbol, IrReplSnippetSymbol>()
     protected val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
     protected val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
     protected val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
@@ -58,6 +59,13 @@ open class DeepCopySymbolRemapper(
             IrScriptSymbolImpl(descriptorsRemapper.remapDeclaredScript(it.descriptor))
         }
         super.visitScript(declaration)
+    }
+
+    override fun visitReplSnippet(declaration: IrReplSnippet) {
+        remapSymbol(replSnippets, declaration) {
+            IrReplSnippetSymbolImpl(null)
+        }
+        super.visitReplSnippet(declaration)
     }
 
     override fun visitConstructor(declaration: IrConstructor) {
@@ -165,6 +173,8 @@ open class DeepCopySymbolRemapper(
         IrAnonymousInitializerSymbolImpl(symbol.owner.descriptor)
 
     override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getDeclared(symbol)
+    override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = replSnippets.getDeclared(symbol)
+
     override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
     override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)

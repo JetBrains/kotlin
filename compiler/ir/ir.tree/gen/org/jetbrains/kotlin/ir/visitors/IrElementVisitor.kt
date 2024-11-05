@@ -72,6 +72,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitScript(declaration: IrScript, data: D): R =
         visitDeclaration(declaration, data)
 
+    fun visitReplSnippet(declaration: IrReplSnippet, data: D): R =
+        visitDeclaration(declaration, data)
+
     fun visitSimpleFunction(declaration: IrSimpleFunction, data: D): R =
         visitFunction(declaration, data)
 

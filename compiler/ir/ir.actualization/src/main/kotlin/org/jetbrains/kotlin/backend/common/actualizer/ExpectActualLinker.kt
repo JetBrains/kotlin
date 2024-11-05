@@ -24,6 +24,8 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
 
     override fun getDeclaredScript(symbol: IrScriptSymbol) = symbol
 
+    override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = symbol
+
     override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol
 
     override fun getDeclaredProperty(symbol: IrPropertySymbol) = symbol

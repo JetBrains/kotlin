@@ -284,6 +284,26 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(declaration)
         }
 
+    override fun visitReplSnippet(declaration: IrReplSnippet): IrReplSnippet =
+        IrReplSnippetImpl(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            factory = declaration.factory,
+            name = declaration.name,
+            symbol = symbolRemapper.getDeclaredReplSnippet(declaration.symbol),
+        ).apply {
+            with(factory) { declarationCreated() }
+            annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
+            receiverParameters = declaration.receiverParameters.memoryOptimizedMap { it.transform() }
+            declaration.variablesFromOtherSnippets.mapTo(variablesFromOtherSnippets) { it.transform() }
+            declaration.declarationsFromOtherSnippets.mapTo(declarationsFromOtherSnippets) { it.transform() }
+            stateObject = declaration.stateObject?.let(symbolRemapper::getReferencedClass)
+            body = declaration.body.transform()
+            returnType = declaration.returnType?.remapType()
+            targetClass = declaration.targetClass?.let(symbolRemapper::getReferencedClass)
+            processAttributes(declaration)
+        }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
         IrFunctionImpl(
             startOffset = declaration.startOffset,

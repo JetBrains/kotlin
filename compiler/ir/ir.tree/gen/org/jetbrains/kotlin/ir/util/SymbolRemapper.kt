@@ -45,6 +45,8 @@ interface SymbolRemapper : DeclaredSymbolRemapper, ReferencedSymbolRemapper {
 
         override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = symbol
 
+        override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = symbol
+
         override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
 
         override fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol = symbol

@@ -147,6 +147,14 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitDeclaration(declaration)
     }
 
+    override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?) {
+        visitReplSnippet(declaration)
+    }
+
+    fun visitReplSnippet(declaration: IrReplSnippet) {
+        visitDeclaration(declaration)
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?) {
         visitSimpleFunction(declaration)
     }

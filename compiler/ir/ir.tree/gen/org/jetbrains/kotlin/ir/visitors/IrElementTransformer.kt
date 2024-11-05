@@ -80,6 +80,9 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitScript(declaration: IrScript, data: D): IrStatement =
         visitDeclaration(declaration, data)
 
+    override fun visitReplSnippet(declaration: IrReplSnippet, data: D): IrStatement =
+        visitDeclaration(declaration, data)
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: D): IrStatement =
         visitFunction(declaration, data)
 

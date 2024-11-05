@@ -294,6 +294,8 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitScript(declaration: IrScript, data: Nothing?) = "SCRIPT"
 
+    override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?): String = "REPL_SNIPPET name:${declaration.name}"
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
             "FUN ${renderOriginIfNonTrivial(options)}" +

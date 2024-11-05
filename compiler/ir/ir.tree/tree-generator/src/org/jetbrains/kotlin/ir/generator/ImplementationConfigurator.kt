@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.generator
 
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.Visibility
-import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
@@ -17,8 +16,6 @@ import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.ir.generator.model.Implementation
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.utils.withIndent
@@ -136,6 +133,14 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             isLateinit("explicitCallParameters", "implicitReceiversParameters", "providedProperties", "providedPropertiesParameters")
             default("origin", "SCRIPT_ORIGIN")
+        }
+
+        impl(replSnippet) {
+            implementation.putImplementationOptInInConstructor = false
+            defaultNull("returnType", "stateObject", "targetClass")
+            isLateinit("receiverParameters", "body")
+            default("origin", "REPL_SNIPPET_ORIGIN")
+            default("declarationsFromOtherSnippets", "ArrayList()")
         }
 
         impl(moduleFragment) {
