@@ -34,8 +34,8 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall5.kt
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] constructor(): R|G| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+            super<R|A|>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                     ^foo Q|C|.R|/A.prop|.R|kotlin/String.toString|()
                 }
 

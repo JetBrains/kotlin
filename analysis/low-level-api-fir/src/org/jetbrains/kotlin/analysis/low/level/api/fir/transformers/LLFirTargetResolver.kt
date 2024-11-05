@@ -337,7 +337,6 @@ internal sealed class LLFirTargetResolver(
         LLFirPhaseUpdater.updateDeclarationInternalsPhase(
             target = target,
             newPhase = resolverPhase,
-            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
         )
     }
 

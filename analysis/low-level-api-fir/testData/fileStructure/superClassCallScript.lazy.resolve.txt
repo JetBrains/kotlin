@@ -22,8 +22,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
-                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                    local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                         ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                     }
 
@@ -50,8 +50,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class D : R|A| {
             public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|D| {
-                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                    local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                         ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                     }
 
@@ -60,8 +60,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superClassCallScript.kts
             }
 
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|D| {
-                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                    local final [ResolvedTo(RAW_FIR)] fun boo(): R|kotlin/String| {
+                super<R|A|>([ResolvedTo(BODY_RESOLVE)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(BODY_RESOLVE)] fun boo(): R|kotlin/String| {
                         ^boo this@R|special/anonymous|.R|/A.prop|.R|kotlin/String.toString|()
                     }
 

@@ -7,7 +7,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] callInsideLambdaInsideSuperCallAndExplicitConst
     }
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
-            super<R|B|>(Int(1), [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|B|>(Int(1), [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/foo|()
             }
             )
