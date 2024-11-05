@@ -766,11 +766,11 @@ fun getJsLowerings(
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
     validateIrAfterInliningOnlyPrivateFunctions.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineAllFunctionsPhase,
     dumpSyntheticAccessorsPhase.takeIf {
         !configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) &&
                 configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
     },
-    inlineAllFunctionsPhase,
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS prefix.
 
