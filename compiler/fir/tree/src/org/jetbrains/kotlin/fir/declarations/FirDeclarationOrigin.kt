@@ -62,6 +62,8 @@ sealed class FirDeclarationOrigin(
         object ParameterFromBaseClass : ScriptCustomization(FirScriptCustomizationKind.PARAMETER_FROM_BASE_CLASS)
     }
 
+    object FromOtherReplSnippet : FirDeclarationOrigin(fromSource = false)
+
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 
     override fun toString(): String {

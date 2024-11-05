@@ -111,6 +111,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.SubstitutionOverride -> KaSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> KaSymbolOrigin.JS_DYNAMIC
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.FromOtherReplSnippet -> KaSymbolOrigin.PLUGIN
 }
 
 internal fun KaClassLikeSymbol.getSymbolKind(): KaSymbolLocation {

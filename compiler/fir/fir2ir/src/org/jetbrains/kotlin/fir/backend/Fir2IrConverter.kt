@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -24,6 +23,11 @@ import org.jetbrains.kotlin.fir.backend.utils.createFilesWithBuiltinsSyntheticDe
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.destructuringDeclarationContainerVariable
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -473,34 +477,18 @@ class Fir2IrConverter(
                 require(parent is IrFile)
                 val irScript = declarationStorage.createIrScript(declaration)
                 addDeclarationToParentIfNeeded(irScript)
-                declarationStorage.withScope(irScript.symbol) {
-                    irScript.parent = parent
-                    for (scriptDeclaration in declaration.declarations.filterIsInstance<FirRegularClass>()) {
-                        registerClassAndNestedClasses(scriptDeclaration, irScript)
-                    }
-                    for (scriptDeclaration in declaration.declarations) {
-                        when (scriptDeclaration) {
-                            is FirRegularClass -> {
-                                processClassAndNestedClassHeaders(scriptDeclaration)
-                            }
-                            is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(scriptDeclaration, irScript)
-                            else -> {}
-                        }
-                    }
-                    for (scriptDeclaration in declaration.declarations) {
-                        val needProcessMember = when (scriptDeclaration) {
-                            is FirAnonymousInitializer -> false // processed later
-                            is FirProperty -> {
-                                // '_' DD element
-                                scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
-                                        scriptDeclaration.destructuringDeclarationContainerVariable == null
-                            }
-                            else -> true
-                        }
-                        if (needProcessMember) {
-                            processMemberDeclaration(scriptDeclaration, containingClass = null, irScript, delegateFieldToPropertyMap = null)
-                        }
-                    }
+                irScript.parent = parent
+                this.declarationStorage.withScope(irScript.symbol) {
+                    processScriptLikeDeclaration(irScript, declaration.declarations)
+                }
+            }
+            is FirReplSnippet -> {
+                require(parent is IrFile)
+                val irSnippet = declarationStorage.createIrReplSnippet(declaration)
+                addDeclarationToParentIfNeeded(irSnippet)
+                irSnippet.parent = parent
+                this.declarationStorage.withScope(irSnippet.symbol) {
+                    processScriptLikeDeclaration(irSnippet, declaration.body.statements.filterIsInstance<FirDeclaration>())
                 }
             }
             is FirSimpleFunction -> {
@@ -566,6 +554,38 @@ class Fir2IrConverter(
             }
             else -> {
                 error("Unexpected member: ${declaration::class}")
+            }
+        }
+    }
+
+    private fun processScriptLikeDeclaration(
+        parent: IrDeclarationParent,
+        declarations: List<FirDeclaration>,
+    ) {
+        for (scriptDeclaration in declarations.filterIsInstance<FirRegularClass>()) {
+            registerClassAndNestedClasses(scriptDeclaration, parent)
+        }
+        for (scriptDeclaration in declarations) {
+            when (scriptDeclaration) {
+                is FirRegularClass -> {
+                    processClassAndNestedClassHeaders(scriptDeclaration)
+                }
+                is FirTypeAlias -> this.classifierStorage.createAndCacheIrTypeAlias(scriptDeclaration, parent)
+                else -> {}
+            }
+        }
+        for (scriptDeclaration in declarations) {
+            val needProcessMember = when (scriptDeclaration) {
+                is FirAnonymousInitializer -> false // processed later
+                is FirProperty -> {
+                    // '_' DD element
+                    scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
+                            scriptDeclaration.destructuringDeclarationContainerVariable == null
+                }
+                else -> true
+            }
+            if (needProcessMember) {
+                processMemberDeclaration(scriptDeclaration, containingClass = null, parent, delegateFieldToPropertyMap = null)
             }
         }
     }

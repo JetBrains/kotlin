@@ -30,6 +30,7 @@ private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 private object KlibSourceFile : FirDeclarationDataKey()
 private object EvaluatedValue : FirDeclarationDataKey()
 private object CompilerPluginMetadata : FirDeclarationDataKey()
+private object OriginalReplSnippet : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -38,6 +39,7 @@ var FirProperty.componentFunctionSymbol: FirNamedFunctionSymbol? by FirDeclarati
 var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
+var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(OriginalReplSnippet)
 
 /**
  * @see [FirBasedSymbol.klibSourceFile]
