@@ -906,6 +906,15 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
     }
 
+    // ------------------------------------ REPL snippets ------------------------------------
+
+    fun createIrReplSnippet(snippet: FirReplSnippet, symbol: IrReplSnippetSymbol): IrReplSnippet =
+        snippet.convertWithOffsets { startOffset, endOffset ->
+            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.name, symbol).also { irSnippet ->
+                irSnippet.metadata = FirMetadataSource.ReplSnippet(snippet)
+            }
+        }
+
     // ------------------------------------ utilities ------------------------------------
 
     companion object {
@@ -1004,7 +1013,7 @@ internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDecl
         is IrClass -> irParent.declarations += declaration
         is IrFile -> irParent.declarations += declaration
         is IrExternalPackageFragment -> irParent.declarations += declaration
-        is IrScript -> {
+        is IrScript, is IrReplSnippet -> {
             /*
              * All declarations of the script will be added during main script conversion
              */

@@ -53,5 +53,7 @@ sealed class FirMetadataSource : MetadataSource {
 
     class CodeFragment(override val fir: FirCodeFragment) : FirMetadataSource(), MetadataSource.CodeFragment
 
+    class ReplSnippet(override val fir: FirReplSnippet) : FirMetadataSource(), MetadataSource.ReplSnippet
+
     class TypeAlias(override val fir: FirTypeAlias) : FirMetadataSource()
 }

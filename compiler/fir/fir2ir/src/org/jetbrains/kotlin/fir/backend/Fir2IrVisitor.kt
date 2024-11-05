@@ -350,6 +350,45 @@ class Fir2IrVisitor(
         return irFunction
     }
 
+    override fun visitReplSnippet(
+        replSnippet: FirReplSnippet,
+        data: Any?,
+    ): IrElement {
+        val irSnippet = declarationStorage.getCachedIrReplSnippet(replSnippet)!!
+        irSnippet.parent = conversionScope.parentFromStack()
+        declarationStorage.enterScope(irSnippet.symbol)
+
+        for (configurator in session.extensionService.fir2IrReplSnippetConfigurators) {
+            with(configurator) {
+                prepareSnippet(this@Fir2IrVisitor, replSnippet, irSnippet)
+            }
+        }
+
+        irSnippet.receiverParameters = replSnippet.receivers.mapIndexed { index, receiver ->
+            val name = Name.identifier("${SCRIPT_RECEIVER_NAME_PREFIX}_$index")
+            val origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
+            receiver.convertWithOffsets { startOffset, endOffset ->
+                IrFactoryImpl.createValueParameter(
+                    startOffset, endOffset, origin, name, receiver.typeRef.toIrType(c), isAssignable = false,
+                    IrValueParameterSymbolImpl(),
+                    varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false
+                ).also {
+                    it.parent = irSnippet
+                    @OptIn(DelicateIrParameterIndexSetter::class)
+                    it.indexInParameters = index
+                    it.kind = IrParameterKind.Context
+                }
+            }
+        }
+        conversionScope.withParent(irSnippet) {
+            irSnippet.body = convertToIrBlockBody(replSnippet.body)
+        }
+
+        declarationStorage.leaveScope(irSnippet.symbol)
+
+        return irSnippet
+    }
+
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: Any?): IrElement {
         return visitAnonymousObject(anonymousObjectExpression.anonymousObject, data)
     }
