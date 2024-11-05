@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -264,9 +265,14 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
     }
 
     companion object {
+        private val isEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            Registry.`is`("kotlin.analysis.jvmBuiltinActualizationForStdlibSources", true)
+        }
+
         /**
          * Creates an [ExpectBuiltinPostProcessor] only if it's needed. In general, this means:
          *
+         * - The workaround is enabled in the registry (`true` by default).
          * - The post-processor is only needed for source and script modules, since other kinds of modules such as libraries cannot depend
          *   on stdlib sources. We have to make a special provision for dangling files, which get their platform and language version
          *   settings from the context session.
@@ -275,6 +281,8 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
          *   `stdlib` modules have the `-Xstdlib-compilation` flag set.
          */
         fun createIfNeeded(session: FirSession, dependencyProviders: List<FirSymbolProvider>): ExpectBuiltinPostProcessor? {
+            if (!isEnabled) return null
+
             val module = session.llFirModuleData.ktModule
             if (module !is KaSourceModule && module !is KaScriptModule && module !is KaDanglingFileModule) return null
 

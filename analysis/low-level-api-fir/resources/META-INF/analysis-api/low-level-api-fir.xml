@@ -15,6 +15,13 @@
         restartRequired="true"
     />
 
+    <registryKey
+        defaultValue="true"
+        description="Enable the JVM builtin actualization workaround (KT-72390) when depending on stdlib sources. Only applies to modules which depend on stdlib sources regardless of this setting."
+        key="kotlin.analysis.jvmBuiltinActualizationForStdlibSources"
+        restartRequired="true"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser"
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser"
