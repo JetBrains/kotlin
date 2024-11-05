@@ -1,7 +1,10 @@
+// KT-72883: org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl cannot be cast to org.jetbrains.kotlin.ir.expressions.IrBlockBody
 // IGNORE_BACKEND: JS_IR
-// ^^^ This test fails due to visibility violation on access to JS `internal` intrinsic functions
-//     `kotlin.sharedBoxCreate`, `kotlin.sharedBoxRead` and `kotlin.sharedBoxWrite`. To be fixed in KT-70295.
+// IGNORE_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // WITH_COROUTINES
+
+// KT-72862: No function found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
 // MODULE: lib
 // FILE: a.kt

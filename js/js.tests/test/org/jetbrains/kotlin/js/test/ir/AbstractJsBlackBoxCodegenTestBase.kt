@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
@@ -53,8 +55,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         }
     }
 
-    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, irInliningFacade, backendFacade)
+    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, irInliningFacade, backendFacade, customIgnoreDirective)
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
@@ -124,6 +126,7 @@ fun <
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
     irInliningFacade: Constructor<IrInliningFacade<I>>,
     backendFacade: Constructor<BackendFacade<I, A>>,
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     globalDefaults {
         frontend = targetFrontend
@@ -144,7 +147,7 @@ fun <
 
     useAfterAnalysisCheckers(
         ::JsFailingTestSuppressor,
-        ::BlackBoxCodegenSuppressor,
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
     )
 
     facadeStep(frontendFacade)

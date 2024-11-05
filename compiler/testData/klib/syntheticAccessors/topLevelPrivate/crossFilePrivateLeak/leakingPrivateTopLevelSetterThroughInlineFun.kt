@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF
 // FILE: a.kt
 var privateSetterVarA = 0
     private set
@@ -23,6 +24,6 @@ fun box(): String {
     customSetVarA(42)
     customSetVarB(21)
     result += privateSetterVarA
-    if (result != 84) return result.toString()
+    if (result != 42) return result.toString()
     return "OK"
 }

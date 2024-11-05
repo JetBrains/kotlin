@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // FILE: A.kt
 class A {
     inner class Inner{

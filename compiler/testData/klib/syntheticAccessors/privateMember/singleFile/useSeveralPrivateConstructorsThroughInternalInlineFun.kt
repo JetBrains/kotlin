@@ -8,7 +8,7 @@ class A private constructor(val s: String) {
         A()
         A(s)
         A(' ')
-        return A(s, s)
+        return A(s, "")
     }
 }
 

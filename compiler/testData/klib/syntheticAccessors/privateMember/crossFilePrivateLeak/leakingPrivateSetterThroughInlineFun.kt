@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF
 // FILE: A.kt
 class A {
     var a: Int = 0

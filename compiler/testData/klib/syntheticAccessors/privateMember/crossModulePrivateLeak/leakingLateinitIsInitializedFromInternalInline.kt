@@ -1,3 +1,13 @@
+// KT-72862: Undefined symbols for architecture arm64: "_kfun:#$OK.doInitializeAndReadOK.<no name provided>.ok_field(OK#doInitializeAndReadOK.<no name provided>){}kotlin.String?"
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// KT-72862: No function found for symbol
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+
+// KT-72840: java.lang.AssertionError: Trying to inline an anonymous object which is not part of the public ABI: OK$doInitializeAndReadOK$1
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_LIGHT_ANALYSIS
+// WITH_STDLIB
 // MODULE: lib
 // FILE: OK.kt
 @Suppress("LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION", "LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY")

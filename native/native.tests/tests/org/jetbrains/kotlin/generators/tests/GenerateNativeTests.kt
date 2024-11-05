@@ -227,6 +227,19 @@ fun main() {
             }
         }
 
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeKlibSyntheticAccessorsBoxTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    klibIrInliner(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
         // KLIB cross-compilation tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
             testClass<AbstractFirKlibCrossCompilationIdentityTest>(

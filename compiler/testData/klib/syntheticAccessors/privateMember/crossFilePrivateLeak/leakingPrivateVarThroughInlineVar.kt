@@ -17,6 +17,6 @@ fun box(): String {
         inlineVar = 1
         result += inlineVar
     }
-    if (result != 13) return result.toString()
+    if (result != 1) return result.toString()
     return "OK"
 }

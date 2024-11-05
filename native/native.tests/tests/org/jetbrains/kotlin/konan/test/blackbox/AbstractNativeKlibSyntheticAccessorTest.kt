@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.KlibSyntheticAccessorTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredWith
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTrans
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -30,6 +32,10 @@ import java.io.File
 
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
 //   to the first compilation stage.
+// Then, check for `IGNORE_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
+//         useAfterAnalysisCheckers(
+//            ::BlackBoxCodegenSuppressor.bind(CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+//        )
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
 abstract class AbstractNativeKlibSyntheticAccessorTest(
     internal val narrowedAccessorVisibility: Boolean
@@ -51,18 +57,19 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
-        val isMuted = testRunSettings.isIgnoredTarget(absoluteTestFile)
+        val isMuted = testRunSettings.isIgnoredWith(absoluteTestFile, CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
 
         val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
         testRunOrFailure.exceptionOrNull()?.let { exception ->
             when {
                 exception !is CompilationToolException -> throw exception
                 isMuted -> {
-                    println("There was an expected failure: CompilationToolException: ${exception.reason}")
-                    return
+                    return // Expected failure
                 }
                 else -> fail { exception.reason }
             }
+        } ?: require (!isMuted) {
+            "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
         }
 
         val testRun = testRunOrFailure.getOrThrow()

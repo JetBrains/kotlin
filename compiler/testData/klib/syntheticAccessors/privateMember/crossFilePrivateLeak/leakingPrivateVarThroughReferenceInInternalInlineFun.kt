@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_SYNTHETIC_ACCESSORS_CHECKS: ANY
 // ^^^ Muted because accessor for function/constructor/property references are not generated. To be fixed in KT-69797.
 
 // FILE: A.kt
