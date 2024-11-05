@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -64,13 +63,14 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 open class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
-    private val phaseConfig: PhaseConfig?,
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) : CodegenFactory {
+    val phaseConfig: PhaseConfig = configuration.phaseConfig ?: PhaseConfig()
+
     /**
      * @param shouldStubAndNotLinkUnboundSymbols
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
@@ -104,7 +104,7 @@ open class JvmIrCodegenFactory(
         val irModuleFragment: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
-        val phaseConfig: PhaseConfig?,
+        val phaseConfig: PhaseConfig,
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
@@ -316,7 +316,6 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phaseConfig = customPhaseConfig ?: PhaseConfig()
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, extensions,
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
@@ -341,7 +340,7 @@ open class JvmIrCodegenFactory(
         val allBuiltins = irModuleFragment.files.filter { it.isJvmBuiltin }
         irModuleFragment.files.removeIf { it.isBytecodeGenerationSuppressed }
 
-        jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
+        jvmLoweringPhases.invokeToplevel(customPhaseConfig, context, irModuleFragment)
 
         return JvmIrCodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
     }
@@ -354,7 +353,7 @@ open class JvmIrCodegenFactory(
         if (hasErrors()) return
 
         notifyCodegenStart()
-        jvmCodegenPhases.invokeToplevel(PhaseConfig(), context, module)
+        jvmCodegenPhases.invokeToplevel(phaseConfig, context, module)
 
         if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group

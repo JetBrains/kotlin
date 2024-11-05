@@ -690,7 +690,6 @@ internal class KaFirCompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            PhaseConfig(),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,

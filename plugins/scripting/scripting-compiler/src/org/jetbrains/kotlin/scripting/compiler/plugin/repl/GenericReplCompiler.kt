@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -117,7 +116,6 @@ open class GenericReplCompiler(
                 }
             val codegenFactory = JvmIrCodegenFactory(
                 checker.environment.configuration,
-                checker.environment.configuration.phaseConfig,
                 compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
 

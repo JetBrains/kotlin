@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -187,7 +186,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
         }
         val codegenFactory = JvmIrCodegenFactory(
             compilationState.environment.configuration,
-            compilationState.environment.configuration.phaseConfig,
             compilationState.mangler, compilationState.symbolTable, generatorExtensions
         )
         val generationState = prebuiltState.build()

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -93,10 +92,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             throw TestsCompilerError(e)
         }
 
-        val codegenFactory = JvmIrCodegenFactory(
-            environment.configuration,
-            environment.configuration.phaseConfig
-        )
+        val codegenFactory = JvmIrCodegenFactory(environment.configuration)
 
         val state = GenerationState.Builder(
             environment.project,

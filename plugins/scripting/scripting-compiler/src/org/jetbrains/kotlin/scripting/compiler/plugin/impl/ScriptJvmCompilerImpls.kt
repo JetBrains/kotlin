@@ -284,7 +284,7 @@ private fun generate(
         KotlinCodegenFacade.compileCorrectFiles(
             sourceFiles,
             it,
-            JvmIrCodegenFactory(kotlinCompilerConfiguration, kotlinCompilerConfiguration.phaseConfig),
+            JvmIrCodegenFactory(kotlinCompilerConfiguration),
         )
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticsReporter,

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
@@ -136,10 +135,7 @@ object GenerationUtils {
 
         val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
-        val codegenFactory = JvmIrCodegenFactory(
-            configuration,
-            configuration.phaseConfig,
-        )
+        val codegenFactory = JvmIrCodegenFactory(configuration)
 
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, configuration
@@ -197,7 +193,7 @@ object GenerationUtils {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                JvmIrCodegenFactory(configuration, configuration.phaseConfig),
+                JvmIrCodegenFactory(configuration),
             )
         }
         return generationState
