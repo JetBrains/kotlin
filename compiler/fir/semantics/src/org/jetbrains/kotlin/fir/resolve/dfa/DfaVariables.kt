@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -53,30 +52,30 @@ private enum class PropertyStability(
 
 class RealVariable(
     val symbol: FirBasedSymbol<*>,
-    val isReceiver: Boolean,
+    val isImplicit: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?,
     val originalType: ConeKotlinType,
 ) : DataFlowVariable() {
     companion object {
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
-            RealVariable(symbol, isReceiver = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
+            RealVariable(symbol, isImplicit = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
 
-        fun receiver(symbol: FirThisOwnerSymbol<*>, type: ConeKotlinType): RealVariable =
-            RealVariable(symbol as FirBasedSymbol<*>, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type)
+        fun implicit(symbol: FirBasedSymbol<*>, type: ConeKotlinType): RealVariable =
+            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, type)
     }
 
     // `originalType` cannot be included into equality comparisons because it can be a captured type.
     // Those are normally not equal to each other, but if this variable is stable, then it is in fact the same type.
     override fun equals(other: Any?): Boolean =
-        other is RealVariable && symbol == other.symbol && isReceiver == other.isReceiver &&
+        other is RealVariable && symbol == other.symbol && isImplicit == other.isImplicit &&
                 dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver
 
     override fun hashCode(): Int =
-        Objects.hash(symbol, isReceiver, dispatchReceiver, extensionReceiver)
+        Objects.hash(symbol, isImplicit, dispatchReceiver, extensionReceiver)
 
     override fun toString(): String =
-        (if (isReceiver) "this@" else "") + when (symbol) {
+        (if (isImplicit) "this@" else "") + when (symbol) {
             is FirClassSymbol<*> -> "${symbol.classId}"
             is FirCallableSymbol<*> -> "${symbol.callableId}"
             else -> "$symbol"
@@ -87,7 +86,7 @@ class RealVariable(
         }
 
     fun getStability(flow: Flow, session: FirSession): SmartcastStability {
-        if (!isReceiver) {
+        if (!isImplicit) {
             val stability = propertyStability
 
             val isUnstableSmartcastOnDelegatedProperties =

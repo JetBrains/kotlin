@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
@@ -45,14 +46,14 @@ class VariableStorage(private val session: FirSession) {
         unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
     ): DataFlowVariable? {
         val unwrapped = fir.unwrapElement() ?: return null
-        val isReceiver = unwrapped is FirThisReceiverExpression
+        val isImplicit = unwrapped is FirThisReceiverExpression
         val symbol = when (unwrapped) {
             is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.symbol
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
             is FirResolvable -> unwrapped.calleeReference.symbol
             else -> null
         }?.takeIf {
-            isReceiver || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
+            isImplicit || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
         }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
 
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
@@ -62,7 +63,7 @@ class VariableStorage(private val session: FirSession) {
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
             (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
-        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
+        val prototype = RealVariable(symbol, isImplicit, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
         val real = if (createReal) rememberWithKnownReceivers(prototype) else realVariables[prototype] ?: return null
         return unwrapAlias(real)
     }
@@ -82,7 +83,7 @@ class VariableStorage(private val session: FirSession) {
         }
 
     private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable =
-        RealVariable(symbol, isReceiver, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
+        RealVariable(symbol, isImplicit, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
 
     /**
      * Call a lambda with every known [RealVariable] that represents a member property of another [RealVariable].

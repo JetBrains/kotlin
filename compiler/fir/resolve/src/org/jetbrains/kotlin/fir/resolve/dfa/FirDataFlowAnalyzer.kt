@@ -79,7 +79,7 @@ abstract class FirDataFlowAnalyzer(
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
-                override fun receiverUpdated(info: TypeStatement) {
+                override fun implicitUpdated(info: TypeStatement) {
                     receiverStack.replaceImplicitValueType(info.variable.symbol, info.smartCastedType(typeContext))
                 }
 
@@ -115,7 +115,7 @@ abstract class FirDataFlowAnalyzer(
 
     protected abstract val logicSystem: LogicSystem
     protected abstract val receiverStack: ImplicitValueStack
-    protected abstract fun receiverUpdated(info: TypeStatement)
+    protected abstract fun implicitUpdated(info: TypeStatement)
 
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
@@ -1539,10 +1539,10 @@ abstract class FirDataFlowAnalyzer(
         val previous = currentSmartCastPosition
         if (previous == flow) return
         receiverStack.implicitValues.forEach {
-            val variable = RealVariable.receiver(it.boundSymbol, it.originalType)
+            val variable = RealVariable.implicit(it.boundSymbol, it.originalType)
             val newStatement = flow?.getTypeStatement(variable)
             if (newStatement != previous?.getTypeStatement(variable)) {
-                receiverUpdated(newStatement ?: MutableTypeStatement(variable))
+                implicitUpdated(newStatement ?: MutableTypeStatement(variable))
             }
         }
         currentSmartCastPosition = flow
@@ -1559,8 +1559,8 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.isReceiver && this === currentSmartCastPosition) {
-            receiverUpdated(newStatement)
+        if (newStatement.variable.isImplicit && this === currentSmartCastPosition) {
+            implicitUpdated(newStatement)
         }
     }
 

@@ -60,7 +60,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                         function.receiverParameter
                     }
                 val type = receiverParameter?.typeRef?.coneType ?: return@Array null
-                RealVariable.receiver(receiverParameter.symbol, type)
+                RealVariable.implicit(receiverParameter.symbol, type)
             }
         }
 
