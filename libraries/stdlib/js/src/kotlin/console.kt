@@ -88,7 +88,7 @@ internal var output = run {
 }
 
 @kotlin.internal.InlineOnly
-private inline fun String(value: Any?): String = js("String")(value)
+private inline fun String(value: Any?): String = value?.toString() ?: "null"
 
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {
