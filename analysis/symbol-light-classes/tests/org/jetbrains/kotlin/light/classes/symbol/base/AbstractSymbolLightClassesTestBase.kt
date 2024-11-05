@@ -82,7 +82,7 @@ abstract class AbstractSymbolLightClassesTestBase(
                 if (configurator.defaultTargetPlatform.has<JvmPlatform>()) {
                     getRenderResult(ktFile, ktFiles, testDataPath, module, project)
                 } else {
-                    withMultiplatformLightClassSupport {
+                    withMultiplatformLightClassSupport(project) {
                         getRenderResult(ktFile, ktFiles, testDataPath, module, project)
                     }
                 }

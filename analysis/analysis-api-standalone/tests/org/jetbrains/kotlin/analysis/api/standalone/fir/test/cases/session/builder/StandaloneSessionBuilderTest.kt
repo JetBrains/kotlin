@@ -6,7 +6,14 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiPrimitiveType
+import com.intellij.psi.PsiTypes
+import com.intellij.psi.impl.source.PsiClassReferenceType
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -28,12 +35,16 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -557,5 +568,98 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             ),
             additionalCheck
         )
+    }
+
+    @Test
+    fun testJvmLightClasses() = testLightClasses(JvmPlatforms.defaultJvmPlatform) { kotlinClass ->
+        val kotlinPsiClass = kotlinClass.toLightClass()
+        require(kotlinPsiClass != null)
+
+        val kotlinPsiClassFromFacade = JavaPsiFacade
+            .getInstance(project)
+            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+
+        require(kotlinPsiClassFromFacade == kotlinPsiClass)
+
+        checkKotlinPsiClass(kotlinPsiClass)
+    }
+
+    @Test
+    fun testCommonLightClasses() = testLightClasses(JvmPlatforms.defaultJvmPlatform) { kotlinClass ->
+        val kotlinPsiClass = kotlinClass.toLightClass()
+        require(kotlinPsiClass != null)
+
+        val kotlinPsiClassFromFacade = JavaPsiFacade
+            .getInstance(project)
+            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+
+        require(kotlinPsiClassFromFacade == kotlinPsiClass)
+
+        checkKotlinPsiClass(kotlinPsiClass)
+    }
+
+    @Test
+    fun testJavaScriptLightClasses() = testLightClasses(JsPlatforms.defaultJsPlatform) { kotlinClass ->
+        val unavailableKotlinClass = kotlinClass.toLightClass()
+        require(unavailableKotlinClass == null) // By default, light classes are not available for non-JVM platforms
+
+        val unavailableKotlinClassFromFacade = JavaPsiFacade
+            .getInstance(project)
+            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+
+        require(unavailableKotlinClassFromFacade == null)
+
+        @OptIn(KaNonPublicApi::class)
+        withMultiplatformLightClassSupport(project) {
+            val kotlinPsiClass = kotlinClass.toLightClass()
+            require(kotlinPsiClass != null)
+
+            val kotlinPsiClassFromFacade = JavaPsiFacade
+                .getInstance(project)
+                .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+
+            // Inside withMultiplatformLightClassSupport, 'JavaPsiFacade' doesn't return Kotlin LC
+            require(kotlinPsiClassFromFacade == null)
+
+            checkKotlinPsiClass(kotlinPsiClass)
+        }
+    }
+
+    private fun testLightClasses(platform: TargetPlatform, block: StandaloneAnalysisAPISession.(KtClassOrObject) -> Unit) {
+        val root = "lightClasses"
+
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                this.platform = platform
+                addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root))
+                        this.platform = platform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+
+        val mainModule = session.modulesWithFiles.keys.single()
+
+        val kotlinClass = analyze(mainModule) {
+            val symbol = findClass(ClassId.fromString("org/test/KotlinClass"))!!
+            symbol.psi as KtClassOrObject
+        }
+
+        session.block(kotlinClass)
+    }
+
+    private fun checkKotlinPsiClass(kotlinPsiClass: PsiClass) {
+        val fooMethod = kotlinPsiClass.methods.single { it.name == "foo" }
+        val fooParameter = fooMethod.parameterList.getParameter(0)!!
+
+        val fooParameterType = fooParameter.type as PsiPrimitiveType
+        assert(fooParameterType == PsiTypes.intType())
+
+        val fooReturnType = fooMethod.returnType as PsiClassReferenceType
+        assert(fooReturnType.canonicalText == "java.lang.String")
+        assert(fooReturnType.resolve() == null)
     }
 }
