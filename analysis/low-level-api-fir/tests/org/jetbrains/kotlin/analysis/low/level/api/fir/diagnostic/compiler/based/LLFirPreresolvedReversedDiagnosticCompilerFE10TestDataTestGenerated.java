@@ -13758,6 +13758,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("withDelegatedProperty.kt")
+        public void testWithDelegatedProperty() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withDelegatedProperty.kt");
+        }
+
+        @Test
         @TestMetadata("withExplicitReceiver.kt")
         public void testWithExplicitReceiver() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withExplicitReceiver.kt");
