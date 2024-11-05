@@ -202,8 +202,8 @@ abstract class JsAbstractInvalidationTest(
 
             return PhaseConfig(
                 jsPhases,
-                dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path,
-                toDumpStateAfter = jsPhases.toPhaseMap().values.toSet()
+                toDumpStateAfter = jsPhases.toPhaseMap().values.toSet(),
+                dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
             )
         }
 

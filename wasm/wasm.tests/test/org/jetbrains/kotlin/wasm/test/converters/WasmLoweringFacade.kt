@@ -53,8 +53,8 @@ class WasmLoweringFacade(
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
                 wasmPhases,
-                dumpToDirectory = dumpOutputDir.path,
                 toDumpStateAfter = wasmPhases.toPhaseMap().values.toSet(),
+                dumpToDirectory = dumpOutputDir.path,
             )
         } else {
             PhaseConfig(wasmPhases)

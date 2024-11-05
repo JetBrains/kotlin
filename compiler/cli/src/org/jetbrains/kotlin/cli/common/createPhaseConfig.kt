@@ -48,10 +48,10 @@ fun createPhaseConfig(
         verbose,
         toDumpStateBefore,
         toDumpStateAfter,
-        dumpDirectory,
-        dumpOnlyFqName,
         toValidateStateBefore,
         toValidateStateAfter,
+        dumpDirectory,
+        dumpOnlyFqName,
         needProfiling,
         checkConditions,
         checkStickyConditions

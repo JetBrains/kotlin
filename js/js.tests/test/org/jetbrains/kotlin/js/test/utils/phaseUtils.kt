@@ -23,8 +23,8 @@ fun createTestPhaseConfig(testServices: TestServices, module: TestModule, topLev
         )
         PhaseConfig(
             topLevelPhase,
+            toDumpStateAfter = topLevelPhase.toPhaseMap().values.toSet(),
             dumpToDirectory = dumpOutputDir.path,
-            toDumpStateAfter = topLevelPhase.toPhaseMap().values.toSet()
         )
     } else {
         PhaseConfig(topLevelPhase)
