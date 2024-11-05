@@ -23925,6 +23925,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("complexGenericOverride.kt")
+      public void testComplexGenericOverride() {
+        runTest("compiler/testData/diagnostics/tests/j+k/complexGenericOverride.kt");
+      }
+
+      @Test
       @TestMetadata("computeIfAbsentConcurrent.kt")
       public void testComputeIfAbsentConcurrent() {
         runTest("compiler/testData/diagnostics/tests/j+k/computeIfAbsentConcurrent.kt");
