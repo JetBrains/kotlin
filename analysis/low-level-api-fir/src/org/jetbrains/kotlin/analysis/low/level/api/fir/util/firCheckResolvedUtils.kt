@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -162,37 +165,6 @@ internal fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, a
     checkTypeRefIsResolved(declaration.returnTypeRef, typeRefName = "return type", declaration, acceptImplicitTypeRef)
 }
 
-internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
-    val receiverTypeRef = declaration.receiverParameter?.typeRef ?: return
-    checkTypeRefIsResolved(receiverTypeRef, typeRefName = "receiver type", declaration, acceptImplicitTypeRef)
-}
-
-internal fun checkContextReceiverTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
-    checkContextReceiverTypeRefIsResolved(declaration.contextReceivers, declaration, acceptImplicitTypeRef)
-}
-
-internal fun checkContextReceiverTypeRefIsResolved(declaration: FirRegularClass, acceptImplicitTypeRef: Boolean = false) {
-    checkContextReceiverTypeRefIsResolved(declaration.contextReceivers, declaration, acceptImplicitTypeRef)
-}
-
-internal fun checkImplicitReceiverTypeRefIsResolved(declaration: FirScript, acceptImplicitTypeRef: Boolean = false) {
-    for (implicitReceiver in declaration.receivers) {
-        val receiverTypeRef = implicitReceiver.typeRef
-        checkTypeRefIsResolved(receiverTypeRef, typeRefName = "implicit receiver type", declaration, acceptImplicitTypeRef)
-    }
-}
-
-private fun checkContextReceiverTypeRefIsResolved(
-    contextReceivers: List<FirContextReceiver>,
-    owner: FirDeclaration,
-    acceptImplicitTypeRef: Boolean,
-) {
-    for (contextReceiver in contextReceivers) {
-        val receiverTypeRef = contextReceiver.typeRef
-        checkTypeRefIsResolved(receiverTypeRef, typeRefName = "context receiver type", owner, acceptImplicitTypeRef)
-    }
-}
-
 internal fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
     val contractDescription = declaration.contractDescription ?: return
     checkWithAttachment(
@@ -221,12 +193,6 @@ internal fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef:
     }
 
     typeRef.accept(AnnotationChecker, owner)
-}
-
-internal fun checkAnnotationsAreResolved(contextReceivers: List<FirContextReceiver>, owner: FirDeclaration) {
-    for (contextReceiver in contextReceivers) {
-        checkAnnotationsAreResolved(owner, contextReceiver.typeRef)
-    }
 }
 
 internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsResolved(

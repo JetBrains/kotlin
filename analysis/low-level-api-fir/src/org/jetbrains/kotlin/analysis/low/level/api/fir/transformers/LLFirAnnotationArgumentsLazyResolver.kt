@@ -11,11 +11,17 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnnotationVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -29,21 +35,14 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
-        if (target !is FirAnnotationContainer) return
-        checkAnnotationsAreResolved(target)
+        if (target is FirAnnotationContainer) {
+            checkAnnotationsAreResolved(target)
+        }
 
         when (target) {
-            is FirCallableDeclaration -> {
-                checkAnnotationsAreResolved(target, target.returnTypeRef)
-                val receiverParameter = target.receiverParameter
-                if (receiverParameter != null) {
-                    checkAnnotationsAreResolved(receiverParameter)
-                    checkAnnotationsAreResolved(target, receiverParameter.typeRef)
-                }
-
-                checkAnnotationsAreResolved(target.contextReceivers, target)
-            }
-
+            is FirCallableDeclaration -> checkAnnotationsAreResolved(target, target.returnTypeRef)
+            is FirReceiverParameter -> checkAnnotationsAreResolved(target, target.typeRef)
+            is FirContextReceiver -> checkAnnotationsAreResolved(target, target.typeRef)
             is FirTypeParameter -> {
                 for (bound in target.bounds) {
                     checkAnnotationsAreResolved(target, bound)
@@ -54,13 +53,6 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 for (typeRef in target.superTypeRefs) {
                     checkAnnotationsAreResolved(target, typeRef)
                 }
-
-                checkAnnotationsAreResolved(target.contextReceivers, target)
-            }
-
-            is FirScript -> for (receiver in target.receivers) {
-                checkAnnotationsAreResolved(receiver)
-                checkAnnotationsAreResolved(target, receiver.typeRef)
             }
 
             is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
@@ -206,7 +198,7 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         is FirAnonymousInitializer,
         is FirDanglingModifierList,
         is FirTypeAlias,
-        -> true
+            -> true
         else -> false
     }
 

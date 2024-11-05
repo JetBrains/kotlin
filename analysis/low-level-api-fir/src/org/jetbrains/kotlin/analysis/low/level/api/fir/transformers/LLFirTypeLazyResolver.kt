@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContextReceiverTypeRefIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkImplicitReceiverTypeRefIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReceiverTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -41,20 +38,14 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
         }
 
         when (target) {
-            is FirCallableDeclaration -> {
-                checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)
-                checkReceiverTypeRefIsResolved(target)
-                checkContextReceiverTypeRefIsResolved(target)
-            }
-
+            is FirCallableDeclaration -> checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)
+            is FirReceiverParameter -> checkTypeRefIsResolved(target.typeRef, "receiver type reference", target)
+            is FirContextReceiver -> checkTypeRefIsResolved(target.typeRef, "context receiver type reference", target)
             is FirTypeParameter -> {
                 for (bound in target.bounds) {
                     checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
-
-            is FirRegularClass -> checkContextReceiverTypeRefIsResolved(target)
-            is FirScript -> checkImplicitReceiverTypeRefIsResolved(target)
         }
     }
 }
@@ -110,7 +101,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             is FirScript,
             is FirRegularClass,
             is FirAnonymousInitializer,
-            -> rawResolve(target)
+                -> rawResolve(target)
 
             is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {

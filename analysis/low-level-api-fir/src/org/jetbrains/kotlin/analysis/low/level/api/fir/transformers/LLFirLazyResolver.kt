@@ -58,6 +58,20 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         checkFunctionParametersAreResolved(target)
         checkVariableSubDeclarationsAreResolved(target)
         checkTypeParametersAreResolved(target)
+        checkReceiversAreResolved(target)
+    }
+
+    private fun checkReceiversAreResolved(declaration: FirDeclaration) {
+        when (declaration) {
+            is FirCallableDeclaration -> {
+                declaration.receiverParameter?.let(::checkIsResolved)
+                declaration.contextReceivers.forEach(::checkIsResolved)
+            }
+
+            is FirScript -> declaration.receivers.forEach(::checkIsResolved)
+            is FirRegularClass -> declaration.contextReceivers.forEach(::checkIsResolved)
+            else -> {}
+        }
     }
 
     private fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
@@ -71,9 +85,7 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
     private fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
         if (declaration !is FirFunction) return
 
-        for (parameter in declaration.valueParameters) {
-            checkIsResolved(parameter)
-        }
+        declaration.valueParameters.forEach(::checkIsResolved)
     }
 
     private fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
