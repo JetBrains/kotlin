@@ -1,4 +1,4 @@
-// LANGUAGE: -ProperUninitializedEnumEntryAccessAnalysis
+// LANGUAGE: +ProperUninitializedEnumEntryAccessAnalysis
 // ISSUE: KT-68451
 // WITH_STDLIB
 
@@ -6,20 +6,20 @@ import kotlin.contracts.*
 import kotlin.properties.ReadOnlyProperty
 
 enum class Some(val s: String, val s2: String) {
-    A(A.someString, <!UNINITIALIZED_ENUM_ENTRY!>B<!>.someString) {
-        val a_inner = B.s // NPE
+    A(<!UNINITIALIZED_ENUM_ENTRY!>A<!>.someString, <!UNINITIALIZED_ENUM_ENTRY!>B<!>.someString) {
+        val a_inner = <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s // NPE
         val b_inner = capture { B.s } // potential NPE
-        val c_inner = inPlace { B.s } // NPE
+        val c_inner = inPlace { <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s } // NPE
         val d_inner by captureDelegate { B.s } // potential NPE
-        val e_inner by inPlaceDelegate { B.s } // NPE
+        val e_inner by inPlaceDelegate { <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s } // NPE
         val h_inner by lazy { when { else -> B.s } }
     },
-    B(A.someString, B.someString) {
-        val a_inner = B.s.length // potential NPE
+    B(A.someString, <!UNINITIALIZED_ENUM_ENTRY!>B<!>.someString) {
+        val a_inner = <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s.length // potential NPE
         val b_inner = capture { B.s.length } // potential NPE
-        val c_inner = inPlace { B.s.length } // potential NPE
+        val c_inner = inPlace { <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s.length } // potential NPE
         val d_inner by captureDelegate { B.s.length } // potential NPE
-        val e_inner by inPlaceDelegate { B.s.length } // potential NPE
+        val e_inner by inPlaceDelegate { <!UNINITIALIZED_ENUM_ENTRY!>B<!>.s.length } // potential NPE
         val h_inner by lazy { when { else -> B.s.length } }
     },
     C(A.someString, B.someString) { // OK
@@ -34,9 +34,9 @@ enum class Some(val s: String, val s2: String) {
 
     val a = <!UNINITIALIZED_ENUM_ENTRY!>A<!>.s // NPE
     val b = capture { A.s } // potential NPE
-    val c = inPlace { A.s } // NPE
+    val c = inPlace { <!UNINITIALIZED_ENUM_ENTRY!>A<!>.s } // NPE
     val d by captureDelegate { A.s } // potential NPE
-    val e by inPlaceDelegate { A.s } // NPE
+    val e by inPlaceDelegate { <!UNINITIALIZED_ENUM_ENTRY!>A<!>.s } // NPE
 
     val someString: String
         get() = "hello"

@@ -622,6 +622,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("falsePropertyAmongEnumsWithProperAnalysis.kt")
+    public void testFalsePropertyAmongEnumsWithProperAnalysis() {
+      runTest("compiler/testData/diagnostics/tests/falsePropertyAmongEnumsWithProperAnalysis.kt");
+    }
+
+    @Test
     @TestMetadata("fileDependencyRecursion.kt")
     public void testFileDependencyRecursion() {
       runTest("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
@@ -7684,6 +7690,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("enumEntryAccessInCapturedBlock.kt")
       public void testEnumEntryAccessInCapturedBlock() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAccessInCapturedBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryAccessInCapturedBlockWithProperAnalysis.kt")
+      public void testEnumEntryAccessInCapturedBlockWithProperAnalysis() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAccessInCapturedBlockWithProperAnalysis.kt");
       }
 
       @Test

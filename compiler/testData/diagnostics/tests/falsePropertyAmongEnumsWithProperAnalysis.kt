@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// LANGUAGE: -ProperUninitializedEnumEntryAccessAnalysis
+// LANGUAGE: +ProperUninitializedEnumEntryAccessAnalysis
 // ISSUE: KT-72743
 
 fun test() {

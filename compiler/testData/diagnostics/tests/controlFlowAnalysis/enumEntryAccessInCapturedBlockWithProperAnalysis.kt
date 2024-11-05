@@ -1,4 +1,4 @@
-// LANGUAGE: -ProperUninitializedEnumEntryAccessAnalysis
+// LANGUAGE: +ProperUninitializedEnumEntryAccessAnalysis
 // ISSUE: KT-68451
 // WITH_STDLIB
 
