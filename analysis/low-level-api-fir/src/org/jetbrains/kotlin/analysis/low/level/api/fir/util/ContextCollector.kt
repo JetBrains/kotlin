@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -269,7 +268,7 @@ private class ContextCollectorVisitor(
     }
 
     private fun computeContext(fir: FirElement, kind: ContextKind): Context {
-        val implicitReceiverStack = context.towerDataContext.implicitReceiverStack
+        val implicitReceiverStack = context.towerDataContext.implicitValueStack
 
         val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
 
@@ -295,7 +294,7 @@ private class ContextCollectorVisitor(
                 // See other usages of 'replaceReceiverType()' for more information.
                 if (realVariable.isReceiver) {
                     val smartCastedType = typeStatement.smartCastedType(bodyHolder.session.typeContext)
-                    implicitReceiverStack.replaceReceiverType(realVariable.symbol, smartCastedType)
+                    implicitReceiverStack.replaceImplicitValueType(realVariable.symbol, smartCastedType)
                 }
             }
         }
@@ -304,7 +303,7 @@ private class ContextCollectorVisitor(
 
         for (realVariable in smartCasts.keys) {
             if (realVariable.isReceiver) {
-                implicitReceiverStack.replaceReceiverType(realVariable.symbol, realVariable.originalType)
+                implicitReceiverStack.replaceImplicitValueType(realVariable.symbol, realVariable.originalType)
             }
         }
 

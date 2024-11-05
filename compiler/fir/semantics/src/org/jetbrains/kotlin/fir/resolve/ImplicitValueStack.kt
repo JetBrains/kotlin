@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.resolve.calls.ContextParameterValue
 import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -20,38 +21,40 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
 
-class ImplicitReceiverStack private constructor(
-    private val stack: PersistentList<ImplicitReceiverValue<*>>,
-    // This multi-map holds indexes of the stack ^
-    private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
-    private val indexesPerSymbol: PersistentMap<FirThisOwnerSymbol<*>, Int>,
-) : Iterable<ImplicitReceiverValue<*>> {
-    val size: Int get() = stack.size
-
+class ImplicitValueStack private constructor(
+    private val implicitReceiverStack: PersistentList<ImplicitReceiverValue<*>>,
+    private val implicitReceiversByLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
+    private val implicitValuesBySymbol: PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue>
+) {
     constructor() : this(
         persistentListOf(),
         PersistentSetMultimap(),
         persistentMapOf(),
     )
 
-    fun addAll(receivers: List<ImplicitReceiverValue<*>>): ImplicitReceiverStack {
-        return receivers.fold(this) { acc, value -> acc.add(name = null, value) }
+    val implicitReceivers: List<ImplicitReceiverValue<*>>
+        get() = implicitReceiverStack
+
+    val implicitValues: Collection<ImplicitValue>
+        get() = implicitValuesBySymbol.values
+
+    fun addAllImplicitReceivers(receivers: List<ImplicitReceiverValue<*>>): ImplicitValueStack {
+        return receivers.fold(this) { acc, value -> acc.addImplicitReceiver(name = null, value) }
     }
 
-    fun addAllContextReceivers(receivers: List<ContextReceiverValue>): ImplicitReceiverStack {
+    fun addAllContextReceivers(receivers: List<ContextReceiverValue>): ImplicitValueStack {
         return receivers.fold(this) { acc, value -> acc.addContextReceiver(value) }
     }
 
-    fun add(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitReceiverStack {
-        val stack = stack.add(value)
-        val index = stack.size - 1
-        val receiversPerLabel = receiversPerLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
-        val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
+    fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitValueStack {
+        val stack = implicitReceiverStack.add(value)
+        val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
+        val implicitValuesBySymbol = implicitValuesBySymbol.put(value.boundSymbol, value)
 
-        return ImplicitReceiverStack(
+        return ImplicitValueStack(
             stack,
             receiversPerLabel,
-            indexesPerSymbol,
+            implicitValuesBySymbol,
         )
     }
 
@@ -61,49 +64,45 @@ class ImplicitReceiverStack private constructor(
         else
             this
 
-    fun addContextReceiver(value: ContextReceiverValue): ImplicitReceiverStack {
+    private fun addContextReceiver(value: ContextReceiverValue): ImplicitValueStack {
         val labelName = value.labelName ?: return this
 
-        val receiversPerLabel = receiversPerLabel.put(labelName, value)
-        return ImplicitReceiverStack(
-            stack,
+        val receiversPerLabel = implicitReceiversByLabel.put(labelName, value)
+        return ImplicitValueStack(
+            implicitReceiverStack,
             receiversPerLabel,
-            indexesPerSymbol,
+            implicitValuesBySymbol,
         )
     }
 
     operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
-        if (name == null) return stack.lastOrNull()?.let(::setOf).orEmpty()
-        return receiversPerLabel[Name.identifier(name)]
+        if (name == null) return implicitReceiverStack.lastOrNull()?.let(::setOf).orEmpty()
+        return implicitReceiversByLabel[Name.identifier(name)]
     }
 
     fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
-        return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+        return implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
     }
 
     fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue? {
-        return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
+        return implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
     }
 
-    fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = stack.asReversed()
-
-    override operator fun iterator(): Iterator<ImplicitReceiverValue<*>> {
-        return stack.iterator()
-    }
+    fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = implicitReceiverStack.asReversed()
 
     // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     @OptIn(ImplicitValue.ImplicitValueInternals::class)
-    fun replaceReceiverType(symbol: FirBasedSymbol<*>, type: ConeKotlinType) {
-        val index = indexesPerSymbol[symbol as FirThisOwnerSymbol<*>] ?: return
-        stack[index].updateTypeFromSmartcast(type)
+    fun replaceImplicitValueType(symbol: FirBasedSymbol<*>, type: ConeKotlinType) {
+        val implicitValue = implicitValuesBySymbol[symbol as FirThisOwnerSymbol<*>] ?: return
+        implicitValue.updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(keepMutable: Boolean): ImplicitReceiverStack {
-        return ImplicitReceiverStack(
-            stack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
-            receiversPerLabel,
-            indexesPerSymbol,
+    fun createSnapshot(keepMutable: Boolean): ImplicitValueStack {
+        return ImplicitValueStack(
+            implicitReceiverStack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
+            implicitReceiversByLabel,
+            implicitValuesBySymbol,
         )
     }
 }

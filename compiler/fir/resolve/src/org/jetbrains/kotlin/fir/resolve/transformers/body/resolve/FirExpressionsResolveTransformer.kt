@@ -114,7 +114,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         var result = when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirThisReference -> {
                 val labelName = callee.labelName
-                val allMatchingImplicitReceivers = implicitReceiverStack[labelName]
+                val allMatchingImplicitReceivers = implicitValueStack[labelName]
                 val implicitReceiver = allMatchingImplicitReceivers.singleWithoutDuplicatingContextReceiversOrNull() ?: run {
                     val diagnostic = allMatchingImplicitReceivers.ambiguityDiagnosticFor(labelName)
                     qualifiedAccessExpression.resultType = ConeErrorType(diagnostic)
@@ -281,11 +281,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         containingCall: FirQualifiedAccessExpression?
     ): FirQualifiedAccessExpression {
         val labelName = superReference.labelName
-        val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
+        val lastDispatchReceiver = implicitValueStack.lastDispatchReceiver()
         val implicitReceiver =
             // Only report label issues if the label is set and the receiver stack is not empty
             if (labelName != null && lastDispatchReceiver != null) {
-                val possibleImplicitReceivers = implicitReceiverStack[labelName]
+                val possibleImplicitReceivers = implicitValueStack[labelName]
                 val labeledReceiver = possibleImplicitReceivers.singleOrNull() as? ImplicitDispatchReceiverValue
                 labeledReceiver ?: run {
                     val diagnostic = if (possibleImplicitReceivers.size >= 2) {
@@ -310,7 +310,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             implicitReceiver == null || superTypeRefs == null || superTypeRefs.isEmpty() -> {
                 val diagnostic =
-                    if (implicitReceiverStack.lastOrNull() is InaccessibleImplicitReceiverValue) {
+                    if (implicitValueStack.implicitReceivers.lastOrNull() is InaccessibleImplicitReceiverValue) {
                         ConeInstanceAccessBeforeSuperCall("<super>")
                     } else {
                         ConeSimpleDiagnostic("Super not available", DiagnosticKind.SuperNotAvailable)
@@ -1409,7 +1409,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.enterCallArguments(delegatedConstructorCall, delegatedConstructorCall.arguments)
-        val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
+        val lastDispatchReceiver = implicitValueStack.lastDispatchReceiver()
         context.forDelegatedConstructorCall(containingConstructor, containingClass as? FirRegularClass, components) {
             delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
         }

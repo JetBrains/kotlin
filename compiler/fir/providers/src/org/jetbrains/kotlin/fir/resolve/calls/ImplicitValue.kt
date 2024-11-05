@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -34,6 +35,8 @@ sealed class ImplicitValue(
     type: ConeKotlinType,
     protected val mutable: Boolean
 ) {
+    abstract val boundSymbol: FirBasedSymbol<*>
+
     var type: ConeKotlinType = type
         private set
 
@@ -97,20 +100,20 @@ sealed class ImplicitValue(
 }
 
 class ContextParameterValue(
-    private val symbol: FirValueParameterSymbol,
+    override val boundSymbol: FirValueParameterSymbol,
     type: ConeKotlinType,
     mutable: Boolean = true,
 ) : ImplicitValue(type, mutable) {
     override val originalExpression: FirExpression = buildPropertyAccessExpression {
-        source = symbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
+        source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
         calleeReference = buildResolvedNamedReference {
-            name = symbol.name
-            resolvedSymbol = symbol
+            name = boundSymbol.name
+            resolvedSymbol = boundSymbol
         }
         coneTypeOrNull = type
     }
 
     override fun createSnapshot(keepMutable: Boolean): ContextParameterValue {
-        return ContextParameterValue(symbol, type, keepMutable)
+        return ContextParameterValue(boundSymbol, type, keepMutable)
     }
 }

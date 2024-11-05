@@ -134,7 +134,7 @@ private class KaFirCompletionExtensionCandidateChecker(
             }
 
         return buildList {
-            addAll(towerDataContext.implicitReceiverStack)
+            addAll(towerDataContext.implicitValueStack.implicitReceivers)
             for (towerDataElement in towerDataContext.towerDataElements) {
                 addAll(towerDataElement.contextReceiverGroup.orEmpty())
             }

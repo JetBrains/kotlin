@@ -88,7 +88,7 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
 }
 
 sealed class ImplicitReceiverValue<S>(
-    val boundSymbol: S,
+    override val boundSymbol: S,
     type: ConeKotlinType,
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,

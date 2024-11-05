@@ -110,7 +110,7 @@ class FirTowerResolver(
 
         val dispatchReceiver =
             if (outerType != null)
-                components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
+                components.implicitValueStack.receiversAsReversed().drop(1).firstOrNull {
                     AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
                 }
             else

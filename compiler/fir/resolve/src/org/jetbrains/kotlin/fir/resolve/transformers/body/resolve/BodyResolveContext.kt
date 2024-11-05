@@ -75,8 +75,8 @@ class BodyResolveContext(
             regularTowerDataContexts = regularTowerDataContexts.replaceTowerDataMode(newMode = value)
         }
 
-    val implicitReceiverStack: ImplicitReceiverStack
-        get() = towerDataContext.implicitReceiverStack
+    val implicitValueStack: ImplicitValueStack
+        get() = towerDataContext.implicitValueStack
 
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()

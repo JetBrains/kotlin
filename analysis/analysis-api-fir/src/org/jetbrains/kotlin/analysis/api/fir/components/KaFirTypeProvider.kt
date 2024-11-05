@@ -261,7 +261,7 @@ internal class KaFirTypeProvider(
                 withPsiEntry("position", position)
             }
 
-        return context.towerDataContext.implicitReceiverStack.map { it.type.asKtType() }
+        return context.towerDataContext.implicitValueStack.implicitReceivers.map { it.type.asKtType() }
     }
 
     override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {

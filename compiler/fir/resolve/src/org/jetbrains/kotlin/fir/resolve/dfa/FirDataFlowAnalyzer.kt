@@ -73,14 +73,14 @@ abstract class FirDataFlowAnalyzer(
             dataFlowAnalyzerContext: DataFlowAnalyzerContext,
         ): FirDataFlowAnalyzer =
             object : FirDataFlowAnalyzer(components, dataFlowAnalyzerContext) {
-                override val receiverStack: ImplicitReceiverStack
-                    get() = components.implicitReceiverStack
+                override val receiverStack: ImplicitValueStack
+                    get() = components.implicitValueStack
 
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
                 override fun receiverUpdated(info: TypeStatement) {
-                    receiverStack.replaceReceiverType(info.variable.symbol, info.smartCastedType(typeContext))
+                    receiverStack.replaceImplicitValueType(info.variable.symbol, info.smartCastedType(typeContext))
                 }
 
                 override val logicSystem: LogicSystem =
@@ -114,7 +114,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     protected abstract val logicSystem: LogicSystem
-    protected abstract val receiverStack: Iterable<ImplicitReceiverValue<*>>
+    protected abstract val receiverStack: ImplicitValueStack
     protected abstract fun receiverUpdated(info: TypeStatement)
 
     private val graphBuilder get() = context.graphBuilder
@@ -1538,7 +1538,7 @@ abstract class FirDataFlowAnalyzer(
     private fun resetSmartCastPositionTo(flow: Flow?) {
         val previous = currentSmartCastPosition
         if (previous == flow) return
-        receiverStack.forEach {
+        receiverStack.implicitValues.forEach {
             val variable = RealVariable.receiver(it.boundSymbol, it.originalType)
             val newStatement = flow?.getTypeStatement(variable)
             if (newStatement != previous?.getTypeStatement(variable)) {
