@@ -62,6 +62,7 @@ class WasmIrToBinary(
     private val optimizeInstructionFlow: Boolean = true,
 ) : DebugInformationConsumer {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
+    private var codeSectionOffset: Int = 0
 
     // "Stack" of offsets waiting initialization. 
     // Since blocks have as a prefix variable length number encoding its size, we can't calculate absolute offsets inside those blocks
@@ -173,7 +174,7 @@ class WasmIrToBinary(
             }
 
             // code section
-            appendSection(WasmBinary.Section.CODE) {
+            appendSection(WasmBinary.Section.CODE, { codeSectionOffset = b.written }) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach { appendCode(it) }
             }
@@ -326,12 +327,12 @@ class WasmIrToBinary(
         }
     }
 
-    private fun appendSection(section: WasmBinary.Section, content: () -> Unit) {
+    private fun appendSection(section: WasmBinary.Section, saver: () -> Unit = {}, content: () -> Unit) {
         b.writeVarUInt7(section.id)
-        withVarUInt32PayloadSizePrepended { content() }
+        withVarUInt32PayloadSizePrepended(saver, { content() })
     }
 
-    private fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
+    private fun withVarUInt32PayloadSizePrepended(saver: () -> Unit = {}, fn: () -> Unit) {
         val box = Box(-1)
         val previousOffsets = offsets
         offsets += box
@@ -346,6 +347,7 @@ class WasmIrToBinary(
         box.value = b.written
         offsets = previousOffsets
 
+        saver()
         b.write(newWriter)
     }
 
@@ -565,8 +567,6 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
-        debugInformationGenerator?.startFunction(getCurrentSourceLocationMapping(function.location), function.name)
-
         withVarUInt32PayloadSizePrepended {
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
@@ -576,10 +576,10 @@ class WasmIrToBinary(
                 }
             }
 
+            debugInformationGenerator?.startFunction(getCurrentSourceLocationMapping(function.startLocation), function.name)
             appendExpr(function.instructions)
+            debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.endLocation))
         }
-
-        debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.location))
     }
 
     private fun appendData(wasmData: WasmData) {
@@ -637,6 +637,26 @@ class WasmIrToBinary(
         val bytes = str.toByteArray()
         this.writeVarUInt32(bytes.size)
         this.writeBytes(bytes)
+    }
+
+
+    private inner class SourceLocationMappingToBinary(
+        override val sourceLocation: SourceLocation,
+        // Offsets in generating binary, initialized lazily. Since blocks has as a prefix variable length number encoding its size
+        // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
+        private val offsets: List<Box>,
+    ) : SourceLocationMapping() {
+        override val generatedLocation: SourceLocation.Location by lazy {
+            SourceLocation.Location(
+                module = "",
+                file = "",
+                line = 0,
+                column = offsets.sumOf {
+                    assert(it.value >= 0) { "Offset must be >=0 but ${it.value}" }
+                    it.value
+                } - codeSectionOffset
+            )
+        }
     }
 }
 
@@ -763,24 +783,5 @@ interface ByteWriter {
         }
 
         override fun createTemp() = OutputStream(ByteArrayOutputStream())
-    }
-}
-
-private class SourceLocationMappingToBinary(
-    override val sourceLocation: SourceLocation,
-    // Offsets in generating binary, initialized lazily. Since blocks has as a prefix variable length number encoding its size
-    // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
-    private val offsets: List<Box>,
-) : SourceLocationMapping() {
-    override val generatedLocation: SourceLocation.Location by lazy {
-        SourceLocation.Location(
-            module = "",
-            file = "",
-            line = 0,
-            column = offsets.sumOf {
-                assert(it.value >= 0) { "Offset must be >=0 but ${it.value}" }
-                it.value
-            }
-        )
     }
 }

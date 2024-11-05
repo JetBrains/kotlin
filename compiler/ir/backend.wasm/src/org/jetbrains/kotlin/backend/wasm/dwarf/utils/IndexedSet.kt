@@ -11,7 +11,7 @@ class IndexedSet<T> : Iterable<T> {
     val size: Int get() = pool.size
 
     fun add(element: T): Int = pool.getOrPut(element) {
-        pool.size + 1
+        pool.size
     }
 
     override operator fun iterator(): Iterator<T> = pool.keys.iterator()

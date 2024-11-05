@@ -5,16 +5,30 @@
 
 package org.jetbrains.kotlin.backend.wasm.dwarf
 
+import org.jetbrains.kotlin.backend.wasm.dwarf.entries.CompileUnit
+import org.jetbrains.kotlin.backend.wasm.dwarf.entries.Subprogram
+
 // The API is inspired by https://github.com/gimli-rs/gimli
 class Dwarf(encoding: Encoding = Encoding.Default) {
     val strings = StringTable()
     val lines = LineProgram(encoding)
-//    val units = UnitTable()
+    val abbreviations = AbbreviationTable()
+    val mainCompileUnit = CompileUnit(
+        strings.add("main"),
+        strings.add("Kotlin/Wasm Compiler"),
+        strings.add("."),
+        encoding
+    )
 
     fun generate(): DebuggingSections =
         DebuggingSections().apply {
+            val compileUnitAbbreviation = abbreviations.add(CompileUnit.abbreviation)
+            val subprogramAbbreviation = abbreviations.add(Subprogram.abbreviation)
+
             val stringOffsets = strings.write(debugStrings)
             lines.write(debugLines, stringOffsets)
+            mainCompileUnit.write(compileUnitAbbreviation, subprogramAbbreviation, debugInfo, stringOffsets)
+            abbreviations.write(debugAbbreviations)
         }
 
     enum class Format(val wordSize: Int) {

@@ -5,35 +5,62 @@
 
 package org.jetbrains.kotlin.backend.wasm.dwarf.entries
 
+import org.jetbrains.kotlin.backend.wasm.dwarf.*
+import org.jetbrains.kotlin.backend.wasm.dwarf.lines.FileTable
+import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 
-@DW_TAG(DwTag.SUBPROGRAM)
-data class SubprogramEntry(
-    @DW_AT(DwAttribute.NAME)
-    val name: String,
-
-    @DW_AT(DwAttribute.EXTERNAL)
-    val isPublic: Boolean,
-
+data class Subprogram(
+    val name: StringTable.StringRef,
+    val file: FileTable.FileId,
     val startGeneratedLocation: SourceLocationMapping
 ) : DebuggingInformationEntry {
-    lateinit var endGeneratedLocation: SourceLocationMapping
+    companion object {
+        val abbreviation = Abbreviation(
+            tag = DwTag.SUBPROGRAM,
+            hasChildren = false,
+            attributes = listOf(
+                DwAttribute.NAME by DwForm.STRP,
+                DwAttribute.EXTERNAL by DwForm.FLAG,
+                DwAttribute.DECL_FILE by DwForm.UDATA,
+                DwAttribute.DECL_LINE by DwForm.UDATA,
+                DwAttribute.DECL_COLUMN by DwForm.UDATA,
+                DwAttribute.LOW_PC by DwForm.ADDR,
+                DwAttribute.HIGH_PC by DwForm.ADDR,
+            )
+        )
+    }
 
+    lateinit var endGeneratedLocation: SourceLocationMapping
     private val sourceLocation = startGeneratedLocation.sourceLocation as SourceLocation.Location
 
-    @DW_AT(DwAttribute.LOW_PC)
-    val lowProgramCounter: Int by lazy { startGeneratedLocation.generatedLocation.column }
+    val isPublic = true
+    val line by lazy { sourceLocation.line + 1 }
+    val column by lazy { sourceLocation.column }
+    val lowProgramCounter by lazy { startGeneratedLocation.generatedLocation.column }
+    val highProgramCounter by lazy { endGeneratedLocation.generatedLocation.column }
 
-    @DW_AT(DwAttribute.HIGH_PC)
-    val highProgramCounter: Int by lazy { endGeneratedLocation.generatedLocation.column }
 
-    @DW_AT(DwAttribute.DECL_FILE)
-    val file: Int = 0 // by lazy { sourceLocation.file }
+    fun write(
+        encoding: Dwarf.Encoding,
+        abbreviation: AbbreviationTable.AbbreviationRef,
+        writer: ByteWriter,
+        stringOffsets: List<Int>
+    ) {
+        require(encoding.format == Dwarf.Format.DWARF_32) { "Unsupported format: ${encoding.format}" }
+        require(encoding.version == 5) { "Unsupported DWARF version: ${encoding.version}" }
 
-    @DW_AT(DwAttribute.DECL_LINE)
-    val line: Int by lazy { sourceLocation.line }
 
-    @DW_AT(DwAttribute.DECL_COLUMN)
-    val column: Int by lazy { sourceLocation.column }
+        with(writer) {
+            writeVarUInt32(abbreviation.index.toUInt())
+            writeUInt64(stringOffsets[name.index - 1].toULong(), encoding.format.wordSize)
+            writeUByte(if (isPublic) 1u else 0u)
+            writeVarUInt32(file.index.toUInt())
+            writeVarUInt32(line.toUInt())
+            writeVarUInt32(column.toUInt())
+            writeUInt64(lowProgramCounter.toULong(), encoding.format.wordSize)
+            writeUInt64(highProgramCounter.toULong(), encoding.format.wordSize)
+        }
+    }
 }

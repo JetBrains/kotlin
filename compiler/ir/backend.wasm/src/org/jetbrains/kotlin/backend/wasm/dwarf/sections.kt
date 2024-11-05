@@ -30,7 +30,7 @@ class DebuggingSections : Iterable<DebuggingSection> {
     val debugLines = DebuggingSection.DebugLines()
     val debugAbbreviations = DebuggingSection.DebugAbbreviations()
 
-    private val sections = listOf(debugStrings, debugInfo, debugLines, debugAbbreviations)
+    private val sections = listOf(debugAbbreviations, debugStrings, debugLines, debugInfo)
 
     override fun iterator(): Iterator<DebuggingSection> = sections.iterator()
 }

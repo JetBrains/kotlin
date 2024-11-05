@@ -19,6 +19,10 @@ enum class DwLines(val opcode: UInt) {
     SET_PROLOGUE_END(0x0au),
     SET_EPILOGUE_BEGIN(0x0bu),
     SET_ISA(0x0cu),
+
+    // Extended
+    END_SEQUENCE(0x01u),
+    SET_ADDRESS(0x02u)
 }
 
 /** https://dwarfstd.org/doc/DWARF5.pdf, Page 237 **/

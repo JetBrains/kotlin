@@ -25,7 +25,7 @@ internal abstract class BaseOutput {
 internal class NodeJsOutput(val outputStream: dynamic) : BaseOutput() {
     override fun print(message: Any?) {
         // TODO: Using local variable because of bug in block decomposition lowering in IR backend
-        val messageString = String(message)
+        val messageString = message?.toString() ?: "null"
         outputStream.write(messageString)
     }
 }

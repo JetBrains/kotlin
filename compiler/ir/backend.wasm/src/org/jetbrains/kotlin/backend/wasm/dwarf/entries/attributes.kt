@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.dwarf.entries
 
 /** https://dwarfstd.org/doc/DWARF5.pdf **/
-enum class DwAttribute(val value: UInt) {
+enum class DwAttribute(val opcode: UInt) {
     SIBLING(0x01u),
     LOCATION(0x02u),
     NAME(0x03u),

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.dwarf.utils.IndexedSet
 class StringTable {
     private val set = IndexedSet<String>()
 
-    fun add(string: String): StringRef = StringRef(set.add(string))
+    fun add(string: String): StringRef = StringRef(set.add(string) + 1)
 
     fun write(section: DebuggingSection): List<Int> {
         val offsets = ArrayList<Int>()

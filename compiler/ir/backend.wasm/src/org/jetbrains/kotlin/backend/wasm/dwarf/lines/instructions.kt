@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.backend.wasm.dwarf.lines
 
 import org.jetbrains.kotlin.backend.wasm.dwarf.DebuggingSection
+import org.jetbrains.kotlin.backend.wasm.dwarf.Dwarf
 import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
 
 sealed class LineInstruction(val operation: DwLines) {
     protected abstract fun writeArguments(writer: ByteWriter)
 
-    fun writeTo(writer: ByteWriter) {
+    open fun writeTo(writer: ByteWriter) {
         writer.writeUByte(operation.opcode.toUByte())
         writeArguments(writer)
     }
@@ -19,6 +20,37 @@ sealed class LineInstruction(val operation: DwLines) {
     data object Copy : LineInstruction(DwLines.COPY) {
         override fun writeArguments(writer: ByteWriter) {
             // Empty Arguments
+        }
+    }
+
+    data object SetPrologueEnd : LineInstruction(DwLines.SET_PROLOGUE_END) {
+        override fun writeArguments(writer: ByteWriter) {
+            // Empty Arguments
+        }
+    }
+
+    data object EndSequence : LineInstruction(DwLines.END_SEQUENCE) {
+        override fun writeArguments(writer: ByteWriter) {
+            // Empty Arguments
+        }
+
+        override fun writeTo(writer: ByteWriter) {
+            writer.writeUByte(0u)
+            writer.writeVarUInt32(1u)
+            writer.writeUByte(operation.opcode.toUByte())
+        }
+    }
+
+    data class SetAddress(val address: Int, val encoding: Dwarf.Encoding) : LineInstruction(DwLines.SET_ADDRESS) {
+        override fun writeArguments(writer: ByteWriter) {
+            // Empty Arguments
+        }
+
+        override fun writeTo(writer: ByteWriter) {
+            writer.writeUByte(0u)
+            writer.writeVarUInt32(1u + encoding.addressSize.toUInt())
+            writer.writeUByte(operation.opcode.toUByte())
+            writer.writeUInt64(address.toULong(), encoding.addressSize)
         }
     }
 

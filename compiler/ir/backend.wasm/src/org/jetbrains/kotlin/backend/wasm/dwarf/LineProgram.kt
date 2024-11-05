@@ -21,20 +21,49 @@ class LineProgram(
     private val directories = DirectoryTable()
 
     private val instructions = mutableListOf<LineInstruction>()
-    private var previousRow = LineRow(StringTable.StringRef(-1), StringTable.StringRef(-1), 0, 1, 0)
+    private val DEFAULT_ROW = LineRow(
+        file = FileTable.FileId(-1),
+        addressOffset = 0,
+        line = 0,
+        column = 0,
+    )
+    private var previousRow = DEFAULT_ROW
 
-    class LineRow(
-        val file: StringTable.StringRef,
-        val directory: StringTable.StringRef,
+    data class LineRow(
+        val file: FileTable.FileId,
         val addressOffset: Int,
         val line: Int,
         val column: Int,
     )
 
+    fun addFile(
+        file: StringTable.StringRef,
+        directory: StringTable.StringRef,
+    ): FileTable.FileId {
+        val dirIndex = directories.add(directory)
+        return files.add(file, dirIndex)
+    }
+
+    fun startFunction(row: LineRow) {
+        if (row.file != previousRow.file) {
+            instructions.push(LineInstruction.SetFile(row.file))
+        }
+
+        instructions.push(LineInstruction.SetAddress(row.addressOffset, encoding))
+        instructions.push(LineInstruction.SetPrologueEnd)
+
+        previousRow = DEFAULT_ROW.copy(addressOffset = row.addressOffset, file = row.file)
+    }
+
+    fun endFunction(row: LineRow) {
+        add(row)
+        instructions[instructions.lastIndex] = LineInstruction.EndSequence
+        previousRow = DEFAULT_ROW
+    }
+
     fun add(row: LineRow) {
-        if (row.file != previousRow.file || row.directory != previousRow.directory) {
-            val dirIndex = directories.add(row.directory)
-            instructions.push(LineInstruction.SetFile(files.add(row.file, dirIndex)))
+        if (row.file != previousRow.file) {
+            instructions.push(LineInstruction.SetFile(row.file))
         }
 
         if (row.column != previousRow.column) {
@@ -53,7 +82,7 @@ class LineProgram(
         }
 
         instructions.push(LineInstruction.Copy)
-
+        previousRow = row
     }
 
     fun write(section: DebuggingSection.DebugLines, stringOffsets: List<Int>) {
@@ -87,12 +116,12 @@ class LineProgram(
                 writeUInt64(stringOffsets[dir.index - 1].toULong(), encoding.format.wordSize)
             }
 
-            // File name entry formats (only ever 2)
+            // File name entry formats (only ever 3)
             writeUByte(2u)
             writeVarUInt32(DwLinesHeader.PATH.opcode)
             writeVarUInt32(DwForm.STRP.opcode)
             writeVarUInt32(DwLinesHeader.DIRECTORY_INDEX.opcode)
-            writeVarUInt32(DwForm.U_DATA.opcode)
+            writeVarUInt32(DwForm.UDATA.opcode)
 
             writeVarUInt32(files.size.toUInt())
             for (file in files) {
