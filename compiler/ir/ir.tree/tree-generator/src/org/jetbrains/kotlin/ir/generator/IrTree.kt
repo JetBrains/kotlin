@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.VariableKind
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.anonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.ir.generator.IrSymbolTree.functionSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.localDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.packageFragmentSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.replSnippetSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.returnTargetSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.returnableBlockSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.scriptSymbol
@@ -38,9 +44,8 @@ import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.*
-import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Array
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
+import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.name.FqName
@@ -537,6 +542,22 @@ object IrTree : AbstractTreeBuilder() {
             deepCopyExcludeFromApply = true
         } // K1
     }
+    val replSnippet: Element by element(Declaration) {
+        parent(declarationBase)
+        parent(declarationWithName)
+        parent(declarationParent)
+        parent(metadataSourceOwner)
+
+        +declaredSymbol(replSnippetSymbol)
+        +descriptor("ReplSnippetDescriptor")
+        +listField("receiversParameters", valueParameter, mutability = Var)
+        +listField("variablesFromOtherSnippets", variable, mutability = MutableList)
+        +listField("capturingDeclarationsFromOtherSnippets", declaration, mutability = MutableList, isChild = false)
+        +referencedSymbol("stateObject", classSymbol, nullable = true)
+        +field("body", body)
+        +field("returnType", irTypeType, nullable = true)
+        +referencedSymbol("targetClass", classSymbol, nullable = true)
+    }
     val simpleFunction: Element by element(Declaration) {
         parent(function)
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbol))
@@ -566,6 +587,7 @@ object IrTree : AbstractTreeBuilder() {
     val variable: Element by element(Declaration) {
         parent(declarationBase)
         parent(valueDeclaration)
+        parent(attributeContainer)
 
         +descriptor("VariableDescriptor")
         +declaredSymbol(variableSymbol)

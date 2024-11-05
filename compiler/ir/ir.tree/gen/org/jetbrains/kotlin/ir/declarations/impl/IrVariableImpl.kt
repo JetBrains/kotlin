@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -38,6 +39,10 @@ class IrVariableImpl internal constructor(
 
     override val factory: IrFactory
         get() = error("Create IrVariableImpl directly")
+
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 interface DescriptorsRemapper {
     fun remapDeclaredClass(descriptor: ClassDescriptor): ClassDescriptor? = descriptor
     fun remapDeclaredScript(descriptor: ScriptDescriptor): ScriptDescriptor? = descriptor
+    fun remapDeclaredReplSnippet(descriptor: ReplSnippetDescriptor): ReplSnippetDescriptor? = descriptor
     fun remapDeclaredConstructor(descriptor: ClassConstructorDescriptor): ClassConstructorDescriptor? = descriptor
     fun remapDeclaredEnumEntry(descriptor: ClassDescriptor): ClassDescriptor? = descriptor
     fun remapDeclaredExternalPackageFragment(descriptor: PackageFragmentDescriptor): PackageFragmentDescriptor = descriptor

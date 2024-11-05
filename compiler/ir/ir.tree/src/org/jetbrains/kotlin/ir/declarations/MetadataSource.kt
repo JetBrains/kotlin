@@ -22,6 +22,7 @@ interface MetadataSource {
     }
     interface Script : MetadataSource
     interface CodeFragment : MetadataSource
+    interface ReplSnippet : MetadataSource
     interface Function : MetadataSource
     interface Property : MetadataSource {
         val isConst: Boolean

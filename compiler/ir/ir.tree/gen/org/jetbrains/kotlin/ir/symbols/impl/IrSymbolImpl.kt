@@ -53,6 +53,11 @@ class IrScriptSymbolImpl(
     signature: IdSignature? = null,
 ) : IrSymbolWithSignature<ScriptDescriptor, IrScript>(descriptor, signature), IrScriptSymbol
 
+class IrReplSnippetSymbolImpl(
+    descriptor: ReplSnippetDescriptor? = null,
+    signature: IdSignature? = null,
+) : IrSymbolWithSignature<ReplSnippetDescriptor, IrReplSnippet>(descriptor, signature), IrReplSnippetSymbol
+
 class IrTypeParameterSymbolImpl(
     descriptor: TypeParameterDescriptor? = null,
     signature: IdSignature? = null,

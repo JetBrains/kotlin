@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -43,3 +44,5 @@ var IrFunction.viewOfOriginalSuspendFunction: IrSimpleFunction? by irAttribute(f
 var IrSimpleFunction.staticDefaultStub: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 var IrAttributeContainer.isEnclosedInConstructor: Boolean by irFlag(followAttributeOwner = true)
+
+var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute(followAttributeOwner = true)

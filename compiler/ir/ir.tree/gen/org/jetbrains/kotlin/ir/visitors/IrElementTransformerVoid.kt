@@ -124,6 +124,12 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>(), IrElementTr
     final override fun visitScript(declaration: IrScript, data: Nothing?): IrStatement =
         visitScript(declaration)
 
+    open fun visitReplSnippet(declaration: IrReplSnippet): IrStatement =
+        visitDeclaration(declaration)
+
+    final override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?): IrStatement =
+        visitReplSnippet(declaration)
+
     open fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
         visitFunction(declaration)
 

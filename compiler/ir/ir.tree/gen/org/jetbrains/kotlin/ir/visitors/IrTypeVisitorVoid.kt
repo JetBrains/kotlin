@@ -117,6 +117,15 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>(), IrElementVis
         super<IrElementVisitorVoid>.visitScript(declaration)
     }
 
+    final override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?) {
+        visitReplSnippet(declaration)
+    }
+
+    override fun visitReplSnippet(declaration: IrReplSnippet) {
+        declaration.returnType?.let { visitTypeRecursively(declaration, it) }
+        super<IrElementVisitorVoid>.visitReplSnippet(declaration)
+    }
+
     final override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) {
         visitTypeAlias(declaration)
     }

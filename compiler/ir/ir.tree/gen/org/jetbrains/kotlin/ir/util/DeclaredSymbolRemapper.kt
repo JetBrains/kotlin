@@ -89,6 +89,12 @@ interface DeclaredSymbolRemapper {
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
+     * - [IrReplSnippet.symbol]
+     */
+    fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol
+
+    /**
+     * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrTypeAlias.symbol]
      */
     fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
