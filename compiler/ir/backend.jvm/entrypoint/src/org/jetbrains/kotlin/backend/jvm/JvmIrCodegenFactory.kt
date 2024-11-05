@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
@@ -28,6 +26,8 @@ import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -44,7 +44,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
@@ -69,7 +72,7 @@ open class JvmIrCodegenFactory(
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) : CodegenFactory {
-    val phaseConfig: PhaseConfig = configuration.phaseConfig ?: PhaseConfig()
+    private val phaseConfig: PhaseConfig = configuration.phaseConfig ?: PhaseConfig()
 
     /**
      * @param shouldStubAndNotLinkUnboundSymbols
@@ -104,7 +107,6 @@ open class JvmIrCodegenFactory(
         val irModuleFragment: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
-        val phaseConfig: PhaseConfig,
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
@@ -275,7 +277,6 @@ open class JvmIrCodegenFactory(
             irModuleFragment,
             psi2irContext.irBuiltIns,
             symbolTable,
-            phaseConfig,
             irProviders,
             jvmGeneratorExtensions,
             JvmBackendExtension.Default,
@@ -309,7 +310,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, irBuiltIns, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
+        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -340,7 +341,7 @@ open class JvmIrCodegenFactory(
         val allBuiltins = irModuleFragment.files.filter { it.isJvmBuiltin }
         irModuleFragment.files.removeIf { it.isBytecodeGenerationSuppressed }
 
-        jvmLoweringPhases.invokeToplevel(customPhaseConfig, context, irModuleFragment)
+        jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
         return JvmIrCodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
     }
@@ -437,7 +438,6 @@ open class JvmIrCodegenFactory(
                 irModuleFragment,
                 irPluginContext.irBuiltIns,
                 symbolTable,
-                phaseConfig,
                 irProviders,
                 extensions,
                 backendExtension,

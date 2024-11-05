@@ -315,7 +315,6 @@ object KotlinToJVMBytecodeCompiler {
             irModuleFragment,
             irBuiltIns,
             symbolTable,
-            codegenFactory.phaseConfig,
             components.irProviders,
             JvmGeneratorExtensionsImpl(configuration),
             JvmBackendExtension.Default,

@@ -88,12 +88,10 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         // TODO: handle fir from light tree
         val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
 
-        val codegenFactory = JvmIrCodegenFactory(compilerConfiguration)
         val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
             fir2IrResult.irModuleFragment,
             fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,
-            codegenFactory.phaseConfig,
             fir2IrResult.components.irProviders,
             createFir2IrExtensions(compilerConfiguration),
             FirJvmBackendExtension(
@@ -105,6 +103,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         )
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
+        val codegenFactory = JvmIrCodegenFactory(compilerConfiguration)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
             fir2IrResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, compilerConfiguration
