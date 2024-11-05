@@ -5,6 +5,10 @@
 public class A
     internal inline fun internalInlineExtension(): String
         /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+internal fun topLevelFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+internal inline fun topLevelInlineFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 private inline fun A.privateInlineExtension4(): String
     /* TARGET use-site */ this.privateExtension()
 private inline fun A.privateInlineExtension3(): String

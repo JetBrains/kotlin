@@ -5,5 +5,8 @@
 /* TARGET declaration */ private suspend fun privateSuspendMethod(): String
 internal suspend inline fun internalInline(): String
     /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
+public fun box(): String
+    local suspend fun <anonymous>(): String
+        /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
 /* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt(): String
     /* TARGET use-site */ privateSuspendMethod()

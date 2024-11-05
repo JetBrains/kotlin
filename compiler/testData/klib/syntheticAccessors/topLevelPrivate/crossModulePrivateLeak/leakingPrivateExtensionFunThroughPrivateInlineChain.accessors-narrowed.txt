@@ -4,6 +4,10 @@
 
 internal inline fun String.internalInlineExtension(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+internal fun topLevelFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+internal inline fun topLevelInlineFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 private inline fun String.privateInlineExtension4(): String
     /* TARGET use-site */ this.privateExtension()
 private inline fun String.privateInlineExtension3(): String
