@@ -1,0 +1,8 @@
+FILE: innerOnTopLevelTypeAlias.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inner typealias TA = R|C|
