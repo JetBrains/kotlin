@@ -14,7 +14,7 @@ private fun <E> foobar() = {
 
     class Derived : LocalOuter<Double, Short>() {
         fun foo(): LocalInner<Long> = null!!
-        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<!><Char> = null!!
+        fun bar(): LocalAlias<Char> = null!!
     }
 
     Derived()
@@ -31,7 +31,7 @@ private fun noParameters() = {
 
     class Derived2 : LocalOuter2<Double, Short>() {
         fun foo(): LocalInner2<Long> = null!!
-        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<!><Char> = null!!
+        fun bar(): LocalAlias2<Char> = null!!
     }
 
     Derived2()
@@ -42,7 +42,7 @@ fun test() {
     x = foobar<String>()
 
     x().foo().a() checkType { _<A<String, Double, Short, Long>>() }
-    x().bar() <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>A<String, Double, Short, Char><!>>() }
+    x().bar() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<String, Double, Short, Char>>() }
 
     x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
 
@@ -50,5 +50,5 @@ fun test() {
     y = noParameters()
 
     y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
-    y().bar() <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>A<Any, Double, Short, Char><!>>() }
+    y().bar() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<Any, Double, Short, Char>>() }
 }
