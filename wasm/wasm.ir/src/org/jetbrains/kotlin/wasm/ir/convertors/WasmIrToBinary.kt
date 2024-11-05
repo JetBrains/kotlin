@@ -654,8 +654,12 @@ class WasmIrToBinary(
                 column = offsets.sumOf {
                     assert(it.value >= 0) { "Offset must be >=0 but ${it.value}" }
                     it.value
-                } - codeSectionOffset
+                }
             )
+        }
+
+        override val generatedLocationRelativeToCodeSection: SourceLocation.Location by lazy {
+            generatedLocation.copy(column = generatedLocation.column - codeSectionOffset)
         }
     }
 }

@@ -38,8 +38,8 @@ data class Subprogram(
     val isPublic = true
     val line by lazy { sourceLocation.line + 1 }
     val column by lazy { sourceLocation.column }
-    val lowProgramCounter by lazy { startGeneratedLocation.generatedLocation.column }
-    val highProgramCounter by lazy { endGeneratedLocation.generatedLocation.column }
+    val lowProgramCounter by lazy { startGeneratedLocation.generatedLocationRelativeToCodeSection.column }
+    val highProgramCounter by lazy { endGeneratedLocation.generatedLocationRelativeToCodeSection.column }
 
 
     fun write(

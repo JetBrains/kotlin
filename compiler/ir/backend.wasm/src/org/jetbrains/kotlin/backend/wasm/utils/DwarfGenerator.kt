@@ -54,7 +54,7 @@ class DwarfGenerator : DebugInformationGenerator {
 
         for ((mapping, isFunctionStart, isFunctionEnd) in sourceLocationMappings) {
             val sourceLocation = mapping.sourceLocation.takeIf { it != prev || isFunctionEnd } as? SourceLocation.Location ?: continue
-            val generatedLocation = mapping.generatedLocation
+            val generatedLocation = mapping.generatedLocationRelativeToCodeSection
             val row = LineProgram.LineRow(
                 sourceLocation.fileId,
                 generatedLocation.column,

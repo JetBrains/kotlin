@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -164,6 +165,9 @@ fun compileWasm(
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
 
+    val dwarfGeneratorForBinary = runIf(generateDwarf) {
+        DwarfGenerator()
+    }
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
     }
@@ -187,7 +191,10 @@ fun compileWasm(
             linkedModule,
             moduleName,
             emitNameSection,
-            DwarfGenerator()
+            DebugInformationGeneratorImpl(
+                sourceMapGenerator = sourceMapGeneratorForBinary,
+                dwarfGenerator = dwarfGeneratorForBinary,
+            )
         )
 
     wasmIrToBinary.appendWasmModule()
