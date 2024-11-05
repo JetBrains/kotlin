@@ -284,6 +284,7 @@ fun processConstraintStorageFromExpression(statement: FirStatement, processor: (
 
             wasAny
         }
+        is FirErrorExpression -> statement.expression?.let { processConstraintStorageFromExpression(it, processor) } == true
         else -> false
     }
 }

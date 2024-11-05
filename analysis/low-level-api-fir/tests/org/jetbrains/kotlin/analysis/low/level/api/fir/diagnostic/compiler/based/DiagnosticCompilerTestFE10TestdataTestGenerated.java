@@ -48116,6 +48116,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("expectedSomeTypesOnIllegalSelector.kt")
+        public void testExpectedSomeTypesOnIllegalSelector() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/expectedSomeTypesOnIllegalSelector.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedSomeTypesOnNormalSelector.kt")
+        public void testExpectedSomeTypesOnNormalSelector() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/expectedSomeTypesOnNormalSelector.kt");
+        }
+
+        @Test
         @TestMetadata("extensionPriority.kt")
         public void testExtensionPriority() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionPriority.kt");
