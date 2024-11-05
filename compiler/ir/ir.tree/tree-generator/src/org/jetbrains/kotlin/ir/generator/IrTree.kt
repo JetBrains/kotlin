@@ -211,6 +211,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("type", irTypeType)
     }
     val valueParameter: Element by element(Declaration) {
+        doPrint = false
         needTransformMethod()
 
         parent(declarationBase)
