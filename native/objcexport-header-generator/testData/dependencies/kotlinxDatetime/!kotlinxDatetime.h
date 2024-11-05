@@ -1216,16 +1216,12 @@ __attribute__((objc_subclassing_restricted))
 - (id<KotlinTimeMark>)plusDuration:(int64_t)duration __attribute__((swift_name("plus(duration:)")));
 @end
 
-@interface NSDate (Extensions)
-- (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
-@end
-
-@interface NSTimeZone (Extensions)
-- (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
-@end
-
 @interface DatePeriod (Extensions)
 - (DatePeriod *)plusOther:(DatePeriod *)other __attribute__((swift_name("plus(other:)")));
+@end
+
+@interface DateTimeComponentsCompanion (Extensions)
+- (DateTimeComponents *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 @end
 
 @interface DateTimePeriod (Extensions)
@@ -1308,6 +1304,14 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) int32_t number __attribute__((swift_name("number")));
 @end
 
+@interface NSDate (Extensions)
+- (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
+@end
+
+@interface NSTimeZone (Extensions)
+- (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
+@end
+
 @interface TimeZone (Extensions)
 - (UtcOffset *)offsetAtInstant:(Instant *)instant __attribute__((swift_name("offsetAt(instant:)")));
 - (NSTimeZone *)toNSTimeZone __attribute__((swift_name("toNSTimeZone()")));
@@ -1316,10 +1320,6 @@ __attribute__((objc_subclassing_restricted))
 @interface UtcOffset (Extensions)
 - (FixedOffsetTimeZone *)asTimeZone __attribute__((swift_name("asTimeZone()")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
-@end
-
-@interface DateTimeComponentsCompanion (Extensions)
-- (DateTimeComponents *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 @end
 
 #pragma pop_macro("_Nullable_result")

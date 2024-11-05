@@ -1,45 +1,26 @@
 package org.jetbrains.kotlin.objcexport.mangling
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
-/**
- * ObjC method consists of 3 parts, each part needs to be mangled
- * - selectors [buildMangledSelectors]
- * - parameters [buildMangledParameters]
- * - swift_name attribute [buildMangledSwiftNameAttribute]
- */
-internal fun ObjCExportContext.mangleObjCMethods(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
+
+internal fun ObjCExportContext.mangleObjCMethods(
+  stubs: List<ObjCExportStub>,
+  containingStub: ObjCExportStub,
+): List<ObjCExportStub> {
     if (!stubs.hasMethodConflicts()) return stubs
-    val membersDetails = mutableMapOf<String, ObjCMemberDetails>()
+  val mangler = ObjCMethodMangler()
     return stubs.map { member ->
-        if (member is ObjCMethod && member.isSwiftNameMethod()) {
-            val memberKey = getMemberKey(member)
-            val attribute = membersDetails[memberKey]
-            if (attribute != null) {
-                val mangledAttribute = attribute.mangleAttribute()
-                val cloned = member.copy(
-                    buildMangledSelectors(mangledAttribute),
-                    buildMangledParameters(mangledAttribute),
-                    buildMangledSwiftNameAttribute(mangledAttribute)
-                )
-                membersDetails[memberKey] = mangledAttribute
-                cloned
-            } else {
-                val swiftNameAttr = getSwiftNameAttribute(member)
-                membersDetails[memberKey] = parseSwiftNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType)
-                member
-            }
-        } else member
+      if (member.isSwiftNameMethod()) mangler.mangle(member, containingStub)
+      else member
     }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
 internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
     val with = if (attribute.isConstructor) "With" else ""
     return if (attribute.parameters.isEmpty())
-        listOf(attribute.name)
+      listOf(attribute.name + attribute.postfix)
     else if (attribute.parameters.size == 1) {
         listOf(
             (attribute.name + with + attribute.parameters.first()
@@ -66,18 +47,20 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
 }
 
 
-private fun buildMangledSwiftNameAttribute(attribute: ObjCMemberDetails): String {
+internal fun buildMangledSwiftNameMethodAttribute(attribute: ObjCMemberDetails, containingStub: ObjCExportStub): String {
     val parameters = attribute.parameters.mapIndexed { index, parameter ->
-        if (index == attribute.parameters.size - 1) {
-            parameter.mangleSelector(attribute.postfix)
-        } else {
-            parameter
-        }
+      if (index == attribute.parameters.size - 1) parameter.mangleSelector(attribute.postfix)
+      else parameter
     }
-    return "swift_name(\"${attribute.name}(${parameters.joinToString(separator = "")})\")"
+
+  val name = if (containingStub.isExtensionFacade && attribute.parameters.isEmpty()) {
+    attribute.name + attribute.postfix
+  } else attribute.name
+
+  return "swift_name(\"${name}(${parameters.joinToString(separator = "")})\")"
 }
 
-private fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> {
+internal fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> {
     return attribute.parameters.mapIndexed { index, parameter ->
         when (index) {
             /** Last parameter goes always mangled */
@@ -86,6 +69,10 @@ private fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> {
             else -> parameter
         }
     }
+}
+
+internal fun ObjCExportStub.isSwiftNameMethod(): Boolean {
+  return this is ObjCMethod && isSwiftNameMethod()
 }
 
 internal fun ObjCMethod.isSwiftNameMethod(): Boolean {

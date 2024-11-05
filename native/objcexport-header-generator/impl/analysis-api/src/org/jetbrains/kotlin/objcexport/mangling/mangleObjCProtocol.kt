@@ -11,7 +11,7 @@ internal fun ObjCExportContext.mangleObjCProtocol(objCProtocol: ObjCProtocol, na
         origin = objCProtocol.origin,
         attributes = objCProtocol.attributes,
         superProtocols = objCProtocol.superProtocols,
-        members = mangleObjCProperties(mangleObjCMethods(objCProtocol.members)),
+        members = mangleObjCProperties(mangleObjCMethods(objCProtocol.members, objCProtocol)),
         extras = objCProtocol.extras
     )
 }

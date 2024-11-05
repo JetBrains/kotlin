@@ -2315,22 +2315,6 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 @property (class, readonly) NSArray<AtomicfuSynchronizedObjectStatus *> *entries __attribute__((swift_name("entries")));
 @end
 
-@interface KotlinIntArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
-@interface KotlinLongArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
-@interface KotlinIntRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
-@interface KotlinLongRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
 @interface CoroutineDispatcher (Extensions)
 
 /**
@@ -2344,12 +2328,28 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 @property (readonly) CoroutineDispatcher *IO __attribute__((swift_name("IO")));
 @end
 
-@interface SharingStartedCompanion (Extensions)
-- (id<SharingStarted>)WhileSubscribedStopTimeout:(int64_t)stopTimeout replayExpiration:(int64_t)replayExpiration __attribute__((swift_name("WhileSubscribed(stopTimeout:replayExpiration:)")));
-@end
-
 @interface KotlinArray (Extensions)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinIntArray (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinIntRange (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinLongArray (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinLongRange (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface SharingStartedCompanion (Extensions)
+- (id<SharingStarted>)WhileSubscribedStopTimeout:(int64_t)stopTimeout replayExpiration:(int64_t)replayExpiration __attribute__((swift_name("WhileSubscribed(stopTimeout:replayExpiration:)")));
 @end
 
 #pragma pop_macro("_Nullable_result")

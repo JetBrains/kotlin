@@ -18,7 +18,7 @@ class CopyStubsTest {
             getterName = "getterName",
             declarationAttributes = listOf("declarationAttrs")
         )
-        val copy = objCProperty.copy("get=foo_")
+        val copy = objCProperty.copy(name = "foo", propertyAttributes = "get=foo_", declarationAttributes = null)
         assertTrue {
             copy.name == "foo" &&
                     copy.comment?.contentLines == listOf("comment") &&

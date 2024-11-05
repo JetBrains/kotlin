@@ -25,5 +25,8 @@ internal fun ObjCExportContext.mangleObjCStubs(stubs: List<ObjCExportStub>): Lis
             }
             else -> stub
         }
-    }
+    }.run { mangleExtensionFacadesMembers(this) }
 }
+
+
+

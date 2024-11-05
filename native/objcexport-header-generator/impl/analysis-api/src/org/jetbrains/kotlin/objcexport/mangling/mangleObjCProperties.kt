@@ -7,17 +7,9 @@ import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
 internal fun ObjCExportContext.mangleObjCProperties(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
     if (!stubs.hasPropertiesConflicts()) return stubs
-    val swiftNameAttributes = hashSetOf<String>()
+    val mangler = ObjCPropertyMangler()
     return stubs.map { member ->
-        if (member is ObjCProperty) {
-            val attr = getSwiftNameAttribute(member)
-            if (swiftNameAttributes.contains(attr)) {
-                member.copy("getter=${member.name}_")
-            } else member
-        } else if (member is ObjCMethod && member.isSwiftNameMethod()) {
-            swiftNameAttributes.add(getSwiftNameAttribute(member).replace("()", ""))
-            member
-        } else member
+        mangler.mangle(member, containingStub = member)
     }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
@@ -40,6 +32,10 @@ internal fun List<ObjCExportStub>.hasPropertiesConflicts(): Boolean {
         }
     }
     return false
+}
+
+internal fun ObjCExportStub.isSwiftNameProperty(): Boolean {
+    return (this as? ObjCProperty)?.isSwiftNameProperty() ?: false
 }
 
 internal fun ObjCProperty.isSwiftNameProperty(): Boolean {

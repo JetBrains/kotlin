@@ -1997,6 +1997,29 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @property (readonly) KotlinKTypeProjection *STAR __attribute__((swift_name("STAR")));
 @end
 
+@interface AbstractPolymorphicSerializer (Extensions)
+
+/**
+ * @note annotations
+ *   kotlinx.serialization.InternalSerializationApi
+*/
+- (id<DeserializationStrategy>)findPolymorphicSerializerDecoder:(id<CompositeDecoder>)decoder klassName:(NSString * _Nullable)klassName __attribute__((swift_name("findPolymorphicSerializer(decoder:klassName:)")));
+
+/**
+ * @note annotations
+ *   kotlinx.serialization.InternalSerializationApi
+*/
+- (id<SerializationStrategy>)findPolymorphicSerializerEncoder:(id<Encoder>)encoder value:(id)value __attribute__((swift_name("findPolymorphicSerializer(encoder:value:)")));
+@end
+
+@interface ClassSerialDescriptorBuilder (Extensions)
+- (void)elementElementName:(NSString *)elementName annotations:(NSArray<id<KotlinAnnotation>> *)annotations isOptional:(BOOL)isOptional __attribute__((swift_name("element(elementName:annotations:isOptional:)")));
+@end
+
+@interface KotlinBooleanCompanion (Extensions)
+- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+@end
+
 @interface KotlinByteCompanion (Extensions)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
@@ -2006,6 +2029,10 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @end
 
 @interface KotlinDoubleCompanion (Extensions)
+- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+@end
+
+@interface KotlinDurationCompanion (Extensions)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
@@ -2022,6 +2049,10 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @end
 
 @interface KotlinShortCompanion (Extensions)
+- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+@end
+
+@interface KotlinStringCompanion (Extensions)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
@@ -2043,29 +2074,6 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 
 @interface KotlinUnit (Extensions)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
-@end
-
-@interface KotlinDurationCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
-@end
-
-@interface ClassSerialDescriptorBuilder (Extensions)
-- (void)elementElementName:(NSString *)elementName annotations:(NSArray<id<KotlinAnnotation>> *)annotations isOptional:(BOOL)isOptional __attribute__((swift_name("element(elementName:annotations:isOptional:)")));
-@end
-
-@interface AbstractPolymorphicSerializer (Extensions)
-
-/**
- * @note annotations
- *   kotlinx.serialization.InternalSerializationApi
-*/
-- (id<DeserializationStrategy>)findPolymorphicSerializerDecoder:(id<CompositeDecoder>)decoder klassName:(NSString * _Nullable)klassName __attribute__((swift_name("findPolymorphicSerializer(decoder:klassName:)")));
-
-/**
- * @note annotations
- *   kotlinx.serialization.InternalSerializationApi
-*/
-- (id<SerializationStrategy>)findPolymorphicSerializerEncoder:(id<Encoder>)encoder value:(id)value __attribute__((swift_name("findPolymorphicSerializer(encoder:value:)")));
 @end
 
 @interface PolymorphicModuleBuilder (Extensions)
@@ -2102,14 +2110,6 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @interface SerializersModuleBuilder (Extensions)
 - (void)contextualSerializer:(id<KSerializer>)serializer __attribute__((swift_name("contextual(serializer:)")));
 - (void)polymorphicBaseClass:(id<KotlinKClass>)baseClass baseSerializer:(id<KSerializer> _Nullable)baseSerializer builderAction:(void (^)(PolymorphicModuleBuilder<id> *))builderAction __attribute__((swift_name("polymorphic(baseClass:baseSerializer:builderAction:)")));
-@end
-
-@interface KotlinStringCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
-@end
-
-@interface KotlinBooleanCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

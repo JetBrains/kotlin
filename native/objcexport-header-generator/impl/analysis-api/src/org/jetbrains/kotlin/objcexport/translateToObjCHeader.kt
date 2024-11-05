@@ -261,7 +261,7 @@ private class KtObjCExportHeaderGenerator(
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
-            stubs = mangleObjCStubs(stubs).sortedWith(ObjCInterfaceOrder),
+            stubs = mangleObjCStubs(stubs.sortedWith(ObjCInterfaceOrder)),
             classForwardDeclarations = mangleClassForwards(classForwardDeclarations).sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()

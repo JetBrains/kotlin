@@ -16,7 +16,12 @@ package org.jetbrains.kotlin.backend.konan.objcexport
  * In the beginning it calls `generateExtraClassEarly` which generates extended interface
  */
 val ObjCInterfaceOrder: Comparator<ObjCExportStub> = Comparator { stub1, stub2 ->
-    if (stub1 is ObjCInterface && stub1.categoryName != null) 1
-    else if (stub2 is ObjCInterface && stub2.categoryName != null) -1
-    else 0
+    val isStub1ExtensionFacade = (stub1 as? ObjCInterface)?.categoryName != null
+    val isStub2ExtensionFacade = (stub2 as? ObjCInterface)?.categoryName != null
+    when {
+        isStub1ExtensionFacade && isStub2ExtensionFacade -> stub1.name.compareTo(stub2.name)
+        isStub1ExtensionFacade -> 1
+        isStub2ExtensionFacade -> -1
+        else -> 0
+    }
 }

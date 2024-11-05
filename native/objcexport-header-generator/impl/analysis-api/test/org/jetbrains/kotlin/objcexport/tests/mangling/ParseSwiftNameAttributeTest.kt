@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.objcexport.tests.mangling
 import org.jetbrains.kotlin.objcexport.mangling.ObjCMemberDetails
 import org.jetbrains.kotlin.objcexport.mangling.buildMangledSelectors
 import org.jetbrains.kotlin.objcexport.mangling.mangleAttribute
-import org.jetbrains.kotlin.objcexport.mangling.parseSwiftNameAttribute
+import org.jetbrains.kotlin.objcexport.mangling.parseSwiftMethodNameAttribute
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -14,7 +14,7 @@ class ParseSwiftNameAttributeTest {
     fun `test - no parameters`() {
         assertEquals(
             ObjCMemberDetails("foo", emptyList()),
-            parseSwiftNameAttribute("swift_name(\"foo()\")")
+            parseSwiftMethodNameAttribute("swift_name(\"foo()\")")
         )
     }
 
@@ -22,7 +22,7 @@ class ParseSwiftNameAttributeTest {
     fun `test - multiple parameters`() {
         assertEquals(
             ObjCMemberDetails("foo", listOf("p0:", "p1:")),
-            parseSwiftNameAttribute("swift_name(\"foo(p0:p1:)\")")
+            parseSwiftMethodNameAttribute("swift_name(\"foo(p0:p1:)\")")
         )
     }
 
@@ -30,28 +30,36 @@ class ParseSwiftNameAttributeTest {
     fun `test - receiver`() {
         assertEquals(
             ObjCMemberDetails("foo", listOf("_:", "p0:")),
-            parseSwiftNameAttribute("swift_name(\"foo(_:p0:)\")")
+            parseSwiftMethodNameAttribute("swift_name(\"foo(_:p0:)\")")
         )
     }
 
     @Test
     fun `test - invalid attribute name`() {
         assertFails {
-            parseSwiftNameAttribute("swift(\"foo(p0:)\")")
+            parseSwiftMethodNameAttribute("swift(\"foo(p0:)\")")
         }
     }
 
     @Test
     fun `test - no method name`() {
         assertFails {
-            parseSwiftNameAttribute("swift_name(\"(p0:)\")")
+            parseSwiftMethodNameAttribute("swift_name(\"(p0:)\")")
         }
+    }
+
+    @Test
+    fun `test - building non mangled selectors with no parameters`() {
+        assertEquals(
+            listOf("foo"),
+            buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, ""))
+        )
     }
 
     @Test
     fun `test - building mangled selectors with no parameters`() {
         assertEquals(
-            listOf("foo"),
+            listOf("foo_"),
             buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, "_"))
         )
     }
