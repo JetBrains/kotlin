@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// LANGUAGE: -EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
+// FIR_DUMP
 
 // FILE: JEnumEntry.java
 
@@ -26,9 +26,11 @@ public enum JEnumField {
 
 // FILE: test.kt
 
-fun test() {
-    JEnumEntry.entries
-    JEnumStaticField.entries
+fun test(): String {
+    val first = JEnumEntry.entries
+    val second = JEnumStaticField.entries
 
-    JEnumField::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
+    val third = JEnumField::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
+
+    return "$first$second$third"
 }

@@ -1,5 +1,5 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
-// IGNORE_BACKEND: JVM
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// IGNORE_BACKEND_K1: ANY
 // FULL_JDK
 // WITH_STDLIB
 
@@ -11,7 +11,9 @@ enum class EBasic {
     A0;
 }
 
-enum class E0 {;
+enum class E0 {
+    A1;
+
     companion object {
         val entries = "OK"
     }
@@ -72,8 +74,8 @@ enum class E05 : I05 {
 fun box(): String {
     assertEquals(EBasic.entries.first().toString(), "A0") // make sure the feature is working
 
-    assertEquals(E0.entries, "OK")
-    assertEquals(Shadowing.E0.E.test(), "OK")
+    assertEquals(E0.entries.first().toString(), "A1")
+    assertEquals(Shadowing.E0.E.test().first().toString(), "E")
     assertEquals(E01.entries.toString(), "OK")
     assertEquals(E02.E.test(), "OK")
 

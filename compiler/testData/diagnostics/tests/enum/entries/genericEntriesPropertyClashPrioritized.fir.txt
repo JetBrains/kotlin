@@ -1,4 +1,4 @@
-FILE: genericEntriesPropertyClashOn.fir.kt
+FILE: genericEntriesPropertyClashPrioritized.fir.kt
     package pckg
 
     public final enum class A : R|kotlin/Enum<pckg/A>| {
@@ -28,6 +28,6 @@ FILE: genericEntriesPropertyClashOn.fir.kt
             ^ Int(0)
         }
     public final fun test(): R|kotlin/Unit| {
-        lval i: R|kotlin/Int| = Q|pckg/A|.R|pckg/entries|<R|pckg/A.Companion|>
+        lval i: R|kotlin/Int| = Q|pckg/A|.R|pckg/A.entries*s|
         Q|pckg/A.Companion|.R|pckg/entries|<R|pckg/A.Companion|>
     }

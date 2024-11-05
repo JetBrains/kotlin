@@ -12580,6 +12580,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("entriesPropertyImportPrioritized.kt")
+        public void testEntriesPropertyImportPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportPrioritized.kt");
+        }
+
+        @Test
         @TestMetadata("entriesPropertyImportedClash.kt")
         public void testEntriesPropertyImportedClash() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClash.kt");
@@ -12607,6 +12613,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("entriesPropertyInCompanionClashOn.kt")
         public void testEntriesPropertyInCompanionClashOn() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyInCompanionClashOn.kt");
+        }
+
+        @Test
+        @TestMetadata("entriesPropertyInCompanionClashPrioritized.kt")
+        public void testEntriesPropertyInCompanionClashPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyInCompanionClashPrioritized.kt");
         }
 
         @Test
@@ -12640,6 +12652,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("enumEntriesAmbiguityPrioritized.kt")
+        public void testEnumEntriesAmbiguityPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguityPrioritized.kt");
+        }
+
+        @Test
         @TestMetadata("genericEntriesPropertyClash.kt")
         public void testGenericEntriesPropertyClash() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClash.kt");
@@ -12649,6 +12667,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("genericEntriesPropertyClashOn.kt")
         public void testGenericEntriesPropertyClashOn() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClashOn.kt");
+        }
+
+        @Test
+        @TestMetadata("genericEntriesPropertyClashPrioritized.kt")
+        public void testGenericEntriesPropertyClashPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/genericEntriesPropertyClashPrioritized.kt");
         }
 
         @Test
@@ -12667,6 +12691,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("javaEnumEntriesAmbiguityOn.kt")
         public void testJavaEnumEntriesAmbiguityOn() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguityOn.kt");
+        }
+
+        @Test
+        @TestMetadata("javaEnumEntriesAmbiguityPrioritized.kt")
+        public void testJavaEnumEntriesAmbiguityPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguityPrioritized.kt");
         }
 
         @Test
@@ -12712,9 +12742,21 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsicPrioritized.kt")
+        public void testRedeclarationOfEnumEntriesNameWithIntrinsicPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsicPrioritized.kt");
+        }
+
+        @Test
         @TestMetadata("referenceFalsePositiveWarnings.kt")
         public void testReferenceFalsePositiveWarnings() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/referenceFalsePositiveWarnings.kt");
+        }
+
+        @Test
+        @TestMetadata("referenceFalsePositiveWarningsPrioritized.kt")
+        public void testReferenceFalsePositiveWarningsPrioritized() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/referenceFalsePositiveWarningsPrioritized.kt");
         }
 
         @Test

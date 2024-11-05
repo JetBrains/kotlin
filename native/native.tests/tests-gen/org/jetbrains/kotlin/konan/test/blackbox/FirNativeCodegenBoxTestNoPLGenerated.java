@@ -16058,9 +16058,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
-      @TestMetadata("enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt")
-      public void testEnumEntriesCompatibilityCheckNoPrioritizedEnumEntries() {
-        runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt");
+      @TestMetadata("enumEntriesCompatibilityCheckPrioritized.kt")
+      public void testEnumEntriesCompatibilityCheckPrioritized() {
+        runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckPrioritized.kt");
       }
 
       @Test

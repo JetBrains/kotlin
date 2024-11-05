@@ -1,4 +1,4 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -13,6 +13,6 @@ enum class A {
 val <T> T.entries: Int get() = 0
 
 fun test() {
-    val i: Int = <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
+    val i: Int = <!INITIALIZER_TYPE_MISMATCH!>A.entries<!>
     A.Companion.entries
 }

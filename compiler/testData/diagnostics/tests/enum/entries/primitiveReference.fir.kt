@@ -1,4 +1,4 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries
 // WITH_STDLIB
 
 enum class Some {}

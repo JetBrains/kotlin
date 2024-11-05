@@ -12,6 +12,6 @@ enum class A {
 val <T> T.entries: Int get() = 0
 
 fun test() {
-    <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
+    val i: Int = <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
     A.Companion.entries
 }
