@@ -57,8 +57,23 @@ fun createPhaseConfig(
         checkStickyConditions
     ).also {
         if (arguments.listPhases) {
-            it.list()
+            list(compoundPhase, enabled, verbose)
         }
+    }
+}
+
+private fun list(
+    compoundPhase: CompilerPhase<*, *, *>,
+    enabled: Set<AnyNamedPhase> = mutableSetOf(),
+    verbose: Set<AnyNamedPhase> = mutableSetOf(),
+) {
+    for ((depth, phase) in compoundPhase.getNamedSubphases()) {
+        println(buildString {
+            append("    ".repeat(depth))
+            append(phase.name)
+            if (phase !in enabled) append(" (Disabled)")
+            if (phase in verbose) append(" (Verbose)")
+        })
     }
 }
 

@@ -55,15 +55,4 @@ class PhaseConfig(
 
     override fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
         phase in toValidateStateAfter
-
-    fun list() {
-        for ((depth, phase) in compoundPhase.getNamedSubphases()) {
-            println(buildString {
-                append("    ".repeat(depth))
-                append(phase.name)
-                if (phase !in enabledMut) append(" (Disabled)")
-                if (phase in verbose) append(" (Verbose)")
-            })
-        }
-    }
 }
