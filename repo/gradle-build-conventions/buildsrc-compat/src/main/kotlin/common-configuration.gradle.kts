@@ -287,8 +287,16 @@ fun Project.configureArtifacts() {
 }
 
 fun Project.configureTests() {
-    val ignoreTestFailures: Boolean by rootProject.extra
-    if (!plugins.hasPlugin("compiler-tests-convention")) {
+    val projectsUsingTcMutes = listOf(
+        ":native",
+        ":kotlin-native",
+        ":kotlin-gradle-",
+        ":compiler:build-tools",
+        ":libraries:tools:gradle",
+        ":gradle",
+    )
+    if (projectsUsingTcMutes.none { project.path.startsWith(it) }) {
+        val ignoreTestFailures: Boolean by rootProject.extra
         tasks.configureEach {
             if (this is VerificationTask) {
                 ignoreFailures = ignoreTestFailures
