@@ -2580,7 +2580,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but package name found.")
 
         // Function contracts
-        map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING)
+        map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}.", TO_STRING)
         map.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING)
 
         // Conventions

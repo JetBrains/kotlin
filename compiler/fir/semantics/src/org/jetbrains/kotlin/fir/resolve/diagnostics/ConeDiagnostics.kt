@@ -175,17 +175,17 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
 
     class UnresolvedCall(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "unresolved call in contract description: ${name.asString()}"
+            get() = "unresolved call '$name' in contract description"
     }
 
     class NoReceiver(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "no receiver for call '${name.asString()}' found"
+            get() = "no receiver for call '$name' found"
     }
 
     class NoArgument(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "no argument for call '${name.asString()}' found"
+            get() = "no argument for call '$name' found"
     }
 
     class NotAConstant(val element: Any) : ConeContractDescriptionError() {
@@ -209,49 +209,49 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
 
     class NotAParameterReference(val element: ConeContractDescriptionElement) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "$element is not a parameter or receiver reference"
+            get() = "'$element' is not a parameter or receiver reference"
     }
 
     class IllegalParameter(val symbol: FirCallableSymbol<*>, override val reason: String) : ConeContractDescriptionError()
 
     class UnresolvedThis(val expression: FirThisReceiverExpression) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Can't resolve this reference"
+            get() = "can't resolve 'this' reference"
     }
 
     class IllegalThis(val expression: FirThisReceiverExpression) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Only this reference to extension receiver of a function is allowed"
+            get() = "'this' can only be a qualified reference to the extension receiver of contract owner."
     }
 
     class UnresolvedInvocationKind(val element: FirElement) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "${element.render()} is not a valid invocation kind"
+            get() = "'${element.render()}' is not a valid invocation kind"
     }
 
     class NotABooleanExpression(val element: ConeContractDescriptionElement) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "$element is not a boolean expression"
+            get() = "'$element' is not a boolean expression"
     }
 
     class NotContractDsl(val callableId: CallableId) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "$callableId is not a part of contracts DSL"
+            get() = "'$callableId' is not part of the contracts DSL"
     }
 
     class IllegalEqualityOperator(val operation: FirOperation) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "$operation operator call is illegal in contract description"
+            get() = "'$operation' operator call is illegal in contract descriptions"
     }
 
     class NotSelfTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Type parameter ${symbol.name} does not belong to owner of contract"
+            get() = "type parameter '${symbol.name}' does not belong to contract owner"
     }
 
     class NotReifiedTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Type parameter ${symbol.name} is not reified"
+            get() = "type parameter '${symbol.name}' is not reified"
     }
 }
 
