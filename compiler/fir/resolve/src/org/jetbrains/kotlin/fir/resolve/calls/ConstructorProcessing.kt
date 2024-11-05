@@ -59,7 +59,6 @@ private fun FirScope.processConstructorsByName(
         processor,
         session,
         bodyResolveComponents,
-        constructorFilter,
     )
 
     processSyntheticConstructors(
@@ -131,7 +130,6 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    constructorFilter: ConstructorFilter,
 ) {
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
@@ -173,9 +171,7 @@ private fun processConstructors(
         }
 
         scope?.processDeclaredConstructors {
-            if (constructorFilter.accepts(it.fir)) {
-                processor(it)
-            }
+            processor(it)
         }
     }
 }
