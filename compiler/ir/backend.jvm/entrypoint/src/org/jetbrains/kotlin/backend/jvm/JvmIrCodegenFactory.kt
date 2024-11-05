@@ -342,7 +342,7 @@ open class JvmIrCodegenFactory(
         else null
         val phaseConfig = customPhaseConfig ?: PhaseConfig()
         val context = JvmBackendContext(
-            state, irBuiltIns, symbolTable, phaseConfig, extensions,
+            state, irBuiltIns, symbolTable, extensions,
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {

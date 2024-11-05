@@ -20,22 +20,22 @@ import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.Type
@@ -45,7 +45,6 @@ class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    val phaseConfig: PhaseConfig,
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
     val irSerializer: JvmIrSerializer?,
