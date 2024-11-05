@@ -71,8 +71,7 @@ open class WasmCompilerWithIC(
     }
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
-        val wasmPhases = getWasmPhases(true)
-        val phaseConfig = PhaseConfig(wasmPhases)
+        val phaseConfig = PhaseConfig()
 
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 

@@ -52,12 +52,11 @@ class WasmLoweringFacade(
             val dumpOutputDir = File(outputDirBase, "irdump")
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
-                wasmPhases,
                 toDumpStateAfter = wasmPhases.toPhaseMap().values.toSet(),
                 dumpToDirectory = dumpOutputDir.path,
             )
         } else {
-            PhaseConfig(wasmPhases)
+            PhaseConfig()
         }
 
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)

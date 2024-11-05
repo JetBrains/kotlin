@@ -22,11 +22,10 @@ fun createTestPhaseConfig(testServices: TestServices, module: TestModule, topLev
             JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
         )
         PhaseConfig(
-            topLevelPhase,
             toDumpStateAfter = topLevelPhase.toPhaseMap().values.toSet(),
             dumpToDirectory = dumpOutputDir.path,
         )
     } else {
-        PhaseConfig(topLevelPhase)
+        PhaseConfig()
     }
 }

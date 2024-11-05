@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -199,7 +198,7 @@ internal class KaFe10CompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            PhaseConfig(jvmPhases),
+            PhaseConfig(),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             ideCodegenSettings = ideCodegenSettings,
         )

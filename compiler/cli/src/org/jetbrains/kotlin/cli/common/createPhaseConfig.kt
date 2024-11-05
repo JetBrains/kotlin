@@ -21,7 +21,7 @@ fun createPhaseConfig(
     fun report(message: String) = messageCollector.report(CompilerMessageSeverity.ERROR, message)
 
     val phases = compoundPhase.toPhaseMap()
-    val enabled = computeEnabled(phases, arguments.disablePhases, ::report).toMutableSet()
+    val disabled = computeDisabled(phases, arguments.disablePhases, ::report).toMutableSet()
     val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::report)
 
     val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::report)
@@ -42,9 +42,7 @@ fun createPhaseConfig(
     val checkStickyConditions = arguments.checkStickyPhaseConditions
 
     return PhaseConfig(
-        compoundPhase,
-        phases,
-        enabled,
+        disabled,
         verbose,
         toDumpStateBefore,
         toDumpStateAfter,
@@ -57,33 +55,32 @@ fun createPhaseConfig(
         checkStickyConditions
     ).also {
         if (arguments.listPhases) {
-            list(compoundPhase, enabled, verbose)
+            list(compoundPhase, disabled, verbose)
         }
     }
 }
 
 private fun list(
     compoundPhase: CompilerPhase<*, *, *>,
-    enabled: Set<AnyNamedPhase> = mutableSetOf(),
+    disabled: Set<AnyNamedPhase> = mutableSetOf(),
     verbose: Set<AnyNamedPhase> = mutableSetOf(),
 ) {
     for ((depth, phase) in compoundPhase.getNamedSubphases()) {
         println(buildString {
             append("    ".repeat(depth))
             append(phase.name)
-            if (phase !in enabled) append(" (Disabled)")
+            if (phase in disabled) append(" (Disabled)")
             if (phase in verbose) append(" (Verbose)")
         })
     }
 }
 
-private fun computeEnabled(
+private fun computeDisabled(
     phases: MutableMap<String, AnyNamedPhase>,
     namesOfDisabled: Array<String>?,
     report: (String) -> Unit
 ): Set<AnyNamedPhase> {
-    val disabledPhases = phaseSetFromArguments(phases, namesOfDisabled, report)
-    return phases.values.toSet() - disabledPhases
+    return phaseSetFromArguments(phases, namesOfDisabled, report)
 }
 
 private fun phaseSetFromArguments(

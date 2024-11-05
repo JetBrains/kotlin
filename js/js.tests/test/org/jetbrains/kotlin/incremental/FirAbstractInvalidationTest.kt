@@ -122,7 +122,7 @@ abstract class FirAbstractInvalidationTest(
         }
 
         val transformedResult = PhaseEngine(
-            PhaseConfig(JsPreSerializationLoweringPhasesProvider.lowerings(configuration)),
+            PhaseConfig(),
             PhaserState(),
             PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)

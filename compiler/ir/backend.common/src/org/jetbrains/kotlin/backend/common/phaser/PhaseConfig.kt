@@ -17,10 +17,7 @@ fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
  * It is defined before compilation and can't be modified in the process.
  */
 class PhaseConfig(
-    private val compoundPhase: CompilerPhase<*, *, *>,
-    phases: Map<String, AnyNamedPhase> = compoundPhase.toPhaseMap(),
-    initiallyEnabled: Set<AnyNamedPhase> = phases.values.toSet(),
-
+    disabledPhases: Set<AnyNamedPhase> = emptySet(),
     val verbose: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
@@ -32,16 +29,16 @@ class PhaseConfig(
     override val checkConditions: Boolean = false,
     override val checkStickyConditions: Boolean = false
 ) : PhaseConfigurationService {
-    private val enabledMut = initiallyEnabled.toMutableSet()
+    private val disabledMut = disabledPhases.toMutableSet()
 
     override fun isEnabled(phase: AnyNamedPhase): Boolean =
-        phase in enabledMut
+        phase !in disabledMut
 
     override fun isVerbose(phase: AnyNamedPhase): Boolean =
         phase in verbose
 
     override fun disable(phase: AnyNamedPhase) {
-        enabledMut.remove(phase)
+        disabledMut.add(phase)
     }
 
     override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =

@@ -335,7 +335,7 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmLoweringPhases)
+        val phaseConfig = customPhaseConfig ?: PhaseConfig()
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, phaseConfig, extensions,
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
@@ -370,7 +370,7 @@ open class JvmIrCodegenFactory(
         if (hasErrors()) return
 
         notifyCodegenStart()
-        jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
+        jvmCodegenPhases.invokeToplevel(PhaseConfig(), context, module)
 
         if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group

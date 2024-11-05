@@ -107,7 +107,7 @@ class GenerateIrRuntime {
     private val configuration = buildConfiguration(environment)
     private val project = environment.project
     private val jsPhases = getJsPhases(configuration)
-    private val phaseConfig = PhaseConfig(jsPhases)
+    private val phaseConfig = PhaseConfig()
 
     private val languageVersionSettings = configuration.languageVersionSettings
     private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
