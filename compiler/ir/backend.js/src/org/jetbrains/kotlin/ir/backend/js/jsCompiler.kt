@@ -38,7 +38,6 @@ class LoweredIr(
 fun compile(
     mainCallArguments: List<String>?,
     depsDescriptors: ModulesStructure,
-    phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
@@ -62,7 +61,6 @@ fun compile(
         irBuiltIns,
         symbolTable,
         deserializer,
-        phaseConfig,
         exportedDeclarations,
         keep,
         dceRuntimeDiagnostic,
@@ -82,7 +80,6 @@ fun compileIr(
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     irLinker: JsIrLinker,
-    phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName>,
     keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
@@ -138,12 +135,12 @@ fun compileIr(
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
-        lowerPreservingTags(allModules, context, phaseConfig, it)
+        lowerPreservingTags(allModules, context, it)
     } ?: run {
         val phaserState = PhaserState<IrModuleFragment>()
         getJsLowerings(configuration).forEachIndexed { _, lowering ->
             allModules.forEach { module ->
-                lowering.invoke(phaseConfig, phaserState, context, module)
+                lowering.invoke(context.phaseConfig, phaserState, context, module)
             }
         }
     }

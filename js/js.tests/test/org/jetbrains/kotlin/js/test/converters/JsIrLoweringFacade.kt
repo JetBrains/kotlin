@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
@@ -111,7 +112,7 @@ class JsIrLoweringFacade(
             ).dump(module, firstTimeCompilation)
         }
 
-        val phaseConfig = createTestPhaseConfig(testServices, module, getJsPhases(configuration))
+        configuration.phaseConfig = createTestPhaseConfig(testServices, module, getJsPhases(configuration))
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 
@@ -125,7 +126,6 @@ class JsIrLoweringFacade(
             irBuiltIns,
             symbolTable,
             deserializer,
-            phaseConfig,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
             keep = keep,
             dceRuntimeDiagnostic = null,

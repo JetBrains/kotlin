@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
@@ -61,6 +62,7 @@ class WasmLoweringFacade(
 
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        configuration.phaseConfig = phaseConfig
 
         val testPackage = extractTestPackage(testServices)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
@@ -71,7 +73,6 @@ class WasmLoweringFacade(
             mainModule,
             configuration,
             performanceManager,
-            phaseConfig = phaseConfig,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts

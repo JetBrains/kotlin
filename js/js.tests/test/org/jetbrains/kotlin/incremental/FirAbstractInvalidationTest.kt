@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -122,7 +123,7 @@ abstract class FirAbstractInvalidationTest(
         }
 
         val transformedResult = PhaseEngine(
-            PhaseConfig(),
+            configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
             PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)

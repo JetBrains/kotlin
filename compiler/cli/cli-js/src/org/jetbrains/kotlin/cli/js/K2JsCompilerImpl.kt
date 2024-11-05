@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
@@ -55,7 +56,6 @@ private val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
 private class Ir2JsTransformer(
     val arguments: K2JSCompilerArguments,
     val module: ModulesStructure,
-    val phaseConfig: PhaseConfig,
     val messageCollector: MessageCollector,
     val mainCallArguments: List<String>?,
 ) {
@@ -65,7 +65,6 @@ private class Ir2JsTransformer(
         return compile(
             mainCallArguments,
             module,
-            phaseConfig,
             IrFactoryImplForJsIC(WholeWorldStageController()),
             keep = arguments.irKeep?.split(",")
                 ?.filterNot { it.isEmpty() }
@@ -272,12 +271,12 @@ internal class K2JsCompilerImpl(
             messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is not supported for Kotlin/Js.")
         }
 
-        val phaseConfig = createPhaseConfig(getJsPhases(configuration), arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(getJsPhases(configuration), arguments, messageCollector)
 
         val start = System.currentTimeMillis()
 
         try {
-            val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
+            val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
             val outputs = ir2JsTransformer.compileAndTransformIrNew()
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")

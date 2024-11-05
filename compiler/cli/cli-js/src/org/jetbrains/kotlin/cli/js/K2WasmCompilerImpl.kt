@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
@@ -138,12 +139,12 @@ internal class K2WasmCompilerImpl(
             loadFunctionInterfacesIntoStdlib = true,
         )
 
+        configuration.phaseConfig = createPhaseConfig(getWasmPhases(isIncremental = false), arguments, messageCollector)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,
             configuration,
             performanceManager,
-            phaseConfig = createPhaseConfig(getWasmPhases(isIncremental = false), arguments, messageCollector),
             exportedDeclarations = setOf(FqName("main")),
             generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = arguments.irPropertyLazyInitialization,

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
@@ -28,11 +27,10 @@ fun optimizeProgramByIr(
     val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
     eliminateDeadDeclarations(modules, context, moduleKind, removeUnusedAssociatedObjects, dceDumpNameCache)
 
-    val phaseConfig = PhaseConfig()
     val phaserState = PhaserState<IrModuleFragment>()
     optimizationLoweringList.forEachIndexed { _, lowering ->
         modules.forEach { module ->
-            lowering.invoke(phaseConfig, phaserState, context, module)
+            lowering.invoke(context.phaseConfig, phaserState, context, module)
         }
     }
 }

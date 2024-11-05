@@ -50,7 +50,6 @@ internal fun prepareIcCaches(
         JsICContext(
             mainCallArguments,
             arguments.granularity,
-            PhaseConfig(),
         )
     }
 

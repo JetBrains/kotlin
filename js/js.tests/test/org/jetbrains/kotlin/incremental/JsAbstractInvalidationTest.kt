@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.*
@@ -106,10 +107,10 @@ abstract class JsAbstractInvalidationTest(
                     else -> projStep.dirtyJsModules
                 }
 
+                configuration.phaseConfig = getPhaseConfig(configuration, projStep.id)
                 val icContext = JsICContext(
                     mainArguments,
                     granularity,
-                    getPhaseConfig(configuration, projStep.id),
                     setOf(FqName(BOX_FUNCTION_NAME)),
                 )
 
