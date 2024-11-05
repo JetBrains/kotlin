@@ -460,55 +460,6 @@
       <option name="ignoreObscureOperators" value="true" />
     </inspection_tool>
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <replaceConfiguration name="DirectCallOfDispose" text="$Instance$.dispose()" recursive="false" caseInsensitive="false" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="Disposer.dispose($Instance$)">
-        <constraint name="Instance" regexp="super" nameOfExprType="Disposable" withinHierarchy="true" exprTypeWithinHierarchy="true" minCount="0" negateName="true" within="" contains="" />
-        <constraint name="__context__" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="File.createTempFile" text="java.io.File.createTempFile($prefix$, $suffix$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.openapi.util.io.FileUtil.createTempFile($prefix$, $suffix$)">
-        <constraint name="prefix" within="" contains="" />
-        <constraint name="suffix" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="File.createTempFile(dir)" text="java.io.File.createTempFile($prefix$, $suffix$, $dir$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.openapi.util.io.FileUtil.createTempFile($dir$, $prefix$, $suffix$, true)">
-        <constraint name="prefix" within="" contains="" />
-        <constraint name="suffix" within="" contains="" />
-        <constraint name="dir" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Log.error" text="$LOG$.assertTrue(false, $e$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="$LOG$.error($e$)">
-        <constraint name="e" within="" contains="" />
-        <constraint name="LOG" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="new Class[0]" text="new Class[0]" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.EMPTY_CLASS_ARRAY" />
-      <replaceConfiguration name="new Object[0]" text="new Object[0]" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.EMPTY_OBJECT_ARRAY" />
-      <replaceConfiguration name="new String[0]" text="new String[0]" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.EMPTY_STRING_ARRAY" />
-      <searchConfiguration name="SwingUtilities.invokeLater" text="SwingUtilities.invokeLater($runnable$)" recursive="false" caseInsensitive="false" type="JAVA">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="runnable" within="" contains="" />
-      </searchConfiguration>
-      <replaceConfiguration name="toObjectArray" text="$collection$.toArray(new Object[$collection$.size()])" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toObjectArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="toObjectArray0" text="$collection$.toArray(new Object[0])" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toObjectArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="toObjectArray00" text="$collection$.toArray(ArrayUtil.EMPTY_OBJECT_ARRAY)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toObjectArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="toStringArray" text="$collection$.toArray(new String[$collection$.size()])" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toStringArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="toStringArray0" text="$collection$.toArray(new String[0])" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toStringArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="toStringArray00" text="$collection$.toArray(ArrayUtil.EMPTY_STRING_ARRAY)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.toStringArray($collection$)">
-        <constraint name="collection" within="" contains="" />
-      </replaceConfiguration>
-      <searchConfiguration name="Use RecursionManager?" text="class $Class$ { &#10;  ThreadLocal&lt;$FieldType$&gt; $FieldName$ = $Init$;&#10;}" recursive="false" caseInsensitive="false" type="JAVA">
-        <constraint name="Class" script="&quot;&quot;" within="" contains="" />
-        <constraint name="FieldType" script="&quot;&quot;" regexp="Collection" withinHierarchy="true" maxCount="2147483647" target="true" wholeWordsOnly="true" within="" contains="" />
-        <constraint name="FieldName" script="&quot;&quot;" maxCount="2147483647" within="" contains="" />
-        <constraint name="Init" script="&quot;&quot;" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="__context__" script="&quot;&quot;" within="" contains="" />
-      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SameParameterValue" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true" />
