@@ -55,6 +55,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
 
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)
+            useHandlers(::LLFirPhaseVerifier)
         }
 
         useMetaTestConfigurators(::LLFirMetaTestConfigurator)

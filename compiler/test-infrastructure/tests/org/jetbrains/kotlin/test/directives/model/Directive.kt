@@ -141,6 +141,26 @@ class ComposedRegisteredDirectives(
 
 // --------------------------- Utils ---------------------------
 
+fun RegisteredDirectives.suppressIf(suppressionDirective: Directive, filter: (Throwable) -> Boolean, action: () -> Unit) {
+    val hasSuppressionDirective = suppressionDirective in this
+    var exception: Throwable? = null
+    try {
+        action()
+    } catch (e: Throwable) {
+        exception = e
+    }
+
+    if (exception != null) {
+        if (!filter(exception) || !hasSuppressionDirective) {
+            throw exception
+        }
+
+        return
+    } else if (hasSuppressionDirective) {
+        throw AssertionError("'${suppressionDirective.name}' directive present but no exception thrown. Please remove directive")
+    }
+}
+
 fun RegisteredDirectives.singleValue(directive: StringDirective): String {
     return singleOrZeroValue(directive) ?: error("No values passed to $directive")
 }
