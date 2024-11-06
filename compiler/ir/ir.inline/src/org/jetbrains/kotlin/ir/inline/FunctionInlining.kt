@@ -383,28 +383,44 @@ open class FunctionInlining(
                 val functionArgument = substituteMap[dispatchReceiver.symbol.owner] ?: return super.visitCall(expression)
                 if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true) return super.visitCall(expression)
 
+                fun IrCall.asCallOf(function: IrSimpleFunction, boundArguments: List<IrExpression>): IrCall {
+                    return IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, function.symbol).also {
+                        val arguments = boundArguments.map { it.deepCopyWithSymbols() } + getAllArgumentsWithIr().map { it.second }.drop(1)
+                        for ((index, argument) in arguments.withIndex()) {
+                            it.arguments[index] = argument
+                        }
+                    }
+                }
+
                 return when {
                     functionArgument is IrCallableReference<*> ->
                         error("Can't inline given reference, it should've been lowered\n${functionArgument.render()}")
 
-                    functionArgument.isAdaptedFunctionReference() ->
+                    functionArgument.isAdaptedFunctionReference() -> {
                         inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
+                    }
 
                     functionArgument.isLambdaBlock() -> {
                         inlineAdaptedFunctionReference(expression, functionArgument as IrBlock).statements.last() as IrExpression
                     }
 
                     functionArgument is IrFunctionExpression ->
-                        inlineFunctionExpression(expression, functionArgument)
+                        inlineFunctionExpression(expression.asCallOf(functionArgument.function, emptyList()), functionArgument.function, functionArgument)
+
+                    functionArgument is IrRichFunctionReference ->
+                        inlineFunctionExpression(expression.asCallOf(functionArgument.invokeFunction, functionArgument.boundValues), functionArgument.invokeFunction, expression)
+
+                    functionArgument is IrRichPropertyReference ->
+                        inlineFunctionExpression(expression.asCallOf(functionArgument.getterFunction, functionArgument.boundValues), functionArgument.getterFunction, expression)
 
                     else ->
                         super.visitCall(expression)
                 }
             }
 
-            fun inlineFunctionExpression(irCall: IrCall, irFunctionExpression: IrFunctionExpression): IrExpression {
+            fun inlineFunctionExpression(irCall: IrCall, function: IrSimpleFunction, originalInlinedElement: IrElement): IrExpression {
                 // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
-                val newExpression = inlineFunction(irCall, irFunctionExpression.function, irFunctionExpression)
+                val newExpression = inlineFunction(irCall, function, originalInlinedElement)
                 // Substitute lambda arguments with target function arguments.
                 return newExpression.transform(this, null)
             }
@@ -567,13 +583,16 @@ open class FunctionInlining(
                 get() = parameter.getOriginalParameter().isInlineParameter() &&
                         (argumentExpression is IrFunctionReference
                                 || argumentExpression is IrFunctionExpression
+                                || argumentExpression is IrRichFunctionReference
                                 || argumentExpression.isAdaptedFunctionReference()
                                 || argumentExpression.isInlineLambdaBlock()
                                 || argumentExpression.isLambdaBlock())
 
             val isInlinablePropertyReference: Boolean
                 // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
-                get() = parameter.getOriginalParameter().isInlineParameter() && argumentExpression is IrPropertyReference
+                get() = parameter.getOriginalParameter().isInlineParameter() && (
+                        argumentExpression is IrPropertyReference || argumentExpression is IrRichPropertyReference
+                        )
 
             val isImmutableVariableLoad: Boolean
                 get() = argumentExpression.let { argument ->
@@ -730,11 +749,28 @@ open class FunctionInlining(
             return evaluationStatements
         }
 
+        private fun evaluateCapturedValues(parameters: List<IrValueParameter>, expressions: MutableList<IrExpression>): List<IrVariable> {
+            return buildList {
+                for (i in expressions.indices) {
+                    val irExpression = expressions[i].transform(ParameterSubstitutor(), data = null)
+
+                    val newVariable = currentScope.scope.createTemporaryVariable(
+                        startOffset = irExpression.startOffset, // TODO: it's different condition above
+                        endOffset = irExpression.endOffset,
+                        irExpression = irExpression,
+                        nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_${parameters[i].name}",
+                        isMutable = false,
+                        origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
+                    )
+                    expressions[i] = irGetValueWithoutLocation(newVariable.symbol)
+                    add(newVariable)
+                }
+            }
+        }
+
         private fun evaluateArguments(
             callSite: IrFunctionAccessExpression, callee: IrFunction
         ): Triple<List<IrVariable>, List<IrVariable>, List<IrVariable>> {
-            // This list stores temp variables that represent non-default arguments of inline call.
-            // The expressions that represent these arguments must be evaluated outside the inline block (at call-site).
             val evaluationStatements = mutableListOf<IrVariable>()
             // This list stores temp variables that represent default arguments of inline call, and they must be evaluated at the callee-site.
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
@@ -759,6 +795,12 @@ open class FunctionInlining(
                     substituteMap[parameter] = argument.argumentExpression
                     when (val arg = argument.argumentExpression) {
                         is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${arg.render()}")
+                        is IrRichFunctionReference -> {
+                            container += evaluateCapturedValues(arg.invokeFunction.valueParameters, arg.boundValues)
+                        }
+                        is IrRichPropertyReference -> {
+                            container += evaluateCapturedValues(arg.getterFunction.valueParameters, arg.boundValues)
+                        }
                         is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || arg.origin == IrStatementOrigin.LAMBDA) {
                             container += evaluateArguments(arg.statements.last() as IrFunctionReference)
                         }

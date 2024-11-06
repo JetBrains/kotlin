@@ -258,8 +258,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 }
             }
             buildInvokeMethod(
-                    // would be not needed, when upgrade is a first lowering
-                    functionReference.overriddenFunctionSymbol.owner.let { it.suspendFunction ?: it },
+                    functionReference.overriddenFunctionSymbol.owner,
                     superInterfaceType,
                     functionReference.invokeFunction,
                     fields
