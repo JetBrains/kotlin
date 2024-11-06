@@ -40,6 +40,11 @@ dependencies {
     testApi(project(":compiler:fir:plugin-utils"))
     testImplementation(projectTests(":generators:test-generator"))
     testImplementation(projectTests(":js:js.tests"))
+    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -110,6 +115,7 @@ artifacts {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
     setUpJsIrBoxTests()

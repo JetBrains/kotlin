@@ -485,36 +485,4 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("sessions/sessionInvalidation")
         }
     }
-
-    testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "plugins/kotlinx-serialization/testData") {
-        run {
-            fun TestGroup.TestClass.diagnosticsModelInit() {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("firMembers")
-            }
-
-            testClass<AbstractLLFirSerializationDiagnosticTest> {
-                diagnosticsModelInit()
-            }
-
-            testClass<AbstractLLFirReversedSerializationDiagnosticTest> {
-                diagnosticsModelInit()
-            }
-        }
-
-        run {
-            fun TestGroup.TestClass.blackBoxModelInit() {
-                model("boxIr")
-                model("codegen")
-            }
-
-            testClass<AbstractLLFirSerializationBlackBoxCodegenBasedTest> {
-                blackBoxModelInit()
-            }
-
-            testClass<AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest> {
-                blackBoxModelInit()
-            }
-        }
-    }
 }

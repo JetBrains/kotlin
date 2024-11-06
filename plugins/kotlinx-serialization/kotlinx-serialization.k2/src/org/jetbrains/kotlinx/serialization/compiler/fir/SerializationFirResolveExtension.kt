@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
@@ -202,11 +203,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         ) return emptyList()
         val target = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }
         val original = target.fir
-        val copy = buildSimpleFunctionCopy(original) {
-            symbol = FirNamedFunctionSymbol(callableId)
-            origin = SerializationPluginKey.origin
+
+        // TODO(KT-73060): To avoid an exception caused by the lazy resolution on the generated function with `FirResolvePhase.STATUS`
+        //                 to `FirResolvePhase.EXPECT_ACTUAL_MATCHING` (as described in KT-72844), we set the generated function
+        //                 resolution phase here as `FirResolvePhase.BODY_RESOLVE`. To avoid the contract violation, we have to
+        //                 correctly provide the FIR resolution information in `FirResolvePhase.BODY_RESOLVE` level here.
+        val copy = copyFirFunctionWithResolvePhase(original, callableId, SerializationPluginKey, FirResolvePhase.BODY_RESOLVE) {
             status = original.status.copy(modality = Modality.FINAL)
         }
+
         copy.excludeFromJsExport(session)
         return listOf(copy.symbol)
     }
