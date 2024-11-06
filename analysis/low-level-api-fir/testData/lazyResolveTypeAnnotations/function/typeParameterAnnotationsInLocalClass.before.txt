@@ -12,15 +12,15 @@
 
 @R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType

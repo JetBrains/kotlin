@@ -1,5 +1,5 @@
 @A()
-owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.receiverArgument
+owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.receiverArgument
 context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.receiverArgument
 
 @A()

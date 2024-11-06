@@ -7,9 +7,9 @@ annotation class Anno(val position: String)
 <!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(List<@Anno("context receiver type $prop") Int>)
 class ClassWithImplicitConstructor
 
-<!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(List<@Anno("context receiver type $prop") Int>)
-class ClassWithExplicitConstructor() {
-    constructor(i: Int) : this()
+<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(List<@Anno("context receiver type $prop") Int>)
+class ClassWithExplicitConstructor<!CONTEXT_RECEIVERS_DEPRECATED!>()<!> {
+    <!CONTEXT_RECEIVERS_DEPRECATED!>constructor(i: Int) : this()<!>
 }
 
 const val prop = "str"

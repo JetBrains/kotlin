@@ -1,85 +1,85 @@
-@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
+@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>
   context -> FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
+@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>
   context -> FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
+@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String
   context -> FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
+@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>
   context -> FirReceiverParameterSymbol from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
+@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>
   context -> FirReceiverParameterSymbol from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
+@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String
   context -> FirReceiverParameterSymbol from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
+@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
+@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
+@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
+@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
+@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
+@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
+@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
+@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
+@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /foo
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-receiverAsImplicitReturnTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
                 ^ this@R|/foo|
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
             }
 

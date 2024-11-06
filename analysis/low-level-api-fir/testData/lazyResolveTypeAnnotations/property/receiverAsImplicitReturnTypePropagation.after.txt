@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

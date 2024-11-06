@@ -12,7 +12,7 @@
 
 @R|myPack/Anno|(position = <strcat>(String(receiver type ), R|myPack/prop|))  kotlin/collections/List<ERROR CLASS: Incomplete code>
   context -> FirReceiverParameterSymbol from FirPropertySymbol <local>/variableToResolve
-  anchor -> [FirNamedFunctionSymbol myPack/ttt]
+  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol <local>/variableToResolve]
 
 @R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/variableToResolve

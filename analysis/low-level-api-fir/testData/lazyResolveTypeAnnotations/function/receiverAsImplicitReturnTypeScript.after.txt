@@ -1,26 +1,26 @@
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
   context -> FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
   context -> FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
   context -> FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypeScript.kts>

@@ -1551,11 +1551,13 @@ open class PsiRawFirBuilder(
                     this.customLabelName = contextReceiverElement.labelNameAsName()
                     this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
 
-                    contextReceiverElement.typeReference()?.toFirType()?.let {
-                        this.returnTypeRef = it
+                    this.symbol = FirReceiverParameterSymbol()
+                    withContainerSymbol(this.symbol) {
+                        contextReceiverElement.typeReference()?.toFirType()?.let {
+                            this.returnTypeRef = it
+                        }
                     }
 
-                    this.symbol = FirReceiverParameterSymbol()
                     this.moduleData = baseModuleData
                     this.origin = FirDeclarationOrigin.Source
                     this.containingDeclarationSymbol = containingDeclarationSymbol
@@ -1816,12 +1818,15 @@ open class PsiRawFirBuilder(
                     typeReference.toFirOrImplicitType()
                 }
 
-                val receiverType = function.receiverTypeReference?.toFirType()
+                val receiverTypeCalculator: (() -> FirTypeRef)? = function.receiverTypeReference?.let {
+                    { it.toFirType() }
+                }
+
                 val labelName: String?
 
                 val functionBuilder = if (isAnonymousFunction) {
                     FirAnonymousFunctionBuilder().apply {
-                        receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
+                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                         symbol = functionSymbol as FirAnonymousFunctionSymbol
                         isLambda = false
                         hasExplicitParameterList = true
@@ -1833,7 +1838,7 @@ open class PsiRawFirBuilder(
                     }
                 } else {
                     FirSimpleFunctionBuilder().apply {
-                        receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
+                        receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                         symbol = functionSymbol as FirNamedFunctionSymbol
@@ -2156,7 +2161,10 @@ open class PsiRawFirBuilder(
                     name = propertyName
                     this.isVar = isVar
 
-                    receiverParameter = receiverTypeReference?.toFirType()?.convertToReceiverParameter(moduleData, propertySymbol)
+                    receiverParameter = receiverTypeReference?.let {
+                        createReceiverParameter({ it.toFirType() }, moduleData, propertySymbol)
+                    }
+
                     initializer = propertyInitializer
 
                     val propertyAnnotations = mutableListOf<FirAnnotationCall>()

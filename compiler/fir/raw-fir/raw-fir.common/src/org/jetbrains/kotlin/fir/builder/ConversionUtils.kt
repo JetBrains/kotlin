@@ -30,12 +30,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
@@ -674,21 +669,24 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
         }
     }
 
-fun FirTypeRef.convertToReceiverParameter(
+fun AbstractRawFirBuilder<*>.createReceiverParameter(
+    typeRefCalculator: () -> FirTypeRef,
     moduleData: FirModuleData,
     containingCallableSymbol: FirCallableSymbol<*>,
-): FirReceiverParameter {
-    val typeRef = this
-    @Suppress("UNCHECKED_CAST")
-    return buildReceiverParameter {
+): FirReceiverParameter = buildReceiverParameter {
+    symbol = FirReceiverParameterSymbol()
+    withContainerSymbol(symbol) {
+        val typeRef = typeRefCalculator()
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+
+        @Suppress("UNCHECKED_CAST")
         annotations += (typeRef.annotations as List<FirAnnotationCall>).filterUseSiteTarget(AnnotationUseSiteTarget.RECEIVER)
         val filteredTypeRefAnnotations = typeRef.annotations.filterNot { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
         if (filteredTypeRefAnnotations.size != typeRef.annotations.size) {
             typeRef.replaceAnnotations(filteredTypeRefAnnotations)
         }
+
         this.typeRef = typeRef
-        symbol = FirReceiverParameterSymbol()
         this.moduleData = moduleData
         origin = FirDeclarationOrigin.Source
         this.containingDeclarationSymbol = containingCallableSymbol

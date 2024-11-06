@@ -1040,6 +1040,24 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
+    override fun transformReceiverParameter(
+        receiverParameter: FirReceiverParameter,
+        data: ResolutionMode,
+    ): FirReceiverParameter = whileAnalysing(session, receiverParameter) {
+        context.withReceiverParameter(receiverParameter) {
+            transformDeclarationContent(receiverParameter, data) as FirReceiverParameter
+        }
+    }
+
+    override fun transformContextReceiver(
+        contextReceiver: FirContextReceiver,
+        data: ResolutionMode,
+    ): FirContextReceiver = whileAnalysing(session, contextReceiver) {
+        context.withContextReceiver(contextReceiver) {
+            transformDeclarationContent(contextReceiver, data) as FirContextReceiver
+        }
+    }
+
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: ResolutionMode

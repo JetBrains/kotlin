@@ -1322,7 +1322,7 @@ class LightTreeRawFirDeclarationBuilder(
         var isReturnType = false
         var delegate: LighterASTNode? = null
         var isVar = false
-        var receiverType: FirTypeRef? = null
+        var receiverTypeNode: LighterASTNode? = null
         var returnType: FirTypeRef = implicitType
         val typeConstraints = mutableListOf<TypeConstraint>()
         val accessors = mutableListOf<LighterASTNode>()
@@ -1352,7 +1352,7 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                     TYPE_PARAMETER_LIST -> typeParameterList = it
                     COLON -> isReturnType = true
-                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
+                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
                     TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                     PROPERTY_DELEGATE -> delegate = it
                     VAR_KEYWORD -> isVar = true
@@ -1379,7 +1379,7 @@ class LightTreeRawFirDeclarationBuilder(
                 name = propertyName
                 this.isVar = isVar
 
-                receiverParameter = receiverType?.convertToReceiverParameter(moduleData, propertySymbol)
+                receiverParameter = receiverTypeNode?.let { createReceiverParameter({ convertType(it) }, moduleData, propertySymbol) }
                 initializer = propertyInitializer
 
                 //probably can do this for delegateExpression itself
@@ -1492,7 +1492,7 @@ class LightTreeRawFirDeclarationBuilder(
                             baseModuleData,
                             classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                             context,
-                            isExtension = receiverType != null,
+                            isExtension = receiverTypeNode != null,
                         )
                     }
                 }
@@ -1844,7 +1844,7 @@ class LightTreeRawFirDeclarationBuilder(
         var identifier: String? = null
         var valueParametersList: LighterASTNode? = null
         var isReturnType = false
-        var receiverType: FirTypeRef? = null
+        var receiverTypeNode: LighterASTNode? = null
         var returnType: FirTypeRef? = null
         val typeConstraints = mutableListOf<TypeConstraint>()
         var block: LighterASTNode? = null
@@ -1878,7 +1878,7 @@ class LightTreeRawFirDeclarationBuilder(
                     TYPE_PARAMETER_LIST -> typeParameterList = it
                     VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contains "return"
                     COLON -> isReturnType = true
-                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
+                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
                     TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                     CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                     BLOCK -> block = it
@@ -1895,10 +1895,11 @@ class LightTreeRawFirDeclarationBuilder(
                     else implicitType
             }
 
+            val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it)} }
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
+                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
                     isLambda = false
                     hasExplicitParameterList = true
@@ -1915,7 +1916,7 @@ class LightTreeRawFirDeclarationBuilder(
                 target = FirFunctionTarget(labelName, isLambda = false)
                 FirSimpleFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverType?.convertToReceiverParameter(baseModuleData, functionSymbol)
+                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                     name = functionName
                     status = FirDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(),
@@ -2676,11 +2677,13 @@ class LightTreeRawFirDeclarationBuilder(
                     ?.getChildNodeByType(REFERENCE_EXPRESSION)
                     ?.getReferencedNameAsName()
 
-                typeReference?.let {
-                    this.returnTypeRef = convertType(it)
+                this.symbol = FirReceiverParameterSymbol()
+                withContainerSymbol(this.symbol) {
+                    typeReference?.let {
+                        this.returnTypeRef = convertType(it)
+                    }
                 }
 
-                this.symbol = FirReceiverParameterSymbol()
                 this.moduleData = baseModuleData
                 this.origin = FirDeclarationOrigin.Source
                 this.containingDeclarationSymbol = containingDeclarationSymbol

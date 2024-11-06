@@ -485,6 +485,24 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformBackingField,
     )
 
+    override fun transformReceiverParameter(
+        receiverParameter: FirReceiverParameter,
+        data: ResolutionMode,
+    ): FirReceiverParameter = declarationTransformation(
+        receiverParameter,
+        data,
+        FirDeclarationsResolveTransformer::transformReceiverParameter,
+    )
+
+    override fun transformContextReceiver(
+        contextReceiver: FirContextReceiver,
+        data: ResolutionMode,
+    ): FirContextReceiver = declarationTransformation(
+        contextReceiver,
+        data,
+        FirDeclarationsResolveTransformer::transformContextReceiver,
+    )
+
     override fun transformField(
         field: FirField,
         data: ResolutionMode,
