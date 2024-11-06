@@ -460,6 +460,19 @@
       <option name="ignoreObscureOperators" value="true" />
     </inspection_tool>
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES">
+      <replaceConfiguration name="Replace getValueArgument() with arguments[]" uuid="a9c983e4-291c-417e-a514-7f4de29362f3" description="Use new argument API.&#10;Please remember to adjust index!" suppressId="REPLACE_getValueArgument" text="$Before$.$MethodCall$($Index$)" recursive="false" caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="false" replacement="arguments[$Index$]">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Before" minCount="0" within="" contains="" />
+        <constraint name="MethodCall" regexp="getValueArgument" target="true" within="" contains="" />
+        <constraint name="Index" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Replace putValueArgument() with arguments[]" uuid="4364f23a-9838-4b6d-825f-795b93f8e801" description="Use new argument API.&#10;Please remember to adjust index!" suppressId="REPLACE_putValueArgument" text="$Before$.$MethodCall$($Index$, $Value$)" recursive="false" caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="false" replacement="arguments[$Index$] = $Value$">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Before" minCount="0" within="" contains="" />
+        <constraint name="MethodCall" regexp="putValueArgument" target="true" within="" contains="" />
+        <constraint name="Index" within="" contains="" />
+        <constraint name="Value" within="" contains="" />
+      </replaceConfiguration>
       <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" suppressId="DEPRECATED_COMPILER_API" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
         <constraint name="__context__" within="" contains="" />
         <constraint name="Reference" reference="Deprecated compiler API - class" within="" contains="" />
@@ -567,6 +580,8 @@
     <inspection_tool class="WhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
+    <inspection_tool class="a9c983e4-291c-417e-a514-7f4de29362f3" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
+    <inspection_tool class="4364f23a-9838-4b6d-825f-795b93f8e801" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
     <inspection_tool class="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
   </profile>
 </component>
