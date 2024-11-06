@@ -42,11 +42,11 @@ internal class NativeInlineFunctionResolver(
 
         val doubleInliningEnabled = !context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
 
+        UpgradeCallableReferences(context).lower(function)
+
         NativeAssertionWrapperLowering(context).lower(function)
 
         LateinitLowering(context).lower(body)
-
-        UpgradeCallableReferences(context).lower(function)
 
         SharedVariablesLowering(context).lower(body, function)
 

@@ -544,9 +544,9 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
+    upgradeCallableReferencesPhase,
     assertionWrapperPhase,
     lateinitPhase,
-    upgradeCallableReferencesPhase,
     sharedVariablesPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     extractLocalClassesFromInlineBodies,
