@@ -14,8 +14,8 @@
 // KT-65261: TODO
 // DISABLE_NATIVE: useThreadStateChecker=ENABLED
 
-// FREE_CINTEROP_ARGS: -Xsource-compiler-option -ObjC++
-// FREE_COMPILER_ARGS: -Xbinary=gcSchedulerType=manual -opt-in=kotlin.native.internal.InternalForKotlinNative
+// Do not use mmap for allocations to hopefully better track RSS usage.
+// FREE_COMPILER_ARGS: -Xbinary=gcSchedulerType=manual -Xbinary=disableMmap=true -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: cinterop
 // FILE: objclib.def
 language = Objective-C
@@ -31,38 +31,39 @@ linkerOpts = -framework AppKit
 
 #ifdef __cplusplus
 extern "C" {
-    #endif
+#endif
 
-    void startApp(void (^task)());
-    BOOL isMainThread();
-    void spin();
+void startApp(void (^task)());
+BOOL isMainThread();
+void spin();
 
-    #ifdef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-// FILE: objclib.m
+// FILE: objclib.mm
 #include "objclib.h"
 
+#include <atomic>
 #include <cinttypes>
-#include <dispatch/dispatch.h>
 #include <map>
-#import <AppKit/NSApplication.h>
-#import <Foundation/NSRunLoop.h>
-#import <Foundation/NSThread.h>
 
-std::map<uintptr_t, bool> dictionary;
+#include <dispatch/dispatch.h>
+#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+
+std::map<uintptr_t, std::atomic<bool>> dictionary;
 
 @implementation OnDestroyHook
 - (instancetype)init {
     if (self = [super init]) {
-        dictionary[(uintptr_t)self] = true;
+        dictionary[(uintptr_t)self].store(true);
     }
     return self;
 }
 
 - (void)dealloc {
-    dictionary[(uintptr_t)self] = false;
+    dictionary[(uintptr_t)self].store(false);
 }
 
 @end
@@ -72,9 +73,9 @@ extern "C" void startApp(void (^task)()) {
         // At this point all other scheduled main queue tasks were already executed.
         // Executing via performBlock to allow a recursive run loop in `spin()`.
         [[NSRunLoop currentRunLoop] performBlock:^{
-        task();
-        [NSApp terminate:NULL];
-    }];
+            task();
+            [NSApp terminate:NULL];
+        }];
     });
     [[NSApplication sharedApplication] run];
 }
@@ -91,8 +92,8 @@ extern "C" void spin() {
     while (true) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
         bool done = true;
-        for (auto kvp : dictionary) {
-            if (kvp.second) {
+        for (auto& kvp : dictionary) {
+            if (kvp.second.load()) {
                 done = false;
                 break;
             }
@@ -121,6 +122,7 @@ class PeakRSSChecker(private val rssDiffLimitBytes: Long) {
     fun check(): Long {
         val diffBytes = MemoryUsageInfo.peakResidentSetSizeBytes - initialBytes
         check(diffBytes <= rssDiffLimitBytes) { "Increased peak RSS by $diffBytes bytes which is more than $rssDiffLimitBytes" }
+        println("Increased peak RSS by $diffBytes bytes out of allowed $rssDiffLimitBytes")
         return diffBytes
     }
 }
