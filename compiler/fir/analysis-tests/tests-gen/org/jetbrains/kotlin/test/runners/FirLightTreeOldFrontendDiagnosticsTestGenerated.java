@@ -2395,6 +2395,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("contextReceiverOnClass.kt")
+      public void testContextReceiverOnClass() {
+        runTest("compiler/testData/diagnostics/tests/annotations/contextReceiverOnClass.kt");
+      }
+
+      @Test
+      @TestMetadata("contextReceiverOnFunction.kt")
+      public void testContextReceiverOnFunction() {
+        runTest("compiler/testData/diagnostics/tests/annotations/contextReceiverOnFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextReceiverOnProperty.kt")
+      public void testContextReceiverOnProperty() {
+        runTest("compiler/testData/diagnostics/tests/annotations/contextReceiverOnProperty.kt");
+      }
+
+      @Test
       @TestMetadata("cycleAnnotationOnFunction.kt")
       public void testCycleAnnotationOnFunction() {
         runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunction.kt");

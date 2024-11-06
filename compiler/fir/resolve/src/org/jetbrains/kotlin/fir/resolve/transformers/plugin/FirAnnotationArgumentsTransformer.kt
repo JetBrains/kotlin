@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -188,6 +189,9 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
             regularClass.transformAnnotations(this, ResolutionMode.ContextIndependent)
             regularClass.transformTypeParameters(this, ResolutionMode.ContextIndependent)
             regularClass.transformSuperTypeRefs(this, ResolutionMode.ContextIndependent)
+            regularClass.contextReceivers.forEach {
+                it.transformSingle(this, ResolutionMode.ContextIndependent)
+            }
         }
 
         doTransformRegularClass(regularClass, data)
@@ -231,6 +235,9 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformReceiverParameter(transformer, data)
                 .transformValueParameters(transformer, data)
                 .transformAnnotations(transformer, data)
+                .contextReceivers.forEach {
+                    it.transformSingle(transformer, data)
+                }
         }
 
         return simpleFunction
@@ -244,6 +251,9 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformAnnotations(transformer, data)
                 .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
+                .contextReceivers.forEach {
+                    it.transformSingle(transformer, data)
+                }
 
             context.forConstructorParameters(constructor, containingClass, components) {
                 constructor.transformValueParameters(transformer, data)
@@ -278,6 +288,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformGetter(transformer, data)
                 .transformSetter(transformer, data)
                 .transformBackingField(transformer, data)
+                .transformContextReceivers(transformer, data)
         }
 
         return property
