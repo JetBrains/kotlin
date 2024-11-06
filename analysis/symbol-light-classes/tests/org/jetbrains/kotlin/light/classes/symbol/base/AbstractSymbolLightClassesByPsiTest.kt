@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
@@ -63,7 +64,9 @@ abstract class AbstractSymbolLightClassesByPsiTest(
         return lightClasses.sortedBy {
             it.qualifiedName ?: it.name.toString()
         }.joinToString("\n\n") {
-            it.renderClass()
+            PsiClassRenderer.renderClass(it, additionalInfo = ::additionalInformation)
         }
     }
+
+    open fun additionalInformation(element: PsiElement): String? = null
 }
