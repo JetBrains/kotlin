@@ -41,3 +41,5 @@ testsJar {}
 projectTest {
     workingDir = rootDir
 }
+
+generatedConfigurationKeys("CLIConfigurationKeys")

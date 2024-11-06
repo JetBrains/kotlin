@@ -9,6 +9,8 @@ dependencies {
     implementation(project(":generators:tree-generator-common"))
     implementation(project(":compiler:fir:tree:tree-generator"))
     implementation(project(":compiler:config"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:cli-base"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     /*
