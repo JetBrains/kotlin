@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
@@ -64,24 +63,12 @@ class ConeOverloadConflictResolver(
     private val transformerComponents: BodyResolveComponents,
 ) : ConeCallConflictResolver() {
 
-    override fun chooseMaximallySpecificCandidates(
-        candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean,
-    ): Set<Candidate> = chooseMaximallySpecificCandidates(
-        candidates,
-        discriminateAbstracts,
-        // We don't discriminate against generics for callable references because, other than in regular calls,
-        // there is no syntax for specifying generic type arguments.
-        discriminateGenerics = candidates.first().callInfo.callSite !is FirCallableReferenceAccess
-    )
-
     /**
      * Partial mirror of [org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.chooseMaximallySpecificCandidates]
      */
-    private fun chooseMaximallySpecificCandidates(
+    override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
-        // Set to 'false' only for property-for-invoke case
         discriminateGenerics: Boolean,
     ): Set<Candidate> {
         if (candidates.size == 1) return candidates
@@ -168,7 +155,7 @@ class ConeOverloadConflictResolver(
         }
 
         val bestInvokeReceiver =
-            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false, discriminateAbstracts = false)
+            this.chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false, discriminateAbstracts = false)
                 .singleOrNull() ?: return candidates
 
         return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }
