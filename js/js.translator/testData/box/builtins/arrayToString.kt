@@ -2,6 +2,7 @@
 // The `expected` values in asserts just reflect the current state of things. It doesn't mean things _must_ be this way.
 // So feel free to update them if you're sure that the array-to-string conversion should behave differently.
 // See also: KT-14013
+// WITH_STDLIB
 
 var LOG = ""
 
@@ -23,6 +24,12 @@ fun testKt14013() {
     log(a!!.toString())
 
     assertEquals("[...];[...];[...];", pullLog(), "testKt14013")
+}
+
+fun concretePrimitiveArrayToString(a: IntArray) {
+    log(a.toString())
+    log("$a")
+    log("" + a)
 }
 
 fun concreteArrayToString(a: Array<Int>) {
@@ -49,7 +56,7 @@ fun box(): String {
     val a = arrayOf(1, 2, 3)
     concreteArrayToString(a)
 
-    assertEquals("[...];1,2,3;1,2,3;", pullLog(), "concreteArrayToString")
+    assertEquals("[...];[...];[...];", pullLog(), "concreteArrayToString")
 
     genericValueToString(a)
 
@@ -58,6 +65,10 @@ fun box(): String {
     anyValueToString(a)
 
     assertEquals("[...];[...];[...];", pullLog(), "anyValueToString")
+
+    concretePrimitiveArrayToString(a.toIntArray())
+
+    assertEquals("[...];[...];[...];", pullLog(), "concretePrimitiveArrayToString")
 
     return "OK"
 }
