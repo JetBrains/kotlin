@@ -22,7 +22,8 @@ fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
 class PsiClassRenderer private constructor(
     private val renderInner: Boolean,
-    private val membersFilter: MembersFilter
+    private val membersFilter: MembersFilter,
+    private val additionalInfo: ((PsiElement) -> String?)?,
 ) {
 
     interface MembersFilter {
@@ -40,13 +41,15 @@ class PsiClassRenderer private constructor(
         fun renderClass(
             psiClass: PsiClass,
             renderInner: Boolean = false,
-            membersFilter: MembersFilter = MembersFilter.DEFAULT
+            membersFilter: MembersFilter = MembersFilter.DEFAULT,
+            additionalInfo: ((PsiElement) -> String?)? = null
         ): String =
-            PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+            PsiClassRenderer(renderInner, membersFilter, additionalInfo).renderClass(psiClass)
 
-        fun renderType(psiType: PsiType): String = with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT)) {
-            psiType.renderType()
-        }
+        fun renderType(psiType: PsiType): String =
+            with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT, additionalInfo = null)) {
+                psiType.renderType()
+            }
     }
 
     private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
@@ -63,6 +66,7 @@ class PsiClassRenderer private constructor(
         append(psiClass.typeParameters.renderTypeParams())
         append(psiClass.extendsList.renderRefList("extends"))
         append(psiClass.implementsList.renderRefList("implements"))
+        renderAdditionalInfo(psiClass)
         appendLine(" {")
         withIndent {
             if (psiClass.isEnum) {
@@ -79,6 +83,9 @@ class PsiClassRenderer private constructor(
 
         append("}")
     }
+
+    private fun renderAdditionalInfo(psi: PsiElement?): String =
+        psi?.let { psi -> additionalInfo?.invoke(psi)?.let { "/* $it */" } } ?: ""
 
     private fun renderClass(psiClass: PsiClass): String = prettyPrint {
         renderClass(psiClass)
@@ -163,7 +170,7 @@ class PsiClassRenderer private constructor(
 
         if (sortReferences) referencesTypes.sort()
 
-        return " " + keyword + " " + referencesTypes.joinToString()
+        return " " + keyword + " " + referencesTypes.joinToString() + renderAdditionalInfo(this)
     }
 
     private fun PsiVariable.renderVar(): String {
@@ -178,7 +185,7 @@ class PsiClassRenderer private constructor(
 
         computeConstantValue()?.let { result += " /* constant value $it */" }
 
-        return result
+        return result + renderAdditionalInfo(this)
     }
 
     private fun Array<PsiTypeParameter>.renderTypeParams() =
@@ -205,7 +212,7 @@ class PsiClassRenderer private constructor(
         if (value is KClassValue.Value.NormalClass && value.arrayDimensions == 0) {
             return "${value.classId.asSingleFqName()}.class"
         }
-        return text
+        return text + renderAdditionalInfo(this)
     }
 
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
@@ -229,7 +236,8 @@ class PsiClassRenderer private constructor(
                     else " throws " + thrownTypes.joinToString { it.renderType() }
                 } +
                 ";" +
-                "// ${getSignature(PsiSubstitutor.EMPTY).renderSignature()}"
+                "// ${getSignature(PsiSubstitutor.EMPTY).renderSignature()}" +
+                renderAdditionalInfo(this)
 
     private fun MethodSignature.renderSignature(): String {
         val typeParams = typeParameters.renderTypeParams()
@@ -247,9 +255,10 @@ class PsiClassRenderer private constructor(
             ?: ""
 
         val initializingClass = initializingClass ?: return "$annotations$name"
+        val additionalInfo = renderAdditionalInfo(this@renderEnumConstant)
         return prettyPrint {
             append(annotations)
-            appendLine("$name {")
+            appendLine("$name ${additionalInfo}{")
             renderMembers(initializingClass)
             append("}")
         }
@@ -309,7 +318,7 @@ class PsiClassRenderer private constructor(
         if (qualifiedName == null && renderedAttributesString.isEmpty()) {
             return ""
         }
-        return "@$qualifiedName(${renderedAttributes.joinToString()})"
+        return "@$qualifiedName(${renderedAttributes.joinToString()})" + renderAdditionalInfo(this)
     }
 
 

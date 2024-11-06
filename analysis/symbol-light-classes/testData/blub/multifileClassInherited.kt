@@ -1,4 +1,4 @@
-// KOTLINC_ARGS: -Xmultifile-parts-inherit
+// COMPILER_ARGUMENTS: -Xmultifile-parts-inherit
 
 @file:JvmName("AnotherName")
 @file:JvmMultifileClass

@@ -21,6 +21,12 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
         "analysis/symbol-light-classes/testData",
     ) {
         run {
+            testClass<AbstractBlubTest> {
+                model("blub")
+            }
+        }
+
+        run {
             testClass<AbstractSymbolLightClassesStructureForSourceTest> {
                 model("structure", pattern = TestGeneratorUtil.KT)
             }
