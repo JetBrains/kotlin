@@ -6,7 +6,6 @@ fun f(a: UByte): Int {
     return n
 }
 
-// 0 iconst_m1
 // 0 iterator
 // 0 hasNext
 // 0 next
