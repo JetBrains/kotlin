@@ -89,12 +89,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
-                startOffset, endOffset,
-                IrDeclarationOrigin.INSTANCE_RECEIVER,
-                descriptor.thisAsReceiverParameter,
-                descriptor.thisAsReceiverParameter.type.toIrType()
-            ).also { it.parent = irClass }
+            irClass.setThisReceiverParameter(context)
 
             irClass.valueClassRepresentation = descriptor.valueClassRepresentation?.mapUnderlyingType { it.toIrType() as IrSimpleType }
         }

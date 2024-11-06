@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.createBodyGenerator
+import org.jetbrains.kotlin.psi2ir.generators.setThisReceiverParameter
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -45,12 +46,7 @@ open class FragmentDeclarationGenerator(
                 Modality.FINAL
             )
         }.buildWithScope { irClass ->
-            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
-                startOffset, endOffset,
-                IrDeclarationOrigin.INSTANCE_RECEIVER,
-                classDescriptor.thisAsReceiverParameter,
-                classDescriptor.thisAsReceiverParameter.type.toIrType()
-            )
+            irClass.setThisReceiverParameter(context)
 
             generatePrimaryConstructor(irClass)
 

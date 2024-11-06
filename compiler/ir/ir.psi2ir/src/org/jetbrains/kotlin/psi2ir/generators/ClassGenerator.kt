@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -73,12 +72,7 @@ internal class ClassGenerator(
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
-                startOffset, endOffset,
-                IrDeclarationOrigin.INSTANCE_RECEIVER,
-                classDescriptor.thisAsReceiverParameter,
-                classDescriptor.thisAsReceiverParameter.type.toIrType()
-            )
+            irClass.setThisReceiverParameter(context)
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
 
@@ -539,5 +533,16 @@ internal class ClassGenerator(
             }
         }
 
+    }
+}
+
+fun IrClass.setThisReceiverParameter(context: GeneratorContext) {
+    thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
+        startOffset, endOffset,
+        IrDeclarationOrigin.INSTANCE_RECEIVER,
+        symbol.descriptor.thisAsReceiverParameter,
+        context.typeTranslator.translateType(symbol.descriptor.thisAsReceiverParameter.type),
+    ).also {
+        it.parent = this
     }
 }
