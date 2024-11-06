@@ -785,6 +785,3 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
 @JvmName("getSerializedDataByPsiFiles")
 fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
     getSerializedData(newSources.map(::KtPsiSourceFile))
-
-val CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
-    get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)

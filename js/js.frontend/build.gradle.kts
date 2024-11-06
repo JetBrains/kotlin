@@ -21,3 +21,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+generatedConfigurationKeys("JSConfigurationKeys")
