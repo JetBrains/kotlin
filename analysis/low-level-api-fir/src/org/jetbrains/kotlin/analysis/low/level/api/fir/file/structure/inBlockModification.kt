@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -181,6 +183,13 @@ private val FirDeclaration.hasLegacyContract: Boolean
     get() = this is FirFunction && body?.statements?.firstOrNull() is FirContractCallBlock
 
 private fun FirDeclaration.decreasePhase(newPhase: FirResolvePhase) {
+    if (isPartialBodyResolvable) {
+        val oldPhase = resolvePhase
+        if (oldPhase >= FirResolvePhase.BODY_RESOLVE.previous) {
+            partialBodyResolveState = null
+        }
+    }
+
     @OptIn(ResolveStateAccess::class)
     resolveState = newPhase.asResolveState()
 }

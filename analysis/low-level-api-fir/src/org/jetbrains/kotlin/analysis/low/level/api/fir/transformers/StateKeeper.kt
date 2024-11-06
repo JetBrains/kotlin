@@ -272,6 +272,8 @@ internal inline fun <Target : FirElementWithResolveState, Context : Any, Result>
         prepareTarget(target)
         preservedState.postProcess()
         return action()
+    } catch (e: PartialBodyAnalysisSuspendedException) {
+        throw e
     } catch (e: Throwable) {
         preservedState?.restore()
         throw e

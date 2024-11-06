@@ -27,18 +27,44 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider
-            .getTopmostSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
-
-        val actual = resolveWithClearCaches(mainFile) { session ->
-            renderActualFir(
-                fir = selectedElement.getOrBuildFir(session),
-                ktElement = selectedElement,
-                renderingOptions = testServices.firRenderingOptions,
-                firFile = mainFile.getOrBuildFirFile(session),
-            )
+        fun findElement(qualifierIndex: Int?): KtElement? {
+            val qualifier = if (qualifierIndex != null) "$qualifierIndex" else ""
+            val element = testServices.expressionMarkerProvider
+                .getTopmostSelectedElementOfTypeByDirectiveOrNull(mainFile, mainModule, defaultType = KtElement::class, qualifier)
+            return element as KtElement?
         }
 
+        val results = resolveWithClearCaches(mainFile) { session ->
+            val elementsToAnalyze = sequence<KtElement> {
+                val firstCandidate = findElement(qualifierIndex = null) ?: error("No selected element found")
+                yield(firstCandidate)
+
+                var index = 1
+                while (true) {
+                    val candidate = findElement(index) ?: break
+                    yield(candidate)
+                    index += 1
+                }
+            }.toList()
+
+            val renderingOptions = testServices.firRenderingOptions
+                .copy(renderKtText = elementsToAnalyze.size > 1)
+
+            val results = mutableListOf<String>()
+
+            for (element in elementsToAnalyze) {
+                results += renderActualFir(
+                    fir = element.getOrBuildFir(session),
+                    ktElement = element,
+                    renderingOptions = renderingOptions,
+                    firFile = mainFile.getOrBuildFirFile(session),
+                )
+            }
+
+            return@resolveWithClearCaches results
+        }
+
+        val actual = results.joinToString(separator = "\n\n=====\n\n")
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }
