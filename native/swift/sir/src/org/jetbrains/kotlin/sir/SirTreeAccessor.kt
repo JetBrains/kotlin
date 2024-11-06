@@ -14,6 +14,9 @@ public fun SirDeclarationContainer.allVariables(): Sequence<SirVariable> =
 public fun SirDeclarationContainer.allClasses(): Sequence<SirClass> =
     declarations.asSequence().filterIsInstance<SirClass>()
 
+public fun SirDeclarationContainer.allStructs(): Sequence<SirStruct> =
+    declarations.asSequence().filterIsInstance<SirStruct>()
+
 public fun SirDeclarationContainer.allTypealiases(): Sequence<SirTypealias> =
     declarations.asSequence().filterIsInstance<SirTypealias>()
 

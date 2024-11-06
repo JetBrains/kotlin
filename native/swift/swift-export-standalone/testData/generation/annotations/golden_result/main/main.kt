@@ -12,6 +12,18 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@ExportedBridge("__root___MESSAGE_get")
+public fun __root___MESSAGE_get(): kotlin.native.internal.NativePtr {
+    val _result = MESSAGE
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___constMessage")
+public fun __root___constMessage(): kotlin.native.internal.NativePtr {
+    val _result = constMessage()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___deprecatedChildT_init_allocate")
 public fun __root___deprecatedChildT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<deprecatedChildT>()
@@ -56,6 +68,24 @@ public fun __root___deprecationInheritedV_get(): Unit {
     deprecationInheritedV
 }
 
+@ExportedBridge("__root___formattedMessage")
+public fun __root___formattedMessage(): kotlin.native.internal.NativePtr {
+    val _result = formattedMessage()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___multilineFormattedMessage")
+public fun __root___multilineFormattedMessage(): kotlin.native.internal.NativePtr {
+    val _result = multilineFormattedMessage()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___multilineMessage")
+public fun __root___multilineMessage(): kotlin.native.internal.NativePtr {
+    val _result = multilineMessage()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___normalChildT_init_allocate")
 public fun __root___normalChildT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<normalChildT>()
@@ -90,9 +120,33 @@ public fun __root___obsoletedV_get(): Unit {
     obsoletedV
 }
 
+@ExportedBridge("__root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__")
+public fun __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+    val __x = x
+    val __y = y
+    val _result = renamed(__x, __y)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___renamedF")
 public fun __root___renamedF(): Unit {
     renamedF()
+}
+
+@ExportedBridge("__root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__")
+public fun __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+    val __x = x
+    val __y = y
+    val _result = renamedQualified(__x, __y)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__")
+public fun __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+    val __x = x
+    val __y = y
+    val _result = renamedQualifiedWithArguments(__x, __y)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___renamedT_init_allocate")
@@ -110,6 +164,20 @@ public fun __root___renamedT_init_initialize__TypesOfArguments__Swift_UInt__(__k
 @ExportedBridge("__root___renamedV_get")
 public fun __root___renamedV_get(): Unit {
     renamedV
+}
+
+@ExportedBridge("__root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__")
+public fun __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+    val __x = x
+    val __y = y
+    val _result = renamedWithArguments(__x, __y)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___unrenamed")
+public fun __root___unrenamed(): kotlin.native.internal.NativePtr {
+    val _result = unrenamed()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("deprecatedChildT_deprecationFurtherReinforcedF")

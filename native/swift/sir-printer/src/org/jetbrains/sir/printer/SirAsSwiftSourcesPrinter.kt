@@ -7,7 +7,9 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.Comparators
+import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.sir.util.swiftStringLiteral
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -115,8 +117,8 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirDeclaration.printAttributes() {
         attributes.forEach {
-            println("@", it.identifier, it.arguments?.joinToString(prefix = "(", postfix = ")") { parameter ->
-                parameter.name?.let { "$it: ${parameter.expression}" } ?: "${parameter.expression}"
+            println("@", it.identifier.swiftIdentifier, it.arguments?.joinToString(prefix = "(", postfix = ")") { parameter ->
+                parameter.swiftRender
             } ?: "")
         }
     }
@@ -129,6 +131,9 @@ public class SirAsSwiftSourcesPrinter(
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
         allClasses()
+            .sortedWithIfNeeded(Comparators.stableNamedComparator)
+            .forEach { it.print() }
+        allStructs()
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
         allVariables()
@@ -221,7 +226,7 @@ public class SirAsSwiftSourcesPrinter(
                 null -> ""
             }
         )
-        println("import $moduleName")
+        println("import ${moduleName.swiftIdentifier}")
     }
 
     private fun SirDeclarationContainer.printContainerKeyword() = print(
@@ -240,7 +245,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirElement.printName() = print(
         when (this@printName) {
-            is SirNamed -> name
+            is SirNamed -> name.swiftIdentifier
             is SirExtension -> extendedType.swiftRender
             else -> error("There is no printable name for SirElement: ${this@printName}")
         }
@@ -250,7 +255,7 @@ public class SirAsSwiftSourcesPrinter(
         visibility
             .takeUnless { this is SirAccessor }
             .takeIf { it != SirVisibility.INTERNAL }
-            ?.let { "${it.swift} " }
+            ?.let { it.swift + " " }
             ?: ""
     )
 
@@ -338,7 +343,7 @@ public class SirAsSwiftSourcesPrinter(
     private fun SirCallable.printName() = print(
         when (this) {
             is SirInit -> "init"
-            is SirFunction -> "func $name"
+            is SirFunction -> "func ${name.swiftIdentifier}"
             is SirGetter,
             is SirSetter,
                 -> ""
@@ -402,14 +407,6 @@ private val SirVisibility.swift
         SirVisibility.PACKAGE -> "package"
     }
 
-private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
-
-private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"
-
-private val SirParameter.swiftRender
-    get(): String = (argumentName ?: "_") +
-            (parameterName?.let { " $it" } ?: "") + ": " +
-            type.swiftRender
 
 private val SirType.swiftRender: String
     get() = when (this) {
@@ -423,4 +420,18 @@ private val SirClassMemberDeclaration.callableKind: SirCallableKind
     get() = when (this) {
         is SirVariable -> kind
         is SirCallable -> (this as SirCallable).kind
+    }
+
+private val SirParameter.swiftRender: String
+    get() = (argumentName ?: "_") +
+            (parameterName?.let { " $it" } ?: "") + ": " +
+            type.swiftRender
+
+private val SirArgument.swiftRender
+    get(): String = name?.let { "${it.swiftIdentifier}: ${expression.swiftRender}" } ?: expression.swiftRender
+
+private val SirExpression.swiftRender: String
+    get() = when (this) {
+        is SirExpression.Raw -> raw
+        is SirExpression.StringLiteral -> value.swiftStringLiteral
     }

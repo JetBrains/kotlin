@@ -13,6 +13,9 @@ class SirArgument(
     constructor(expression: String) : this(null, SirExpression(expression))
 }
 
-class SirExpression(val raw: String) {
-    override fun toString(): String = raw
+sealed class SirExpression {
+    class Raw(val raw: String) : SirExpression()
+    class StringLiteral(val value: String) : SirExpression()
 }
+
+fun SirExpression(raw: String): SirExpression = SirExpression.Raw(raw)

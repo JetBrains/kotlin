@@ -65,14 +65,14 @@ private val SirDeclaration.swiftParentNamePrefix: String?
 
 val SirDeclarationParent.swiftFqNameOrNull: String?
     get() = (this as? SirNamedDeclaration)?.swiftFqName
-        ?: ((this as? SirNamed)?.name)
+        ?: ((this as? SirNamed)?.name?.swiftSanitizedName)
         ?: ((this as? SirExtension)?.extendedType?.swiftName)
 
 val SirNamedDeclaration.swiftFqName: String
-    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+    get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName}" } ?: name.swiftSanitizedName
 
 val SirFunction.swiftFqName: String
-    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+    get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName}" } ?: name.swiftSanitizedName
 
 val SirVariable.swiftFqName: String
-    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+    get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName}" } ?: name.swiftSanitizedName

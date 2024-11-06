@@ -375,6 +375,11 @@ public final class renamedT : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var MESSAGE: Swift.String {
+    get {
+        return __root___MESSAGE_get()
+    }
+}
 @available(*, deprecated, message: "Deprecated")
 public var deprecationInheritedImplicitlyV: Swift.Void {
     get {
@@ -399,6 +404,10 @@ public var renamedV: Swift.Void {
         return __root___renamedV_get()
     }
 }
+@available(*, deprecated, message: "message")
+public func constMessage() -> Swift.Never {
+    return __root___constMessage()
+}
 @available(*, deprecated, message: "Deprecated")
 public func deprecatedF() -> Swift.Void {
     return __root___deprecatedF()
@@ -407,11 +416,66 @@ public func deprecatedF() -> Swift.Void {
 public func deprecatedImplicitlyF() -> Swift.Void {
     return __root___deprecatedImplicitlyF()
 }
+@available(*, deprecated, message: "->message<-")
+public func formattedMessage() -> Swift.Never {
+    return __root___formattedMessage()
+}
+@available(*, deprecated, message: """
+
+    line1
+    message
+    line2
+
+""")
+public func multilineFormattedMessage() -> Swift.Never {
+    return __root___multilineFormattedMessage()
+}
+@available(*, deprecated, message: """
+
+    line1
+    line2
+
+""")
+public func multilineMessage() -> Swift.Never {
+    return __root___multilineMessage()
+}
 @available(*, unavailable, message: "Obsoleted")
 public func obsoletedF() -> Swift.Void {
     return __root___obsoletedF()
 }
+@available(*, deprecated, message: ". Replacement: something")
+public func renamed(
+    x: Swift.Int32,
+    y: Swift.Float
+) -> Swift.Never {
+    return __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(x, y)
+}
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public func renamedF() -> Swift.Void {
     return __root___renamedF()
+}
+@available(*, deprecated, message: ". Replacement: something.else")
+public func renamedQualified(
+    x: Swift.Int32,
+    y: Swift.Float
+) -> Swift.Never {
+    return __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(x, y)
+}
+@available(*, deprecated, message: ". Replacement: something.else(x, y)")
+public func renamedQualifiedWithArguments(
+    x: Swift.Int32,
+    y: Swift.Float
+) -> Swift.Never {
+    return __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x, y)
+}
+@available(*, deprecated, message: ". Replacement: something(y, x)")
+public func renamedWithArguments(
+    x: Swift.Int32,
+    y: Swift.Float
+) -> Swift.Never {
+    return __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x, y)
+}
+@available(*, deprecated, message: ". Replacement: unrenamed")
+public func unrenamed() -> Swift.Never {
+    return __root___unrenamed()
 }

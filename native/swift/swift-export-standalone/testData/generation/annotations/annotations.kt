@@ -273,3 +273,41 @@ open class hiddenСhildT : hiddenT() {
     override fun deprecationRestatedF() = Unit
     override val deprecationRestatedV: Unit get() = Unit
 }
+
+// FILE: annotations_replacewith.kt
+
+const val MESSAGE = "message"
+
+@Deprecated(message = MESSAGE)
+fun constMessage(): Nothing = TODO("never")
+
+@Deprecated(message = "->$MESSAGE<-")
+fun formattedMessage(): Nothing = TODO("never")
+
+@Deprecated(message = """
+    line1
+    line2
+""")
+fun multilineMessage(): Nothing = TODO("never")
+
+@Deprecated(message = """
+    line1
+    $MESSAGE
+    line2
+""")
+fun multilineFormattedMessage(): Nothing = TODO("never")
+
+@Deprecated(message = "", replaceWith = ReplaceWith("unrenamed"))
+fun unrenamed(): Nothing = TODO("never")
+
+@Deprecated(message = "", replaceWith = ReplaceWith("something"))
+fun renamed(x: Int, y: Float): Nothing = TODO("never")
+
+@Deprecated(message = "", replaceWith = ReplaceWith("something(y, x)"))
+fun renamedWithArguments(x: Int, y: Float): Nothing = TODO("never")
+
+@Deprecated(message = "", replaceWith = ReplaceWith("something.else"))
+fun renamedQualified(x: Int, y: Float): Nothing = TODO("never")
+
+@Deprecated(message = "", replaceWith = ReplaceWith("something.else(x, y)"))
+fun renamedQualifiedWithArguments(x: Int, y: Float): Nothing = TODO("never")

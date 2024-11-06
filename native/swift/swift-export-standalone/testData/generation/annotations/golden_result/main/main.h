@@ -1,6 +1,10 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NSString * __root___MESSAGE_get();
+
+uintptr_t __root___constMessage() __attribute((noreturn));
+
 uintptr_t __root___deprecatedChildT_init_allocate();
 
 void __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
@@ -17,6 +21,12 @@ void __root___deprecationInheritedImplicitlyV_get();
 
 void __root___deprecationInheritedV_get();
 
+uintptr_t __root___formattedMessage() __attribute((noreturn));
+
+uintptr_t __root___multilineFormattedMessage() __attribute((noreturn));
+
+uintptr_t __root___multilineMessage() __attribute((noreturn));
+
 uintptr_t __root___normalChildT_init_allocate();
 
 void __root___normalChildT_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
@@ -29,13 +39,23 @@ void __root___obsoletedF();
 
 void __root___obsoletedV_get();
 
+uintptr_t __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+
 void __root___renamedF();
+
+uintptr_t __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+
+uintptr_t __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
 
 uintptr_t __root___renamedT_init_allocate();
 
 void __root___renamedT_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 void __root___renamedV_get();
+
+uintptr_t __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+
+uintptr_t __root___unrenamed() __attribute((noreturn));
 
 void deprecatedChildT_deprecationFurtherReinforcedF(uintptr_t self);
 

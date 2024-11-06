@@ -1000,7 +1000,7 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
-    fun `attributes`() {
+    fun `should print attributes`() {
 
         val clazz = buildClass {
             name = "OPEN_INTERNAL"
@@ -1057,6 +1057,113 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/attributes"
+        )
+    }
+
+    @Test
+    fun `should escape identifiers`() {
+        val identifiers = listOf(
+            "simple0",
+            "", // empty
+            "_", // underscore
+            "a", // single character
+            "0", // single digit
+            "∞", // single unicode symbol 221e
+            "\u221E", // single unicode symbol 221e
+            "0startsWithDigit",
+            "~invalidSymbol~",
+            "unicode∞symbol221e",
+            "with space",
+            "() -> Function",
+            "+", // operator
+            "class", // keyword
+            "Class", // almost keyword
+            "with\textensive\r\nwhite spacing",
+            "\t\r\n", // just whitespacing
+            "\b\\\$" // more escapes
+        )
+
+        val module = buildModule {
+            name = "Test"
+        }.apply {
+            for (identifier in identifiers) {
+                val doc = identifier.split('\n').joinToString(separator = "\n") { "// $it" }
+                val decl = buildStruct {
+                    origin = SirOrigin.Unknown
+                    name = identifier
+                }.also { addChild { it } }
+
+                addChild {
+                    buildFunction {
+                        origin = SirOrigin.Unknown
+                        name = identifier
+                        returnType = SirNominalType(decl)
+                        documentation = doc
+                    }
+                }
+                addChild {
+                    buildVariable {
+                        origin = SirOrigin.Unknown
+                        name = identifier
+                        type = SirNominalType(decl)
+                        documentation = doc
+                        getter = buildGetter()
+                    }
+                }
+                addChild {
+                    buildTypealias {
+                        origin = SirOrigin.Unknown
+                        name = identifier
+                        type = SirNominalType(decl)
+                        documentation = doc
+                    }
+                }
+            }
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/identifiers"
+        )
+    }
+
+    @Test
+    fun `should choose appropriate string literals`() {
+        val messages = listOf(
+            "simple",
+            "", // empty
+            "∞", // single unicode symbol 221e
+            "\u221E", // single unicode symbol 221e
+            "unicode∞symbol221e",
+            "with space",
+            "with\textensive\r\nwhite spacing",
+            "\t\r\n", // just whitespacing
+            "\b\\\$", // more escapes
+            "\"doubly-quoted\"",
+            "'singly-quoted'",
+            "`backticked`",
+            "\"#unescaped",
+        )
+
+        val module = buildModule {
+            name = "Test"
+        }.apply {
+            // At the time of writing, attributes is the easiest way to test literal strings
+            for (message in messages) {
+                addChild {
+                    buildStruct {
+                        origin = SirOrigin.Unknown
+                        name = "test"
+                        attributes.add(SirAttribute.Available(deprecated = true, message = message))
+                        documentation = message.split('\n').joinToString(separator = "\n") { "// $it" }
+                    }
+                }
+            }
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/string_literals"
         )
     }
 

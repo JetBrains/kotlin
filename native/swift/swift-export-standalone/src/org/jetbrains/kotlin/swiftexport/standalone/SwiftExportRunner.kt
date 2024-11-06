@@ -78,7 +78,7 @@ public data class SwiftExportConfig(
     }
     internal val targetPackageFqName = settings[ROOT_PACKAGE]?.let { packageName ->
         packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
-            ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
+            ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier } }
             ?: null.also {
                 logger.report(
                     SwiftExportLogger.Severity.Warning,

@@ -33,8 +33,8 @@ public sealed interface SirAttribute {
                 SirArgument("deprecated").takeIf { deprecated && !unavailable },
                 SirArgument("obsoleted", "1.0").takeIf { obsoleted && !unavailable },
                 SirArgument("unavailable").takeIf { unavailable },
-                renamed.takeIf { it.isNotEmpty() }?.let { SirArgument("renamed", "\"$renamed\"") },
-                message?.let { SirArgument("message", "\"$it\"") },
+                renamed.takeIf { it.isNotEmpty() }?.let { SirArgument("renamed", SirExpression.StringLiteral(renamed)) },
+                message?.let { SirArgument("message", SirExpression.StringLiteral(message)) },
             )
     }
 }
