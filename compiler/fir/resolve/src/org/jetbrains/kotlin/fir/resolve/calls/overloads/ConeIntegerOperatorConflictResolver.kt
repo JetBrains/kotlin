@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 object ConeIntegerOperatorConflictResolver : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean
+        discriminateAbstracts: Boolean,
+        discriminateGenerics: Boolean
     ): Set<Candidate> {
         if (candidates.size <= 1) {
             return candidates

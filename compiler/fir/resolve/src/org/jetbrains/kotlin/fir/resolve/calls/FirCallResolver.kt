@@ -209,7 +209,7 @@ class FirCallResolver(
         towerResolver.reset()
 
         val result = towerResolver.runResolver(info, resolutionContext, collector)
-        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
+        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext, discriminateGenerics = true)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
         return ResolutionResult(info, applicability, reducedCandidates)
@@ -222,10 +222,15 @@ class FirCallResolver(
         collector: CandidateCollector,
         explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
+        discriminateGenerics: Boolean,
     ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
-            return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
+            return conflictResolver.chooseMaximallySpecificCandidates(
+                list.toSet(),
+                discriminateAbstracts = onSuperReference,
+                discriminateGenerics
+            )
         }
 
         val candidates = collector.bestCandidates()
@@ -466,7 +471,13 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val (reducedCandidates, applicability) = reduceCandidates(
+            result,
+            callableReferenceAccess.explicitReceiver,
+            // We don't discriminate against generics for callable references because, other than in regular calls,
+            // there is no syntax for specifying generic type arguments.
+            discriminateGenerics = false,
+        )
         val nonEmptyAndAllSuccessful = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
@@ -700,7 +711,7 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val (reducedCandidates, applicability) = reduceCandidates(result)
+        val (reducedCandidates, applicability) = reduceCandidates(result, discriminateGenerics = true)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,
