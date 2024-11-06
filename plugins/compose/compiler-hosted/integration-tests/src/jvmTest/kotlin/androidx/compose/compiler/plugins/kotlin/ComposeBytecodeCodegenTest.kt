@@ -800,4 +800,41 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         )
     }
+
+    // regression test for b/376148043
+    @Test
+    fun testUpdatingLambdaText() {
+        val oldBytecode = compileBytecode(
+            """
+                  import androidx.compose.runtime.*
+
+                  @Composable fun composableFun3() {
+                    val a = { }
+                  }
+                  @Composable fun composableFun4() {
+                    val a = { } 
+                  }
+            """,
+            className = "TestClass",
+        )
+
+        val newBytecode = compileBytecode(
+            """
+                  import androidx.compose.runtime.*
+
+                  @Composable fun composableFun3() {
+                    val a = { "hello" }
+                  }
+                  @Composable fun composableFun4() {
+                    val a = { } 
+                  }
+            """,
+            className = "TestClass",
+        )
+
+        val function4Regex = Regex("composableFun4[\\s\\S]*?LOCALVARIABLE")
+        val function4 = function4Regex.find(newBytecode)?.value ?: error("Could not find function4 in new bytecode")
+        val oldFunction4 = function4Regex.find(oldBytecode)?.value ?: error("Could not find function4 in old bytecide")
+        assertEquals(oldFunction4, function4)
+    }
 }

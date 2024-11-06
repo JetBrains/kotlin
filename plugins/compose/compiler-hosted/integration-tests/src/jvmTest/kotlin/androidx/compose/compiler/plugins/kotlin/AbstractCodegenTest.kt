@@ -39,9 +39,18 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
         @Language("kotlin")
         src: String,
         dumpClasses: Boolean = false,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
         validate: (String) -> Unit,
     ) {
-        val className = "Test_REPLACEME_${uniqueNumber++}"
+        validate(compileBytecode(src, dumpClasses, className))
+    }
+
+    protected fun compileBytecode(
+        @Language("kotlin")
+        src: String,
+        dumpClasses: Boolean = false,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
+    ): String {
         val fileName = "$className.kt"
 
         val loader = classLoader(
@@ -60,13 +69,11 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
             fileName, dumpClasses
         )
 
-        val apiString = loader
+        return loader
             .allGeneratedFiles
             .filter { it.relativePath.endsWith(".class") }.joinToString("\n") {
                 it.asText().replace('$', '%').replace(className, "Test")
             }
-
-        validate(apiString)
     }
 
     protected fun classLoader(
