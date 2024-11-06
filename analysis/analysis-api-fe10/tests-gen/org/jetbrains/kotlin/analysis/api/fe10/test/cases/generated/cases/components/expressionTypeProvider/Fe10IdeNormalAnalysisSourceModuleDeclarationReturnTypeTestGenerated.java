@@ -70,6 +70,12 @@ public class Fe10IdeNormalAnalysisSourceModuleDeclarationReturnTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt")
+  public void testImplicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt");
+  }
+
+  @Test
   @TestMetadata("localDeclarations.kt")
   public void testLocalDeclarations() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/localDeclarations.kt");
