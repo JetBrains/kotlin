@@ -138,6 +138,7 @@ class PostponedArgumentsAnalyzer(
         val lambdaReturnType = lambda.returnType
 
         val expectedTypeForReturnArguments = when {
+            forOverloadByLambdaReturnType -> null
             c.canBeProper(lambdaReturnType) -> substitute(lambdaReturnType)
 
             // For Unit-coercion

@@ -1,15 +1,30 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// FILE: MyEnum.java
+// WITH_STDLIB
+import kotlin.experimental.ExperimentalTypeInference
 
-public enum MyEnum {
-    A;
-    public int getOrdinal() {return "";}
+fun interface MyRunnable {
+    fun run();
 }
 
-// FILE: main.kt
+fun interface MyCallable<V> {
+    fun call(): V
+}
 
-fun foo() {
-    MyEnum.A.getOrdinal()
+fun submit(x: MyRunnable) {}
+fun <VS> submit(x: MyCallable<VS>) {}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun submit1(x: () -> Unit) {}
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun submit1(x: () -> String): String = ""
+
+
+fun main() {
+    //submit { "" }
+
+    submit1 { "" }.length
 }
