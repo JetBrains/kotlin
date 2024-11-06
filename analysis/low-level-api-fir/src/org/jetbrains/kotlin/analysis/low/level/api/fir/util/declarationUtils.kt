@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -231,6 +233,20 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
         else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
     }
 }
+
+internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
+    get() = when (this) {
+        is FirFunction -> this !is FirErrorFunction
+        is FirAnonymousInitializer -> true
+        else -> false
+    }
+
+internal val FirElementWithResolveState.body: FirBlock?
+    get() = when (this) {
+        is FirFunction -> body
+        is FirAnonymousInitializer -> body
+        else -> null
+    }
 
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.

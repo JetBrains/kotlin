@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 
-internal class FirRenderingOptions(
+internal data class FirRenderingOptions(
     val renderKtText: Boolean = false,
     val renderKtFileName: Boolean = false,
     val renderContainerSource: Boolean = false,

@@ -43,16 +43,28 @@ import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class DataFlowAnalyzerContext(private val session: FirSession) {
-    val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
-    internal val variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+    internal var graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
+        private set
 
-    var variableStorage: VariableStorage = VariableStorage(session)
+    internal var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+        private set
+
+    internal var variableStorage: VariableStorage = VariableStorage(session)
         private set
 
     private var assignmentCounter = 0
 
     fun newAssignmentIndex(): Int {
         return assignmentCounter++
+    }
+
+    fun resetFrom(source: DataFlowAnalyzerContext) {
+        reset()
+
+        graphBuilder = source.graphBuilder
+        variableAssignmentAnalyzer = source.variableAssignmentAnalyzer
+        variableStorage = source.variableStorage
+        assignmentCounter = source.assignmentCounter
     }
 
     fun reset() {

@@ -5,17 +5,40 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentHashMapOf
+import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.collections.indexOf
 
 /**
  * Collects [KT -> FIR][KtToFirMapping] mapping and [diagnostics][FileStructureElementDiagnostics] for [declaration].
@@ -28,8 +51,9 @@ import org.jetbrains.kotlin.psi.*
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,
+    elementProvider: FirElementProvider = EagerFirElementProvider(declaration)
 ) {
-    val mappings: KtToFirMapping = KtToFirMapping(declaration)
+    val mappings: KtToFirMapping = KtToFirMapping(elementProvider)
 
     companion object {
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
@@ -41,14 +65,175 @@ internal sealed class FileStructureElement(
     }
 }
 
-internal class KtToFirMapping(firElement: FirDeclaration) {
+private typealias FirElementProvider = (KtElement) -> FirElement?
+
+private class EagerFirElementProvider(firDeclaration: FirDeclaration) : FirElementProvider {
     private val mapping = FirElementsRecorder.recordElementsFrom(
-        firElement = firElement,
-        recorder = FileStructureElement.recorderFor(firElement),
+        firElement = firDeclaration,
+        recorder = FileStructureElement.recorderFor(firDeclaration),
     )
 
-    fun getElement(ktElement: KtElement): FirElement? {
-        return mapping[ktElement]
+    override fun invoke(element: KtElement): FirElement? {
+        return mapping[element]
+    }
+}
+
+private class PartialBodyFirElementProvider(
+    private val declaration: FirDeclaration,
+    private val psiDeclaration: KtDeclaration,
+    private val psiBlock: KtBlockExpression,
+    private val psiStatements: List<KtExpression>,
+    private val session: LLFirResolvableModuleSession
+) : FirElementProvider {
+    /**
+     * Contains the latest known partial body resolution state.
+     *
+     * Initially, the [lastState] is empty, even though the declaration itself may already be partially resolved.
+     * On querying the mapping (by calling [invoke]), the actual resolved state is synchronized with the [lastState],
+     * and all missing elements are added to [bodyMappings].
+     */
+    @Volatile
+    private var lastState = LLPartialBodyResolveState(
+        totalPsiStatementCount = psiStatements.size,
+        analyzedPsiStatementCount = 0,
+        analyzedFirStatementCount = 0,
+        performedAnalysesCount = 0,
+        analysisStateSnapshot = null
+    )
+
+    /**
+     * Contains mappings for non-body elements.
+     */
+    private val signatureMappings: Map<KtElement, FirElement>
+
+    /**
+     * Contains collected mappings.
+     * Initially, only signature mappings are registered (the body is ignored).
+     * After consequent partial body analysis, elements from analyzed statements are appended.
+     */
+    @Volatile
+    private var bodyMappings: PersistentMap<KtElement, FirElement> = persistentMapOf()
+
+    // The body block cannot be cached on the element provider construction, as the body might be lazy at that point
+    private val bodyBlock: FirBlock
+        get() = declaration.body ?: error("Partial body element provider supports only declarations with bodies")
+
+    private val lockProvider: LLFirLockProvider
+        get() = session.moduleComponents.globalResolveComponents.lockProvider
+
+    init {
+        signatureMappings = persistentHashMapOf<KtElement, FirElement>()
+            .builder()
+            .also { declaration.accept(DeclarationStructureElement.SignatureRecorder(bodyBlock), it) }
+            .build()
+    }
+
+    override fun invoke(psiElement: KtElement): FirElement? {
+        val psiStatement = findTopmostStatement(psiElement)
+
+        if (psiStatement == null) {
+            // Didn't find a containing topmost statement. It's either a signature element or some unrelated one
+            return signatureMappings[psiElement]
+        }
+
+        val psiStatementIndex = psiStatements.indexOf(psiStatement)
+
+        checkWithAttachment(psiStatementIndex >= 0, { "The topmost statement was not found" }) {
+            withPsiEntry("statement", psiStatement)
+            withPsiEntry("declaration", psiDeclaration)
+        }
+
+        synchronized(this) {
+            if (lastState.analyzedPsiStatementCount > psiStatementIndex) {
+                // The statement is already analyzed and its children are in collected
+                return bodyMappings[psiElement]
+            }
+        }
+
+        performBodyAnalysis(psiStatementIndex)
+
+        synchronized(this) {
+            val newState = fetchPartialBodyResolveState()
+            if (newState != null) {
+                val lastCount = lastState.analyzedFirStatementCount
+                val newCount = newState.analyzedFirStatementCount
+
+                // There are newly analyzed statements, let's collect them
+                if (lastCount < newCount) {
+                    val firBody = bodyBlock
+                    require(firBody !is FirLazyBlock)
+
+                    val newBodyMappingsBuilder = bodyMappings.builder()
+
+                    for (index in lastCount until newCount) {
+                        val firStatement = firBody.statements[index]
+                        firStatement.accept(DeclarationStructureElement.Recorder, newBodyMappingsBuilder)
+                    }
+
+                    bodyMappings = newBodyMappingsBuilder.build()
+                    lastState = newState
+                }
+            } else {
+                // The body has never been analyzed (otherwise the partial body resolve state should have been present)
+                bodyMappings = bodyMappings
+                    .builder()
+                    .also { bodyBlock.accept(FileStructureElement.recorderFor(declaration), it) }
+                    .build()
+            }
+        }
+
+        return bodyMappings[psiElement]
+    }
+
+    private fun findTopmostStatement(psiElement: KtElement): KtElement? {
+        var previous: PsiElement? = null
+
+        for (current in psiElement.parentsWithSelf) {
+            when (current) {
+                psiBlock -> return previous as? KtElement
+                psiDeclaration -> return null
+            }
+
+            previous = current
+        }
+
+        return null
+    }
+
+    private fun fetchPartialBodyResolveState(): LLPartialBodyResolveState? {
+        var result: LLPartialBodyResolveState? = null
+        var isRun = false
+        lockProvider.withReadLock(declaration, FirResolvePhase.BODY_RESOLVE) {
+            result = declaration.partialBodyResolveState
+            isRun = true // 'withReadLock' does not call the lambda if the declaration already resolved
+        }
+        return if (isRun) result else declaration.partialBodyResolveState
+    }
+
+    private fun performBodyAnalysis(psiStatementIndex: Int) {
+        val psiStatementLimit = psiStatementIndex + 1
+        if (psiStatementLimit < psiStatements.size) {
+            val request = LLPartialBodyResolveRequest(
+                target = declaration,
+                totalPsiStatementCount = psiStatements.size,
+                targetPsiStatementCount = psiStatementLimit,
+                stopElement = psiStatements[psiStatementLimit]
+            )
+
+            val target = LLFirResolveDesignationCollector.getDesignationToResolveForPartialBody(request)
+            if (target != null) {
+                session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(target, FirResolvePhase.BODY_RESOLVE)
+                return
+            }
+        }
+
+        declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+    }
+}
+
+internal class KtToFirMapping(private val elementProvider: FirElementProvider) {
+    private fun getElement(ktElement: KtElement): FirElement? {
+        return elementProvider(ktElement)
     }
 
     fun getFir(element: KtElement): FirElement? {
@@ -221,8 +406,59 @@ internal class DeclarationStructureElement(
             moduleComponents = moduleComponents,
         )
     ),
+    elementProvider = createFirElementProvider(declaration),
 ) {
-    object Recorder : FirElementsRecorder() {
+    private companion object {
+        private val IS_PARTIAL_RESOLVE_ENABLED = Registry.`is`("kotlin.analysis.partialBodyAnalysis", true)
+
+        private fun createFirElementProvider(declaration: FirDeclaration): FirElementProvider {
+            if (IS_PARTIAL_RESOLVE_ENABLED) {
+                val bodyBlock = declaration.body
+                if (declaration.isPartialBodyResolvable && bodyBlock != null && declaration.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
+                    require(declaration.resolvePhase == FirResolvePhase.BODY_RESOLVE.previous)
+
+                    val isPartiallyResolvable = when (bodyBlock) {
+                        is FirSingleExpressionBlock -> false
+                        is FirEmptyExpressionBlock -> false
+                        is FirLazyBlock -> true // Optimistic (however, below we also check the PSI statement count)
+                        else -> bodyBlock.statements.size > 1
+                    }
+
+                    val session = declaration.llFirResolvableSession
+                    val psiDeclaration = declaration.realPsi as? KtDeclaration
+                    val psiBodyBlock = psiDeclaration?.bodyBlock
+                    val psiStatements = psiBodyBlock?.statements
+
+                    if (isPartiallyResolvable && session != null && psiStatements != null && psiStatements.size > 1) {
+                        return PartialBodyFirElementProvider(declaration, psiDeclaration, psiBodyBlock, psiStatements, session)
+                    }
+                }
+            }
+
+            declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return EagerFirElementProvider(declaration)
+        }
+
+        private val KtDeclaration.bodyBlock: KtBlockExpression?
+            get() = when (this) {
+                is KtAnonymousInitializer -> body as? KtBlockExpression
+                is KtDeclarationWithBody -> bodyBlockExpression
+                else -> null
+            }
+    }
+
+    object Recorder : AbstractRecorder()
+
+    class SignatureRecorder(val bodyElement: FirElement) : AbstractRecorder() {
+        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            if (element === bodyElement) {
+                return
+            }
+            super.visitElement(element, data)
+        }
+    }
+
+    abstract class AbstractRecorder : FirElementsRecorder() {
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
             super.visitConstructor(constructor, data)
 
