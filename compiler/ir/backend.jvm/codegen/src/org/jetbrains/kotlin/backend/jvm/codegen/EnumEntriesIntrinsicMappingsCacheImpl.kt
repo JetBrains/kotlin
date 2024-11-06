@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
@@ -44,7 +44,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
             name = Name.identifier("EntriesIntrinsicMappings")
             origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             parent = containingClass
         }
 

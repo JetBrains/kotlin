@@ -142,7 +142,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = irFunction.parent
-                createParameterDeclarations()
+                createThisReceiverParameter()
                 typeParameters = irFunction.typeParameters.memoryOptimizedMap { typeParam ->
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
                 }

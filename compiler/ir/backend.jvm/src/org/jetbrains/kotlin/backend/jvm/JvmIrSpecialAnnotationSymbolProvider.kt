@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
@@ -62,7 +62,7 @@ object JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
             kind = ClassKind.ANNOTATION_CLASS
             name = shortClassName
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             parent = irPackage
             addConstructor {
                 isPrimary = true

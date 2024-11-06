@@ -1198,7 +1198,7 @@ val IrDeclaration.isTopLevel: Boolean
         return parentClass?.isFileClass == true && parentClass.parent is IrPackageFragment
     }
 
-fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
+fun IrClass.createThisReceiverParameter() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
 
@@ -1207,7 +1207,7 @@ fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragmen
         kind = ClassKind.ANNOTATION_CLASS
         name = fqn.shortName()
     }.apply {
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         this.parent = parent
         addConstructor {
             isPrimary = true
@@ -1232,12 +1232,6 @@ fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
         is IrProperty -> listOfNotNull(it.getter, it.setter)
         else -> emptyList()
     }
-}
-
-
-fun IrClass.createParameterDeclarations() {
-    assert(thisReceiver == null)
-    thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
 
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
@@ -1663,3 +1657,17 @@ fun IrDeclaration.isPublishedApi(): Boolean =
                 ?.hasAnnotation(StandardClassIds.Annotations.PublishedApi) ?: false
 
 const val SKIP_BODIES_ERROR_DESCRIPTION = "skipBodies"
+
+// === Junkyard ===
+
+/**
+ * Deprecated, use [createThisReceiverParameter]
+ */
+fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() =
+    createThisReceiverParameter()
+
+/**
+ * Deprecated, use [createThisReceiverParameter]
+ */
+fun IrClass.createParameterDeclarations() =
+    createThisReceiverParameter()

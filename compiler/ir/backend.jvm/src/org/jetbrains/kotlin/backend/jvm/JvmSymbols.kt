@@ -111,7 +111,7 @@ class JvmSymbols(
                 "kotlin.internal" -> kotlinInternalPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             block(this)
         }.symbol
 
@@ -162,7 +162,7 @@ class JvmSymbols(
             name = Name.identifier("Kotlin")
         }.apply {
             parent = klass
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         })
     }
 

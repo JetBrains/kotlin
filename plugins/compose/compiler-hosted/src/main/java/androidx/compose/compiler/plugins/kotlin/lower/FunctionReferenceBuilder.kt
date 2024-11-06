@@ -64,7 +64,7 @@ class FunctionReferenceBuilder(
     }.apply {
         parent = currentDeclarationParent
         superTypes = listOfNotNull(superType)
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         copyAttributes(irFunctionExpression)
         metadata = irFunctionExpression.function.metadata
     }

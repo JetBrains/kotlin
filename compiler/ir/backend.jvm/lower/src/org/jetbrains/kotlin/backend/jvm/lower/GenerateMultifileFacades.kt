@@ -104,7 +104,7 @@ private fun generateMultifileFacades(
             name = jvmClassName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.apply {
             parent = file
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             origin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
                 this.classNameOverride = jvmClassName

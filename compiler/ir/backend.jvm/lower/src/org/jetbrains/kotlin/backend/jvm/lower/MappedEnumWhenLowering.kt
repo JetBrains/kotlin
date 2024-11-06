@@ -82,7 +82,7 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
                 name = Name.identifier("WhenMappings")
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
             }.apply {
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
             }
         }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -207,7 +207,7 @@ abstract class IrBuiltIns {
             modality = Modality.FINAL
         }.apply {
             parent = kotlinInternalPackageFragment
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             addConstructor { isPrimary = true }
             addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
         }

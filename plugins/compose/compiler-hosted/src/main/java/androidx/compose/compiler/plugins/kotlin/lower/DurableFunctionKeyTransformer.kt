@@ -196,7 +196,7 @@ class DurableFunctionKeyTransformer(
             // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
             name = Name.identifier("$shortName\$KeyMeta")
         }.also {
-            it.createParameterDeclarations()
+            it.createThisReceiverParameter()
 
             // store the full file path to the file that this class is associated with in an
             // annotation on the class. This will be used by tooling to associate the keys

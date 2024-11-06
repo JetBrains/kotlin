@@ -234,7 +234,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
 
             // The function reference class only needs to be generic over type parameters coming from an enclosing scope.
             copyTypeParameters(typeParametersFromEnclosingScope)
-            createParameterDeclarations()
+            createThisReceiverParameter()
         }
 
         /**

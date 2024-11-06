@@ -140,7 +140,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             visibility = DescriptorVisibilities.LOCAL
         }.apply {
             this.parent = parent
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             copyAttributes(reference)
 
             val function = reference.symbol.owner

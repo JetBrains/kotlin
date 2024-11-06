@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -63,7 +62,7 @@ internal interface DescriptorToIrTranslationMixin {
                         it.toIrType()
                     }
                     irClass.generateAnnotations()
-                    irClass.createParameterDeclarations()
+                    irClass.createThisReceiverParameter()
                     builder(irClass)
                     createFakeOverrides(descriptor).forEach(irClass::addMember)
                 }

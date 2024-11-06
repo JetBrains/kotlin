@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -138,7 +138,7 @@ class JvmReflectSymbols(val context: JvmBackendContext) {
             modality = classModality
         }.apply {
             parent = javaLangReflectPackage
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             block(this)
         }.symbol
 }

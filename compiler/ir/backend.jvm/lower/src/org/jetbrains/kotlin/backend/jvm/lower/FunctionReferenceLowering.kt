@@ -548,7 +548,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 // NB this would no longer matter if we generate SAM wrapper classes as synthetic.
                 typeParameters = createFakeFormalTypeParameters(samInterface.typeParameters, this)
             }
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             copyAttributes(irFunctionReference)
             if (isHeavyweightLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata

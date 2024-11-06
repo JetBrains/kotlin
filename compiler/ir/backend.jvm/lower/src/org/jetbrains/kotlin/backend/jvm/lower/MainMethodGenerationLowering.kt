@@ -140,7 +140,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
             }.let { wrapper ->
                 +wrapper
 
-                wrapper.createImplicitParameterDeclarationWithWrappedDescriptor()
+                wrapper.createThisReceiverParameter()
 
                 val lambdaSuperClass = backendContext.ir.symbols.lambdaClass
                 val functionClass = backendContext.ir.symbols.getJvmSuspendFunctionClass(0)

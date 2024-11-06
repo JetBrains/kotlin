@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
@@ -258,7 +258,7 @@ class JvmAtomicSymbols(
         isValue = isValueClass
     }.apply {
         parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
     }.symbol
 
     private val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {

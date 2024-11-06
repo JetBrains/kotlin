@@ -1128,7 +1128,7 @@ private class ObjCBlockPointerValuePassing(
                 ClassKind.CLASS,
                 Modality.FINAL,
         )
-        irClass.createParameterDeclarations()
+        irClass.createThisReceiverParameter()
 
         irClass.superTypes += stubs.irBuiltIns.anyType
         irClass.superTypes += functionType.makeNotNull()

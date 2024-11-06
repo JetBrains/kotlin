@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -77,7 +77,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             modality = Modality.OPEN,
         ).apply {
             setCommonParent()
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
     }
 

@@ -504,7 +504,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 Modality.FINAL,
         ).apply {
             irFile.addChild(this)
-            createParameterDeclarations()
+            createThisReceiverParameter()
 
             val testClassType = testClass.defaultType
             val testCompanionType = if (testClass.kind == ClassKind.OBJECT) {

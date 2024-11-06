@@ -248,7 +248,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
 //                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
                 createReceiverField()
             }
         }

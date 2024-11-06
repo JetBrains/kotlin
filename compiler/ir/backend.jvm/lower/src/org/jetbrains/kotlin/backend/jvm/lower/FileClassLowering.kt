@@ -113,7 +113,7 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
             superTypes = listOf(context.irBuiltIns.anyType)
             parent = irFile
             declarations.addAll(fileClassMembers)
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             for (member in fileClassMembers) {
                 member.parent = this
                 if (member is IrProperty) {

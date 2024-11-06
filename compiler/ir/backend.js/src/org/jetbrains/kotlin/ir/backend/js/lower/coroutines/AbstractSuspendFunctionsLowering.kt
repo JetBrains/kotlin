@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
@@ -174,7 +173,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 visibility = function.visibility
             }.apply {
                 parent = function.parent
-                createParameterDeclarations()
+                createThisReceiverParameter()
                 typeParameters = function.typeParameters.memoryOptimizedMap { typeParam ->
                     // TODO: remap types
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }

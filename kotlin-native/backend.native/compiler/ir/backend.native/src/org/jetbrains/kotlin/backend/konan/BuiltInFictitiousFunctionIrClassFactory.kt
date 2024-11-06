@@ -250,7 +250,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         IrSimpleTypeImpl(superTypeSymbol, superType.isMarkedNullable, arguments, emptyList())
                     }
 
-                    createParameterDeclarations()
+                    createThisReceiverParameter()
 
                     val invokeFunctionDescriptor = descriptor.unsubstitutedMemberScope.getContributedFunctions(
                             OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).single()

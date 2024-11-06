@@ -79,7 +79,7 @@ class SerialInfoImplJvmIrGenerator(
             visibility = DescriptorVisibilities.PUBLIC
         }.apply {
             parent = annotationClass
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(annotationClass.defaultType)
         }
         annotationClass.declarations.add(subclass)
@@ -110,7 +110,7 @@ class SerialInfoImplJvmIrGenerator(
         modality = Modality.FINAL
     }.apply {
         parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         block(this)
     }.symbol
 }

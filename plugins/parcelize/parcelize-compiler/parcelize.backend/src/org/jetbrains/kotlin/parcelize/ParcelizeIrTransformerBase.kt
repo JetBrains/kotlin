@@ -151,7 +151,7 @@ abstract class ParcelizeIrTransformerBase(
             }.apply {
                 parent = irField
                 superTypes = listOf(creatorType)
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
 
                 addConstructor {
                     isPrimary = true

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -56,7 +56,7 @@ class JvmSharedVariablesManager(
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = Name.identifier(primitiveType.classOrNull!!.owner.name.asString() + "Ref")
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
         primitiveType.classifierOrFail to RefProvider(refClass, primitiveType)
     }
@@ -70,7 +70,7 @@ class JvmSharedVariablesManager(
                 name = Name.identifier("T")
                 superTypes.add(irBuiltIns.anyNType)
             }
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
         RefProvider(refClass, refClass.typeParameters[0].defaultType)
     }

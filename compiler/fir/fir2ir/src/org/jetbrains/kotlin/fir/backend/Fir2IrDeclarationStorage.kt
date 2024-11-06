@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
@@ -1371,7 +1371,7 @@ class Fir2IrDeclarationStorage(
                         source = containerSource
                     ).apply {
                         parent = parentPackage
-                        createParameterDeclarations()
+                        createThisReceiverParameter()
                         this.isNonCachedSourceFileFacade = true
                     }
                 }

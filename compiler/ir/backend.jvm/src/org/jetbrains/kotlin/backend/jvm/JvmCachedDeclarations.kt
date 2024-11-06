@@ -250,7 +250,7 @@ class JvmCachedDeclarations(
                 name = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
             }.apply {
                 parent = interfaceClass
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
             }
         }
 
@@ -292,7 +292,7 @@ class JvmCachedDeclarations(
                 kind = ClassKind.ANNOTATION_CLASS
                 name = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
             }.apply {
-                createImplicitParameterDeclarationWithWrappedDescriptor()
+                createThisReceiverParameter()
                 parent = annotationClass
                 superTypes = listOf(context.irBuiltIns.annotationType)
             }

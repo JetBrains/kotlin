@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -263,7 +263,7 @@ class ComposableDefaultParamLowering(
             name = ComposeNames.DEFAULT_IMPLS
         }.apply {
             parent.addChild(this)
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
         }
     }
 }

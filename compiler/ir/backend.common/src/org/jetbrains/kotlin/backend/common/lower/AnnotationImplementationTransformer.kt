@@ -177,7 +177,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         }.apply {
             parent = localDeclarationParent ?: irFile
                     ?: error("irFile in transformer should be specified when creating synthetic implementation")
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(annotationClass.defaultType)
             platformSetup()
             // Type parameters can be copied from annotationClass, but in fact they are never used by any of the backends.

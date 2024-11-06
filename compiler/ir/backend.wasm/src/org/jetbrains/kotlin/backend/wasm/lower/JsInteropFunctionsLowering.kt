@@ -565,7 +565,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val closureClass = context.irFactory.buildClass {
             name = Name.identifier("__JsClosureToKotlinClosure_${info.signatureString}")
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(functionType)
             parent = currentParent
         }

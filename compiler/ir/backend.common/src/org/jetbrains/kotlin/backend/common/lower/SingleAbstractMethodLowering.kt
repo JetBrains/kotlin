@@ -184,7 +184,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             visibility = wrapperVisibility
             setSourceRange(createFor)
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(superType) memoryOptimizedPlus getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }

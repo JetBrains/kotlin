@@ -96,7 +96,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
             visibility = if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes += context.ir.symbols.continuationImplClass.owner.defaultType
             parent = irFunction
 

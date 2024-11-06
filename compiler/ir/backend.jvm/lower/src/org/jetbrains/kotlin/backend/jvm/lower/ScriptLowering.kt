@@ -360,7 +360,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
             modality = Modality.FINAL
         }.apply {
             parent = scriptingJvmPackage
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             addFunction("runCompiledScript", context.irBuiltIns.unitType, isStatic = true).apply {
                 addValueParameter("scriptClass", javaLangClass.starProjectedType)
                 addValueParameter {

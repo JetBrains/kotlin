@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -171,7 +171,7 @@ class AndroidSymbols(
         kind = ClassKind.INTERFACE
         modality = Modality.ABSTRACT
     }.apply {
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
         val t = addTypeParameter("T", irBuiltIns.anyNType)
         parent = androidOsParcelable.owner
 
@@ -571,7 +571,7 @@ class AndroidSymbols(
         isValue = isValueClass
     }.apply {
         parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
+        createThisReceiverParameter()
     }.symbol
 
     fun createBuilder(
