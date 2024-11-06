@@ -23,8 +23,6 @@ dependencies {
     testModules.forEach {
         embedded(projectTests(it)) { isTransitive = false }
     }
-
-    embedded(intellijJavaRt()) { isTransitive = false }
 }
 
 publish()

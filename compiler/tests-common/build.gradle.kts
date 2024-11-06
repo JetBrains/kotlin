@@ -75,7 +75,6 @@ dependencies {
 
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
-    testApi(intellijJavaRt()) // for FileComparisonFailure
 
     testImplementation(libs.guava)
     testImplementation(libs.intellij.asm)

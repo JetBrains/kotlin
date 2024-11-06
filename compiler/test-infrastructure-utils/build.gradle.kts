@@ -10,9 +10,6 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    // This dependency is needed only for FileComparisonFailure
-    testImplementation(intellijJavaRt())
 }
 
 sourceSets {

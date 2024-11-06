@@ -39,8 +39,7 @@ dependencies {
     testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
-    testApi(intellijJavaRt()) // for FileComparisonFailure
-    testApi(libs.junit4) // for ComparisonFailure
+    testApi(libs.junit4)
 
     testApi(toolsJarApi())
     testRuntimeOnly(toolsJar())

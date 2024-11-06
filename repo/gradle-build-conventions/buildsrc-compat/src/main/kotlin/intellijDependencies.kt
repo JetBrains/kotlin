@@ -22,7 +22,6 @@ fun Project.testFramework() = "com.jetbrains.intellij.platform:test-framework:$i
 fun Project.devKitJps() = "com.jetbrains.intellij.devkit:devkit-jps:$intellijVersion"
 fun Project.intellijPlatformUtil() = "com.jetbrains.intellij.platform:util:$intellijVersion"
 fun Project.intellijPlatformUtilBase() = "com.jetbrains.intellij.platform:util-base:$intellijVersion"
-fun Project.intellijJavaRt() = "com.jetbrains.intellij.java:java-rt:$intellijVersion"
 fun Project.intellijAnalysis() = "com.jetbrains.intellij.platform:analysis:$intellijVersion"
 fun Project.intellijResources() = "com.jetbrains.intellij.platform:resources:$intellijVersion"
 fun Project.intellijJDom() = "com.jetbrains.intellij.platform:util-jdom:$intellijVersion"
