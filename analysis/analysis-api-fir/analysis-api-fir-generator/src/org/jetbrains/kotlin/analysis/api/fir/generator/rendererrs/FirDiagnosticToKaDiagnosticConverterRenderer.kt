@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.ConversionContext
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
-import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
+import org.jetbrains.kotlin.generators.util.inBracketsWithIndent
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
+import kotlin.reflect.KType
 
 object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {
@@ -64,8 +65,13 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         println("$expression,")
     }
 
-    override fun collectImportsForDiagnosticParameter(diagnosticParameter: HLDiagnosticParameter): Collection<String> =
-        diagnosticParameter.importsToAdd
+    override fun collectImportsForDiagnosticParameterReflect(diagnosticParameter: HLDiagnosticParameter): Collection<KType> {
+        return emptyList()
+    }
+
+    override fun collectImportsForDiagnosticParameterSimple(diagnosticParameter: HLDiagnosticParameter): Collection<String> {
+        return diagnosticParameter.importsToAdd
+    }
 
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",

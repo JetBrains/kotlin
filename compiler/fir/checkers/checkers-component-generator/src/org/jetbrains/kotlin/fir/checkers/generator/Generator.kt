@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.util.getGenerationPath
+import org.jetbrains.kotlin.generators.util.printCopyright
+import org.jetbrains.kotlin.generators.util.printGeneratedMessage
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File

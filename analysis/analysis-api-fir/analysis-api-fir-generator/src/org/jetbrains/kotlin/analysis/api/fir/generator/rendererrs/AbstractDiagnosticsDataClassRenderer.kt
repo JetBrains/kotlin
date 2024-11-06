@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs
 
 import org.jetbrains.kotlin.analysis.api.fir.generator.*
-import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticListRenderer
-import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.util.printImports
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 import kotlin.reflect.KType
@@ -21,35 +20,48 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
         file.writeToFileUsingSmartPrinterIfFileContentChanged { render(hlDiagnosticsList, packageName) }
     }
 
-    private fun SmartPrinter.collectAndPrintImports(diagnosticList: HLDiagnosticList) {
-        val imports = collectImports(diagnosticList)
-        printImports(imports)
+    private fun SmartPrinter.collectAndPrintImports(diagnosticList: HLDiagnosticList, packageName: String) {
+        val importableTypes = diagnosticList.diagnostics.flatMap {
+            buildList {
+                add(it.original.psiType)
+                it.parameters.forEach { parameter ->
+                    addAll(collectImportsForDiagnosticParameterReflect(parameter))
+                }
+            }
+        }
+
+        val simpleImports = buildList {
+            addAll(defaultImports)
+
+            diagnosticList.diagnostics.forEach { diagnostic ->
+                diagnostic.parameters.forEach { diagnosticParameter ->
+                    addAll(collectImportsForDiagnosticParameterSimple(diagnosticParameter))
+                }
+            }
+        }
+
+        this.printImports(
+            packageName = packageName,
+            importableTypes,
+            simpleImports,
+            starImports = emptyList()
+        )
     }
 
     protected fun SmartPrinter.printHeader(packageName: String, diagnosticList: HLDiagnosticList) {
         printCopyright()
         println("package $packageName")
         println()
-        collectAndPrintImports(diagnosticList)
-        println()
+        collectAndPrintImports(diagnosticList, packageName)
         printGeneratedMessage()
-    }
-
-    protected fun collectImports(diagnosticList: HLDiagnosticList): Collection<String> = buildSet {
-        addAll(defaultImports)
-        for (diagnostic in diagnosticList.diagnostics) {
-            diagnostic.original.psiType.collectClassNamesTo(this)
-            diagnostic.parameters.forEach { diagnosticParameter ->
-                addAll(collectImportsForDiagnosticParameter(diagnosticParameter))
-            }
-        }
     }
 
     protected fun HLDiagnosticList.containsClashingBySimpleNameType(type: KType): Boolean {
         return diagnostics.any { it.className == type.simpleName }
     }
 
-    protected abstract fun collectImportsForDiagnosticParameter(diagnosticParameter: HLDiagnosticParameter): Collection<String>
+    protected abstract fun collectImportsForDiagnosticParameterReflect(diagnosticParameter: HLDiagnosticParameter): Collection<KType>
+    protected abstract fun collectImportsForDiagnosticParameterSimple(diagnosticParameter: HLDiagnosticParameter): Collection<String>
 
     protected abstract fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String)
 

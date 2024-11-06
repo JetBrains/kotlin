@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.FirDiagnosticT
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KaDiagnosticClassImplementationRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KaDiagnosticClassRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.getGenerationPath
+import org.jetbrains.kotlin.generators.util.getGenerationPath
 import java.nio.file.Path
 
 object DiagnosticClassGenerator {

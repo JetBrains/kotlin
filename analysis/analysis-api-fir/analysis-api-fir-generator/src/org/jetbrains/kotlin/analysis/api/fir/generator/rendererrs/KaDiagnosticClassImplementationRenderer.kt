@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.analysis.api.fir.generator.printTypeWithShortNames
-import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
+import kotlin.reflect.KType
 
 object KaDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {
@@ -52,8 +52,12 @@ object KaDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         println(",")
     }
 
-    override fun collectImportsForDiagnosticParameter(diagnosticParameter: HLDiagnosticParameter): Collection<String> = buildSet {
-        diagnosticParameter.type.collectClassNamesTo(this)
+    override fun collectImportsForDiagnosticParameterReflect(diagnosticParameter: HLDiagnosticParameter): Collection<KType> {
+        return listOf(diagnosticParameter.type)
+    }
+
+    override fun collectImportsForDiagnosticParameterSimple(diagnosticParameter: HLDiagnosticParameter): Collection<String> {
+        return emptyList()
     }
 
     override val defaultImports = listOf(

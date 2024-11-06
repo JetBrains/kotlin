@@ -35,6 +35,7 @@ val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("n
 
 dependencies {
     api(kotlinStdlib("jdk8"))
+    api(project(":core:util.runtime"))
     api(intellijPlatformUtil()) {
         exclude(module = "annotations")
     }

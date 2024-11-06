@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.RegularDiagnosticData
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.util.getGenerationPath
+import org.jetbrains.kotlin.generators.util.printCopyright
+import org.jetbrains.kotlin.generators.util.printGeneratedMessage
 import java.io.File
 
 fun generateNonSuppressibleErrorNamesFile(generationPath: File, packageName: String) {
