@@ -48,7 +48,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
             ) ?: return null
 
             val outerType = outerType(expandedType, session) { it.getContainingDeclaration(session) }
-            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType, abbreviation = null)
+            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
         }
         else -> null
     }

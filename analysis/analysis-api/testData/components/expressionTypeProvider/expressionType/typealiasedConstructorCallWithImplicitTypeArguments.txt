@@ -1,2 +1,2 @@
 expression: TypeAlias(MyClass())
-type: test.TypeAlias /* = test.GenericClass<test.MyClass> */
+type: test.TypeAlias<test.MyClass> /* = test.GenericClass<test.MyClass> */

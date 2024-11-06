@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -44,7 +45,7 @@ class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
-    private val abbreviation: ConeClassLikeType?,
+    private val abbreviation: ConeClassLikeType = typeAliasSymbol.defaultType(),
 ) : FirScope() {
     private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
         .moduleData
@@ -64,7 +65,7 @@ class TypeAliasConstructorsSubstitutingScope(
                     this.typeParameters.clear()
                     typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
-                    if (abbreviation != null && aliasedTypeExpansionGloballyEnabled) {
+                    if (aliasedTypeExpansionGloballyEnabled) {
                         returnTypeRef = returnTypeRef.withReplacedConeType(
                             returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
                         )

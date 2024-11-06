@@ -55,7 +55,6 @@ private fun FirScope.processConstructorsByName(
         session,
         bodyResolveComponents,
         constructorFilter,
-        callInfo.typeArguments,
     )
 
     processSyntheticConstructors(
@@ -133,7 +132,6 @@ private fun processConstructors(
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     constructorFilter: ConstructorFilter,
-    typeArguments: List<FirTypeProjection>,
 ) {
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
@@ -153,9 +151,6 @@ private fun processConstructors(
                         matchedSymbol,
                         basicScope,
                         outerType,
-                        abbreviation = matchedSymbol.constructType(
-                            Array(typeArguments.size) { typeArguments[it].toConeTypeProjection() },
-                        ),
                     )
                 } else {
                     null

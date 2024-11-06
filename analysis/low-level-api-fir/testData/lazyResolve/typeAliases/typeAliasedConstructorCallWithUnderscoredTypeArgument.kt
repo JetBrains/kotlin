@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package test
 
 class Box<T>(val value: T)

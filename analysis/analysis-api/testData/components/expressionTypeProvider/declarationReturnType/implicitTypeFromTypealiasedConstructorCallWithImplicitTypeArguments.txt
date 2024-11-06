@@ -3,4 +3,4 @@ GenericClass@(3,1)
     t@(3,23) : T
 MyClass@(5,1)
 TypeAlias@(7,1)
-propertyWithImplicitType@(9,1) : test.TypeAlias
+propertyWithImplicitType@(9,1) : test.TypeAlias<test.MyClass>

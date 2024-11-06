@@ -1,0 +1,155 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(SUPER_TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(STATUS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(CONTRACTS)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            String(OK)
+        }
+        )
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            String(OK)
+        }
+        )
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            String(OK)
+        }
+        )
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            String(OK)
+        }
+        )
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public abstract fun [ResolvedTo(STATUS)] interface Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun provide(): R|T|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(CONTRACTS)] TT> = R|test/Box<TT>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TT>] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(OK)
+        }
+        )
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
+    public abstract fun [ResolvedTo(BODY_RESOLVE)] interface Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun provide(): R|T|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TT> = R|test/Box<TT>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TT>] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(OK)
+        }
+        )
+    }

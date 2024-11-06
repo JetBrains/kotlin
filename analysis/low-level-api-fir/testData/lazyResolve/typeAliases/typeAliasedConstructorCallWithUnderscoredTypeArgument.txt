@@ -1,0 +1,207 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(SUPER_TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public? final? [ResolvedTo(TYPES)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(STATUS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(CONTRACTS)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(String(OK))
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(String(OK))
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(String(OK))
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] get(): T
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Unit| {
+        Alias#<>(String(OK))
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final [ResolvedTo(STATUS)] class Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Box] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=test/Box.value] value: R|T|): R|test/Box<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Box] get(): R|T|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(SUPER_TYPES)] TT> = R|test/Box<TT>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|test/Box.Box|<R|kotlin/String|>(String(OK))
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Box] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Box.value] value: R|T|): R|test/Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Box] get(): R|T|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TT> = R|test/Box<TT>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|test/Box.Box|<R|kotlin/String|>(String(OK))
+    }
