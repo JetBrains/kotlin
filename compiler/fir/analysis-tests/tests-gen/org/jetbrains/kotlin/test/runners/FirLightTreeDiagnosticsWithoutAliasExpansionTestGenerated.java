@@ -279,6 +279,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       }
 
       @Test
+      @TestMetadata("nestedTypeAliasConstructors.kt")
+      public void testNestedTypeAliasConstructors() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/nestedTypeAliasConstructors.kt");
+      }
+
+      @Test
       @TestMetadata("recursiveNestedInnerTypeAliases.kt")
       public void testRecursiveNestedInnerTypeAliases() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/recursiveNestedInnerTypeAliases.kt");

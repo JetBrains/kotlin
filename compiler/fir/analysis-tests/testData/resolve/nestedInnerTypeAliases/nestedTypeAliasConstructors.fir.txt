@@ -1,0 +1,28 @@
+FILE: nestedTypeAliasConstructors.kt
+    public final class Pair<X, Y> : R|kotlin/Any| {
+        public constructor<X, Y>(x: R|X|, y: R|Y|): R|Pair<X, Y>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|X| = R|<local>/x|
+            public get(): R|X|
+
+        public final val y: R|Y| = R|<local>/y|
+            public get(): R|Y|
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias P<X, Y> = R|Pair<X, Y>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|C|.R|/Pair.Pair<Inapplicable(INAPPLICABLE): /Pair.Pair>#|<R|kotlin/String|, R|kotlin/Int|>(String(str0), Int(0))
+        Q|C|.R|/Pair.Pair<Inapplicable(INAPPLICABLE): /Pair.Pair>#|<R|kotlin/Int|, R|kotlin/String|>(String(str0), Int(0))
+        Q|C|.R|/Pair.Pair|<R|kotlin/String|, R|kotlin/Int|>(String(str0), Int(0))
+        Q|C|.R|/Pair.Pair|<R|kotlin/String|, R|kotlin/Int|>(String(str0), Int(0))
+        Q|C|.R|/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(0), String(str0))
+    }
