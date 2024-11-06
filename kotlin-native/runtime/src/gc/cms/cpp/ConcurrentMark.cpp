@@ -41,6 +41,7 @@ void gc::mark::ConcurrentMark::endMarkingEpoch() {
 }
 
 void gc::mark::ConcurrentMark::runMainInSTW() {
+    std::unique_lock markLock(markMutex_);
     ParallelProcessor::Worker mainWorker(*parallelProcessor_);
     GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
 

@@ -12,4 +12,8 @@ namespace kotlin::gc {
 class GC::Impl {};
 class GC::ThreadData::Impl {};
 
+namespace barriers {
+class SpecialRefReleaseGuard::Impl {};
+}
+
 } // namespace kotlin::gc

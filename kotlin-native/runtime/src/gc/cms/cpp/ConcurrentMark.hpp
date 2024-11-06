@@ -131,6 +131,11 @@ public:
         return markTerminationGuard;
     }
 
+    /** Ensures that the mark phase would not be run during the execution of the guarded code. Use with care. */
+    auto markMutex() noexcept {
+        return std::shared_lock{markMutex_};
+    }
+
 private:
     GCHandle& gcHandle();
 
@@ -146,6 +151,7 @@ private:
     ManuallyScoped<ParallelProcessor, true> parallelProcessor_{};
 
     RWSpinLock markTerminationMutex_;
+    RWSpinLock markMutex_;
 };
 
 namespace test_support {

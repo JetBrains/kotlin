@@ -33,5 +33,9 @@ private:
     ParallelMarkConcurrentSweep::ThreadData gc_;
 };
 
+namespace barriers {
+class SpecialRefReleaseGuard::Impl {};
+}
+
 } // namespace gc
 } // namespace kotlin

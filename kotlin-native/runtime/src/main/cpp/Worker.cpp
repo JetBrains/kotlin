@@ -682,7 +682,7 @@ void Future::storeResultUnlocked(KNativePtr result, bool ok) {
 }
 
 void Future::cancelUnlocked(MemoryState* memoryState) {
-  kotlin::ThreadStateGuard guard(memoryState, ThreadState::kNative);
+  kotlin::AssertThreadState(memoryState, ThreadState::kNative);
   {
     Locker locker(&lock_, memoryState);
     state_ = CANCELLED;
@@ -854,7 +854,7 @@ Worker::~Worker() {
       DisposeStablePointer(name_);
   }
 
-  kotlin::ThreadStateGuard guard(memoryState_, ThreadState::kNative);
+  kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
 }
