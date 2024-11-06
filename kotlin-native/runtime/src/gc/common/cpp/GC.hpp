@@ -94,7 +94,6 @@ private:
 };
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
-void beforeSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept;
 OBJ_GETTER(weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 bool isMarked(ObjHeader* object) noexcept;
@@ -103,7 +102,24 @@ bool isMarked(ObjHeader* object) noexcept;
 // If the mark bit was unset, this will return `false`.
 bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
-extern const bool kRequiresThreadDataDuringThreadDestruction;
+namespace barriers {
+
+class SpecialRefReleaseGuard : MoveOnly {
+    class Impl;
+public:
+    static bool isNoop();
+
+    SpecialRefReleaseGuard(mm::DirectRefAccessor ref) noexcept;
+    SpecialRefReleaseGuard(SpecialRefReleaseGuard&& other) noexcept;
+    ~SpecialRefReleaseGuard() noexcept;
+
+    SpecialRefReleaseGuard& operator=(SpecialRefReleaseGuard&& other) noexcept;
+
+private:
+    FlatPImpl<Impl, 32> impl_;
+};
+
+} // namespace barriers
 
 } // namespace gc
 

@@ -160,17 +160,20 @@ PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor 
     }
 }
 
-PERFORMANCE_INLINE void gc::barriers::beforeSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept {
+PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::Impl::Impl(mm::DirectRefAccessor ref) noexcept {
     // Can be called with any possible thread state: kotlin, native, unattached thread.
     // This guard synchronizes with the `ConcurrentMark` via the ThreadRegistry lock.
     // It must be done before the barriers phase check.
-    CalledFromNativeGuard guard(/*reentrant=*/true);
-
-    auto phase = currentPhase();
-    BarriersLogDebug(phase, "Write *%p <- NULL (%p overwritten)", ref.location(), ref.load());
-
-    if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
-        beforeHeapRefUpdateSlowPath(ref, nullptr, true);
+    if (mm::ThreadRegistry::IsCurrentThreadRegistered()) {
+        // If the thread is registered, just ensure, that the root set mutation happens will happen in the runnable state
+        stateGuard_ = ThreadStateGuard{ThreadState::kRunnable, true};
+        // NOTE that this barrier must be executed before the RC decrement
+        beforeHeapRefUpdate(ref, nullptr, false);
+    } else {
+        // In case of an unregistered thread, just do thing outside the mark phase.
+        // NOTE This code can be called from quite an unexpected places (such as TLS destructors).
+        // One can't simply register the thread from here.
+        markMutex_ = markDispatcher().markMutex();
     }
 }
 

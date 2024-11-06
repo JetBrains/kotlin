@@ -7,10 +7,12 @@
 
 #include <atomic>
 #include <optional>
+#include <shared_mutex>
 
 #include "Utils.hpp"
 #include "GCStatistics.hpp"
 #include "ReferenceOps.hpp"
+#include "GC.hpp"
 
 /** See. `ConcurrentMark` */
 namespace kotlin::gc::barriers {
@@ -35,9 +37,19 @@ void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
-// Potentially a removal from global root set. May be seen as overwritting a heap ref with `nullptr`.
-void beforeSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept;
 
 ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
+
+class SpecialRefReleaseGuard::Impl : MoveOnly {
+public:
+    explicit Impl(mm::DirectRefAccessor ref) noexcept;
+    Impl(Impl&& other) = default;
+    ~Impl() = default;
+    Impl& operator=(Impl&& other) = default;
+
+private:
+    std::shared_lock<RWSpinLock> markMutex_{};
+    ThreadStateGuard stateGuard_{};
+};
 
 } // namespace kotlin::gc::barriers

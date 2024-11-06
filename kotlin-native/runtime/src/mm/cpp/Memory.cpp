@@ -84,13 +84,6 @@ extern "C" MemoryState* InitMemory() {
     return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
 }
 
-extern "C" void RestoreMemoryState(MemoryState* state) {
-    if (gc::kRequiresThreadDataDuringThreadDestruction) {
-        auto* node = mm::FromMemoryState(state);
-        mm::ThreadRegistry::Instance().SetCurrentThreadDataNode(node);
-    }
-}
-
 void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }

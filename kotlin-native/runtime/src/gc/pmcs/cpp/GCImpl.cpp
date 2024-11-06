@@ -89,8 +89,6 @@ bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
 
 ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
-ALWAYS_INLINE void gc::beforeSpecialRefReleaseToZero(mm::DirectRefAccessor ref) noexcept {}
-
 PERFORMANCE_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_RESULT_OF(gc::WeakRefRead, weakReferee);
 }
@@ -102,6 +100,12 @@ PERFORMANCE_INLINE bool gc::isMarked(ObjHeader* object) noexcept {
 PERFORMANCE_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
+
+ALWAYS_INLINE bool gc::barriers::SpecialRefReleaseGuard::isNoop() { return true; }
+ALWAYS_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(mm::DirectRefAccessor) noexcept {}
+ALWAYS_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(SpecialRefReleaseGuard&&) noexcept = default;
+ALWAYS_INLINE gc::barriers::SpecialRefReleaseGuard::~SpecialRefReleaseGuard() noexcept = default;
+ALWAYS_INLINE gc::barriers::SpecialRefReleaseGuard& gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard::operator=(SpecialRefReleaseGuard&&) noexcept = default;
 
 // static
 ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
@@ -117,5 +121,3 @@ ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignmen
 ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return new (ptr) gc::GC::ObjectData();
 }
-
-const bool gc::kRequiresThreadDataDuringThreadDestruction = false;

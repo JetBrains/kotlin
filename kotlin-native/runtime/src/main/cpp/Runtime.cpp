@@ -127,19 +127,17 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
   ::runtimeState = state;
-  RestoreMemoryState(state->memoryState);
   --aliveRuntimesCount;
   ClearTLS(state->memoryState);
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
 
-  // Worker deinit must be performed in the runnable state because
-  // Worker's destructor unregisters stable refs.
+  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
+  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
+
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
-  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
   DeinitMemory(state->memoryState, destroyRuntime);
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
