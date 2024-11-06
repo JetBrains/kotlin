@@ -13,6 +13,7 @@ val allContainers: List<KeysContainer> = listOf(
     CommonConfigurationKeysContainer,
     CLIConfigurationKeysContainer,
     KlibConfigurationKeysContainer,
+    JvmConfigurationKeysContainer,
 )
 
 fun main(args: Array<String>) {

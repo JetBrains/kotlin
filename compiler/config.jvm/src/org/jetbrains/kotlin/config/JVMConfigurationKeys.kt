@@ -1,196 +1,350 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:Suppress("IncorrectFormatting", "unused")
+
 package org.jetbrains.kotlin.config
 
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+import java.io.File
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
-import java.io.File
 
 object JVMConfigurationKeys {
     @JvmField
-    val OUTPUT_DIRECTORY: CompilerConfigurationKey<File> = CompilerConfigurationKey.create<File>("output directory")
+    val OUTPUT_DIRECTORY = CompilerConfigurationKey.create<File>("output directory")
 
     @JvmField
-    val OUTPUT_JAR: CompilerConfigurationKey<File> = CompilerConfigurationKey.create<File>("output .jar")
+    val OUTPUT_JAR = CompilerConfigurationKey.create<File>("output .jar")
 
     @JvmField
-    val INCLUDE_RUNTIME: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("include runtime to the resulting .jar")
+    val INCLUDE_RUNTIME = CompilerConfigurationKey.create<Boolean>("include runtime to the resulting .jar")
 
     @JvmField
-    val JDK_HOME: CompilerConfigurationKey<File> = CompilerConfigurationKey.create<File>("jdk home")
+    val JDK_HOME = CompilerConfigurationKey.create<File>("jdk home")
 
     @JvmField
-    val NO_JDK: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("no jdk")
+    val NO_JDK = CompilerConfigurationKey.create<Boolean>("no jdk")
 
     @JvmField
-    val DISABLE_STANDARD_SCRIPT_DEFINITION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Disable standard kotlin script support")
+    val DISABLE_STANDARD_SCRIPT_DEFINITION = CompilerConfigurationKey.create<Boolean>("Disable standard kotlin script support")
 
     @JvmField
-    val RETAIN_OUTPUT_IN_MEMORY: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("retain compiled classes in memory for further use, e.g. when running scripts")
+    val RETAIN_OUTPUT_IN_MEMORY = CompilerConfigurationKey.create<Boolean>("retain compiled classes in memory for further use, e.g. when running scripts")
 
     @JvmField
-    val DISABLE_CALL_ASSERTIONS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("disable not-null call assertions")
+    val DISABLE_CALL_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call assertions")
 
     @JvmField
-    val DISABLE_RECEIVER_ASSERTIONS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("disable not-null call receiver assertions")
+    val DISABLE_RECEIVER_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call receiver assertions")
 
     @JvmField
-    val DISABLE_PARAM_ASSERTIONS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("disable not-null parameter assertions")
+    val DISABLE_PARAM_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null parameter assertions")
 
     @JvmField
-    val ASSERTIONS_MODE: CompilerConfigurationKey<JVMAssertionsMode> =
-        CompilerConfigurationKey.create<JVMAssertionsMode>("assertions mode")
+    val ASSERTIONS_MODE = CompilerConfigurationKey.create<JVMAssertionsMode>("assertions mode")
 
     @JvmField
-    val DISABLE_OPTIMIZATION: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("disable optimization")
+    val DISABLE_OPTIMIZATION = CompilerConfigurationKey.create<Boolean>("disable optimization")
 
     @JvmField
-    val USE_TYPE_TABLE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("use type table in serializer")
+    val USE_TYPE_TABLE = CompilerConfigurationKey.create<Boolean>("use type table in serializer")
 
     @JvmField
-    val JVM_TARGET: CompilerConfigurationKey<JvmTarget> = CompilerConfigurationKey.create<JvmTarget>("JVM bytecode target version")
+    val JVM_TARGET = CompilerConfigurationKey.create<JvmTarget>("JVM bytecode target version")
 
     @JvmField
-    val PARAMETERS_METADATA: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Parameters metadata for java 1.8 reflection")
+    val PARAMETERS_METADATA = CompilerConfigurationKey.create<Boolean>("Parameters metadata for java 1.8 reflection")
 
     @JvmField
-    val INCREMENTAL_COMPILATION_COMPONENTS: CompilerConfigurationKey<IncrementalCompilationComponents> =
-        CompilerConfigurationKey.create<IncrementalCompilationComponents>("incremental cache provider")
+    val INCREMENTAL_COMPILATION_COMPONENTS = CompilerConfigurationKey.create<IncrementalCompilationComponents>("incremental cache provider")
 
     @JvmField
-    val MODULE_XML_FILE: CompilerConfigurationKey<File> = CompilerConfigurationKey.create<File>("path to module.xml")
+    val MODULE_XML_FILE = CompilerConfigurationKey.create<File>("path to module.xml")
 
     @JvmField
-    val MODULES: CompilerConfigurationKey<List<Module>> = CompilerConfigurationKey.create<List<Module>>("module data")
+    val MODULES = CompilerConfigurationKey.create<List<Module>>("module data")
 
     @JvmField
-    val FRIEND_PATHS: CompilerConfigurationKey<List<String>> =
-        CompilerConfigurationKey.create<List<String>>("friend module paths")
+    val FRIEND_PATHS = CompilerConfigurationKey.create<List<String>>("friend module paths")
 
     @JvmField
-    val USE_PSI_CLASS_FILES_READING: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("use a slower (PSI-based) class files reading implementation")
+    val USE_PSI_CLASS_FILES_READING = CompilerConfigurationKey.create<Boolean>("use a slower (PSI-based) class files reading implementation")
 
     @JvmField
-    val USE_FAST_JAR_FILE_SYSTEM: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("use a faster JAR filesystem implementation")
+    val USE_FAST_JAR_FILE_SYSTEM = CompilerConfigurationKey.create<Boolean>("use a faster JAR filesystem implementation")
 
     @JvmField
-    val USE_JAVAC: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("use javac [experimental]")
+    val USE_JAVAC = CompilerConfigurationKey.create<Boolean>("use javac [experimental]")
 
     @JvmField
-    val COMPILE_JAVA: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("compile java files [experimental]")
+    val COMPILE_JAVA = CompilerConfigurationKey.create<Boolean>("compile java files [experimental]")
 
     @JvmField
-    val ADDITIONAL_JAVA_MODULES: CompilerConfigurationKey<List<String>> =
-        CompilerConfigurationKey.create<List<String>>("additional Java modules")
+    val ADDITIONAL_JAVA_MODULES = CompilerConfigurationKey.create<List<String>>("additional Java modules")
 
     @JvmField
-    val EMIT_JVM_TYPE_ANNOTATIONS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Emit JVM type annotations in bytecode")
+    val EMIT_JVM_TYPE_ANNOTATIONS = CompilerConfigurationKey.create<Boolean>("Emit JVM type annotations in bytecode")
 
     @JvmField
-    val STRING_CONCAT: CompilerConfigurationKey<JvmStringConcat> =
-        CompilerConfigurationKey.create<JvmStringConcat>("Specifies string concatenation scheme")
+    val STRING_CONCAT = CompilerConfigurationKey.create<JvmStringConcat>("Specifies string concatenation scheme")
 
     @JvmField
-    val JDK_RELEASE: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create<Int>("Specifies JDK API version")
+    val JDK_RELEASE = CompilerConfigurationKey.create<Int>("Specifies JDK API version")
 
     @JvmField
-    val SAM_CONVERSIONS: CompilerConfigurationKey<JvmClosureGenerationScheme> =
-        CompilerConfigurationKey.create<JvmClosureGenerationScheme>("SAM conversions code generation scheme")
+    val SAM_CONVERSIONS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("SAM conversions code generation scheme")
 
     @JvmField
-    val LAMBDAS: CompilerConfigurationKey<JvmClosureGenerationScheme> =
-        CompilerConfigurationKey.create<JvmClosureGenerationScheme>("Lambdas code generation scheme")
+    val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("Lambdas code generation scheme")
 
     @JvmField
-    val KLIB_PATHS: CompilerConfigurationKey<List<String>> =
-        CompilerConfigurationKey.create<List<String>>("Paths to .klib libraries")
+    val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("Paths to .klib libraries")
 
     @JvmField
-    val ABI_STABILITY: CompilerConfigurationKey<JvmAbiStability> =
-        CompilerConfigurationKey.create<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR")
+    val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR")
 
     @JvmField
-    val DO_NOT_CLEAR_BINDING_CONTEXT: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("When using the IR backend, do not clear BindingContext between psi2ir and lowerings")
+    val DO_NOT_CLEAR_BINDING_CONTEXT = CompilerConfigurationKey.create<Boolean>("When using the IR backend, do not clear BindingContext between psi2ir and lowerings")
 
     @JvmField
-    val NO_RESET_JAR_TIMESTAMPS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Do not reset timestamps in jar entries")
+    val NO_RESET_JAR_TIMESTAMPS = CompilerConfigurationKey.create<Boolean>("Do not reset timestamps in jar entries")
 
     @JvmField
-    val NO_UNIFIED_NULL_CHECKS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Use pre-1.4 exception types in null checks instead of java.lang.NPE")
+    val NO_UNIFIED_NULL_CHECKS = CompilerConfigurationKey.create<Boolean>("Use pre-1.4 exception types in null checks instead of java.lang.NPE")
 
     @JvmField
-    val NO_SOURCE_DEBUG_EXTENSION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP")
+    val NO_SOURCE_DEBUG_EXTENSION = CompilerConfigurationKey.create<Boolean>("Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP")
 
     @JvmField
-    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Use old, 1.4 version of inline classes mangling scheme")
+    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME = CompilerConfigurationKey.create<Boolean>("Use old, 1.4 version of inline classes mangling scheme")
 
     @JvmField
-    val ENABLE_JVM_PREVIEW: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Enable Java language preview features")
+    val ENABLE_JVM_PREVIEW = CompilerConfigurationKey.create<Boolean>("Enable Java language preview features")
 
     @JvmField
-    val NO_REFLECT: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar")
+    val NO_REFLECT = CompilerConfigurationKey.create<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar")
 
     @JvmField
-    val SERIALIZE_IR: CompilerConfigurationKey<JvmSerializeIrMode> =
-        CompilerConfigurationKey.create<JvmSerializeIrMode>("What functions to serialize as IR to class metadata")
+    val SERIALIZE_IR = CompilerConfigurationKey.create<JvmSerializeIrMode>("What functions to serialize as IR to class metadata")
 
     @JvmField
-    val VALIDATE_BYTECODE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("Validate generated JVM bytecode")
+    val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("Validate generated JVM bytecode")
 
     @JvmField
-    val LINK_VIA_SIGNATURES: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend")
+    val LINK_VIA_SIGNATURES = CompilerConfigurationKey.create<Boolean>("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend")
 
     @JvmField
-    val ENABLE_DEBUG_MODE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create<Boolean>("Enable debug mode")
+    val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("Enable debug mode")
 
     @JvmField
-    val NO_NEW_JAVA_ANNOTATION_TARGETS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
+    val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     @JvmField
-    val OLD_INNER_CLASSES_LOGIC: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Use old logic for generation of InnerClasses attributes")
+    val OLD_INNER_CLASSES_LOGIC = CompilerConfigurationKey.create<Boolean>("Use old logic for generation of InnerClasses attributes")
 
     @JvmField
-    val ENABLE_IR_INLINER: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
+    val ENABLE_IR_INLINER = CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
 
     @JvmField
-    val USE_INLINE_SCOPES_NUMBERS: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
+    val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
 
     @JvmField
-    val SKIP_BODIES: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
+    val SKIP_BODIES = CompilerConfigurationKey.create<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
+
 }
+
+var CompilerConfiguration.outputDirectory: File?
+    get() = get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+    set(value) { put(JVMConfigurationKeys.OUTPUT_DIRECTORY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.outputJar: File?
+    get() = get(JVMConfigurationKeys.OUTPUT_JAR)
+    set(value) { put(JVMConfigurationKeys.OUTPUT_JAR, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.includeRuntime: Boolean
+    get() = getBoolean(JVMConfigurationKeys.INCLUDE_RUNTIME)
+    set(value) { put(JVMConfigurationKeys.INCLUDE_RUNTIME, value) }
+
+var CompilerConfiguration.jdkHome: File?
+    get() = get(JVMConfigurationKeys.JDK_HOME)
+    set(value) { put(JVMConfigurationKeys.JDK_HOME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.noJdk: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_JDK)
+    set(value) { put(JVMConfigurationKeys.NO_JDK, value) }
+
+var CompilerConfiguration.disableStandardScriptDefinition: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION)
+    set(value) { put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, value) }
+
+var CompilerConfiguration.retainOutputInMemory: Boolean
+    get() = getBoolean(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY)
+    set(value) { put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, value) }
+
+var CompilerConfiguration.disableCallAssertions: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
+    set(value) { put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, value) }
+
+var CompilerConfiguration.disableReceiverAssertions: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS)
+    set(value) { put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, value) }
+
+var CompilerConfiguration.disableParamAssertions: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
+    set(value) { put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, value) }
+
+var CompilerConfiguration.assertionsMode: JVMAssertionsMode?
+    get() = get(JVMConfigurationKeys.ASSERTIONS_MODE)
+    set(value) { put(JVMConfigurationKeys.ASSERTIONS_MODE, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.disableOptimization: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DISABLE_OPTIMIZATION)
+    set(value) { put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, value) }
+
+var CompilerConfiguration.useTypeTable: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
+    set(value) { put(JVMConfigurationKeys.USE_TYPE_TABLE, value) }
+
+var CompilerConfiguration.jvmTarget: JvmTarget?
+    get() = get(JVMConfigurationKeys.JVM_TARGET)
+    set(value) { put(JVMConfigurationKeys.JVM_TARGET, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.parametersMetadata: Boolean
+    get() = getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
+    set(value) { put(JVMConfigurationKeys.PARAMETERS_METADATA, value) }
+
+var CompilerConfiguration.incrementalCompilationComponents: IncrementalCompilationComponents?
+    get() = get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+    set(value) { put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.moduleXmlFile: File?
+    get() = get(JVMConfigurationKeys.MODULE_XML_FILE)
+    set(value) { put(JVMConfigurationKeys.MODULE_XML_FILE, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.modules: MutableList<Module>
+    get() = getList(JVMConfigurationKeys.MODULES)
+    set(value) { put(JVMConfigurationKeys.MODULES, value) }
+
+var CompilerConfiguration.friendPaths: MutableList<String>
+    get() = getList(JVMConfigurationKeys.FRIEND_PATHS)
+    set(value) { put(JVMConfigurationKeys.FRIEND_PATHS, value) }
+
+var CompilerConfiguration.usePsiClassFilesReading: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+    set(value) { put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, value) }
+
+var CompilerConfiguration.useFastJarFileSystem: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)
+    set(value) { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, value) }
+
+var CompilerConfiguration.useJavac: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_JAVAC)
+    set(value) { put(JVMConfigurationKeys.USE_JAVAC, value) }
+
+var CompilerConfiguration.compileJava: Boolean
+    get() = getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
+    set(value) { put(JVMConfigurationKeys.COMPILE_JAVA, value) }
+
+var CompilerConfiguration.additionalJavaModules: MutableList<String>
+    get() = getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES)
+    set(value) { put(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, value) }
+
+var CompilerConfiguration.emitJvmTypeAnnotations: Boolean
+    get() = getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
+    set(value) { put(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS, value) }
+
+var CompilerConfiguration.stringConcat: JvmStringConcat?
+    get() = get(JVMConfigurationKeys.STRING_CONCAT)
+    set(value) { put(JVMConfigurationKeys.STRING_CONCAT, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.jdkRelease: Int?
+    get() = get(JVMConfigurationKeys.JDK_RELEASE)
+    set(value) { put(JVMConfigurationKeys.JDK_RELEASE, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.samConversions: JvmClosureGenerationScheme?
+    get() = get(JVMConfigurationKeys.SAM_CONVERSIONS)
+    set(value) { put(JVMConfigurationKeys.SAM_CONVERSIONS, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
+    get() = get(JVMConfigurationKeys.LAMBDAS)
+    set(value) { put(JVMConfigurationKeys.LAMBDAS, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.klibPaths: MutableList<String>
+    get() = getList(JVMConfigurationKeys.KLIB_PATHS)
+    set(value) { put(JVMConfigurationKeys.KLIB_PATHS, value) }
+
+var CompilerConfiguration.abiStability: JvmAbiStability?
+    get() = get(JVMConfigurationKeys.ABI_STABILITY)
+    set(value) { put(JVMConfigurationKeys.ABI_STABILITY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.doNotClearBindingContext: Boolean
+    get() = getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)
+    set(value) { put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, value) }
+
+var CompilerConfiguration.noResetJarTimestamps: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS)
+    set(value) { put(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, value) }
+
+var CompilerConfiguration.noUnifiedNullChecks: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
+    set(value) { put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, value) }
+
+var CompilerConfiguration.noSourceDebugExtension: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION)
+    set(value) { put(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION, value) }
+
+var CompilerConfiguration.useOldInlineClassesManglingScheme: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+    set(value) { put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, value) }
+
+var CompilerConfiguration.enableJvmPreview: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
+    set(value) { put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, value) }
+
+var CompilerConfiguration.noReflect: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_REFLECT)
+    set(value) { put(JVMConfigurationKeys.NO_REFLECT, value) }
+
+var CompilerConfiguration.serializeIr: JvmSerializeIrMode?
+    get() = get(JVMConfigurationKeys.SERIALIZE_IR)
+    set(value) { put(JVMConfigurationKeys.SERIALIZE_IR, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.validateBytecode: Boolean
+    get() = getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
+    set(value) { put(JVMConfigurationKeys.VALIDATE_BYTECODE, value) }
+
+var CompilerConfiguration.linkViaSignatures: Boolean
+    get() = getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
+    set(value) { put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, value) }
+
+var CompilerConfiguration.enableDebugMode: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
+    set(value) { put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, value) }
+
+var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
+    set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
+
+var CompilerConfiguration.oldInnerClassesLogic: Boolean
+    get() = getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
+    set(value) { put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, value) }
+
+var CompilerConfiguration.enableIrInliner: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
+    set(value) { put(JVMConfigurationKeys.ENABLE_IR_INLINER, value) }
+
+var CompilerConfiguration.useInlineScopesNumbers: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
+    set(value) { put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, value) }
+
+var CompilerConfiguration.skipBodies: Boolean
+    get() = getBoolean(JVMConfigurationKeys.SKIP_BODIES)
+    set(value) { put(JVMConfigurationKeys.SKIP_BODIES, value) }
+

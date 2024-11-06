@@ -14,3 +14,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" { }
 }
+
+generatedConfigurationKeys("JVMConfigurationKeys")
