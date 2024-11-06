@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
@@ -1237,7 +1238,11 @@ open class FirDeclarationsResolveTransformer(
                         symbol = FirValueParameterSymbol(name)
                         returnTypeRef = receiverType
                             .toFirResolvedTypeRef(lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                        valueParameterKind = FirValueParameterKind.ContextParameter
+                        valueParameterKind = if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                            FirValueParameterKind.ContextParameter
+                        } else {
+                            FirValueParameterKind.LegacyContextReceiver
+                        }
                     }
                 }.orEmpty()
         )
