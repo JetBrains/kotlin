@@ -242,7 +242,7 @@ class PostponedArgumentsAnalyzer(
             //      foo() // T = Unit, even though there is no implicit return
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
-            val haveSubsystem = c.addSubsystemFromExpression(expression)
+            val haveSubsystem = c.addSubsystemFromAtom(atom)
             if (isLastExpression && isUnitLambda) {
                 // That "if" is necessary because otherwise we would force a lambda return type
                 // to be inferred from completed last expression.

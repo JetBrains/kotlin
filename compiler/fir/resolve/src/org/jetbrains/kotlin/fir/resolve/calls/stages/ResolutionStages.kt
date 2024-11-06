@@ -480,6 +480,23 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
+        // We could write simply
+        // val arguments = callInfo.argumentAtoms
+        // but, we have to re-create atoms here for each candidate, otherwise in a large number of tests
+        // we can encounter a problem "subAtom already initialized". For example:
+        //
+        //   class A<K>
+        //   fun <K> A<K>.foo(k: K) = k // (1)
+        //   fun <K> A<K>.foo(a: () -> Unit) = 2 // (2)
+        //   fun test(){
+        //     A<Int>().foo {} // (1)
+        //   }
+        //
+        // We have two different candidates for the 'foo' call here, so we initialize subAtom first time
+        // inside 'preprocessLambdaArgument' -> 'createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded' for a non-functional candidate,
+        // and then try to re-initialize it second time inside 'preprocessLambdaArgument' -> 'createResolvedLambdaAtom' for a functional one
+        //
+        // So the pattern is "lambda at use-site with two different candidates"
         val arguments = callInfo.arguments.map { ConeResolutionAtom.createRawAtom(it) }
         val mapping = context.bodyResolveComponents.mapArguments(
             arguments,

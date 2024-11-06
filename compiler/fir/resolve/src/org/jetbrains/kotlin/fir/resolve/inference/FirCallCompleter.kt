@@ -205,9 +205,14 @@ class FirCallCompleter(
                 when {
                     system.notFixedTypeVariables.isEmpty() -> return
                     expectedType.isUnit ->
+                        // There's no much sense in using EQUALITY where just subtyping should be enough,
+                        // but it seems like it was introduced as a workaround for KT-39900, to avoid adding Unit constraint
+                        // which wouldn't fail before lambda analysis, but would lead after it.
+                        // See diagnostics/tests/inference/coercionToUnit/coerctionToUnitForATypeWithUpperBound.kt
+                        // But it seems like it should be generally resolved via KT-63678
+                        // TODO: Consider using `addSubtypeConstraintIfCompatible` both for Unit and Unit! (KT-72396)
                         system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
                     // Flexible Unit!
-                    // TODO: Consider unifying Unit! and Unit behavior (KT-72396)
                     else -> system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
                 }
             }
@@ -484,13 +489,36 @@ class FirCallCompleter(
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)
                 .map {
+                    val rawAtom = ConeResolutionAtom.createRawAtom(it.expression)
                     when {
-                        // If return statements of lambda analyzed with an expected type (so, not in dependent mode)
-                        // There should be no complex atom left
-                        expectedReturnType != null && session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21) ->
-                            ConeSimpleLeafResolutionAtom(it.expression, allowUnresolvedExpression = false)
+                        expectedReturnType == null ->
+                            rawAtom
+                        !session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21) ->
+                            rawAtom
+                        // Generally, this branch should be removed, and we should use ConeSimpleLeafResolutionAtom here, too.
+                        // (see the comment under the "else").
+                        //
+                        // But due to subtle resolution details, we preserve atoms with candidates, so we might consider it
+                        // as `haveSubsystem == true` at PostponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem,
+                        // which would allow us to add Unit constraint there and infer Unit as a builder result at
+                        //  diagnostics/tests/inference/pcla/issues/kt52838c.fir.kt
+                        //
+                        // Perfectly, this Unit constraint shouldn't be required at all or should be added at
+                        // FirCallCompleter.addConstraintFromExpectedType, but there we use EQUALITY constraints for Unit
+                        // and `Captured(*) & PTVv` as an expression type (smart cast), so it fails.
+                        // TODO: Hopefully this can be removed once we get rid of adding EQUALITY for Unit expected type (KT-72396)
+                        rawAtom is ConeAtomWithCandidate ->
+                            rawAtom
                         else ->
-                            ConeResolutionAtom.createRawAtom(it.expression)
+                            // If return statements of lambda analyzed with an expected type (so, not in dependent mode),
+                            // there should be no complex atom left.
+                            //
+                            // This is especially crucial for lambdas used as return expressions of the current lambda, since,
+                            // with expected, type, they have been completely analyzed, so we shouldn't create postponed atoms for them.
+                            // Because such postponed atoms would be taken into account by ConstraintSystemCompleter
+                            // (e.g., at fixNextReadyVariableForParameterTypeIfNeeded), thus affecting variable fixation order.
+                            // See diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/noPostponedAtomForNestedLambda.fir.kt
+                            ConeSimpleLeafResolutionAtom(it.expression, allowUnresolvedExpression = false)
                     }
                 }
 

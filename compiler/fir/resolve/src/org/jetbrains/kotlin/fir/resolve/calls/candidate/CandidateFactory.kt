@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom.Companion.createRawAtom
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -40,8 +41,8 @@ class CandidateFactory private constructor(
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
-            callInfo.arguments.forEach {
-                system.addSubsystemFromExpression(it)
+            callInfo.argumentAtoms.forEach {
+                system.addSubsystemFromAtom(it)
             }
             return system.asReadOnlyStorage()
         }
@@ -257,40 +258,24 @@ class CandidateFactory private constructor(
     }
 }
 
-fun processConstraintStorageFromExpression(statement: FirStatement, processor: (ConstraintStorage) -> Unit): Boolean {
-    return when (statement) {
-        is FirQualifiedAccessExpression,
-        is FirWhenExpression,
-        is FirTryExpression,
-        is FirCheckNotNullCall,
-        is FirElvisExpression,
-        -> {
-            val candidate = (statement as FirResolvable).candidate() ?: return false
-            processor(candidate.system.asReadOnlyStorage())
+private fun processConstraintStorageFromAtom(
+    atom: ConeResolutionAtom,
+    processor: (ConstraintStorage) -> Unit,
+): Boolean {
+    return when (atom) {
+        is ConeAtomWithCandidate -> {
+            processor(atom.candidate.system.asReadOnlyStorage())
             true
         }
-
-        is FirSafeCallExpression -> processConstraintStorageFromExpression(statement.selector, processor)
-        is FirWrappedArgumentExpression -> processConstraintStorageFromExpression(statement.expression, processor)
-        is FirBlock -> {
-            var wasAny = false
-
-            // Might be `.any {` call, but we should process all the items
-            statement.lastExpression?.let {
-                if (processConstraintStorageFromExpression(it, processor)) {
-                    wasAny = true
-                }
-            }
-
-            wasAny
+        is ConeResolutionAtomWithSingleChild -> {
+            processConstraintStorageFromAtom(atom.subAtom ?: return false, processor)
         }
-        is FirErrorExpression -> statement.expression?.let { processConstraintStorageFromExpression(it, processor) } == true
         else -> false
     }
 }
 
-fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement): Boolean {
-    return processConstraintStorageFromExpression(statement) {
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromAtom(atom: ConeResolutionAtom): Boolean {
+    return processConstraintStorageFromAtom(atom) {
         // If a call inside a lambda uses outer CS,
         // it's already integrated into inference session via FirPCLAInferenceSession.processPartiallyResolvedCall
         if (!it.usesOuterCs) {
