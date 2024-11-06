@@ -135,12 +135,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         println("constructorIndicator = null,")
                     }
                     for (field in constructorArguments) {
-                        if (element.isSubclassOfAny(
-                                IrTree.delegatingConstructorCall,
-                                IrTree.enumConstructorCall
-                            ) && field.name == "origin"
-                        ) continue
-
                         print(field.name, " = ")
                         copyField(element, field)
                         println(",")

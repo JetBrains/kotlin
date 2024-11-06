@@ -910,13 +910,14 @@ fun IrDelegatingConstructorCallImpl(
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
 ): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    origin = null,
+    origin = origin,
     typeArguments = initializeTypeArguments(typeArgumentsCount),
     valueArguments = initializeParameterArguments(symbol.getRealOwner().valueParameters.size),
 )
@@ -934,13 +935,14 @@ fun IrDelegatingConstructorCallImplWithShape(
     contextParameterCount: Int,
     hasDispatchReceiver: Boolean,
     hasExtensionReceiver: Boolean,
+    origin: IrStatementOrigin? = null,
 ): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    origin = null,
+    origin = origin,
     typeArguments = initializeTypeArguments(typeArgumentsCount),
     valueArguments = initializeParameterArguments(valueArgumentsCount),
 )
@@ -955,13 +957,14 @@ fun IrEnumConstructorCallImpl(
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
 ): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    origin = null,
+    origin = origin,
     typeArguments = initializeTypeArguments(typeArgumentsCount),
     valueArguments = initializeParameterArguments(symbol.getRealOwner().valueParameters.size),
 )
@@ -979,13 +982,14 @@ fun IrEnumConstructorCallImplWithShape(
     contextParameterCount: Int,
     hasDispatchReceiver: Boolean,
     hasExtensionReceiver: Boolean,
+    origin: IrStatementOrigin? = null,
 ): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    origin = null,
+    origin = origin,
     typeArguments = initializeTypeArguments(typeArgumentsCount),
     valueArguments = initializeParameterArguments(valueArgumentsCount),
 )
