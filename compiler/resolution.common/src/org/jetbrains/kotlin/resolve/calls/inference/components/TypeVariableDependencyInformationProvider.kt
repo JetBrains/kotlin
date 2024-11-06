@@ -39,6 +39,8 @@ class TypeVariableDependencyInformationProvider(
     private val shallowTypeVariableDependencies: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> = hashMapOf()
 
     // Oriented edges
+    // For a type variable X, another variable Y belongs to `postponeArgumentsEdges[X]` iff there's some postponed atom
+    // that contains X in its input type and Y in its output type.
     private val postponeArgumentsEdges: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> = hashMapOf()
 
     private val relatedToAllOutputTypes: MutableSet<TypeConstructorMarker> = hashSetOf()
