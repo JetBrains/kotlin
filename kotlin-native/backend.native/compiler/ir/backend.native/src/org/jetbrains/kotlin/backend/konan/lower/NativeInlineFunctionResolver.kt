@@ -50,12 +50,12 @@ internal class NativeInlineFunctionResolver(
 
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
 
+        UpgradeCallableReferences(context).lower(function)
+
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
         // Do not extract local classes off of inline functions from cached libraries.
         // LocalClassesInInlineFunctionsLowering(context).lower(body, function)
         // LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
-
-        UpgradeCallableReferences(context).lower(function)
 
         ArrayConstructorLowering(context).lower(body, function)
 

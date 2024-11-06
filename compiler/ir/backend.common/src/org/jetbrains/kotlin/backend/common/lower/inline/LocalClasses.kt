@@ -56,8 +56,12 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val inlineLambdas = mutableListOf<IrFunction>()
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
-                    val inlineLambda = (argument as? IrFunctionExpression)?.function
-                        ?.takeIf { rootCallee.parameters[index].isInlineParameter() }
+                    val inlineLambda = when (argument) {
+                       is IrFunctionExpression -> argument.function
+                       is IrRichPropertyReference -> argument.getterFunction
+                       is IrRichFunctionReference -> argument.invokeFunction
+                       else -> null
+                    }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
                     if (inlineLambda == null)
                         expression.arguments[index] = argument?.transform(this, data)
                     else
@@ -82,6 +86,17 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
 
                         override fun visitFunctionExpression(expression: IrFunctionExpression) {
                             expression.function.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.invokeFunction.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.getterFunction.acceptChildrenVoid(this)
+                            expression.setterFunction?.acceptChildrenVoid(this)
                         }
 
                         override fun visitFunction(declaration: IrFunction) {
