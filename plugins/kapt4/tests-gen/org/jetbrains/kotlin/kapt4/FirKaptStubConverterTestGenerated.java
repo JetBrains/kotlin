@@ -48,6 +48,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("annotationWithCompanion.kt")
+  public void testAnnotationWithCompanion() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("annotationWithEmptyTarget.kt")
   public void testAnnotationWithEmptyTarget() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithEmptyTarget.kt");
