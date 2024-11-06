@@ -48,7 +48,7 @@ fun ConeClassifierLookupTag.toRegularClassSymbol(useSiteSession: FirSession): Fi
  */
 @OptIn(LookupTagInternals::class)
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
-    if (this is ConeClassLookupTagWithFixedSymbol) {
+    if (this is ConeClassLikeLookupTagWithFixedSymbol) {
         return this.symbol
     }
     (this as? ConeClassLikeLookupTagImpl)?.boundSymbol?.takeIf { it.first === useSiteSession }?.let { return it.second }

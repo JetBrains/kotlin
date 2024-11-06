@@ -91,7 +91,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             this.symbol = refinedTypeSymbol
             superTypeRefs += buildResolvedTypeRef {
                 coneType = ConeClassLikeTypeImpl(
-                    ConeClassLookupTagWithFixedSymbol(schemaId, schemaSymbol),
+                    ConeClassLikeLookupTagWithFixedSymbol(schemaId, schemaSymbol),
                     emptyArray(),
                     isMarkedNullable = false
                 )
@@ -103,7 +103,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 lookupTag,
                 arrayOf(
                     ConeClassLikeTypeImpl(
-                        ConeClassLookupTagWithFixedSymbol(refinedTypeId, refinedTypeSymbol),
+                        ConeClassLikeLookupTagWithFixedSymbol(refinedTypeId, refinedTypeSymbol),
                         emptyArray(),
                         isMarkedNullable = false
                     )

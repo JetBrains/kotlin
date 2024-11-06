@@ -81,7 +81,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
                     ConeClassLikeLookupTagImpl(DataFrameLikeCallsRefinementExtension.DATAFRAME),
                     arrayOf(
                         ConeClassLikeTypeImpl(
-                            ConeClassLookupTagWithFixedSymbol(tokenSymbol.classId, tokenSymbol),
+                            ConeClassLikeLookupTagWithFixedSymbol(tokenSymbol.classId, tokenSymbol),
                             emptyArray(),
                             isMarkedNullable = false
                         )
@@ -116,7 +116,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             DataFrameLikeCallsRefinementExtension.Companion.KEY,
             name,
             ConeClassLikeTypeImpl(
-                ConeClassLookupTagWithFixedSymbol(scope, scopeSymbol),
+                ConeClassLikeLookupTagWithFixedSymbol(scope, scopeSymbol),
                 emptyArray(),
                 isMarkedNullable = false
             )

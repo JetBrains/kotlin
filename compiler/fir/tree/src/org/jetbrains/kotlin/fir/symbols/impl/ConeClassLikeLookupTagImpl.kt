@@ -16,7 +16,7 @@ annotation class LookupTagInternals
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
 
     init {
-        assert(!classId.isLocal) { "You should use ConeClassLookupTagWithFixedSymbol for local $classId!" }
+        assert(!classId.isLocal) { "You should use ${ConeClassLikeLookupTagWithFixedSymbol::class.simpleName} for local $classId!" }
     }
 
     @LookupTagInternals
