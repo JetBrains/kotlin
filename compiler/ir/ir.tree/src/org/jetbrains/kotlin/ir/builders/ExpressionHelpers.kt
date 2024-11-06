@@ -466,3 +466,22 @@ fun IrBuilderWithScope.irConstantObject(
         typeArguments
     )
 }
+
+fun IrBuilder.irRichFunctionReference(
+    invokeFunction: IrSimpleFunction,
+    superType: IrType,
+    reflectionTargetSymbol: IrFunctionSymbol?,
+    overriddenFunctionSymbol: IrSimpleFunctionSymbol,
+    captures: List<IrExpression>,
+    origin: IrStatementOrigin?,
+): IrRichFunctionReferenceImpl = IrRichFunctionReferenceImpl(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = superType,
+    reflectionTargetSymbol = reflectionTargetSymbol,
+    overriddenFunctionSymbol = overriddenFunctionSymbol,
+    invokeFunction = invokeFunction,
+    origin = origin
+).apply {
+    boundValues += captures
+}

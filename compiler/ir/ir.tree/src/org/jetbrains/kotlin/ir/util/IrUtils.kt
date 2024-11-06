@@ -44,8 +44,7 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParame
         is IrFunctionAccessExpression -> this.symbol.owner
         is IrFunctionReference -> this.symbol.owner
         is IrPropertyReference -> {
-            assert(this.field == null) { "Field should be null to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}" }
-            this.getter!!.owner
+            this.getter?.owner ?: error("There should be getter to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}")
         }
         else -> error(this)
     }

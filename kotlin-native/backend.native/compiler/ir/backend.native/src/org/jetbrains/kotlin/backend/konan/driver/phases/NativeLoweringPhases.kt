@@ -151,6 +151,11 @@ private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
         name = "NativeInlineCallableReferenceToLambdaPhase",
 )
 
+private val upgradeCallableReferencesPhase = createFileLoweringPhase(
+        ::UpgradeCallableReferences,
+        name = "UpgradeCallableReferences",
+)
+
 private val arrayConstructorPhase = createFileLoweringPhase(
         ::ArrayConstructorLowering,
         name = "ArrayConstructor",
@@ -579,6 +584,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         provisionalFunctionExpressionPhase,
         volatilePhase,
         testProcessorPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
+        upgradeCallableReferencesPhase,
         delegatedPropertyOptimizationPhase,
         propertyReferencePhase,
         functionReferencePhase,
