@@ -1,0 +1,33 @@
+FILE: annotationOnReceiver.kt
+    public? final? fun @RECEIVER:FunctionReceiverAnnotation(IntegerLiteral(1)) @ReceiverTypeAnnotation(IntegerLiteral(2)) List<@ReceiverNestedTypeAnnotation(IntegerLiteral(3)) String>.function(): R|kotlin/Unit| {
+    }
+    public? final? val @RECEIVER:PropertyReceiverAnnotation(IntegerLiteral(4)) @ReceiverTypeAnnotation(IntegerLiteral(5)) List<@ReceiverNestedTypeAnnotation(IntegerLiteral(6)) String>.property: <implicit>
+        public? get(): <implicit> {
+            ^ IntegerLiteral(0)
+        }
+    context(List<@ContextReceiverAnnotation(IntegerLiteral(7)) Int>, List<@ContextReceiverAnnotation() String>)
+    public? final? fun functionWithContextReceivers(): R|kotlin/Unit| {
+    }
+    context(List<@ContextReceiverAnnotation(IntegerLiteral(8)) Long>, List<@ContextReceiverAnnotation() Boolean>)
+    public? final? val propertyWithContextReceivers: <implicit>
+        public? get(): <implicit> {
+            ^ IntegerLiteral(0)
+        }
+    context(List<@ContextReceiverAnnotation(IntegerLiteral(9)) Short>, List<@ContextReceiverAnnotation() UInt>)
+    public final? class MyClass : R|kotlin/Any| {
+        public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(List<@ContextReceiverAnnotation(IntegerLiteral(10)) Short>, List<@ContextReceiverAnnotation() UInt>)
+    public final? class MyClassWithExplicitConstructor : R|kotlin/Any| {
+        public? [ContainingClassKey=MyClassWithExplicitConstructor] constructor(): R|MyClassWithExplicitConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? [ContainingClassKey=MyClassWithExplicitConstructor] constructor(i: Int): R|MyClassWithExplicitConstructor| {
+            this<R|MyClassWithExplicitConstructor|>()
+        }
+
+    }

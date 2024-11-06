@@ -2383,6 +2383,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("contextReceiverAsFunctionImplicitReturnType.kt")
+      public void testContextReceiverAsFunctionImplicitReturnType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/contextReceiverAsFunctionImplicitReturnType.kt");
+      }
+
+      @Test
+      @TestMetadata("contextReceiverAsPropertyImplicitReturnType.kt")
+      public void testContextReceiverAsPropertyImplicitReturnType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/contextReceiverAsPropertyImplicitReturnType.kt");
+      }
+
+      @Test
       @TestMetadata("cycleAnnotationOnFunction.kt")
       public void testCycleAnnotationOnFunction() {
         runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunction.kt");
@@ -2407,6 +2419,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("cycleAnnotationOnFunctionReceiverType.kt")
+      public void testCycleAnnotationOnFunctionReceiverType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunctionReceiverType.kt");
+      }
+
+      @Test
+      @TestMetadata("cycleAnnotationOnFunctionReceiverTypeInsideLocalClass.kt")
+      public void testCycleAnnotationOnFunctionReceiverTypeInsideLocalClass() {
+        runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnFunctionReceiverTypeInsideLocalClass.kt");
+      }
+
+      @Test
       @TestMetadata("cycleAnnotationOnProperty.kt")
       public void testCycleAnnotationOnProperty() {
         runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnProperty.kt");
@@ -2428,6 +2452,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("cycleAnnotationOnPropertyInsideLocalClass.kt")
       public void testCycleAnnotationOnPropertyInsideLocalClass() {
         runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyInsideLocalClass.kt");
+      }
+
+      @Test
+      @TestMetadata("cycleAnnotationOnPropertyReceiverType.kt")
+      public void testCycleAnnotationOnPropertyReceiverType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyReceiverType.kt");
+      }
+
+      @Test
+      @TestMetadata("cycleAnnotationOnPropertyReceiverTypeInsideLocalClass.kt")
+      public void testCycleAnnotationOnPropertyReceiverTypeInsideLocalClass() {
+        runTest("compiler/testData/diagnostics/tests/annotations/cycleAnnotationOnPropertyReceiverTypeInsideLocalClass.kt");
       }
 
       @Test
@@ -2830,6 +2866,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("qualifiedNestedClassAsIsAsAnnotationParameter.kt")
       public void testQualifiedNestedClassAsIsAsAnnotationParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/qualifiedNestedClassAsIsAsAnnotationParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("receiverAsFunctionImplicitType.kt")
+      public void testReceiverAsFunctionImplicitType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/receiverAsFunctionImplicitType.kt");
+      }
+
+      @Test
+      @TestMetadata("receiverAsPropertyImplicitType.kt")
+      public void testReceiverAsPropertyImplicitType() {
+        runTest("compiler/testData/diagnostics/tests/annotations/receiverAsPropertyImplicitType.kt");
       }
 
       @Test
