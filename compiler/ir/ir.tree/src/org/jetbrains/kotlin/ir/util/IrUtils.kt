@@ -1505,6 +1505,44 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
 
+/**
+ * Check whether [this] has exact number/presence of parameters, as specified for each parameter kind.
+ *
+ * Additionally, checks whether [parameters] have the types specified in [parameterTypes].
+ * Note: types are compared with [IrType.equals].
+ */
+fun IrFunction.hasShape(
+    dispatchReceiver: Boolean = false,
+    extensionReceiver: Boolean = false,
+    contextParameters: Int = 0,
+    regularParameters: Int = 0,
+    parameterTypes: List<IrType?> = emptyList(),
+): Boolean {
+    var actuallyHasDispatchReceiver = false
+    var actuallyHasExtensionReceiver = false
+    var actualContextParameters = 0
+    var actualRegularParameters = 0
+    for (param in target.parameters) {
+        when (param.kind) {
+            IrParameterKind.DispatchReceiver -> actuallyHasDispatchReceiver = true
+            IrParameterKind.ExtensionReceiver -> actuallyHasExtensionReceiver = true
+            IrParameterKind.ContextParameter -> actualContextParameters++
+            IrParameterKind.RegularParameter -> actualRegularParameters++
+        }
+    }
+
+    if (actuallyHasDispatchReceiver != dispatchReceiver) return false
+    if (actuallyHasExtensionReceiver != extensionReceiver) return false
+    if (actualContextParameters != contextParameters) return false
+    if (actualRegularParameters != regularParameters) return false
+
+    for ((param, expectedType) in parameters zip parameterTypes) {
+        if (expectedType != null && param.type != expectedType) return false
+    }
+
+    return true
+}
+
 fun IrFunction.isToString(): Boolean =
     name == OperatorNameConventions.TO_STRING && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
 
