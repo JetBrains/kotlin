@@ -585,6 +585,40 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrRichFunctionReference =
+        IrRichFunctionReferenceImpl(
+            constructorIndicator = null,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedFunction),
+            overriddenFunctionSymbol = symbolRemapper.getReferencedSimpleFunction(expression.overriddenFunctionSymbol),
+            invokeFunction = expression.invokeFunction.transform(),
+            origin = expression.origin,
+            hasUnitConversion = expression.hasUnitConversion,
+            hasSuspendConversion = expression.hasSuspendConversion,
+            hasVarargConversion = expression.hasVarargConversion,
+            isRestrictedSuspension = expression.isRestrictedSuspension,
+        ).apply {
+            expression.boundValues.mapTo(boundValues) { it.transform() }
+            processAttributes(expression)
+        }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrRichPropertyReference =
+        IrRichPropertyReferenceImpl(
+            constructorIndicator = null,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedDeclarationWithAccessors),
+            getterFunction = expression.getterFunction.transform(),
+            setterFunction = expression.setterFunction?.transform(),
+            origin = expression.origin,
+        ).apply {
+            expression.boundValues.mapTo(boundValues) { it.transform() }
+            processAttributes(expression)
+        }
+
     override fun visitClassReference(expression: IrClassReference): IrClassReference =
         IrClassReferenceImpl(
             constructorIndicator = null,

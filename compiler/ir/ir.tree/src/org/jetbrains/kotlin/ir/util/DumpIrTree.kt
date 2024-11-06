@@ -357,6 +357,28 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            val names = expression.invokeFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            expression.overriddenFunctionSymbol.dumpInternal("overriddenFunctionSymbol")
+            expression.boundValues.forEachIndexed { index, value ->
+                value.accept(this, "bound ${names[index]}")
+            }
+            expression.invokeFunction.accept(this, "invoke")
+        }
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            val names = expression.getterFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            expression.boundValues.forEachIndexed { index, value ->
+                value.accept(this, "bound ${names[index]}")
+            }
+            expression.getterFunction.accept(this, "getter")
+            expression.setterFunction?.accept(this, "setter")
+        }
+    }
+
     override fun visitSetField(expression: IrSetField, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.receiver?.accept(this, "receiver")
@@ -498,15 +520,19 @@ internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<
     if (symbol.isBound) {
         val owner = symbol.owner
         if (owner is IrFunction) {
-            return (0 until expectedCount).map {
-                if (it < owner.valueParameters.size)
-                    owner.valueParameters[it].name.asString()
-                else
-                    "${it + 1}"
-            }
+            return owner.getValueParameterNamesForDebug(expectedCount)
         }
     }
     return getPlaceholderParameterNames(expectedCount)
+}
+
+private fun IrFunction.getValueParameterNamesForDebug(
+    expectedCount: Int,
+): List<String> = (0 until expectedCount).map {
+    if (it < valueParameters.size)
+        valueParameters[it].name.asString()
+    else
+        "${it + 1}"
 }
 
 internal fun getPlaceholderParameterNames(expectedCount: Int) =

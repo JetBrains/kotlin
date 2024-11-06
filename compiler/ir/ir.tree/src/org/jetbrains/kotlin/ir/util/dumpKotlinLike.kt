@@ -687,7 +687,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         name: String,
         printTypeParametersAndExtensionReceiver: Boolean,
         printSignatureAndBody: Boolean,
-        printExtraTrailingNewLine: Boolean
+        printExtraTrailingNewLine: Boolean,
+        finishWithNewLine: Boolean = true
     ) {
         /* TODO
             correspondingProperty
@@ -751,7 +752,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             }
 
             if (!printSignatureAndBody || body == null || options.bodyPrintingStrategy != BodyPrintingStrategy.PRINT_BODIES) {
-                p.printlnWithNoIndent()
+                if (finishWithNewLine) {
+                    p.printlnWithNoIndent()
+                }
             }
 
             if (printExtraTrailingNewLine)
@@ -1270,6 +1273,52 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             printSignatureAndBody = true,
             printExtraTrailingNewLine = false,
         )
+    }
+
+    private fun IrSimpleFunction.dumpForBoundReference(data: IrDeclaration?) = printSimpleFunction(
+        data = data,
+        keyword = "fun",
+        name = "",
+        printTypeParametersAndExtensionReceiver = true,
+        printSignatureAndBody = true,
+        printExtraTrailingNewLine = false,
+        finishWithNewLine = false
+    )
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclaration?) = wrap(expression, data) {
+        p.printWithNoIndent(expression.type.dumpKotlinLike())
+        p.printlnWithNoIndent("(")
+        p.pushIndent()
+        p.print("/* bound = */ [")
+        expression.boundValues.forEachIndexed { index, value ->
+            if (index != 0) p.printWithNoIndent(",")
+            value.accept(this, data)
+        }
+        p.printlnWithNoIndent("],")
+        p.print("/* invoke = */")
+        expression.invokeFunction.dumpForBoundReference(data)
+        p.popIndent()
+        p.println(")")
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: IrDeclaration?) = wrap(expression, data) {
+        p.printWithNoIndent(expression.type.dumpKotlinLike())
+        p.printlnWithNoIndent("(")
+        p.pushIndent()
+        p.print("/* bound = */ [")
+        expression.boundValues.forEachIndexed { index, value ->
+            if (index != 0) p.printWithNoIndent(",")
+            value.accept(this, data)
+        }
+        p.printlnWithNoIndent("],")
+        p.print("/* getter = */")
+        expression.getterFunction.dumpForBoundReference(data)
+        expression.setterFunction?.let {
+            p.print("/* setter = */")
+            it.dumpForBoundReference(data)
+        }
+        p.popIndent()
+        p.println(")")
     }
 
     override fun visitGetField(expression: IrGetField, data: IrDeclaration?) = wrap(expression, data) {

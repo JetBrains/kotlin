@@ -183,12 +183,18 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
         bindableSymbolParent("FunctionDescriptor", returnableBlock)
     }
 
+    val declarationWithAccessorsSymbol by element {
+        isSealed = true
+    }
+
     val propertySymbol by element {
         bindableSymbolParent("PropertyDescriptor", property)
+        parent(declarationWithAccessorsSymbol)
         parent(type<PropertySymbolMarker>())
     }
 
     val localDelegatedPropertySymbol by element {
+        parent(declarationWithAccessorsSymbol)
         bindableSymbolParent("VariableDescriptorWithAccessors", localDelegatedProperty)
     }
 

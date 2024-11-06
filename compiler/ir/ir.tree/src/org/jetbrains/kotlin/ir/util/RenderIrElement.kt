@@ -478,6 +478,19 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget=${renderReflectionTarget(expression)}"
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Nothing?): String =
+        "RICH_FUNCTION_REFERENCE type=${expression.type.render()} origin=${expression.origin} " +
+                renderFlagsList(
+                    "unit_conversion".takeIf { expression.hasUnitConversion },
+                    "suspend_conversion".takeIf { expression.hasSuspendConversion },
+                    "vararg_conversion".takeIf { expression.hasVarargConversion },
+                    "restricted_suspension".takeIf { expression.isRestrictedSuspension },
+                ) + "reflectionTarget='${expression.reflectionTargetSymbol?.renderReference()}'"
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Nothing?): String =
+        "RICH_PROPERTY_REFERENCE type=${expression.type.render()} origin=${expression.origin} " +
+                "reflectionTarget='${expression.reflectionTargetSymbol?.renderReference()}'"
+
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?): String =
         "RAW_FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 

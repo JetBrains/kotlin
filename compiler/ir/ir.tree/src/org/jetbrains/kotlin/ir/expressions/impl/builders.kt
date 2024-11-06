@@ -316,6 +316,52 @@ fun IrFunctionExpressionImpl(
     origin = origin,
 )
 
+fun IrRichFunctionReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    reflectionTargetSymbol: IrFunctionSymbol?,
+    overriddenFunctionSymbol: IrSimpleFunctionSymbol,
+    invokeFunction: IrSimpleFunction,
+    origin: IrStatementOrigin? = null,
+    hasUnitConversion: Boolean = false,
+    hasSuspendConversion: Boolean = false,
+    hasVarargConversion: Boolean = false,
+    isRestrictedSuspension: Boolean = false,
+) = IrRichFunctionReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    reflectionTargetSymbol = reflectionTargetSymbol,
+    overriddenFunctionSymbol = overriddenFunctionSymbol,
+    invokeFunction = invokeFunction,
+    origin = origin,
+    hasUnitConversion = hasUnitConversion,
+    hasSuspendConversion = hasSuspendConversion,
+    hasVarargConversion = hasVarargConversion,
+    isRestrictedSuspension = isRestrictedSuspension,
+)
+
+fun IrRichPropertyReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
+    getterFunction: IrSimpleFunction,
+    setterFunction: IrSimpleFunction?,
+    origin: IrStatementOrigin? = null
+) = IrRichPropertyReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    reflectionTargetSymbol = reflectionTargetSymbol,
+    getterFunction = getterFunction,
+    setterFunction = setterFunction,
+    origin = origin
+)
+
 fun IrGetClassImpl(
     startOffset: Int,
     endOffset: Int,

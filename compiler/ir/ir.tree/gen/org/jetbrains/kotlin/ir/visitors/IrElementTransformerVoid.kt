@@ -322,6 +322,18 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>(), IrElementTr
     final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): IrElement =
         visitLocalDelegatedPropertyReference(expression)
 
+    open fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression =
+        visitExpression(expression)
+
+    final override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Nothing?): IrExpression =
+        visitRichFunctionReference(expression)
+
+    open fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression =
+        visitExpression(expression)
+
+    final override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Nothing?): IrExpression =
+        visitRichPropertyReference(expression)
+
     open fun visitClassReference(expression: IrClassReference): IrExpression =
         visitDeclarationReference(expression)
 
