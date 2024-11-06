@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(TYPES)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(TYPES)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(STATUS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(CONTRACTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simple.kt

@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
@@ -146,9 +146,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
     }
-    ): R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| {
+    ): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
         ^foo R|<local>/param|
     }
 
@@ -165,9 +165,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypeBodyResolve.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
     }
-    ): R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| {
+    ): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
         ^foo R|<local>/param|
     }
 

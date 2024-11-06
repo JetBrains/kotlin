@@ -1,8 +1,8 @@
-@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>
+@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirNamedFunctionSymbol /implicitType
   anchor -> [FirNamedFunctionSymbol /withType]
 
-@R|Anno|(privateConstant#)  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol /implicitType
   anchor -> [FirNamedFunctionSymbol /withType]
 
@@ -20,9 +20,9 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         private [ResolvedTo(RAW_FIR)] get(): <implicit>
     internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
     }
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }

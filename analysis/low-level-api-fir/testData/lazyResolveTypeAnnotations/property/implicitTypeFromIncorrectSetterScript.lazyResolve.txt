@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
 
         public? final? [ResolvedTo(TYPES)] var resolveMe: <implicit>
             public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
-            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
 
         public final [ResolvedTo(STATUS)] var resolveMe: <implicit>
             public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit>
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
             public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ field#
             }
-            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
@@ -269,7 +269,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 

@@ -1,12 +1,12 @@
-@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>
+@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirFieldSymbol second/MyClass.$$delegate_0
   anchor -> [FirRegularClassSymbol second/MyClass]
 
-@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>
+@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirFieldSymbol second/MyClass.$$delegate_0
   anchor -> [FirRegularClassSymbol second/MyClass]
 
-@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int
+@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirFieldSymbol second/MyClass.$$delegate_0
   anchor -> [FirRegularClassSymbol second/MyClass]
 
@@ -30,12 +30,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Second<R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String|> = LAZY_EXPRESSION
 

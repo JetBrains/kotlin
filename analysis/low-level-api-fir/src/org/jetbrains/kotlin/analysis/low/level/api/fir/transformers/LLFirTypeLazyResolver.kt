@@ -63,12 +63,7 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
  * @see FirResolvePhase.TYPES
  */
 private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
-    private val transformer = object : FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession) {
-        override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
-            FirLazyBodiesCalculator.calculateAnnotations(typeRef, session)
-            return super.transformTypeRef(typeRef, data)
-        }
-    }
+    private val transformer = FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
     override fun withContainingFile(firFile: FirFile, action: () -> Unit) {

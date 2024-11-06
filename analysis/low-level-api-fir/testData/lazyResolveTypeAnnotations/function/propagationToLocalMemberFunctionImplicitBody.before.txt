@@ -1,36 +1,36 @@
-@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBody.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
         ^bar Null(null)
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
@@ -59,15 +59,15 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBody.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] fun doo(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
+                public final [ResolvedTo(RAW_FIR)] fun doo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
                     ^doo this@R|<local>/Local|.R|<local>/foo|()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
+                public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
                     ^foo R|util/bar|()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] fun baz(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
+                public final [ResolvedTo(RAW_FIR)] fun baz(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
                     ^baz this@R|<local>/Local|.R|<local>/foo|()
                 }
 

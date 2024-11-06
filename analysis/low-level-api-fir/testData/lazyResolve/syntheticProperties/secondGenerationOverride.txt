@@ -1,7 +1,7 @@
 STATUS:
 TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
     public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 EXPECT_ACTUAL_MATCHING:
 TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun setSomething([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun setSomething([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
     public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -91,7 +91,7 @@ TARGET: public open override [<synthetic> CONTRACTS] var something: R|kotlin/Str
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
         <strcat>(String(body: ), propertyFromBody#)
     }
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             <strcat>(String(body: ), propertyFromBody#)
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): <implicit> { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
     public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -139,7 +139,7 @@ TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var somet
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
         <strcat>(String(body: ), propertyFromBody#)
     }
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
         ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
     }
 
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             <strcat>(String(body: ), propertyFromBody#)
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun setSomething([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun setSomething([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
             ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
         }
 
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -191,7 +191,7 @@ TARGET: public open override [<synthetic> CONSTANT_EVALUATION] var something: R|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
         <strcat>(String(body: ), propertyFromBody#)
     }
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
         ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
     }
 
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             <strcat>(String(body: ), propertyFromBody#)
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun setSomething([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun setSomething([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
             ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
         }
 
@@ -217,7 +217,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -269,7 +269,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -327,7 +327,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
                 ^getValue this@R|/Delegate|.R|/Delegate.explicitType|()
             }
 
-            public open override [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public open override [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
         }

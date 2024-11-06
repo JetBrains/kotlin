@@ -176,14 +176,14 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(value#)  kotlin/String| {
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
         ^typeWithAnnotation String()
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(value#)  kotlin/String|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(value#)  kotlin/String| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
         }
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(value#)  kotlin/String|): R|kotlin/Unit| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
         }
 
 CONSTANT_EVALUATION:
@@ -199,14 +199,14 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(value#)  kotlin/String| {
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
         ^typeWithAnnotation String()
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(value#)  kotlin/String|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(value#)  kotlin/String| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
         }
-        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|Anno|(value#)  kotlin/String|): R|kotlin/Unit| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| {
         }
 
 ANNOTATION_ARGUMENTS:

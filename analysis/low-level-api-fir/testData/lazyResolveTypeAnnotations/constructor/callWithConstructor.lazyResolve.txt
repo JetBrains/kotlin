@@ -147,9 +147,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
@@ -173,9 +173,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final [ResolvedTo(STATUS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
@@ -199,9 +199,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
@@ -225,9 +225,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
@@ -251,9 +251,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
@@ -277,9 +277,9 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructor.kt
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(super type call ), prop#))  util/AbstractClass<@R|util/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }

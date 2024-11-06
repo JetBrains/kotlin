@@ -259,9 +259,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -307,9 +307,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(STATUS)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -355,9 +355,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -403,9 +403,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -451,9 +451,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -499,9 +499,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-            LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            LAZY_super<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {

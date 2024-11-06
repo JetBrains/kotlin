@@ -407,20 +407,20 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
 
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 ^getValue IntegerLiteral(1)
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|by R|/Delegate.Delegate|()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
 
@@ -456,20 +456,20 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
 
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 ^getValue IntegerLiteral(1)
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
-            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|by R|/Delegate.Delegate|()
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
             }
-            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
 
@@ -509,7 +509,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
                 ^getValue IntegerLiteral(1)
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
         }
@@ -558,7 +558,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
                 ^getValue IntegerLiteral(1)
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
         }

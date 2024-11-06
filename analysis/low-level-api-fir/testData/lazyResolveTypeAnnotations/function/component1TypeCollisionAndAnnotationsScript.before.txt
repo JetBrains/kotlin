@@ -1,12 +1,12 @@
-@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
+@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
-@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
+@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
-@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
+@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
@@ -36,15 +36,15 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
         }
 
         public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionAndAnnotationsScript.kts>] class MyDataClass : R|kotlin/Any| {
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>|): R|one/two/MyDataClass| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|<local>/prop1|
-                public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+            public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop1|
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|> = R|<local>/prop2|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] get(): @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|>
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|> = R|<local>/prop2|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] get(): @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-component1TypeCollisionAndAnnotationsScript.kts>] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
@@ -63,11 +63,11 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             }
 
-            public? final operator [ResolvedTo(TYPES)] fun component1(): R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+            public? final operator [ResolvedTo(TYPES)] fun component1(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|>
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>
 
-            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @R|one/two/Anno|[Unresolved](IntegerLiteral(0).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @R|one/two/Anno|[Unresolved](LAZY_EXPRESSION) MyClass<R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 

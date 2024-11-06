@@ -338,12 +338,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
             private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Second<R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String|> = LAZY_EXPRESSION
 
@@ -400,14 +400,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| = LAZY_EXPRESSION
 
             public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -462,14 +462,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| = LAZY_EXPRESSION
 
             public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -524,14 +524,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| = LAZY_EXPRESSION
 
             public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -586,14 +586,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| = LAZY_EXPRESSION
 
             public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -648,14 +648,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| = LAZY_EXPRESSION
 
             public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {

@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(TYPES)] R|T|.foo: <implicit>
+    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(TYPES)] R|T|.foo: <implicit>
         public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
 
 STATUS:
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(STATUS)] val <[ResolvedTo(STATUS)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(STATUS)] R|T|.foo: <implicit>
+    public final [ResolvedTo(STATUS)] val <[ResolvedTo(STATUS)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(STATUS)] R|T|.foo: <implicit>
         public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.foo: <implicit>
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.foo: <implicit>
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(CONTRACTS)] R|T|.foo: <implicit>
+    public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(CONTRACTS)] R|T|.foo: <implicit>
         public [ResolvedTo(CONTRACTS)] get(): <implicit> {
             ^ this#
         }
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.foo: R|T|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.foo: R|T|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|T| {
             ^ this@R|/foo|
         }
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] T : R|One|, R|@R|Anno|(String(str))  Two|> [ResolvedTo(CONSTANT_EVALUATION)] R|T|.foo: R|T|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(CONSTANT_EVALUATION)] R|T|.foo: R|T|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|T| {
             ^ this@R|/foo|
         }

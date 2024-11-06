@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+            public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
         }
 
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
         }
 
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
         }
 
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+            public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
                 ^createP2 P2#()
             }
 
@@ -345,7 +345,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
                 ^createP2 P2#()
             }
 
@@ -382,7 +382,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
                 ^createP2 P2#()
             }
 
@@ -447,9 +447,9 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>| {
+            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(LAZY_EXPRESSION)  P1<@R|Anno|(LAZY_EXPRESSION)  T1>| {
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
-                    LAZY_super<R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>|>
+                    LAZY_super<R|@R|Anno|(LAZY_EXPRESSION)  P1<@R|Anno|(LAZY_EXPRESSION)  T1>|>
                 }
 
                 public [ResolvedTo(STATUS)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }

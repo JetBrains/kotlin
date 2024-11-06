@@ -162,12 +162,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 
@@ -191,12 +191,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 
@@ -220,12 +220,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 
@@ -249,12 +249,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 
@@ -278,12 +278,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 
@@ -307,12 +307,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 

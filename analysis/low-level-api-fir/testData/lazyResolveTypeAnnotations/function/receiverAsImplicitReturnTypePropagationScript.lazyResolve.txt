@@ -233,11 +233,11 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagationScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
             ^bar this@R|/bar|.R|/foo|()
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
             ^foo this@R|/foo|
         }
 
@@ -261,11 +261,11 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagationScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
             ^bar this@R|/bar|.R|/foo|()
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
             ^foo this@R|/foo|
         }
 

@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public? final? [ResolvedTo(TYPES)] val foo: R|kotlin/Int|
         public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(STATUS)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(STATUS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(STATUS)] val foo: R|kotlin/Int|
         public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val foo: R|kotlin/Int|
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONTRACTS)] val foo: R|kotlin/Int|
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
             ^ IntegerLiteral(0)
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ IntegerLiteral(0)
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] val foo: R|kotlin/Int|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
             ^ IntegerLiteral(0)

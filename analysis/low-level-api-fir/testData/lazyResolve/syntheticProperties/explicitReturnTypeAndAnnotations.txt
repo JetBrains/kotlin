@@ -1,6 +1,6 @@
 STATUS:
-TARGET: public open override [<synthetic> STATUS] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+TARGET: public open override [<synthetic> STATUS] val something: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -8,7 +8,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -24,8 +24,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] val something: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun getSomething(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -49,8 +49,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 CONTRACTS:
-TARGET: public open override [<synthetic> CONTRACTS] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+TARGET: public open override [<synthetic> CONTRACTS] val something: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
         ^getSomething String(str).also#(::println#)
     }
 
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^getSomething String(str).also#(::println#)
         }
 
@@ -78,8 +78,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
         ^getSomething String(str).also#(::println#)
     }
 
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^getSomething String(str).also#(::println#)
         }
 
@@ -107,8 +107,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 CONSTANT_EVALUATION:
-TARGET: public open override [<synthetic> CONSTANT_EVALUATION] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+TARGET: public open override [<synthetic> CONSTANT_EVALUATION] val something: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
         ^getSomething String(str).also#(::println#)
     }
 
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^getSomething String(str).also#(::println#)
         }
 

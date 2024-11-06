@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(TYPES)] var [ResolvedTo(TYPES)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public? final? [ResolvedTo(TYPES)] var [ResolvedTo(TYPES)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: <implicit>
             public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] var [ResolvedTo(STATUS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(STATUS)] var [ResolvedTo(STATUS)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
             public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] var [ResolvedTo(CONTRACTS)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: <implicit>
+        public final [ResolvedTo(CONTRACTS)] var [ResolvedTo(CONTRACTS)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: <implicit>
             public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ this#
             }
@@ -236,11 +236,11 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
                 ^ this@R|/foo|
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
             }
 
 
@@ -263,11 +263,11 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] var [ResolvedTo(CONSTANT_EVALUATION)] R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.foo: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|
-            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] var [ResolvedTo(CONSTANT_EVALUATION)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.foo: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
                 ^ this@R|/foo|
             }
-            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
             }
 
 

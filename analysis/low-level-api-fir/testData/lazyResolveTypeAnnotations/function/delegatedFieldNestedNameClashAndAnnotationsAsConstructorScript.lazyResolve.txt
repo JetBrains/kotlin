@@ -306,14 +306,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
             private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base = LAZY_EXPRESSION
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @R|second/Anno|[Unresolved](IntegerLiteral(0).plus#(inner#)) second.Base = R|<local>/prop|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @R|second/Anno|[Unresolved](IntegerLiteral(0).plus#(inner#)) second.Base
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) second.Base = R|<local>/prop|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @R|second/Anno|[Unresolved](LAZY_EXPRESSION) second.Base
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
@@ -361,15 +361,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
@@ -417,15 +417,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| {
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
@@ -473,15 +473,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
@@ -529,15 +529,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| {
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
@@ -585,15 +585,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| {
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }

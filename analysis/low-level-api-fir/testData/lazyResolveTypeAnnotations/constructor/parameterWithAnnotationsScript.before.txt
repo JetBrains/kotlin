@@ -1,12 +1,12 @@
-@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>
+@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
-@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>
+@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
-@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String
+@R|Anno|(LAZY_EXPRESSION)  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-parameterWithAnnotationsScript.kts>] class A : R|kotlin/Any| {
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): R|A| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| = LAZY_EXPRESSION): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 

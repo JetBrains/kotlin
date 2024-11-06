@@ -1,4 +1,4 @@
-@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirReceiverParameterSymbol from FirPropertySymbol /foo
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
@@ -14,6 +14,6 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public? final? [ResolvedTo(TYPES)] val foo: R|kotlin/Int|
         public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }

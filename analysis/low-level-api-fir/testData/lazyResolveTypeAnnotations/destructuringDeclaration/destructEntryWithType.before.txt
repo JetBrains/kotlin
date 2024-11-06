@@ -1,24 +1,24 @@
-@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
-@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
-@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
-@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
-@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
-@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
   anchor -> [FirPropertySymbol util/left]
 
@@ -63,8 +63,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
             public? [ResolvedTo(RAW_FIR)] get(): MyPair
 
         [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = LAZY_EXPRESSION
-            public [ResolvedTo(TYPES)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+        public final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
+            public [ResolvedTo(TYPES)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>

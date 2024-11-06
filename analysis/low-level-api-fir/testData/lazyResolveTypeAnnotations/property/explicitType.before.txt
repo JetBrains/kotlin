@@ -1,60 +1,60 @@
-@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<ERROR CLASS: Incomplete code>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<ERROR CLASS: Incomplete code>
   context -> FirReceiverParameterSymbol from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested bound ), prop#))  kotlin/String>
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/String>
   context -> FirTypeParameterSymbol T from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
-@R|myPack/Anno|(<strcat>(String(nested bound ), prop#))  kotlin/String
+@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/String
   context -> FirTypeParameterSymbol T from FirPropertySymbol myPack/variableToResolve
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
@@ -70,6 +70,6 @@ FILE: [ResolvedTo(IMPORTS)] explicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T : R|@R|myPack/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested bound ), prop#))  kotlin/String>|> [ResolvedTo(TYPES)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T : R|@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/String>|> [ResolvedTo(TYPES)] @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: R|@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }

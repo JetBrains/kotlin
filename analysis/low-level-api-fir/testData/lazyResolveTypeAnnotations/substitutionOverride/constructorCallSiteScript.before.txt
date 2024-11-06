@@ -30,9 +30,9 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>| {
+            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(LAZY_EXPRESSION)  P1<@R|Anno|(LAZY_EXPRESSION)  T1>| {
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
-                    LAZY_super<R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>|>
+                    LAZY_super<R|@R|Anno|(LAZY_EXPRESSION)  P1<@R|Anno|(LAZY_EXPRESSION)  T1>|>
                 }
 
                 public [ResolvedTo(STATUS)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }

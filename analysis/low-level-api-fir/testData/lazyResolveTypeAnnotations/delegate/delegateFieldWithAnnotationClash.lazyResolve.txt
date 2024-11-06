@@ -189,12 +189,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -224,12 +224,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -259,12 +259,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -294,12 +294,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -329,12 +329,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -364,12 +364,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {

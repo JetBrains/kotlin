@@ -1,16 +1,16 @@
-@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertySymbol /foo
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /foo
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /foo
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
-@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirReceiverParameterSymbol from FirPropertySymbol /foo
   anchor -> [FirReceiverParameterSymbol from FirPropertySymbol /foo]
 
@@ -26,8 +26,8 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>| {
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
             ^ this@R|/foo|
         }

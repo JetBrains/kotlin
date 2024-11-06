@@ -60,11 +60,7 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateAnnotations(firElement: FirElementWithResolveState) {
-        calculateAnnotations(firElement, firElement.moduleData.session)
-    }
-
-    fun calculateAnnotations(firElement: FirElement, session: FirSession) {
-        firElement.accept(LazyAnnotationCalculatorVisitor, session)
+        firElement.accept(LazyAnnotationCalculatorVisitor, firElement.moduleData.session)
     }
 
     fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {

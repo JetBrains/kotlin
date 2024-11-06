@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(STATUS)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(STATUS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(<strcat>(String(context receiver type ), prop#))  kotlin/Int>|)
+    context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>

@@ -1,12 +1,12 @@
-@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
+@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirPropertySymbol <local>/<destruct>
   anchor -> [FirPropertySymbol util/pair]
 
-@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
   context -> FirPropertySymbol <local>/<destruct>
   anchor -> [FirPropertySymbol util/pair]
 
-@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
+@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirPropertySymbol <local>/<destruct>
   anchor -> [FirPropertySymbol util/pair]
 
@@ -47,10 +47,10 @@ FILE: [ResolvedTo(IMPORTS)] destruct.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val pair: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
+        public final [ResolvedTo(CONTRACTS)] val pair: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/pair]] lval <destruct>: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/pair|
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/pair]] lval <destruct>: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|util/pair|
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 

@@ -267,7 +267,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
@@ -360,7 +360,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(<strcat>(String(setter parameter type ), prop#))  kotlin/collections/List<@R|low/Anno|(<strcat>(String(setter nested parameter type ), prop#))  kotlin/collections/Collection<@R|low/Anno|(<strcat>(String(setter nested nested parameter type ), prop#))  kotlin/String>>|): R|kotlin/Unit| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
 
