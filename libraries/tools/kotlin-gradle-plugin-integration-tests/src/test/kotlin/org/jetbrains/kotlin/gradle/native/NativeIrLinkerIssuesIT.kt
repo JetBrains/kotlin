@@ -275,7 +275,11 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
                     .filterNot { it.matches(KONAN_PLATFORM_LIB_DEPENDENCY_REGEX) || it.contains(" stdlib: ") }
                     .joinToString("\n")
 
-                assertEquals(expectedErrorMessage(), errorMessage)
+                assertEquals(
+                    expectedErrorMessage(),
+                    errorMessage,
+                    message = "Gradle build output:\n${output}\n"
+                )
             }
         }
     }
