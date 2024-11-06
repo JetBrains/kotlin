@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
@@ -132,10 +134,15 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                     try {
                         action()
                     } catch (e: Throwable) {
-                        exceptionOccurred = true
+                        if (e !is PartialBodyAnalysisSuspendedException) {
+                            exceptionOccurred = true
+                        }
                         throw e
                     } finally {
-                        val newPhase = if (updatePhase && !exceptionOccurred) toPhase else stateSnapshot.resolvePhase
+                        val newPhase = when {
+                            !updatePhase || exceptionOccurred -> stateSnapshot.resolvePhase
+                            else -> computeNewPhase(stateSnapshot, toPhase)
+                        }
                         unlock(toPhase = newPhase)
                     }
 
@@ -147,6 +154,19 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 }
             }
         }
+    }
+
+    private fun FirElementWithResolveState.computeNewPhase(stateSnapshot: FirResolveState, toPhase: FirResolvePhase): FirResolvePhase {
+        if (this is FirDeclaration && toPhase == FirResolvePhase.BODY_RESOLVE) {
+            val state = partialBodyResolveState
+            if (state != null && !state.isFullyAnalyzed) {
+                // We only update the phase to BODY_RESOLVE if all statements are resolved.
+                // Otherwise, we set (BODY_RESOLVE - 1), so the next BODY_RESOLVE phase run can finish the analysis.
+                return stateSnapshot.resolvePhase
+            }
+        }
+
+        return toPhase
     }
 
     private fun waitOnBarrier(

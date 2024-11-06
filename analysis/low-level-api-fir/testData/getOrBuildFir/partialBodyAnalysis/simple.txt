@@ -1,0 +1,39 @@
+KT element: KtValueArgument
+KT element text:
+1 + 2
+FIR element: FirIntegerLiteralOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1).R|kotlin/Int.plus|(Int(2))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] simple.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/3) #1] fun test(): R|kotlin/Unit| {
+        R|/consume|(Int(1).R|kotlin/Int.plus|(Int(2)))
+        consume#(String(foo))
+        consume#(Char(b))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+=====
+
+KT element: KtValueArgument
+KT element text:
+"foo"
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+String(foo)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] simple.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #2] fun test(): R|kotlin/Unit| {
+        R|/consume|(Int(1).R|kotlin/Int.plus|(Int(2)))
+        R|/consume<Inapplicable(INAPPLICABLE): /consume>#|(String(foo))
+        consume#(Char(b))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }

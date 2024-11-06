@@ -1,0 +1,66 @@
+KT element: KtBlockExpression
+KT element text:
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+FIR element: FirBlockImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+ {
+    this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] contract.kt
+    public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/4) #1] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun [ResolvedTo(RAW_FIR)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        before#()
+        block#()
+        after#()
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun before(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun after(): R|kotlin/Unit| { LAZY_BLOCK }
+
+=====
+
+KT element: KtCallExpression
+KT element text:
+block()
+FIR element: FirImplicitInvokeCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] contract.kt
+    public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/4) #2] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun [ResolvedTo(RAW_FIR)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|/before|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        after#()
+    }
+    public final [ResolvedTo(CONTRACTS)] fun before(): R|kotlin/Unit| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun after(): R|kotlin/Unit| { LAZY_BLOCK }

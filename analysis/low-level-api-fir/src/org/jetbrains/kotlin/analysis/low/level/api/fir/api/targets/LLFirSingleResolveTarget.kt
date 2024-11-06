@@ -9,6 +9,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 
+private object PartialBodyResolveStateKey : FirDeclarationDataKey()
+
+internal var FirDeclaration.partialBodyResolveState: LLPartialBodyResolveState?
+        by FirDeclarationDataRegistry.data(PartialBodyResolveStateKey)
+
 /**
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */
