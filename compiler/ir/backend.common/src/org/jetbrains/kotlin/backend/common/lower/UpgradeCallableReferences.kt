@@ -298,7 +298,7 @@ open class UpgradeCallableReferences(
                         this.type = type
                     }
                 }
-                this.body = context.createIrBuilder(symbol).run {
+                this.body = context.createIrBuilder(symbol).at(this@buildWrapperFunction).run {
                     irBlockBody {
                         body(parameters)
                     }

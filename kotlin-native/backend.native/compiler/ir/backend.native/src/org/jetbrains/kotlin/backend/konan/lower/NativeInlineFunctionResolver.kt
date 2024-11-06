@@ -59,9 +59,9 @@ internal class NativeInlineFunctionResolver(
         // LocalClassesInInlineFunctionsLowering(context).lower(body, function)
         // LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
 
-        NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
+        UpgradeCallableReferences(context).lower(function)
+
         ArrayConstructorLowering(context).lower(body, function)
-        WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
 
         if (doubleInliningEnabled) {
             NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
