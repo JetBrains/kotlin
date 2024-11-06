@@ -55,6 +55,8 @@ class ConstraintInjector(
 
         fun resolveForkPointsConstraints()
 
+        fun onNewConstraintOrForkPoint()
+
         fun recordTypeVariableReferenceInConstraint(
             constraintOwner: TypeConstructorMarker,
             referencedVariable: TypeConstructorMarker,
@@ -180,6 +182,8 @@ class ConstraintInjector(
                     typeCheckerState.position to forkPointData
                 }
 
+                c.onNewConstraintOrForkPoint()
+
                 // During completion, we start processing fork constrains immediately
                 if (c.atCompletionState) {
                     c.resolveForkPointsConstraints()
@@ -240,6 +244,7 @@ class ConstraintInjector(
             }
 
             if (wasAdded) {
+                c.onNewConstraintOrForkPoint()
                 recordReferencesOfOtherTypeVariableInConstraint(c, constraint, typeVariableConstructor)
             }
 

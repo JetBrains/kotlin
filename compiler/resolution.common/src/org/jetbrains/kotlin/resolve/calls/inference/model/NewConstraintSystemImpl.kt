@@ -41,6 +41,10 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
+
+    // Cached value that should be reset on each new constraint or fork point
+    private var hasContradictionInForkPointsCache: Boolean? = null
+
     override var typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>? = null
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
@@ -392,6 +396,7 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
+        hasContradictionInForkPointsCache = null
     }
 
     @AssertionsOnly
@@ -524,6 +529,10 @@ class NewConstraintSystemImpl(
         }
     }
 
+    override fun onNewConstraintOrForkPoint() {
+        hasContradictionInForkPointsCache = null
+    }
+
     /**
      * Checks if the current state of forked constraints is not contradictory.
      *
@@ -536,6 +545,8 @@ class NewConstraintSystemImpl(
         if (state == State.FREEZED) return false
 
         if (constraintsFromAllForkPoints.isEmpty()) return false
+
+        hasContradictionInForkPointsCache?.let { return it }
 
         val allForkPointsData = constraintsFromAllForkPoints.toList()
         constraintsFromAllForkPoints.clear()
@@ -551,7 +562,7 @@ class NewConstraintSystemImpl(
 
         constraintsFromAllForkPoints.addAll(allForkPointsData)
 
-        return isThereAnyUnsuccessful
+        return isThereAnyUnsuccessful.also { hasContradictionInForkPointsCache = it }
     }
 
     /**
@@ -568,7 +579,7 @@ class NewConstraintSystemImpl(
             runTransaction {
                 applyForkPointBranch(constraintSetForForkBranch, position)
 
-                !hasContradiction
+                !storage.hasContradiction
             }
         }
 
