@@ -1,0 +1,70 @@
+FILE: recursiveNestedInnerTypeAliases.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias TA = R|C|
+
+    }
+    public final class C1 : R|kotlin/Any| {
+        public constructor(): R|C1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public C1.constructor(): R|C1.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final typealias TA1 = R|C2|
+
+        public final typealias TA2 = <ERROR TYPE REF: Loop in supertypes involving /C1.TA2>
+
+        public final typealias TA3 = <ERROR TYPE REF: Loop in supertypes involving /C1.TA3>
+
+        public final typealias Nested = R|C1.Inner|
+
+    }
+    public final class C2 : R|kotlin/Any| {
+        public constructor(): R|C2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias TA2 = R|C1|
+
+    }
+    public final class D1<T> : R|kotlin/Any| {
+        public constructor<T>(): R|D1<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner typealias TA1<Outer(T)> = R|D2<T>|
+
+        public final inner typealias TA2<Outer(T)> = <ERROR TYPE REF: Loop in supertypes involving /D1.TA2>
+
+        public final inner typealias TA3<Outer(T)> = <ERROR TYPE REF: Loop in supertypes involving /D1.TA3>
+
+    }
+    public final class D2<T> : R|kotlin/Any| {
+        public constructor<T>(): R|D2<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner typealias TA2<Outer(T)> = R|D1<T>|
+
+    }
+    public final class E : <ERROR TYPE REF: Loop in supertypes involving /E> {
+        public constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias TA = <ERROR TYPE REF: Loop in supertypes involving /E.TA>
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|C1|.R|/C2.C2|()
+        R|/D1.D1|<R|kotlin/String|>().R|/D2.D2<CS errors: /D2.D2>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+    }

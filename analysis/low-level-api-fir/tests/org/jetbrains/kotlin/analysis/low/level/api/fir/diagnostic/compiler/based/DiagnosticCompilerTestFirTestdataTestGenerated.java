@@ -4014,6 +4014,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("recursiveNestedInnerTypeAliases.kt")
+      public void testRecursiveNestedInnerTypeAliases() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/recursiveNestedInnerTypeAliases.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt")
       public void testUnresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt");
