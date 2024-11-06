@@ -64,7 +64,7 @@ class SourceMapGenerator(
 
             when (sourceLocation) {
                 // TODO: add the ignored location into "ignoreList" in future
-                is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
+                is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> continue// sourceMapBuilder.addEmptyMapping(generatedLocation.column)
                 is SourceLocation.Location -> {
                     // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
                     val relativePath = pathResolver
