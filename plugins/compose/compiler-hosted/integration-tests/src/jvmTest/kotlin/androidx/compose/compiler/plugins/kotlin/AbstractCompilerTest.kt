@@ -92,7 +92,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
         updateConfiguration = {
-            val enableFir = if (forcedFirSetting != null) forcedFirSetting else useFir
+            val enableFir = if (forcedFirSetting != null) forcedFirSetting else this@AbstractCompilerTest.useFir
             val languageVersion =
                 if (enableFir) {
                     LanguageVersion.KOTLIN_2_0
