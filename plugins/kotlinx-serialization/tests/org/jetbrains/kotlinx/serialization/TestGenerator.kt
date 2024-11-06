@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization
 
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlinx.serialization.matrix.cases.enumsTestMatrix
@@ -76,8 +77,46 @@ fun main(args: Array<String>) {
                 model("boxIr")
             }
 
+            // ------------------------------- code compile -------------------------------
+
+            testClass<AbstractCompilerFacilityTestForSerialization> {
+                model("compilerFacility")
+            }
+
             testMatrix {
                 add("enums") { enumsTestMatrix() }
+            }
+        }
+
+        testGroup(testsRoot = "plugins/kotlinx-serialization/tests-gen", testDataRoot = "plugins/kotlinx-serialization/testData") {
+            run {
+                fun TestGroup.TestClass.diagnosticsModelInit() {
+                    model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                    model("firMembers")
+                }
+
+                testClass<AbstractLLFirSerializationDiagnosticTest> {
+                    diagnosticsModelInit()
+                }
+
+                testClass<AbstractLLFirReversedSerializationDiagnosticTest> {
+                    diagnosticsModelInit()
+                }
+            }
+
+            run {
+                fun TestGroup.TestClass.blackBoxModelInit() {
+                    model("boxIr")
+                    model("codegen")
+                }
+
+                testClass<AbstractLLFirSerializationBlackBoxCodegenBasedTest> {
+                    blackBoxModelInit()
+                }
+
+                testClass<AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest> {
+                    blackBoxModelInit()
+                }
             }
         }
     }

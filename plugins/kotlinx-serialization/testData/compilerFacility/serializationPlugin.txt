@@ -1,0 +1,4 @@
+public final class home/MainKt {
+    // source: 'main.kt'
+    public final static method Greeting(p0: java.lang.String, p1: com.example.data.Data): void
+}
