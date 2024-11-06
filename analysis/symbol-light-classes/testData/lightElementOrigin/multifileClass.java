@@ -3,5 +3,5 @@ public final class AnotherName /* AnotherName*/ {
 }
 
 final class AnotherName__MultifileClassKt /* AnotherName__MultifileClassKt*/ {
-  public static final int test(int);//  test(int)/* (origin: FUN test in AnotherName__MultifileClassKt.class) */
+  public static final int test(int);//  test(int)/* (origin: FUN test in AnotherName.class) */
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.StringValue
@@ -33,8 +34,22 @@ open class KotlinDeclarationInCompiledFileSearcher {
         val relativeClassName = generateSequence(member.containingClass) { it.containingClass }.toList().dropLast(1).reversed()
             .map { Name.identifier(it.name!!) }
 
+        val multifileClassFile = findMainClassOfMultifilePartClass(file)
         val memberName = member.name ?: return null
-        return findByStubs(file, relativeClassName, member, memberName)
+        return findByStubs(multifileClassFile ?: file, relativeClassName, member, memberName)
+    }
+
+    /**
+     * If [file] points to a class that has the [org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.MULTIFILE_CLASS_PART] kind,
+     * this method returns the corresponding class file with the MULTIFILE_CLASS kind.
+     */
+    private fun findMainClassOfMultifilePartClass(file: KtClsFile): KtClsFile? {
+        val header = ClsKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(file.virtualFile)
+        return header?.multifileClassName?.let {
+            val shortName = it.substringAfterLast('/')
+            val multifileClassFile = file.virtualFile.parent?.findChild("$shortName.class")
+            multifileClassFile?.let(file.manager::findFile) as? KtClsFile
+        }
     }
 
     protected fun findByStubs(

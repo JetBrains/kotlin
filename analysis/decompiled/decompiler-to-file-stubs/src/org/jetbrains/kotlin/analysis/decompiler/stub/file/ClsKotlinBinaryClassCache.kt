@@ -25,6 +25,7 @@ class ClsKotlinBinaryClassCache {
         val classId: ClassId,
         val kind: KotlinClassHeader.Kind,
         val metadataVersion: MetadataVersion,
+        val multifileClassName: String?,
         val partNamesIfMultifileFacade: List<String>,
         val packageName: String?
     ) {
@@ -86,7 +87,7 @@ class ClsKotlinBinaryClassCache {
         }
 
         if (isKotlinBinaryClass) {
-            val headerInfo = createHeaderInfo(kotlinBinaryClass!!)
+            val headerInfo = createHeaderInfo(kotlinBinaryClass)
             file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
         }
 
@@ -119,7 +120,7 @@ class ClsKotlinBinaryClassCache {
 
     private fun KotlinClassHeader.toLightHeader(classId: ClassId) =
         KotlinBinaryClassHeaderData(
-            classId, kind, metadataVersion, multifilePartNames, packageName
+            classId, kind, metadataVersion, multifileClassName, multifilePartNames, packageName
         )
 
     private val KOTLIN_IS_COMPILED_FILE_ATTRIBUTE: String = "kotlin-is-binary-compiled".apply {
