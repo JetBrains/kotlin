@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -113,7 +112,7 @@ internal class KaFirSymbolRelationProvider(
                 }
 
                 is KaValueParameterSymbol -> {
-                    return firSymbolBuilder.callableBuilder.buildCallableSymbol(this.firSymbol.fir.containingFunctionSymbol)
+                    return firSymbolBuilder.buildSymbol(this.firSymbol.fir.containingDeclarationSymbol) as? KaDeclarationSymbol
                 }
 
                 is KaCallableSymbol -> {
@@ -198,7 +197,7 @@ internal class KaFirSymbolRelationProvider(
             is KaBackingFieldSymbol -> symbol.owningProperty
             is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
             is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingFunctionSymbol) as? KaDeclarationSymbol
+            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
             else -> null
         }
     }

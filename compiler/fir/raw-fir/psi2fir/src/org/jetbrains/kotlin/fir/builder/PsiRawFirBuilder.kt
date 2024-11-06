@@ -692,7 +692,7 @@ open class PsiRawFirBuilder(
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
-                containingFunctionSymbol = functionSymbol
+                containingDeclarationSymbol = functionSymbol
                 annotations += additionalAnnotations
             }
         }
@@ -1406,7 +1406,7 @@ open class PsiRawFirBuilder(
                             name = StandardNames.DEFAULT_VALUE_PARAMETER
 
                             symbol = FirValueParameterSymbol(name)
-                            containingFunctionSymbol = functionSymbol
+                            containingDeclarationSymbol = functionSymbol
 
                             returnTypeRef = file.getContentElement().toFirOrErrorType()
                             isCrossinline = false
@@ -1930,7 +1930,7 @@ open class PsiRawFirBuilder(
                         val name = SpecialNames.DESTRUCT
                         val multiParameter = buildValueParameter {
                             source = valueParameter.toFirSourceElement()
-                            containingFunctionSymbol = this@buildAnonymousFunction.symbol
+                            containingDeclarationSymbol = this@buildAnonymousFunction.symbol
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = valueParameter.typeReference.toFirOrImplicitType()

@@ -335,7 +335,7 @@ object FirFakeOverrideGenerator {
         original: FirValueParameter,
         returnTypeRef: FirTypeRef,
         origin: FirDeclarationOrigin,
-        containingFunctionSymbol: FirFunctionSymbol<*>,
+        containingDeclarationSymbol: FirFunctionSymbol<*>,
         source: KtSourceElement?,
         copyDefaultValues: Boolean = true,
     ): FirValueParameter = buildValueParameterCopy(original) {
@@ -343,7 +343,7 @@ object FirFakeOverrideGenerator {
         this.source = source
         this.returnTypeRef = returnTypeRef
         symbol = FirValueParameterSymbol(original.name)
-        this.containingFunctionSymbol = containingFunctionSymbol
+        this.containingDeclarationSymbol = containingDeclarationSymbol
         defaultValue = defaultValue
             ?.takeIf { copyDefaultValues }
             ?.let {
@@ -542,7 +542,7 @@ object FirFakeOverrideGenerator {
                     original = originalParameter,
                     returnTypeRef = propertyReturnTypeRef,
                     origin = origin,
-                    containingFunctionSymbol = it.symbol,
+                    containingDeclarationSymbol = it.symbol,
                     source = originalParameter.source,
                 )
                 it.replaceValueParameters(listOf(newParameter))

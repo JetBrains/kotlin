@@ -138,8 +138,8 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     val isVararg: Boolean
         get() = fir.isVararg
 
-    val containingFunctionSymbol: FirFunctionSymbol<*>
-        get() = fir.containingFunctionSymbol
+    val containingDeclarationSymbol: FirBasedSymbol<*>
+        get() = fir.containingDeclarationSymbol
 }
 
 class FirReceiverParameterSymbol : FirBasedSymbol<FirDeclaration>() {

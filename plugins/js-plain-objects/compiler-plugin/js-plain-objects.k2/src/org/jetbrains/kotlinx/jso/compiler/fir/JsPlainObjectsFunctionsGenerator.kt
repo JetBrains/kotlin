@@ -282,7 +282,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     isNoinline = true
                     isVararg = false
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    containingFunctionSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
                     defaultValue = it.getParameterDefaultValueFromProperty()
                 }
             }

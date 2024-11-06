@@ -475,7 +475,7 @@ private fun createDeclarationsForJavaRecord(
 
             javaClass.recordComponents.mapTo(valueParameters) { component ->
                 buildJavaValueParameter {
-                    containingFunctionSymbol = this@buildJavaConstructor.symbol
+                    containingDeclarationSymbol = this@buildJavaConstructor.symbol
                     source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
                     this.moduleData = moduleData
                     isFromSource = component.isFromSource
@@ -625,7 +625,7 @@ private fun convertJavaAnnotationMethodToValueParameter(
         this.moduleData = moduleData
         isFromSource = javaMethod.isFromSource
         returnTypeRef = firJavaMethod.returnTypeRef
-        containingFunctionSymbol = firJavaMethod.symbol
+        containingDeclarationSymbol = firJavaMethod.symbol
         name = javaMethod.name
         isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == FirJavaFacade.VALUE_METHOD_NAME
     }

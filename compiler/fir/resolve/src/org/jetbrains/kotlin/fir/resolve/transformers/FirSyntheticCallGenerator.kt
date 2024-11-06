@@ -554,7 +554,7 @@ class FirSyntheticCallGenerator(
         val name = Name.identifier(nameAsString)
         return buildValueParameter {
             moduleData = session.moduleData
-            containingFunctionSymbol = functionSymbol
+            containingDeclarationSymbol = functionSymbol
             origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.name = name
             returnTypeRef = this@toValueParameter

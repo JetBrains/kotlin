@@ -1590,7 +1590,7 @@ class LightTreeRawFirDeclarationBuilder(
         val accessorSymbol = FirPropertyAccessorSymbol()
         var firValueParameters: FirValueParameter = buildDefaultSetterValueParameter {
             moduleData = baseModuleData
-            containingFunctionSymbol = accessorSymbol
+            containingDeclarationSymbol = accessorSymbol
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
             symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
@@ -1819,7 +1819,7 @@ class LightTreeRawFirDeclarationBuilder(
         val calculatedModifiers = modifiers ?: Modifier()
         return buildValueParameter {
             source = firValueParameter.source
-            containingFunctionSymbol = functionSymbol
+            containingDeclarationSymbol = functionSymbol
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
@@ -2604,7 +2604,7 @@ class LightTreeRawFirDeclarationBuilder(
             additionalAnnotations = additionalAnnotations,
             name = name,
             defaultValue = firExpression,
-            containingFunctionSymbol = functionSymbol,
+            containingDeclarationSymbol = functionSymbol,
             destructuringDeclaration = destructuringDeclaration
         )
     }

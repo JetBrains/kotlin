@@ -204,7 +204,7 @@ class FirSamResolver(
 
             valueParameters += buildValueParameter {
                 moduleData = session.moduleData
-                containingFunctionSymbol = syntheticFunctionSymbol
+                containingDeclarationSymbol = syntheticFunctionSymbol
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source

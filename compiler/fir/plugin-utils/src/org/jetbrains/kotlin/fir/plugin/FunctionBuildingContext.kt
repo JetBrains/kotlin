@@ -90,7 +90,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
                 // TODO: check how it will actually work in fir2ir
                 defaultValue = buildExpressionStub { coneTypeOrNull = session.builtinTypes.nothingType.coneType }
             }
-            this.containingFunctionSymbol = containingFunctionSymbol
+            this.containingDeclarationSymbol = containingFunctionSymbol
             isCrossinline = valueParameter.isCrossinline
             isNoinline = valueParameter.isNoinline
             isVararg = valueParameter.isVararg

@@ -529,7 +529,7 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData
                 this.returnTypeRef = valueParameter.typeRef
-                containingFunctionSymbol = this@buildJavaMethod.symbol
+                containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
                 isFromSource = true

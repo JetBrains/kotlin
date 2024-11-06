@@ -175,7 +175,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     }
                     name = itName
                     this.symbol = parameterSymbol
-                    containingFunctionSymbol = fSymbol
+                    containingDeclarationSymbol = fSymbol
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false

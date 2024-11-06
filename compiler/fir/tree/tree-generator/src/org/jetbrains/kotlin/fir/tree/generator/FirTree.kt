@@ -644,7 +644,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +declaredSymbol(valueParameterSymbolType)
         +field("defaultValue", expression, nullable = true, withReplace = true)
-        +referencedSymbol("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)) {
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
             withBindThis = false
         }
         generateBooleanFields("crossinline", "noinline", "vararg")

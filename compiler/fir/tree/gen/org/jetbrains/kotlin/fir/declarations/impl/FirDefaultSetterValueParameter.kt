@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -41,7 +41,7 @@ internal class FirDefaultSetterValueParameter(
     override val containerSource: DeserializedContainerSource?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
-    override val containingFunctionSymbol: FirFunctionSymbol<*>,
+    override val containingDeclarationSymbol: FirBasedSymbol<*>,
 ) : FirValueParameter() {
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()

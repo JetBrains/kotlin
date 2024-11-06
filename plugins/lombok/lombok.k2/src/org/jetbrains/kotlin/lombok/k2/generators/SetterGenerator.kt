@@ -91,7 +91,7 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
                 valueParameters += buildJavaValueParameter {
                     moduleData = field.moduleData
-                    containingFunctionSymbol = this@buildJavaMethod.symbol
+                    containingDeclarationSymbol = this@buildJavaMethod.symbol
                     returnTypeRef = field.returnTypeRef
                     name = field.name
                     isVararg = false

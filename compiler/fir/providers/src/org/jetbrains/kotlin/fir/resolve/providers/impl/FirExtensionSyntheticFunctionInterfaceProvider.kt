@@ -267,7 +267,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                                 val parameterName = Name.identifier("p${index + 1}")
                                 buildValueParameter {
                                     moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
-                                    containingFunctionSymbol = this@buildSimpleFunction.symbol
+                                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
                                     origin = builtInOrigin
                                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                     returnTypeRef = typeArgument

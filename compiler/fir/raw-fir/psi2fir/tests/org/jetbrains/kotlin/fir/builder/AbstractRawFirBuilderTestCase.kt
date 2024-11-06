@@ -97,7 +97,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                     append("owner -> ")
                     appendLine(annotation.containingDeclarationSymbol.let {
                         if (it is FirValueParameterSymbol) {
-                            "$it from ${it.containingFunctionSymbol}"
+                            "$it from ${it.containingDeclarationSymbol}"
                         } else {
                             it
                         }

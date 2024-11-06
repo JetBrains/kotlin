@@ -22,7 +22,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        val containingFunctionSymbol = declaration.containingFunctionSymbol
+        val containingFunctionSymbol = declaration.containingDeclarationSymbol
         if (containingFunctionSymbol !is FirAnonymousFunctionSymbol) return
         if (declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) return
 

@@ -191,7 +191,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                                 coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
                             }
                         }
-                        containingFunctionSymbol = firFunction.symbol
+                        containingDeclarationSymbol = firFunction.symbol
                         isCrossinline = it.isCrossinline
                         isNoinline = it.isNoinline
                         isVararg = it.isVararg
@@ -254,7 +254,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                                 coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
                             }
                         }
-                        containingFunctionSymbol = firConstructor.symbol
+                        containingDeclarationSymbol = firConstructor.symbol
                         isCrossinline = it.isCrossinline
                         isNoinline = it.isNoinline
                         isVararg = it.isVararg
@@ -532,7 +532,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             return when (this) {
                 is FirClassLikeDeclaration -> runIf(!classId.isLocal) { classId.topmostParentClassId.toSymbol(session)?.fir }
                 is FirTypeParameter -> containingDeclarationSymbol.fir.topmostParent(session)
-                is FirValueParameter -> containingFunctionSymbol.fir.topmostParent(session)
+                is FirValueParameter -> containingDeclarationSymbol.fir.topmostParent(session)
                 is FirCallableDeclaration -> symbol.callableId.classId
                     ?.takeIf { !it.isLocal }
                     ?.topmostParentClassId

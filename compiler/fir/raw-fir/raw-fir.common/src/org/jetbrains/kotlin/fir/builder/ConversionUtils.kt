@@ -504,7 +504,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             symbol = FirPropertyAccessorSymbol()
             val parameter = buildValueParameter {
                 source = declarationFakeSource
-                containingFunctionSymbol = this@buildPropertyAccessor.symbol
+                containingDeclarationSymbol = this@buildPropertyAccessor.symbol
                 this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource

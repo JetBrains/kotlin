@@ -78,7 +78,7 @@ internal fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(actio
  * @see postponedSymbolsForAnnotationResolution
  */
 internal fun FirBasedSymbol<*>.unwrapSymbolToPostpone(): FirBasedSymbol<*> = when (this) {
-    is FirValueParameterSymbol -> containingFunctionSymbol
+    is FirValueParameterSymbol -> containingDeclarationSymbol
     else -> this
 }
 

@@ -1312,7 +1312,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
             valueParameters += buildValueParameter {
                 resolvePhase = this@createDataClassCopyFunction.resolvePhase
                 source = parameterSource
-                containingFunctionSymbol = this@buildSimpleFunction.symbol
+                containingDeclarationSymbol = this@buildSimpleFunction.symbol
                 moduleData = this@createDataClassCopyFunction.moduleData
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef

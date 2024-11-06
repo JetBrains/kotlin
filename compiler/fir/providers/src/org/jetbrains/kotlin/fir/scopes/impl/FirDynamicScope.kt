@@ -167,7 +167,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
         val parameter = buildValueParameter {
             moduleData = session.moduleData
-            containingFunctionSymbol = this@buildSimpleFunction.symbol
+            containingDeclarationSymbol = this@buildSimpleFunction.symbol
             origin = FirDeclarationOrigin.DynamicScope
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = anyArrayTypeRef

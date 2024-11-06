@@ -457,7 +457,7 @@ class FirSignatureEnhancement(
 
                 buildValueParameter {
                     source = valueParameter.source
-                    containingFunctionSymbol = functionSymbol
+                    containingDeclarationSymbol = functionSymbol
                     moduleData = this@FirSignatureEnhancement.moduleData
                     origin = declarationOrigin
                     returnTypeRef = enhancedReturnType.withReplacedConeType(

@@ -718,7 +718,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val name = c.nameResolver.getName(proto.name)
             buildValueParameter {
                 moduleData = c.moduleData
-                this.containingFunctionSymbol = functionSymbol
+                this.containingDeclarationSymbol = functionSymbol
                 origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name

@@ -156,7 +156,7 @@ fun generateValueOfFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
         valueParameters += buildValueParameter vp@{
             source = sourceElement
-            containingFunctionSymbol = this@buildSimpleFunction.symbol
+            containingDeclarationSymbol = this@buildSimpleFunction.symbol
             this.origin = origin
             this.moduleData = moduleData
             this.returnTypeRef = buildResolvedTypeRef {

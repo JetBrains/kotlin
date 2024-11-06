@@ -141,7 +141,7 @@ private fun dumpFir(
 private fun FirBasedSymbol<*>.toStringWithContext(): String {
     val base = toString()
     val parentSymbol: FirBasedSymbol<*>? = when (this) {
-        is FirValueParameterSymbol -> containingFunctionSymbol
+        is FirValueParameterSymbol -> containingDeclarationSymbol
         is FirPropertyAccessorSymbol -> propertySymbol
         is FirTypeParameterSymbol -> containingDeclarationSymbol
         is FirBackingFieldSymbol -> propertySymbol

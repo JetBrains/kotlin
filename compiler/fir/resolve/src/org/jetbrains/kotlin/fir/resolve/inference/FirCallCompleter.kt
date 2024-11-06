@@ -353,7 +353,7 @@ class FirCallCompleter(
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
                         source = lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
-                        containingFunctionSymbol = lambda.symbol
+                        containingDeclarationSymbol = lambda.symbol
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         this.name = name

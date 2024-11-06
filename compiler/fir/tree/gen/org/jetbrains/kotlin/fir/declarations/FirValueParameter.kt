@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -51,7 +51,7 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirValueParameterSymbol
     abstract val defaultValue: FirExpression?
-    abstract val containingFunctionSymbol: FirFunctionSymbol<*>
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
     abstract val isVararg: Boolean

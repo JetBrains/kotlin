@@ -199,7 +199,7 @@ class LightTreeRawFirExpressionBuilder(
                     val name = SpecialNames.DESTRUCT
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
-                        containingFunctionSymbol = functionSymbol
+                        containingDeclarationSymbol = functionSymbol
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef

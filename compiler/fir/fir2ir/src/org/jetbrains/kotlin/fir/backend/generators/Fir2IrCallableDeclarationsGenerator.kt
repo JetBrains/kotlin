@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -743,7 +744,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 origin = origin,
                 name = valueParameter.name,
                 type = type,
-                isAssignable = valueParameter.containingFunctionSymbol.fir.shouldParametersBeAssignable(c),
+                isAssignable = valueParameter.containingDeclarationSymbol.fir.let { it is FirCallableDeclaration && it.shouldParametersBeAssignable(c) },
                 symbol = IrValueParameterSymbolImpl(),
                 varargElementType = valueParameter.varargElementType?.toIrType(c, typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
@@ -760,7 +761,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                      */
                     if (!c.configuration.allowNonCachedDeclarations) return@tryFindInExpect null
 
-                    val actualFunction = valueParameter.containingFunctionSymbol
+                    val actualFunction = valueParameter.containingDeclarationSymbol as FirFunctionSymbol
                     if (!actualFunction.isActual) return@tryFindInExpect null
 
                     val expectFunction = actualFunction.getSingleMatchedExpectForActualOrNull()

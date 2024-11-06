@@ -57,7 +57,7 @@ class ValueParameter(
     private val additionalAnnotations: List<FirAnnotation>,
     val name: Name,
     val defaultValue: FirExpression?,
-    private val containingFunctionSymbol: FirFunctionSymbol<*>?,
+    private val containingDeclarationSymbol: FirFunctionSymbol<*>?,
     val destructuringDeclaration: DestructuringDeclaration? = null
 ) {
     fun hasValOrVar(): Boolean {
@@ -91,7 +91,7 @@ class ValueParameter(
             defaultValue = this@ValueParameter.defaultValue
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
-            containingFunctionSymbol = this@ValueParameter.containingFunctionSymbol
+            containingDeclarationSymbol = this@ValueParameter.containingDeclarationSymbol
                 ?: error("containingFunctionSymbol should present when converting ValueParameter to a FirValueParameter")
 
             annotations += this@ValueParameter.annotations

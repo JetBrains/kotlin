@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -36,7 +36,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var containerSource: DeserializedContainerSource? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
-    lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
+    lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun build(): FirValueParameter {
         return FirDefaultSetterValueParameter(
@@ -50,7 +50,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             containerSource,
             annotations.toMutableOrEmpty(),
             symbol,
-            containingFunctionSymbol,
+            containingDeclarationSymbol,
         )
     }
 

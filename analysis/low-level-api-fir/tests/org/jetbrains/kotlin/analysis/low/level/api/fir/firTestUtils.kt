@@ -103,7 +103,7 @@ private val FirDeclaration.canBeResolved: Boolean
     get() = when (this) {
         is FirAnonymousFunction -> false
         is FirProperty -> !isLocal
-        is FirValueParameter -> containingFunctionSymbol.fir.canBeResolved
+        is FirValueParameter -> containingDeclarationSymbol.fir.canBeResolved
         is FirPropertyAccessor -> propertySymbol.fir.canBeResolved
         is FirBackingField -> propertySymbol.fir.canBeResolved
         else -> true

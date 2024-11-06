@@ -157,7 +157,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     source = toSourceElement()
     isFromSource = this@toFirValueParameter.isFromSource
     this.moduleData = moduleData
-    containingFunctionSymbol = functionSymbol
+    containingDeclarationSymbol = functionSymbol
     name = this@toFirValueParameter.name ?: Name.identifier("p$index")
     returnTypeRef = type.toFirJavaTypeRef(session, source)
     isVararg = this@toFirValueParameter.isVararg

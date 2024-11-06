@@ -129,7 +129,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                         }
                         else -> typeRef
                     }
-                    containingFunctionSymbol = constructorSymbol
+                    containingDeclarationSymbol = constructorSymbol
                     name = field.name
                     isVararg = false
                     isFromSource = true

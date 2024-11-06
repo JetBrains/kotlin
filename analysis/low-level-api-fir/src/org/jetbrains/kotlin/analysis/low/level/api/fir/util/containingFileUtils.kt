@@ -19,7 +19,7 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
         is FirScript -> provider.getFirScriptContainerFile(symbol)
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
-        is FirValueParameter -> containingFunctionSymbol.fir.getContainingFile()
+        is FirValueParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirBackingField -> propertySymbol.fir.getContainingFile()
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration -> provider.getFirClassifierContainerFileIfAny(symbol)
