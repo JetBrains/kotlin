@@ -241,7 +241,10 @@ fun Test.setUpJsBoxTests(tags: String?) {
     inputs.file(rootDir.resolve("libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib"))
 
     useJUnitPlatform {
-        tags?.let { includeTags(it) }
+        tags?.let {
+            includeTags(it)
+            excludeTags("none()")
+        }
     }
 
     setUpBoxTests()
