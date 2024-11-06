@@ -91,7 +91,12 @@ class FirAnonymousObjectSymbol(packageFqName: FqName) : FirClassSymbol<FirAnonym
 )
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {
-    override fun toLookupTag(): ConeClassLikeLookupTag = classId.toLookupTag()
+    private val lookupTag: ConeClassLikeLookupTag =
+        if (classId.isLocal) ConeClassLikeLookupTagWithFixedSymbol(classId, this)
+        else classId.toLookupTag()
+
+    override fun toLookupTag(): ConeClassLikeLookupTag = lookupTag
+
 
     val resolvedExpandedTypeRef: FirResolvedTypeRef
         get() {

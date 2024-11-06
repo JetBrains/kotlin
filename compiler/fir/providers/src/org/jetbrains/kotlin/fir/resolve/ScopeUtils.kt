@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUp
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -149,9 +149,9 @@ private fun ConeClassLikeType.classScope(
     return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag, requiredMembersPhase)
 }
 
-fun FirClassSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()
+fun FirClassLikeSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()
 
-fun FirClass.defaultType(): ConeClassLikeType =
+fun FirClassLikeDeclaration.defaultType(): ConeClassLikeType =
     ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         typeParameters.map {
