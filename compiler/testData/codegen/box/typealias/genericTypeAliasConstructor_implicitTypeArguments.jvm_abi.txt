@@ -1,0 +1,9 @@
+MODULE main
+	CLASS GenericTypeAliasConstructor_implicitTypeArgumentsKt.class
+		PACKAGE METADATA
+			PROPERTY getZ()LCell;
+				Property: class.metadata.property.returnType
+					K1
+						Cell<kotlin/collections/List<MyClass>> /* = AliasedCell^<MyClass> */
+					K2
+						Cell<kotlin/collections/List<MyClass>> /* = AliasedCell^ */
