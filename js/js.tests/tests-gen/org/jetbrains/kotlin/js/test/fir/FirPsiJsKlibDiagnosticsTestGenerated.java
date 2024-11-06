@@ -59,6 +59,18 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     }
 
     @Test
+    @TestMetadata("privateClassMembersAsArgumentsError.kt")
+    public void testPrivateClassMembersAsArgumentsError() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateClassMembersAsArgumentsError.kt");
+    }
+
+    @Test
+    @TestMetadata("privateClassMembersAsArgumentsWarning.kt")
+    public void testPrivateClassMembersAsArgumentsWarning() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateClassMembersAsArgumentsWarning.kt");
+    }
+
+    @Test
     @TestMetadata("privateTypesInsideInternalInlineFunctionError.kt")
     public void testPrivateTypesInsideInternalInlineFunctionError() {
       runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionError.kt");
@@ -68,6 +80,30 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     @TestMetadata("privateTypesInsideInternalInlineFunctionWarning.kt")
     public void testPrivateTypesInsideInternalInlineFunctionWarning() {
       runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarning.kt");
+    }
+
+    @Test
+    @TestMetadata("publicClassAsPrivateSuperClassError.kt")
+    public void testPublicClassAsPrivateSuperClassError() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/publicClassAsPrivateSuperClassError.kt");
+    }
+
+    @Test
+    @TestMetadata("publicClassAsPrivateSuperClassWarning.kt")
+    public void testPublicClassAsPrivateSuperClassWarning() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/publicClassAsPrivateSuperClassWarning.kt");
+    }
+
+    @Test
+    @TestMetadata("twoLevelNestedClassError.kt")
+    public void testTwoLevelNestedClassError() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/twoLevelNestedClassError.kt");
+    }
+
+    @Test
+    @TestMetadata("twoLevelNestedClassWarning.kt")
+    public void testTwoLevelNestedClassWarning() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/twoLevelNestedClassWarning.kt");
     }
 
     @Nested
