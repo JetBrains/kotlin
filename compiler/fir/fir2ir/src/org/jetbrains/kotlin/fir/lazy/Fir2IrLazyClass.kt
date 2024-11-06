@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.backend.utils.computeValueClassRepresentation
-import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.utils.getIrSymbolsForSealedSubclasses
+import org.jetbrains.kotlin.fir.backend.utils.setThisReceiver
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -139,18 +139,8 @@ class Fir2IrLazyClass(
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {
-        val typeArguments = fir.typeParameters.map {
-            IrSimpleTypeImpl(
-                classifierStorage.getCachedIrTypeParameter(it.symbol.fir)!!.symbol,
-                hasQuestionMark = false, arguments = emptyList(), annotations = emptyList()
-            )
-        }
-        val receiver = declareThisReceiverParameter(
-            c,
-            thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = typeArguments, annotations = emptyList()),
-            thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-        )
-        receiver
+        setThisReceiver(c, fir.typeParameters)
+        thisReceiver
     }
 
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?

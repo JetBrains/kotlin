@@ -112,7 +112,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
-        irClass.setThisReceiver(klass.typeParameters)
+        irClass.setThisReceiver(c, klass.typeParameters)
         irClass.declareSupertypes(klass)
         if (klass is FirRegularClass) {
             irClass.declareValueClassRepresentation(klass)
@@ -129,18 +129,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
             declarations.addAll(fieldsForContextReceiversOfCurrentClass)
         }
-    }
-
-    private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
-        val typeArguments = typeParameters.map {
-            val typeParameter = classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT)
-            IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, emptyList(), emptyList())
-        }
-        thisReceiver = declareThisReceiverParameter(
-            c,
-            thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, typeArguments, emptyList()),
-            thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-        )
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
@@ -333,11 +321,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 setParent(containingFile)
                 addDeclarationToParent(this, containingFile)
                 typeParameters = emptyList()
-                thisReceiver = declareThisReceiverParameter(
-                    c,
-                    thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
-                    thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                )
+                setThisReceiver(c, emptyList())
                 superTypes = listOf(builtins.anyType)
             }
         }
@@ -429,11 +413,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             setParent(irParent)
             addDeclarationToParent(this, irParent)
             typeParameters = emptyList()
-            thisReceiver = declareThisReceiverParameter(
-                c,
-                thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
-                thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
-            )
+            setThisReceiver(c, emptyList())
             superTypes = listOf(builtins.anyType)
         }
     }
