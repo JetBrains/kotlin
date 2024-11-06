@@ -48,4 +48,9 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<
      * @throws IllegalArgumentException if this enum type has no constant with the specified name
      * @valueOf
      */
+
+    /**
+     * Returns an immutable [kotlin.enums.EnumEntries] list containing the constants of this enum type, in the order they're declared.
+     * @entries
+     */
 }
