@@ -41,19 +41,19 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.10.1</version>
+      <version>5.11.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.10.1</version>
+      <version>5.11.3</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>1.10.1</version>
+      <version>1.11.3</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
