@@ -11,15 +11,15 @@
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>

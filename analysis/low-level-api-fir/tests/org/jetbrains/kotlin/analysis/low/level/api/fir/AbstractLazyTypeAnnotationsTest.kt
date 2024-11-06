@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -145,6 +146,7 @@ private fun FirBasedSymbol<*>.toStringWithContext(): String {
         is FirPropertyAccessorSymbol -> propertySymbol
         is FirTypeParameterSymbol -> containingDeclarationSymbol
         is FirBackingFieldSymbol -> propertySymbol
+        is FirReceiverParameterSymbol -> containingDeclarationSymbol
         else -> null
     }
 

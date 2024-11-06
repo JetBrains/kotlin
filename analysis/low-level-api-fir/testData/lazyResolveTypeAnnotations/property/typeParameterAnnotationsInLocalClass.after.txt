@@ -3,7 +3,7 @@
   anchor -> [FirPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol <local>/explicitType
   anchor -> [FirPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int

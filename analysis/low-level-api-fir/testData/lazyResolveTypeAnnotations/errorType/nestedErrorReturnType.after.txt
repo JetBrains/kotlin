@@ -7,11 +7,11 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1

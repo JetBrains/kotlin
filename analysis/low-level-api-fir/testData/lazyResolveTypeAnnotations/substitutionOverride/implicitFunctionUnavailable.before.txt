@@ -11,23 +11,23 @@
   anchor -> [FirNamedFunctionSymbol second/AbstractClass.Companion.explicitType]
 
 @R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol second/AbstractClass.resolveMe
   anchor -> [FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol second/AbstractClass.resolveMe
   anchor -> [FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass, FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
 
 @R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
 
 @R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>

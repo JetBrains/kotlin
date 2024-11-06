@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.mpp.EnumEntrySymbolMarker
 import org.jetbrains.kotlin.mpp.PropertySymbolMarker
 import org.jetbrains.kotlin.mpp.ValueParameterSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: CallableId) : FirCallableSymbol<E>() {
     val resolvedInitializer: FirExpression?
@@ -143,6 +145,15 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
 }
 
 class FirReceiverParameterSymbol : FirBasedSymbol<FirDeclaration>() {
+    val containingDeclarationSymbol: FirBasedSymbol<*>
+        get() = when (val fir = fir) {
+            is FirReceiverParameter -> fir.containingDeclarationSymbol
+            is FirContextReceiver -> fir.containingDeclarationSymbol
+            else -> errorWithAttachment("Unexpected receiver parameter: ${fir::class.simpleName}") {
+                withFirEntry("fir", fir)
+            }
+        }
+
     override fun toString(): String = "FirReceiverParameterSymbol"
 }
 

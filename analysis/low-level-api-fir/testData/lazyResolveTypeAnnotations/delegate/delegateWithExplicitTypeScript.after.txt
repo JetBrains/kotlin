@@ -11,15 +11,15 @@
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /OriginalInterface.explicitType
   anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>

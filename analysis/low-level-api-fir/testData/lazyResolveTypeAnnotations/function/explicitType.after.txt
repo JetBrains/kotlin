@@ -11,15 +11,15 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>

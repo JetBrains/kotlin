@@ -19,31 +19,31 @@
   anchor -> [FirRegularClassSymbol second/SubClass]
 
 @R|second/Anno|(<strcat>(String(receiver type ), constant#))  second/Pair<@R|second/Anno|(<strcat>(String(nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>, @R|second/Anno|(<strcat>(String(nested right receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested right receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested nested right receiver type ), constant#))  F
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested left receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
 
 @R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirPropertySymbol second/AbstractClass.resolveMe
   anchor -> [FirRegularClassSymbol second/SubClass]
 
 @R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>?

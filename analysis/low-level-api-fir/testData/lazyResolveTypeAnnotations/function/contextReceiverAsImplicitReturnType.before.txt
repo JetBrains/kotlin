@@ -3,7 +3,7 @@
   anchor -> [FirNamedFunctionSymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirReceiverParameterSymbol
+  context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /foo
   anchor -> [FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
