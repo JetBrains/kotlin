@@ -2009,8 +2009,8 @@ class ComposableFunctionBodyTransformer(
         return hash
     }
 
-    private fun functionSourceKey(): Int {
-        when (val fn = currentFunctionScope.function) {
+    private fun functionSourceKey(function: IrFunction): Int {
+        when (val fn = function) {
             is IrSimpleFunction -> {
                 return fn.sourceKey()
             }
@@ -2028,12 +2028,12 @@ class ComposableFunctionBodyTransformer(
             sourceKey()
         )
 
-    private fun irFunctionSourceKey(): IrConst =
+    private fun irFunctionSourceKey(function: IrFunction = currentFunctionScope.function): IrConst =
         IrConstImpl.int(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             context.irBuiltIns.intType,
-            functionSourceKey()
+            functionSourceKey(function)
         )
 
     private fun irStartReplaceGroup(
@@ -3261,7 +3261,7 @@ class ComposableFunctionBodyTransformer(
             } else {
                 cacheCall.wrap(
                     before = inputVals.filterNotNull() + listOf(
-                        irStartReplaceGroup(expression, blockScope)
+                        irStartReplaceGroup(expression, blockScope, irFunctionSourceKey(expression.symbol.owner))
                     ),
                     after = listOf(irEndReplaceGroup(scope = blockScope))
                 )

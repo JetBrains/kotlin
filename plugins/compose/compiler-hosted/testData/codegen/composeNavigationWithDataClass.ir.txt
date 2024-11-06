@@ -197,7 +197,7 @@ MODULE_FRAGMENT
                   BLOCK type=kotlin.Unit origin=null
                     CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
                       $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost' type=androidx.compose.runtime.Composer? origin=null
-                      key: CONST Int type=kotlin.Int value=-924393826
+                      key: CONST Int type=kotlin.Int value=-1633490746
                     CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost' type=androidx.compose.runtime.Composer? origin=null
                       sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
