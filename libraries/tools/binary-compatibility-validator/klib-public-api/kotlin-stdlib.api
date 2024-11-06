@@ -11454,6 +11454,8 @@ final object kotlin.native/Platform { // kotlin.native/Platform|null[0]
         final fun <get-memoryModel>(): kotlin.native/MemoryModel // kotlin.native/Platform.memoryModel.<get-memoryModel>|<get-memoryModel>(){}[0]
     final val osFamily // kotlin.native/Platform.osFamily|{}osFamily[0]
         final fun <get-osFamily>(): kotlin.native/OsFamily // kotlin.native/Platform.osFamily.<get-osFamily>|<get-osFamily>(){}[0]
+    final val programName // kotlin.native/Platform.programName|{}programName[0]
+        final fun <get-programName>(): kotlin/String? // kotlin.native/Platform.programName.<get-programName>|<get-programName>(){}[0]
 
     final var isCleanersLeakCheckerActive // kotlin.native/Platform.isCleanersLeakCheckerActive|{}isCleanersLeakCheckerActive[0]
         final fun <get-isCleanersLeakCheckerActive>(): kotlin/Boolean // kotlin.native/Platform.isCleanersLeakCheckerActive.<get-isCleanersLeakCheckerActive>|<get-isCleanersLeakCheckerActive>(){}[0]
