@@ -15,4 +15,4 @@ sourceSets {
     "test" {}
 }
 
-generatedConfigurationKeys("CommonConfigurationKeys")
+generatedConfigurationKeys("CommonConfigurationKeys", "KlibConfigurationKeys")

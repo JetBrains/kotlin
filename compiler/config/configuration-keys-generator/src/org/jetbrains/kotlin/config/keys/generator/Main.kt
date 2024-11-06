@@ -12,6 +12,7 @@ import java.io.File
 val allContainers: List<KeysContainer> = listOf(
     CommonConfigurationKeysContainer,
     CLIConfigurationKeysContainer,
+    KlibConfigurationKeysContainer,
 )
 
 fun main(args: Array<String>) {
