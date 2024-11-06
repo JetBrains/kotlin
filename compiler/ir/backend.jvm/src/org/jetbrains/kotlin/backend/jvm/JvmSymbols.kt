@@ -1112,10 +1112,7 @@ class JvmSymbols(
             val irClass = this
             parent = javaLangAnnotationPackage
             javaLangAnnotationPackage.addChild(this)
-            thisReceiver = buildValueParameter(this) {
-                name = Name.identifier("\$this")
-                type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
-            }
+            createThisReceiverParameter()
         }
 
         private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor =

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -625,10 +626,7 @@ class IrValidatorTest {
             ),
             emptyList()
         )
-        outerClass.thisReceiver = buildValueParameter(outerClass) {
-            type = outerType
-            name = SpecialNames.THIS
-        }
+        outerClass.createThisReceiverParameter()
         file.addChild(outerClass)
         val innerClass = IrFactoryImpl.buildClass {
             isInner = true

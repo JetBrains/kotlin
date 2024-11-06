@@ -118,22 +118,8 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             declarations.add(companionObject)
 
             companionObject.parent = this
-            companionObject.thisReceiver = context.irFactory.createValueParameter(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = FACTORY_FOR_KOTLIN_COLLECTIONS,
-                name = SpecialNames.THIS,
-                type = companionObject.typeWith(),
-                isAssignable = false,
-                symbol = IrValueParameterSymbolImpl(),
-                varargElementType = null,
-                isCrossinline = false,
-                isNoinline = false,
-                isHidden = false,
-            ).also { field ->
-                field.parent = companionObject
-            }
-
+            companionObject.createThisReceiverParameter()
+            companionObject.thisReceiver!!.origin = FACTORY_FOR_KOTLIN_COLLECTIONS
         }
 
         val factoryMethod = context.irFactory.createSimpleFunction(
