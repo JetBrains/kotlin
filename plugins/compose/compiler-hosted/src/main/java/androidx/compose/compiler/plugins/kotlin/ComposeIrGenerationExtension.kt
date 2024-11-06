@@ -49,6 +49,7 @@ class ComposeIrGenerationExtension(
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
+    private val lambdaMemoization: Boolean = true,
     private val messageCollector: MessageCollector,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
@@ -155,12 +156,14 @@ class ComposeIrGenerationExtension(
         ).lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
-        ComposerLambdaMemoization(
-            pluginContext,
-            metrics,
-            stabilityInferencer,
-            featureFlags,
-        ).lower(moduleFragment)
+        if (lambdaMemoization) {
+            ComposerLambdaMemoization(
+                pluginContext,
+                metrics,
+                stabilityInferencer,
+                featureFlags,
+            ).lower(moduleFragment)
+        }
 
         // transform all composable functions to have an extra synthetic composer
         // parameter. this will also transform all types and calls to include the extra

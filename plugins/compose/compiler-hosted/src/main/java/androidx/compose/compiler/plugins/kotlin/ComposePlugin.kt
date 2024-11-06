@@ -80,6 +80,9 @@ object ComposeConfiguration {
         )
     val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY =
         CompilerConfigurationKey<Boolean>("Skip IR lowering transformation when finding Compose runtime fails")
+
+    val LAMBDA_MEMOIZATION_ENABLED_KEY =
+        CompilerConfigurationKey<Boolean>("Enable lambda memoization")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -207,6 +210,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+
+        val LAMBDA_MEMOIZATION = CliOption(
+            "lambdaMemoization",
+            "<true|false>",
+            "Memoize lambda instances for composition",
+            required = false,
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -227,6 +237,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         TRACE_MARKERS_OPTION,
         FEATURE_FLAG_OPTION,
         SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
+        LAMBDA_MEMOIZATION,
     )
 
     override fun processOption(
@@ -329,6 +340,12 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
             value == "true"
         )
+
+        LAMBDA_MEMOIZATION -> configuration.put(
+            ComposeConfiguration.LAMBDA_MEMOIZATION_ENABLED_KEY,
+            value == "true"
+        )
+
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -667,6 +684,11 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
             )
 
+            val lambdaMemoization = configuration.get(
+                ComposeConfiguration.LAMBDA_MEMOIZATION_ENABLED_KEY,
+                true
+            )
+
             val featureFlags = FeatureFlags(
                 configuration.get(
                     ComposeConfiguration.FEATURE_FLAGS, emptyList()
@@ -723,6 +745,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 descriptorSerializerContext = descriptorSerializerContext,
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
+                lambdaMemoization = lambdaMemoization,
                 messageCollector = configuration.messageCollector,
             )
         }
