@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -103,17 +101,7 @@ internal class KaFirTypeProvider(
                 val firSymbol = firSymbol
                 val defaultConeType = when (firSymbol) {
                     is FirTypeParameterSymbol -> firSymbol.defaultType
-                    is FirClassLikeSymbol<*> -> ConeClassLikeTypeImpl(
-                        firSymbol.toLookupTag(),
-                        firSymbol.typeParameterSymbols.map {
-                            ConeTypeParameterTypeImpl(
-                                it.toLookupTag(),
-                                isMarkedNullable = false
-                            )
-                        }.toTypedArray(),
-                        isMarkedNullable = false,
-                    )
-
+                    is FirClassLikeSymbol<*> -> firSymbol.defaultType()
                     else -> errorWithAttachment("Unexpected ${firSymbol::class.simpleName}") {
                         withFirSymbolEntry("symbol", firSymbol)
                     }
