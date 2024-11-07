@@ -9,7 +9,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
