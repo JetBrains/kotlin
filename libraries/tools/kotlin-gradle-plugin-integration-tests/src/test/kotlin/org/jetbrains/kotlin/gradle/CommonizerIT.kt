@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -288,18 +289,21 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-46234 intermediate source set with only one native target")
+    @TestMetadata("commonize-kt-46234-singleNativeTarget")
     @GradleTest
     fun testIntermediateSourceSetWithOnlyOneNativeTarget(gradleVersion: GradleVersion) {
         testSingleNativePlatform("commonize-kt-46234-singleNativeTarget", gradleVersion)
     }
 
     @DisplayName("KT-46142 standalone native source set")
+    @TestMetadata("commonize-kt-46142-singleNativeTarget")
     @GradleTest
     fun testStandaloneNativeSourceSet(gradleVersion: GradleVersion) {
         testSingleNativePlatform("commonize-kt-46142-singleNativeTarget", gradleVersion)
     }
 
     @DisplayName("KT-46248 single supported native target dependency propagation")
+    @TestMetadata("commonize-kt-46248-singleNativeTargetPropagation")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagation(gradleVersion: GradleVersion) {
         val posixDependencyRegex = Regex(""".*Dependency:.*[pP]osix""")
@@ -328,6 +332,7 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-46248 single supported native target dependency propagation - cinterop")
+    @TestMetadata("commonize-kt-47523-singleNativeTargetPropagation-cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationCInterop(gradleVersion: GradleVersion) {
         val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-nativePlatformCinterop-dummy.*""")
