@@ -17,14 +17,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 
-class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesManager {
+class JsSharedVariablesManager(
+    private val builtIns: IrBuiltIns,
+    private val dynamicType: IrDynamicType,
+    intrinsics: JsIntrinsics,
+) : SharedVariablesManager {
 
-    private val builtIns: IrBuiltIns = context.irBuiltIns
-    private val createBox: IrSimpleFunctionSymbol = context.intrinsics.createSharedBox
-    private val readBox: IrSimpleFunctionSymbol = context.intrinsics.readSharedBox
-    private val writeBox: IrSimpleFunctionSymbol = context.intrinsics.writeSharedBox
-    private val dynamicType = context.dynamicType
+    private val createBox: IrSimpleFunctionSymbol = intrinsics.createSharedBox
+    private val readBox: IrSimpleFunctionSymbol = intrinsics.readSharedBox
+    private val writeBox: IrSimpleFunctionSymbol = intrinsics.writeSharedBox
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val valueType = originalDeclaration.type
