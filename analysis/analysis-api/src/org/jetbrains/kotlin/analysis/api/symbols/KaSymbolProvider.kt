@@ -148,6 +148,14 @@ public interface KaSymbolProvider {
      */
     public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol?
 
+    /**
+     * @return [KaClassLikeSymbol] with specified [classId] or `null` in case such a symbol is not found
+     *
+     * @see findClass
+     * @see findTypeAlias
+     */
+    public fun findClassLike(classId: ClassId): KaClassLikeSymbol?
+
     @Deprecated("Use 'findTypeAlias()' instead.", replaceWith = ReplaceWith("findTypeAlias(classId)"))
     public fun getTypeAliasByClassId(classId: ClassId): KaTypeAliasSymbol? = findTypeAlias(classId)
 

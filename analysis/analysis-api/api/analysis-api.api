@@ -1280,6 +1280,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolProvider {
 	public abstract fun findClass (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
+	public abstract fun findClassLike (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 	public abstract fun findPackage (Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol;
 	public abstract fun findTopLevelCallables (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;)Lkotlin/sequences/Sequence;
 	public abstract fun findTypeAlias (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaTypeAliasSymbol;

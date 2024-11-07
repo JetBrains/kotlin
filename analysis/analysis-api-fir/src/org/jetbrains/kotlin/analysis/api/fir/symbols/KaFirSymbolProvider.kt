@@ -176,6 +176,11 @@ internal class KaFirSymbolProvider(
         return firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(symbol)
     }
 
+    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
+        val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+        return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(symbol)
+    }
+
     override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = withValidityAssertion {
         val firs = firSymbolProvider.getTopLevelCallableSymbols(packageFqName, name)
         return firs.asSequence().map { firSymbol ->

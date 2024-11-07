@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvid
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.findClassifierAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.findTypeAliasAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.name.ClassId
@@ -136,6 +137,11 @@ internal class KaFe10SymbolProvider(
     override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = withValidityAssertion {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findTypeAliasAcrossModuleDependencies(classId) ?: return null
         return descriptor.toKtClassifierSymbol(analysisContext) as? KaTypeAliasSymbol
+    }
+
+    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? = withValidityAssertion {
+        val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(classId) ?: return null
+        return descriptor.toKtClassifierSymbol(analysisContext) as? KaClassLikeSymbol
     }
 
     override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = withValidityAssertion {
