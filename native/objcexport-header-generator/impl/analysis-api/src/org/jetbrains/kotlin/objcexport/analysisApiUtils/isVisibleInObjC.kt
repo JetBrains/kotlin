@@ -174,9 +174,15 @@ private fun KaSession.isHiddenFromObjCByDeprecation(symbol: KaClassSymbol): Bool
 
 private fun KaSession.isInlined(symbol: KaClassSymbol): Boolean {
     if (symbol !is KaNamedClassSymbol) return false
+    if (isUnsignedPrimitive(symbol)) return false
     if (symbol.isInline) return true
-    // TODO: There are some native types that are 'implicitly inlined'
     return false
+}
+
+private fun KaSession.isUnsignedPrimitive(symbol: KaClassSymbol): Boolean {
+    return symbol.defaultType.run {
+        isUShortType || isUByteType || isUIntType || isULongType
+    }
 }
 
 private fun KaClassKind.isVisibleInObjC(): Boolean = when (this) {

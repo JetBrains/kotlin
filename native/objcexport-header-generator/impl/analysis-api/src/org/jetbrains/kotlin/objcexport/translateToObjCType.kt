@@ -56,7 +56,6 @@ internal fun ObjCExportContext.translateToObjCReferenceType(type: KaType): ObjCR
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
-@OptIn(KaExperimentalApi::class)
 internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaType): ObjCNonNullReferenceType {
     with(analysisSession) {
 

@@ -114,7 +114,13 @@ private fun KaSession.bridgeType(
     }
 
     if (primitiveObjCValueType != null) {
-        return ValueTypeBridge(primitiveObjCValueType)
+        /**
+         * Nullable primitives needs to be passed through priority mapping at [mapToReferenceTypeIgnoringNullability]
+         * And either be translated as `id _Nullable` or nullable mapped type
+         */
+        return if (primitiveObjCValueType == ObjCValueType.POINTER) {
+            ValueTypeBridge(primitiveObjCValueType)
+        } else if (type.isMarkedNullable) ReferenceBridge else ValueTypeBridge(primitiveObjCValueType)
     }
 
     /* If type is inlined, then build the bridge for the inlined target type */

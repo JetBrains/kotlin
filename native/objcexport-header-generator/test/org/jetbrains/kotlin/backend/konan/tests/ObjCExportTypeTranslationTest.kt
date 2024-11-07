@@ -123,9 +123,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - number - Byte - nullable`() {
+        val header = header("""val foo: Byte? get() = error("stub")""")
+        assertEquals("Byte * _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - number - UByte`() {
         val header = header("""val foo: UByte get() = error("stub")""")
         assertEquals("uint8_t", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - number - UByte - nullable`() {
+        val header = header("""val foo: UByte? get() = error("stub")""")
+        assertEquals("UByte * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -135,9 +147,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - number - Short - nullable`() {
+        val header = header("""val foo: Short? get() = error("stub")""")
+        assertEquals("Short * _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - number - UShort`() {
         val header = header("""val foo: UShort get() = error("stub")""")
         assertEquals("uint16_t", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - number - UShort - nullable`() {
+        val header = header("""val foo: UShort? get() = error("stub")""")
+        assertEquals("UShort * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -147,9 +171,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - number - Int - nullable`() {
+        val header = header("""val foo: Int? get() = error("stub")""")
+        assertEquals("Int * _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - number - UInt`() {
         val header = header("""val foo: UInt get() = error("stub")""")
         assertEquals("uint32_t", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - number - UInt - nullable`() {
+        val header = header("""val foo: UInt? get() = error("stub")""")
+        assertEquals("UInt * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -159,9 +195,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - number - Long - nullable`() {
+        val header = header("""val foo: Long? get() = error("stub")""")
+        assertEquals("Long * _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - number - ULong`() {
         val header = header("""val foo: ULong get() = error("stub")""")
         assertEquals("uint64_t", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - number - ULong - nullable`() {
+        val header = header("""val foo: ULong? get() = error("stub")""")
+        assertEquals("ULong * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -171,9 +219,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - number - Float - nullable`() {
+        val header = header("""val foo: Float? get() = error("stub")""")
+        assertEquals("Float * _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - number - Double`() {
         val header = header("""val foo: Double get() = error("stub")""")
         assertEquals("double", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - number - Double - nullable`() {
+        val header = header("""val foo: Double? get() = error("stub")""")
+        assertEquals("Double * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -195,9 +255,21 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - char - nullable`() {
+        val header = header("""val foo: Char? get() = error("stub")""")
+        assertEquals("id _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - string`() {
         val header = header("""val foo: String get() = error("stub")""")
         assertEquals("NSString *", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - string - nullable`() {
+        val header = header("""val foo: String? get() = error("stub")""")
+        assertEquals("NSString * _Nullable", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
