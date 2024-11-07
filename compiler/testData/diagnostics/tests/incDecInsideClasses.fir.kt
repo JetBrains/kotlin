@@ -2,7 +2,7 @@
 // DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
 
 class MatchSticksInc {
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.inc() = this + "|"
+    operator fun String.inc() = this + "|"
 }
 
 class MatchSticksPlus {

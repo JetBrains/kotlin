@@ -23886,6 +23886,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("incDecWith2Receivers.kt")
+    public void testIncDecWith2Receivers() {
+      runTest("compiler/testData/codegen/box/increment/incDecWith2Receivers.kt");
+    }
+
+    @Test
     @TestMetadata("kt36956.kt")
     public void testKt36956() {
       runTest("compiler/testData/codegen/box/increment/kt36956.kt");
