@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.diagnostics.*
+import org.jetbrains.kotlin.konan.test.headerklib.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
@@ -161,6 +162,36 @@ fun main() {
                 )
             ) {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
+            }
+        }
+
+        // Header klib comparison tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/comparison") {
+            testClass<AbstractNativeHeaderKlibComparisonTest>(
+                suiteTestClassName = "NativeHeaderKlibComparisonTestGenerated",
+            ) {
+                model(extension = null, recursive = false)
+            }
+            testClass<AbstractNativeHeaderKlibComparisonTest>(
+                suiteTestClassName = "FirNativeHeaderKlibComparisonTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model(extension = null, recursive = false)
+            }
+        }
+
+        // Header klib compilation tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/compilation") {
+            testClass<AbstractNativeHeaderKlibCompilationTest>(
+                suiteTestClassName = "NativeHeaderKlibCompilationTestGenerated",
+            ) {
+                model(extension = null, recursive = false)
+            }
+            testClass<AbstractNativeHeaderKlibCompilationTest>(
+                suiteTestClassName = "FirNativeHeaderKlibCompilationTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model(extension = null, recursive = false)
             }
         }
 
