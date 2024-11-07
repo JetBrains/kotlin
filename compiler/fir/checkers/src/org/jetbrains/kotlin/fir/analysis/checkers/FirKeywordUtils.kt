@@ -93,7 +93,6 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
         is KtPsiSourceElement -> {
             val modifierListOwner = psi as? KtModifierListOwner
 
-            // TODO: drop in the context of KT-72295
             // The check is required in the Analysis API mode as in this case property accessor
             // has the containing property as a source
             if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {

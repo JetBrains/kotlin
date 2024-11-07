@@ -58,11 +58,6 @@ open class PsiRawFirBuilder(
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
 ) : AbstractRawFirBuilder<PsiElement>(session) {
-    /**
-     * @see generateAccessorsByDelegate
-     */
-    protected open val KtProperty.sourceForDelegatedPropertyAccessors: KtSourceElement? get() = null
-
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
         target.bind(function)
     }
@@ -2309,6 +2304,7 @@ open class PsiRawFirBuilder(
                                 ownerRegularOrAnonymousObjectSymbol = null,
                                 context = context,
                                 isExtension = false,
+                                explicitDeclarationSource = propertySource,
                             )
                         }
                     } else {
@@ -2390,7 +2386,7 @@ open class PsiRawFirBuilder(
                                     lazyDelegateExpression = lazyDelegateExpression,
                                     lazyBodyForGeneratedAccessors = lazyBody,
                                     bindFunction = ::bindFunctionTarget,
-                                    explicitDeclarationSource = sourceForDelegatedPropertyAccessors,
+                                    explicitDeclarationSource = propertySource,
                                 )
                             }
                         }
