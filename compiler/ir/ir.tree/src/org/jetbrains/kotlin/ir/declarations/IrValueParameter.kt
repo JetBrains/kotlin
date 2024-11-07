@@ -60,7 +60,16 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract var defaultValue: IrExpressionBody?
 
+    /**
+     * Deprecated, kept only for source compatibility.
+     *
+     * Please replace with [indexInOldValueParameters].
+     */
     var index: Int = -1
+        @DelicateIrParameterIndexSetter
+        set
+
+    var indexInOldValueParameters: Int by ::index
         @DelicateIrParameterIndexSetter
         set
 
