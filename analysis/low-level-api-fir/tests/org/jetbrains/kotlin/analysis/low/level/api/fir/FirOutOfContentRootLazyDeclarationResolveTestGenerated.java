@@ -1706,6 +1706,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("typeAliasedConstructorCallWithUnderscoredTypeArgument.kt")
+    public void testTypeAliasedConstructorCallWithUnderscoredTypeArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasedConstructorCallWithUnderscoredTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt")
+    public void testTypeAliasedSamConstructorCallWithUnderscoredTypeArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedAnnotationOnTypeAlias.kt")
     public void testUnresolvedAnnotationOnTypeAlias() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/unresolvedAnnotationOnTypeAlias.kt");

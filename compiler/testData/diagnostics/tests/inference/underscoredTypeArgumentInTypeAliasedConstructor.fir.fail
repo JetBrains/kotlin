@@ -1,0 +1,5 @@
+org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Placeholder projection cannot be mapped. Placeholders are replaced during analysis. If the containing element was already analyzed and a placeholder is still present, it indicates a bug.
+	at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.toConeTypeProjection(FirTypeUtils.kt:234)
+	at org.jetbrains.kotlin.fir.resolve.calls.ConstructorProcessingKt.processConstructors(ConstructorProcessing.kt:157)
+	at org.jetbrains.kotlin.fir.resolve.calls.ConstructorProcessingKt.processConstructorsByName(ConstructorProcessing.kt:51)
+	at org.jetbrains.kotlin.fir.resolve.calls.ConstructorProcessingKt.processFunctionsAndConstructorsByName(ConstructorProcessing.kt:75)
