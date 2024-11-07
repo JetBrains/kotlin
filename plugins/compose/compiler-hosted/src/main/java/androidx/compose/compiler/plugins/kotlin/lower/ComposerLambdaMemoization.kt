@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -62,6 +63,78 @@ private class CaptureCollector {
 
     fun recordCapture(local: IrSymbolOwner) {
         capturedDeclarations.add(local)
+    }
+}
+
+/**
+ * Implementation for assigning lambda names.
+ * For example,
+ * ```kotlin
+ * @Composable
+ * fun Foo() {
+ *     Bar { // <- lambda-1
+ *         Bar { <- lambda 1$1
+ *
+ *         }
+ *
+ *         Bar { <- lambda 1$2
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * Where the [currentLambdaKey] will return the `1$1`, `1$2`, ... parts which is associated with the lambda.
+ */
+private class LambdaNamingContext {
+
+    private val stack = ArrayDeque<StackElement>(listOf(StackElement(null)))
+
+    class StackElement(val key: String?) {
+
+        private var nextGenericKey = START_INDEX
+
+        fun nextGenericKey(): Int {
+            try {
+                return nextGenericKey
+            } finally {
+                nextGenericKey++
+            }
+        }
+    }
+
+    inline fun <T> withScope(element: IrElement?, action: () -> T): T {
+        if (element == null) return action()
+
+        push(element)
+        return try {
+            action()
+        } finally {
+            pop()
+        }
+    }
+
+    private fun push(element: IrElement) {
+        stack += StackElement(element.createKey())
+    }
+
+    private fun pop() {
+        stack.removeLast()
+    }
+
+    fun currentLambdaKey(): String {
+        return stack.mapNotNull { it.key }.joinToString("$")
+    }
+
+    private fun IrElement.createKey(): String {
+        return (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.asString()
+            ?: stack.last().nextGenericKey().toString()
+    }
+
+    private companion object {
+        /**
+         * The first lambda is starting with 1 instead of 0 because of historical reasons.
+         */
+        const val START_INDEX = 1
     }
 }
 
@@ -251,6 +324,8 @@ class ComposerLambdaMemoization(
 
     ModuleLoweringPass {
 
+    private val lambdaNamingContext = LambdaNamingContext()
+
     private val declarationContextStack = mutableListOf<DeclarationContext>()
 
     private val currentFunctionContext: FunctionContext?
@@ -294,6 +369,10 @@ class ComposerLambdaMemoization(
         // generating remember after call as it was added at the same time as the slot table was
         // modified to support remember after call.
         FeatureFlag.OptimizeNonSkippingGroups.enabled && rememberComposableLambdaFunction != null
+    }
+
+    private fun currentLambdaName(): String {
+        return "lambda-" + lambdaNamingContext.currentLambdaKey()
     }
 
     private fun getOrCreateComposableSingletonsClass(): IrClass {
@@ -382,6 +461,7 @@ class ComposerLambdaMemoization(
         return result
     }
 
+
     private fun irCurrentComposer(): IrExpression {
         val currentComposerSymbol = getTopLevelPropertyGetter(ComposeCallableIds.currentComposer)
 
@@ -406,10 +486,13 @@ class ComposerLambdaMemoization(
         if (declaration.isLocal) {
             declarationContextStack.recordLocalDeclaration(context)
         }
-        declarationContextStack.push(context)
-        val result = super.visitFunction(declaration)
-        declarationContextStack.pop()
-        return result
+
+        lambdaNamingContext.withScope(declaration.takeUnless { declaration.name.isSpecial }) {
+            declarationContextStack.push(context)
+            val result = super.visitFunction(declaration)
+            declarationContextStack.pop()
+            return result
+        }
     }
 
     override fun visitClass(declaration: IrClass): IrStatement {
@@ -417,10 +500,12 @@ class ComposerLambdaMemoization(
         if (declaration.isLocal) {
             declarationContextStack.recordLocalDeclaration(context)
         }
-        declarationContextStack.push(context)
-        val result = super.visitClass(declaration)
-        declarationContextStack.pop()
-        return result
+        lambdaNamingContext.withScope(declaration) {
+            declarationContextStack.push(context)
+            val result = super.visitClass(declaration)
+            declarationContextStack.pop()
+            return result
+        }
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
@@ -741,7 +826,7 @@ class ComposerLambdaMemoization(
         lambdaType: IrType,
     ): IrExpression {
         val clazz = getOrCreateComposableSingletonsClass()
-        val lambdaName = "lambda-${clazz.declarations.size}"
+        val lambdaName = currentLambdaName()
         val lambdaProp = clazz.addProperty {
             name = Name.identifier(lambdaName)
             visibility = DescriptorVisibilities.INTERNAL
@@ -784,12 +869,14 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
-        val declarationContext = declarationContextStack.peek()
-            ?: return super.visitFunctionExpression(expression)
-        return if (expression.function.allowsComposableCalls)
-            visitComposableFunctionExpression(expression, declarationContext)
-        else
-            visitNonComposableFunctionExpression(expression)
+        return lambdaNamingContext.withScope(expression) {
+            val declarationContext = declarationContextStack.peek()
+                ?: return super.visitFunctionExpression(expression)
+            return if (expression.function.allowsComposableCalls)
+                visitComposableFunctionExpression(expression, declarationContext)
+            else
+                visitNonComposableFunctionExpression(expression)
+        }
     }
 
     private fun startCollector(collector: CaptureCollector) {

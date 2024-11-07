@@ -782,4 +782,79 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
+    @Test
+    fun testMemoizingNestedLambdas() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun root() {
+                Box {
+                    print("root/1") 
+                    Box {
+                        print("root/1/1")
+                    }
+                    
+                    Box {
+                        print("root/1/2")
+            
+                        Box {
+                            print("root/1/2/1")
+                        }
+                        
+                        Box {
+                            print("root/1/2/2")
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testMemoizingDifferentlyScopedLambdas() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            val topLevelScope = @Composable { println("topLevelScope") }
+
+            @Composable
+            fun functionScope() {
+                Box {
+                    print("functionScope")
+                }     
+            }
+
+            class ClassScope {
+                @Composable
+                fun classScope() {
+                    Box {
+                        print("classScope")
+                    }
+                }
+            
+                class NestedClassScope {
+                    @Composable
+                    fun nestedClassScope() {
+                        Box {
+                            print("nestedClassScope")
+                        }
+                    }
+                }
+            }
+
+
+        """.trimIndent()
+    )
 }
