@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// IGNORE_REVERSED_RESOLVE
 interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R
 
