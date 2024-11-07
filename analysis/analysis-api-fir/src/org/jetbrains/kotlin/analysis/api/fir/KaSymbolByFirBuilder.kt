@@ -111,18 +111,13 @@ internal class KaSymbolByFirBuilder(
         return createPackageSymbol(packageFqName)
     }
 
-    fun createPackageSymbol(packageFqName: FqName): KaPackageSymbol {
-        return KaFirPackageSymbol(packageFqName, project, token)
-    }
+    fun createPackageSymbol(packageFqName: FqName): KaPackageSymbol = KaFirPackageSymbol(packageFqName, project, token)
 
     inner class ClassifierSymbolBuilder {
-        fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KaClassifierSymbol {
-            return when (firSymbol) {
-                is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
-                is FirTypeParameterSymbol -> buildTypeParameterSymbol(firSymbol)
-            }
+        fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KaClassifierSymbol = when (firSymbol) {
+            is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
+            is FirTypeParameterSymbol -> buildTypeParameterSymbol(firSymbol)
         }
-
 
         fun buildClassLikeSymbol(firSymbol: FirClassLikeSymbol<*>): KaClassLikeSymbol = when (firSymbol) {
             is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
@@ -272,6 +267,7 @@ internal class KaSymbolByFirBuilder(
             if (firSymbol is FirPropertySymbol && !firSymbol.isLocal && firSymbol !is FirSyntheticPropertySymbol) {
                 return buildPropertySignature(firSymbol)
             }
+
             return with(analysisSession) { buildVariableSymbol(firSymbol).asSignature() }
         }
 
@@ -396,28 +392,27 @@ internal class KaSymbolByFirBuilder(
 
     inner class TypeBuilder {
         fun buildKtType(coneType: ConeKotlinType): KaType = when (coneType) {
-            is ConeClassLikeTypeImpl -> {
-                when {
-                    coneType.lookupTag.toSymbol(rootSession) == null -> {
-                        KaFirClassErrorType(
-                            coneType = coneType,
-                            coneDiagnostic = ConeUnresolvedSymbolError(coneType.lookupTag.classId),
-                            builder = this@KaSymbolByFirBuilder
-                        )
-                    }
-                    hasFunctionalClassId(coneType) -> KaFirFunctionType(coneType, this@KaSymbolByFirBuilder)
-                    else -> KaFirUsualClassType(coneType, this@KaSymbolByFirBuilder)
+            is ConeClassLikeTypeImpl -> when {
+                coneType.lookupTag.toSymbol(rootSession) == null -> {
+                    KaFirClassErrorType(
+                        coneType = coneType,
+                        coneDiagnostic = ConeUnresolvedSymbolError(coneType.lookupTag.classId),
+                        builder = this@KaSymbolByFirBuilder
+                    )
                 }
+                hasFunctionalClassId(coneType) -> KaFirFunctionType(coneType, this@KaSymbolByFirBuilder)
+                else -> KaFirUsualClassType(coneType, this@KaSymbolByFirBuilder)
             }
+
             is ConeTypeParameterType -> KaFirTypeParameterType(coneType, this@KaSymbolByFirBuilder)
             is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
                 is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError -> {
                     KaFirClassErrorType(coneType, diagnostic, this@KaSymbolByFirBuilder)
                 }
-                else -> {
-                    KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
-                }
+
+                else -> KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
             }
+
             is ConeDynamicType -> KaFirDynamicType(coneType, this@KaSymbolByFirBuilder)
             is ConeFlexibleType -> KaFirFlexibleType(coneType, this@KaSymbolByFirBuilder)
             is ConeIntersectionType -> KaFirIntersectionType(coneType, this@KaSymbolByFirBuilder)
@@ -430,8 +425,10 @@ internal class KaSymbolByFirBuilder(
                     null -> ConeSimpleDiagnostic("Cannot infer parameter type for ${coneType.typeConstructor.debugName}")
                     else -> ConeCannotInferTypeParameterType((typeParameter as ConeTypeParameterLookupTag).typeParameterSymbol)
                 }
+
                 buildKtType(ConeErrorType(diagnostic, isUninferredParameter = true, attributes = coneType.attributes))
             }
+
             else -> throwUnexpectedElementError(coneType)
         }
 
@@ -445,9 +442,7 @@ internal class KaSymbolByFirBuilder(
             return coneType.functionTypeKind(analysisSession.firResolveSession.useSiteFirSession, expandTypeAliases = false) != null
         }
 
-        fun buildKtType(coneType: FirTypeRef): KaType {
-            return buildKtType(coneType.coneType)
-        }
+        fun buildKtType(coneType: FirTypeRef): KaType = buildKtType(coneType.coneType)
 
         fun buildTypeProjection(coneType: ConeTypeProjection): KaTypeProjection = when (coneType) {
             is ConeStarProjection -> KaBaseStarTypeProjection(token)
@@ -458,13 +453,11 @@ internal class KaSymbolByFirBuilder(
             )
         }
 
-        fun buildSubstitutor(substitutor: ConeSubstitutor): KaSubstitutor {
-            if (substitutor == ConeSubstitutor.Empty) return KaSubstitutor.Empty(token)
-            return when (substitutor) {
-                is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
-                is ChainedSubstitutor -> KaFirChainedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
-                else -> KaFirGenericSubstitutor(substitutor, this@KaSymbolByFirBuilder)
-            }
+        fun buildSubstitutor(substitutor: ConeSubstitutor): KaSubstitutor = when (substitutor) {
+            ConeSubstitutor.Empty -> KaSubstitutor.Empty(token)
+            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
+            is ChainedSubstitutor -> KaFirChainedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
+            else -> KaFirGenericSubstitutor(substitutor, this@KaSymbolByFirBuilder)
         }
     }
 
