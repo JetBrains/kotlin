@@ -7501,6 +7501,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("contextParameterUsage.kt")
+      public void testContextParameterUsage() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterUsage.kt");
+      }
+
+      @Test
       @TestMetadata("overloadAmbiguity.kt")
       public void testOverloadAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/overloadAmbiguity.kt");

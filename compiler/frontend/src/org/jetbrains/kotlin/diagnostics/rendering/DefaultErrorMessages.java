@@ -1302,6 +1302,7 @@ public class DefaultErrorMessages {
         MAP.put(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, "With implicit context receiver, call is ambiguous. Specify the receiver explicitly");
         MAP.put(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL, "To use contextual declarations, specify the `-Xcontext-receivers` compiler option");
         MAP.put(SUBTYPING_BETWEEN_CONTEXT_RECEIVERS, "Subtyping relation between context receivers is prohibited");
+        MAP.put(CONTEXT_PARAMETERS_UNSUPPORTED, "Context parameters are not supported in K1 mode. Consider using a more recent language version and switching to K2 mode.");
 
         MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
         MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");

@@ -1453,6 +1453,7 @@ public interface Errors {
     DiagnosticFactory0<KtElement> AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> SUBTYPING_BETWEEN_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> CONTEXT_PARAMETERS_UNSUPPORTED = DiagnosticFactory0.create(ERROR);
 
     // Error sets
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
