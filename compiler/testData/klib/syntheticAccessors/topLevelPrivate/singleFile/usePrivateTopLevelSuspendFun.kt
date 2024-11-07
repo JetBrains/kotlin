@@ -1,5 +1,6 @@
 // KT-72883: org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl cannot be cast to org.jetbrains.kotlin.ir.expressions.IrBlockBody
 // IGNORE_BACKEND: JS_IR
+// IGNORE_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // WITH_COROUTINES
 
 import kotlin.coroutines.*
