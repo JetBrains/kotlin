@@ -36,56 +36,63 @@ import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String): String {
-        val withSelectedProcessed = processSelectedExpression(file, content)
-        return processCaretExpression(file, withSelectedProcessed)
+        return processCaretMarkers(file, processSelectedMarkers(file, content))
     }
 
-    private fun processSelectedExpression(file: TestFile, content: String): String {
-        val startCaretPosition = content.indexOfOrNull(TAGS.OPENING_EXPRESSION_TAG) ?: return content
-
-        val endCaretPosition = content.indexOfOrNull(TAGS.CLOSING_EXPRESSION_TAG)
-            ?: error("${TAGS.CLOSING_EXPRESSION_TAG} was not found in the file")
-
-        check(startCaretPosition < endCaretPosition)
-        testServices.expressionMarkerProvider.addSelectedExpression(
-            file,
-            TextRange.create(startCaretPosition, endCaretPosition - TAGS.OPENING_EXPRESSION_TAG.length)
-        )
-        return content
-            .replace(TAGS.OPENING_EXPRESSION_TAG, "")
-            .replace(TAGS.CLOSING_EXPRESSION_TAG, "")
-    }
-
-    private fun processCaretExpression(file: TestFile, content: String): String {
-        var result = content
-        var match = TAGS.CARET_REGEXP.find(result)
-        while (match != null) {
-            val startCaretPosition = match.range.first
-            val tag = match.groups[2]?.value
-            testServices.expressionMarkerProvider.addCaret(file, tag, startCaretPosition)
-            result = result.removeRange(match.range)
-            match = TAGS.CARET_REGEXP.find(result)
+    private fun processSelectedMarkers(file: TestFile, content: String): String {
+        return processText(content, TAGS.SELECTION_REGEXP) { qualifier, range ->
+            testServices.expressionMarkerProvider.addSelection(file, qualifier, TextRange(range.first, range.last + 1))
         }
+    }
+
+    private fun processCaretMarkers(file: TestFile, content: String): String {
+        return processText(content, TAGS.CARET_REGEXP) { qualifier, range ->
+            testServices.expressionMarkerProvider.addCaret(file, qualifier, range.first)
+        }
+    }
+
+    private fun processText(text: String, regex: Regex, action: (String, IntRange) -> Unit): String {
+        var result = text
+
+        while (true) {
+            val match = regex.find(result) ?: break
+            val qualifier = match.groupValues[2]
+
+            val startOffset = match.range.first
+            val selectionGroup = match.groups[3]
+
+            val range = if (selectionGroup != null) {
+                val delta = selectionGroup.range.first - startOffset
+                IntRange(selectionGroup.range.first - delta, selectionGroup.range.last - delta)
+            } else {
+                IntRange(startOffset, startOffset)
+            }
+
+            action(qualifier, range)
+
+            val replacementText = match.groupValues.getOrNull(3) ?: ""
+            result = result.replaceRange(match.range, replacementText)
+        }
+
         return result
     }
 
     object TAGS {
-        const val OPENING_EXPRESSION_TAG = "<expr>"
-        const val CLOSING_EXPRESSION_TAG = "</expr>"
-        val CARET_REGEXP = "<caret(_(\\w+))?>".toRegex()
+        val SELECTION_REGEXP = "<(expr(?:_(\\w+))?)>(.+?)</\\1>".toRegex()
+        val CARET_REGEXP = "<(caret(?:_(\\w+))?)>".toRegex()
     }
 }
 
 class ExpressionMarkerProvider : TestService {
-    private val selected = FileMarkerStorage<String, TextRange>()
+    private val selections = FileMarkerStorage<String, TextRange>()
     private val carets = FileMarkerStorage<String, Int>()
 
-    fun addSelectedExpression(file: TestFile, range: TextRange) {
-        selected.add(file.name, qualifier = "", range)
+    fun addSelection(file: TestFile, qualifier: String, range: TextRange) {
+        selections.add(file.name, qualifier, range)
     }
 
-    fun addCaret(file: TestFile, caretTag: String?, caretOffset: Int) {
-        carets.add(file.name, caretTag.orEmpty(), caretOffset)
+    fun addCaret(file: TestFile, qualifier: String, caretOffset: Int) {
+        carets.add(file.name, qualifier, caretOffset)
     }
 
     fun getCaretPositionOrNull(file: PsiFile, caretTag: String? = null): Int? {
@@ -105,7 +112,7 @@ class ExpressionMarkerProvider : TestService {
             .map { (qualifier, offset) -> CaretMarker(qualifier, offset) }
     }
 
-    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected.get(file.name, qualifier = "")
+    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selections.get(file.name, qualifier = "")
     fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
     inline fun <reified P : PsiElement> getElementOfTypeAtCaret(file: PsiFile, caretTag: String? = null): P {
@@ -156,7 +163,7 @@ class ExpressionMarkerProvider : TestService {
         val expectedClass = expectedTypeClass(module.directives) ?: defaultType?.java
         return getSelectedElementOfClassOrNull(ktFile, expectedClass)
             ?: getElementOfClassAtCaretOrNull(ktFile, expectedClass, caretTag)
-            ?: error("Neither ${ExpressionMarkersSourceFilePreprocessor.TAGS.OPENING_EXPRESSION_TAG} marker nor <caret> were found in file")
+            ?: error("Neither <expr> marker nor <caret> were found in file")
     }
 
     private fun getSelectedElementOfClassOrNull(
@@ -345,6 +352,3 @@ private class FileMarkerStorage<K : Any, T : Any> {
 }
 
 val TestServices.expressionMarkerProvider: ExpressionMarkerProvider by TestServices.testServiceAccessor()
-
-fun String.indexOfOrNull(substring: String) =
-    indexOf(substring).takeIf { it >= 0 }
