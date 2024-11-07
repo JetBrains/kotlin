@@ -736,6 +736,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("incDecInsideClasses.kt")
+    public void testIncDecInsideClasses() {
+      runTest("compiler/testData/diagnostics/tests/incDecInsideClasses.kt");
+    }
+
+    @Test
     @TestMetadata("incGenericExtensionProperty.kt")
     public void testIncGenericExtensionProperty() {
       runTest("compiler/testData/diagnostics/tests/incGenericExtensionProperty.kt");
