@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
+import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
@@ -18,6 +19,19 @@ fun main() {
     val k1BoxTestDir = listOf("multiplatform/k1")
 
     generateTestGroupSuiteWithJUnit5 {
+        // irText tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/ir/irText") {
+            testClass<AbstractClassicNativeIrTextTest> {
+                model(excludeDirs = listOf("declarations/multiplatform/k2"))
+            }
+            testClass<AbstractFirLightTreeNativeIrTextTest> {
+                model(excludeDirs = listOf("declarations/multiplatform/k1"))
+            }
+            testClass<AbstractFirPsiNativeIrTextTest> {
+                model(excludeDirs = listOf("declarations/multiplatform/k1"))
+            }
+        }
+
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
             testClass<AbstractDiagnosticsNativeTest> {

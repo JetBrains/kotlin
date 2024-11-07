@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
-import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
-import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
-import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
@@ -94,19 +91,6 @@ fun main() {
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
                 model("boxInline", targetBackend = TargetBackend.NATIVE)
-            }
-        }
-
-        // irText tests
-        testGroup("native/native.tests/tests-gen", "compiler/testData/ir/irText") {
-            testClass<AbstractClassicNativeIrTextTest> {
-                model(excludeDirs = listOf("declarations/multiplatform/k2"))
-            }
-            testClass<AbstractFirLightTreeNativeIrTextTest> {
-                model(excludeDirs = listOf("declarations/multiplatform/k1"))
-            }
-            testClass<AbstractFirPsiNativeIrTextTest> {
-                model(excludeDirs = listOf("declarations/multiplatform/k1"))
             }
         }
 
