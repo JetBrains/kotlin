@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getSelectedElement(mainFile)) {
+        val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)) {
             is KtExpression -> element
             is KtValueArgument -> element.getArgumentExpression()!!
             else -> error("Unexpected element: $element of ${element::class}")

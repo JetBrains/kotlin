@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiSymbolSubstitutionTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
             val symbol = declaration.symbol as KaCallableSymbol
 

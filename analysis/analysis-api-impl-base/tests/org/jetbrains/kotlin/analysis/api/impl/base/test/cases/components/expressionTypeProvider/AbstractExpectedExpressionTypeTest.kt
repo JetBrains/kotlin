@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtExpression
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
 
         val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {

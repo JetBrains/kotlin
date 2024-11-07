@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule)
+        val element = testServices.expressionMarkerProvider.getBottommostSelectedElementOfTypeByDirective(mainFile, mainModule)
         val expression = when (element) {
             is KtExpression -> element
             is KtValueArgument -> element.getArgumentExpression()

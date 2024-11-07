@@ -46,7 +46,7 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
     }
 
     private fun KaSession.getReferencedConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaConstructorSymbol? {
-        val reference = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtSimpleNameExpression>(mainFile)
+        val reference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtSimpleNameExpression>(mainFile)
 
         return reference?.mainReference?.resolveToSymbol() as? KaConstructorSymbol
     }

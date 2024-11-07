@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val ktTypeReference = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtTypeReference>(mainFile)
+        val ktTypeReference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtTypeReference>(mainFile)
         val actual = analyseForTest(ktTypeReference) {
             val ktType = ktTypeReference.type
             val annotations = ktType.annotations

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val classOrObject = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(mainFile)
+        val classOrObject = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassOrObject>(mainFile)
         resolveWithClearCaches(classOrObject) { session ->
             val classSymbol = classOrObject.resolveToFirSymbolOfType<FirClassSymbol<*>>(session)
             val symbols = collectAllCallableDeclarations(classSymbol, session)

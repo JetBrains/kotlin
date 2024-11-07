@@ -71,7 +71,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             val ktDeclaration = if (Directives.RESOLVE_SCRIPT in testServices.moduleStructure.allDirectives) {
                 ktFile.script!!
             } else {
-                testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
+                testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(ktFile)
             }
 
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val textRange = testServices.expressionMarkerProvider.getSelectedRange(mainFile)
+        val textRange = testServices.expressionMarkerProvider.getSelection(mainFile)
         val statements = findStatements(mainFile, textRange)
 
         val actualText = analyseForTest(mainFile) {

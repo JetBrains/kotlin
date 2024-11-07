@@ -59,9 +59,9 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             checkSession(firResolveSession)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
-            val preresolvedElementCarets = testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
+            val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
                 files = allKtFiles,
-                caretTag = "preresolved",
+                qualifier = "preresolved",
             )
 
             val phase = testServices.moduleStructure.allDirectives.singleOrZeroValue(PRE_RESOLVED_PHASE)

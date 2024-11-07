@@ -15,7 +15,7 @@ import java.io.File
 
 abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val contextElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile)
+        val contextElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(mainFile)
 
         val fragmentText = mainModule.testModule.files.single().originalFile
             .run { File(parent, "$nameWithoutExtension.fragment.$extension") }

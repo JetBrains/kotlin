@@ -23,7 +23,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
         assert(!project.isDisposed) { "$project is disposed" }
-        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+        val caretPosition = testServices.expressionMarkerProvider.getCaret(mainFile)
         val ktReferences = mainFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
         if (ktReferences.size != 1) {
             testServices.assertions.fail { "No references at caret found" }

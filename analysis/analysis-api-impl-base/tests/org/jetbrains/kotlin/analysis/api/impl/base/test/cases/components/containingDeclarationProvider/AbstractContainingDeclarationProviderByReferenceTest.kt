@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
+        val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
 
         analyseForTest(mainFile) {
             val ktSymbol = referenceExpression.mainReference.resolveToSymbol() ?: error("Reference is not resolved")
