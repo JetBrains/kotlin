@@ -255,6 +255,7 @@ private fun isValidFloat(s: String): Boolean {
     //
     // 1. Standard:
     //     - With an integer part only: 1234
+    //.    - With an integer part followed by the decimal point: 1234.
     //     - With integer and fractional parts: 1234.4678
     //     - With a fractional part only: .4678
     //
@@ -264,13 +265,14 @@ private fun isValidFloat(s: String): Boolean {
     //
     // 2. Hexadecimal:
     //     - With an integer part only: 0x12ab
+    //     - With an integer part followed by the decimal point: 0x12ab.
     //     - With integer and fractional parts: 0x12ab.CD78
     //     - With a fractional part only: 0x.CD78
     //
-    //     Mandatory signed exponent: p or P, followed by optionally signed digits (+12, -12, 12)
+    //     Mandatory signed exponent: p or P, followed by optionally signed decimal digits (+12, -12, 12)
     //
     //     Optional sign prefix: + or -
-    //     Optional suffix: f, F, d, or D (for instance 12.34f or .34D)
+    //     Optional suffix: f, F, d, or D (for instance 0xAB.01P1f or 0x.34P0D)
     //
     // Two special cases:
     //     "NaN" and "Infinity" strings, can have an optional sign prefix (+ or -)
@@ -416,7 +418,7 @@ private inline fun Char.isHexLetter(): Boolean {
  * If [this] character lies outside the 'A'..'Z' range, a resulting code unit will not make much sense.
  * This function is not a general purpose solution for a case transformation,
  * and it is intended for use in conjunction with comparison,
- * like `'R'.asciiLetterToLowerCaseCode() == 'r'`.
+ * like `'R'.asciiLetterToLowerCaseCode() == 'r'.code`.
  */
 @kotlin.internal.InlineOnly
 private inline fun Char.asciiLetterToLowerCaseCode(): Int = this.code or 0x20
@@ -467,8 +469,7 @@ private inline fun String.advanceAndValidateMantissa(start: Int, endInclusive: I
         hasFractionalPart = checkpoint != start
     }
 
-    // A hex string must have an integer part and a fractional part
-    // A non-hex string may have an integer part, or a fractional part, or both
+    // Both hex and non-hex strings must have an integer part, or a fractional part, or both
     if (!hasIntegerPart && !hasFractionalPart) {
         if (hexFormat) {
             return -1
@@ -478,7 +479,7 @@ private inline fun String.advanceAndValidateMantissa(start: Int, endInclusive: I
             if (constant == null) return -1
 
             // If the string contains exactly the constant we guessed, advance to after the constant
-            if (indexOf(constant, start, false) == start) return endInclusive + 1
+            return if (indexOf(constant, start, false) == start) return endInclusive + 1 else -1
         }
     }
 
