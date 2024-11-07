@@ -156,6 +156,11 @@ public final class ENUM : KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
+    public static func valueOf(
+        value: Swift.String
+    ) -> main.ENUM {
+        return main.ENUM(__externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+    }
 }
 public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {
     public override init() {

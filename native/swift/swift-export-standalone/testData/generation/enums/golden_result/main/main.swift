@@ -28,6 +28,11 @@ public final class Enum : KotlinRuntime.KotlinBase {
     public func print() -> Swift.String {
         return Enum_print(self.__externalRCRef())
     }
+    public static func valueOf(
+        value: Swift.String
+    ) -> main.Enum {
+        return main.Enum(__externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
+    }
 }
 public func enumId(
     e: Swift.Never

@@ -47,6 +47,11 @@ public extension main.a.b.c {
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
+        public static func valueOf(
+            value: Swift.String
+        ) -> main.a.b.c.E {
+            return main.a.b.c.E(__externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
+        }
     }
 }
 public enum a {
@@ -62,5 +67,4 @@ public enum a {
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
-// Can't export a.b.c.E.valueOf: static functions are not supported yet.
 // Can't export a.b.c.E.entries: static properties are not supported yet.

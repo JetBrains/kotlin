@@ -412,6 +412,7 @@ func testEnums() throws {
     try assertEquals(actual: Enum.a.print(), expected: "3 - str")
 
     try assertEquals(actual: Enum.b.print(), expected: "rts - 5")
+    try assertEquals(actual: Enum.valueOf(value: "b").print(), expected: "rts - 5")
 
     switch en {
     case .a: break;

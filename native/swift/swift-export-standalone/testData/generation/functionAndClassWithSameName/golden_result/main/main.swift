@@ -34,6 +34,11 @@ public final class EnumWithFactory : KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
+    public static func valueOf(
+        value: Swift.String
+    ) -> main.EnumWithFactory {
+        return main.EnumWithFactory(__externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
+    }
 }
 public final class ObjectWithFactory : KotlinRuntime.KotlinBase {
     public static var shared: main.ObjectWithFactory {

@@ -39,6 +39,8 @@ uintptr_t ENUM_INSIDE_ENUM_init_allocate();
 
 void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
+uintptr_t ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+
 uintptr_t __root___DATA_CLASS_WITH_REF_init_allocate();
 
 void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(uintptr_t __kt, uintptr_t o);

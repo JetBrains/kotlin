@@ -5,6 +5,8 @@ int32_t ClassWithFactoryWithoutParameters_value_get(uintptr_t self);
 
 uintptr_t EnumWithFactory_ONE_get();
 
+uintptr_t EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+
 uintptr_t __root___ClassWithFactoryWithoutParameters();
 
 uintptr_t __root___ClassWithFactoryWithoutParameters_init_allocate();

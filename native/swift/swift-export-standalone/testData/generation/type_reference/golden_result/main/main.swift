@@ -542,6 +542,11 @@ public extension ExportedKotlinPackages.ignored {
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
+        public static func valueOf(
+            value: Swift.String
+        ) -> ExportedKotlinPackages.ignored.ENUM {
+            return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+        }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
         return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_produce_ENUM())

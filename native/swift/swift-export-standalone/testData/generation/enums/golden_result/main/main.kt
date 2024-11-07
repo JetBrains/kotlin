@@ -37,3 +37,10 @@ public fun Enum_print(self: kotlin.native.internal.NativePtr): kotlin.native.int
     return _result.objcPtr()
 }
 
+@ExportedBridge("Enum_valueOf__TypesOfArguments__Swift_String__")
+public fun Enum_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = interpretObjCPointer<kotlin.String>(value)
+    val _result = Enum.valueOf(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+

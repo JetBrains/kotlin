@@ -155,6 +155,8 @@ void __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namesp
 
 uintptr_t ignored_ENUM_A_get();
 
+uintptr_t ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+
 uintptr_t ignored_produce_ENUM();
 
 void ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(uintptr_t x);

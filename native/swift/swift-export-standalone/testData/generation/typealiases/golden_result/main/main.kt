@@ -144,6 +144,13 @@ public fun ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(__kt
     kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM())
 }
 
+@ExportedBridge("ENUM_valueOf__TypesOfArguments__Swift_String__")
+public fun ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = interpretObjCPointer<kotlin.String>(value)
+    val _result = ENUM.valueOf(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_allocate")
 public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>()

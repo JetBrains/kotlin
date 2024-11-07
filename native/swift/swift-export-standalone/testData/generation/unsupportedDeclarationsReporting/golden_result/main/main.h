@@ -15,3 +15,5 @@ uintptr_t a_b_c_E_B_get();
 
 uintptr_t a_b_c_E_C_get();
 
+uintptr_t a_b_c_E_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+

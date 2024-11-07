@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.classSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
-import org.jetbrains.kotlin.sir.SirClass
-import org.jetbrains.kotlin.sir.SirModality
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -44,7 +42,7 @@ public class SirVisibilityCheckerImpl(
                 true
             }
             is KaNamedFunctionSymbol -> {
-                ktSymbol.isConsumableBySirBuilder()
+                ktSymbol.isConsumableBySirBuilder(ktSymbol.containingSymbol as? KaClassSymbol)
             }
             is KaVariableSymbol -> {
                 ktSymbol.isConsumableBySirBuilder() && !ktSymbol.hasHiddenAccessors
@@ -59,8 +57,8 @@ public class SirVisibilityCheckerImpl(
         return if (isConsumable && !isHidden) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(): Boolean {
-        if (isStatic) {
+    private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(parent: KaClassSymbol?): Boolean {
+        if (isStatic && parent?.let { isValueOfOnEnum(it) } != true) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "static functions are not supported yet.")
             return false
         }
@@ -153,6 +151,10 @@ public class SirVisibilityCheckerImpl(
 
     @OptIn(KaExperimentalApi::class)
     private fun KaDeclarationSymbol.isPublic(): Boolean = compilerVisibility.isPublicAPI
+
+    private fun KaNamedFunctionSymbol.isValueOfOnEnum(parent: KaClassSymbol): Boolean {
+        return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
+    }
 }
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
