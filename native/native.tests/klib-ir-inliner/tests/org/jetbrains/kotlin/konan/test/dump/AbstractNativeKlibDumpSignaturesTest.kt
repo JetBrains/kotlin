@@ -3,9 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.konan.test.dump
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.asLibraryDependency
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
+import org.jetbrains.kotlin.konan.test.blackbox.cinteropToLibrary
+import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
+import org.jetbrains.kotlin.konan.test.firIdentical
+import org.jetbrains.kotlin.konan.test.blackbox.muteCInteropTestIfNecessary
+import org.jetbrains.kotlin.konan.test.blackbox.muteTestIfNecessary
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependency
@@ -17,6 +25,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIrSignatures
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadataSignatures
+import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.utils.withExtension
