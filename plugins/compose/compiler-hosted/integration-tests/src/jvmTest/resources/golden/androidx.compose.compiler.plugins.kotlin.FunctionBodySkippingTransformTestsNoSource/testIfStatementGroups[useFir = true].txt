@@ -38,7 +38,7 @@ fun Test(level: Int, %composer: Composer?, %changed: Int) {
               "Before"
             }
           })
-          Wrap(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+          Wrap(ComposableSingletons%TestKt.lambda%867304610, %composer, 0b0110)
           used(<block>{
             %composer.cache(false) {
               "End"
@@ -61,7 +61,7 @@ fun Test(level: Int, %composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%867304610: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       used(<block>{
         %composer.cache(false) {

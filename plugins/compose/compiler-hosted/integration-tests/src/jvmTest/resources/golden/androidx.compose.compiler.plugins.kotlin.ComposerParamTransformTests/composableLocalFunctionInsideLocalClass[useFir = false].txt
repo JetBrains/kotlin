@@ -38,7 +38,7 @@ fun test() {
           traceEventStart(<>, %changed, -1, <>)
         }
         Button({
-        }, ComposableSingletons%TestKt.lambda-1, %composer, 0b00110110)
+        }, ComposableSingletons%TestKt.lambda%-951912229, %composer, 0b00110110)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -53,7 +53,7 @@ fun test() {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%-951912229: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {

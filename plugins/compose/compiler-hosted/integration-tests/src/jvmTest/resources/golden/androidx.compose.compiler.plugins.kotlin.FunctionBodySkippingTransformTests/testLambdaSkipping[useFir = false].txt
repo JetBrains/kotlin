@@ -18,10 +18,10 @@ fun LazyListScope.Example(items: LazyPagingItems<User>) {
 // ------------------------------------------
 
 fun LazyListScope.Example(items: LazyPagingItems<User>) {
-  itemsIndexed(items, ComposableSingletons%TestKt.lambda-1)
+  itemsIndexed(items, ComposableSingletons%TestKt.lambda%-2123538558)
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: @[ExtensionFunctionType] Function5<LazyItemScope, Int, User?, Composer, Int, Unit> = composableLambdaInstance(<>, false) { index: Int, user: User?, %composer: Composer?, %changed: Int ->
+  val lambda%-2123538558: @[ExtensionFunctionType] Function5<LazyItemScope, Int, User?, Composer, Int, Unit> = composableLambdaInstance(<>, false) { index: Int, user: User?, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b010000000001 != 0b010000000000 || !%composer.skipping) {
       if (isTraceInProgress()) {

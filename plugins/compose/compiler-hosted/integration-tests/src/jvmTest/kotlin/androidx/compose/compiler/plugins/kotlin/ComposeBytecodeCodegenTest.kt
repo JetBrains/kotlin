@@ -779,7 +779,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
                 val matches = classesRegex.findAll(bytecode)
                 val lambdaClass = matches
-                    .first { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda-1%1") == true }
+                    .single { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda%") == true }
                     .value
                 val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
                 val invokeMethod = invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")

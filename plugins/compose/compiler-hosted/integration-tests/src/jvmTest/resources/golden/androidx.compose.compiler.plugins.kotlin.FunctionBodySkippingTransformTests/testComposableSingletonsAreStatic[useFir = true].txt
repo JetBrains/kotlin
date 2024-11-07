@@ -31,7 +31,7 @@ fun Example(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %cha
   }
   if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (%default and 0b0001 != 0) {
-      content = ComposableSingletons%TestKt.lambda-1
+      content = ComposableSingletons%TestKt.lambda%-1401779980
     }
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
@@ -48,7 +48,7 @@ fun Example(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %cha
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%-1401779980: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {

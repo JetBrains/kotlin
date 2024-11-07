@@ -23,7 +23,7 @@ fun Test() {
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%changed != 0 || !%composer.skipping) {
-    W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+    W(ComposableSingletons%TestKt.lambda%1773251756, %composer, 0b0110)
   } else {
     %composer.skipToGroupEnd()
   }
@@ -32,7 +32,7 @@ fun Test(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%1773251756: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       A(%composer, 0)
     } else {

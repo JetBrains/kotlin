@@ -261,6 +261,8 @@ class ComposerLambdaMemoization(
     private var composableSingletonsClass: IrClass? = null
     private var currentFile: IrFile? = null
 
+    private val usedSingletonLambdaNames = hashSetOf<String>()
+
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
     private val rememberFunctions =
@@ -731,7 +733,8 @@ class ComposerLambdaMemoization(
                     collector,
                     false
                 ),
-                lambdaType = expression.type
+                lambdaType = expression.type,
+                lambdaName = createSingletonLambdaName(functionExpression)
             )
             return if (inPublicInlineScope) {
                 // Public inline functions can't use singleton instance because changes to the function body
@@ -749,6 +752,21 @@ class ComposerLambdaMemoization(
         }
     }
 
+    private fun createSingletonLambdaName(expression: IrFunctionExpression): String {
+        val name = "lambda$${expression.function.sourceKey()}"
+        if (usedSingletonLambdaNames.add(name)) {
+            return name
+        }
+
+        var manglingNumber = 0
+        while (true) {
+            val mangledName = "$name$${manglingNumber++}"
+            if (usedSingletonLambdaNames.add(mangledName)) {
+                return mangledName
+            }
+        }
+    }
+
     private fun hasTypeParameter(type: IrType): Boolean {
         return type.anyTypeArgument { true }
     }
@@ -756,9 +774,10 @@ class ComposerLambdaMemoization(
     private fun irGetComposableSingleton(
         lambdaExpression: IrExpression,
         lambdaType: IrType,
+        lambdaName: String,
     ): IrCall {
         val clazz = getOrCreateComposableSingletonsClass()
-        val lambdaName = "lambda-${clazz.declarations.size}"
+
         val lambdaProp = clazz.addProperty {
             name = Name.identifier(lambdaName)
             visibility = DescriptorVisibilities.INTERNAL
@@ -776,7 +795,7 @@ class ComposerLambdaMemoization(
                 f.initializer = DeclarationIrBuilder(context, clazz.symbol)
                     .irExprBody(lambdaExpression.markIsTransformedLambda())
             }
-            p.addGetter {
+            val getter = p.addGetter {
                 returnType = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
@@ -788,7 +807,33 @@ class ComposerLambdaMemoization(
                     +irReturn(irGetField(irGet(thisParam), p.backingField!!))
                 }
             }
+
+            /*
+            Add property for backwards compatibility:
+            Previous versions of the compose compiler leaked this ComposableSingletons class through inline functions.
+            To keep compatibility, we're still generating a property with the old lambda naming schema.
+             */
+            if (currentFunctionContext?.declaration?.isInPublicInlineScope == true) {
+                clazz.addProperty {
+                    name = Name.identifier("lambda-${usedSingletonLambdaNames.size}")
+                    visibility = DescriptorVisibilities.INTERNAL
+                }.also { p ->
+                    p.addGetter {
+                        returnType = lambdaType
+                        visibility = DescriptorVisibilities.INTERNAL
+                        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                    }.also { fn ->
+                        val thisParam = clazz.thisReceiver!!.copyTo(fn)
+                        fn.parent = clazz
+                        fn.dispatchReceiverParameter = thisParam
+                        fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                            +irReturn(irCall(getter))
+                        }
+                    }
+                }
+            }
         }
+
         return irCall(
             lambdaProp.getter!!.symbol,
             dispatchReceiver = IrGetObjectValueImpl(
