@@ -75,7 +75,6 @@ class DispatchReceiverMemberScopeTowerLevel(
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
-        var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
         val receiverTypeWithoutSmartCast = getOriginalReceiverExpressionIfStableSmartCast()?.resolvedType
         val scopeWithoutSmartcast = receiverTypeWithoutSmartCast?.scope(
@@ -85,20 +84,26 @@ class DispatchReceiverMemberScopeTowerLevel(
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
 
+        var empty: Boolean
         if (scopeWithoutSmartcast == null) {
-            consumeCandidates(output, candidatesWithoutSmartcast = candidates)
+            empty = scope.processCandidates(processScopeMembers) { candidate ->
+                output.consumeCandidate(
+                    candidate,
+                    dispatchReceiverValue.receiverExpression,
+                    givenExtensionReceiverOptions,
+                    scope,
+                    isFromOriginalTypeInPresenceOfSmartCast = false
+                )
+            }
         } else {
             val map: MutableMap<T, MemberFromSmartcastScope<T>> = mutableMapOf()
 
-            scopeWithoutSmartcast.collectCandidates(processScopeMembers).let { (isEmpty, originalCandidates) ->
-                empty = empty && isEmpty
-                for (originalCandidate in originalCandidates) {
-                    map[originalCandidate.member] = MemberFromSmartcastScope(originalCandidate, DispatchReceiverToUse.UnwrapSmartcast)
-                }
+            empty = scopeWithoutSmartcast.processCandidates(processScopeMembers) { candidate ->
+                map[candidate] =
+                    MemberFromSmartcastScope(MemberWithBaseScope(candidate, scopeWithoutSmartcast), DispatchReceiverToUse.UnwrapSmartcast)
             }
 
-            for (candidateFromSmartCast in candidates) {
-                val memberFromSmartcast = candidateFromSmartCast.member
+            empty = empty and scope.processCandidates(processScopeMembers) { memberFromSmartcast ->
                 val keyMember = unwrapSubstitutionOverrideForSmartcastedThisAccessInAnonymousInitializer(memberFromSmartcast)
                     ?: memberFromSmartcast
                 val existing = map[keyMember]
@@ -108,7 +113,10 @@ class DispatchReceiverMemberScopeTowerLevel(
                 // - When the smart-casted type is always null, we want to return it and report UNSAFE_CALL.
                 // - When the original type can be null, in this case the smart-case either makes it not-null or the call is red anyway.
                 if (existing == null || dispatchReceiverValue.type.isNullableNothing || receiverTypeWithoutSmartCast.canBeNull(session)) {
-                    map[candidateFromSmartCast.member] = MemberFromSmartcastScope(candidateFromSmartCast, DispatchReceiverToUse.SmartcastWithoutUnwrapping)
+                    map[memberFromSmartcast] = MemberFromSmartcastScope(
+                        MemberWithBaseScope(memberFromSmartcast, scope),
+                        DispatchReceiverToUse.SmartcastWithoutUnwrapping
+                    )
                 } else {
                     existing.dispatchReceiverToUse = DispatchReceiverToUse.SmartcastIfUnwrappedInvisible
                 }
@@ -213,35 +221,18 @@ class DispatchReceiverMemberScopeTowerLevel(
         var dispatchReceiverToUse: DispatchReceiverToUse,
     )
 
-    private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
-        processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
-    ): Pair<Boolean, List<MemberWithBaseScope<T>>> {
+    private inline fun <T : FirCallableSymbol<*>> FirTypeScope.processCandidates(
+        processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit,
+        crossinline candidateProcessor: (T) -> Unit,
+    ): Boolean {
         var empty = true
-        val result = mutableListOf<MemberWithBaseScope<T>>()
         processScopeMembers { candidate ->
             empty = false
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
-                result += MemberWithBaseScope(candidate, this)
+                candidateProcessor(candidate)
             }
         }
-        return empty to result
-    }
-
-    private fun <T : FirCallableSymbol<*>> consumeCandidates(
-        output: TowerLevelProcessor,
-        candidatesWithoutSmartcast: Collection<MemberWithBaseScope<T>>,
-    ) {
-        for ((candidate, scope) in candidatesWithoutSmartcast) {
-            if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
-                output.consumeCandidate(
-                    candidate,
-                    dispatchReceiverValue.receiverExpression,
-                    givenExtensionReceiverOptions,
-                    scope,
-                    isFromOriginalTypeInPresenceOfSmartCast = false
-                )
-            }
-        }
+        return empty
     }
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
