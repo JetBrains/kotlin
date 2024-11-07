@@ -59,20 +59,6 @@ abstract class SwiftExportExtension @Inject constructor(
 ) : SwiftExportedModuleMetadata {
 
     /**
-     * Configure binaries of the Swift Export built from this project.
-     */
-    fun binaries(configure: AbstractNativeLibrary.() -> Unit) {
-        forAllSwiftExportBinaries(configure)
-    }
-
-    /**
-     * Configure binaries of the Swift Export built from this project.
-     */
-    fun binaries(configure: Action<AbstractNativeLibrary>) = binaries {
-        configure.execute(this)
-    }
-
-    /**
      * Configure Swift Export modules export.
      */
     fun export(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {

@@ -2384,8 +2384,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTa
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;Lorg/gradle/api/artifacts/dsl/DependencyHandler;)V
-	public final fun binaries (Lkotlin/jvm/functions/Function1;)V
-	public final fun binaries (Lorg/gradle/api/Action;)V
 	public final fun export (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public final fun export (Ljava/lang/Object;Lorg/gradle/api/Action;)V
 	public static synthetic fun export$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
