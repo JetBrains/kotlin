@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.addDefaultSettingsToSettingsGradle
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 @DisplayName("Artifacts publication")
 @JvmGradlePluginTests
@@ -142,12 +142,10 @@ class PublishingIT : KGPBaseTest() {
                 } else {
                     "expected-pom-legacy-pom-rewriter.xml"
                 }
-                val expectedPomFile = projectPath.resolve(expectedPomName)
+                val expectedPomFile = projectPath.resolve(expectedPomName).toFile()
 
-                KotlinTestUtils.assertEqualsToFile(expectedPomFile, actualPomContent)
+                assertEqualsToFile(expectedPomFile, actualPomContent)
             }
         }
     }
-
-
 }

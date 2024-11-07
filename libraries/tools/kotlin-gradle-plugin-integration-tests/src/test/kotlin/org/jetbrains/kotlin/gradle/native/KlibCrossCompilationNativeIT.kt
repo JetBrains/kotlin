@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -26,7 +25,10 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion) {
         nativeProject("klibCrossCompilationDefaultSettings", gradleVersion) {
             build(":compileKotlinIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(projectPath.resolve("diagnostics.txt"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    projectPath.resolve("diagnostics.txt").toFile(),
+                    extractProjectsAndTheirDiagnostics()
+                )
                 assertTasksSkipped(":compileKotlinIosArm64")
             }
         }
@@ -72,12 +74,12 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             }
 
             build(":compileKotlinIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
 
             build(":linkIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
                 // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
                 // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
                 assertTasksSkipped(":linkDebugTestIosArm64")
