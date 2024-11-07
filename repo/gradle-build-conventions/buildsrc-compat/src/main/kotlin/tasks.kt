@@ -376,9 +376,7 @@ fun Project.generatedConfigurationKeys(containerName: String, vararg containerNa
         generatorClasspath(project(":compiler:config:configuration-keys-generator"))
     }
 
-    // `src` will be changed to `gen` after migration of existing hand-written files
-    // this is needed to keep the git history for these files
-    val generationRoot = projectDir.resolve("src")
+    val generationRoot = projectDir.resolve("gen")
 
     tasks.register<NoDebugJavaExec>("generateConfigurationKeys") {
         val generatorRoot = "$rootDir/compiler/config/configuration-keys-generator/src/"
