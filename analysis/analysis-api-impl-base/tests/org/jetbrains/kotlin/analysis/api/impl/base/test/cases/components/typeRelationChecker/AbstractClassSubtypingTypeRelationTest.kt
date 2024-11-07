@@ -84,10 +84,7 @@ abstract class AbstractLenientClassIdSubtypingTypeRelationTest : AbstractClassId
 
 abstract class AbstractClassSymbolSubtypingTypeRelationTest : AbstractClassSubtypingTypeRelationTest() {
     override fun KaSession.checkIsSubtype(type: KaType, classId: ClassId): Boolean {
-        val symbol = findClass(classId)
-            ?: findTypeAlias(classId)
-            ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
-
+        val symbol = findClassLike(classId) ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
         return type.isSubtypeOf(symbol, errorTypePolicy)
     }
 }

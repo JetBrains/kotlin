@@ -133,10 +133,7 @@ sealed class SymbolData {
 
     data class SamConstructorData(val classId: ClassId) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val symbol = findClass(classId)
-                ?: findTypeAlias(classId)
-                ?: error("Class-like symbol is not found by '$classId'")
-
+            val symbol = findClassLike(classId) ?: error("Class-like symbol is not found by '$classId'")
             val samConstructor = symbol.samConstructor ?: error("SAM constructor is not found for symbol '$symbol'")
             return listOf(samConstructor)
         }

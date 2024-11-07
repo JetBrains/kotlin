@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import kotlin.collections.filter
-import kotlin.collections.flatMap
-import kotlin.collections.map
 import kotlin.reflect.KClass
-import kotlin.sequences.filterIsInstance
 
 internal object KDocReferenceResolver {
     /**
@@ -464,7 +460,7 @@ internal object KDocReferenceResolver {
     }
 
     private fun KaSession.collectSymbolsByClassId(classId: ClassId, consumer: MutableCollection<KaSymbol>) {
-        val symbol = findClass(classId) ?: findTypeAlias(classId)
+        val symbol = findClassLike(classId)
         consumer.addIfNotNull(symbol)
     }
 
