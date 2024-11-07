@@ -290,7 +290,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     }
 }
 
-internal class LibraryCompilation(
+class LibraryCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
