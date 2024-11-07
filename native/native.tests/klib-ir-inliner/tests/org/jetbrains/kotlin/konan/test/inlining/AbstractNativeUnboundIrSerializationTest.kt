@@ -6,14 +6,22 @@
 package org.jetbrains.kotlin.konan.test.inlining
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer.XStatementOrExpression
+import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanGlobalDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrFileSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.common.messages.getLogger
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,14 +30,24 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.util.createStubDefaultValue
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isGetter
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.test.BoxCodegenWithoutBinarySuppressor
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -38,24 +56,31 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KProperty1
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
-import org.jetbrains.kotlin.protobuf.MessageLite as ProtoMessage
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
  * The idea of the test is the following:
@@ -165,7 +190,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             .mapNotNull { testServices.dependencyProvider.getArtifactSafe(it, ArtifactKinds.KLib) })
             .map {
                 resolveSingleFileKlib(
-                    KFile(it.outputFile.absolutePath),
+                    org.jetbrains.kotlin.konan.file.File(it.outputFile.absolutePath),
                     configuration.getLogger(treatWarningsAsErrors = true)
                 )
             }.toList()
@@ -266,7 +291,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         // It does not make sense to keep tests without a single inline function as "green", because nothing
         // effectively has been tested there. Neither makes it sense to keep them red. Thus, muted.
-        assumeTrue(functionsUnderTestCounter > 0, "No inline functions found for test")
+        Assumptions.assumeTrue(functionsUnderTestCounter > 0, "No inline functions found for test")
     }
 
     companion object {
@@ -310,8 +335,8 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             assertListsEqual(a, b, SerializedFunction::protoDebugInfos, ::areDebugInfosEqual) { "debug infos for $functionDescription" }
         }
 
-        private fun <T : ProtoMessage> areEqual(a: T, b: T): Boolean = a.toByteArray() contentEquals b.toByteArray()
-        private fun <T : XStatementOrExpression> areEqual(a: T, b: T): Boolean = a.toByteArray() contentEquals b.toByteArray()
+        private fun <T : MessageLite> areEqual(a: T, b: T): Boolean = a.toByteArray() contentEquals b.toByteArray()
+        private fun <T : IrFileSerializer.XStatementOrExpression> areEqual(a: T, b: T): Boolean = a.toByteArray() contentEquals b.toByteArray()
 
         private fun areDebugInfosEqual(a: String, b: String): Boolean {
             // We store rendered IR declaration text in 'debug info' for signatures of local declarations.
@@ -383,10 +408,10 @@ private class SingleFunctionSerializer(
 }
 
 private data class SerializedFunction(
-    val functionProto: ProtoDeclaration,
-    val protoTypes: List<ProtoType>,
-    val protoIdSignatures: List<ProtoIdSignature>,
+    val functionProto: IrDeclaration,
+    val protoTypes: List<IrType>,
+    val protoIdSignatures: List<IdSignature>,
     val protoStrings: List<String>,
-    val protoBodies: List<XStatementOrExpression>,
+    val protoBodies: List<IrFileSerializer.XStatementOrExpression>,
     val protoDebugInfos: List<String>,
 )

@@ -8,6 +8,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(projectTests(":native:native.tests"))
+    testImplementation(project(":compiler:ir.serialization.native"))
 }
 
 sourceSets {
@@ -25,3 +26,8 @@ nativeTest(
     null,
     allowParallelExecution = true,
 )
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    dependsOn(":compiler:generateTestData")
+}
