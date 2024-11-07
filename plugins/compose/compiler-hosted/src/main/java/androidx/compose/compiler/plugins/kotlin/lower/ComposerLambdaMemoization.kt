@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -260,6 +261,8 @@ class ComposerLambdaMemoization(
     private var composableSingletonsClass: IrClass? = null
     private var currentFile: IrFile? = null
 
+    private val usedSingletonLambdaNames = hashSetOf<String>()
+
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
     private val rememberFunctions =
@@ -347,6 +350,7 @@ class ComposerLambdaMemoization(
             try {
                 currentFile = declaration
                 composableSingletonsClass = null
+                usedSingletonLambdaNames.clear()
                 val file = super.visitFile(declaration)
                 // if there were no constants found in the entire file, then we don't need to
                 // create this class at all
@@ -725,10 +729,26 @@ class ComposerLambdaMemoization(
             }
             return irGetComposableSingleton(
                 lambdaExpression = wrapped,
-                lambdaType = expression.type
+                lambdaType = expression.type,
+                lambdaName = createSingletonLambdaName(functionExpression)
             )
         } else {
             return wrapped
+        }
+    }
+
+    private fun createSingletonLambdaName(expression: IrFunctionExpression): String {
+        val name = "lambda$${expression.function.sourceKey()}"
+        if (usedSingletonLambdaNames.add(name)) {
+            return name
+        }
+
+        var manglingNumber = 0
+        while (true) {
+            val mangledName = "$name$${manglingNumber++}"
+            if (usedSingletonLambdaNames.add(mangledName)) {
+                return mangledName
+            }
         }
     }
 
@@ -739,9 +759,10 @@ class ComposerLambdaMemoization(
     private fun irGetComposableSingleton(
         lambdaExpression: IrExpression,
         lambdaType: IrType,
-    ): IrExpression {
+        lambdaName: String,
+    ): IrCall {
         val clazz = getOrCreateComposableSingletonsClass()
-        val lambdaName = "lambda-${clazz.declarations.size}"
+
         val lambdaProp = clazz.addProperty {
             name = Name.identifier(lambdaName)
             visibility = DescriptorVisibilities.INTERNAL
@@ -759,7 +780,7 @@ class ComposerLambdaMemoization(
                 f.initializer = DeclarationIrBuilder(context, clazz.symbol)
                     .irExprBody(lambdaExpression.markIsTransformedLambda())
             }
-            p.addGetter {
+            val getter = p.addGetter {
                 returnType = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
@@ -771,7 +792,32 @@ class ComposerLambdaMemoization(
                     +irReturn(irGetField(irGet(thisParam), p.backingField!!))
                 }
             }
+
+            /*
+            Add property for backwards compatibility:
+            Previous versions of the compose compiler leaked this ComposableSingletons class through inline functions.
+            To keep compatibility, we're still generating a property with the old lambda naming schema.
+             */
+            if (currentFunctionContext?.declaration?.isInPublicInlineScope == true) {
+                clazz.addProperty {
+                    name = Name.identifier("lambda-${usedSingletonLambdaNames.size}")
+                    visibility = DescriptorVisibilities.INTERNAL
+                }.also { p ->
+                    p.addGetter {
+                        returnType = lambdaType
+                        visibility = DescriptorVisibilities.INTERNAL
+                    }.also { fn ->
+                        val thisParam = clazz.thisReceiver!!.copyTo(fn)
+                        fn.parent = clazz
+                        fn.dispatchReceiverParameter = thisParam
+                        fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                            +irReturn(irCall(getter))
+                        }
+                    }
+                }
+            }
         }
+
         return irCall(
             lambdaProp.getter!!.symbol,
             dispatchReceiver = IrGetObjectValueImpl(
