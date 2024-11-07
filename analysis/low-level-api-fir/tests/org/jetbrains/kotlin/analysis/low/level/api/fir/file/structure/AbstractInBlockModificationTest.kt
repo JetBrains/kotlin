@@ -44,8 +44,8 @@ abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() 
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
-            ktFile = mainFile,
+        val selectedElement = testServices.expressionMarkerProvider.getBottommostSelectedElementOfTypeByDirective(
+            file = mainFile,
             module = mainModule,
         )
 

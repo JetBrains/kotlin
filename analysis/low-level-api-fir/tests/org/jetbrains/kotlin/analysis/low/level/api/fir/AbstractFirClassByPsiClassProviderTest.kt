@@ -31,7 +31,7 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
         val mainKtModule = mainModule.ktModule
         val psiClassUnderCaret = when (mainKtModule) {
             is KaSourceModule -> {
-                testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<PsiClass>(testServices).single().first
+                testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<PsiClass>(testServices).single().first
             }
             is KaLibraryModule -> {
                 mainModule.files

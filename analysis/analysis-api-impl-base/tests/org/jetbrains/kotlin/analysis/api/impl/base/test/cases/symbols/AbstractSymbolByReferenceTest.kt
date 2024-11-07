@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByReferenceTest : AbstractSymbolTest() {
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtReferenceExpression>(ktFile)
+        val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(ktFile)
         return SymbolsData(
             listOfNotNull(referenceExpression.mainReference.resolveToSymbol())
         )

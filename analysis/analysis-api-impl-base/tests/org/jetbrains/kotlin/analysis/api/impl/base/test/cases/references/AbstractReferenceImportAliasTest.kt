@@ -25,7 +25,7 @@ abstract class AbstractReferenceImportAliasTest : AbstractAnalysisApiBasedTest()
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val position = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+        val position = testServices.expressionMarkerProvider.getCaret(mainFile)
         val reference = mainFile.findReferenceAt(position)
         assertNotNull(reference)
         val expectedAlias = mainModule.testModule.directives.singleValue(Directives.TYPE_ALIAS)

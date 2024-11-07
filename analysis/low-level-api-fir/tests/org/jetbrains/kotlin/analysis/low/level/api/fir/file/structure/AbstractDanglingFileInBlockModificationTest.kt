@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractDanglingFileInBlockModificationTes : AbstractInBlockModificationTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule)
+        val selectedElement = testServices.expressionMarkerProvider.getBottommostSelectedElementOfTypeByDirective(mainFile, mainModule)
 
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
         val fakeKtFile = ktPsiFactory.createFile(mainFile.name, mainFile.text)

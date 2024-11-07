@@ -20,10 +20,10 @@ import kotlin.collections.single
 abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisApiBasedTest() {
     override fun doTest(testServices: TestServices) {
         val baseClass = testServices.expressionMarkerProvider
-            .getElementsOfTypeAtCarets<KtClassOrObject>(testServices, "base")
+            .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "base")
             .single().first
         val superClass = testServices.expressionMarkerProvider
-            .getElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
+            .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
             .single().first
 
         val substitutorRendered = analyseForTest(baseClass) {

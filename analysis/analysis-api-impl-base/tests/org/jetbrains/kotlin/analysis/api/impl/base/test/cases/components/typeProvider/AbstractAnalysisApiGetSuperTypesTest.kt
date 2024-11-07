@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElement(mainFile)
+        val expression = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)
         expression as? KtExpression ?: error("unexpected expression kind ${expression::class}")
 
         val actual = executeOnPooledThreadInReadAction {

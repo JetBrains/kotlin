@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiSymbolAsSignatureTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
             val symbol = declaration.symbol as KaCallableSymbol
             val signature = symbol.asSignature()

@@ -66,7 +66,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         val firFile = mainFile.getOrBuildFirFile(resolveSession)
 
         val targetElement = testServices.expressionMarkerProvider
-            .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
+            .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 
         val bodyElement = if (useBodyElement) targetElement else null
 

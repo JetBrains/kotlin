@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
+        val element = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtElement>(mainFile)
 
         val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(element) {

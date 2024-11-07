@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val subClass = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(mainFile, "sub")
-        val superClass = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(mainFile, "super")
+        val subClass = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassOrObject>(mainFile, "sub")
+        val superClass = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassOrObject>(mainFile, "super")
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(subClass) {

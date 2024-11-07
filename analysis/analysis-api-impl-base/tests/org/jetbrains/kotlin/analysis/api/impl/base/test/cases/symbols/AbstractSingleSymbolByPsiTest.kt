@@ -16,9 +16,9 @@ abstract class AbstractSingleSymbolByPsiTest : AbstractSymbolTest() {
     override val suppressPsiBasedFilePointerCheck: Boolean get() = false
 
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val declaration = testServices.expressionMarkerProvider.getSelectedElementOrElementAtCaretOfTypeByDirective(
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeByDirective(
             ktFile, testServices.moduleStructure.modules.first(),
-            KtDeclaration::class
+            defaultType = KtDeclaration::class
         )
 
         val symbol = when (declaration) {

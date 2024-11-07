@@ -38,9 +38,9 @@ abstract class AbstractTypeRelationTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    protected fun KaSession.getTypeAtMarker(mainFile: KtFile, testServices: TestServices, caretTag: String? = null): KaType {
-        val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtElement>(mainFile, caretTag)
-            ?: testServices.expressionMarkerProvider.getSelectedElements(mainFile).singleOrNull()
+    protected fun KaSession.getTypeAtMarker(mainFile: KtFile, testServices: TestServices, qualifier: String = ""): KaType {
+        val element = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(mainFile, qualifier)
+            ?: testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)
 
         return when (element) {
             is KtProperty -> element.symbol.returnType

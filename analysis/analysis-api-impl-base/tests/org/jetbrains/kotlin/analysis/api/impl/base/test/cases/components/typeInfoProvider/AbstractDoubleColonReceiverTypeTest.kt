@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtDoubleColonExpression
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtDoubleColonExpression
 
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {

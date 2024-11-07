@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingDeclarationProviderForSetterParameterTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val context = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtProperty>(mainFile)
+        val context = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtProperty>(mainFile)
 
         analyseForTest(context) { declaration ->
             val propertySymbol = (declaration as KtProperty).symbol as KaPropertySymbol

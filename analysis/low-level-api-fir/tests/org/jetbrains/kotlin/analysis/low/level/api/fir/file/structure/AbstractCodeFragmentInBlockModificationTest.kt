@@ -20,7 +20,7 @@ abstract class AbstractCodeFragmentInBlockModificationTest : AbstractAnalysisApi
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val targetElement = testServices.expressionMarkerProvider
-            .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
+            .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 
         assertNull(targetElement.getNonLocalReanalyzableContainingDeclaration())
 

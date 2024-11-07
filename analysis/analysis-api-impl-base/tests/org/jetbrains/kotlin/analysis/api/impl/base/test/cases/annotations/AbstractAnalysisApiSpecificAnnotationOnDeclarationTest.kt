@@ -27,7 +27,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
+        val ktDeclaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val classIdString = mainModule.testModule.directives.singleValue(Directives.CLASS_ID)
 
         val actual = analyseForTest(ktDeclaration) {

@@ -35,14 +35,14 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         val carets = testServices.expressionMarkerProvider.getAllCarets(file)
         if (carets.size > 1) {
             return carets.map {
-                val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(file, it.tag)
-                ResolveKtElementTestCaseContext(element = element, marker = it.fullTag)
+                val element = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(file, it.qualifier)
+                ResolveKtElementTestCaseContext(element = element, marker = it.tagText)
             }
         }
 
-        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(file)
-            ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
-                ktFile = file,
+        val expression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(file)
+            ?: testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirective(
+                file = file,
                 module = module,
                 defaultType = KtElement::class,
             ) as KtElement

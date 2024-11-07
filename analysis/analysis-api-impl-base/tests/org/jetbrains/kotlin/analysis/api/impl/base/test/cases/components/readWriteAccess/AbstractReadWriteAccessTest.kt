@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractReadWriteAccessTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtExpression>(mainFile)
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtExpression>(mainFile)
 
         val readWriteAccess = expressionAtCaret.readWriteAccess(true)
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByJavaPsiTest : AbstractSymbolTest() {
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtReferenceExpression>(ktFile)
+        val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(ktFile)
         val symbolByReference = referenceExpression.mainReference.resolveToSymbol() ?: error("Failed to resolve reference")
 
         val symbolByJavaPsi = when (val javaPsi = symbolByReference.psi) {

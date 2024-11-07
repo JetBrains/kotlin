@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractSymbolLightClassesEquivalentTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val lightQName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val lightElements = declaration.toLightElements()
         testServices.assertions.assertFalse(lightElements.isEmpty())
         if (lightElements.size > 1) {
