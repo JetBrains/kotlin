@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
 fun main() {
@@ -16,6 +18,51 @@ fun main() {
     val k1BoxTestDir = listOf("multiplatform/k1")
 
     generateTestGroupSuiteWithJUnit5 {
+        // New frontend test infrastructure tests
+        testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
+            testClass<AbstractDiagnosticsNativeTest> {
+                model(
+                    "nativeTests",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    // There are no special native-specific diagnostics in K1 frontend.
+                    // These checks happen in native backend instead, in SpecialBackendChecks class.
+                    excludeDirs = listOf("specialBackendChecks"),
+                )
+            }
+
+            testClass<AbstractFirPsiNativeDiagnosticsTest>(
+                suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirLightTreeNativeDiagnosticsTest>(
+                suiteTestClassName = "FirLightTreeOldFrontendNativeDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir()),
+            ) {
+                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("klibSerializationTests")
+                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
+                model("nativeTests/specialBackendChecks")
+            }
+
+            testClass<AbstractFirLightTreeNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirLightTreeNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("klibSerializationTests")
+                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
+                model("nativeTests/specialBackendChecks")
+            }
+        }
+
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractNativeUnboundIrSerializationTest>(
