@@ -72,7 +72,6 @@ public actual interface KMutableProperty<V> : KProperty<V> {
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty0<out V> : KProperty<V>, () -> V {
     /**
      * Returns the current value of the property.
@@ -87,7 +86,6 @@ public actual interface KProperty0<out V> : KProperty<V>, () -> V {
     @SinceKotlin("1.1")
     public fun getDelegate(): Any?
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
     override val getter: Getter<V>
 
     /**
@@ -101,7 +99,6 @@ public actual interface KProperty0<out V> : KProperty<V>, () -> V {
 /**
  * Represents a `var`-property without any kind of receiver.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
@@ -110,7 +107,6 @@ public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V
      */
     public actual fun set(value: V)
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
     override val setter: Setter<V>
 
     /**
@@ -128,7 +124,6 @@ public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V
  * @param T the type of the receiver which should be used to obtain the value of the property.
  * @param V the type of the property value.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
     /**
      * Returns the current value of the property.
@@ -156,7 +151,6 @@ public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
     @SinceKotlin("1.1")
     public fun getDelegate(receiver: T): Any?
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
     override val getter: Getter<T, V>
 
     /**
@@ -170,7 +164,6 @@ public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
 /**
  * Represents a `var`-property, operations on which take one receiver as a parameter.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
@@ -182,7 +175,6 @@ public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProp
      */
     public actual fun set(receiver: T, value: V)
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
     override val setter: Setter<T, V>
 
     /**
@@ -204,7 +196,6 @@ public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProp
  *        the type of the extension receiver.
  * @param V the type of the property value.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
     /**
      * Returns the current value of the property. In case of the extension property in a class,
@@ -231,7 +222,6 @@ public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
     @SinceKotlin("1.1")
     public fun getDelegate(receiver1: D, receiver2: E): Any?
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
     override val getter: Getter<D, E, V>
 
     /**
@@ -246,7 +236,6 @@ public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
 /**
  * Represents a `var`-property, operations on which take two receivers as parameters.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KMutableProperty2<D, E, V> : KProperty2<D, E, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
@@ -257,7 +246,6 @@ public actual interface KMutableProperty2<D, E, V> : KProperty2<D, E, V>, KMutab
      */
     public actual fun set(receiver1: D, receiver2: E, value: V)
 
-    @Suppress("RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
     override val setter: Setter<D, E, V>
 
     /**
