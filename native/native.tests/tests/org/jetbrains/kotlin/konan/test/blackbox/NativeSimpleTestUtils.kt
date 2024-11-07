@@ -111,7 +111,7 @@ internal fun TestCompilationArtifact.KLIB.asFriendLibraryDependency() =
 internal fun TestCompilationArtifact.KLIBStaticCache.asStaticCacheDependency() =
     ExistingDependency(this, TestCompilationDependencyType.LibraryStaticCache)
 
-internal fun AbstractNativeSimpleTest.compileToLibrary(sourcesDir: File, vararg dependencies: TestCompilationArtifact.KLIB) =
+fun AbstractNativeSimpleTest.compileToLibrary(sourcesDir: File, vararg dependencies: TestCompilationArtifact.KLIB) =
     compileToLibrary(sourcesDir, buildDir, *dependencies)
 
 fun AbstractNativeSimpleTest.compileToLibrary(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =

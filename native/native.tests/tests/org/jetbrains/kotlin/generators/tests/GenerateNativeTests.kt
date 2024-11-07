@@ -365,36 +365,6 @@ fun main() {
             }
         }
 
-        // Header klib comparison tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/header-klibs/comparison") {
-            testClass<AbstractNativeHeaderKlibComparisonTest>(
-                suiteTestClassName = "NativeHeaderKlibComparisonTestGenerated",
-            ) {
-                model(extension = null, recursive = false)
-            }
-            testClass<AbstractNativeHeaderKlibComparisonTest>(
-                suiteTestClassName = "FirNativeHeaderKlibComparisonTestGenerated",
-                annotations = listOf(*frontendFir()),
-            ) {
-                model(extension = null, recursive = false)
-            }
-        }
-
-        // Header klib compilation tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/header-klibs/compilation") {
-            testClass<AbstractNativeHeaderKlibCompilationTest>(
-                suiteTestClassName = "NativeHeaderKlibCompilationTestGenerated",
-            ) {
-                model(extension = null, recursive = false)
-            }
-            testClass<AbstractNativeHeaderKlibCompilationTest>(
-                suiteTestClassName = "FirNativeHeaderKlibCompilationTestGenerated",
-                annotations = listOf(*frontendFir()),
-            ) {
-                model(extension = null, recursive = false)
-            }
-        }
-
         // Plain executable tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/standalone") {
             testClass<AbstractNativeBlackBoxTest>(
