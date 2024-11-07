@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.util.Collections
 import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
@@ -78,18 +79,18 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
 
 class ExpressionMarkerProvider : TestService {
     private val selected = mutableMapOf<String, TextRange>()
-    private val carets = CaretProvider()
+    private val carets = FileMarkerStorage<String, Int>()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
         selected[file.name] = range
     }
 
     fun addCaret(file: TestFile, caretTag: String?, caretOffset: Int) {
-        carets.addCaret(file.name, caretTag, caretOffset)
+        carets.add(file.name, caretTag.orEmpty(), caretOffset)
     }
 
     fun getCaretPositionOrNull(file: PsiFile, caretTag: String? = null): Int? {
-        return carets.getCaretOffset(file.name, caretTag)
+        return carets.get(file.name, caretTag.orEmpty())
     }
 
     fun getCaretPosition(file: PsiFile, caretTag: String? = null): Int {
@@ -101,7 +102,8 @@ class ExpressionMarkerProvider : TestService {
     }
 
     fun getAllCarets(file: PsiFile): List<CaretMarker> {
-        return carets.getAllCarets(file.name)
+        return carets.getAll(file.name)
+            .map { (qualifier, offset) -> CaretMarker(qualifier, offset) }
     }
 
     fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
@@ -321,36 +323,36 @@ data class CaretMarker(val tag: String, val offset: Int) {
         }
 }
 
-private class CaretProvider {
-    private val caretToFile = mutableMapOf<String, CaretsInFile>()
+private class FileMarkerStorage<K : Any, T : Any> {
+    private val markersByFile = mutableMapOf<K, FileMarkers<T>>()
 
-    fun getCaretOffset(filename: String, caretTag: String?): Int? {
-        val cartsInFile = caretToFile[filename] ?: return null
-        return cartsInFile.getCaretOffsetByTag(caretTag)
+    fun get(key: K, qualifier: String): T? {
+        val fileMarkers = markersByFile[key] ?: return null
+        return fileMarkers.get(qualifier)
     }
 
-    fun getAllCarets(filename: String): List<CaretMarker> {
-        return caretToFile[filename]?.getAllCarets().orEmpty()
+    fun getAll(key: K): Map<String, T> {
+        return markersByFile[key]?.getAll().orEmpty()
     }
 
-    fun addCaret(filename: String, caretTag: String?, caretOffset: Int) {
-        val cartsInFile = caretToFile.getOrPut(filename) { CaretsInFile() }
-        cartsInFile.addCaret(caretTag, caretOffset)
+    fun add(key: K, qualifier: String, value: T) {
+        val fileMarkers = markersByFile.getOrPut(key) { FileMarkers() }
+        fileMarkers.add(qualifier, value)
     }
 
-    private class CaretsInFile {
-        private val carets = mutableMapOf<String, Int>()
+    private class FileMarkers<T : Any> {
+        private val markersByTag = mutableMapOf<String, T>()
 
-        fun getCaretOffsetByTag(tag: String?): Int? {
-            return carets[tag.orEmpty()]
+        fun get(qualifier: String): T? {
+            return markersByTag[qualifier]
         }
 
-        fun getAllCarets(): List<CaretMarker> {
-            return carets.map { (tag, offset) -> CaretMarker(tag, offset) }
+        fun getAll(): Map<String, T> {
+            return Collections.unmodifiableMap(markersByTag)
         }
 
-        fun addCaret(caretTag: String?, caretOffset: Int) {
-            carets[caretTag.orEmpty()] = caretOffset
+        fun add(qualifier: String, value: T) {
+            markersByTag[qualifier] = value
         }
     }
 }
