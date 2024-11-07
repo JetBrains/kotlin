@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation

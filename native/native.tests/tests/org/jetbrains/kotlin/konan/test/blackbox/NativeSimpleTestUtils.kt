@@ -195,7 +195,7 @@ internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
 }
 
 // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
-internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
+fun AbstractNativeSimpleTest.compileToExecutableInOneStage(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
     compileToExecutableInOneStage(testCase, true, dependencies.asList())
 
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
@@ -349,7 +349,7 @@ private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     return compilation.result
 }
 
-internal fun getLibraryArtifact(testCase: TestCase, outputDir: File, packed: Boolean = true) =
+fun getLibraryArtifact(testCase: TestCase, outputDir: File, packed: Boolean = true) =
     TestCompilationArtifact.KLIB(outputDir.resolve(testCase.modules.first().name + if (packed) ".klib" else ""))
 
 private fun AbstractNativeSimpleTest.getExecutableArtifact() =
