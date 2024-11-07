@@ -284,7 +284,7 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
         return null
     }
 
-    val contextElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(ktFile)
+    val contextElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(ktFile)
 
     val fragmentText = ioFragmentFile.readText()
     val isBlockFragment = fragmentText.any { it == '\n' }

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declarationAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
+        val declarationAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
 
         analyseForTest(mainFile) {
             val symbol = declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, mainFile).single()

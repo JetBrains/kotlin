@@ -36,7 +36,7 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         val actualText = analyseForTest(mainFile) {
             val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, mainFile)
 
-            val useSiteElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
+            val useSiteElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
                 ?: findFirstUseSiteElement(mainFile)
                 ?: error("Cannot find use-site element to check visibility at.")
 

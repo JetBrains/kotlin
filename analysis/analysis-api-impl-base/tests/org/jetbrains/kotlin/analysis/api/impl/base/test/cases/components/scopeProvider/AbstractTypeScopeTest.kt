@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(mainFile)
+        val expression = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtExpression>(mainFile)
         analyseForTest(expression) {
             val type = expression.expressionType
                 ?: error("expression $expression is not typable")

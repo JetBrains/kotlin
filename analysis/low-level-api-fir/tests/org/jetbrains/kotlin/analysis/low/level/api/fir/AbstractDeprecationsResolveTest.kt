@@ -41,8 +41,8 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val file = mainFile ?: mainModule.files.first()
         val declaration = when (file) {
-            is KtFile -> testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(file)
-            is PsiJavaFile -> testServices.expressionMarkerProvider.getElementOfTypeAtCaret<PsiMember>(file)
+            is KtFile -> testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(file)
+            is PsiJavaFile -> testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<PsiMember>(file)
             else -> error("Unexpected file ${file::class}")
         }
 

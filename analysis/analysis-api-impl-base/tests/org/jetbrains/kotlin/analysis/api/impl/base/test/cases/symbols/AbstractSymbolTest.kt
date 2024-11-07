@@ -85,7 +85,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     ) {
         val markerProvider = testServices.expressionMarkerProvider
         val analyzeContext = testServices.ktTestModuleStructure.allMainKtFiles.firstNotNullOfOrNull {
-            markerProvider.getElementOfTypeAtCaretOrNull<KtElement>(it, "context")
+            markerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(it, "context")
         }
 
         val directives = mainModule.testModule.directives

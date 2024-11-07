@@ -26,7 +26,7 @@ abstract class AbstractDeclarationModificationServicePsiResilienceTest : Abstrac
     protected abstract fun modifySelectedElement(element: PsiElement)
 
     override fun doTestWithPsiModification(ktFile: KtFile, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val selectedElement = testServices.expressionMarkerProvider.getTopmostSelectedElement(ktFile)
         modifySelectedElement(selectedElement)
 
         // The test passes when `LLFirDeclarationModificationService` throws no exceptions.

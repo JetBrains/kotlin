@@ -12,14 +12,12 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor.TAGS.getCaretTagText
+import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor.TAGS.getSelectionTagText
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfTypeTo
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -28,38 +26,42 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.Collections
+import java.util.NoSuchElementException
+import kotlin.jvm.Throws
 import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String): String {
-        return processCaretMarkers(file, processSelectedMarkers(file, content))
+        val processors = listOf(
+            SourceFileProcessor(TAGS.SELECTION_REGEXP) { qualifier, range ->
+                testServices.expressionMarkerProvider.addSelection(file, qualifier, TextRange(range.first, range.last + 1))
+            },
+            SourceFileProcessor(TAGS.CARET_REGEXP) { qualifier, range ->
+                testServices.expressionMarkerProvider.addCaret(file, qualifier, range.first)
+            }
+        )
+
+        return processText(content, processors)
     }
 
-    private fun processSelectedMarkers(file: TestFile, content: String): String {
-        return processText(content, TAGS.SELECTION_REGEXP) { qualifier, range ->
-            testServices.expressionMarkerProvider.addSelection(file, qualifier, TextRange(range.first, range.last + 1))
-        }
-    }
-
-    private fun processCaretMarkers(file: TestFile, content: String): String {
-        return processText(content, TAGS.CARET_REGEXP) { qualifier, range ->
-            testServices.expressionMarkerProvider.addCaret(file, qualifier, range.first)
-        }
-    }
-
-    private fun processText(text: String, regex: Regex, action: (String, IntRange) -> Unit): String {
+    private fun processText(text: String, processors: List<SourceFileProcessor>): String {
         var result = text
 
-        while (true) {
-            val match = regex.find(result) ?: break
+        nextMatch@ while (true) {
+            // Find a processor with the most early matching tag
+            val matches = sequence {
+                for (processor in processors) {
+                    val match = processor.regex.find(result) ?: continue
+                    yield(processor to match)
+                }
+            }.sortedBy { it.second.range.first }
+
+            val (processor, match) = matches.firstOrNull() ?: break
             val qualifier = match.groupValues[2]
 
             val startOffset = match.range.first
-            val selectionGroup = match.groups[3]
+            val selectionGroup = if (match.groups.size >= 4) match.groups[3] else null
 
             val range = if (selectionGroup != null) {
                 val delta = selectionGroup.range.first - startOffset
@@ -68,18 +70,27 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
                 IntRange(startOffset, startOffset)
             }
 
-            action(qualifier, range)
+            processor.action(qualifier, range)
 
-            val replacementText = match.groupValues.getOrNull(3) ?: ""
+            val replacementText = selectionGroup?.value ?: ""
             result = result.replaceRange(match.range, replacementText)
         }
 
         return result
     }
 
+    private class SourceFileProcessor(val regex: Regex, val action: (String, IntRange) -> Unit)
+
     object TAGS {
-        val SELECTION_REGEXP = "<(expr(?:_(\\w+))?)>(.+?)</\\1>".toRegex()
+        val SELECTION_REGEXP = "<(expr(?:_(\\w+))?)>(.*?)</\\1>".toRegex(RegexOption.DOT_MATCHES_ALL)
         val CARET_REGEXP = "<(caret(?:_(\\w+))?)>".toRegex()
+
+        fun getCaretTagText(qualifier: String): String = getTagText("caret", qualifier)
+        fun getSelectionTagText(qualifier: String): String = getTagText("expr", qualifier)
+
+        private fun getTagText(tagName: String, qualifier: String): String {
+            return if (qualifier.isEmpty()) "<$tagName>" else "<${tagName}_$qualifier>"
+        }
     }
 }
 
@@ -95,226 +106,340 @@ class ExpressionMarkerProvider : TestService {
         carets.add(file.name, qualifier, caretOffset)
     }
 
-    fun getCaretPositionOrNull(file: PsiFile, caretTag: String? = null): Int? {
-        return carets.get(file.name, caretTag.orEmpty())
-    }
-
-    fun getCaretPosition(file: PsiFile, caretTag: String? = null): Int {
-        return getCaretPositionOrNull(file, caretTag)
-            ?: run {
-                val caretName = "caret${caretTag?.let { "_$it" }.orEmpty()}"
-                error("No <$caretName> found in file")
-            }
-    }
-
-    fun getAllCarets(file: PsiFile): List<CaretMarker> {
-        return carets.getAll(file.name)
-            .map { (qualifier, offset) -> CaretMarker(qualifier, offset) }
-    }
-
-    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selections.get(file.name, qualifier = "")
-    fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
-
-    inline fun <reified P : PsiElement> getElementOfTypeAtCaret(file: PsiFile, caretTag: String? = null): P {
-        val offset = getCaretPosition(file, caretTag)
-        return file.findElementAt(offset)?.parentOfType() ?: error("No expression found at caret")
+    /**
+     * Returns the offset of a caret tag with the given [qualifier], or `null` if there is no such a tag.
+     */
+    fun getCaretOrNull(file: PsiFile, qualifier: String = ""): Int? {
+        return carets.get(file.name, qualifier)
     }
 
     /**
-     * Returns an element of type [P] at the specified caret, or returns `null` if no such caret exists. If the caret can be found but the
-     * element has the wrong type, an error will be raised.
+     * Returns the offset of a caret tag with the given [qualifier]. Throws an exception if there is no such a tag.
      */
-    inline fun <reified P : KtElement> getElementOfTypeAtCaretOrNull(file: KtFile, caretTag: String? = null): P? {
-        val offset = getCaretPositionOrNull(file, caretTag) ?: return null
-        return file.findElementAt(offset)
-            ?.parentOfType()
-            ?: error("Element at caret doesn't exist or doesn't have a parent of type `${P::class.simpleName}`")
+    @Throws(IllegalStateException::class)
+    fun getCaret(file: PsiFile, qualifier: String = ""): Int {
+        return getCaretOrNull(file, qualifier)
+            ?: caretNotFoundError(getCaretTagText(qualifier))
     }
 
-    @OptIn(PrivateForInline::class)
-    inline fun <reified P : PsiElement> getElementsOfTypeAtCarets(
-        files: Collection<PsiFile>,
-        caretTag: String? = null,
-    ): Collection<Pair<P, PsiFile>> {
-        return files.mapNotNull { file ->
-            getCaretPositionOrNull(file, caretTag)?.let { offset ->
-                file.findElementAt(offset)?.parentOfType<P>()?.let { element ->
-                    element to file
-                }
+    /**
+     * Returns all carets in the file.
+     */
+    fun getAllCarets(file: PsiFile): List<FileMarker<Int>> {
+        return carets.getAll(file.name)
+            .map { (qualifier, offset) -> FileMarker(qualifier, getCaretTagText(qualifier), offset) }
+    }
+
+    /**
+     * Returns the text range enclosed in a selection tag with the given [qualifier], or `null` if there is no such a tag.
+     */
+    fun getSelectionOrNull(file: PsiFile, qualifier: String = ""): TextRange? {
+        return selections.get(file.name, qualifier)
+    }
+
+    /**
+     * Returns the text range enclosed in a selection tag with the given [qualifier]. Throws an exception if there is no such a tag.
+     */
+    @Throws(IllegalStateException::class)
+    fun getSelection(file: PsiFile, qualifier: String = ""): TextRange {
+        return getSelectionOrNull(file, qualifier)
+            ?: caretNotFoundError(getSelectionTagText(qualifier))
+    }
+
+    /**
+     * Returns all selections in the file.
+     */
+    fun getAllSelections(file: PsiFile): List<FileMarker<TextRange>> {
+        return selections.getAll(file.name)
+            .map { (qualifier, range) -> FileMarker(qualifier, getSelectionTagText(qualifier), range) }
+    }
+
+    /**
+     * Returns the bottommost element of the type [T] at a caret tag with the given [qualifier].
+     * Throws an exception if there is no such a tag or if the element under the tag has an incompatible type.
+     */
+    @Throws(NoSuchElementException::class)
+    inline fun <reified T : PsiElement> getBottommostElementOfTypeAtCaret(file: PsiFile, qualifier: String = ""): T {
+        return getBottommostElementOfTypeAtCaret(file, T::class, qualifier)
+    }
+
+    /**
+     * Returns the bottommost element of the type [T] at a caret tag with the given [qualifier].
+     * Throws an exception if there is no such a tag or if the element under the tag has an incompatible type.
+     */
+    @Throws(NoSuchElementException::class)
+    fun <T : PsiElement> getBottommostElementOfTypeAtCaret(file: PsiFile, type: KClass<T>, qualifier: String = ""): T {
+        return getBottommostElementOfTypeAtCaretOrNull(file, type, qualifier)
+            ?: throw NoSuchElementException("Found no element on ${getCaretTagText(qualifier)} with the type ${type.simpleName}")
+    }
+
+    /**
+     * Returns a bottommost element of the type [T] at a caret tag with the given [qualifier], or `null` if there is no such a tag
+     * or if the element under the tag has an incompatible type.
+     */
+    inline fun <reified T : PsiElement> getBottommostElementOfTypeAtCaretOrNull(file: PsiFile, qualifier: String = ""): T? {
+        return getBottommostElementOfTypeAtCaretOrNull(file, T::class, qualifier)
+    }
+
+    /**
+     * Returns a bottommost element of the type [T] at a caret tag with the given [qualifier], or `null` if there is no such a tag
+     * or if the element under the tag has an incompatible type.
+     */
+    fun <T : PsiElement> getBottommostElementOfTypeAtCaretOrNull(file: PsiFile, type: KClass<T>, qualifier: String = ""): T? {
+        val offset = getCaretOrNull(file, qualifier) ?: return null
+        val element = file.findElementAt(offset)
+        return PsiTreeUtil.getParentOfType(element, type.java, false)
+    }
+
+    /**
+     * Returns a list of bottommost elements of the type [T] at a caret tag with the given [qualifier] in each of the given [files].
+     */
+    inline fun <reified T : PsiElement> getBottommostElementsOfTypeAtCarets(
+        files: List<PsiFile>,
+        qualifier: String = "",
+    ): List<Pair<T, PsiFile>> {
+        return buildList {
+            for (file in files) {
+                val element = getBottommostElementOfTypeAtCaretOrNull<T>(file, qualifier) ?: continue
+                add(element to file)
             }
         }
     }
 
-    inline fun <reified P : PsiElement> getElementsOfTypeAtCarets(
+    /**
+     * Returns a list of bottommost elements of the type [T] at a caret with the given [qualifier] in every test file.
+     */
+    inline fun <reified T : PsiElement> getBottommostElementsOfTypeAtCarets(
         testServices: TestServices,
-        caretTag: String? = null,
-    ): Collection<Pair<P, PsiFile>> {
-        return testServices.ktTestModuleStructure.mainModules.flatMap { ktTestModule ->
-            getElementsOfTypeAtCarets<P>(ktTestModule.files, caretTag)
-        }
+        qualifier: String = "",
+    ): Collection<Pair<T, PsiFile>> {
+        return testServices.ktTestModuleStructure.mainModules
+            .flatMap { getBottommostElementsOfTypeAtCarets<T>(it.files, qualifier) }
     }
 
-    fun getSelectedElementOrElementAtCaretOfTypeByDirective(
-        ktFile: KtFile,
+    /**
+     * Returns a list of topmost elements enclosed in a selection tag with the given [qualifier] in the order as they appear
+     * in the file.
+     *
+     * Such as, for `<expr>foo bar</expr>`, both `foo` and `bar` will be returned if there is no parent in the selection range
+     * that includes both `foo` and `bar`.
+     */
+    private fun getTopmostSelectedElements(file: KtFile, qualifier: String = ""): List<PsiElement> {
+        val range = getSelectionOrNull(file, qualifier) ?: return emptyList()
+
+        val elements = if (range.isEmpty) {
+            val candidates = file.collectDescendantsOfType<PsiElement> { it.textRange == range }
+            buildList {
+                for (candidate in candidates) {
+                    // Search only for topmost descendants
+                    if (candidates.none { it !== candidate && it.isAncestor(candidate, strict = true) }) {
+                        add(candidate)
+                    }
+                }
+            }
+        } else {
+            file.elementsInRange(range)
+        }
+
+        return elements.trimWhitespaces()
+    }
+
+    /**
+     * Returns the topmost element enclosed in a selection tag with the given [qualifier].
+     * Throws an exception if such an element does not exist or if there are multiple selected elements.
+     */
+    @Throws(IllegalStateException::class)
+    fun getTopmostSelectedElement(file: KtFile, qualifier: String = ""): PsiElement {
+        val elements = getTopmostSelectedElements(file, qualifier)
+        return elements.singleOrNull() ?: singleElementError(elements)
+    }
+
+    /**
+     * Returns the topmost element of the type [T] enclosed in a selection tag with the given [qualifier].
+     * Throws an exception if there is no such a tag or if there is no element with the type [T].
+     */
+    @Throws(IllegalStateException::class)
+    inline fun <reified T : PsiElement> getTopmostSelectedElementOfType(file: KtFile, qualifier: String = ""): T {
+        return getTopmostSelectedElementOfType(file, T::class, qualifier)
+    }
+
+    /**
+     * Returns the topmost element of the type [T] enclosed in a selection tag with the given [qualifier].
+     * Throws an exception if there is no such a tag or if there is no element with the type [T].
+     */
+    @Throws(IllegalStateException::class)
+    fun <T : PsiElement> getTopmostSelectedElementOfType(file: KtFile, type: KClass<T>, qualifier: String = ""): T {
+        val elements = getTopmostSelectedElementsOfType(file, type, qualifier)
+        return elements.singleOrNull() ?: singleElementError(elements)
+    }
+
+    /**
+     * Returns the topmost element of the type [T] enclosed in a selection tag with the given [qualifier],
+     * or `null` if there is no such element.
+     */
+    @Throws(IllegalStateException::class)
+    private fun <T : PsiElement> getTopmostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
+        val elements = getTopmostSelectedElementsOfType(file, type, qualifier)
+        return elements.singleOrNull()
+    }
+
+    /**
+     * Returns the topmost element of the type [T] enclosed in a selection tag with the given [qualifier].
+     * Throws an exception if there is no such a tag or if there is no element with the type [T].
+     */
+    @Throws(IllegalStateException::class)
+    private fun <T : PsiElement> getTopmostSelectedElementsOfType(file: KtFile, type: KClass<T>, qualifier: String = ""): List<T> {
+        return getTopmostSelectedElements(file, qualifier).mapNotNull { getChildOfTypeOrNull(it, type) }
+    }
+
+    /**
+     * Returns the [element] if it is of type [T], or its first descendant of the type [T] with the same text range,
+     * or `null` if there are no such elements.
+     */
+    private fun <T : PsiElement> getChildOfTypeOrNull(element: PsiElement, type: KClass<T>): T? {
+        if (type.isInstance(element)) {
+            @Suppress("UNCHECKED_CAST")
+            return element as T
+        }
+
+        val result = generateSequence(element) { it.children.singleOrNull() }
+            .takeWhile { it.textRange == element.textRange }
+            .firstOrNull { type.isInstance(it) }
+
+        @Suppress("UNCHECKED_CAST")
+        return result as T?
+    }
+
+    /**
+     * Returns the bottommost element of the type [T] enclosed in an '<expr>' selection tag with the given [qualifier].
+     * Throws an error if there are no such elements.
+     */
+    @Throws(NoSuchElementException::class)
+    fun <T : PsiElement> getBottommostSelectedElementOfType(file: KtFile, type: KClass<T>, qualifier: String = ""): T {
+        return getBottommostSelectedElementOfTypeOrNull(file, type, qualifier)
+            ?: throw NoSuchElementException("Found no element of type ${type.simpleName} inside ${getSelectionTagText(qualifier)}")
+    }
+
+    /**
+     * Returns the bottommost element of the type [T] enclosed in a selection tag with the given [qualifier],
+     * or `null` if there is no selection tag with the given [qualifier].
+     */
+    private fun <T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
+        val element = getTopmostSelectedElements(file, qualifier).singleOrNull() ?: return null
+
+        val result = generateSequence(element) { it.children.singleOrNull() }
+            .filter { type.isInstance(it) }
+            .last { it.textRange == element.textRange }
+
+        @Suppress("UNCHECKED_CAST")
+        return result as T
+    }
+
+    /**
+     * Returns the bottommost element of the type inferred from the [Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE] directive.
+     * If the directive is not found, the [defaultType] is used instead.
+     * The method first tries to find the element enclosed in a selection tag and then looks up an element on a caret.
+     * Throws an error if the element is not found.
+     */
+    fun getBottommostElementOfTypeByDirective(
+        file: KtFile,
         module: TestModule,
-        defaultType: KClass<out PsiElement>? = null,
-        caretTag: String? = null,
+        defaultType: KClass<out PsiElement> = PsiElement::class,
+        qualifier: String = "",
     ): PsiElement {
-        val expectedClass = expectedTypeClass(module.directives) ?: defaultType?.java
-        return getSelectedElementOfClassOrNull(ktFile, expectedClass)
-            ?: getElementOfClassAtCaretOrNull(ktFile, expectedClass, caretTag)
+        val type = findExpectedTypeClass(module.directives) ?: defaultType
+        return getBottommostSelectedElementOfTypeOrNull(file, type, qualifier)
+            ?: getBottommostElementOfTypeAtCaretOrNull(file, type, qualifier)
             ?: error("Neither <expr> marker nor <caret> were found in file")
     }
 
-    private fun getSelectedElementOfClassOrNull(
-        ktFile: KtFile,
-        expectedClass: Class<out PsiElement>?,
+    /**
+     * Returns the topmost element of the type inferred from the [Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE] directive
+     * enclosed in a selection tag with the given [qualifier].
+     * Throws an error if the element is not found.
+     */
+    fun getTopmostSelectedElementOfTypeByDirective(
+        file: KtFile,
+        module: KtTestModule,
+        defaultType: KClass<out PsiElement> = PsiElement::class,
+        qualifier: String = "",
+    ): PsiElement {
+        val type = findExpectedTypeClass(module.testModule.directives) ?: defaultType
+        return getTopmostSelectedElementOfType(file, type, qualifier)
+    }
+
+    /**
+     * Returns the topmost element of the type inferred from the [Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE] directive
+     * enclosed in a selection tag with the given [qualifier] or `null` if the element is not found, or if there are multiple matching
+     * elements.
+     */
+    fun getTopmostSelectedElementOfTypeByDirectiveOrNull(
+        file: KtFile,
+        module: KtTestModule,
+        defaultType: KClass<out PsiElement> = PsiElement::class,
+        qualifier: String = "",
     ): PsiElement? {
-        if (expectedClass == null) return getSelectedElementOrNull(ktFile)
-
-        val selectedElements = getSelectedElementsOrNull(ktFile) ?: return null
-        return findDescendantOfTheSameRangeOfType(selectedElements, expectedClass)
+        val type = findExpectedTypeClass(module.testModule.directives) ?: defaultType
+        return getTopmostSelectedElementOfTypeOrNull(file, type, qualifier)
     }
 
-
-    private fun getElementOfClassAtCaretOrNull(
-        ktFile: KtFile,
-        expectedClass: Class<out PsiElement>?,
-        caretTag: String? = null,
-    ): PsiElement? {
-        val caretPosition = getCaretPositionOrNull(ktFile, caretTag) ?: return null
-        val elementAtPosition = ktFile.findElementAt(caretPosition) ?: return null
-        if (expectedClass == null) return elementAtPosition
-        return PsiTreeUtil.getParentOfType(elementAtPosition, expectedClass, /*strict*/false)
+    /**
+     * Returns the bottommost element of the type inferred from the [Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE] directive
+     * enclosed in a selection tag with the given [qualifier].
+     * Throws an error if the element is not found.
+     */
+    fun getBottommostSelectedElementOfTypeByDirective(
+        file: KtFile,
+        module: KtTestModule,
+        defaultType: KClass<out PsiElement> = PsiElement::class,
+        qualifier: String = "",
+    ): PsiElement {
+        val type = findExpectedTypeClass(module.testModule.directives) ?: defaultType
+        return getBottommostSelectedElementOfType(file, type, qualifier)
     }
 
-    fun getSelectedElementOrNull(file: KtFile): PsiElement? {
-        val elements = getSelectedElementsOrNull(file) ?: return null
-        if (elements.size != 1) {
-            singleElementError(elements)
-        }
-
-        return elements.single()
-    }
-
-    private fun singleElementError(elements: Collection<PsiElement>): Nothing {
-        error("Expected one element at range but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
-    }
-
-    fun getSelectedElementsOrNull(file: KtFile): List<PsiElement>? {
-        val range = getSelectedRangeOrNull(file) ?: return null
-        val elements = if (range.isEmpty) {
-            file.collectDescendantsOfType<PsiElement> { it.textRange == range }
-        } else {
-            file.elementsInRange(range)
-        }.trimWhitespaces()
-
-        return elements
-    }
-
-    fun getSelectedElements(file: KtFile): List<PsiElement> {
-        val range = getSelectedRange(file)
-        val elements = if (range.isEmpty) {
-            file.collectDescendantsOfType<PsiElement> { it.textRange == range }
-        } else {
-            file.elementsInRange(range)
-        }.trimWhitespaces()
-
-        return elements.ifEmpty { error("No selected expression found") }
-    }
-
-    fun getSelectedElement(file: KtFile): PsiElement {
-        val selectedElements = getSelectedElements(file)
-        return selectedElements.singleOrNull() ?: singleElementError(selectedElements)
-    }
-
-    fun expectedTypeClass(registeredDirectives: RegisteredDirectives): Class<PsiElement>? {
+    private fun findExpectedTypeClass(registeredDirectives: RegisteredDirectives): KClass<PsiElement>? {
         val expectedType = registeredDirectives.singleOrZeroValue(Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE) ?: return null
         val ktPsiPackage = "org.jetbrains.kotlin.psi."
         val expectedTypeFqName = ktPsiPackage + expectedType.removePrefix(ktPsiPackage)
 
         @Suppress("UNCHECKED_CAST")
-        return Class.forName(expectedTypeFqName) as Class<PsiElement>
-    }
-
-    fun getSelectedElementOfTypeByDirective(
-        ktFile: KtFile,
-        module: KtTestModule,
-        defaultType: KClass<out PsiElement>? = null,
-    ): PsiElement {
-        val expectedType = expectedTypeClass(module.testModule.directives) ?: defaultType?.java ?: return getSelectedElement(ktFile)
-
-        val selectedElements = getSelectedElements(ktFile)
-        selectedElements.filter(expectedType::isInstance).ifNotEmpty {
-            return singleOrNull() ?: singleElementError(this)
-        }
-
-        return findDescendantOfTheSameRangeOfType(selectedElements, expectedType)
-    }
-
-    private fun findDescendantOfTheSameRangeOfType(selectedElements: List<PsiElement>, expectedClass: Class<out PsiElement>): PsiElement {
-        val result = mutableSetOf<PsiElement>()
-        for (element in selectedElements) {
-            element.collectDescendantsOfTypeTo(result, { true }) {
-                expectedClass.isInstance(it) && it.textRange == element.textRange
-            }
-        }
-
-        return result.singleOrNull() ?: singleElementError(result)
-    }
-
-    inline fun <reified E : KtElement> getSelectedElementOfType(file: KtFile): E {
-        return when (val selected = getSelectedElement(file)) {
-            is E -> selected
-            else -> generateSequence(selected) { current ->
-                current.children.singleOrNull()?.takeIf { it.textRange == current.textRange }
-            }.firstIsInstance()
-        }
-    }
-
-    /**
-     * Find the bottommost element of an [elementType] or its subtype located precisely in the [range].
-     */
-    private fun <T : PsiElement> getBottommostElementOfTypeInRange(file: KtFile, range: TextRange, elementType: Class<T>): T {
-        var candidate = PsiTreeUtil.findElementOfClassAtOffset(file, range.startOffset, elementType, true)
-        while (candidate != null && candidate.endOffset < range.endOffset) {
-            candidate = PsiTreeUtil.getParentOfType(candidate, elementType)?.takeIf { it.startOffset == range.startOffset }
-        }
-
-        return candidate?.takeIf { it.endOffset == range.endOffset }
-            ?: error("Cannot find '${elementType.name}' in range $range")
-    }
-
-    /**
-     * Find the bottommost element of [E] or its subtype wrapped in an '<expr>' selection tag.
-     */
-    fun <E : KtElement> getBottommostSelectedElementOfType(file: KtFile, elementType: Class<E>): E {
-        val range = getSelectedRange(file)
-        return getBottommostElementOfTypeInRange(file, range, elementType)
+        return Class.forName(expectedTypeFqName).kotlin as KClass<PsiElement>
     }
 
     private fun List<PsiElement>.trimWhitespaces(): List<PsiElement> =
         dropWhile { it is PsiWhiteSpace }
             .dropLastWhile { it is PsiWhiteSpace }
 
+    @Throws(IllegalStateException::class)
+    private fun caretNotFoundError(tagText: String): Nothing {
+        error("No '$tagText' tag was found in the file")
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun singleElementError(elements: Collection<PsiElement>): Nothing {
+        val foundElements = elements.joinToString { it::class.simpleName + ": " + it.text }
+        error("Expected a single element but found ${elements.size} [$foundElements]")
+    }
+
     object Directives : SimpleDirectivesContainer() {
         val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
     }
 }
 
-data class CaretMarker(val tag: String, val offset: Int) {
+/**
+ * @param qualifier a tag qualifier (e.g., 'foo' for the '<caret_foo>' tag).
+ * @param tagText the complete opening tag text.
+ * @param value the marker value (an offset or a text range).
+ */
+data class FileMarker<T : Any>(
+    val qualifier: String,
+    val tagText: String,
+    val value: T,
+)
 
-    /**
-     * Full render of this caret marker in the `<caret>` or `<caret_$tag>` form.
-     *
-     * @see ExpressionMarkersSourceFilePreprocessor.TAGS.CARET_REGEXP
-     */
-    val fullTag: String
-        get() = if (tag.isEmpty()) {
-            "<caret>"
-        } else {
-            "<caret_${tag}>"
-        }
+fun FileMarker<TextRange>.toCaretMarker(): FileMarker<Int> {
+    return FileMarker(qualifier, getCaretTagText(qualifier), value.startOffset)
 }
 
 private class FileMarkerStorage<K : Any, T : Any> {

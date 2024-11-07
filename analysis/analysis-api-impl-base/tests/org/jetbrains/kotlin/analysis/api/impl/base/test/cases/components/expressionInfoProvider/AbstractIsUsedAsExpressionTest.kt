@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(mainFile).let {
+        val expression = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtExpression>(mainFile).let {
             if (it is KtBlockExpression && it.statements.size == 1 && it.textRange == it.statements.single().textRange) {
                 it.statements.single()
             } else {

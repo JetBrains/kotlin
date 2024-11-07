@@ -32,7 +32,7 @@ abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLaz
             testServices,
             outputRenderingMode = OutputRenderingMode.ONLY_TARGET_DECLARATION,
         ) { firResolveSession ->
-            val position = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+            val position = testServices.expressionMarkerProvider.getCaret(mainFile)
             val reference = mainFile.findReferenceAt(position)
             if (reference == null) {
                 error("No reference found at caret")

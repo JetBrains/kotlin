@@ -50,7 +50,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
                 typeParameterSymbol = classSymbol.typeParameters.find { it.name == typeParameterName }
                     ?: error("Type parameter $typeParameterName not found")
             } else {
-                val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeParameter
+                val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtTypeParameter
                 typeParameterReferenceText = expressionAtCaret.text
                 typeParameterSymbol = expressionAtCaret.symbol
             }

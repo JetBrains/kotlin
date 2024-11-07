@@ -87,7 +87,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
     private fun findLightDeclaration(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices): PsiMember {
         val directives = module.testModule.directives
         val lightElementClassQualifier = directives.singleValue(Directives.PSI)
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFiles.first())
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(ktFiles.first())
         val lightElements = declaration.toLightElements()
         val actualLightDeclaration = lightElements.find { it::class.qualifiedName == lightElementClassQualifier }
             ?: error("$lightElementClassQualifier is not found in ${lightElements.map { it::class.qualifiedName }}")

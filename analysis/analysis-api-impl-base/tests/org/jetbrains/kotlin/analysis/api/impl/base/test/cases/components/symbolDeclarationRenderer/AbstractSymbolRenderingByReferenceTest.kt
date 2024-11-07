@@ -21,7 +21,9 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderedString = executeOnPooledThreadInReadAction {
             analyseForTest(mainFile) {
-                val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
+                val referenceExpression = testServices.expressionMarkerProvider
+                    .getBottommostElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
+
                 val ktSymbol = referenceExpression.mainReference.resolveToSymbol()
                 testServices.assertions.assertNotNull(ktSymbol)
                 testServices.assertions.assertTrue(ktSymbol is KaDeclarationSymbol)

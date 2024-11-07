@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeReferenceTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeReference
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtTypeReference
 
         val actual = analyseForTest(expressionAtCaret) {
             val kaType = expressionAtCaret.type

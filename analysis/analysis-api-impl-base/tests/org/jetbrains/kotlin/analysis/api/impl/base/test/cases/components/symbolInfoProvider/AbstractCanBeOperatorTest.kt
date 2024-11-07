@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractCanBeOperatorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val function = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtNamedFunction>(mainFile)
+        val function = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtNamedFunction>(mainFile)
         val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
         val actual = analyseForTest(mainFile) {
             val functionSymbol = function?.symbol as? KaNamedFunctionSymbol ?: error("NO NAMED FUNCTION UNDER CARET")

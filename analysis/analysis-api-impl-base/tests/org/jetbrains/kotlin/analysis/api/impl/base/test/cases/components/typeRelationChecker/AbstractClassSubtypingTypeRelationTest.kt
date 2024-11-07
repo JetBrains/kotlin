@@ -33,7 +33,7 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
     }
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
-        val type = getTypeAtMarker(mainFile, testServices, caretTag = "type1")
+        val type = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
         val classId = ClassId.fromString(
             testServices.moduleStructure.allDirectives.singleValue(ClassSubtypingTestDirectives.SUPERCLASS_ID)
         )
