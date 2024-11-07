@@ -48,18 +48,15 @@ internal class PropertyReferenceLowering(val generationState: NativeGenerationSt
     private val immutableSymbols = context.ir.symbols.immutablePropertiesConstructors
     private val mutableSymbols = context.ir.symbols.mutablePropertiesConstructors
     private var tempIndex = 0
-
     override fun lower(irFile: IrFile) {
-        val generatedClasses = mutableListOf<IrClass>()
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val startOffset = expression.startOffset
-                val endOffset = expression.endOffset
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
-                return createKProperty(expression, irBuilder, irFile, generatedClasses)
+                return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression).run {
+                    createKProperty(expression, this)
+                }
             }
 
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
@@ -79,14 +76,11 @@ internal class PropertyReferenceLowering(val generationState: NativeGenerationSt
                 }
             }
         })
-        irFile.declarations.addAll(generatedClasses)
     }
 
     private fun createKProperty(
             expression: IrPropertyReference,
-            irBuilder: IrBuilderWithScope,
-            irFile: IrFile,
-            generatedClasses: MutableList<IrClass>
+            irBuilder: IrBuilderWithScope
     ): IrExpression {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
@@ -154,24 +148,11 @@ internal class PropertyReferenceLowering(val generationState: NativeGenerationSt
                 immutableSymbols
             }.byRecieversCount[receiverTypes.size]
 
-            fun IrFunctionReference.convert(): IrExpression {
-                val builder = FunctionReferenceLowering.FunctionReferenceBuilder(
-                        irFile,
-                        irFile,
-                        this,
-                        generationState,
-                        irBuilder,
-                )
-                val (newClass, newExpression) = builder.build()
-                generatedClasses.add(newClass)
-                return newExpression
-            }
-
             +irCallWithSubstitutedType(constructor, receiverTypes + listOf(returnType)).apply {
                 putValueArgument(0, irString(expression.symbol.owner.name.asString()))
-                putValueArgument(1, getterCallableReference.convert())
+                putValueArgument(1, getterCallableReference)
                 if (setterCallableReference != null) {
-                    putValueArgument(2, setterCallableReference.convert())
+                    putValueArgument(2, setterCallableReference)
                 }
             }
         }

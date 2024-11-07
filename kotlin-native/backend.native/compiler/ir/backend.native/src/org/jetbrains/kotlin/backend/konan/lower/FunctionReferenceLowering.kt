@@ -173,7 +173,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
 
     private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
-    class FunctionReferenceBuilder(
+    private class FunctionReferenceBuilder(
             val irFile: IrFile,
             val parent: IrDeclarationParent,
             val functionReference: IrFunctionReference,

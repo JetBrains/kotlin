@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -83,26 +82,11 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
     ) = add(TestFunction(function, kind, ignored))
 
     private fun <T : IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
-            irFile: IrFile,
             receiver: IrValueDeclaration,
             registerTestCase: IrFunction,
             registerFunction: IrFunction,
             functions: Collection<TestFunction>,
-            generatedClasses: MutableList<IrClass>,
     ) {
-        fun IrFunctionReference.convert(): IrExpression {
-            val builder = FunctionReferenceLowering.FunctionReferenceBuilder(
-                    irFile,
-                    irFile,
-                    this,
-                    generationState,
-                    this@generateFunctionRegistration,
-            )
-            val (newClass, newExpression) = builder.build()
-            generatedClasses.add(newClass)
-            return newExpression
-        }
-
         functions.forEach {
             if (it.kind == FunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
@@ -115,7 +99,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                             registerTestCase.valueParameters[1].type,
                             it.function.symbol,
                             typeArgumentsCount = 0,
-                            reflectionTarget = null).convert())
+                            reflectionTarget = null))
                     putValueArgument(2, irBoolean(it.ignored))
                 }
             } else {
@@ -135,7 +119,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                             registerFunction.valueParameters[1].type,
                             it.function.symbol,
                             typeArgumentsCount = 0,
-                            reflectionTarget = null).convert())
+                            reflectionTarget = null))
                 }
             }
         }
@@ -431,10 +415,8 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                                            testClassType: IrType,
                                            testCompanionType: IrType,
                                            testSuite: IrClassSymbol,
-                                           irFile: IrFile,
                                            owner: IrClass,
                                            functions: Collection<TestFunction>,
-                                           generatedClasses: MutableList<IrClass>,
                                            ignored: Boolean): IrConstructor =
             context.irFactory.createConstructor(
                     testSuite.owner.startOffset,
@@ -474,8 +456,8 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                         putValueArgument(0, irString(suiteName))
                         putValueArgument(1, irBoolean(ignored))
                     }
-                    generateFunctionRegistration(irFile, testSuite.owner.thisReceiver!!,
-                            registerTestCase, registerFunction, functions, generatedClasses)
+                    generateFunctionRegistration(testSuite.owner.thisReceiver!!,
+                            registerTestCase, registerFunction, functions)
                 }
             }
 
@@ -491,7 +473,6 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             testCompanion: IrClass?,
             irFile: IrFile,
             functions: Collection<TestFunction>,
-            generatedClasses: MutableList<IrClass>,
     ): IrClass {
         return context.irFactory.createClass(
                 testClass.startOffset,
@@ -514,7 +495,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             }
 
             val constructor = buildClassSuiteConstructor(
-                    suiteName, testClassType, testCompanionType, symbol, irFile, this, functions, generatedClasses, testClass.ignored
+                    suiteName, testClassType, testCompanionType, symbol, this, functions, testClass.ignored
             )
 
             val instanceGetter: IrFunction
@@ -541,8 +522,8 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
     //endregion
 
     // region IR generation methods
-    private fun generateClassSuite(testClass: TestClass, irFile: IrFile, generatedClasses: MutableList<IrClass>) =
-            with(buildClassSuite(testClass.suiteName, testClass.ownerClass, testClass.companion, irFile, testClass.functions, generatedClasses)) {
+    private fun generateClassSuite(testClass: TestClass, irFile: IrFile) =
+            with(buildClassSuite(testClass.suiteName, testClass.ownerClass, testClass.companion, irFile, testClass.functions)) {
                 val irConstructor = constructors.single()
                 val irBuilder = context.createIrBuilder(irFile.symbol, testClass.ownerClass.startOffset, testClass.ownerClass.endOffset)
                 irBuilder.irCall(irConstructor)
@@ -577,7 +558,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 && it.valueParameters[2].type.isBoolean()
     }
 
-    private fun generateTopLevelSuite(irFile: IrFile, topLevelSuiteName: String, functions: Collection<TestFunction>, generatedClasses: MutableList<IrClass>): IrExpression? {
+    private fun generateTopLevelSuite(irFile: IrFile, topLevelSuiteName: String, functions: Collection<TestFunction>): IrExpression? {
         val irBuilder = context.createIrBuilder(irFile.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
         if (!checkTopLevelSuiteName(irFile, topLevelSuiteName)) {
             return null
@@ -589,18 +570,15 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             }
             val testSuiteVal = irTemporary(constructorCall, "topLevelTestSuite")
             generateFunctionRegistration(
-                    irFile,
                     testSuiteVal,
                     topLevelSuiteRegisterTestCase,
                     topLevelSuiteRegisterFunction,
-                    functions,
-                    generatedClasses)
+                    functions)
         }
     }
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
         val statements = mutableListOf<IrStatement>()
-        val generatedClasses = mutableListOf<IrClass>()
 
         // There is no specified order on fake override functions, so to ensure all the tests are run deterministically,
         // sort the fake override functions by name.
@@ -621,11 +599,11 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == FunctionKind.TEST }
         }.forEach { (_, testClass) ->
-            statements.add(generateClassSuite(testClass, irFile, generatedClasses))
+            statements.add(generateClassSuite(testClass, irFile))
         }
 
         if (annotationCollector.topLevelFunctions.isNotEmpty()) {
-            generateTopLevelSuite(irFile, annotationCollector.topLevelSuiteName, annotationCollector.topLevelFunctions, generatedClasses)?.let { statements.add(it) }
+            generateTopLevelSuite(irFile, annotationCollector.topLevelSuiteName, annotationCollector.topLevelFunctions)?.let { statements.add(it) }
         }
 
         if (statements.isNotEmpty()) {
@@ -648,7 +626,6 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 )
             }
         }
-        irFile.declarations.addAll(generatedClasses)
     }
     // endregion
 
