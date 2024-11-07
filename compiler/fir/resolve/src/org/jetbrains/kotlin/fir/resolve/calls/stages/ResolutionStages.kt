@@ -208,7 +208,9 @@ object CheckContextReceivers : ResolutionStage() {
             candidate.substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }?.takeUnless { it.isEmpty() } ?: return
 
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) &&
+            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        ) {
             sink.reportDiagnostic(UnsupportedContextualDeclarationCall)
             return
         }
