@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
+import org.jetbrains.kotlin.konan.test.dump.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
@@ -94,6 +95,76 @@ fun main() {
                 model("codegen/boxInline", skipTestAllFilesCheck = true)
             }
         }
+
+        // Dump KLIB metadata tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-metadata") {
+            testClass<AbstractNativeKlibDumpMetadataTest>(
+                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated"
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+            testClass<AbstractNativeKlibDumpMetadataTest>(
+                suiteTestClassName = "FirNativeKlibDumpMetadataTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
+        // Dump KLIB IR tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-ir") {
+            testClass<AbstractNativeKlibDumpIrTest>(
+                suiteTestClassName = "NativeKlibDumpIrTestGenerated",
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+            testClass<AbstractNativeKlibDumpIrTest>(
+                suiteTestClassName = "FirNativeKlibDumpIrTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
+        // Dump KLIB IR signatures tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
+            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+                suiteTestClassName = "NativeKlibDumpIrSignaturesTestGenerated",
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+                suiteTestClassName = "FirNativeKlibDumpIrSignaturesTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model(pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
+        // Dump KLIB metadata signatures tests
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
+            testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
+                suiteTestClassName = "NativeKlibDumpMetadataSignaturesTestGenerated",
+            ) {
+                model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
+            }
+            testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
+                suiteTestClassName = "FirNativeKlibDumpMetadataSignaturesTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
+            }
+        }
+
+
     }
 }
 

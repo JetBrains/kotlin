@@ -162,7 +162,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     }
 }
 
-internal fun muteCInteropTestIfNecessary(defFile: File, target: KonanTarget) {
+fun muteCInteropTestIfNecessary(defFile: File, target: KonanTarget) {
     if (!defFile.defFileIsSupportedOn(target)) {
         Assumptions.abort<Nothing>("C-interop tests with Objective-C are not supported at non-Apple targets, def file: $defFile")
     }
