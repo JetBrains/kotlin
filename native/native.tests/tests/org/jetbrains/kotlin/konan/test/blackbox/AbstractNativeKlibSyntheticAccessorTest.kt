@@ -32,6 +32,10 @@ import java.io.File
 
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
 //   to the first compilation stage.
+// Then, check for `IGNORE_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
+//         useAfterAnalysisCheckers(
+//            ::BlackBoxCodegenSuppressor.bind(CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+//        )
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
 abstract class AbstractNativeKlibSyntheticAccessorTest(
     internal val narrowedAccessorVisibility: Boolean
@@ -60,8 +64,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
             when {
                 exception !is CompilationToolException -> throw exception
                 isMuted -> {
-                    println("There was an expected failure: CompilationToolException: ${exception.reason}")
-                    return
+                    return // Expected failure
                 }
                 else -> fail { exception.reason }
             }
