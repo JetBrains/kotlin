@@ -6,6 +6,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -414,7 +416,13 @@ class ScriptTemplateTest : TestCase() {
                 throw t
             }
         } finally {
-            Disposer.dispose(rootDisposable)
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(rootDisposable)
+                }
+            } else {
+                Disposer.dispose(rootDisposable)
+            }
         }
     }
 }
