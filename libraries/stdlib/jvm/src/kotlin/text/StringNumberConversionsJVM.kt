@@ -479,7 +479,7 @@ private inline fun String.advanceAndValidateMantissa(start: Int, endInclusive: I
             if (constant == null) return -1
 
             // If the string contains exactly the constant we guessed, advance to after the constant
-            return if (indexOf(constant, start, false) == start) return endInclusive + 1 else -1
+            return if (indexOf(constant, start, false) == start) endInclusive + 1 else -1
         }
     }
 
