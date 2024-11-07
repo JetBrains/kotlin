@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfTypeTo
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -123,18 +122,6 @@ class ExpressionMarkerProvider : TestService {
         return file.findElementAt(offset)
             ?.parentOfType()
             ?: error("Element at caret doesn't exist or doesn't have a parent of type `${P::class.simpleName}`")
-    }
-
-    inline fun <reified P : KtElement> getElementOfTypeAtCaretByDirective(
-        file: KtFile,
-        registeredDirectives: RegisteredDirectives,
-        caretTag: String? = null,
-    ): P {
-        val elementAtCaret = getElementOfTypeAtCaret<P>(file, caretTag)
-        val expectedType = expectedTypeClass(registeredDirectives) ?: return elementAtCaret
-        return (elementAtCaret as PsiElement).parentsWithSelf.firstNotNullOfOrNull { currentElement ->
-            currentElement.takeIf(expectedType::isInstance) as? P
-        } ?: error("Element of ${P::class.simpleName} & ${expectedType.simpleName} is not found")
     }
 
     @OptIn(PrivateForInline::class)
