@@ -40,7 +40,7 @@ internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
             ?.firstNotNullOfOrNull { if (isApplicableCandidate(it)) it else null }
             ?: return null
 
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(firForCreatedSymbol)
+        return analysisSession.firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(firForCreatedSymbol)
     }
 
     @OptIn(ExperimentalContracts::class)

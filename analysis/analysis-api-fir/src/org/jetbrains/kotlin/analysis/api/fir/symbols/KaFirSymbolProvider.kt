@@ -168,7 +168,7 @@ internal class KaFirSymbolProvider(
 
     override fun findClass(classId: ClassId): KaClassSymbol? = withValidityAssertion {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(symbol)
+        return firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(symbol)
     }
 
     override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = withValidityAssertion {

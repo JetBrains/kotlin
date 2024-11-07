@@ -121,11 +121,11 @@ internal class KaSymbolByFirBuilder(
 
         fun buildClassLikeSymbol(firSymbol: FirClassLikeSymbol<*>): KaClassLikeSymbol = when (firSymbol) {
             is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
-            is FirRegularClassSymbol -> buildNamedClassOrObjectSymbol(firSymbol)
+            is FirRegularClassSymbol -> buildNamedClassSymbol(firSymbol)
             is FirTypeAliasSymbol -> buildTypeAliasSymbol(firSymbol)
         }
 
-        fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KaNamedClassSymbol {
+        fun buildNamedClassSymbol(symbol: FirRegularClassSymbol): KaNamedClassSymbol {
             return KaFirNamedClassSymbol(symbol, analysisSession)
         }
 

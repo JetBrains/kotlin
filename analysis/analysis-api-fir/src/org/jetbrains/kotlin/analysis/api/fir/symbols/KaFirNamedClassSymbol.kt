@@ -142,7 +142,7 @@ internal class KaFirNamedClassSymbol private constructor(
     override val companionObject: KaNamedClassSymbol?
         get() = withValidityAssertion {
             firSymbol.companionObjectSymbol?.let {
-                builder.classifierBuilder.buildNamedClassOrObjectSymbol(it)
+                builder.classifierBuilder.buildNamedClassSymbol(it)
             }
         }
 

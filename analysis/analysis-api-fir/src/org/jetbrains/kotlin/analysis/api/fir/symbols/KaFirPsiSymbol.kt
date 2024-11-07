@@ -152,7 +152,7 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
             val enumFirSymbol = firSession.builtinTypes.enumType.toRegularClassSymbol(firSession)
                 ?: return firSymbol.superTypesList(builder) // something goes wrong here
 
-            val enumKaSymbol = builder.classifierBuilder.buildNamedClassOrObjectSymbol(enumFirSymbol)
+            val enumKaSymbol = builder.classifierBuilder.buildNamedClassSymbol(enumFirSymbol)
             buildClassType(enumKaSymbol) {
                 argument(defaultType)
             }
