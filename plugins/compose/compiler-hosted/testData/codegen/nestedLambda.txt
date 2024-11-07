@@ -15,11 +15,11 @@ public interface home/ColumnScope {
     // source: 'main.kt'
 }
 
-final class home/ComposableSingletons$MainKt$lambda-1$1 {
+final class home/ComposableSingletons$MainKt$lambda$-1263890955$1 {
     // source: 'main.kt'
     enclosing class home/ComposableSingletons$MainKt
-    public final static field INSTANCE: home.ComposableSingletons$MainKt$lambda-1$1
-    inner (anonymous) class home/ComposableSingletons$MainKt$lambda-1$1
+    public final static field INSTANCE: home.ComposableSingletons$MainKt$lambda$-1263890955$1
+    inner (anonymous) class home/ComposableSingletons$MainKt$lambda$-1263890955$1
     static method <clinit>(): void
     method <init>(): void
     public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
@@ -29,11 +29,11 @@ final class home/ComposableSingletons$MainKt$lambda-1$1 {
 public final class home/ComposableSingletons$MainKt {
     // source: 'main.kt'
     public final static field INSTANCE: home.ComposableSingletons$MainKt
-    private static field lambda-1: kotlin.jvm.functions.Function2
-    inner (anonymous) class home/ComposableSingletons$MainKt$lambda-1$1
+    private static field lambda$-1263890955: kotlin.jvm.functions.Function2
+    inner (anonymous) class home/ComposableSingletons$MainKt$lambda$-1263890955$1
     static method <clinit>(): void
     public method <init>(): void
-    public final method getLambda-1$main(): kotlin.jvm.functions.Function2
+    public final method getLambda$-1263890955$main(): kotlin.jvm.functions.Function2
 }
 
 public final class home/DominantColorState {

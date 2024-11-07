@@ -47,7 +47,7 @@ private interface DefaultParamInterface {
       }
       if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
         if (%default and 0b0001 != 0) {
-          content = ComposableSingletons%TestKt.lambda-1
+          content = ComposableSingletons%TestKt.lambda%-1800837504
         }
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
@@ -92,7 +92,7 @@ private interface DefaultParamInterface {
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              ComposedContent%default(ComposableSingletons%TestKt.lambda-2, %this%, %composer, 0b0110, 0)
+              ComposedContent%default(ComposableSingletons%TestKt.lambda%-1311305486, %this%, %composer, 0b0110, 0)
               if (isTraceInProgress()) {
                 traceEventEnd()
               }
@@ -118,7 +118,7 @@ private interface DefaultParamInterface {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%-1800837504: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Text("...>:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
@@ -132,7 +132,7 @@ internal object ComposableSingletons%TestKt {
       %composer.skipToGroupEnd()
     }
   }
-  val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%-1311305486: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Text("...>:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {

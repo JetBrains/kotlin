@@ -826,4 +826,235 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
+    @Test
+    fun testLambdasNextToEachOther() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun root() {
+                Box { print("1") }
+                Box { print("2") }
+                Box { print("2") }
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testMemoizingNestedLambdas() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun root() {
+                Box {
+                    print("root/1") 
+                    Box {
+                        print("root/1/1")
+                    }
+                    
+                    Box {
+                        print("root/1/2")
+            
+                        Box {
+                            print("root/1/2/1")
+                        }
+                        
+                        Box {
+                            print("root/1/2/2")
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testMemoizingDifferentlyScopedLambdas() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            val topLevelScope = @Composable { println("topLevelScope") }
+
+            @Composable
+            fun functionScope() {
+                Box {
+                    print("functionScope")
+                }     
+            }
+
+            class ClassScope {
+                @Composable
+                fun classScope() {
+                    Box {
+                        print("classScope")
+                    }
+                }
+            
+                class NestedClassScope {
+                    @Composable
+                    fun nestedClassScope() {
+                        Box {
+                            print("nestedClassScope")
+                        }
+                    }
+                }
+            }
+
+
+        """.trimIndent()
+    )
+
+    @Test
+    fun testComposableInlineFunction() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable fun NonInlined() {
+               val a = @Composable { }
+            }
+            
+            @Composable inline fun Inlined() {
+               val b = @Composable {}
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testComposableLambdaPropertyUsedInTwoFunctions() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            val a = @Composable { }
+            val b = @Composable { }
+
+            @Composable fun Foo() {
+                a()
+                b()
+            }
+            
+            @Composable inline fun Bar() {
+                a()
+                b()
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testOverloads() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Foo() {
+                Box {}
+            }
+            
+            @Composable fun Foo(x: Int) {
+                Box {}
+            }
+
+            @Composable fun Int.Foo() {
+                Box {}
+            }
+
+            @Composable fun Foo(x: String) {
+                Box {}
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testGetterAndSetter() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            var foo: @Composable () -> Unit = { Box { print("field") } }
+                get() = {
+                    Box { 
+                        print("get")
+                    }
+                }
+                set(value) {
+                    field = {
+                        Box {
+                            print("set")
+                         }
+                    }
+                }           
+        """.trimIndent()
+    )
+
+
+    @Test
+    fun testDifferentLambdaTypes() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Foo() {
+                val a: @Composable () -> Unit = { }
+                val b: @Composable (x: Int) -> Unit = {}
+                val c: @Composable (x: String) -> Unit = {}
+                val d: @Composable Int.() -> Unit = {}
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testCallingInlineFunction() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Box(child: @Composable () -> Unit) {
+                print("box")
+                child()
+            }
+            
+            @Composable
+            inline fun Foo(crossinline child: @Composable () -> Unit) {
+                val a = @Composable {
+                    print("a")
+                }
+                
+                Box {
+                     print("foo")
+                     a()
+                     child()
+                }
+            }
+        
+            @Composable
+            fun Test() {
+                Foo {
+                    print("test")
+                }           
+            }
+        """.trimIndent()
+    )
 }

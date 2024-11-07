@@ -16,9 +16,9 @@ val foo = @Composable { x: Int, y: Foo ->
 // Transformed IR
 // ------------------------------------------
 
-val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%529523933
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
+  val lambda%529523933: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<A(x)>,<B(y)>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

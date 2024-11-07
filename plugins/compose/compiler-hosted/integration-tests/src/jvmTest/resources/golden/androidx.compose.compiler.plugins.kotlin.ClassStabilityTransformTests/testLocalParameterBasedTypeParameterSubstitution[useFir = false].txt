@@ -93,7 +93,7 @@ fun C(items: List<String>, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00110000 or 0b1110 and %dirty)
+    X(items, ComposableSingletons%TestKt.lambda%1463567948, %composer, 0b00110000 or 0b1110 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -105,7 +105,7 @@ fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
+  val lambda%1463567948: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<A(item...>,<A(Wrap...>:Test.kt")
     val %dirty = %changed
     if (%changed and 0b0110 == 0) {

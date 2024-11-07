@@ -1,0 +1,141 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Box(child: @Composable () -> Unit) {
+    print("box")
+    child()
+}
+
+@Composable
+inline fun Foo(crossinline child: @Composable () -> Unit) {
+    val a = @Composable {
+        print("a")
+    }
+    
+    Box {
+         print("foo")
+         a()
+         child()
+    }
+}
+
+@Composable
+fun Test() {
+    Foo {
+        print("test")
+    }           
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Box)<child(...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(child)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    print("box")
+    child(%composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Box(child, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<{>,<Box>:Test.kt")
+  val a = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("a")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }, %composer, 0b00110110)
+  Box(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<a()>,<child(...>:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("foo")
+      a(%composer, 6)
+      child(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }, %composer, 0b00110110), %composer, 0b0110)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Foo>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Foo({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C:Test.kt")
+      print("test")
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%-1390967652: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("a")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda-1: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%-1390967652
+    }
+}

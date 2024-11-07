@@ -15,9 +15,9 @@ val test = @Composable { x: Int ->
 // Transformed IR
 // ------------------------------------------
 
-val test: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+val test: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-302707801
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, %composer: Composer?, %changed: Int ->
+  val lambda%-302707801: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<A(x)>:Test.kt")
     val %dirty = %changed
     if (%changed and 0b0110 == 0) {

@@ -23,8 +23,8 @@ fun A(%composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val foo = ComposableSingletons%TestKt.lambda-1
-    val bar = ComposableSingletons%TestKt.lambda-2
+    val foo = ComposableSingletons%TestKt.lambda%-1189050887
+    val bar = ComposableSingletons%TestKt.lambda%2106561222
     B(foo, %composer, 0b0110)
     B(bar, %composer, 0b0110)
     if (isTraceInProgress()) {
@@ -38,7 +38,7 @@ fun A(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%-1189050887: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
@@ -52,7 +52,7 @@ internal object ComposableSingletons%TestKt {
       %composer.skipToGroupEnd()
     }
   }
-  val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda%2106561222: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {

@@ -1,0 +1,163 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+val topLevelScope = @Composable { println("topLevelScope") }
+
+@Composable
+fun functionScope() {
+    Box {
+        print("functionScope")
+    }     
+}
+
+class ClassScope {
+    @Composable
+    fun classScope() {
+        Box {
+            print("classScope")
+        }
+    }
+
+    class NestedClassScope {
+        @Composable
+        fun nestedClassScope() {
+            Box {
+                print("nestedClassScope")
+            }
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val topLevelScope: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-548887921
+@Composable
+fun functionScope(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(functionScope)<Box>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Box(ComposableSingletons%TestKt.lambda%-1567063066, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    functionScope(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@StabilityInferred(parameters = 1)
+class ClassScope {
+  @Composable
+  fun classScope(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(classScope)<Box>:Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Box(ComposableSingletons%TestKt.lambda%665899684, %composer, 0b0110)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.classScope(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  @StabilityInferred(parameters = 1)
+  class NestedClassScope {
+    @Composable
+    fun nestedClassScope(%composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(nestedClassScope)<Box>:Test.kt")
+      if (%changed and 0b0001 != 0 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        Box(ComposableSingletons%TestKt.lambda%-959936766, %composer, 0b0110)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      val tmp0_rcvr = <this>
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        tmp0_rcvr.nestedClassScope(%composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+    static val %stable: Int = 0
+  }
+  static val %stable: Int = 0
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%-548887921: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      println("topLevelScope")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda%-1567063066: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("functionScope")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda%665899684: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("classScope")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda%-959936766: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("nestedClassScope")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

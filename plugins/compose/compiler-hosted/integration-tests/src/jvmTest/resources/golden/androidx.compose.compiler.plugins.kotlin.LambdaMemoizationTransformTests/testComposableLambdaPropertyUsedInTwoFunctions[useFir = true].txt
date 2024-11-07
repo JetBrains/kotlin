@@ -1,0 +1,81 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+val a = @Composable { }
+val b = @Composable { }
+
+@Composable fun Foo() {
+    a()
+    b()
+}
+
+@Composable inline fun Bar() {
+    a()
+    b()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val a: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-486040309
+val b: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%1731717644
+@Composable
+fun Foo(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Foo)<a()>,<b()>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    a(%composer, 6)
+    b(%composer, 6)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Foo(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Bar(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Bar)<a()>,<b()>:Test.kt")
+  a(%composer, 6)
+  b(%composer, 6)
+  sourceInformationMarkerEnd(%composer)
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%-486040309: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda%1731717644: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}
