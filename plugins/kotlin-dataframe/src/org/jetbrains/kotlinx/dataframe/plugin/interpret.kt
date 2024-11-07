@@ -90,8 +90,8 @@ fun <T> KotlinTypeFacade.interpret(
     val refinedArguments: RefinedArguments = functionCall.collectArgumentExpressions()
 
     val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
-    val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
-    val conflictingKeys = additionalArguments.keys intersect actualArgsMap.keys
+    val actualValueArguments = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
+    val conflictingKeys = additionalArguments.keys intersect actualValueArguments.keys
     if (conflictingKeys.isNotEmpty()) {
         if (isTest) {
             interpretationFrameworkError("Conflicting keys: $conflictingKeys")
@@ -99,20 +99,34 @@ fun <T> KotlinTypeFacade.interpret(
         return null
     }
     val expectedArgsMap = processor.expectedArguments
-        .filterNot { it.name.startsWith("typeArg") }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
-    val unexpectedArguments = expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments
+    val typeArguments = buildMap {
+        functionCall.typeArguments.forEachIndexed { index, firTypeProjection ->
+            val key = "typeArg$index"
+            val lens = expectedArgsMap[key]?.lens ?: return@forEachIndexed
+            val value: Any = if (lens == Interpreter.Id) {
+                firTypeProjection.toConeTypeProjection()
+            } else {
+                val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
+                if (type is ConeIntersectionType) return@forEachIndexed
+                Marker(type)
+            }
+            put(key, Interpreter.Success(value))
+        }
+    }
+
+    val unexpectedArguments = (expectedArgsMap.keys - defaultArguments) != (actualValueArguments.keys + typeArguments.keys - defaultArguments)
     if (unexpectedArguments) {
         if (isTest) {
             val message = buildString {
                 appendLine("ERROR: Different set of arguments")
                 appendLine("Implementation class: $processor")
-                appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
-                val diff = actualArgsMap.keys - expectedArgsMap.keys
+                appendLine("Not found in actual: ${expectedArgsMap.keys - actualValueArguments.keys}")
+                val diff = actualValueArguments.keys - expectedArgsMap.keys
                 appendLine("Passed, but not expected: ${diff}")
                 appendLine("add arguments to an interpeter:")
-                appendLine(diff.map { actualArgsMap[it] })
+                appendLine(diff.map { actualValueArguments[it] })
             }
             interpretationFrameworkError(message)
         }
@@ -121,6 +135,7 @@ fun <T> KotlinTypeFacade.interpret(
 
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
     arguments += additionalArguments
+    arguments += typeArguments
     val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
         val name = it.name.identifier
         val expectedArgument = expectedArgsMap[name] ?: error("$processor $name")
@@ -267,17 +282,6 @@ fun <T> KotlinTypeFacade.interpret(
             }
         }
         value?.let { value1 -> it.name.identifier to value1 }
-    }
-
-    functionCall.typeArguments.forEachIndexed { index, firTypeProjection ->
-        val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
-        if (type is ConeIntersectionType) return@forEachIndexed
-//        val approximation = TypeApproximationImpl(
-//            type.classId!!.asFqNameString(),
-//            type.isMarkedNullable
-//        )
-        val approximation = Marker(type)
-        arguments["typeArg$index"] = Interpreter.Success(approximation)
     }
 
     return if (interpretationResults.size == refinedArguments.refinedArguments.size) {

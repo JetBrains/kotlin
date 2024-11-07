@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.List
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.withNullability
 import org.jetbrains.kotlinx.dataframe.codeGen.*
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
@@ -77,9 +77,11 @@ import java.util.*
 class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
     val Arguments.body by dsl()
+    val Arguments.typeArg0: ConeTypeProjection? by arg(lens = Interpreter.Id)
+
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val dsl = CreateDataFrameDslImplApproximation()
-        body(dsl, mapOf("explicitReceiver" to Interpreter.Success(receiver)))
+        body(dsl, mapOf("typeArg0" to Interpreter.Success(typeArg0)))
         return PluginDataFrameSchema(dsl.columns)
     }
 }
@@ -87,17 +89,19 @@ class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
 class ToDataFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
     val Arguments.maxDepth: Number by arg(defaultValue = Present(DEFAULT_MAX_DEPTH))
+    val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return toDataFrame(maxDepth.toInt(), receiver, TraverseConfiguration())
+        return toDataFrame(maxDepth.toInt(), typeArg0, TraverseConfiguration())
     }
 }
 
 class ToDataFrameDefault : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
+    val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return toDataFrame(DEFAULT_MAX_DEPTH, receiver, TraverseConfiguration())
+        return toDataFrame(DEFAULT_MAX_DEPTH, typeArg0, TraverseConfiguration())
     }
 }
 
@@ -115,14 +119,14 @@ private const val DEFAULT_MAX_DEPTH = 0
 
 class Properties0 : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
-    val Arguments.explicitReceiver: FirExpression? by arg()
     val Arguments.maxDepth: Int by arg()
     val Arguments.body by dsl()
+    val Arguments.typeArg0: ConeTypeProjection by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret() {
         dsl.configuration.maxDepth = maxDepth
         body(dsl.configuration.traverseConfiguration, emptyMap())
-        val schema = toDataFrame(dsl.configuration.maxDepth, explicitReceiver, dsl.configuration.traverseConfiguration)
+        val schema = toDataFrame(dsl.configuration.maxDepth, typeArg0, dsl.configuration.traverseConfiguration)
         dsl.columns.addAll(schema.columns())
     }
 }
@@ -178,8 +182,8 @@ class Exclude1 : AbstractInterpreter<Unit>() {
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
-    explicitReceiver: FirExpression?,
-    traverseConfiguration: TraverseConfiguration
+    arg: ConeTypeProjection,
+    traverseConfiguration: TraverseConfiguration,
 ): PluginDataFrameSchema {
     fun ConeKotlinType.isValueType() =
         this.isArrayTypeOrNullableArrayType ||
@@ -290,8 +294,6 @@ internal fun KotlinTypeFacade.toDataFrame(
             }
     }
 
-    val receiver = explicitReceiver ?: return PluginDataFrameSchema.EMPTY
-    val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: return PluginDataFrameSchema.EMPTY
     return when {
         arg.isStarProjection -> PluginDataFrameSchema.EMPTY
         else -> {
