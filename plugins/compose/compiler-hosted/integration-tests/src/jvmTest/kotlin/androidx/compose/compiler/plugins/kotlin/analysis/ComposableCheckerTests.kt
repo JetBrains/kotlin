@@ -1443,6 +1443,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testComposableValueOperator() {
+        assumeTrue(!useFir)
         check(
             """
             import androidx.compose.runtime.Composable
@@ -1463,6 +1464,61 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 val foo by fooValue
                 val fooDelegate by FooDelegate()
                 var mutableFoo by <!COMPOSE_INVALID_DELEGATE!>fooValue<!>
+                val bar = Bar()
+
+                println(<!COMPOSABLE_INVOCATION!>foo<!>)
+                println(<!COMPOSABLE_INVOCATION!>fooDelegate<!>)
+                println(bar.<!COMPOSABLE_INVOCATION!>foo<!>)
+
+                <!COMPOSABLE_INVOCATION!>mutableFoo<!> = Unit
+            }
+
+            @Composable
+            fun TestComposable() {
+                val fooValue = Foo()
+                val foo by fooValue
+                val fooDelegate by FooDelegate()
+                val bar = Bar()
+
+                println(foo)
+                println(fooDelegate)
+                println(bar.foo)
+            }
+
+            class Bar {
+                val <!COMPOSABLE_EXPECTED!>foo<!> by Foo()
+
+                @get:Composable
+                val foo2 by Foo()
+            }
+            """
+        )
+    }
+
+    @Test
+    fun testComposableValueOperatorK2() {
+        // The output is mostly the same except for one diagnostic placement.
+        assumeTrue(useFir)
+        check(
+            """
+            import androidx.compose.runtime.Composable
+            import kotlin.reflect.KProperty
+
+            class Foo
+            class FooDelegate {
+                @Composable
+                operator fun getValue(thisObj: Any?, property: KProperty<*>) {}
+                @Composable
+                operator fun <!COMPOSE_INVALID_DELEGATE!>setValue<!>(thisObj: Any?, property: KProperty<*>, value: Any) {}
+            }
+            @Composable operator fun Foo.getValue(thisObj: Any?, property: KProperty<*>) {}
+            @Composable operator fun Foo.<!COMPOSE_INVALID_DELEGATE!>setValue<!>(thisObj: Any?, property: KProperty<*>, value: Any) {}
+
+            fun <!COMPOSABLE_EXPECTED!>nonComposable<!>() {
+                val fooValue = Foo()
+                val foo by fooValue
+                val fooDelegate by FooDelegate()
+                var <!COMPOSE_INVALID_DELEGATE!>mutableFoo<!> by fooValue
                 val bar = Bar()
 
                 println(<!COMPOSABLE_INVOCATION!>foo<!>)

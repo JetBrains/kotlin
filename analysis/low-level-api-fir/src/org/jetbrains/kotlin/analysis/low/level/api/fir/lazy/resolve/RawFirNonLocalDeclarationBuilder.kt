@@ -42,9 +42,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val declarationToBuild: KtElement,
     private val functionsToRebind: Set<FirFunction>,
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
-    override val KtProperty.sourceForDelegatedPropertyAccessors: KtSourceElement?
-        get() = this.toFirSourceElement()
-
     companion object {
         fun buildWithFunctionSymbolRebind(
             session: FirSession,

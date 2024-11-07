@@ -1427,7 +1427,8 @@ class LightTreeRawFirDeclarationBuilder(
                         baseModuleData,
                         classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                         context = context,
-                        isExtension = false
+                        isExtension = false,
+                        explicitDeclarationSource = propertySource,
                     )
                 } else {
                     this.isLocal = false
@@ -1503,6 +1504,7 @@ class LightTreeRawFirDeclarationBuilder(
                             classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
                             context,
                             isExtension = receiverTypeNode != null,
+                            explicitDeclarationSource = propertySource,
                         )
                     }
                 }
