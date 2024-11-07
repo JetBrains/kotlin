@@ -295,7 +295,7 @@ fun Project.configureTests() {
         ":libraries:tools:gradle",
         ":gradle",
     )
-    if (projectsUsingTcMutes.none { project.path.startsWith(it) }) {
+    if (projectsUsingTcMutes.any { project.path.startsWith(it) }) {
         val ignoreTestFailures: Boolean by rootProject.extra
         tasks.configureEach {
             if (this is VerificationTask) {
