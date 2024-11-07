@@ -58,9 +58,9 @@ private class Transformer(
 
     private fun matchStdlibExtensionContainsCall(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.size == 1 &&
-                callee.extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.closedRange) == true &&
-                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}")
+        return callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}") &&
+                callee.hasShape(extensionReceiver = true, regularParameters = 1)
+                callee.extensionReceiverParameter!!.type.isSubtypeOfClass(context.ir.symbols.closedRange)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -293,8 +293,8 @@ private class Transformer(
         }.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
         val compareToFun = comparisonClass.functions.singleOrNull {
             it.name == OperatorNameConventions.COMPARE_TO &&
-                    it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                    it.valueParameters.size == 1 && (!isNumericRange || it.valueParameters[0].type == comparisonClass.defaultType)
+                    it.hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                    (!isNumericRange || it.valueParameters[0].type == comparisonClass.defaultType)
         } ?: return null
 
         // contains() function for ComparableRange is implemented as `value >= start && value <= endInclusive` (`value` is the argument).

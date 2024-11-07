@@ -140,7 +140,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
                             IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
                         } else {
                             val arrayConstructor = arrayType.classOrNull!!.constructors.single {
-                                it.owner.valueParameters.size == 1 && it.owner.valueParameters.single().type == context.irBuiltIns.intType
+                                it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
                             }
                             IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
                         }
