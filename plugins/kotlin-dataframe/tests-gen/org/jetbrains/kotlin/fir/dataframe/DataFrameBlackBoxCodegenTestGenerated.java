@@ -419,6 +419,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_customIterable.kt")
+  public void testToDataFrame_customIterable() {
+    runTest("testData/box/toDataFrame_customIterable.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_dataSchema.kt")
   public void testToDataFrame_dataSchema() {
     runTest("testData/box/toDataFrame_dataSchema.kt");
