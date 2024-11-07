@@ -77,11 +77,11 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
 }
 
 class ExpressionMarkerProvider : TestService {
-    private val selected = mutableMapOf<String, TextRange>()
+    private val selected = FileMarkerStorage<String, TextRange>()
     private val carets = FileMarkerStorage<String, Int>()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
-        selected[file.name] = range
+        selected.add(file.name, qualifier = "", range)
     }
 
     fun addCaret(file: TestFile, caretTag: String?, caretOffset: Int) {
@@ -105,7 +105,7 @@ class ExpressionMarkerProvider : TestService {
             .map { (qualifier, offset) -> CaretMarker(qualifier, offset) }
     }
 
-    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
+    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected.get(file.name, qualifier = "")
     fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
     inline fun <reified P : PsiElement> getElementOfTypeAtCaret(file: PsiFile, caretTag: String? = null): P {
