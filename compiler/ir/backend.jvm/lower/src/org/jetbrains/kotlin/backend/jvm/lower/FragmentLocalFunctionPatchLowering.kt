@@ -74,7 +74,7 @@ internal class FragmentLocalFunctionPatchLowering(
                             // the corresponding argument from the existing
                             // call and place at the appropriate slot in the
                             // call to the lowered function
-                            expression.getValueArgument(oldParameter.index)!!
+                            expression.getValueArgument(oldParameter.indexInOldValueParameters)!!
                         } else {
                             // The parameter is introduced by the lowering to
                             // private static function, so corresponds to a _capture_ by the local function
@@ -99,7 +99,7 @@ internal class FragmentLocalFunctionPatchLowering(
                             irBuilder.irGet(newParameter)
                         }
 
-                        putValueArgument(newValueParameterDeclaration.index, getValue)
+                        putValueArgument(newValueParameterDeclaration.indexInOldValueParameters, getValue)
                     }
                 }
             }

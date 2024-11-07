@@ -134,7 +134,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
                             irBuilder.at(expression).irGet(loweredConstructorFunction.extensionReceiverParameter!!)
                         }
                         is IrValueParameter ->
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.valueParameters[value.index])
+                            irBuilder.at(expression).irGet(loweredConstructorFunction.valueParameters[value.indexInOldValueParameters])
                         else -> expression
                     }
                 }

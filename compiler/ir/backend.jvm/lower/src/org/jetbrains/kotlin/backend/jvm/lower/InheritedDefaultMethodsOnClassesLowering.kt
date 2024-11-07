@@ -146,7 +146,7 @@ internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrE
         val movedThisParameter = irCall.symbol.owner.valueParameters
             .find { it.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER }
             ?: return
-        val movedThisParameterIndex = movedThisParameter.index
+        val movedThisParameterIndex = movedThisParameter.indexInOldValueParameters
         irCall.putValueArgument(
             movedThisParameterIndex,
             irCall.getValueArgument(movedThisParameterIndex)?.reinterpretAsDispatchReceiverOfType(movedThisParameter.type)

@@ -431,7 +431,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
 
         // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
-        val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
+        val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.indexInOldValueParameters
             ?: valueParameters.size
         function.valueParameters += valueParameters.take(index).map {
             it.copyTo(function, type = it.type.substitute(substitutionMap))
@@ -487,7 +487,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
         it.extensionReceiver = extensionReceiver
         val continuationParameter = view.continuationParameter()!!
         for (i in 0 until valueArgumentsCount) {
-            it.putValueArgument(i + if (i >= continuationParameter.index) 1 else 0, getValueArgument(i))
+            it.putValueArgument(i + if (i >= continuationParameter.indexInOldValueParameters) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {
             val continuation = if (caller.origin == LoweredDeclarationOrigins.INLINE_LAMBDA)
@@ -497,7 +497,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
                         ?: throw AssertionError("${caller.render()} has no continuation; can't call ${owner.render()}")
                 )
-            it.putValueArgument(continuationParameter.index, continuation)
+            it.putValueArgument(continuationParameter.indexInOldValueParameters, continuation)
         }
     }
 }

@@ -83,7 +83,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 // works correctly so that `f() { "OK" }` returns "OK" and
                 // `f()` throws a NullPointerException.
                 originalDeclaration.valueParameters.forEach {
-                    variables[it.symbol] = newIrFunction.valueParameters[it.index].symbol
+                    variables[it.symbol] = newIrFunction.valueParameters[it.indexInOldValueParameters].symbol
                 }
 
                 generateSuperCallHandlerCheckIfNeeded(originalDeclaration, newIrFunction)
@@ -96,9 +96,9 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                     if (!valueParameter.isMovedReceiver()) {
                         ++sourceParameterIndex
                     }
-                    val parameter = newIrFunction.valueParameters[valueParameter.index]
+                    val parameter = newIrFunction.valueParameters[valueParameter.indexInOldValueParameters]
                     val remapped = valueParameter.defaultValue?.let { defaultValue ->
-                        val mask = irGet(newIrFunction.valueParameters[originalDeclaration.valueParameters.size + valueParameter.index / 32])
+                        val mask = irGet(newIrFunction.valueParameters[originalDeclaration.valueParameters.size + valueParameter.indexInOldValueParameters / 32])
                         val bit = irInt(1 shl (sourceParameterIndex % 32))
                         val defaultFlag =
                             irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
@@ -305,7 +305,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                     when (parameter) {
                         stubFunction.dispatchReceiverParameter -> log { "call::dispatch@: ${ir2string(argument)}" }
                         stubFunction.extensionReceiverParameter -> log { "call::extension@: ${ir2string(argument)}" }
-                        else -> log { "call::params@$${parameter.index}/${parameter.name}: ${ir2string(argument)}" }
+                        else -> log { "call::params@$${parameter.indexInOldValueParameters}/${parameter.name}: ${ir2string(argument)}" }
                     }
                     if (argument != null) {
                         putArgument(parameter, argument)

@@ -37,10 +37,10 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
     var valueParameters: List<IrValueParameter> = emptyList()
         set(value) {
             for (parameter in field) {
-                parameter.index = -1
+                parameter.indexInOldValueParameters = -1
             }
             for ((index, parameter) in value.withIndex()) {
-                parameter.index = index
+                parameter.indexInOldValueParameters = index
             }
             field = value
         }

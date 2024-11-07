@@ -215,7 +215,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         IrGetValueImpl(startOffset, endOffset, secondParameter.type, secondParameter.symbol))
 
                 delegatingConstructor.valueParameters.forEach {
-                    result.putValueArgument(it.loweredIndex, delegatingConstructorCall.getValueArgument(it.index))
+                    result.putValueArgument(it.loweredIndex, delegatingConstructorCall.getValueArgument(it.indexInOldValueParameters))
                 }
 
                 return result
@@ -244,7 +244,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, ordinal))
 
                 enumConstructor.valueParameters.forEach {
-                    result.putValueArgument(it.loweredIndex, enumConstructorCall.getValueArgument(it.index))
+                    result.putValueArgument(it.loweredIndex, enumConstructorCall.getValueArgument(it.indexInOldValueParameters))
                 }
 
                 return result
@@ -355,7 +355,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
     }
 }
 
-private val IrValueParameter.loweredIndex: Int get() = index + 2
+private val IrValueParameter.loweredIndex: Int get() = indexInOldValueParameters + 2
 
 private class ParameterMapper(superConstructor: IrConstructor,
                               val constructor: IrConstructor,
@@ -366,7 +366,7 @@ private class ParameterMapper(superConstructor: IrConstructor,
 
         val superParameter = expression.symbol.owner as? IrValueParameter ?: return expression
         if (valueParameters.contains(superParameter)) {
-            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.index
+            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.indexInOldValueParameters
             val parameter = constructor.valueParameters[index]
             return IrGetValueImpl(
                     expression.startOffset, expression.endOffset,
@@ -380,7 +380,7 @@ private class ParameterMapper(superConstructor: IrConstructor,
         expression.transformChildrenVoid()
         val superParameter = expression.symbol.owner as? IrValueParameter ?: return expression
         if (valueParameters.contains(superParameter)) {
-            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.index
+            val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.indexInOldValueParameters
             val parameter = constructor.valueParameters[index]
             return IrSetValueImpl(
                     expression.startOffset, expression.endOffset,

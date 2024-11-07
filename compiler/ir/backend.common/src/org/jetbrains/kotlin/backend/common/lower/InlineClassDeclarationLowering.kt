@@ -170,7 +170,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         // Use these delegating call later to initialize this variable.
                         lateinit var thisVar: IrVariable
                         val parameterMapping = staticMethod.valueParameters.associateBy {
-                            irConstructor.valueParameters[it.index].symbol
+                            irConstructor.valueParameters[it.indexInOldValueParameters].symbol
                         }
 
                         (constructorBody as IrBlockBody).statements.forEach { statement ->
@@ -262,7 +262,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                                     in function.valueParameters -> {
                                         val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.index + offset]
+                                        staticMethod.valueParameters[valueDeclaration.indexInOldValueParameters + offset]
                                     }
 
                                     else -> return expression
@@ -277,7 +277,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 when (valueDeclaration) {
                                     in function.valueParameters -> {
                                         val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.index + offset].symbol
+                                        staticMethod.valueParameters[valueDeclaration.indexInOldValueParameters + offset].symbol
                                     }
                                     else -> return expression
                                 },

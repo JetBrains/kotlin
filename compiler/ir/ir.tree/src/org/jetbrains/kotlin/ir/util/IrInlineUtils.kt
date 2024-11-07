@@ -40,7 +40,7 @@ val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
-    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
+    indexInOldValueParameters >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
 fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE

@@ -734,15 +734,15 @@ abstract class AbstractAtomicfuTransformer(
                         ?: error("Failed to find a transformed atomic extension parent function for ${this.render()}.")
 
         private fun IrValueParameter.remapValueParameters(transformedExtension: IrFunction): IrValueParameter? {
-            if (index < 0 && !type.isAtomicType()) {
+            if (indexInOldValueParameters < 0 && !type.isAtomicType()) {
                 // data is a transformed function
                 // index == -1 for `this` parameter
                 return transformedExtension.dispatchReceiverParameter
                     ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
             }
-            if (index >= 0) {
+            if (indexInOldValueParameters >= 0) {
                 val shift = transformedExtension.valueParameters.map { it.name.asString() }.count { it.endsWith(ATOMICFU) }
-                return transformedExtension.valueParameters[index + shift]
+                return transformedExtension.valueParameters[indexInOldValueParameters + shift]
             }
             return null
         }

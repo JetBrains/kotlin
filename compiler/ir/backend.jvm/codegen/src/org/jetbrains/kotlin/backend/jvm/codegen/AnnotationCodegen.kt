@@ -181,7 +181,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
         for (param in annotation.symbol.owner.valueParameters) {
-            val value = annotation.getValueArgument(param.index)
+            val value = annotation.getValueArgument(param.indexInOldValueParameters)
             if (value != null)
                 genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
             else if (param.defaultValue != null)

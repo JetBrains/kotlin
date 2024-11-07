@@ -137,7 +137,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         break
                     val argument = if (i < stack.size - 1) stack[i + 1] else expression
                     val parameter = cur.symbol.owner.valueParameters.singleOrNull {
-                        cur.getValueArgument(it.index) == argument
+                        cur.getValueArgument(it.indexInOldValueParameters) == argument
                     }
                     if (parameter?.annotations?.findAnnotation(VOLATILE_LAMBDA_FQ_NAME) != null) {
                         return expression
@@ -582,7 +582,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                                 when (parameter) {
                                     referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
                                     referencedFunction.extensionReceiverParameter -> extensionReceiver = argument
-                                    else -> putValueArgument(parameter.index, argument)
+                                    else -> putValueArgument(parameter.indexInOldValueParameters, argument)
                                 }
                             }
                             assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }

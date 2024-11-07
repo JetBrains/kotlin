@@ -96,7 +96,7 @@ class IrInlineCodegen(
         val inlineLambda = argumentExpression.unwrapInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
-            rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
+            rememberClosure(parameterType, irValueParameter.indexInOldValueParameters, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
@@ -138,7 +138,7 @@ class IrInlineCodegen(
                     // Here we replicate the old backend: reusing the locals for everything except extension receivers.
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    val argValue = if (irValueParameter.index >= 0)
+                    val argValue = if (irValueParameter.indexInOldValueParameters >= 0)
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     else
                         codegen.genToStackValue(argumentExpression, parameterType, irValueParameter.type, blockInfo)
@@ -150,7 +150,7 @@ class IrInlineCodegen(
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-            putArgumentToLocalVal(expectedType, onStack, irValueParameter.index, kind)
+            putArgumentToLocalVal(expectedType, onStack, irValueParameter.indexInOldValueParameters, kind)
         }
     }
 

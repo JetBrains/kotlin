@@ -461,7 +461,7 @@ open class LocalDeclarationsLowering(
             ): T =
                 apply {
                     for (p in newTarget.valueParameters) {
-                        putValueArgument(p.index, transform(p))
+                        putValueArgument(p.indexInOldValueParameters, transform(p))
                     }
                 }
 
@@ -473,7 +473,7 @@ open class LocalDeclarationsLowering(
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
 
                     if (oldParameter != null) {
-                        oldExpression.getValueArgument(oldParameter.index)
+                        oldExpression.getValueArgument(oldParameter.indexInOldValueParameters)
                     } else {
                         // The callee expects captured value as argument.
                         val capturedValueSymbol =
@@ -780,7 +780,7 @@ open class LocalDeclarationsLowering(
                     startOffset = p.startOffset
                     endOffset = p.endOffset
                     origin =
-                        if (p is IrValueParameter && p.index < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        if (p is IrValueParameter && p.indexInOldValueParameters < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
                     name = suggestNameForCapturedValue(p, generatedNames, isExplicitLocalFunction = isExplicitLocalFunction)
                     type = localFunctionContext.remapType(p.type)

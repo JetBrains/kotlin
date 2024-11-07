@@ -190,7 +190,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         private fun IrFunction.getMethodType(): MethodType {
-            val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.index)) }
+            val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.indexInOldValueParameters)) }
             return when (this) {
                 is IrSimpleFunction -> {
                     val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())

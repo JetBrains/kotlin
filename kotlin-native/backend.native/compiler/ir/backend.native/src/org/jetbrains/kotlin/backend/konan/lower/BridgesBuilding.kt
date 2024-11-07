@@ -94,7 +94,7 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFacto
                 it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
             }
             valueParameters = target.valueParameters.map {
-                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
+                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.indexInOldValueParameters).type() ?: it.type)
             }
 
             typeParameters = function.typeParameters.map { parameter ->

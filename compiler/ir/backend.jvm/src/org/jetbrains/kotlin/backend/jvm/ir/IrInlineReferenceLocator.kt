@@ -26,7 +26,7 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {
-                val lambda = expression.getValueArgument(parameter.index)?.unwrapInlineLambda() ?: continue
+                val lambda = expression.getValueArgument(parameter.indexInOldValueParameters)?.unwrapInlineLambda() ?: continue
                 visitInlineLambda(lambda, function, parameter, data!!)
             }
         }

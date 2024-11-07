@@ -499,7 +499,7 @@ class ComposerParamTransformer(
 
             // update parameter types so they are ready to accept the default values
             fn.valueParameters.fastForEach { param ->
-                if (fn.hasDefaultExpressionDefinedForValueParameter(param.index)) {
+                if (fn.hasDefaultExpressionDefinedForValueParameter(param.indexInOldValueParameters)) {
                     param.type = param.type.defaultParameterType()
                 }
             }

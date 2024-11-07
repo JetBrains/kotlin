@@ -195,7 +195,7 @@ fun IrExpression.implicitCastIfNeededTo(type: IrType) =
         IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
 
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
-    symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null && (!it.isVararg || it.defaultValue != null) }
+    symbol.owner.valueParameters.any { this.getValueArgument(it.indexInOldValueParameters) == null && (!it.isVararg || it.defaultValue != null) }
 
 fun IrValueParameter.createStubDefaultValue(): IrExpressionBody =
     factory.createExpressionBody(
@@ -411,7 +411,7 @@ fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrCo
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return (getValueArgument(parameter.index) as IrConst).value as String
+    return (getValueArgument(parameter.indexInOldValueParameters) as IrConst).value as String
 }
 
 inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
@@ -420,7 +420,7 @@ inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String):
 @PublishedApi
 internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { getValueArgument(it.index) }
+    val argument = parameter?.let { getValueArgument(it.indexInOldValueParameters) }
     return (argument as IrConst?)?.value
 }
 
@@ -450,7 +450,7 @@ fun IrClass.getAnnotationRetention(): KotlinRetention? {
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
+    val index = symbol.owner.valueParameters.find { it.name == name }?.indexInOldValueParameters ?: return null
     return getValueArgument(index)
 }
 
@@ -492,7 +492,7 @@ inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(pr
 
 fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     listOf(this),
-    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
+    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.indexInOldValueParameters] } ?: listOf() },
     { current -> current.defaultValue != null }
 )
 
@@ -825,8 +825,8 @@ fun IrGetValue.remapSymbolParent(classRemapper: (IrClass) -> IrClass, functionRe
                 parent.dispatchReceiverParameter -> remappedFunction.dispatchReceiverParameter!!
                 parent.extensionReceiverParameter -> remappedFunction.extensionReceiverParameter!!
                 else -> {
-                    assert(parent.valueParameters[parameter.index] == parameter)
-                    remappedFunction.valueParameters[parameter.index]
+                    assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
+                    remappedFunction.valueParameters[parameter.indexInOldValueParameters]
                 }
             }
         }
@@ -1094,7 +1094,7 @@ fun IrFunction.copyValueParametersToStatic(
     }
 
     for (oldValueParameter in source.valueParameters) {
-        if (oldValueParameter.index >= numValueParametersToCopy) break
+        if (oldValueParameter.indexInOldValueParameters >= numValueParametersToCopy) break
         target.valueParameters = target.valueParameters memoryOptimizedPlus oldValueParameter.copyTo(
             target,
             origin = origin

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -170,7 +169,7 @@ abstract class AbstractComposeLowering(
         listOf(this),
         { current ->
             (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { fn ->
-                fn.owner.valueParameters[current.index].also { p ->
+                fn.owner.valueParameters[current.indexInOldValueParameters].also { p ->
                     p.parent = fn.owner
                 }
             } ?: listOf()
@@ -1524,7 +1523,7 @@ abstract class AbstractComposeLowering(
                 val valueParameter =
                     (expression.symbol.owner as? IrValueParameter) ?: return original
 
-                val parameterIndex = valueParameter.index
+                val parameterIndex = valueParameter.indexInOldValueParameters
                 if (valueParameter.parent != originalFunction) {
                     return super.visitGetValue(expression)
                 }

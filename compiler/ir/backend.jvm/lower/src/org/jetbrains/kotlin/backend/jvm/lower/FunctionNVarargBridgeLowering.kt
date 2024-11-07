@@ -136,7 +136,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                     dispatchReceiver = irGet(dispatchReceiverParameter!!)
 
                     for (parameter in invoke.valueParameters) {
-                        val index = parameter.index
+                        val index = parameter.indexInOldValueParameters
                         val argArray = irGet(valueParameters.single())
                         val argument = irCallOp(arrayGetFun, context.irBuiltIns.anyNType, argArray, irInt(index))
                         putValueArgument(index, irImplicitCast(argument, invoke.valueParameters[index].type))

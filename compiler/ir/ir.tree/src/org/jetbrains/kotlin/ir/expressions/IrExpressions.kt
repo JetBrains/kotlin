@@ -100,5 +100,5 @@ fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrVal
     when (parameter) {
         callee.dispatchReceiverParameter -> dispatchReceiver = argument
         callee.extensionReceiverParameter -> extensionReceiver = argument
-        else -> putValueArgument(parameter.index, argument)
+        else -> putValueArgument(parameter.indexInOldValueParameters, argument)
     }

@@ -126,7 +126,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             val oldParameters = enumConstructor.valueParameters
             val newParameters = valueParameters
             oldParameters.forEach { old ->
-                val new = newParameters.single { it.index == old.index + additionalParameters.size }
+                val new = newParameters.single { it.indexInOldValueParameters == old.indexInOldValueParameters + additionalParameters.size }
                 old.valueParameter = new
 
                 old.defaultValue?.let { default ->

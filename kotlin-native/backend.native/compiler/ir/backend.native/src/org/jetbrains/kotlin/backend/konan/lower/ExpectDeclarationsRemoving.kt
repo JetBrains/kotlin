@@ -77,7 +77,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                 val defaultValue = declaration.defaultValue ?: return
                 val function = declaration.parent as IrFunction
 
-                val index = declaration.index
+                val index = declaration.indexInOldValueParameters
                 assert(function.valueParameters[index] == declaration)
 
                 if (function is IrConstructor && OptionalAnnotationUtil.isOptionalAnnotationClass(function.descriptor.constructedClass)) {
@@ -212,8 +212,8 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                     parent.dispatchReceiverParameter -> parent.findActualForExpected().dispatchReceiverParameter!!
                     parent.extensionReceiverParameter -> parent.findActualForExpected().extensionReceiverParameter!!
                     else -> {
-                        assert(parent.valueParameters[parameter.index] == parameter)
-                        parent.findActualForExpected().valueParameters[parameter.index]
+                        assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
+                        parent.findActualForExpected().valueParameters[parameter.indexInOldValueParameters]
                     }
                 }
 

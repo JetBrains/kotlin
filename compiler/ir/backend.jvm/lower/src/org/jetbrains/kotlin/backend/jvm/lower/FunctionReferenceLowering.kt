@@ -888,8 +888,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
             for (valueParameter in callee.valueParameters) {
                 callArguments[valueParameter] = wrapIntoTemporaryVariableIfNecessary(
-                    irCall.getValueArgument(valueParameter.index)
-                        ?: throw AssertionError("No value argument #${valueParameter.index} in adapter call: ${irCall.dump()}")
+                    irCall.getValueArgument(valueParameter.indexInOldValueParameters)
+                        ?: throw AssertionError("No value argument #${valueParameter.indexInOldValueParameters} in adapter call: ${irCall.dump()}")
                 )
             }
 

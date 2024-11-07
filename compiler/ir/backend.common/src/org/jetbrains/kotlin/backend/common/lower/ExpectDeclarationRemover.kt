@@ -127,7 +127,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
 
         if (!function.descriptor.isActual) return
 
-        val index = declaration.index
+        val index = declaration.indexInOldValueParameters
 
         if (index < 0) return
 

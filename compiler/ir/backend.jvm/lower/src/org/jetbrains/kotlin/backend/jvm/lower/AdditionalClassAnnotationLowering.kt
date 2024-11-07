@@ -138,7 +138,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
     }
 
     private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-        val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
+        val index = symbol.owner.valueParameters.find { it.name == name }?.indexInOldValueParameters ?: return null
         return getValueArgument(index)
     }
 

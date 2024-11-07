@@ -61,7 +61,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             val function = expression.symbol.owner
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transformToLambda(data))
+                    expression.putValueArgument(parameter.indexInOldValueParameters, expression.getValueArgument(parameter.indexInOldValueParameters)?.transformToLambda(data))
                 }
             }
         }

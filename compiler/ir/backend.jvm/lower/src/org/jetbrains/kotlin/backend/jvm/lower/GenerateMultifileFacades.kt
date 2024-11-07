@@ -270,7 +270,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
                     call.extensionReceiver = irGet(parameter)
                 }
                 for (parameter in function.valueParameters) {
-                    call.putValueArgument(parameter.index, irGet(parameter))
+                    call.putValueArgument(parameter.indexInOldValueParameters, irGet(parameter))
                 }
             })
         }

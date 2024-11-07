@@ -468,7 +468,7 @@ open class FunctionInlining(
                         val parameterToSet = when (parameter) {
                             function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
                             function.extensionReceiverParameter -> inlinedFunction.extensionReceiverParameter!!
-                            else -> inlinedFunction.valueParameters[parameter.index]
+                            else -> inlinedFunction.valueParameters[parameter.indexInOldValueParameters]
                         }
                         putArgument(parameterToSet, argument.doImplicitCastIfNeededTo(parameterToSet.type))
                     }
@@ -592,7 +592,7 @@ open class FunctionInlining(
                 ).andAllOuterClasses()
 
             val valueArguments =
-                callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.index) }.toMutableList()
+                callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.indexInOldValueParameters) }.toMutableList()
 
             if (callee.extensionReceiverParameter != null) {
                 parameterToArgument += ParameterToArgument(
@@ -611,7 +611,7 @@ open class FunctionInlining(
 
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
             for (parameter in callee.valueParameters) {
-                val argument = valueArguments[parameter.index]
+                val argument = valueArguments[parameter.indexInOldValueParameters]
                 when {
                     argument != null -> {
                         parameterToArgument += ParameterToArgument(
@@ -645,7 +645,7 @@ open class FunctionInlining(
 
                     else -> {
                         val message = "Incomplete expression: call to ${callee.render()} " +
-                                "has no argument at index ${parameter.index}"
+                                "has no argument at index ${parameter.indexInOldValueParameters}"
                         throw Error(message)
                     }
                 }
@@ -692,7 +692,7 @@ open class FunctionInlining(
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
                     referenced.extensionReceiverParameter -> reference.extensionReceiver = newArgument
-                    else -> reference.putValueArgument(it.parameter.index, newArgument)
+                    else -> reference.putValueArgument(it.parameter.indexInOldValueParameters, newArgument)
                 }
             }
             return evaluationStatements

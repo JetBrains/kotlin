@@ -468,7 +468,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
                     valueParameters.take(info.argumentsToCheck).forEach {
-                        +parameterTypeCheck(it, target.valueParameters[it.index].type, info.defaultValueGenerator(this@apply))
+                        +parameterTypeCheck(it, target.valueParameters[it.indexInOldValueParameters].type, info.defaultValueGenerator(this@apply))
                     }
                 }
                 +irReturn(delegatingCall(this@apply, target, specialBridge.superQualifierSymbol))

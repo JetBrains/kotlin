@@ -152,7 +152,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
     override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
                                                  parameter: IrValueParameter): IrExpression {
-        return this.useAsArgument(expression.target.valueParameters[parameter.index])
+        return this.useAsArgument(expression.target.valueParameters[parameter.indexInOldValueParameters])
     }
 
     /**
@@ -207,7 +207,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             else this
 
             irBuilders.peek()!!.at(this)
-                    .irCall(conversion).apply { this.putValueArgument(parameter.index, argument) }
+                    .irCall(conversion).apply { this.putValueArgument(parameter.indexInOldValueParameters, argument) }
         }
     }
 
@@ -491,7 +491,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             }
 
             val parameterMapping = result.valueParameters.associateBy {
-                irConstructor.valueParameters[it.index].symbol
+                irConstructor.valueParameters[it.indexInOldValueParameters].symbol
             }
 
             (irConstructor.body as IrBlockBody).statements.forEach { statement ->

@@ -144,7 +144,7 @@ open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : B
     private val IrValueSymbol.classForImplicitThis: IrClass?
         // TODO: is this the correct way to get the class?
         get() =
-            if (this is IrValueParameterSymbol && owner.index == -1 &&
+            if (this is IrValueParameterSymbol && owner.indexInOldValueParameters == -1 &&
                 (owner == (owner.parent as? IrFunction)?.dispatchReceiverParameter ||
                         owner == (owner.parent as? IrClass)?.thisReceiver)
             ) {

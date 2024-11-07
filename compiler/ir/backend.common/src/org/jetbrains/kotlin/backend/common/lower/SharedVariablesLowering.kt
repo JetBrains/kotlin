@@ -86,7 +86,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                     expression.dispatchReceiver?.accept(this, data)
                     expression.extensionReceiver?.accept(this, data)
                     for (param in callee.valueParameters) {
-                        val arg = expression.getValueArgument(param.index) ?: continue
+                        val arg = expression.getValueArgument(param.indexInOldValueParameters) ?: continue
                         if (param.isInlineParameter()
                             // This is somewhat conservative but simple.
                             // If a user put redundant <crossinline> modifier on a parameter,

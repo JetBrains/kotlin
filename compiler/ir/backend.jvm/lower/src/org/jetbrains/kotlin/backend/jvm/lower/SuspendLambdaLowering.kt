@@ -187,7 +187,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                     type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else it.type
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
-                    visibility = if (it.index < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility = if (it.indexInOldValueParameters < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 } else null
                 ParameterInfo(field, it.type, it.name, it.origin)
             }
@@ -248,9 +248,9 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
-                        val varIndex = if (parameter.index < 0) irFunction.contextReceiverParametersCount
-                        else if (parameter.index < irFunction.contextReceiverParametersCount || irFunction.extensionReceiverParameter == null) parameter.index
-                        else parameter.index + 1
+                        val varIndex = if (parameter.indexInOldValueParameters < 0) irFunction.contextReceiverParametersCount
+                        else if (parameter.indexInOldValueParameters < irFunction.contextReceiverParametersCount || irFunction.extensionReceiverParameter == null) parameter.indexInOldValueParameters
+                        else parameter.indexInOldValueParameters + 1
                         val lvar = localVals[varIndex]
                             ?: return expression
                         return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)

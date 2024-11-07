@@ -542,7 +542,7 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
             val typeName = param.type.classFqName?.shortName()?.identifierOrNullIfSpecial
             add(
                 createField(
-                    Name.identifier("\$\$implicitReceiver_${typeName ?: param.index.toString()}"),
+                    Name.identifier("\$\$implicitReceiver_${typeName ?: param.indexInOldValueParameters.toString()}"),
                     param.type
                 ) to param
             )

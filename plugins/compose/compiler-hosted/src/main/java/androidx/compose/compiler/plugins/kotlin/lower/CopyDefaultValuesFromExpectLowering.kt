@@ -238,8 +238,8 @@ class CopyDefaultValuesFromExpectLowering(
                         parent.findActualForExpected().extensionReceiverParameter!!
 
                     else -> {
-                        assert(parent.valueParameters[parameter.index] == parameter)
-                        parent.findActualForExpected().valueParameters[parameter.index]
+                        assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
+                        parent.findActualForExpected().valueParameters[parameter.indexInOldValueParameters]
                     }
                 }
 

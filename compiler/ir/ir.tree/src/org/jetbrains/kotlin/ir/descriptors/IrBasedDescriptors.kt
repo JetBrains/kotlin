@@ -140,7 +140,7 @@ abstract class IrBasedCallableDescriptor<T : IrDeclaration>(owner: T) : Callable
 open class IrBasedValueParameterDescriptor(owner: IrValueParameter) : ValueParameterDescriptor,
     IrBasedCallableDescriptor<IrValueParameter>(owner) {
 
-    override val index get() = owner.index
+    override val index get() = owner.indexInOldValueParameters
     override val isCrossinline get() = owner.isCrossinline
     override val isNoinline get() = owner.isNoinline
     override val varargElementType get() = owner.varargElementType?.toIrBasedKotlinType()
@@ -206,7 +206,7 @@ open class IrBasedReceiverParameterDescriptor(owner: IrValueParameter) : Receive
 }
 
 fun IrValueParameter.toIrBasedDescriptor() =
-    if (index < 0)
+    if (indexInOldValueParameters < 0)
         IrBasedReceiverParameterDescriptor(this)
     else
         IrBasedValueParameterDescriptor(this)
@@ -1307,7 +1307,7 @@ private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
     }
     return AnnotationDescriptorImpl(
         annotationClass.defaultType.toIrBasedKotlinType(),
-        symbol.owner.valueParameters.memoryOptimizedMap { it.name to getValueArgument(it.index) }
+        symbol.owner.valueParameters.memoryOptimizedMap { it.name to getValueArgument(it.indexInOldValueParameters) }
             .filter { it.second != null }
             .associate { it.first to it.second!!.toConstantValue() },
         source

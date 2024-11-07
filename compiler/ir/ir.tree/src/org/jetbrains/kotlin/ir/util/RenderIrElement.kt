@@ -333,7 +333,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         declaration.runTrimEnd {
             "VALUE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
                     "name:$name " +
-                    (if (index >= 0) "index:$index " else "") +
+                    (if (indexInOldValueParameters >= 0) "index:$indexInOldValueParameters " else "") +
                     "type:${type.render()} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
                     renderValueParameterFlags()

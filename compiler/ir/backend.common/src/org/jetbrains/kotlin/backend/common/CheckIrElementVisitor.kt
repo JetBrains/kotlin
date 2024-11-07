@@ -254,8 +254,8 @@ internal class CheckIrElementVisitor(
         declaration.checkFunction(declaration)
 
         for ((i, p) in declaration.valueParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of value parameter ${p.index} != $i")
+            if (p.indexInOldValueParameters != i) {
+                reportError(declaration, "Inconsistent index of value parameter ${p.indexInOldValueParameters} != $i")
             }
         }
 

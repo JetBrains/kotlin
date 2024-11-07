@@ -450,9 +450,9 @@ internal class KaFirCompilerFacility(
             val receiverClassId = receiverClass?.owner?.classId
 
             if (receiverClassId != null) {
-                if (owner.index >= 0) {
+                if (owner.indexInOldValueParameters >= 0) {
                     val labelName = receiverClassId.shortClassName
-                    return CodeFragmentCapturedValue.ContextReceiver(owner.index, labelName, isCrossingInlineBounds = true)
+                    return CodeFragmentCapturedValue.ContextReceiver(owner.indexInOldValueParameters, labelName, isCrossingInlineBounds = true)
                 }
 
                 val parent = owner.parent

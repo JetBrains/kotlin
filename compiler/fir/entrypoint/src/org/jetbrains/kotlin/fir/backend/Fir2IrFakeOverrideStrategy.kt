@@ -382,7 +382,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 IrGetValueImpl(offset, offset, extensionReceiver.type, extensionReceiver.symbol)
             }
             delegatedFunction.valueParameters.forEach {
-                putValueArgument(it.index, IrGetValueImpl(offset, offset, it.type, it.symbol))
+                putValueArgument(it.indexInOldValueParameters, IrGetValueImpl(offset, offset, it.type, it.symbol))
             }
             for (index in delegatedFunction.typeParameters.indices) {
                 val parameter = delegatedFunction.typeParameters[index]

@@ -534,7 +534,7 @@ private fun KotlinStubs.generateCFunction(
     signature.extensionReceiverParameter?.let { callbackBuilder.addParameter(it, function.extensionReceiverParameter!!) }
 
     signature.valueParameters.forEach {
-        callbackBuilder.addParameter(it, function.valueParameters[it.index])
+        callbackBuilder.addParameter(it, function.valueParameters[it.indexInOldValueParameters])
     }
 
     return callbackBuilder.build(function, signature)

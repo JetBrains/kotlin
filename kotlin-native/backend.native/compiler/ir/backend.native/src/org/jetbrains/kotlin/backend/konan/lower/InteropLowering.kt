@@ -295,7 +295,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                             extensionReceiver = irGet(result.dispatchReceiverParameter!!)
                             putValueArgument(0, irCall(constructor).also {
                                 result.valueParameters.forEach { parameter ->
-                                    it.putValueArgument(parameter.index, irGet(parameter))
+                                    it.putValueArgument(parameter.indexInOldValueParameters, irGet(parameter))
                                 }
                             })
                         }
@@ -520,7 +520,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                         initMethodInfo,
                         superQualifier = delegatingCallConstructingClass.symbol,
                         receiver = builder.irGet(constructedClass.thisReceiver!!),
-                        arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
+                        arguments = initMethod.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) },
                         call = expression,
                         method = initMethod
                 )
@@ -595,7 +595,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         val callee = expression.symbol.owner
         val initMethod = callee.getObjCInitMethod()
         if (initMethod != null) {
-            val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
+            val arguments = callee.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) }
             require(expression.extensionReceiver == null) { renderCompilerError(expression) }
             require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
 
@@ -651,7 +651,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                             ?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
 
             if (!useKotlinDispatch) {
-                val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
+                val arguments = callee.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) }
                 require(expression.dispatchReceiver == null || expression.extensionReceiver == null) { renderCompilerError(expression) }
                 require(expression.superQualifierSymbol?.owner?.isObjCMetaClass() != true) { renderCompilerError(expression) }
                 require(expression.superQualifierSymbol?.owner?.isInterface != true) { renderCompilerError(expression) }

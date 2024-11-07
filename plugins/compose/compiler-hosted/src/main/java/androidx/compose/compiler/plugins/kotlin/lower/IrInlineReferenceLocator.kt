@@ -85,7 +85,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 if (function.isInlineFunctionCall(context)) {
                     for (parameter in function.valueParameters) {
                         if (parameter.isInlinedFunction()) {
-                            expression.getValueArgument(parameter.index)
+                            expression.getValueArgument(parameter.indexInOldValueParameters)
                                 ?.also { inlineFunctionExpressions += it }
                                 ?.unwrapLambda()
                                 ?.let { inlineLambdaToParameter[it] = parameter }
@@ -127,7 +127,7 @@ private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
 // This is copied from JvmIrInlineUtils.kt in the Kotlin compiler, since we
 // need to check for synthetic composable functions.
 private fun IrValueParameter.isInlinedFunction(): Boolean =
-    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction() ||
+    indexInOldValueParameters >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction() ||
             type.isSyntheticComposableFunction()) &&
             // Parameters with default values are always nullable, so check the expression too.
             // Note that the frontend has a diagnostic for nullable inline parameters, so actually

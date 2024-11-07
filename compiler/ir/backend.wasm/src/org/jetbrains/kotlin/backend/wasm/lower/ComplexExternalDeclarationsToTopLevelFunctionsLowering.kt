@@ -561,7 +561,7 @@ private fun numDefaultParametersForExternalFunction(function: IrFunction): Int {
     }
 
     val firstDefaultParameterIndex: Int? =
-        function.valueParameters.firstOrNull { it.defaultValue != null }?.index
+        function.valueParameters.firstOrNull { it.defaultValue != null }?.indexInOldValueParameters
 
     return if (firstDefaultParameterIndex == null)
         0
