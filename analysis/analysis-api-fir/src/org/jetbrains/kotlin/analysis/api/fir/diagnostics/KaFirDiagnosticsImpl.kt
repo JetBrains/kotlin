@@ -2687,7 +2687,7 @@ internal class ConflictingInheritedMembersImpl(
 
 internal class AbstractMemberNotImplementedImpl(
     override val classOrObject: KaClassLikeSymbol,
-    override val missingDeclaration: KaCallableSymbol,
+    override val missingDeclarations: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.AbstractMemberNotImplemented
@@ -2701,21 +2701,21 @@ internal class AbstractMemberNotImplementedByEnumEntryImpl(
 
 internal class AbstractClassMemberNotImplementedImpl(
     override val classOrObject: KaClassLikeSymbol,
-    override val missingDeclaration: KaCallableSymbol,
+    override val missingDeclarations: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.AbstractClassMemberNotImplemented
 
 internal class InvisibleAbstractMemberFromSuperErrorImpl(
     override val classOrObject: KaClassLikeSymbol,
-    override val invisibleDeclaration: KaCallableSymbol,
+    override val invisibleDeclarations: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.InvisibleAbstractMemberFromSuperError
 
 internal class InvisibleAbstractMemberFromSuperWarningImpl(
     override val classOrObject: KaClassLikeSymbol,
-    override val invisibleDeclaration: KaCallableSymbol,
+    override val invisibleDeclarations: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.InvisibleAbstractMemberFromSuperWarning

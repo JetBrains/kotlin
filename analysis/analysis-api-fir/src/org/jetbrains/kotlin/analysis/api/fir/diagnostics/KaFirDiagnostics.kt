@@ -2245,7 +2245,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface AbstractMemberNotImplemented : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = AbstractMemberNotImplemented::class
         val classOrObject: KaClassLikeSymbol
-        val missingDeclaration: KaCallableSymbol
+        val missingDeclarations: List<KaCallableSymbol>
     }
 
     interface AbstractMemberNotImplementedByEnumEntry : KaFirDiagnostic<KtEnumEntry> {
@@ -2257,19 +2257,19 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface AbstractClassMemberNotImplemented : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = AbstractClassMemberNotImplemented::class
         val classOrObject: KaClassLikeSymbol
-        val missingDeclaration: KaCallableSymbol
+        val missingDeclarations: List<KaCallableSymbol>
     }
 
     interface InvisibleAbstractMemberFromSuperError : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = InvisibleAbstractMemberFromSuperError::class
         val classOrObject: KaClassLikeSymbol
-        val invisibleDeclaration: KaCallableSymbol
+        val invisibleDeclarations: List<KaCallableSymbol>
     }
 
     interface InvisibleAbstractMemberFromSuperWarning : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = InvisibleAbstractMemberFromSuperWarning::class
         val classOrObject: KaClassLikeSymbol
-        val invisibleDeclaration: KaCallableSymbol
+        val invisibleDeclarations: List<KaCallableSymbol>
     }
 
     interface AmbiguousAnonymousTypeInferred : KaFirDiagnostic<KtDeclaration> {

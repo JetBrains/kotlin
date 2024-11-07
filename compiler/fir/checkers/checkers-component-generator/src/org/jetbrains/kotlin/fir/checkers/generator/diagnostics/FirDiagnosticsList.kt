@@ -1116,7 +1116,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClassSymbol<*>>("classOrObject")
-            parameter<FirCallableSymbol<*>>("missingDeclaration")
+            parameter<List<FirCallableSymbol<*>>>("missingDeclarations")
         }
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY by error<KtEnumEntry>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirEnumEntrySymbol>("enumEntry")
@@ -1124,14 +1124,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClassSymbol<*>>("classOrObject")
-            parameter<FirCallableSymbol<*>>("missingDeclaration")
+            parameter<List<FirCallableSymbol<*>>>("missingDeclarations")
         }
         val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by deprecationError<KtClassOrObject>(
             LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses,
             PositioningStrategy.DECLARATION_NAME
         ) {
             parameter<FirClassSymbol<*>>("classOrObject")
-            parameter<FirCallableSymbol<*>>("invisibleDeclaration")
+            parameter<List<FirCallableSymbol<*>>>("invisibleDeclarations")
         }
         val AMBIGUOUS_ANONYMOUS_TYPE_INFERRED by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<Collection<ConeKotlinType>>("superTypes")

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_IMPLEMENTED_B
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
@@ -116,7 +115,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
             classScope.processPropertiesByName(name, ::collectSymbol)
         }
 
-        varsImplementedByInheritedVal.firstOrNull()?.let { symbol ->
+        varsImplementedByInheritedVal.forEach { symbol ->
             val implementationVal = symbol.intersections.first { it is FirPropertySymbol && it.isVal && !it.isAbstract }
             val abstractVar = symbol.intersections.first { it is FirPropertySymbol && it.isVar && it.isAbstract }
             reporter.reportOn(
@@ -128,36 +127,54 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 context,
             )
         }
-        if (!canHaveAbstractDeclarations && notImplementedSymbols.isNotEmpty()) {
-            val notImplemented = (notImplementedSymbols.firstOrNull { !it.isFromInterfaceOrEnum(context) } ?: notImplementedSymbols.first())
-                .unwrapFakeOverrides()
-            if (notImplemented.isFromInterfaceOrEnum(context)) {
-                val containingDeclaration = context.containingDeclarations.lastOrNull()
-                if (declaration.isInitializerOfEnumEntry(containingDeclaration)) {
-                    reporter.reportOn(
-                        source,
-                        ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
-                        containingDeclaration.symbol,
-                        notImplementedSymbols,
-                        context
-                    )
-                } else {
-                    reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
-                }
-            } else {
-                reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
+        if (!canHaveAbstractDeclarations) {
+            val (fromInterfaceOrEnum, notFromInterfaceOrEnum) = notImplementedSymbols.partition {
+                it.unwrapFakeOverrides().isFromInterfaceOrEnum(context)
+            }
+            val containingDeclaration = context.containingDeclarations.lastOrNull()
+            val (fromInitializerOfEnumEntry, notFromInitializerOfEnumEntry) = fromInterfaceOrEnum.partition {
+                declaration.isInitializerOfEnumEntry(containingDeclaration)
+            }
+
+            if (containingDeclaration is FirEnumEntry && fromInitializerOfEnumEntry.isNotEmpty()) {
+                reporter.reportOn(
+                    source,
+                    ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
+                    containingDeclaration.symbol,
+                    fromInitializerOfEnumEntry,
+                    context,
+                )
+            }
+
+            if (notFromInitializerOfEnumEntry.isNotEmpty()) {
+                reporter.reportOn(
+                    source,
+                    ABSTRACT_MEMBER_NOT_IMPLEMENTED,
+                    classSymbol,
+                    notFromInitializerOfEnumEntry.map { it.unwrapFakeOverrides() },
+                    context,
+                )
+            }
+
+            if (notFromInterfaceOrEnum.isNotEmpty()) {
+                reporter.reportOn(
+                    source,
+                    ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
+                    classSymbol,
+                    notFromInterfaceOrEnum.map { it.unwrapFakeOverrides() },
+                    context,
+                )
             }
         }
         if (!canHaveAbstractDeclarations && invisibleSymbols.isNotEmpty()) {
-            val invisible = invisibleSymbols.first()
-            reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, classSymbol, invisible, context)
+            reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, classSymbol, invisibleSymbols, context)
         }
 
-        manyImplementationsDelegationSymbols.firstOrNull()?.let {
+        manyImplementationsDelegationSymbols.forEach {
             reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, it, context)
         }
 
-        delegationOverrideOfFinal.firstOrNull()?.let { (delegated, final) ->
+        delegationOverrideOfFinal.forEach { (delegated, final) ->
             reporter.reportOn(
                 source,
                 OVERRIDING_FINAL_MEMBER_BY_DELEGATION,
@@ -167,7 +184,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
             )
         }
 
-        delegationOverrideOfOpen.firstOrNull()?.let { (delegated, open) ->
+        delegationOverrideOfOpen.forEach { (delegated, open) ->
             reporter.reportOn(
                 source,
                 DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE,
@@ -177,25 +194,26 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
             )
         }
 
-        if (manyImplementationsDelegationSymbols.isEmpty() && notImplementedIntersectionSymbols.isNotEmpty()) {
-            val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
-            val (abstractIntersections, implIntersections) =
-                (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections.partition {
-                    it.modality == Modality.ABSTRACT
-                }
-            if (implIntersections.any {
-                    it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
-                }
-            ) {
-                reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
-            } else {
-                if (canHaveAbstractDeclarations && abstractIntersections.any {
+        if (manyImplementationsDelegationSymbols.isEmpty()) {
+            notImplementedIntersectionSymbols.forEach { notImplementedIntersectionSymbol ->
+                val (abstractIntersections, implIntersections) =
+                    (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections.partition {
+                        it.modality == Modality.ABSTRACT
+                    }
+                if (implIntersections.any {
                         it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
                     }
                 ) {
-                    return
+                    reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
+                } else {
+                    if (canHaveAbstractDeclarations && abstractIntersections.any {
+                            it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
+                        }
+                    ) {
+                        return
+                    }
+                    reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
                 }
-                reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             }
         }
     }

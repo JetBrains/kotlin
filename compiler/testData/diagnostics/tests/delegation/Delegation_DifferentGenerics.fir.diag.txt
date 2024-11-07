@@ -1,4 +1,7 @@
-/KC.kt:(79,87): error: Class 'KC' is not abstract and does not implement abstract member 'foo'.
+/KC.kt:(79,87): error: Class 'KC' is not abstract and does not implement abstract members:
+fun <C> foo(): List<C>
+fun <D> baz(): D
+fun <E, F> bar(): List<F>
 
 /KC.kt:(99,107): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun <C> foo(): List<C>
@@ -20,7 +23,10 @@ fun <E, F> bar(): List<F>
 /KC.kt:(194,214): error: Conflicting overloads:
 fun bar(): List<Int>
 fun <E, F> bar(): List<F>
-/KJC.kt:(90,99): error: Class 'KJC' is not abstract and does not implement abstract member 'foo'.
+/KJC.kt:(90,99): error: Class 'KJC' is not abstract and does not implement abstract members:
+fun <C : Any!> foo(): (Mutable)List<C!>!
+fun <D : Any!> baz(): D!
+fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
 
 /KJC.kt:(111,119): error: 'foo' overrides nothing. Potential signatures for overriding:
 fun <C : Any!> foo(): (Mutable)List<C!>!

@@ -87,6 +87,20 @@ object FirDiagnosticRenderers {
         symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
     }
 
+    /**
+     * Prepends [singular] or [plural] depending on the elements count.
+     */
+    fun <Q> prefix(
+        singular: String,
+        plural: String,
+        renderer: ContextIndependentParameterRenderer<Collection<Q>>,
+    ): ContextIndependentParameterRenderer<Collection<Q>> {
+        return Renderer { elements ->
+            val decoration = if (elements.size == 1) singular else plural
+            decoration + renderer.render(elements)
+        }
+    }
+
     val SYMBOLS_ON_NEWLINE_WITH_INDENT = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         private val mode = MultiplatformDiagnosticRenderingMode()
 

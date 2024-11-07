@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.prefix
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS
@@ -1917,27 +1918,27 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
-            "{0} is not abstract and does not implement abstract member ''{1}''.",
+            "{0} is not abstract and does not implement abstract {1}",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            DECLARATION_NAME
+            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
-            "{0} does not implement abstract members:{1}",
+            "{0} does not implement abstract {1}",
             RENDER_ENUM_ENTRY_QUOTED,
-            SYMBOLS_ON_NEXT_LINES,
+            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
         map.put(
             ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
-            "{0} is not abstract and does not implement abstract base class member ''{1}''.",
+            "{0} is not abstract and does not implement abstract base class {1}",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            DECLARATION_NAME
+            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
         map.put(
             INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER,
-            "''{0}'' inherits invisible abstract member {1}.",
+            "''{0}'' inherits invisible abstract {1}",
             DECLARATION_NAME,
-            SYMBOL_WITH_CONTAINING_DECLARATION
+            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Please specify the type explicitly.", NOT_RENDERED)
         map.put(

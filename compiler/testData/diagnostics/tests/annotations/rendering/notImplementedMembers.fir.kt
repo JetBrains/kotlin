@@ -23,8 +23,8 @@ abstract class D {
     abstract val d: @An Int
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; d")!>class E<!> : D(), A
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; a")!>class F<!> : A
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:val d: @An() Int"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:fun a(arg: @An() Int): Unit")!>class E<!> : D(), A
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:fun a(arg: @An() Int): Unit")!>class F<!> : A
 
 @An
 interface G {
