@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.ContextParameterValue
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
@@ -111,12 +115,8 @@ class ImplicitValueStack private constructor(
 }
 
 fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull(): ImplicitReceiverValue<*>? {
-    return when {
-        // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't
-        // obvious how to fix it
-        distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1 -> this.firstOrNull()
-        else -> null
-    }
+    // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't obvious how to fix it
+    return distinctBy { if (it.isContextReceiver) it.boundSymbol else it }.singleOrNull()
 }
 
 fun Set<ImplicitReceiverValue<*>>.ambiguityDiagnosticFor(labelName: String?): ConeSimpleDiagnostic {
