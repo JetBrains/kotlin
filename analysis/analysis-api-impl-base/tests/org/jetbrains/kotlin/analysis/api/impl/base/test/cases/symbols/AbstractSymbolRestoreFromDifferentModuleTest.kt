@@ -22,12 +22,12 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
 
     override fun doTest(testServices: TestServices) {
         val declaration =
-            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(testServices).single().first
+            testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(testServices).single().first
 
         val restoreAt =
-            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtElement>(
+            testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtElement>(
                 testServices,
-                caretTag = "restoreAt"
+                qualifier = "restoreAt"
             ).single().first
 
         val project = declaration.project

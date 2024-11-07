@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElement(mainFile) as KtExpression
+        val expression = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile) as KtExpression
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
                 val smartCastInfo = expression.smartCastInfo

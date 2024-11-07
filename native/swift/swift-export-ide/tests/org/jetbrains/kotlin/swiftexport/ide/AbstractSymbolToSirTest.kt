@@ -21,7 +21,7 @@ import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) = analyseForTest(mainFile) {
         val kaDeclaration = testServices
-            .expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile).symbol
+            .expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile).symbol
         val actual: String = withSirSession {
             kaDeclaration
                 .sirDeclarations()

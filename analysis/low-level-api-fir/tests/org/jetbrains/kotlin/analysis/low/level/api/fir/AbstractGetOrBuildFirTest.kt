@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
+        val selectedElement = testServices.expressionMarkerProvider
+            .getTopmostSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
 
         val actual = resolveWithClearCaches(mainFile) { session ->
             renderActualFir(
