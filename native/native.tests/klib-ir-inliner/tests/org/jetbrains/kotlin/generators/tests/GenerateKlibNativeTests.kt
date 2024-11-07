@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.diagnostics.*
+import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
@@ -195,7 +196,22 @@ fun main() {
             }
         }
 
-
+        // KLIB evolution tests.
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/evolution") {
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "NativeKlibEvolutionTestGenerated"
+            ) {
+                model(recursive = false)
+            }
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model(recursive = false)
+            }
+        }
     }
 }
 

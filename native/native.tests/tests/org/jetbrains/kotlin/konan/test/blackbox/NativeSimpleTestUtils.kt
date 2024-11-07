@@ -247,7 +247,7 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     }
 }
 
-internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
+fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
     sourceFile: File,
     moduleName: String = sourceFile.name,
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,

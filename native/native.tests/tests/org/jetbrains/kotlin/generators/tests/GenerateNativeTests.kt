@@ -171,23 +171,6 @@ fun main() {
             }
         }
 
-        // KLIB evolution tests.
-        testGroup("native/native.tests/tests-gen", "compiler/testData/klib/evolution") {
-            testClass<AbstractNativeKlibEvolutionTest>(
-                suiteTestClassName = "NativeKlibEvolutionTestGenerated"
-            ) {
-                model(recursive = false)
-            }
-            testClass<AbstractNativeKlibEvolutionTest>(
-                suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                )
-            ) {
-                model(recursive = false)
-            }
-        }
-
         // KLIB synthetic accessor tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeKlibSyntheticAccessorInPhase1Test>(
