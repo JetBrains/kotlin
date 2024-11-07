@@ -285,15 +285,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("contextCollector", pattern = TestGeneratorUtil.KT)
         }
 
-        testClass<AbstractDependentContextCollectorSourceTest> {
-            model("contextCollector", pattern = TestGeneratorUtil.KT)
-        }
-
         testClass<AbstractContextCollectorScriptTest> {
-            model("contextCollector", pattern = TestGeneratorUtil.KTS)
-        }
-
-        testClass<AbstractDependentContextCollectorScriptTest> {
             model("contextCollector", pattern = TestGeneratorUtil.KTS)
         }
 
