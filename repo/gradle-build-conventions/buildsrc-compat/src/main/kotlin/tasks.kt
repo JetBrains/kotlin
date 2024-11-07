@@ -250,6 +250,9 @@ fun Project.projectTest(
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
+        project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull?.let { parallelTestsExcludesFile ->
+            systemProperty("teamcity.build.parallelTests.excludesFile", parallelTestsExcludesFile)
+        }
 
         systemProperty("idea.ignore.disabled.plugins", "true")
 
