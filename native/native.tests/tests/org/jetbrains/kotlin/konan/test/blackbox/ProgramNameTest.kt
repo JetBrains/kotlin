@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ForcedNoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -52,8 +54,10 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
                 timeout = 60.seconds
             }
             val sanitizedStdout = result.stdout.replace("\r\n", "\n") // Ignore if we have unix or windows line endings
-            assertEquals("calling exec...\n$expected", sanitizedStdout)
-            assertEquals("", result.stderr)
+            Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+                assertEquals("calling exec...\n$expected", sanitizedStdout)
+                assertEquals("", result.stderr)
+            }
         }
 
         // kotlinPrintEntryPoint removes .kexe
