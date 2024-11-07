@@ -17,7 +17,7 @@ private val privateValueSeparateFiles = 0
 
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSeparateFiles<!> = 0<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Long by <!CONFLICTING_KLIB_SIGNATURES_ERROR!>lazy { 0L }<!><!>
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Long by lazy { 0L }<!>
 
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
 var Int.extensionValue: Int
@@ -34,7 +34,7 @@ private val privateValueSeparateFiles = 0
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSingleFile: Int<!> = 0<!>
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val valueSingleFile: String<!> = ""<!>
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Int by <!CONFLICTING_KLIB_SIGNATURES_ERROR!>lazy { 1 }<!><!>
+<!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION") val myDelegated: Int by lazy { 1 }<!>
 
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
 val Int.extensionValue: Int
