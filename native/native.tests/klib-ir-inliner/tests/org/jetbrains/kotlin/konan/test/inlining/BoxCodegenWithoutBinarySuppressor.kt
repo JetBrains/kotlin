@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test
+package org.jetbrains.kotlin.konan.test.inlining
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -19,8 +18,8 @@ import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.utils.bind
 
 /**
- * The regular [BlackBoxCodegenSuppressor] fails the test with [CodegenTestDirectives.IGNORE_BACKEND],
- * [CodegenTestDirectives.IGNORE_BACKEND_K1] or [CodegenTestDirectives.IGNORE_BACKEND_K2] directive if the test
+ * The regular [org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor] fails the test with [org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND],
+ * [org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K1] or [org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2] directive if the test
  * has passed all facade and handler stages without failed assertions, and thus needs to be "unmuted". This works well
  * for Kotlin/JVM backend, because the result of compilation is always a JAR file.
  *
@@ -31,9 +30,9 @@ import org.jetbrains.kotlin.utils.bind
  *
  * If we would like to have two tests based on the same testData file, one that produces only KLIBs and another one
  * that produces binaries, then we might end up in a situation where the test that produces KLIBs fails
- * due to [BlackBoxCodegenSuppressor] and the test that produces binaries is "green".
+ * due to [org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor] and the test that produces binaries is "green".
  *
- * A new [BoxCodegenWithoutBinarySuppressor] is an alternative to [BlackBoxCodegenSuppressor] which makes it
+ * A new [BoxCodegenWithoutBinarySuppressor] is an alternative to [org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor] which makes it
  * possible to not fail a test in the absence of failed assertions.
  *
  * Important:
@@ -45,7 +44,7 @@ class BoxCodegenWithoutBinarySuppressor(testServices: TestServices) : AfterAnaly
         get() = listOf(CodegenTestDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::SuppressionChecker.bind(null)))
+        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null)))
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val suppressionChecker = testServices.codegenSuppressionChecker

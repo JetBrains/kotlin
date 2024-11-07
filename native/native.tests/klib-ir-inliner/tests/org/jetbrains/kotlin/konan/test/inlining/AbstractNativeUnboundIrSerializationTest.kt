@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.konan.test.BoxCodegenWithoutBinarySuppressor
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
