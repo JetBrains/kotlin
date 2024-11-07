@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -230,13 +229,6 @@ class DispatchReceiverMemberScopeTowerLevel(
         processScopeMembers { candidate ->
             empty = false
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
-                val fir = candidate.fir
-                // Calls on a dispatch receiver cannot be:
-                // - a constructor call unless it's an inner class
-                // - a SAM constructor call
-                if ((fir as? FirConstructor)?.isInner == false || fir.origin == FirDeclarationOrigin.SamConstructor) {
-                    return@processScopeMembers
-                }
                 result += MemberWithBaseScope(candidate, this)
             }
         }
