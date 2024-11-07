@@ -12,6 +12,8 @@ kotlinx-bcv = "0.13.2"
 
 ktor = "2.3.11"
 
+javaDiffUtils = "4.12"
+
 ## Analysis
 kotlin-compiler = "2.0.20"
 kotlin-compiler-k2 = "2.1.0-dev-5441"
@@ -130,6 +132,9 @@ apacheMaven-core = { module = "org.apache.maven:maven-core", version.ref = "apac
 apacheMaven-pluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version.ref = "apacheMaven-pluginTools" }
 apacheMaven-pluginApi = { module = "org.apache.maven:maven-plugin-api", version.ref = "apacheMaven-core" }
 apacheMaven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "apacheMaven-artifact" }
+
+#### Diff Utils ####
+javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "javaDiffUtils" }
 
 #### CLI #####
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = "kotlinx-cli" }
