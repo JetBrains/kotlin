@@ -82,7 +82,6 @@ internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy(LazyThreadSafetyMode.N
 class JsCommonCoroutineSymbols(
     symbolTable: SymbolTable,
     val module: ModuleDescriptor,
-    val context: JsCommonBackendContext
 ) {
     val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
     val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)

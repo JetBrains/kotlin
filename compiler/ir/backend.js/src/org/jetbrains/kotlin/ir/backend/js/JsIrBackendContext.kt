@@ -184,7 +184,7 @@ class JsIrBackendContext(
         }
 
     override val coroutineSymbols =
-        JsCommonCoroutineSymbols(symbolTable, module, this)
+        JsCommonCoroutineSymbols(symbolTable, module)
 
     override val jsPromiseSymbol: IrClassSymbol?
         get() = intrinsics.promiseClassSymbol

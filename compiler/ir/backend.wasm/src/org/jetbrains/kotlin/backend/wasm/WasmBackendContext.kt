@@ -87,7 +87,7 @@ class WasmBackendContext(
     override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val coroutineSymbols =
-        JsCommonCoroutineSymbols(symbolTable, module,this)
+        JsCommonCoroutineSymbols(symbolTable, module)
 
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
