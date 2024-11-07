@@ -4455,6 +4455,17 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Test
+      @TestMetadata("overloadAmbiguity.kt")
+      public void testOverloadAmbiguity() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/overloadAmbiguity.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {

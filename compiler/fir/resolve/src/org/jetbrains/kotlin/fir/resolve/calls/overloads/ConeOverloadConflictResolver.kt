@@ -64,6 +64,8 @@ class ConeOverloadConflictResolver(
     private val transformerComponents: BodyResolveComponents,
 ) : ConeCallConflictResolver() {
 
+    private val contextParametersEnabled = inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
+
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
@@ -387,8 +389,12 @@ class ConeOverloadConflictResolver(
             }
         }
 
-        if (call1.contextReceiverCount > call2.contextReceiverCount) return true
-        if (call1.contextReceiverCount < call2.contextReceiverCount) return false
+        if (contextParametersEnabled) {
+            if (call1.hasContext != call2.hasContext) return call1.hasContext
+        } else {
+            if (call1.contextReceiverCount > call2.contextReceiverCount) return true
+            if (call1.contextReceiverCount < call2.contextReceiverCount) return false
+        }
 
         return createEmptyConstraintSystem().isSignatureEquallyOrMoreSpecific(
             call1,
@@ -467,11 +473,12 @@ class ConeOverloadConflictResolver(
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = computeSignatureTypes(call, variable),
             hasExtensionReceiver = variable.receiverParameter != null,
-            contextReceiverCount = variable.contextReceivers.size,
+            contextReceiverCount = if (!contextParametersEnabled) variable.contextReceivers.size else 0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (variable as? FirProperty)?.isExpect == true,
-            isSyntheticMember = false
+            isSyntheticMember = false,
+            hasContext = variable.contextReceivers.isNotEmpty(),
         )
     }
 
@@ -482,11 +489,12 @@ class ConeOverloadConflictResolver(
             valueParameterTypes = computeSignatureTypes(call, constructor),
             //constructor.receiverParameter != null,
             hasExtensionReceiver = false,
-            contextReceiverCount = constructor.contextReceivers.size,
+            contextReceiverCount = if (!contextParametersEnabled) constructor.contextReceivers.size else 0,
             hasVarargs = constructor.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = constructor.isExpect,
-            isSyntheticMember = false
+            isSyntheticMember = false,
+            hasContext = constructor.contextReceivers.isNotEmpty(),
         )
     }
 
@@ -496,11 +504,12 @@ class ConeOverloadConflictResolver(
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, function),
             hasExtensionReceiver = function.receiverParameter != null,
-            contextReceiverCount = function.contextReceivers.size,
+            contextReceiverCount = if (!contextParametersEnabled) function.contextReceivers.size else 0,
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
-            isSyntheticMember = false
+            isSyntheticMember = false,
+            hasContext = function.contextReceivers.isNotEmpty(),
         )
     }
 
@@ -530,7 +539,9 @@ class ConeOverloadConflictResolver(
                         TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
                     }
             } else {
-                called.contextReceivers.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
+                if (!contextParametersEnabled) {
+                    called.contextReceivers.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
+                }
                 if (call.argumentMappingInitialized) {
                     call.argumentMapping.mapTo(this) { (argument, parameter) ->
                         parameter.toTypeWithConversion(argument, session, call)

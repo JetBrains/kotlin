@@ -29,6 +29,7 @@ class FlatSignature<out T> constructor(
     val isExpect: Boolean,
     val isSyntheticMember: Boolean,
     val valueParameterTypes: List<TypeWithConversion?>,
+    val hasContext: Boolean = contextReceiverCount > 0
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
