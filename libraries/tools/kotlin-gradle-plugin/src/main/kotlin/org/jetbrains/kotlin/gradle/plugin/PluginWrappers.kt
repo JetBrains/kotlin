@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
@@ -97,24 +93,6 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
         @Suppress("DEPRECATION_ERROR")
         project.applyPlugin<Kotlin2JsPluginWrapper>()
         super.apply(project)
-    }
-}
-
-open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinAndroidPluginWrapper>()
-        super.apply(project)
-    }
-
-    override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
-        (project.extensions.getByName("android") as BaseExtension).sourceSets
-
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
-        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
-        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME)
-            ?: return
-        kotlinSourceSet.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
     }
 }
 

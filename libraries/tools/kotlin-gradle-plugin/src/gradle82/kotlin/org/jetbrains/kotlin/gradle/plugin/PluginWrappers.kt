@@ -107,24 +107,6 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
     }
 }
 
-open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinAndroidPluginWrapper>()
-        super.apply(project)
-    }
-
-    override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
-        (project.extensions.getByName("android") as BaseExtension).sourceSets
-
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
-        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
-        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME)
-            ?: return
-        kotlinSourceSet.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
-    }
-}
-
 open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     override fun apply(project: Project) {
         project.applyPlugin<KotlinCommonPluginWrapper>()
