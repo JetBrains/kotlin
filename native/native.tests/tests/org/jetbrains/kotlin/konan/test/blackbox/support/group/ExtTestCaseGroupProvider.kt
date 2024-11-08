@@ -925,16 +925,6 @@ internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     }
 }
 
-internal fun Settings.isIgnoredWith(testDataFile: File, directive: ValueDirective<TargetBackend>): Boolean {
-    val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredWith")
-    try {
-        val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
-        return extTestDataFileStructure.directives[directive].containsNativeOrAny
-    } finally {
-        Disposer.dispose(disposable)
-    }
-}
-
 private val KtFile.packageFqNameForKLib: FqName
     get() = when (name.substringAfterLast(".")) {
         "kt" -> packageFqName
