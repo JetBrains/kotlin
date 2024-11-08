@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.inline.util
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
-import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.name
 
@@ -46,26 +45,3 @@ fun isCallInvocation(invocation: JsInvocation): Boolean {
 
     return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty() && qualifier.qualifier != null
 }
-
-/**
- * If an expression A references to another expression B, which in turn references to C, or a corresponding expression
- * at the end of a chain of references. They are usually JsNameRef expressions with JsFunction at the very end.
- * This chain is produced when there are lots of aliases created from aliases, i.e. `var $tmp1 = foo; var $tmp2 = $tmp1;`.
- * So for `$tmp2` we should get reference to `foo`.
- */
-val JsExpression.transitiveStaticRef: JsExpression
-    get() {
-        var qualifier = this
-        loop@while (true) {
-            qualifier = when (qualifier) {
-                is JsNameRef -> {
-                    qualifier.name?.staticRef as? JsExpression ?: break@loop
-                }
-                is JsInvocation -> {
-                    getSimpleName(qualifier)?.staticRef as? JsExpression ?: break@loop
-                }
-                else -> break@loop
-            }
-        }
-        return qualifier
-    }
