@@ -68,8 +68,6 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
                 }
                 else -> fail { exception.reason }
             }
-        } ?: require (!isMuted) {
-            "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
         }
 
         val testRun = testRunOrFailure.getOrThrow()
@@ -92,12 +90,13 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         }.exceptionOrNull()?.let { exception ->
             if (!isMuted || exception !is AssertionFailedError)
                 throw exception
-            println("There was an expected failure on synthetic accessors dump comparison: ${exception.message}")
-            return
+            return // There was an expected failure on synthetic accessors dump comparison: ${exception.message}"
         }
 
         if (isMuted) {
-            fail { "Looks like this test can be unmuted." }
+            fail {
+                "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
+            }
         }
     }
 
