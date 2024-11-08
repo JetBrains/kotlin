@@ -339,12 +339,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         // ```
         // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
         // implicit `this` expression passed as the first argument.
-        if (
-            candidate.dispatchReceiver?.expression?.resolvedType
-                ?.fullyExpandedType(context.session)
-                ?.isSomeFunctionType(context.session) == true
-            && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
-        ) {
+        if (callInfo.isImplicitInvoke) {
             for (atom in candidate.argumentMapping.keys) {
                 checkImpl(
                     atom,
@@ -551,9 +546,8 @@ internal object MapArguments : ResolutionStage() {
 }
 
 internal val Candidate.isInvokeFromExtensionFunctionType: Boolean
-    get() = explicitReceiverKind == DISPATCH_RECEIVER
+    get() = this.callInfo.isImplicitInvoke
             && dispatchReceiver?.expression?.resolvedType?.fullyExpandedType(this.callInfo.session)?.isExtensionFunctionType == true
-            && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
     if (!usesSamConversion || isJavaApplicableCandidate()) return false
