@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -14,11 +15,15 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
-import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
-import com.intellij.util.indexing.FileContent
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.indexing.FileContentImpl
+import com.intellij.util.io.AbstractStringEnumerator
+import com.intellij.util.io.StringRef
+import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
@@ -48,6 +53,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.ConcurrentHashMap
 
 class KotlinStandaloneDeclarationProvider internal constructor(
@@ -171,29 +177,50 @@ class KotlinStandaloneDeclarationProviderFactory(
     private val createdFakeKtFiles = mutableListOf<KtFile>()
 
     private fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
+        val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
         return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
-            val fileContent = FileContentImpl.createByFile(virtualFile, project)
-            createKtFileStub(fileContent)
+            val stub = if (cacheService != null)
+                cacheService.processBuiltinsFile(virtualFile, this::createFileStub)
+            else
+                createFileStub(virtualFile)
+
+            stub?.let {
+                registerStub(it, virtualFile, isSharedStub = cacheService != null)
+            }
         }
     }
 
-    private fun createKtFileStub(fileContent: FileContent): KotlinFileStubImpl? {
-        val stub = builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl ?: return null
-        registerStub(stub, fileContent.file)
-        return stub
+    private fun createFileStub(virtualFile: VirtualFile): KotlinFileStubImpl? {
+        val fileContent = FileContentImpl.createByFile(virtualFile, project)
+        return builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 
     @OptIn(KaImplementationDetail::class)
-    private fun registerStub(stub: KotlinFileStubImpl, virtualFile: VirtualFile) {
-        val fileViewProvider = KtClassFileViewProvider(psiManager, virtualFile)
+    private fun registerStub(stub: KotlinFileStubImpl, virtualFile: VirtualFile, isSharedStub: Boolean): KotlinFileStubImpl {
+        val resultStub = if (isSharedStub) {
+            if (stub.psi != null) {
+                error("Shared stub cannot have psi as it leads to a project leak")
+            }
 
+            cloneStubRecursively(
+                originalStub = stub,
+                copyParentStub = null,
+                buffer = UnsyncByteArrayOutputStream(),
+                storage = StringEnumerator(),
+            ) as KotlinFileStubImpl
+        } else {
+            stub
+        }
+
+        val fileViewProvider = KtClassFileViewProvider(psiManager, virtualFile)
         val fakeFile = object : KtFile(fileViewProvider, isCompiled = true), SmartPointerIncompatiblePsiFile {
-            override fun getStub(): KotlinFileStub? = stub
+            override fun getStub(): KotlinFileStub? = resultStub
             override fun isPhysical() = false
         }
 
-        stub.psi = fakeFile
+        resultStub.psi = fakeFile
         createdFakeKtFiles.add(fakeFile)
+        return resultStub
     }
 
     private class KtClassFileViewProvider(
@@ -353,7 +380,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             for (root in sharedBinaryRoots) {
                 KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
                     collectStubsFromBinaryRoot(additionalRoot, binaryClassCache)
-                }?.let(::processCollectedStubs)
+                }?.let { processCollectedBinaryStubs(it, isSharedStubs = true) }
             }
 
             // In contrast to `sharedBinaryRoots`, which are shared between many different projects (e.g. the Kotlin stdlib), `binaryRoots`
@@ -361,7 +388,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             // performance advantage.
             binaryRoots
                 .map { collectStubsFromBinaryRoot(it, binaryClassCache) }
-                .forEach { processCollectedStubs(it) }
+                .forEach { processCollectedBinaryStubs(it, isSharedStubs = false) }
         }
 
         sourceKtFiles.forEach { file ->
@@ -386,7 +413,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
             is KotlinPlaceHolderStubImpl -> {
                 if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
-                    stub.getChildrenStubs().filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
+                    stub.childrenStubs.filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
                 }
             }
         }
@@ -442,10 +469,9 @@ class KotlinStandaloneDeclarationProviderFactory(
         return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 
-    private fun processCollectedStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>) {
+    private fun processCollectedBinaryStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>, isSharedStubs: Boolean) {
         stubs.forEach { entry ->
-            val stub = entry.value
-            registerStub(stub, entry.key)
+            val stub = registerStub(entry.value, entry.key, isSharedStubs)
             processStub(stub)
         }
     }
@@ -471,16 +497,25 @@ class KotlinStandaloneDeclarationProviderFactory(
  * Test application service to store stubs of shared between tests libraries.
  *
  * Otherwise, each test would start indexing of stdlib from scratch,
- * and under the lock which makes tests extremely slow*/
-class KotlinFakeClsStubsCache {
+ * and under the lock which makes tests extremely slow
+ *
+ * **Note**: shared stubs **MUST NOT** store psi
+ */
+internal class KotlinFakeClsStubsCache {
     private val fakeFileClsStubs = ConcurrentHashMap<String, Map<VirtualFile, KotlinFileStubImpl>>()
+    private val fakeBuiltInsClsStubs = ConcurrentHashMap<VirtualFile, KotlinFileStubImpl?>()
+
+    fun processBuiltinsFile(
+        root: VirtualFile,
+        buildStub: (VirtualFile) -> KotlinFileStubImpl?,
+    ): KotlinFileStubImpl? = fakeBuiltInsClsStubs.computeIfAbsent(root, buildStub)
 
     companion object {
         fun processAdditionalRoot(
             root: VirtualFile,
             storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
         ): Map<VirtualFile, KotlinFileStubImpl>? {
-            val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java) ?: return null
+            val service = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>() ?: return null
             return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
                 storage(root)
             }
@@ -498,4 +533,73 @@ class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : 
                 }
             }
         }
+}
+
+/**
+ * Returns a copy of [originalStub].
+ *
+ * @see KotlinFakeClsStubsCache
+ */
+private fun <T : PsiElement> cloneStubRecursively(
+    originalStub: StubElement<T>,
+    copyParentStub: StubElement<*>?,
+    buffer: UnsyncByteArrayOutputStream,
+    storage: AbstractStringEnumerator,
+): StubElement<*> {
+    buffer.reset()
+
+    // Some specific elements are covered here as they widely used and has additional logic inside `serialize`,
+    // to it is an optimization
+    val copyStub = when (originalStub) {
+        is KotlinUserTypeStubImpl -> KotlinUserTypeStubImpl(
+            copyParentStub,
+            originalStub.upperBound,
+            originalStub.abbreviatedType,
+        )
+
+        is KotlinNameReferenceExpressionStubImpl -> KotlinNameReferenceExpressionStubImpl(
+            copyParentStub,
+            StringRef.fromString(originalStub.getReferencedName()),
+            originalStub.isClassRef,
+        )
+
+        is PsiFileStub -> {
+            val serializer = originalStub.type
+            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
+            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
+        }
+
+        else -> {
+            val serializer = originalStub.stubType
+            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
+            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
+        }
+    }
+
+    for (originalChild in originalStub.childrenStubs) {
+        cloneStubRecursively(originalStub = originalChild, copyParentStub = copyStub, buffer = buffer, storage = storage)
+    }
+
+    return copyStub
+}
+
+private class StringEnumerator : AbstractStringEnumerator {
+    private val values = HashMap<String, Int>()
+    private val strings = mutableListOf<String>()
+
+    override fun enumerate(value: String?): Int {
+        if (value == null) return 0
+
+        return values.getOrPut(value) {
+            strings += value
+            values.size + 1
+        }
+    }
+
+    override fun valueOf(idx: Int): String? = if (idx == 0) null else strings[idx - 1]
+
+    override fun markCorrupted(): Unit = shouldNotBeCalled()
+    override fun close(): Unit = shouldNotBeCalled()
+    override fun isDirty(): Boolean = shouldNotBeCalled()
+    override fun force(): Unit = shouldNotBeCalled()
 }
