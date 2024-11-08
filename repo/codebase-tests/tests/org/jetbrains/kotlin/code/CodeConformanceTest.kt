@@ -35,7 +35,6 @@ class CodeConformanceTest : TestCase() {
                 "intellij",
                 "js/js.tests/.gradle",
                 "js/js.tests/build",
-                "js/js.translator/qunit/qunit.js",
                 "js/js.translator/testData/node_modules",
                 "local",
                 "libraries/kotlin.test/js/it/.gradle",

@@ -53,10 +53,6 @@ the Kotlin IntelliJ IDEA plugin:
         is derived from Rhino, (C) 1997-1999 Netscape Communications Corporation, distributed under the
         Netscape Public License.
 
- - Path: js/js.translator/qunit/qunit.js
-      - License: MIT ([license/third_party/qunit_license.txt][qunit])
-      - Origin: QUnit, Copyright (c) 2012 John Resig, Jörn Zaefferer,
-
  - Path: libraries/stdlib/src/kotlin/collections
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
@@ -286,7 +282,6 @@ any distributions of the compiler, libraries or plugin:
 [jspecify]: third_party/testdata/jspecify_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
 [power-assert]: third_party/power_assert_license.txt
-[qunit]: third_party/qunit_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt
 [spring]: third_party/testdata/spring_license.txt
