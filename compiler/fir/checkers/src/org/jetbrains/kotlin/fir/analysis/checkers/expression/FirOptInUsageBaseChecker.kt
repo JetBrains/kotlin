@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.getSubclassOptInApplicabilityAndMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
@@ -42,8 +43,6 @@ import org.jetbrains.kotlin.resolve.checkers.OptInInheritanceDiagnosticMessagePr
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInUsagesDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -306,12 +305,14 @@ object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter,
         source: KtSourceElement? = element.source,
     ) {
+        val isSubclassOptInApplicable =
+            (context.containingDeclarations.lastOrNull() as? FirClass)?.let { getSubclassOptInApplicabilityAndMessage(it).first } ?: false
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
                 val (diagnostic, messageProvider, verb) = when {
                     fromSupertype && severity == Experimentality.Severity.WARNING -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE,
-                        OptInInheritanceDiagnosticMessageProvider,
+                        OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                         "should"
                     )
                     severity == Experimentality.Severity.WARNING -> Triple(
@@ -321,7 +322,7 @@ object FirOptInUsageBaseChecker {
                     )
                     fromSupertype && severity == Experimentality.Severity.ERROR -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
-                        OptInInheritanceDiagnosticMessageProvider,
+                        OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                         "must"
                     )
                     severity == Experimentality.Severity.ERROR -> Triple(

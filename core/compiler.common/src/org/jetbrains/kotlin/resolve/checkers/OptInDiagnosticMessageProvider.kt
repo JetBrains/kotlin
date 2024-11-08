@@ -26,11 +26,13 @@ object OptInUsagesInFutureDiagnosticMessageProvider : OptInDiagnosticMessageProv
         )
 }
 
-object OptInInheritanceDiagnosticMessageProvider : OptInDiagnosticMessageProvider() {
-    private const val DEFAULT_PREFIX = "This class or interface requires opt-in to be implemented"
+class OptInInheritanceDiagnosticMessageProvider(private val isSubclassOptInApplicable: Boolean) : OptInDiagnosticMessageProvider() {
+    companion object {
+        private const val DEFAULT_PREFIX = "This class or interface requires opt-in to be implemented"
+    }
 
     override fun buildDefaultDiagnosticMessage(markerName: String, verb: String): String =
-        OptInNames.buildDefaultDiagnosticMessage("$DEFAULT_PREFIX. Its usage $verb be marked", markerName, isSubclassOptInApplicable = true)
+        OptInNames.buildDefaultDiagnosticMessage("$DEFAULT_PREFIX. Its usage $verb be marked", markerName, isSubclassOptInApplicable)
 
     override fun buildCustomDiagnosticMessage(message: String): String = "$DEFAULT_PREFIX: $message"
 

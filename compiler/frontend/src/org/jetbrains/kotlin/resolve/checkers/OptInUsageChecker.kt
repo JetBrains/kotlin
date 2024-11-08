@@ -133,7 +133,7 @@ class OptInUsageChecker : CallChecker {
             }
 
         private fun getMessageProvider(subclassesOnly: Boolean) =
-            if (subclassesOnly) OptInInheritanceDiagnosticMessageProvider else OptInUsagesDiagnosticMessageProvider
+            if (subclassesOnly) OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable = true) else OptInUsagesDiagnosticMessageProvider
 
         private val USAGE_DIAGNOSTICS = OptInReporterMultiplexer(
             warning = { subclassesOnly ->
