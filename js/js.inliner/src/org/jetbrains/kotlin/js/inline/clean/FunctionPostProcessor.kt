@@ -31,7 +31,6 @@ class FunctionPostProcessor(val root: JsFunction, private val voidName: JsName? 
         { DeadCodeElimination(root.body).apply() },
         { RedundantVariableDeclarationElimination(root.body).apply() },
         { RedundantStatementElimination(root).apply() },
-        { CoroutineStateElimination(root.body).apply() },
         { BoxingUnboxingElimination(root.body).apply() },
         { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() },
         { voidName?.let { VoidPropertiesElimination(root.body, voidName).apply() } ?: false }
