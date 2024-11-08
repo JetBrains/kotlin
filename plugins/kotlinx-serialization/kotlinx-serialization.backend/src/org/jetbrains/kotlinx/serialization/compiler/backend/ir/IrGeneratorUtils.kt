@@ -31,7 +31,7 @@ fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor
         -1,
         -1,
         (declaration.parent as? IrClass)?.symbol ?: return null,
-        type
+        irBuiltIns.unitType,
     )
 
     return irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
