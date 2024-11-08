@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import java.util.Stack
+import kotlin.collections.contains
 
 open class PsiRawFirBuilder(
     session: FirSession,
@@ -298,7 +300,7 @@ open class PsiRawFirBuilder(
             this().toFirExpression(errorReason)
 
         private fun KtElement?.toFirExpression(
-            errorReason: String,
+            errorReason: String = "",
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
         ): FirExpression = toFirExpression { ConeSimpleDiagnostic(errorReason, kind) }
 
@@ -311,10 +313,19 @@ open class PsiRawFirBuilder(
             if (this == null) {
                 return buildErrorExpression(source = sourceWhenThisIsNull?.toFirSourceElement(), diagnosticFn())
             }
+            return wrapExpressionIfNeeded(this, convertElement(this, null), sourceWhenInvalidExpression, isValidExpression, diagnosticFn)
+        }
 
-            return when (val fir = convertElement(this, null)) {
+        private inline fun <reified R : FirExpression> wrapExpressionIfNeeded(
+            expression: KtElement,
+            fir: FirElement?,
+            sourceWhenInvalidExpression: KtElement? = expression,
+            isValidExpression: (FirExpression) -> Boolean = { !it.isStatementLikeExpression },
+            diagnosticFn: () -> ConeDiagnostic,
+        ): R {
+            return when (fir) {
                 is FirExpression -> when {
-                    isValidExpression(fir) -> checkSelectorInvariant(fir)
+                    isValidExpression(fir) -> expression.checkSelectorInvariant(fir)
                     else -> buildErrorExpression {
                         nonExpressionElement = fir
                         diagnostic = diagnosticFn()
@@ -324,9 +335,9 @@ open class PsiRawFirBuilder(
                 else -> buildErrorExpression {
                     nonExpressionElement = fir
                     diagnostic = diagnosticFn()
-                    source = fir?.source?.realElement() ?: toFirSourceElement()
+                    source = fir?.source?.realElement() ?: expression.toFirSourceElement()
                 }
-            }
+            } as R
         }
 
         private fun KtElement.checkSelectorInvariant(result: FirExpression): FirExpression {
@@ -3027,21 +3038,132 @@ open class PsiRawFirBuilder(
             }.bindLabel(expression).build()
         }
 
-        override fun visitBinaryExpression(expression: KtBinaryExpression, data: FirElement?): FirElement {
-            val operationToken = expression.operationToken
+        /** Stores an AST to a linear structure which can be traversed in a loop to prevent StackOverflow exception.
+         * An example of this failure is usually a generated code using binary expressions like the following:
+         * `val tmp = "a" + "b" + "c" + "d" + ...`
+         *
+         * The given tree is stored in Reverse Polish notation, which can be traversed in the same order as using recursion.
+         * Example:
+         * An expression `a + (b + c)` will be stored as `a b c + () +`.
+         * Then the items can be processed one by one and simulate "evaluation stack".
+         */
+        private fun convertTreeToStack(tree: KtExpression): StackVisitorData<KtElement> {
+            val treeToStack: MutableList<KtElement?> = mutableListOf()
+            var stringLiteralConcatenationAnalysis = true
 
-            if (operationToken == IDENTIFIER) {
-                context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
-            } else {
-                context.calleeNamesForLambda += null
+            treeToStack.add(tree)
+            var currentNodeIndex = 0
+
+            while (currentNodeIndex < treeToStack.count()) {
+                var node = treeToStack[currentNodeIndex]
+                when (node) {
+                    is KtBinaryExpression -> {
+                        if (node.operationToken == IDENTIFIER) {
+                            context.calleeNamesForLambda += node.operationReference.getReferencedNameAsName()
+                        } else {
+                            context.calleeNamesForLambda += null
+                        }
+
+                        if (node.operationToken != PLUS) {
+                            stringLiteralConcatenationAnalysis = false
+                        }
+
+                        treeToStack.add(currentNodeIndex + 1, node.right)
+                        treeToStack.add(currentNodeIndex + 2, node.left)
+                    }
+                    is KtParenthesizedExpression -> {
+                        context.forwardLabelUsagePermission(node, node.expression)
+                        treeToStack.add(currentNodeIndex + 1, node.expression)
+                    }
+                    else -> {
+                        if (node !is KtStringTemplateExpression) {
+                            stringLiteralConcatenationAnalysis = false
+                        }
+                    }
+                }
+                currentNodeIndex++
             }
 
-            val leftArgument = expression.left.toFirExpression("No left operand")
-            val rightArgument = expression.right.toFirExpression("No right operand")
+            return StackVisitorData<KtElement>(treeToStack.reversed(), stringLiteralConcatenationAnalysis)
+        }
 
-            // No need for the callee name since arguments are already generated
-            context.calleeNamesForLambda.removeLast()
+        private fun convertStackToFirTree(data: StackVisitorData<KtElement>): FirElement {
+            val evaluationStack: Stack<FirExpression?> = Stack()
+            lateinit var result: FirStatement
+            val last = data.treeToStack.last()
+            for (node in data.treeToStack) {
+                when (node) {
+                    is KtBinaryExpression -> {
+                        context.calleeNamesForLambda.removeLast()
 
+                        val right = evaluationStack.pop() ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No right operand"))
+                        val left = evaluationStack.pop() ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No left operand"))
+                        val statement = createBinaryExpression(node, left, right)
+                        if (node === last) { // The last expression could be a statement unlike other ones
+                            assert(evaluationStack.isEmpty())
+                            result = statement
+                        } else {
+                            evaluationStack.push(
+                                wrapExpressionIfNeeded(
+                                    node,
+                                    statement,
+                                    diagnosticFn = { ConeSimpleDiagnostic("Not an expression", DiagnosticKind.ExpressionExpected) })
+                            )
+                        }
+                    }
+                    is KtParenthesizedExpression -> {
+                        evaluationStack.push(
+                            evaluationStack.pop() ?: buildErrorExpression(
+                                null,
+                                ConeSimpleDiagnostic("Empty parentheses", DiagnosticKind.ExpressionExpected)
+                            )
+                        )
+                    }
+                    null -> {
+                        evaluationStack.push(null)
+                    }
+                    else -> {
+                        evaluationStack.push(node.toFirExpression())
+                    }
+                }
+            }
+
+            return result
+        }
+
+        private fun convertStackToStringConcatenationCall(data: StackVisitorData<KtElement>): FirElement {
+            val args = data.treeToStack.mapNotNull { node ->
+                when (node) {
+                    is KtBinaryExpression -> {
+                        context.calleeNamesForLambda.removeLast()
+                        null
+                    }
+                    is KtParenthesizedExpression -> null
+                    else -> node.toFirExpression()
+                }
+            }
+            return buildStringConcatenationCall {
+                argumentList = buildArgumentList { arguments += args }
+                source = data.treeToStack.last()!!.toFirSourceElement()
+                interpolationPrefix = ""
+            }
+        }
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression, data: FirElement?): FirElement {
+            val data = convertTreeToStack(expression)
+            return if (data.stringLiteralConcatenationAnalysis) {
+                convertStackToStringConcatenationCall(data)
+            } else {
+                convertStackToFirTree(data)
+            }
+        }
+
+        private fun createBinaryExpression(
+            expression: KtBinaryExpression,
+            leftArgument: FirExpression,
+            rightArgument: FirExpression
+        ): FirStatement {
+            val operationToken = expression.operationToken
             val source = expression.toFirSourceElement()
 
             when (operationToken) {
@@ -3075,7 +3197,7 @@ open class PsiRawFirBuilder(
             } else {
                 val firOperation = operationToken.toFirOperation()
                 if (firOperation in FirOperation.ASSIGNMENTS) {
-                    return expression.left.generateAssignment(
+                    expression.left.generateAssignment(
                         source,
                         expression.left?.toFirSourceElement(),
                         rightArgument,

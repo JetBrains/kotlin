@@ -23709,6 +23709,18 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
         @Test
+        @TestMetadata("binaryOpFolding.kt")
+        public void testBinaryOpFolding() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpFolding.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryOpStackOverflow.kt")
+        public void testBinaryOpStackOverflow() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");
+        }
+
+        @Test
         @TestMetadata("plus.kt")
         public void testPlus() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
