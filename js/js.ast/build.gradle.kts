@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors"))
+    api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
