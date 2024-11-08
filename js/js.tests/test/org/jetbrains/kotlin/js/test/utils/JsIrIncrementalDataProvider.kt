@@ -82,7 +82,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-            .run { if (shouldBeGenerated()) arguments() else null }
 
         runtimeKlibPath.forEach {
             recordIncrementalData(it, null, libs, configuration, mainArguments)
@@ -97,7 +96,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-            .run { if (shouldBeGenerated()) arguments() else null }
 
         val allDependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList()
 

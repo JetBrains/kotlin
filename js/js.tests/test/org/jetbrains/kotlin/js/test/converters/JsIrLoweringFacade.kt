@@ -114,7 +114,6 @@ class JsIrLoweringFacade(
         val phaseConfig = createTestPhaseConfig(testServices, module, getJsPhases(configuration))
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-            .run { if (shouldBeGenerated()) arguments() else null }
 
         val loweredIr = compileIr(
             irModuleFragment.apply { resolveTestPaths() },

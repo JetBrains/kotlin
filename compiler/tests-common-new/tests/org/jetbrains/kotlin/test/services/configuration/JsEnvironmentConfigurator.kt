@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -155,13 +154,13 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return result
         }
 
-        fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
+        fun getMainCallParametersForModule(module: TestModule): List<String>? {
             return when {
-                JsEnvironmentConfigurationDirectives.CALL_MAIN in module.directives -> MainCallParameters.mainWithArguments(listOf())
+                JsEnvironmentConfigurationDirectives.CALL_MAIN in module.directives -> listOf()
                 JsEnvironmentConfigurationDirectives.MAIN_ARGS in module.directives -> {
-                    MainCallParameters.mainWithArguments(module.directives[JsEnvironmentConfigurationDirectives.MAIN_ARGS].single())
+                    module.directives[JsEnvironmentConfigurationDirectives.MAIN_ARGS].single()
                 }
-                else -> MainCallParameters.noCall()
+                else -> null
             }
         }
 
