@@ -12,9 +12,9 @@ fun testA() {
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT> PCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT> PCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultAA<!>
@@ -37,9 +37,9 @@ fun testB() {
             // FOTv := SOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT> PCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT> PCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultBA<!>
@@ -58,9 +58,9 @@ fun testB() {
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT> PCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT> PCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultBB<!>
@@ -83,9 +83,9 @@ fun testC() {
             // SOTv := FOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT> PCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT> PCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultCA<!>
@@ -108,9 +108,9 @@ fun testD() {
             // FOTv := SOTv := ScopeOwner
 
             // expected: Interloper </: ScopeOwner
-            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            fotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("SOT (of fun <SOT> nestedPCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
             // expected: Interloper </: ScopeOwner
-            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(FOT (of fun <FOT> PCLA) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+            sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT> PCLA) & Any & ScopeOwner; Interloper")!>Interloper<!>)
         }
         // expected: ScopeOwner
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>nestedResultDA<!>

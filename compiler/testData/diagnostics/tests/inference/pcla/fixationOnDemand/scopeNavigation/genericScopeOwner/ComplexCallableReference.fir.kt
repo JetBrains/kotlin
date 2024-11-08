@@ -57,7 +57,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::accessorBackedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTA (of val <SOTA> ScopeOwner<SOTA>.accessorBackedReadableExtensionProperty)>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTA (of val <SOTA> ScopeOwner<SOTA>.accessorBackedReadableExtensionProperty)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultF<!>
@@ -68,7 +68,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::accessorBackedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTB (of var <SOTB> ScopeOwner<SOTB>.accessorBackedWriteableExtensionProperty)>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTB (of var <SOTB> ScopeOwner<SOTB>.accessorBackedWriteableExtensionProperty)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultG<!>
@@ -79,7 +79,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::delegatedReadableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTC (of val <SOTC> ScopeOwner<SOTC>.delegatedReadableExtensionProperty)>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTC (of val <SOTC> ScopeOwner<SOTC>.delegatedReadableExtensionProperty)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultH<!>
@@ -90,7 +90,7 @@ fun test() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide()::delegatedWriteableExtensionProperty
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTD (of var <SOTD> ScopeOwner<SOTD>.delegatedWriteableExtensionProperty)>); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTD (of var <SOTD> ScopeOwner<SOTD>.delegatedWriteableExtensionProperty)>; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultI<!>

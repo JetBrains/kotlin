@@ -13,7 +13,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT (of fun <PNT> createDerivativeTypeVariable) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("PNT (of fun <PNT> createDerivativeTypeVariable) & Any & ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
@@ -55,7 +55,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("it(PNT (of fun <PNT> createDerivativeTypeVariable) & Any & ScopeOwner); Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("PNT (of fun <PNT> createDerivativeTypeVariable) & Any & ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>

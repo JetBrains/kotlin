@@ -75,19 +75,11 @@ open class ConeTypeRenderer(
         }
         when (type) {
             is ConeDefinitelyNotNullType -> {
-                render(type.original)
-                builder.append(" & Any")
+                render(type)
             }
 
             is ConeIntersectionType -> {
-                builder.append("it(")
-                for ((index, intersected) in type.intersectedTypes.withIndex()) {
-                    if (index > 0) {
-                        builder.append(" & ")
-                    }
-                    render(intersected)
-                }
-                builder.append(")")
+                render(type)
             }
 
             is ConeDynamicType -> {
@@ -229,5 +221,21 @@ open class ConeTypeRenderer(
                 builder.append("IOT")
             }
         }
+    }
+
+    protected open fun render(type: ConeDefinitelyNotNullType) {
+        this.render(type.original)
+        builder.append(" & Any")
+    }
+
+    protected open fun render(type: ConeIntersectionType) {
+        builder.append("it(")
+        for ((index, intersected) in type.intersectedTypes.withIndex()) {
+            if (index > 0) {
+                builder.append(" & ")
+            }
+            this.render(intersected)
+        }
+        builder.append(")")
     }
 }

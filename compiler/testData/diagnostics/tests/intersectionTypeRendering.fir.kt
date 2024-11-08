@@ -7,7 +7,7 @@ fun <T> select(vararg x: T): T = x[0]
 
 fun test(c: C, d: D) {
     val it = select(c, d)
-    acceptString(<!ARGUMENT_TYPE_MISMATCH("kotlin.String; it(A & B)")!>it<!>)
+    acceptString(<!ARGUMENT_TYPE_MISMATCH("kotlin.String; A & B")!>it<!>)
 }
 
 fun acceptString(s: String) {}

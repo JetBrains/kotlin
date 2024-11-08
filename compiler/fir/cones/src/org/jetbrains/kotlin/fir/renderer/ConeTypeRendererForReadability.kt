@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
@@ -108,5 +109,14 @@ open class ConeTypeRendererForReadability(
             return
         }
         super.renderConstructor(constructor, nullabilityMarker)
+    }
+
+    override fun render(type: ConeIntersectionType) {
+        for ((index, intersected) in type.intersectedTypes.withIndex()) {
+            if (index > 0) {
+                builder.append(" & ")
+            }
+            this.render(intersected)
+        }
     }
 }
