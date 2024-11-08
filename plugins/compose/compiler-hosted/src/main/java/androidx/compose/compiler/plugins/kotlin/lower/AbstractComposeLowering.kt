@@ -923,6 +923,11 @@ abstract class AbstractComposeLowering(
         getTopLevelClass(hiddenFromObjCClassId)
     }
 
+    private val hiddenFromObjCAnnotation = IrConstructorCallImpl.fromSymbolOwner(
+        type = hiddenFromObjCAnnotationSymbol.defaultType,
+        constructorSymbol = hiddenFromObjCAnnotationSymbol.constructors.first()
+    )
+
     private val deprecationLevelClass = getTopLevelClass(ClassId.fromString("kotlin/DeprecationLevel"))
     private val hiddenDeprecationLevel = deprecationLevelClass.owner.declarations.filterIsInstance<IrEnumEntry>()
         .single { it.name.toString() == "HIDDEN" }.symbol
@@ -973,15 +978,9 @@ abstract class AbstractComposeLowering(
                 +irReturn(irGetField(stabilityField))
             }
             parent.addChild(fn)
+            fn.annotations = listOf(hiddenFromObjCAnnotation, hiddenDeprecatedAnnotation)
         }
 
-        val hiddenFromObjCAnnotation = IrConstructorCallImpl.fromSymbolOwner(
-            type = hiddenFromObjCAnnotationSymbol.defaultType,
-            constructorSymbol = hiddenFromObjCAnnotationSymbol.constructors.first()
-        )
-
-        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(stabilityGetter, hiddenFromObjCAnnotation)
-        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(stabilityGetter, hiddenDeprecatedAnnotation)
         context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(stabilityGetter)
     }
 
