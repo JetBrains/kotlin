@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
@@ -206,6 +207,7 @@ class PostponedArgumentsAnalyzer(
         return results
     }
 
+
     fun applyResultsOfAnalyzedLambdaToCandidateSystem(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ConeResolvedLambdaAtom,
@@ -228,7 +230,11 @@ class PostponedArgumentsAnalyzer(
         val returnTypeRef = lambda.anonymousFunction.returnTypeRef.let {
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substituteAlreadyFixedVariables(lambda.returnType))
         }
-        val isUnitLambda = returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
+        val lambdaReturnType = returnTypeRef.coneType
+        val isUnitLambda =
+            returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
+                    || !lambdaReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(lambdaReturnType)
+        var hadUnitCoercion = false
 
         for (atom in returnAtoms) {
             val expression = atom.expression
@@ -254,10 +260,17 @@ class PostponedArgumentsAnalyzer(
                     //    put("a", 1) // While `put` returns V, we should not enforce the latter to be a subtype of Unit
                     // }
                     // See KT-63602 for details.
-                    builder.addSubtypeConstraintIfCompatible(
-                        expression.resolvedType, returnTypeRef.coneType,
-                        ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
-                    )
+                    if (!builder.addSubtypeConstraintIfCompatible(
+                            expression.resolvedType, returnTypeRef.coneType,
+                            ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
+                        )) {
+                        hadUnitCoercion = true
+                    }
+                } else {
+                    @OptIn(UnresolvedExpressionTypeAccess::class)
+                    if (expression.coneTypeOrNull?.isUnitOrFlexibleUnit != true) {
+                        hadUnitCoercion = true
+                    }
                 }
                 continue
             }
@@ -283,6 +296,8 @@ class PostponedArgumentsAnalyzer(
 
         lambda.analyzed = true
         lambda.returnStatements = returnAtoms
+
+        candidate.hadUnitCoercion = hadUnitCoercion
     }
 
     private fun addLambdaReturnTypeUnitConstraintOrReportError(

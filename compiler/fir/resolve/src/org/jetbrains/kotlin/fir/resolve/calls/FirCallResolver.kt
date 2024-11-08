@@ -209,8 +209,19 @@ class FirCallResolver(
         towerResolver.reset()
 
         val result = towerResolver.runResolver(info, resolutionContext, collector)
-        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext, discriminateGenerics = true)
-        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
+
+        var reducedCandidates: Set<Candidate> = result.bestCandidates().toSet()
+
+        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, result.bestCandidates(), reducedCandidates)
+
+        val applicability: CandidateApplicability
+        reduceCandidates(
+            result, explicitReceiver, resolutionContext,
+            discriminateGenerics = true, candidates = reducedCandidates
+        ).let {
+            reducedCandidates = it.first
+            applicability = it.second
+        }
 
         return ResolutionResult(info, applicability, reducedCandidates)
     }
@@ -223,17 +234,16 @@ class FirCallResolver(
         explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
         discriminateGenerics: Boolean,
+        candidates: Collection<Candidate> = collector.bestCandidates(),
     ): Pair<Set<Candidate>, CandidateApplicability> {
-        fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
+        fun chooseMostSpecific(collection: Collection<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(
-                list.toSet(),
+                collection.toSet(),
                 discriminateAbstracts = onSuperReference,
                 discriminateGenerics
             )
         }
-
-        val candidates = collector.bestCandidates()
 
         if (collector.isSuccess) {
             return chooseMostSpecific(candidates) to collector.currentApplicability

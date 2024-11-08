@@ -25,7 +25,7 @@ fun test(a: A, b: B) {
 
     with(b) {
         a.foo<!NO_VALUE_FOR_PARAMETER!>()<!>
-        <!TOO_MANY_ARGUMENTS!>a<!>.(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)()
+        a.<!INAPPLICABLE_CANDIDATE!>(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)<!>()
 
         (a.foo)()
 

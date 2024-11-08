@@ -125,17 +125,17 @@ fun testWithStringSuper(box: Inv<CharSequence>) {
 }
 
 fun testWithCallableString(box: Inv<() -> String>) {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload<!>({ "hello" }, (box))
+    topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
-    box.<!OVERLOAD_RESOLUTION_AMBIGUITY!>extensionOverload<!> { "hello" }
+    topLevelOverload3(box) <!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>{ <!ARGUMENT_TYPE_MISMATCH!>{ param: CharSequence -> }<!> }<!>
+    box.extensionOverload { "hello" }
 }
 
 fun testWithCallableAny(box: Inv<() -> Any?>) {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload<!>({ "hello" }, (box))
+    topLevelOverload({ "hello" }, (box))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload1<!>(box) { { "hello" } }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>topLevelOverload3<!>(box) { { param: CharSequence -> } }
-    box.<!OVERLOAD_RESOLUTION_AMBIGUITY!>extensionOverload<!> { "hello" }
+    topLevelOverload3(box) <!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>{ <!ARGUMENT_TYPE_MISMATCH!>{ param: CharSequence -> }<!> }<!>
+    box.extensionOverload { "hello" }
 }
 
 fun interface SAM<T> {

@@ -10,12 +10,12 @@ fun takeString(s: String) {}
 fun takeInt(s: Int) {}
 
 fun test_1() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { "" }
+    val x = create { "" }
     takeString(x)
 }
 
 fun test_2() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1 }
+    val x = create { 1 }
     takeInt(x)
 }
 
