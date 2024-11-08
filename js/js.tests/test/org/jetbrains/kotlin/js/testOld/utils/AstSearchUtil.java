@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.testOld.utils;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 
 import java.util.List;
 import java.util.Map;
@@ -69,13 +68,6 @@ public class AstSearchUtil {
                 .filter(e -> e.getKey().getIdent().equals(name))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
-    }
-
-    @NotNull
-    public static JsExpression getMetadataOrFunction(@NotNull JsNode searchRoot, @NotNull String name) {
-        JsExpression property = findByIdent(CollectUtilsKt.collectNamedFunctionsOrMetadata(searchRoot), name);
-        assert property != null: "Property `" + name + "` was not found";
-        return property;
     }
 
     @Nullable

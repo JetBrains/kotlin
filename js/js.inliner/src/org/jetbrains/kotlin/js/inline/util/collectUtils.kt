@@ -105,18 +105,7 @@ fun JsFunction.collectLocalVariables(skipLabelsAndCatches: Boolean = false) = co
 
 fun collectNamedFunctions(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.first.function }
 
-fun collectNamedFunctionsOrMetadata(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.second }
-
-fun collectNamedFunctions(fragments: List<JsProgramFragment>): Map<JsName, JsFunction> {
-    val result = mutableMapOf<JsName, JsFunction>()
-    for (fragment in fragments) {
-        result += collectNamedFunctions(fragment.declarationBlock)
-        result += collectNamedFunctions(fragment.initializerBlock)
-    }
-    return result
-}
-
-fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<FunctionWithWrapper, JsExpression>> {
+private fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<FunctionWithWrapper, JsExpression>> {
     val namedFunctions = mutableMapOf<JsName, Pair<FunctionWithWrapper, JsExpression>>()
 
     scope.accept(object : RecursiveJsVisitor() {
@@ -161,9 +150,9 @@ fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<FunctionWi
 
 data class FunctionWithWrapper(val function: JsFunction, val wrapperBody: JsBlock?)
 
-fun extractFunction(expression: JsExpression) = when (expression) {
+private fun extractFunction(expression: JsExpression) = when (expression) {
     is JsFunction -> FunctionWithWrapper(expression, null)
-    else -> InlineMetadata.decompose(expression)?.function ?: InlineMetadata.tryExtractFunction(expression)
+    else -> null
 }
 
 fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode, visitNestedDeclarations: Boolean = false): List<T> {
