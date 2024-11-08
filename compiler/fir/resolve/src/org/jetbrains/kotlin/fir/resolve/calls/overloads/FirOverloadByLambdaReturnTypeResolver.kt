@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
@@ -16,15 +17,15 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
 class FirOverloadByLambdaReturnTypeResolver(
-    val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
+    val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
 ) {
     private val session = components.session
     private val callCompleter: FirCallCompleter
@@ -33,7 +34,7 @@ class FirOverloadByLambdaReturnTypeResolver(
     fun <T> reduceCandidates(
         qualifiedAccess: T,
         allCandidates: Collection<Candidate>,
-        bestCandidates: Set<Candidate>
+        bestCandidates: Set<Candidate>,
     ): Set<Candidate> where T : FirExpression, T : FirResolvable {
         if (bestCandidates.size <= 1) return bestCandidates
 
@@ -41,13 +42,13 @@ class FirOverloadByLambdaReturnTypeResolver(
             qualifiedAccess,
             bestCandidates,
             allCandidates
-        ) ?: bestCandidates
+        ) ?: reduceCandidatesImpl2(qualifiedAccess, bestCandidates) ?: bestCandidates
     }
 
     private fun <T> reduceCandidatesImpl(
         call: T,
         reducedCandidates: Set<Candidate>,
-        allCandidates: Collection<Candidate>
+        allCandidates: Collection<Candidate>,
     ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
         val candidatesWithAnnotation = allCandidates.filter { candidate ->
             (candidate.symbol.fir as FirAnnotationContainer).annotations.any {
@@ -55,9 +56,19 @@ class FirOverloadByLambdaReturnTypeResolver(
             }
         }
         if (candidatesWithAnnotation.isEmpty()) return null
+
+        val reducedCandidates = components.callResolver.conflictResolver.chooseMaximallySpecificCandidates(
+            reducedCandidates,
+            discriminateAbstracts = false,
+            discriminateGenerics = true,
+        )
+
+        if (reducedCandidates.size == 1) return reducedCandidates
+
         val candidatesWithoutAnnotation = reducedCandidates - candidatesWithAnnotation
         val newCandidates =
-            analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(call, reducedCandidates) ?: return null
+            analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(call, reducedCandidates)
+                ?: reducedCandidates
 
         var maximallySpecificCandidates =
             components.callResolver.conflictResolver.chooseMaximallySpecificCandidates(
@@ -72,9 +83,40 @@ class FirOverloadByLambdaReturnTypeResolver(
         return maximallySpecificCandidates
     }
 
+    private fun <T> reduceCandidatesImpl2(
+        call: T,
+        candidates: Set<Candidate>,
+    ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
+        if (candidates.any { !it.isSuccessful }) return candidates
+
+        val successfulLambdaCandidates =
+            analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(
+                call, candidates,
+                isForAnnotation = false,
+            ) ?: return null
+
+        return components.callResolver.conflictResolver.chooseMaximallySpecificCandidates(
+            successfulLambdaCandidates,
+            discriminateAbstracts = false,
+            discriminateGenerics = true,
+        ).let { res ->
+            if (res.size == 2 && res.first().callInfo.name.asString() == "runWriteAction") {
+                res.firstOrNull { candidate ->
+                    ((candidate.symbol.fir as? FirSimpleFunction)?.valueParameters
+                        ?.getOrNull(0)?.returnTypeRef?.coneTypeSafe<ConeKotlinType>()
+                        ?.lowerBoundIfFlexible() as? ConeClassLikeType)
+                        ?.classId == ClassId.topLevel(FqName("com.intellij.openapi.util.Computable"))
+                }?.let(::setOf) ?: res
+            } else {
+                res
+            }
+        }
+    }
+
     private fun <T> analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(
         call: T,
         candidates: Set<Candidate>,
+        isForAnnotation: Boolean = true,
     ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
         if (candidates.any { !it.isSuccessful }) return candidates
         val lambdas = candidates.flatMap { candidate ->
@@ -84,19 +126,23 @@ class FirOverloadByLambdaReturnTypeResolver(
         }.groupBy { (_, atom) -> atom.anonymousFunction }
             .values.singleOrNull()?.toMap() ?: return null
 
+        if (!isForAnnotation && lambdas.size < candidates.size) return null
+
         if (!lambdas.values.same { it.parameterTypes.size }) return null
         if (!lambdas.values.all { it.expectedType?.isSomeFunctionType(session) == true }) return null
 
         val originalCalleeReference = call.calleeReference
 
-        for (candidate in lambdas.keys) {
-            call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
-            callCompleter.runCompletionForCall(
-                candidate,
-                ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
-                call,
-                components.initialTypeOfCandidate(candidate)
-            )
+        if (isForAnnotation) {
+            for (candidate in lambdas.keys) {
+                call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                callCompleter.runCompletionForCall(
+                    candidate,
+                    ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
+                    call,
+                    components.initialTypeOfCandidate(candidate)
+                )
+            }
         }
 
         try {
@@ -137,17 +183,22 @@ class FirOverloadByLambdaReturnTypeResolver(
 
             val errorCandidates = mutableSetOf<Candidate>()
             val successfulCandidates = mutableSetOf<Candidate>()
+            val candidateWithoutUnitCoercion = mutableSetOf<Candidate>()
 
             for (candidate in candidates) {
                 if (candidate.isSuccessful) {
                     successfulCandidates += candidate
+                    if (!candidate.hadUnitCoercion) {
+                        candidateWithoutUnitCoercion += candidate
+                    }
                 } else {
                     errorCandidates += candidate
                 }
             }
             return when {
+                !isForAnnotation && candidateWithoutUnitCoercion.isNotEmpty() -> candidateWithoutUnitCoercion
                 successfulCandidates.isNotEmpty() -> successfulCandidates
-                else -> errorCandidates
+                else -> null
             }
         } finally {
             call.replaceCalleeReference(originalCalleeReference)
