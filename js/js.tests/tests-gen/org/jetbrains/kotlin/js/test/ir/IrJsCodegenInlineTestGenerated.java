@@ -2351,6 +2351,29 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/functionReference")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class FunctionReference {
+    @Test
+    public void testAllFilesPresentInFunctionReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("fourthOrder.kt")
+    public void testFourthOrder() {
+      runTest("compiler/testData/codegen/boxInline/functionReference/fourthOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("thirdOrder.kt")
+    public void testThirdOrder() {
+      runTest("compiler/testData/codegen/boxInline/functionReference/thirdOrder.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
