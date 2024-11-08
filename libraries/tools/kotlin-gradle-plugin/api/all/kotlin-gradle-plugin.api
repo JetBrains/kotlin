@@ -874,12 +874,6 @@ public class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformImplementationPlug
 	protected fun namedSourceSetsContainer (Lorg/gradle/api/Project;)Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
-public class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformJsPlugin : org/jetbrains/kotlin/gradle/plugin/KotlinPlatformImplementationPluginBase {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase$Companion;
 	public fun <init> (Ljava/lang/String;)V
