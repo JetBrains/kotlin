@@ -19,10 +19,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
 import java.util.ArrayList
@@ -85,5 +88,33 @@ object AnalyzingUtils {
 
     abstract class PsiErrorElementVisitor : KtTreeVisitorVoid() {
         abstract override fun visitErrorElement(element: PsiErrorElement)
+
+        private fun treeToStack(expression: KtBinaryExpression): MutableList<KtExpression> {
+            val result = mutableListOf<KtExpression>(expression)
+            var currIdx = 0
+            while (currIdx < result.size) {
+                val currNode = result[currIdx]
+                if (currNode is KtBinaryExpression) {
+                    currNode.left?.let { result.add(currIdx + 1, it) }
+                    currNode.right?.let { result.add(currIdx + 2, it) }
+                }
+                currIdx++
+            }
+            return result
+        }
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            val evaluationStack = treeToStack(expression)
+
+            while (evaluationStack.isNotEmpty()) {
+                val currNode = evaluationStack.popLast()
+                if (currNode is KtBinaryExpression) {
+                    continue
+                }
+                else {
+                    currNode.accept(this)
+                }
+            }
+        }
     }
 }

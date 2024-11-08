@@ -2931,6 +2931,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("binaryOpFolding.kt")
+        public void testBinaryOpFolding() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpFolding.kt");
+        }
+
+        @Test
         @TestMetadata("binaryOpStackOverflow.kt")
         public void testBinaryOpStackOverflow() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");

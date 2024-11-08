@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.KtNodeTypes.STRING_TEMPLATE
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -47,12 +49,19 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.collections.contains
 
 class LightTreeRawFirExpressionBuilder(
     session: FirSession,
@@ -267,51 +276,174 @@ class LightTreeRawFirExpressionBuilder(
         }
     }
 
+    private fun convertTreeToStack(tree: LighterASTNode, data: StackVisitorData<LighterASTNode>) {
+        data.treeToStack.add(Pair(tree, null))
+        var currentNodeIdx = 0
+
+        while (currentNodeIdx < data.treeToStack.count()) {
+            var node = data.treeToStack[currentNodeIdx].first
+            when (node?.tokenType) {
+                BINARY_EXPRESSION -> {
+                    val (leftNode, opNode, rightNode) = parseBinaryExpression(node)
+                    val operationTokenName = opNode.asText
+                    val operationToken = operationTokenName.getOperationSymbol()
+
+                    if (operationToken == IDENTIFIER) {
+                        context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
+                    } else {
+                        context.calleeNamesForLambda += null
+                    }
+
+                    if (operationToken != PLUS) {
+                        data.stringLiteralConcatenationAnalysis = false
+                    }
+
+                    data.treeToStack.add(currentNodeIdx + 1, Pair(rightNode, "No right operand"))
+                    data.treeToStack.add(currentNodeIdx + 2, Pair(leftNode, "No left operand"))
+                }
+                PARENTHESIZED -> {
+                    val content = node.getExpressionInParentheses()
+                    context.forwardLabelUsagePermission(node, content)
+                    data.treeToStack.add(currentNodeIdx + 1, Pair(content, "Empty parentheses"))
+                }
+                else -> {
+                    if (node?.tokenType != STRING_TEMPLATE) {
+                        data.stringLiteralConcatenationAnalysis = false
+                    }
+                }
+            }
+            currentNodeIdx++
+        }
+    }
+
+    private fun convertToExpression(fir: FirElement, node: LighterASTNode, errMsg: String): FirExpression {
+        return when (fir) {
+            is FirExpression -> {
+                when {
+                    !fir.isStatementLikeExpression -> {
+                        fir
+                    }
+                    else -> {
+                        buildErrorExpression {
+                            nonExpressionElement = fir
+                            diagnostic = ConeSimpleDiagnostic(errMsg, DiagnosticKind.ExpressionExpected)
+                            source = node.toFirSourceElement()
+                        }
+                    }
+                }
+            }
+            else -> {
+                buildErrorExpression {
+                    nonExpressionElement = fir
+                    diagnostic = ConeSimpleDiagnostic(errMsg, DiagnosticKind.ExpressionExpected)
+                    source = fir.source?.realElement() ?: node.toFirSourceElement()
+                }
+            }
+        }
+    }
+
+    private fun buildFirFromStack(data: StackVisitorData<LighterASTNode>): FirStatement {
+        var currentNodeIdx = 0
+        while (data.treeToStack.isNotEmpty()) {
+            val (node, errMsg) = data.treeToStack.popLast()
+            when (node?.tokenType) {
+                BINARY_EXPRESSION -> {
+                    context.calleeNamesForLambda.removeLast()
+
+                    val right = data.evaluationStack.popLast()
+                    val left = data.evaluationStack.popLast()
+                    val fir = createBinaryExpression(node, left as FirExpression, right as FirExpression)
+                    data.evaluationStack.add(
+                        if (errMsg != null) {
+                            convertToExpression(fir, node, errMsg)
+                        } else {
+                            fir
+                        }
+                    )
+                }
+                PARENTHESIZED -> { /*Just consume node*/
+                }
+                else -> {
+                    data.evaluationStack.add(getAsFirExpression<FirExpression>(node, errMsg!!))
+                }
+            }
+
+            currentNodeIdx++
+        }
+
+        return data.validateStackResult()
+    }
+
+    private fun buildStringConcatenationCallFromStack(data: StackVisitorData<LighterASTNode>): FirStatement {
+        val args = data.treeToStack.mapNotNull {
+            val (node, errMsg) = it
+            when (node?.tokenType) {
+                BINARY_EXPRESSION -> {
+                    context.calleeNamesForLambda.removeLast()
+                    null
+                }
+                PARENTHESIZED -> null
+                else -> getAsFirExpression<FirExpression>(node, errMsg!!)
+            }
+        }
+        data.evaluationStack.add(
+            buildStringConcatenationCall {
+                argumentList = buildArgumentList {
+                    arguments += args.reversed()
+                }
+                source = data.treeToStack.first().first?.toFirSourceElement()
+                interpolationPrefix = ""
+            }
+        )
+
+        data.treeToStack.clear()
+        return data.validateStackResult()
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseBinaryExpression
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitBinaryExpression
      */
     private fun convertBinaryExpression(binaryExpression: LighterASTNode): FirStatement {
-        var isLeftArgument = true
-        lateinit var operationTokenName: String
-        var leftArgNode: LighterASTNode? = null
-        var rightArg: LighterASTNode? = null
-        var operationReferenceSource: KtLightSourceElement? = null
+        val data = StackVisitorData<LighterASTNode>()
+        data.stringLiteralConcatenationAnalysis = true
+        convertTreeToStack(binaryExpression, data)
+        return if (data.stringLiteralConcatenationAnalysis) {
+            buildStringConcatenationCallFromStack(data)
+        } else {
+            buildFirFromStack(data)
+        }
+    }
+
+    private fun parseBinaryExpression(binaryExpression: LighterASTNode): Triple<LighterASTNode?, LighterASTNode, LighterASTNode?> {
+        var left: LighterASTNode? = null
+        var op: LighterASTNode? = null
+        var right: LighterASTNode? = null
         binaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> {
-                    isLeftArgument = false
-                    operationTokenName = it.asText
-                    operationReferenceSource = it.toFirSourceElement()
+                    op = it
                 }
                 else -> if (it.isExpression()) {
-                    if (isLeftArgument) {
-                        leftArgNode = it
+                    if (op == null) {
+                        left = it
                     } else {
-                        rightArg = it
+                        right = it
                     }
                 }
             }
         }
+        return Triple(left, op!!, right)
+    }
 
-        val baseSource = binaryExpression.toFirSourceElement()
+    private fun createBinaryExpression(
+        binaryExpression: LighterASTNode, leftArgAsFir: FirExpression, rightArgAsFir: FirExpression,
+    ): FirStatement {
+        val (leftArgNode, opNode, rightArgNode) = parseBinaryExpression(binaryExpression)
+        val operationReferenceSource = opNode.toFirSourceElement()
+        val operationTokenName = opNode.asText
         val operationToken = operationTokenName.getOperationSymbol()
-        if (operationToken == IDENTIFIER) {
-            context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
-        } else {
-            context.calleeNamesForLambda += null
-        }
-
-        val rightArgAsFir =
-            if (rightArg != null)
-                getAsFirExpression<FirExpression>(rightArg, "No right operand")
-            else
-                buildErrorExpression(null, ConeSyntaxDiagnostic("No right operand"))
-
-        val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
-
-        // No need for the callee name since arguments are already generated
-        context.calleeNamesForLambda.removeLast()
+        val baseSource = binaryExpression.toFirSourceElement()
 
         when (operationToken) {
             ELVIS ->
@@ -344,7 +476,7 @@ class LightTreeRawFirExpressionBuilder(
                     rightArgAsFir,
                     firOperation,
                     leftArgAsFir.annotations,
-                    rightArg,
+                    rightArgNode,
                     leftArgNode?.tokenType in UNWRAPPABLE_TOKEN_TYPES,
                 ) {
                     getAsFirExpression<FirExpression>(

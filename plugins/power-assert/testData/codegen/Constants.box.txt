@@ -17,11 +17,10 @@ assert(y == 2)
 ---
 ---
 assert(("Hello" + ", " + "World").length == 0)
-                |      |          |      |
-                |      |          |      false
-                |      |          12
-                |      Hello, World
-                Hello,
+        |                         |      |
+        |                         |      false
+        |                         12
+        Hello, World
 ---
 ---
 assert("$GREETING, World".length == 0)
