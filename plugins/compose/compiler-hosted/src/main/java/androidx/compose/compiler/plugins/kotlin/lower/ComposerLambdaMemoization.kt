@@ -331,7 +331,7 @@ class ComposerLambdaMemoization(
                         startOffset = this.startOffset,
                         endOffset = this.endOffset,
                         classSymbol = it.symbol,
-                        type = it.defaultType
+                        type = context.irBuiltIns.unitType,
                     )
                 }
             }

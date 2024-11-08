@@ -62,7 +62,7 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public <> () returnType:home.ComposableSingletons$MainKt [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$MainKt modality:FINAL visibility:internal superTypes:[]' type=home.ComposableSingletons$MainKt
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$MainKt modality:FINAL visibility:internal superTypes:[]' type=kotlin.Unit
     FUN name:Home visibility:public modality:FINAL <> ($composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int) returnType:kotlin.Unit
       annotations:
         Composable
