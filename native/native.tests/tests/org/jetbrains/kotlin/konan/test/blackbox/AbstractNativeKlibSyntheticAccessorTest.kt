@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -34,7 +34,7 @@ import java.io.File
 //   to the first compilation stage.
 // Then, check for `IGNORE_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
 //         useAfterAnalysisCheckers(
-//            ::BlackBoxCodegenSuppressor.bind(CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+//            ::BlackBoxCodegenSuppressor.bind(KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
 //        )
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
 abstract class AbstractNativeKlibSyntheticAccessorTest(
@@ -57,7 +57,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
-        val isMuted = testRunSettings.isIgnoredWith(absoluteTestFile, CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+        val isMuted = testRunSettings.isIgnoredWith(absoluteTestFile, IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
 
         val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
         testRunOrFailure.exceptionOrNull()?.let { exception ->
@@ -69,7 +69,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
                 else -> fail { exception.reason }
             }
         } ?: require (!isMuted) {
-            "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${CodegenTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
+            "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
         }
 
         val testRun = testRunOrFailure.getOrThrow()
