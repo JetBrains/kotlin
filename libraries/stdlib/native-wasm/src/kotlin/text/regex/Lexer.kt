@@ -738,51 +738,51 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     companion object {
         // Special characters.
-        val CHAR_DOLLAR               = 0xe0000000.toInt() or '$'.toInt()
-        val CHAR_RIGHT_PARENTHESIS    = 0xe0000000.toInt() or ')'.toInt()
-        val CHAR_LEFT_SQUARE_BRACKET  = 0xe0000000.toInt() or '['.toInt()
-        val CHAR_RIGHT_SQUARE_BRACKET = 0xe0000000.toInt() or ']'.toInt()
-        val CHAR_CARET                = 0xe0000000.toInt() or '^'.toInt()
-        val CHAR_VERTICAL_BAR         = 0xe0000000.toInt() or '|'.toInt()
-        val CHAR_AMPERSAND            = 0xe0000000.toInt() or '&'.toInt()
-        val CHAR_HYPHEN               = 0xe0000000.toInt() or '-'.toInt()
-        val CHAR_DOT                  = 0xe0000000.toInt() or '.'.toInt()
-        val CHAR_LEFT_PARENTHESIS     = 0x80000000.toInt() or '('.toInt()
-        val CHAR_NAMED_GROUP          = 0x90000000.toInt() or '('.toInt()
-        val CHAR_NONCAP_GROUP         = 0xc0000000.toInt() or '('.toInt()
-        val CHAR_POS_LOOKAHEAD        = 0xe0000000.toInt() or '('.toInt()
-        val CHAR_NEG_LOOKAHEAD        = 0xf0000000.toInt() or '('.toInt()
-        val CHAR_POS_LOOKBEHIND       = 0xf8000000.toInt() or '('.toInt()
-        val CHAR_NEG_LOOKBEHIND       = 0xfc000000.toInt() or '('.toInt()
-        val CHAR_ATOMIC_GROUP         = 0xfe000000.toInt() or '('.toInt()
-        val CHAR_FLAGS                = 0xff000000.toInt() or '('.toInt()
-        val CHAR_START_OF_INPUT       = 0x80000000.toInt() or 'A'.toInt()
-        val CHAR_WORD_BOUND           = 0x80000000.toInt() or 'b'.toInt()
-        val CHAR_NONWORD_BOUND        = 0x80000000.toInt() or 'B'.toInt()
-        val CHAR_PREVIOUS_MATCH       = 0x80000000.toInt() or 'G'.toInt()
-        val CHAR_NAMED_GROUP_REF      = 0x80000000.toInt() or 'k'.toInt()
-        val CHAR_END_OF_INPUT         = 0x80000000.toInt() or 'z'.toInt()
-        val CHAR_END_OF_LINE          = 0x80000000.toInt() or 'Z'.toInt()
-        val CHAR_LINEBREAK            = 0x80000000.toInt() or 'R'.toInt()
+        const val CHAR_DOLLAR               = 0xe0000000.toInt() or '$'.toInt()
+        const val CHAR_RIGHT_PARENTHESIS    = 0xe0000000.toInt() or ')'.toInt()
+        const val CHAR_LEFT_SQUARE_BRACKET  = 0xe0000000.toInt() or '['.toInt()
+        const val CHAR_RIGHT_SQUARE_BRACKET = 0xe0000000.toInt() or ']'.toInt()
+        const val CHAR_CARET                = 0xe0000000.toInt() or '^'.toInt()
+        const val CHAR_VERTICAL_BAR         = 0xe0000000.toInt() or '|'.toInt()
+        const val CHAR_AMPERSAND            = 0xe0000000.toInt() or '&'.toInt()
+        const val CHAR_HYPHEN               = 0xe0000000.toInt() or '-'.toInt()
+        const val CHAR_DOT                  = 0xe0000000.toInt() or '.'.toInt()
+        const val CHAR_LEFT_PARENTHESIS     = 0x80000000.toInt() or '('.toInt()
+        const val CHAR_NAMED_GROUP          = 0x90000000.toInt() or '('.toInt()
+        const val CHAR_NONCAP_GROUP         = 0xc0000000.toInt() or '('.toInt()
+        const val CHAR_POS_LOOKAHEAD        = 0xe0000000.toInt() or '('.toInt()
+        const val CHAR_NEG_LOOKAHEAD        = 0xf0000000.toInt() or '('.toInt()
+        const val CHAR_POS_LOOKBEHIND       = 0xf8000000.toInt() or '('.toInt()
+        const val CHAR_NEG_LOOKBEHIND       = 0xfc000000.toInt() or '('.toInt()
+        const val CHAR_ATOMIC_GROUP         = 0xfe000000.toInt() or '('.toInt()
+        const val CHAR_FLAGS                = 0xff000000.toInt() or '('.toInt()
+        const val CHAR_START_OF_INPUT       = 0x80000000.toInt() or 'A'.toInt()
+        const val CHAR_WORD_BOUND           = 0x80000000.toInt() or 'b'.toInt()
+        const val CHAR_NONWORD_BOUND        = 0x80000000.toInt() or 'B'.toInt()
+        const val CHAR_PREVIOUS_MATCH       = 0x80000000.toInt() or 'G'.toInt()
+        const val CHAR_NAMED_GROUP_REF      = 0x80000000.toInt() or 'k'.toInt()
+        const val CHAR_END_OF_INPUT         = 0x80000000.toInt() or 'z'.toInt()
+        const val CHAR_END_OF_LINE          = 0x80000000.toInt() or 'Z'.toInt()
+        const val CHAR_LINEBREAK            = 0x80000000.toInt() or 'R'.toInt()
 
         // Quantifier modes.
-        val QMOD_GREEDY     = 0xe0000000.toInt()
-        val QMOD_RELUCTANT  = 0xc0000000.toInt()
-        val QMOD_POSSESSIVE = 0x80000000.toInt()
+        const val QMOD_GREEDY     = 0xe0000000.toInt()
+        const val QMOD_RELUCTANT  = 0xc0000000.toInt()
+        const val QMOD_POSSESSIVE = 0x80000000.toInt()
 
         // Quantifiers.
-        val QUANT_STAR   = QMOD_GREEDY or '*'.toInt()
-        val QUANT_STAR_P = QMOD_POSSESSIVE or '*'.toInt()
-        val QUANT_STAR_R = QMOD_RELUCTANT or '*'.toInt()
-        val QUANT_PLUS   = QMOD_GREEDY or '+'.toInt()
-        val QUANT_PLUS_P = QMOD_POSSESSIVE or '+'.toInt()
-        val QUANT_PLUS_R = QMOD_RELUCTANT or '+'.toInt()
-        val QUANT_ALT    = QMOD_GREEDY or '?'.toInt()
-        val QUANT_ALT_P  = QMOD_POSSESSIVE or '?'.toInt()
-        val QUANT_ALT_R  = QMOD_RELUCTANT or '?'.toInt()
-        val QUANT_COMP   = QMOD_GREEDY or '{'.toInt()
-        val QUANT_COMP_P = QMOD_POSSESSIVE or '{'.toInt()
-        val QUANT_COMP_R = QMOD_RELUCTANT or '{'.toInt()
+        const val QUANT_STAR   = QMOD_GREEDY or '*'.toInt()
+        const val QUANT_STAR_P = QMOD_POSSESSIVE or '*'.toInt()
+        const val QUANT_STAR_R = QMOD_RELUCTANT or '*'.toInt()
+        const val QUANT_PLUS   = QMOD_GREEDY or '+'.toInt()
+        const val QUANT_PLUS_P = QMOD_POSSESSIVE or '+'.toInt()
+        const val QUANT_PLUS_R = QMOD_RELUCTANT or '+'.toInt()
+        const val QUANT_ALT    = QMOD_GREEDY or '?'.toInt()
+        const val QUANT_ALT_P  = QMOD_POSSESSIVE or '?'.toInt()
+        const val QUANT_ALT_R  = QMOD_RELUCTANT or '?'.toInt()
+        const val QUANT_COMP   = QMOD_GREEDY or '{'.toInt()
+        const val QUANT_COMP_P = QMOD_POSSESSIVE or '{'.toInt()
+        const val QUANT_COMP_R = QMOD_RELUCTANT or '{'.toInt()
 
         /** Returns true if [ch] is a plain token. */
         fun isLetter(ch: Int): Boolean {
@@ -804,9 +804,9 @@ internal class Lexer(val patternString: String, flags: Int) {
 
         // Decomposition ===============================================================================================
         // Maximum length of decomposition.
-        val MAX_DECOMPOSITION_LENGTH = 4
+        const val MAX_DECOMPOSITION_LENGTH = 4
         // Maximum length of Hangul decomposition. Note that MAX_HANGUL_DECOMPOSITION_LENGTH <= MAX_DECOMPOSITION_LENGTH.
-        val MAX_HANGUL_DECOMPOSITION_LENGTH = 3
+        const val MAX_HANGUL_DECOMPOSITION_LENGTH = 3
 
         /*
          * Following constants are needed for Hangul canonical decomposition.

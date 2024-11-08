@@ -809,50 +809,50 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
          * This constant specifies that a pattern matches Unix line endings ('\n')
          * only against the '.', '^', and '$' meta characters.
          */
-        val UNIX_LINES = 1 shl 0
+        const val UNIX_LINES = 1 shl 0
 
         /**
          * This constant specifies that a `Pattern` is matched
          * case-insensitively. That is, the patterns "a+" and "A+" would both match
          * the string "aAaAaA".
          */
-        val CASE_INSENSITIVE = 1 shl 1
+        const val CASE_INSENSITIVE = 1 shl 1
 
         /**
          * This constant specifies that a `Pattern` may contain whitespace or
          * comments. Otherwise comments and whitespace are taken as literal
          * characters.
          */
-        val COMMENTS = 1 shl 2
+        const val COMMENTS = 1 shl 2
 
         /**
          * This constant specifies that the meta characters '^' and '$' match only
          * the beginning and end end of an input line, respectively. Normally, they
          * match the beginning and the end of the complete input.
          */
-        val MULTILINE = 1 shl 3
+        const val MULTILINE = 1 shl 3
 
         /**
          * This constant specifies that the whole `Pattern` is to be taken
          * literally, that is, all meta characters lose their meanings.
          */
-        val LITERAL = 1 shl 4
+        const val LITERAL = 1 shl 4
 
         /**
          * This constant specifies that the '.' meta character matches arbitrary
          * characters, including line endings, which is normally not the case.
          */
-        val DOTALL = 1 shl 5
+        const val DOTALL = 1 shl 5
 
         /**
          * This constant specifies that a character in a `Pattern` and a
          * character in the input string only match if they are canonically
          * equivalent.
          */
-        val CANON_EQ = 1 shl 6
+        const val CANON_EQ = 1 shl 6
 
         /** A bit mask that includes all defined match flags */
-        internal val flagsBitMask = Pattern.UNIX_LINES or
+        internal const val flagsBitMask = Pattern.UNIX_LINES or
                 Pattern.CASE_INSENSITIVE or
                 Pattern.COMMENTS or
                 Pattern.MULTILINE or
