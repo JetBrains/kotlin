@@ -418,6 +418,8 @@ func testEnums() throws {
     case .a: break;
     default: try fail("switch over kotlin enum class should work")
     }
+
+    try assertEquals(actual: Enum.allCases, expected: [Enum.a, Enum.b])
 }
 
 class ReferenceTypesTests : TestProvider {

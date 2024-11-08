@@ -9,17 +9,18 @@ import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineVariable
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -27,7 +28,73 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
-internal class SirClassFromKtSymbol(
+internal fun createSirClassFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+): SirAbstractClassFromKtSymbol = when (ktSymbol.classKind) {
+    KaClassKind.ENUM_CLASS ->
+        SirEnumClassFromKtSymbol(
+            ktSymbol,
+            ktModule,
+            sirSession
+        )
+    else -> SirClassFromKtSymbol(
+        ktSymbol,
+        ktModule,
+        sirSession
+    )
+}
+
+private class SirClassFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+) : SirAbstractClassFromKtSymbol(
+    ktSymbol,
+    ktModule,
+    sirSession
+) {
+    override val superClass: SirType? by lazyWithSessions {
+        ktSymbol.superTypes
+            .mapNotNull { it.symbol as? KaClassSymbol }
+            .firstOrNull { it.classKind == KaClassKind.CLASS }
+            ?.let {
+                if (
+                    it.classId == DefaultTypeClassIds.ANY
+                ) {
+                    SirNominalType(KotlinRuntimeModule.kotlinBase).also {
+                        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+                    }
+                } else {
+                    (it.sirDeclaration() as? SirNamedDeclaration)
+                        ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
+                        ?.let { SirNominalType(it) }
+                }
+            }
+    }
+    override val protocols: List<SirProtocol> = emptyList()
+}
+
+internal class SirEnumClassFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+) : SirAbstractClassFromKtSymbol(
+    ktSymbol,
+    ktModule,
+    sirSession
+) {
+    override val superClass: SirType? by lazyWithSessions {
+        // TODO: this super class as default will become obsolete with the KT-66855
+        SirNominalType(KotlinRuntimeModule.kotlinBase).also {
+            ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+        }
+    }
+    override val protocols: List<SirProtocol> = listOf(SirSwiftModule.caseIterable)
+}
+
+internal abstract class SirAbstractClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val ktModule: KaModule,
     override val sirSession: SirSession,
@@ -64,32 +131,12 @@ internal class SirClassFromKtSymbol(
         set(_) = Unit
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations() + syntheticDeclarations()
-    }
-
-    override val superClass: SirType? by lazyWithSessions {
-        ktSymbol.superTypes
-            .mapNotNull { it.symbol as? KaClassSymbol }
-            .firstOrNull { it.classKind == KaClassKind.CLASS }
-            ?.let {
-                if (
-                    it.classId == DefaultTypeClassIds.ANY
-                    || it.isEnumSuperclass /* TODO: this check will become obsolete with the KT-66855 */
-                ) {
-                    SirNominalType(KotlinRuntimeModule.kotlinBase).also {
-                        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
-                    }
-                } else {
-                    (it.sirDeclaration() as? SirNamedDeclaration)
-                        ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
-                        ?.let { SirNominalType(it) }
-                }
-            }
+        childDeclarations + syntheticDeclarations()
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
-    private fun childDeclarations(): List<SirDeclaration> = withSessions {
+    protected val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations(useSiteSession)
             .toList()
@@ -115,7 +162,7 @@ internal class SirClassFromKtSymbol(
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PUBLIC
-                type = SirNominalType(this@SirClassFromKtSymbol)
+                type = SirNominalType(this@SirAbstractClassFromKtSymbol)
                 name = "shared"
                 isInstance = false
                 modality = SirModality.FINAL
@@ -125,11 +172,10 @@ internal class SirClassFromKtSymbol(
             }
         ).onEach { it.parent = this }
 
-        else -> listOf(kotlinBaseInitDeclaration())
+        else -> listOf(
+            kotlinBaseInitDeclaration()
+        )
     }
-
-    private val KaClassSymbol.isEnumSuperclass: Boolean
-        get() = classId == StandardClassIds.Enum
 }
 
 internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {

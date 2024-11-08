@@ -12,58 +12,49 @@ package org.jetbrains.kotlin.sir.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.impl.SirClassImpl
+import org.jetbrains.kotlin.sir.impl.SirProtocolImpl
 
 @SirBuilderDsl
-class SirClassBuilder {
+class SirProtocolBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
-    var superClass: SirType? = null
-    val protocols: MutableList<SirProtocol> = mutableListOf()
-    var modality: SirModality = SirModality.UNSPECIFIED
 
-    fun build(): SirClass {
-        return SirClassImpl(
+    fun build(): SirProtocol {
+        return SirProtocolImpl(
             origin,
             visibility,
             documentation,
             attributes,
             name,
             declarations,
-            superClass,
-            protocols,
-            modality,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildClass(init: SirClassBuilder.() -> Unit): SirClass {
+inline fun buildProtocol(init: SirProtocolBuilder.() -> Unit): SirProtocol {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return SirClassBuilder().apply(init).build()
+    return SirProtocolBuilder().apply(init).build()
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit): SirClass {
+inline fun buildProtocolCopy(original: SirProtocol, init: SirProtocolBuilder.() -> Unit): SirProtocol {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    val copyBuilder = SirClassBuilder()
+    val copyBuilder = SirProtocolBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.superClass = original.superClass
-    copyBuilder.protocols.addAll(original.protocols)
-    copyBuilder.modality = original.modality
     return copyBuilder.apply(init).build()
 }

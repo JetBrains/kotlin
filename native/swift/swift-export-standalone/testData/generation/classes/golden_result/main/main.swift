@@ -153,7 +153,7 @@ public final class DATA_CLASS_WITH_REF : KotlinRuntime.KotlinBase {
         return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
-public final class ENUM : KotlinRuntime.KotlinBase {
+public final class ENUM : KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public final class INSIDE_ENUM : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = ENUM_INSIDE_ENUM_init_allocate()
@@ -179,6 +179,11 @@ public final class ENUM : KotlinRuntime.KotlinBase {
     public static var C: main.ENUM {
         get {
             return main.ENUM(__externalRCRef: ENUM_C_get())
+        }
+    }
+    public static var allCases: [main.ENUM] {
+        get {
+            return ENUM_entries_get() as! Swift.Array<main.ENUM>
         }
     }
     package override init(

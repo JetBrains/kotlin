@@ -195,6 +195,12 @@ public fun ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(__kt
     kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM())
 }
 
+@ExportedBridge("ENUM_entries_get")
+public fun ENUM_entries_get(): kotlin.native.internal.NativePtr {
+    val _result = ENUM.entries
+    return _result.objcPtr()
+}
+
 @ExportedBridge("ENUM_valueOf__TypesOfArguments__Swift_String__")
 public fun ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = interpretObjCPointer<kotlin.String>(value)

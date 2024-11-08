@@ -23,6 +23,12 @@ public fun EnumWithFactory_ONE_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("EnumWithFactory_entries_get")
+public fun EnumWithFactory_entries_get(): kotlin.native.internal.NativePtr {
+    val _result = EnumWithFactory.entries
+    return _result.objcPtr()
+}
+
 @ExportedBridge("EnumWithFactory_valueOf__TypesOfArguments__Swift_String__")
 public fun EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = interpretObjCPointer<kotlin.String>(value)

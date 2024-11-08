@@ -16,6 +16,12 @@ public fun Enum_b_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("Enum_entries_get")
+public fun Enum_entries_get(): kotlin.native.internal.NativePtr {
+    val _result = Enum.entries
+    return _result.objcPtr()
+}
+
 @ExportedBridge("Enum_i_get")
 public fun Enum_i_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Enum

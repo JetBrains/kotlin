@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.sir.builder.buildSetterCopy
 import org.jetbrains.kotlin.sir.util.swiftFqName
 
 public class SirTrampolineVariable(
-    public val source: SirVariable
+    public val source: SirVariable,
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent
     override val origin: SirOrigin get() = SirOrigin.Trampoline(source)

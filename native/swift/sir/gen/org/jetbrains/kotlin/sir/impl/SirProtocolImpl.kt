@@ -12,16 +12,13 @@ package org.jetbrains.kotlin.sir.impl
 
 import org.jetbrains.kotlin.sir.*
 
-internal class SirClassImpl(
+internal class SirProtocolImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
     override val documentation: String?,
     override val attributes: MutableList<SirAttribute>,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
-    override val superClass: SirType?,
-    override val protocols: MutableList<SirProtocol>,
-    override val modality: SirModality,
-) : SirClass() {
+) : SirProtocol() {
     override lateinit var parent: SirDeclarationParent
 }

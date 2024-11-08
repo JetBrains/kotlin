@@ -5,21 +5,7 @@
 
 package org.jetbrains.kotlin.sir.mangler
 
-import org.jetbrains.kotlin.sir.SirClass
-import org.jetbrains.kotlin.sir.SirDeclarationParent
-import org.jetbrains.kotlin.sir.SirEnum
-import org.jetbrains.kotlin.sir.SirErrorType
-import org.jetbrains.kotlin.sir.SirExistentialType
-import org.jetbrains.kotlin.sir.SirExtension
-import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.SirNamed
-import org.jetbrains.kotlin.sir.SirNamedDeclaration
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirStruct
-import org.jetbrains.kotlin.sir.SirType
-import org.jetbrains.kotlin.sir.SirTypealias
-import org.jetbrains.kotlin.sir.SirUnsupportedType
-import org.jetbrains.kotlin.sir.SirVariable
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 // See https://github.com/swiftlang/swift/blob/main/docs/ABI/Mangling.rst for details
@@ -72,6 +58,7 @@ public val SirDeclarationParent.mangledNameOrNull: String?
         is SirEnum -> mangledNameOrNull
         is SirExtension -> mangledNameOrNull
         is SirVariable -> TODO()
+        is SirProtocol -> TODO("KT-66814")
     }
 
 /**
@@ -83,6 +70,7 @@ public val SirNamedDeclaration.mangledNameOrNull: String?
         is SirEnum -> mangledNameOrNull
         is SirStruct -> mangledNameOrNull
         is SirTypealias -> TODO()
+        is SirProtocol -> TODO("KT-66814")
     }
 
 /**

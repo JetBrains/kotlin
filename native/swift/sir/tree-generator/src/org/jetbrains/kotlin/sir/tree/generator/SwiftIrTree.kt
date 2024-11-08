@@ -96,12 +96,19 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
     }
 
+    val protocol: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+        parent(declarationContainer)
+    }
+
     val `class`: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
 
         +field("superClass", typeType, nullable = true)
+        +listField("protocols", protocol)
         +field("modality", modalityKind)
     }
 

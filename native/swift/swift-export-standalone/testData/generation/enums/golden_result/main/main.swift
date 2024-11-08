@@ -1,10 +1,15 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public final class Enum : KotlinRuntime.KotlinBase {
+public final class Enum : KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var a: main.Enum {
         get {
             return main.Enum(__externalRCRef: Enum_a_get())
+        }
+    }
+    public static var allCases: [main.Enum] {
+        get {
+            return Enum_entries_get() as! Swift.Array<main.Enum>
         }
     }
     public static var b: main.Enum {

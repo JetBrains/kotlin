@@ -82,10 +82,6 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaVariableSymbol.isConsumableBySirBuilder(): Boolean {
-        if (this is KaPropertySymbol && isStatic) {
-            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "static properties are not supported yet.")
-            return false
-        }
         if (isExtension) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "extension properties are not supported yet.")
             return false

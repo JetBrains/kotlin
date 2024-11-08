@@ -6,10 +6,7 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.util.Comparators
-import org.jetbrains.kotlin.sir.util.swiftIdentifier
-import org.jetbrains.kotlin.sir.util.swiftName
-import org.jetbrains.kotlin.sir.util.swiftStringLiteral
+import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -106,7 +103,7 @@ public class SirAsSwiftSourcesPrinter(
         printName()
         print(" ")
         if (this is SirClass) {
-            printSuperClass()
+            printSuperClassAndInterface()
         }
         println("{")
         withIndent {
@@ -235,13 +232,19 @@ public class SirAsSwiftSourcesPrinter(
             is SirEnum -> "enum"
             is SirExtension -> "extension"
             is SirStruct -> "struct"
+            is SirProtocol -> "protocol"
             is SirModule -> error("there is no keyword for module. Do not print module as declaration container.")
         }
     )
 
-    private fun SirClass.printSuperClass() = print(
-        superClass?.let { ": ${it.swiftRender} " } ?: ""
-    )
+    private fun SirClass.printSuperClassAndInterface() {
+        val targetString = listOfNotNull(
+            superClass?.swiftRender,
+            protocols.joinToString(" & ") { it.swiftFqName }.takeIf { it.isNotEmpty() }
+        )
+            .joinToString(", ")
+        if (targetString.isNotEmpty()) print(": $targetString ")
+    }
 
     private fun SirElement.printName() = print(
         when (this@printName) {

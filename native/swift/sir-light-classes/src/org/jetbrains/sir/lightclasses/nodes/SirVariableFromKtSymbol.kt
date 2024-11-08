@@ -5,13 +5,16 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
@@ -87,7 +90,33 @@ internal class SirVariableFromKtSymbol(
     sirSession: SirSession,
 ) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
     override val isInstance: Boolean
-        get() = !ktSymbol.isTopLevel
+        get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
+}
+
+@OptIn(KaExperimentalApi::class)
+internal class SirEnumEntriesStaticPropertyFromKtSymbol(
+    ktSymbol: KaPropertySymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+    override val isInstance: Boolean
+        get() = false
+
+    override val name: String
+        get() = "allCases"
+
+    override val type: SirType by lazyWithSessions {
+        SirArrayType(
+            (ktSymbol.returnType as KaClassType)
+                .typeArguments.first().type!!
+                .translateType(
+                    useSiteSession,
+                    reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
+                    reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
+                    processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
+                )
+        )
+    }
 }
 
 internal class SirEnumCaseFromKtSymbol(

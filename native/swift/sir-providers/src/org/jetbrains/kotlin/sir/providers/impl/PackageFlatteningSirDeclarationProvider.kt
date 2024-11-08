@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
-import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTrampolineDeclarationsProvider
 import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineFunction

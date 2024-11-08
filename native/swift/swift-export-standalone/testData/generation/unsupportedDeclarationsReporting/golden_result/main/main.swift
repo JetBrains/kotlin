@@ -26,7 +26,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
     }
 }
 public extension main.a.b.c {
-    public final class E : KotlinRuntime.KotlinBase {
+    public final class E : KotlinRuntime.KotlinBase, Swift.CaseIterable {
         public static var A: main.a.b.c.E {
             get {
                 return main.a.b.c.E(__externalRCRef: a_b_c_E_A_get())
@@ -40,6 +40,11 @@ public extension main.a.b.c {
         public static var C: main.a.b.c.E {
             get {
                 return main.a.b.c.E(__externalRCRef: a_b_c_E_C_get())
+            }
+        }
+        public static var allCases: [main.a.b.c.E] {
+            get {
+                return a_b_c_E_entries_get() as! Swift.Array<main.a.b.c.E>
             }
         }
         package override init(
@@ -67,4 +72,3 @@ public enum a {
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
-// Can't export a.b.c.E.entries: static properties are not supported yet.

@@ -531,10 +531,15 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public final class ENUM : KotlinRuntime.KotlinBase {
+    public final class ENUM : KotlinRuntime.KotlinBase, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.ignored.ENUM {
             get {
                 return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_ENUM_A_get())
+            }
+        }
+        public static var allCases: [ExportedKotlinPackages.ignored.ENUM] {
+            get {
+                return ignored_ENUM_entries_get() as! Swift.Array<ExportedKotlinPackages.ignored.ENUM>
             }
         }
         package override init(

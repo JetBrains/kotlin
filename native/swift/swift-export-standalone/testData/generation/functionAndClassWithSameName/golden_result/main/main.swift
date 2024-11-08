@@ -23,10 +23,15 @@ public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase 
         __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
     }
 }
-public final class EnumWithFactory : KotlinRuntime.KotlinBase {
+public final class EnumWithFactory : KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var ONE: main.EnumWithFactory {
         get {
             return main.EnumWithFactory(__externalRCRef: EnumWithFactory_ONE_get())
+        }
+    }
+    public static var allCases: [main.EnumWithFactory] {
+        get {
+            return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
         }
     }
     package override init(

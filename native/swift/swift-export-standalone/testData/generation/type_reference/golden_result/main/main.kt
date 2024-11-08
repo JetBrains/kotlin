@@ -525,6 +525,12 @@ public fun ignored_ENUM_A_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("ignored_ENUM_entries_get")
+public fun ignored_ENUM_entries_get(): kotlin.native.internal.NativePtr {
+    val _result = ignored.ENUM.entries
+    return _result.objcPtr()
+}
+
 @ExportedBridge("ignored_ENUM_valueOf__TypesOfArguments__Swift_String__")
 public fun ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = interpretObjCPointer<kotlin.String>(value)
