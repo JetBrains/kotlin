@@ -118,6 +118,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
 
     testApi(project(":compiler:tests-mutes:mutes-junit5"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
 
     testCompileOnly(libs.intellij.asm)
 }
