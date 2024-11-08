@@ -324,10 +324,13 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
         private fun processScriptCapturing(receiverExpression: IrExpression?, declaration: IrDeclaration, data: ClosureBuilder?) {
             if (receiverExpression == null) {
                 val parent = declaration.parent
-                if (parent is IrScript) {
-                    data?.seeVariable(parent.thisReceiver!!.symbol)
-                } else if (parent is IrClass && parent.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
-                    data?.seeVariable(parent.thisReceiver!!.symbol)
+                when (parent) {
+                    is IrScript -> {
+                        data?.seeVariable(parent.thisReceiver!!.symbol)
+                    }
+                    is IrClass if (parent.origin == IrDeclarationOrigin.SCRIPT_CLASS || parent.origin == IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET) -> {
+                        data?.seeVariable(parent.thisReceiver!!.symbol)
+                    }
                 }
             }
         }
