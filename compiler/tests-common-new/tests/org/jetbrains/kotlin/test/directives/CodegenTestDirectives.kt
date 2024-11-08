@@ -270,11 +270,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
     )
-
-    val IGNORE_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
-        description = "Ignore failures of checking correctness of synthetic accessors",
-        applicability = Global
-    )
 }
 
 fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule): Boolean {
