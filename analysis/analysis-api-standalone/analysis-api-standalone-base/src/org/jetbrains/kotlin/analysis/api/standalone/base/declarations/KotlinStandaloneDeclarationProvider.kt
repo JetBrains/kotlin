@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
+import org.jetbrains.kotlin.psi.psiUtil.visitBinaryExpressionUsingStack
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.util.concurrent.ConcurrentHashMap
 
 class KotlinStandaloneDeclarationProvider internal constructor(
@@ -229,6 +231,9 @@ class KotlinStandaloneDeclarationProviderFactory(
     ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
 
     private inner class KtDeclarationRecorder : KtVisitorVoid() {
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            visitBinaryExpressionUsingStack(expression)
+        }
 
         override fun visitElement(element: PsiElement) {
             element.acceptChildren(this)
