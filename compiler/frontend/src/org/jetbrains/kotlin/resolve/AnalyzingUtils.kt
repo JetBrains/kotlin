@@ -19,9 +19,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.visitBinaryExpressionUsingStack
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
@@ -85,5 +87,9 @@ object AnalyzingUtils {
 
     abstract class PsiErrorElementVisitor : KtTreeVisitorVoid() {
         abstract override fun visitErrorElement(element: PsiErrorElement)
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            visitBinaryExpressionUsingStack(expression)
+        }
     }
 }
