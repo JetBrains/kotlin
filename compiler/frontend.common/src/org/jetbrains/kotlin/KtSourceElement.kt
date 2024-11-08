@@ -253,6 +253,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
+     * For synthetic overrides implemented by delegation
+     */
+    object MembersImplementedByDelegation : KtFakeSourceElementKind()
+
+    /**
      * `(vararg x: Int)` --> `(x: Array<out Int>)` where array type ref has a fake source kind
      */
     object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
