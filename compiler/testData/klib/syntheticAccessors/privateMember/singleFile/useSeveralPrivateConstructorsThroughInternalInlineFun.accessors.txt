@@ -23,4 +23,4 @@ public class A
 public fun box(): String
     /* ACCESSOR use-site */ access$<init>(s = s)
     /* ACCESSOR use-site */ access$<init>(a = ' ')
-    /* ACCESSOR use-site */ access$<init>(a = s, b = s)
+    /* ACCESSOR use-site */ access$<init>(a = s, b = "")
