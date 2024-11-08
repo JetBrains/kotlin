@@ -173,7 +173,7 @@ internal object ArgumentCheckingProcessor {
             else -> ConeArgumentConstraintPosition(expression)
         }
 
-        val capturedType = prepareCapturedType(argumentType, context)
+        val capturedType = prepareCapturedType(argumentType, context.session)
 
         var argumentTypeForApplicabilityCheck = capturedType.applyIf(useNullableArgumentType) {
             withNullability(nullable = true, session.typeContext)

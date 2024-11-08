@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -75,7 +74,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         if (candidate.givenExtensionReceiverOptions.isEmpty()) return
 
         val preparedReceivers = candidate.givenExtensionReceiverOptions.map {
-            prepareReceivers(it, expectedType, context)
+            prepareReceivers(it, expectedType, context.session)
         }
 
         if (preparedReceivers.size == 1) {
@@ -124,13 +123,13 @@ object CheckExtensionReceiver : ResolutionStage() {
 private fun prepareReceivers(
     argumentExtensionReceiver: ConeResolutionAtom,
     expectedType: ConeKotlinType,
-    context: ResolutionContext,
+    session: FirSession,
 ): ReceiverDescription {
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
         argumentType = argumentExtensionReceiver.expression.resolvedType,
         expectedType = expectedType,
-        session = context.session
-    ).let { prepareCapturedType(it, context) }
+        session = session
+    ).let { prepareCapturedType(it, session) }
         .let {
             when (it) {
                 is ConeIntegerConstantOperatorType -> it.possibleTypes.first()
@@ -211,34 +210,50 @@ object CheckContextArguments : ResolutionStage() {
             return
         }
 
-        val receiverGroups: List<List<FirExpression>> =
-            context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
-                towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
-                    ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
-            }
+        candidate.contextArguments = candidate.mapContextArgumentsOrNull(
+            contextExpectedTypes,
+            context.bodyResolveContext.towerDataContext,
+            sink
+        )
+    }
+}
 
-        val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
-        for (expectedType in contextExpectedTypes) {
-            val matchingReceivers = candidate.findClosestMatchingReceivers(expectedType, receiverGroups, context)
-            when (matchingReceivers.size) {
-                0 -> {
-                    sink.reportDiagnostic(NoContextArgument(expectedType))
-                    return
-                }
-                1 -> {
-                    val matchingReceiver = matchingReceivers.single()
-                    resultingContextArguments.add(matchingReceiver.atom)
-                    candidate.system.addSubtypeConstraint(matchingReceiver.type, expectedType, SimpleConstraintSystemConstraintPosition)
-                }
-                else -> {
-                    sink.reportDiagnostic(AmbiguousContextArgument(expectedType))
-                    return
-                }
-            }
+/**
+ * If any diagnostics are reported to [sink], `null` is returned.
+ */
+fun Candidate.mapContextArgumentsOrNull(
+    contextReceiverExpectedTypes: List<ConeKotlinType>,
+    towerDataContext: FirTowerDataContext,
+    sink: CheckerSink,
+): List<ConeResolutionAtom>? {
+    val receiverGroups: List<List<FirExpression>> =
+        towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
+            towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
+                ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
         }
 
-        candidate.contextArguments = resultingContextArguments
+    val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
+
+    for (expectedType in contextReceiverExpectedTypes) {
+        val matchingReceivers = findClosestMatchingReceivers(expectedType, receiverGroups)
+        when (matchingReceivers.size) {
+            0 -> {
+                sink.reportDiagnostic(NoContextArgument(expectedType))
+                return null
+            }
+            1 -> {
+                val matchingReceiver = matchingReceivers.single()
+                resultingContextArguments.add(matchingReceiver.atom)
+                system.addSubtypeConstraint(matchingReceiver.type, expectedType, SimpleConstraintSystemConstraintPosition)
+            }
+            else -> {
+                sink.reportDiagnostic(AmbiguousContextArgument(expectedType))
+                return null
+            }
+        }
     }
+
+    return resultingContextArguments
 }
 
 object TypeVariablesInExplicitReceivers : ResolutionStage() {
@@ -277,12 +292,11 @@ object TypeVariablesInExplicitReceivers : ResolutionStage() {
 private fun Candidate.findClosestMatchingReceivers(
     expectedType: ConeKotlinType,
     receiverGroups: List<List<FirExpression>>,
-    context: ResolutionContext,
 ): List<ReceiverDescription> {
     for (receiverGroup in receiverGroups) {
         val currentResult =
             receiverGroup
-                .map { prepareReceivers(ConeResolutionAtom.createRawAtom(it), expectedType, context) }
+                .map { prepareReceivers(ConeResolutionAtom.createRawAtom(it), expectedType, callInfo.session) }
                 .filter { system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition) }
 
         if (currentResult.isNotEmpty()) return currentResult
