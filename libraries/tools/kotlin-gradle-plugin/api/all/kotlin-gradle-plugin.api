@@ -824,12 +824,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinJvmPluginKt {
 	public static final field KOTLIN_OPTIONS_DSL_NAME Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinLegacyMultiplatformPluginKt {
-	public static final field EXPECTED_BY_CONFIG_NAME Ljava/lang/String;
-	public static final field IMPLEMENT_CONFIG_NAME Ljava/lang/String;
-	public static final field IMPLEMENT_DEPRECATION_WARNING Ljava/lang/String;
-}
-
 public class org/jetbrains/kotlin/gradle/plugin/KotlinMultiplatformPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinMultiplatformPluginWrapper {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -855,26 +849,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinNativeTargetConfigur
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigurator : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator {
 	public fun <init> (Z)V
-}
-
-public class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformImplementationPluginBase : org/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase {
-	public fun <init> (Ljava/lang/String;)V
-	protected fun addCommonSourceSetToPlatformSourceSet (Lorg/gradle/api/Named;Lorg/gradle/api/Project;)V
-	protected fun addCommonSourceSetToPlatformSourceSet (Lorg/gradle/api/tasks/SourceSet;Lorg/gradle/api/Project;)V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-	protected final fun getKotlin (Lorg/gradle/api/tasks/SourceSet;)Lorg/gradle/api/file/SourceDirectorySet;
-	protected final fun getKotlinSourceDirectorySetSafe (Ljava/lang/Object;)Lorg/gradle/api/file/SourceDirectorySet;
-	protected fun namedSourceSetsContainer (Lorg/gradle/api/Project;)Lorg/gradle/api/NamedDomainObjectContainer;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase : org/gradle/api/Plugin {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase$Companion;
-	public fun <init> (Ljava/lang/String;)V
-	protected final fun getPlatformName ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformPluginBase$Companion {
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProjectsHolderKt {

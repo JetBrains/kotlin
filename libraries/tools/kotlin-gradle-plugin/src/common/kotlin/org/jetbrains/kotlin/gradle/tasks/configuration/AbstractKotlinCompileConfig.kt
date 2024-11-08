@@ -118,8 +118,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.multiPlatformEnabled.value(
                 providers.provider {
                     compilationInfo.project.plugins.any {
-                        it is KotlinPlatformPluginBase ||
-                                it is AbstractKotlinMultiplatformPluginWrapper
+                        it is AbstractKotlinMultiplatformPluginWrapper
                     }
                 }
             )
