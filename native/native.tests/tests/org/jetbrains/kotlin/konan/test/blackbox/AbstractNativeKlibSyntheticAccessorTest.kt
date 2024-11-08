@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.KlibSyntheticAccessorTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredWith
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTrans
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
 import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS
@@ -57,7 +57,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
-        val isMuted = testRunSettings.isIgnoredWith(absoluteTestFile, IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+        val isMuted = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.NATIVE, absoluteTestFile, true, "$IGNORE_SYNTHETIC_ACCESSORS_CHECKS:")
 
         val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
         testRunOrFailure.exceptionOrNull()?.let { exception ->
