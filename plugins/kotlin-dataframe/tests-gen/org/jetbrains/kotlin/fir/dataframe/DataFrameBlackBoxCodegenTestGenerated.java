@@ -41,6 +41,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("castTo_function.kt")
+  public void testCastTo_function() {
+    runTest("testData/box/castTo_function.kt");
+  }
+
+  @Test
   @TestMetadata("columnGroupApi.kt")
   public void testColumnGroupApi() {
     runTest("testData/box/columnGroupApi.kt");
