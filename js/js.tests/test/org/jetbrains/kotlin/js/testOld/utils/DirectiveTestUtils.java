@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
-import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.junit.runners.model.MultipleFailureException;
@@ -437,26 +436,6 @@ public class DirectiveTestUtils {
         }
     }
 
-    private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
-            String message = "Inline metadata has not been generated for function " + functionName;
-            assertNotNull(message, InlineMetadata.decompose(property));
-        }
-    };
-
-    private static final DirectiveHandler HAS_NO_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_NO_INLINE_METADATA") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
-            String message = "Inline metadata has been generated for not effectively public function " + functionName;
-            assertTrue(message, property instanceof JsFunction);
-        }
-    };
-
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -534,8 +513,6 @@ public class DirectiveTestUtils {
             COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,
-            HAS_INLINE_METADATA,
-            HAS_NO_INLINE_METADATA,
             HAS_NO_CAPTURED_VARS,
             DECLARES_VARIABLE
     );
