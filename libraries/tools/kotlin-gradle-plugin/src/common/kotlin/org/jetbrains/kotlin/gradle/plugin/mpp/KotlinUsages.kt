@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.attributes.chooseCandidateByName
 import org.jetbrains.kotlin.gradle.internal.attributes.getCandidateNames
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -61,13 +59,10 @@ object KotlinUsages {
 
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
 
-    internal fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+    private fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when {
             platformType in jvmPlatformTypes -> JAVA_API
-            platformType == common
-                    /** The kotlinExtension check below can be removed when legacy [KotlinPlatformCommonPlugin] is also removed. */
-                    && project.kotlinExtension is KotlinMultiplatformExtension
-                    && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
+            platformType == common && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
             else -> KOTLIN_API
         }
     )
@@ -75,7 +70,7 @@ object KotlinUsages {
     internal fun consumerApiUsage(target: KotlinTarget): Usage =
         consumerApiUsage(target.project, target.platformType)
 
-    internal fun consumerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+    private fun consumerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
             in jvmPlatformTypes -> JAVA_RUNTIME
             else -> KOTLIN_RUNTIME
@@ -84,7 +79,7 @@ object KotlinUsages {
 
     internal fun consumerRuntimeUsage(target: KotlinTarget) = consumerRuntimeUsage(target.project, target.platformType)
 
-    internal fun producerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+    private fun producerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
             in jvmPlatformTypes -> "java-api-jars"
             else -> KOTLIN_API
@@ -93,7 +88,7 @@ object KotlinUsages {
 
     internal fun producerApiUsage(target: KotlinTarget) = producerApiUsage(target.project, target.platformType)
 
-    internal fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+    private fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
             // This attribute is deprecated in Gradle and additionally to Usage attribute
             // it implicitly adds `org.gradle.libraryelements=jar`

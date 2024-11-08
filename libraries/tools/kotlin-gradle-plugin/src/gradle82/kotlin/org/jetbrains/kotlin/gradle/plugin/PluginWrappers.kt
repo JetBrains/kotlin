@@ -92,13 +92,6 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinCommonPluginWrapper>()
-        warnAboutKotlin12xMppDeprecation(project)
-    }
-}
-
 open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     override fun apply(project: Project) {
         project.registerVariantImplementations()
