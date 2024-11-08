@@ -24,6 +24,30 @@ public class ReplWithCustomDefDiagnosticsTestBaseGenerated extends AbstractReplW
   }
 
   @Test
+  @TestMetadata("mixed1.repl.kts")
+  public void testMixed1_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("separate_snippets_use_before_define.repl.kts")
+  public void testSeparate_snippets_use_before_define_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/separate_snippets_use_before_define.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("simple_class.repl.kts")
+  public void testSimple_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/simple_class.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("simple_property.repl.kts")
+  public void testSimple_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/simple_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("single_snippet.repl.kts")
   public void testSingle_snippet_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/single_snippet.repl.kts");
