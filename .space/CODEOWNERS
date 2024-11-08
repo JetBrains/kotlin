@@ -445,7 +445,6 @@
 **.gradle "Kotlin Build Infrastructure"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools"
-/kotlin-native/backend.native/tests/samples/**.gradle "Kotlin Native"
 /kotlin-native/backend.native/tests/samples/**/*.gradle.kts "Kotlin Native"
 .gitignore "Kotlin Build Infrastructure"
 gradlew "Kotlin Build Infrastructure"
