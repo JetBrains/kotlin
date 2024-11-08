@@ -6,15 +6,7 @@
 package org.jetbrains.kotlin.backend.common.checkers.context
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -60,6 +52,12 @@ internal object ValueScopeUpdater : ContextUpdater {
                 // By default, `thisReceiver` is always visited _after_ the script statements (where it may be referenced),
                 // so we add it manually before.
                 addIfNotNull(declaration.thisReceiver?.symbol)
+            }
+        }
+
+        override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?) {
+            context.withScopeOwner(declaration, block) {
+//                addIfNotNull(declaration.thisReceiver?.symbol)
             }
         }
 

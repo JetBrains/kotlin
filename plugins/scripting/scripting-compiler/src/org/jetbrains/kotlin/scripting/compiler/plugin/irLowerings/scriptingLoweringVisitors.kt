@@ -155,7 +155,7 @@ internal abstract class ScriptLikeToClassTransformer(
     val targetClassReceiver: IrValueParameter,
     val typeRemapper: TypeRemapper,
     open val accessCallsGenerator: ScriptLikeAccessCallsGenerator,
-    val capturingClasses: Set<IrClassImpl>,
+    val capturingClasses: Set<IrClass>,
     val needsReceiverProcessing: Boolean,
 ) : IrTransformer<ScriptLikeToClassTransformerContext>() {
 
@@ -163,7 +163,7 @@ internal abstract class ScriptLikeToClassTransformer(
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 
-    val capturingClassesConstructors = mutableMapOf<IrConstructor, IrClassImpl>().apply {
+    val capturingClassesConstructors = mutableMapOf<IrConstructor, IrClass>().apply {
         capturingClasses.forEach { c ->
             c.declarations.forEach { d ->
                 if (d is IrConstructor) {
@@ -535,9 +535,10 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
     context: IrPluginContext,
     parentDeclaration: IrDeclaration,
     externalReceivers: Set<IrType>,
-): Set<IrClassImpl> {
+    alwaysInclude: Set<IrClass> = emptySet()
+): Set<IrClass> {
     val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration)
-    val capturingClasses = mutableSetOf<IrClassImpl>()
+    val capturingClasses = mutableSetOf<IrClass>()
 
     val collector = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
@@ -545,35 +546,39 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
         }
 
         override fun visitClass(declaration: IrClass) {
-            if (declaration is IrClassImpl && !declaration.isInner) {
-                val closure = annotator.getClassClosure(declaration)
-                if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
-                    fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
-                        context.diagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
-                    }
-                    when {
-                        declaration.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
-                        declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
-                        declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
-                        // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
-                        declaration.isCompanion -> reportError(
-                            JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-                        )
-                        declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
+            if (!declaration.isInner) {
+                if (declaration in alwaysInclude) {
+                    capturingClasses.add(declaration)
+                } else {
+                    val closure = annotator.getClassClosure(declaration)
+                    if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
+                        fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
+                            context.diagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
+                        }
+                        when {
+                            declaration.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
+                            declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
+                            declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
+                            // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
+                            declaration.isCompanion -> reportError(
+                                JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+                            )
+                            declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
 
-                        declaration.isClass ->
-                            if (declaration.parent != parentDeclaration) {
-                                if ((declaration.parent as? IrClass)?.isInner == false) {
-                                    context.diagnosticReporter.at(declaration).report(
-                                        JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
-                                        declaration.name.asString(),
-                                        ((declaration.parent as? IrDeclarationWithName)?.name
-                                            ?: SpecialNames.NO_NAME_PROVIDED).asString()
-                                    )
+                            declaration.isClass ->
+                                if (declaration.parent != parentDeclaration) {
+                                    if ((declaration.parent as? IrClass)?.isInner == false) {
+                                        context.diagnosticReporter.at(declaration).report(
+                                            JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
+                                            declaration.name.asString(),
+                                            ((declaration.parent as? IrDeclarationWithName)?.name
+                                                ?: SpecialNames.NO_NAME_PROVIDED).asString()
+                                        )
+                                    }
+                                } else {
+                                    capturingClasses.add(declaration)
                                 }
-                            } else {
-                                capturingClasses.add(declaration)
-                            }
+                        }
                     }
                 }
             }

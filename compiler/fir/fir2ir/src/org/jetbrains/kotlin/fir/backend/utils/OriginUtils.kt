@@ -45,6 +45,7 @@ fun FirClass.irOrigin(c: Fir2IrComponents): IrDeclarationOrigin = when {
     c.firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     else -> when (val origin = origin) {
         is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(origin.key)
+        is FirDeclarationOrigin.FromOtherReplSnippet -> IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
         else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
     }
 }

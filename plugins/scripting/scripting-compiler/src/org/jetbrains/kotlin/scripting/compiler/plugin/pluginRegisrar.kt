@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefin
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
@@ -74,6 +75,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
             IrGenerationExtension.registerExtension(project, ScriptLoweringExtension())
+            IrGenerationExtension.registerExtension(project, ReplLoweringExtension())
 
             if (messageCollector != null) {
                 project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -98,7 +97,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
         }
     }
 
-    private fun collectCapturingClasses(irScript: IrScript, typeRemapper: SimpleTypeRemapper): Set<IrClassImpl> {
+    private fun collectCapturingClasses(irScript: IrScript, typeRemapper: SimpleTypeRemapper): Set<IrClass> {
         val scriptsReceivers = mutableSetOf<IrType>().also {
             it.addIfNotNull(irScript.thisReceiver?.type)
         }
@@ -566,7 +565,7 @@ private class ScriptToClassTransformer(
     targetClassReceiver: IrValueParameter,
     typeRemapper: TypeRemapper,
     accessCallsGenerator: ScriptLikeAccessCallsGenerator,
-    capturingClasses: Set<IrClassImpl>,
+    capturingClasses: Set<IrClass>,
 ) : ScriptLikeToClassTransformer(
     context,
     irScript,
