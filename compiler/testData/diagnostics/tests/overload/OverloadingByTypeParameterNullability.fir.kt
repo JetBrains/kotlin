@@ -18,13 +18,13 @@ fun <A> fooA(arg: A?): A {
     return null!!
 }
 fun <B> fooB(arg: B): B {
-    <!DEBUG_INFO_EXPRESSION_TYPE("B!!")!>fooA(arg)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("B & Any")!>fooA(arg)<!>
     <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("C (of fun <C> fooC) & Any; B (of fun <B> fooB)")!>arg<!>)
     return null!!
 }
 fun <C> fooC(arg: C & Any): C {
-    <!DEBUG_INFO_EXPRESSION_TYPE("C!!")!>fooA(arg)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("C!!")!>fooB(arg)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("C & Any")!>fooA(arg)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("C & Any")!>fooB(arg)<!>
     return null!!
 }
 // fooA can delegate to fooB, fooB can delegate to fooA => fooA & fooB can't be overloads

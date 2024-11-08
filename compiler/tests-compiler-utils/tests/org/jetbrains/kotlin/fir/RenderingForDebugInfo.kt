@@ -5,58 +5,11 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugInfo
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 fun ConeKotlinType.renderForDebugInfo(): String {
-    val nullabilitySuffix = when {
-        this is ConeErrorType -> ""
-        isMarkedNullable -> "?"
-        else -> ""
-    }
-    return when (this) {
-        is ConeTypeVariableType -> "TypeVariable(${this.typeConstructor.name})"
-        is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"
-        is ConeErrorType -> "ERROR CLASS: ${diagnostic.reason}"
-        is ConeCapturedType -> "CapturedType(${constructor.projection.renderForDebugInfo()})"
-        is ConeClassLikeType -> {
-            buildString {
-                append(lookupTag.classId.asSingleFqName().asString())
-                if (typeArguments.isNotEmpty()) {
-                    append(typeArguments.joinToString(prefix = "<", postfix = ">") {
-                        it.renderForDebugInfo()
-                    })
-                }
-            }
-        }
-        is ConeLookupTagBasedType -> {
-            lookupTag.name.asString()
-        }
-        is ConeFlexibleType -> {
-            buildString {
-                append("(")
-                append(lowerBound.renderForDebugInfo())
-                append("..")
-                append(upperBound.renderForDebugInfo())
-                append(")")
-            }
-        }
-        is ConeIntersectionType -> {
-            intersectedTypes.joinToString(
-                separator = " & ",
-            ) { it.renderForDebugInfo() }
-        }
-        is ConeStubType -> "Stub: ${constructor.variable}"
-        is ConeIntegerLiteralConstantType -> "ILT: $value"
-        is ConeIntegerConstantOperatorType -> "IOT"
-    } + nullabilitySuffix
-}
-
-private fun ConeTypeProjection.renderForDebugInfo(): String {
-    return when (this) {
-        ConeStarProjection -> "*"
-        is ConeKotlinTypeProjectionIn -> "in ${type.renderForDebugInfo()}"
-        is ConeKotlinTypeProjectionOut -> "out ${type.renderForDebugInfo()}"
-        is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.renderForDebugInfo()}"
-        is ConeKotlinType -> renderForDebugInfo()
-    }
+    val builder = StringBuilder()
+    ConeTypeRendererForDebugInfo(builder).render(this)
+    return builder.toString()
 }

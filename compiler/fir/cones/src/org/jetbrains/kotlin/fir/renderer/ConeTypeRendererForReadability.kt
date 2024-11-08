@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 open class ConeTypeRendererForReadability(
     private val preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
     private val idRendererCreator: () -> ConeIdRenderer,
-) : ConeTypeRenderer(ConeAttributeRenderer.ForReadability) {
+) : ConeTypeRendererForDebugInfo() {
     constructor(
         builder: StringBuilder,
         preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
@@ -95,28 +95,11 @@ open class ConeTypeRendererForReadability(
         return null
     }
 
-    override fun render(type: ConeIntegerLiteralType) {
-        render(type.getApproximatedType())
-    }
-
-    override fun ConeKotlinType.renderAttributes() {
-        renderNonCompilerAttributes()
-    }
-
     override fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String) {
         preRenderedConstructors?.get(constructor)?.let {
             builder.append(it.replace("^", nullabilityMarker))
             return
         }
         super.renderConstructor(constructor, nullabilityMarker)
-    }
-
-    override fun render(type: ConeIntersectionType) {
-        for ((index, intersected) in type.intersectedTypes.withIndex()) {
-            if (index > 0) {
-                builder.append(" & ")
-            }
-            this.render(intersected)
-        }
     }
 }

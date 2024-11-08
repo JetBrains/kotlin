@@ -35,22 +35,22 @@ fun Any.case_2() {
 // TESTCASE NUMBER: 3
 fun <T> T.case_3() {
     if (this is Inv<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.prop_4
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>this<!>.prop_4.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T & Any")!>prop_4<!>.inv()
     }
 }
 
 // TESTCASE NUMBER: 4
 fun <T> T?.case_4() {
     if (this is ClassWithSixTypeParameters<*, *, *, *, *, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.x
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.y
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.x
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T? & Any")!>y<!>
     }
 }
 
@@ -73,8 +73,8 @@ fun <T> ClassWithSixTypeParameters<out T, *, T, in T?, *, T>.case_5() {
  */
 fun <T> case_6(y: Inv<out T>) {
     if (y.prop_3 is MutableList<*>) {
-        y.prop_3
-        y.prop_3[0]
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>y.prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>y.prop_3<!>[0]
     }
 }
 
@@ -84,10 +84,10 @@ fun <T> case_6(y: Inv<out T>) {
  */
 fun <T> Inv<out T>.case_7() {
     if (this.prop_3 is MutableList<*>) {
-        this.prop_3
-        this.prop_3[0]
-        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T)!!")!>prop_3<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T)!!")!>prop_3<!>[0]
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>this.prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>this.prop_3<!>[0]
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T) & kotlin.collections.MutableList<*> & CapturedType(out T) & Any")!>prop_3<!>[0]
     }
 }
 
@@ -106,8 +106,8 @@ fun <T> T.case_8() {
  */
 fun <T> T.case_9() {
     if (this is String) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T!!")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T!!")!>this<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T & Any")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.String & T & Any")!>this<!>.length
         length
     }
 }

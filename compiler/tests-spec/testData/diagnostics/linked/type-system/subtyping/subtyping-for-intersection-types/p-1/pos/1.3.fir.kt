@@ -35,7 +35,7 @@ fun <T> case2(x: T) {
         checkSubtype<T>(x)
 
         x //NI A2 & B2 & T & T!! OI A2 & B2 & T
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & B2 & A2 & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & B2 & A2 & T & Any")!>x<!>
     }
 }
 
@@ -49,7 +49,7 @@ fun <T> case3a(x: T) {
         checkSubtype<A3>(x)
         checkSubtype<B3>(x)
         checkSubtype<T>(x)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T & Any")!>x<!>
     }
 }
 fun <T: Any> case3b(x: T) {
@@ -69,7 +69,7 @@ fun <T: Any?> case3c(x: T) {
         checkSubtype<B3>(x)
         checkSubtype<T>(x)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T & Any")!>x<!>
     }
 }
 
