@@ -290,10 +290,6 @@ fun Project.configureTests() {
     val projectsUsingTcMutes = listOf(
         ":native",
         ":kotlin-native",
-        ":kotlin-gradle-",
-        ":compiler:build-tools",
-        ":libraries:tools:gradle",
-        ":gradle",
     )
     if (projectsUsingTcMutes.any { project.path.startsWith(it) }) {
         val ignoreTestFailures: Boolean by rootProject.extra
