@@ -112,10 +112,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(KlibConfigurationKeys.NO_DOUBLE_INLINING, arguments.noDoubleInlining)
         arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
         configuration.put(
-            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
-            arguments.narrowedSyntheticAccessorsVisibility
-        )
-        configuration.put(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
             DuplicatedUniqueNameStrategy.parseOrDefault(
                 arguments.duplicatedUniqueNameStrategy,

@@ -100,9 +100,6 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
 
                     // Enable double-inlining.
                     "-Xklib-no-double-inlining=false",
-
-                    // Enable narrowing of visibility for synthetic accessors.
-                    "-Xsynthetic-accessors-with-narrowed-visibility".takeIf { nativeTestInstances.enclosingTestInstance.narrowedAccessorVisibility }
                 )
 
                 build()

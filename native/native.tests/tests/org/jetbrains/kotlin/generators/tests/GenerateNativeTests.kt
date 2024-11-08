@@ -217,14 +217,6 @@ fun main() {
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase2Test>(
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
-                    *frontendFir(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
         }
 
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {

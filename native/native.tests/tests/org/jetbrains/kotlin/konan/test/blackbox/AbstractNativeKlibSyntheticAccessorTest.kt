@@ -38,7 +38,6 @@ import java.io.File
 //        )
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
 abstract class AbstractNativeKlibSyntheticAccessorTest(
-    internal val narrowedAccessorVisibility: Boolean
 ) : ExternalSourceTransformersProvider {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
@@ -84,7 +83,6 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
                     dumpDir = syntheticAccessorsDumpDir,
                     moduleNames = testRun.testCase.modules.mapToSet { Name.identifier(it.name) },
                     testDataFile = absoluteTestFile,
-                    withNarrowedVisibility = narrowedAccessorVisibility
                 )
             }
         }.exceptionOrNull()?.let { exception ->
@@ -103,5 +101,4 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
     final override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = null
 }
 
-open class AbstractNativeKlibSyntheticAccessorInPhase1Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = true)
-open class AbstractNativeKlibSyntheticAccessorInPhase2Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = false)
+open class AbstractNativeKlibSyntheticAccessorInPhase1Test : AbstractNativeKlibSyntheticAccessorTest()

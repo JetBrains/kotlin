@@ -31,13 +31,6 @@ object KlibConfigurationKeys {
         CompilerConfigurationKey.create("Path to a directory to dump synthetic accessors and their use sites")
 
     @JvmField
-    val SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create(
-            "Narrow the visibility of generated synthetic accessors to _internal_" +
-                    " if such accessors are only used in inline functions that are not a part of public ABI"
-        )
-
-    @JvmField
     val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<DuplicatedUniqueNameStrategy> =
         CompilerConfigurationKey.create("Duplicated KLIB dependencies handling strategy")
 }
