@@ -126,8 +126,11 @@ private class LambdaNamingContext {
     }
 
     private fun IrElement.createKey(): String {
-        return (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.asString()
-            ?: stack.last().nextGenericKey().toString()
+        return (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.let { name ->
+            /* Fields need to be differentiated from functions, as fun x() and val x can live in the same scope */
+            if (this is IrField) "val-${name.asString()}"
+            else name.asString()
+        } ?: stack.last().nextGenericKey().toString()
     }
 
     private companion object {
@@ -516,6 +519,12 @@ class ComposerLambdaMemoization(
     override fun visitValueAccess(expression: IrValueAccessExpression): IrExpression {
         declarationContextStack.recordCapture(expression.symbol.owner)
         return super.visitValueAccess(expression)
+    }
+
+    override fun visitField(declaration: IrField): IrStatement {
+        lambdaNamingContext.withScope(declaration) {
+            return super.visitField(declaration)
+        }
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {

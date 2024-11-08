@@ -22,12 +22,12 @@ val stableUsed: @Composable StableFoo.() -> Unit = {
 // Transformed IR
 // ------------------------------------------
 
-val unstableUnused: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-val unstableUsed: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-2
-val stableUnused: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-3
-val stableUsed: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-4
+val unstableUnused: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-val-unstableUnused%1
+val unstableUsed: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-val-unstableUsed%1
+val stableUnused: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-val-stableUnused%1
+val stableUsed: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-val-stableUsed%1
 internal object ComposableSingletons%TestKt {
-  val lambda-1: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-val-unstableUnused%1: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b00010001 != 0b00010000 || !%composer.skipping) {
       if (isTraceInProgress()) {
@@ -41,7 +41,7 @@ internal object ComposableSingletons%TestKt {
       %composer.skipToGroupEnd()
     }
   }
-  val lambda-2: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-val-unstableUsed%1: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     val %dirty = %changed
     if (%changed and 0b0110 == 0) {
@@ -64,7 +64,7 @@ internal object ComposableSingletons%TestKt {
       %composer.skipToGroupEnd()
     }
   }
-  val lambda-3: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-val-stableUnused%1: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b00010001 != 0b00010000 || !%composer.skipping) {
       if (isTraceInProgress()) {
@@ -78,7 +78,7 @@ internal object ComposableSingletons%TestKt {
       %composer.skipToGroupEnd()
     }
   }
-  val lambda-4: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-val-stableUsed%1: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     val %dirty = %changed
     if (%changed and 0b0110 == 0) {

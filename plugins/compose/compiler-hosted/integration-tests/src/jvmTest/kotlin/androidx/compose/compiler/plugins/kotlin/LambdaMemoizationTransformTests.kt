@@ -872,4 +872,24 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """.trimIndent()
     )
+
+    @Test
+    fun testComposableLambdaPropertyUsedInTwoFunctions() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            val a = @Composable { }
+            val b = @Composable { }
+
+            @Composable fun Foo() {
+                a()
+                b()
+            }
+            
+            @Composable inline fun Bar() {
+                a()
+                b()
+            }
+        """.trimIndent()
+    )
 }
+

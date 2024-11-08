@@ -35,7 +35,7 @@ class ClassScope {
 // Transformed IR
 // ------------------------------------------
 
-val topLevelScope: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+val topLevelScope: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-val-topLevelScope%1
 @Composable
 fun functionScope(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
@@ -104,7 +104,7 @@ class ClassScope {
   static val %stable: Int = 0
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-val-topLevelScope%1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
