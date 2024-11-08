@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.inline.util
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
-import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 fun collectUsedNames(scope: JsNode): Set<JsName> {

@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpression.JsExpressionHasArguments
-import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
-import org.jetbrains.kotlin.js.backend.ast.metadata.isJsCall
-import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 
 // Replaces box(unbox(value)) and unbox(box(value)) with value
 class BoxingUnboxingElimination(private val root: JsBlock) {

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.facade;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public abstract class MainCallParameters {

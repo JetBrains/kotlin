@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
-import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 
 // Replaces { a: 2, b: VOID, c: VOID } with { a: 2 }
 class VoidPropertiesElimination(private val root: JsBlock, private val voidName: JsName) {

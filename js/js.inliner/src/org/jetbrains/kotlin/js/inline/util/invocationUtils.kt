@@ -22,16 +22,6 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.name
 
 /**
- * Gets invocation qualifier name.
- *
- * @returns `f` for `_.foo.f()` call
- */
-fun getSimpleName(call: JsInvocation): JsName? {
-    val qualifier = call.qualifier
-    return (qualifier as? JsNameRef)?.name
-}
-
-/**
  * Tests if invocation is JavaScript call function
  *
  * @return true  if invocation is something like `x.call(thisReplacement)`
