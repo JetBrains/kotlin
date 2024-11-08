@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsUnaryOperator;
  * Encapsulates different types of constants and naming conventions.
  */
 public final class Namer {
-    public static final String CALL_FUNCTION = "call";
 
     @NotNull
     public static JsExpression getUndefinedExpression() {

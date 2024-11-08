@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.js.inline.util
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
-import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.utils.name
 
 /**
  * Tests if invocation is JavaScript call function
@@ -31,7 +28,5 @@ fun isCallInvocation(invocation: JsInvocation): Boolean {
     val qualifier = invocation.qualifier as? JsNameRef
     val arguments = invocation.arguments
 
-    if (qualifier.name?.descriptor != null) return false
-
-    return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty() && qualifier.qualifier != null
+    return qualifier?.ident == "call" && arguments.isNotEmpty() && qualifier.qualifier != null
 }
