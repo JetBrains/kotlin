@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
 import org.jetbrains.kotlin.descriptors.Modality
@@ -509,6 +510,12 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         private fun extractGeneratedIrDeclarations(declaration: FirDeclaration): List<IrConstructorCall> {
+            when (declaration.origin) {
+                is FirDeclarationOrigin.Synthetic,
+                is FirDeclarationOrigin.Delegated
+                    -> return emptyList()
+                else -> {}
+            }
             val firFile = declaration.containingFile() ?: return emptyList()
             val fileFqName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
             val source = declaration.source ?: return emptyList()
