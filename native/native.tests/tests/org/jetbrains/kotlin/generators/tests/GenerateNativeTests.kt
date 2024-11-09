@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -156,21 +155,6 @@ fun main() {
             }
         }
 
-        // 1st phase IR Inliner tests (IR inliner is invoked before K2 Klib Serializer)
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/codegen") {
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                    klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>()
-                )
-            ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-            }
-        }
-
         // KLIB synthetic accessor tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeKlibSyntheticAccessorInPhase1Test>(
@@ -185,19 +169,6 @@ fun main() {
                 annotations = listOf(
                     *klibSyntheticAccessors(),
                     *frontendFir(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
-        }
-
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeKlibSyntheticAccessorsBoxTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                    klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
@@ -571,7 +542,6 @@ fun frontendFir() = arrayOf(
     annotation(FirPipeline::class.java)
 )
 
-private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun atomicfuNative() = arrayOf(
