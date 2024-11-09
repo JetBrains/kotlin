@@ -56,6 +56,7 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
         if (irClass.isJvmInterface) return
 
         val newBridges = mutableListOf<IrSimpleFunction>()
+        val remove = mutableListOf<IrSimpleFunction>()
         for (declaration in irClass.declarations) {
             if (declaration !is IrSimpleFunction || !declaration.isFakeOverride) continue
 
@@ -63,9 +64,11 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
 
             if (needsJvmDefaultCompatibilityBridge(declaration)) {
                 newBridges.add(generateBridge(declaration, implementation, irClass))
+                remove.add(declaration)
             }
         }
         irClass.declarations.addAll(newBridges)
+        irClass.declarations.removeAll(remove)
     }
 
     // Generating the default compatibility bridge is only necessary if there's a risk that some other method will be called at runtime
