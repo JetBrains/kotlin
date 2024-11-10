@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.konan.test.syntheticAccessors
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.KlibSyntheticAccessorTestSupport
+import org.jetbrains.kotlin.konan.test.support.KlibSyntheticAccessorTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.extension.ExtendWith
 import org.opentest4j.AssertionFailedError
 import java.io.File
+import kotlin.test.assertEquals
 
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
 //   to the first compilation stage.
@@ -52,7 +52,8 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         // In one-stage test mode of K/N, an intermediate klib in introduced between stages with unpredictable unique name,
         // and this messes the per-module logic in DumpSyntheticAccessors.
         // Synthetic accessors are not dependent on test mode, so safely may be tested only in TWO_STAGE_MULTI_MODULE
-        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+        // This testsuite isn't run in full K/Native test matrix, so let's be sure every test configuration has TWO_STAGE_MULTI_MODULE
+        assertEquals(TestMode.TWO_STAGE_MULTI_MODULE, testRunSettings.get<TestMode>())
 
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)

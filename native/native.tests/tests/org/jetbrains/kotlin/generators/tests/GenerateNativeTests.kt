@@ -155,26 +155,6 @@ fun main() {
             }
         }
 
-        // KLIB synthetic accessor tests.
-        testGroup("native/native.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase1Test>(
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
-                    *frontendFir(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase2Test>(
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
-                    *frontendFir(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
-        }
-
         // KLIB cross-compilation tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
             testClass<AbstractFirKlibCrossCompilationIdentityTest>(
@@ -555,20 +535,6 @@ private fun standalone() = arrayOf(
         "property" to ClassLevelProperty.TEST_KIND,
         "propertyValue" to "STANDALONE_NO_TR"
     )
-)
-
-private fun klibSyntheticAccessors() = arrayOf(
-    annotation(
-        EnforcedProperty::class.java,
-        "property" to ClassLevelProperty.TEST_KIND,
-        "propertyValue" to "STANDALONE"
-    ),
-    annotation(
-        EnforcedProperty::class.java,
-        "property" to ClassLevelProperty.CACHE_MODE,
-        "propertyValue" to "NO"
-    ),
-    provider<UseExtTestCaseGroupProvider>(),
 )
 
 private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(

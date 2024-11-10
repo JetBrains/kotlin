@@ -65,7 +65,7 @@ class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLoader>) {
 /**
  * New test modes may be added as necessary.
  */
-internal enum class TestMode(private val description: String) {
+enum class TestMode(private val description: String) {
     ONE_STAGE_MULTI_MODULE(
         description = "Compile each test file as one or many modules (depending on MODULE directives declared in the file)." +
                 " Produce a KLIB per each module except the last one." +

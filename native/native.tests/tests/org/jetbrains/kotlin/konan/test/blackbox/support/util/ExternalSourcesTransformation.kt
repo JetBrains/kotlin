@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
  */
 
 internal typealias ExternalSourceTransformer = (/* file contents */ String) -> /* patched file contents */ String
-internal typealias ExternalSourceTransformers = List<ExternalSourceTransformer>
+typealias ExternalSourceTransformers = List<ExternalSourceTransformer>
 
 internal object DiagnosticsRemovingSourceTransformer : ExternalSourceTransformer {
     override fun invoke(source: String) = source.lineSequence().joinToString("\n") { line ->
