@@ -8,15 +8,20 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
+import org.jetbrains.kotlin.konan.test.syntheticAccessors.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
@@ -245,6 +250,26 @@ fun main() {
                 model(targetBackend = TargetBackend.NATIVE)
             }
         }
+
+        // KLIB synthetic accessor tests.
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+            testClass<AbstractNativeKlibSyntheticAccessorInPhase1Test>(
+                annotations = listOf(
+                    *klibSyntheticAccessors(),
+                    *frontendFir(),
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeKlibSyntheticAccessorInPhase2Test>(
+                annotations = listOf(
+                    *klibSyntheticAccessors(),
+                    *frontendFir(),
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+        }
     }
 }
 
@@ -255,3 +280,16 @@ fun frontendFir() = arrayOf(
 
 private fun klib() = annotation(Tag::class.java, "klib")
 private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
+private fun klibSyntheticAccessors() = arrayOf(
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.TEST_KIND,
+        "propertyValue" to TestKind.STANDALONE.name
+    ),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.CACHE_MODE,
+        "propertyValue" to CacheMode.Alias.NO.name
+    ),
+    provider<UseExtTestCaseGroupProvider>(),
+)

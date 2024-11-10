@@ -25,7 +25,7 @@ internal enum class ProcessLevelProperty(shortName: String) {
 
 @Repeatable
 @Target(AnnotationTarget.CLASS)
-internal annotation class EnforcedProperty(val property: ClassLevelProperty, val propertyValue: String)
+annotation class EnforcedProperty(val property: ClassLevelProperty, val propertyValue: String)
 
 @Target(AnnotationTarget.CLASS)
 internal annotation class EnforcedHostTarget
@@ -33,7 +33,7 @@ internal annotation class EnforcedHostTarget
 @Target(AnnotationTarget.CLASS)
 internal annotation class AcceptablePropertyValues(val property: ClassLevelProperty, val acceptableValues: Array<String>)
 
-internal class EnforcedProperties(testClass: Class<*>) {
+class EnforcedProperties(testClass: Class<*>) {
     private val enforcedAnnotations: Map<ClassLevelProperty, String> = buildMap {
         testClass.getAnnotationsByType(EnforcedProperty::class.java).forEach {
             this[it.property] = it.propertyValue
@@ -55,7 +55,7 @@ internal class EnforcedProperties(testClass: Class<*>) {
         acceptableAnnotations[propertyType]?.contains(value) ?: true
 }
 
-internal enum class ClassLevelProperty(val shortName: String) {
+enum class ClassLevelProperty(val shortName: String) {
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     COMPILER_PLUGINS("compilerPlugins"),

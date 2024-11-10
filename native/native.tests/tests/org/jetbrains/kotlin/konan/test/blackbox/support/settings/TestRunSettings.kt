@@ -23,6 +23,6 @@ class NativeTestInstances<T>(val allInstances: List<Any>) {
         get() = allInstances.firstOrNull() as? ExternalSourceTransformersProvider
 }
 
-internal interface ExternalSourceTransformersProvider {
+interface ExternalSourceTransformersProvider {
     fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers?
 }
