@@ -32,16 +32,15 @@ class JsPartialLinkageIT : KGPBaseTest() {
         ) {
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                // TODO KT-72965: These warnings should go away.
-                assertOutputContains(SUBCLASS_OPT_IN_REQUIRED_CONSTRUCTOR_CANT_BE_CALLED)
-                assertOutputContains(SUBCLASS_OPT_IN_REQUIRED_NO_CONSTRUCTOR_FOUND)
+                assertOutputDoesNotContain(SUBCLASS_OPT_IN_REQUIRED_CONSTRUCTOR_CANT_BE_CALLED)
+                assertOutputDoesNotContain(SUBCLASS_OPT_IN_REQUIRED_NO_CONSTRUCTOR_FOUND)
             }
         }
     }
 
     @GradleTest
     @TestMetadata(value = "kt-72965-pl-warnings-on-SubclassOptInRequired-constructor-call")
-    @DisplayName("KT-72965: Ignore Partial Linkage warnings on SubclassOptInRequired annotation site")
+    @DisplayName("KT-72965: Partial Linkage warnings on SubclassOptInRequired annotation site")
     fun testPartialLinkageWarningsOnSubclassOptInRequiredConstructorCall(gradleVersion: GradleVersion) {
         project(
             projectName = "kt-72965-pl-warnings-on-SubclassOptInRequired-constructor-call/lib",
@@ -60,7 +59,7 @@ class JsPartialLinkageIT : KGPBaseTest() {
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains(SUBCLASS_OPT_IN_REQUIRED_CONSTRUCTOR_CANT_BE_CALLED)
-                assertOutputContains(SUBCLASS_OPT_IN_REQUIRED_NO_CONSTRUCTOR_FOUND)
+                assertOutputDoesNotContain(SUBCLASS_OPT_IN_REQUIRED_NO_CONSTRUCTOR_FOUND)
             }
         }
     }
