@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * When applying any [KotlinHierarchyTemplate] (e.g. by calling `applyDefaultHierarchyTemplate()`), the descriptor will
- * be applied on individual compilations, creating multiple trees of shared SourceSets.
+ * Represents a tree of shared [KotlinSourceSets][KotlinSourceSet].
  *
- * The name of given shared source set within the target hierarchy will be built by
- * `lowerCamelCase(nameOfGroup, nameOfSourceSetTree)`
- * So for the 'common' group within the 'main' tree the shared SourceSet name will be 'commonMain'
+ * When applying any [KotlinHierarchyTemplate], such as calling `kotlin.applyDefaultHierarchyTemplate()`) in multiplatform projects,
+ * the descriptor is applied to individual [compilations][KotlinCompilation], creating multiple trees of shared
+ * [KotlinSourceSets][KotlinSourceSet].
  *
- * The most default case will create two well known SourceSetTrees:
- * - The `main` tree with `commonMain` as its root SourceSet
- * - The `test` tree with `commonTest` as its root SourceSet
+ * The [name] is used as a suffix for each shared [KotlinSourceSet] within the target hierarchy.
+ * For example, for the `common` group within the `main` tree, the shared [KotlinSourceSet] name is `commonMain`.
  *
- * e.g.
+ * The default hierarchy template will create two well-known `SourceSetTrees`:
+ * - The `main` tree with `commonMain` as its root [KotlinSourceSet]
+ * - The `test` tree with `commonTest` as its root [KotlinSourceSet]
+ *
+ * For example, for the following snippet:
  * ```kotlin
  * kotlin {
  *     applyDefaultHierarchyTemplate()
@@ -28,7 +29,7 @@ package org.jetbrains.kotlin.gradle.plugin
  * }
  * ```
  *
- * will create two SourceSetTrees: "main" and "test"
+ * The plugin creates two [KotlinSourceSetTrees][KotlinSourceSetTree] called "main" and "test":
  * ```
  *                    "main"                               "test"
  *
@@ -47,54 +48,76 @@ package org.jetbrains.kotlin.gradle.plugin
  * iosX64Main   iosArm64Main            iosX64Test   iosArm64Test
  * ```
  *
+ * Typically, the name of the [KotlinCompilation] matches the name of the `SourceSetTree`. For example,
+ * the "main" tree, rooted at "commonMain", contains all "main" compilations of the project
+ * targets.
+ * Similarly, the "test" tree, rooted at "commonTest", includes all "test" compilations of the project targets.
  *
- * Usually, the name of the compilation correlates to the name of the SourceSetTree:
- * As seen in the previous example, the "main" tree under the "commonMain" root contains all 'main' compilations of the projects
- * targets. The "test" tree under the "commonTest" root contains all 'test' compilations of the projects targets.
+ * There are some exceptions where the user can't choose the name of the compilations directly. For example, on Android.
+ * In this case, the name of the `KotlinSourceSetTree` can be configured outside the target hierarchy DSL.
  *
- * There are some exceptions, where the name of the compilations cannot be chosen by the user directly (Android)
- * In this case, the name of the SourceSet can be configured outside the target hierarchy DSL.
+ * @param name the name of this `KotlinSourceSetTree`
  */
 class KotlinSourceSetTree(val name: String) {
 
+    /**
+     * @suppress
+     */
     override fun toString(): String = name
 
+    /**
+     * @suppress
+     */
     override fun equals(other: Any?): Boolean {
         if (other !is KotlinSourceSetTree) return false
         return this.name == other.name
     }
 
+    /**
+     * @suppress
+     */
     override fun hashCode(): Int {
         return name.hashCode()
     }
 
+    /**
+     * Constants and static properties for the [KotlinSourceSetTree].
+     */
     companion object {
         /**
-         * The 'main' SourceSetTree. Typically, with 'commonMain' as the root SourceSet
+         * The `main` [KotlinSourceSetTree]. Typically, the root [KotlinSourceSet] has the name: `commonMain`.
          */
         val main: KotlinSourceSetTree = KotlinSourceSetTree("main")
 
         /**
-         * The 'test' SourceSetTree. Typically, with 'commonTest' as the root SourceSet
+         * The `test` [KotlinSourceSetTree]. Typically, the root [KotlinSourceSet] has the name: `commonTest`.
          */
         val test: KotlinSourceSetTree = KotlinSourceSetTree("test")
 
         /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonUnitTest' as the root SourceSet
-         * e.g. relevant for organising Android unitTest compilations/SourceSets
+         * A special pre-defined [KotlinSourceSetTree].
+         *
+         * It can be used to introduce a new tree with `commonUnitTest` as the root [KotlinSourceSet].
+         * For example, it's useful
+         * for organizing Android [KotlinCompilations][KotlinCompilation]/[KotlinSourceSets][KotlinSourceSet] for unit tests.
          */
         val unitTest: KotlinSourceSetTree = KotlinSourceSetTree("unitTest")
 
 
         /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonInstrumentedTest' as the root SourceSet
-         * e.g. relevant for organising Android instrumented compilations/SourceSets
+         * A special pre-defined [KotlinSourceSetTree].
+         *
+         * It can be used to introduce a new tree with `commonInstrumentedTest` as the root [KotlinSourceSet].
+         * For example,
+         * it's useful for organizing Android-instrumented [KotlinCompilations][KotlinCompilation]/[KotlinSourceSets][KotlinSourceSet].
          */
         val instrumentedTest: KotlinSourceSetTree = KotlinSourceSetTree("instrumentedTest")
 
 
         /**
-         * Special pre-defined SourceSetTree: Can be used to introduce a new tree with 'commonIntegrationTest' as root SourceSEt
+         * A special pre-defined [KotlinSourceSetTree].
+         *
+         * It can be used to introduce a new tree with `commonIntegrationTest` as the root [KotlinSourceSet].
          */
         val integrationTest: KotlinSourceSetTree = KotlinSourceSetTree("integrationTest")
 
