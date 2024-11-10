@@ -204,14 +204,14 @@ class KotlinStandaloneDeclarationProviderFactory(
 
     private inner class KtDeclarationRecorder : KtVisitorVoid() {
 
-        private fun treeToStack(expression: KtBinaryExpression): MutableList<KtExpression> {
-            val result = mutableListOf<KtExpression>(expression)
+        private fun treeToStack(expression: KtBinaryExpression): MutableList<PsiElement> {
+            val result = mutableListOf<PsiElement>(expression)
             var currIdx = 0
             while (currIdx < result.size) {
                 val currNode = result[currIdx]
                 if (currNode is KtBinaryExpression) {
-                    currNode.left?.let { result.add(currIdx + 1, it) }
-                    currNode.right?.let { result.add(currIdx + 2, it) }
+                    var insertPos = currIdx + 1
+                    currNode.children.forEach { result.add(insertPos++, it) }
                 }
                 currIdx++
             }
