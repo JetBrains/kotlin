@@ -252,6 +252,8 @@ internal class PartiallyLinkedIrTreePatcher(
                         // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
                         // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
                         doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                                || declaration.symbol.isSubclassOptInRequiredAnnotationConstructor()
                     )
                 )
             }
@@ -515,7 +517,9 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkNotAbstractClass()
                 ?: checkExpressionTypeArguments()
-                ?: customConstructorCallChecks()
+                ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "class") { constructedClass ->
+                    constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
+                } ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = expression.maybeThrowLinkageError {
@@ -554,10 +558,16 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
 
-        private inline fun <T : IrExpression> T.maybeThrowLinkageError(computePartialLinkageCase: T.() -> PartialLinkageCase?): IrExpression =
-            maybeThrowLinkageError(transformer = this@ExpressionTransformer) {
+        protected inline fun <T : IrExpression> T.maybeThrowLinkageError(
+            doNotLogWhen: (PartialLinkageCase) -> Boolean = { false },
+            computePartialLinkageCase: T.() -> PartialLinkageCase?,
+        ): IrExpression = maybeThrowLinkageError(
+            transformer = this@ExpressionTransformer,
+            doNotLogWhen = doNotLogWhen,
+            computePartialLinkageCase = {
                 computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
-            }.also { onAfterMaybeThrowLinkageError() }
+            },
+        ).also { onAfterMaybeThrowLinkageError() }
 
         // Custom post-check. Can be overridden.
         protected open fun IrExpression.onAfterMaybeThrowLinkageError() = Unit
@@ -566,7 +576,7 @@ internal class PartiallyLinkedIrTreePatcher(
             return ExpressionWithUnusableClassifier(this, type.explore() ?: return null)
         }
 
-        private fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
+        protected fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionWithUnusableClassifier(
                 this,
@@ -574,7 +584,7 @@ internal class PartiallyLinkedIrTreePatcher(
             )
         }
 
-        private fun IrExpression.checkReferencedDeclaration(
+        protected fun IrExpression.checkReferencedDeclaration(
             symbol: IrSymbol?,
             checkVisibility: Boolean = true
         ): PartialLinkageCase? {
@@ -851,19 +861,13 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
-        private fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
+        protected fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
             val createdClass = symbol.owner.parentAsClass
             return if (createdClass.modality == Modality.ABSTRACT || createdClass.modality == Modality.SEALED)
                 AbstractClassInstantiation(this, createdClass.symbol)
             else
                 null
         }
-
-        // Custom checks for constructor call. Can be overridden.
-        protected open fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
-            checkReferencedDeclarationType(symbol.owner.parentAsClass, "class") { constructedClass ->
-                constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
-            } ?: checkArgumentsAndValueParameters()
 
         private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
             if (annotations.isNotEmpty()) {
@@ -875,12 +879,16 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (checker.isUsableAnnotation) {
                         true // No PL errors have been found.
                     } else {
-                        // Just log a warning. Do not throw a linkage error as this would produce broken IR.
-                        supportForLowerings.renderAndLogLinkageError(
-                            partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
-                            element = this,
-                            file = currentFile
-                        )
+                        if (annotation.symbol.isSubclassOptInRequiredAnnotationConstructor()) {
+                            // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                        } else {
+                            // Log a warning. Do not throw a linkage error as this would produce broken IR.
+                            supportForLowerings.renderAndLogLinkageError(
+                                partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
+                                element = this,
+                                file = currentFile
+                            )
+                        }
 
                         false // Drop the annotation.
                     }
@@ -903,44 +911,55 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitConst(expression: IrConst): IrExpression = expression // Nothing can be unlinked here.
 
-        override fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
-            checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
-                constructedClass.kind == ClassKind.ANNOTATION_CLASS
-            } ?: run {
-                val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
+        override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError(
+            doNotLogWhen = { partialLinkageCase ->
+                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+                partialLinkageCase is ExpressionWithMissingDeclaration && expression.symbol.isSubclassOptInRequiredAnnotationConstructor()
+            }
+        ) {
+            checkReferencedDeclaration(symbol)
+                ?: checkNotAbstractClass()
+                ?: checkExpressionTypeArguments()
+                ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
+                    constructedClass.kind == ClassKind.ANNOTATION_CLASS
+                } ?: customConstructorCallChecks()
+        }
 
-                checkArgumentsAndValueParameters { index, defaultArgumentExpressionBody ->
-                    val defaultArgument = defaultArgumentExpressionBody?.expression
-                    when {
-                        defaultArgument == null -> {
-                            // A workaround for KT-59030. See also KT-58651.
-                            val valueParameter = symbol.owner.valueParameters.getOrNull(index)
-                            return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
-                        }
-                        defaultArgument is IrConst -> {
-                            // Nothing can be unlinked here.
-                        }
-                        defaultArgument is IrErrorExpression -> {
-                            // Such expression is used as a placeholder for a real default value in Lazy IR.
-                            // Nothing to check here specifically.
-                        }
-                        defaultArgument.isPartialLinkageRuntimeError() -> {
-                            // Default arg has already been processed by ExpressionsTransformer, and it is known to be a PL error.
-                            isUsableAnnotation = false
-                        }
-                        annotationFile.module.shouldBeSkipped -> {
-                            // It does not make sense to check the default arguments in annotation classes from stdlib.
-                        }
-                        else -> {
-                            // WARNING: Jump to (probably) another file and patch the default argument expression right there.
-                            runInFile(annotationFile) {
-                                defaultArgumentExpressionBody.transformVoid(this@AnnotationChecker)
-                            }
+        private fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? {
+            val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
+
+            return checkArgumentsAndValueParameters { index, defaultArgumentExpressionBody ->
+                val defaultArgument = defaultArgumentExpressionBody?.expression
+                when {
+                    defaultArgument == null -> {
+                        // A workaround for KT-59030. See also KT-58651.
+                        val valueParameter = symbol.owner.valueParameters.getOrNull(index)
+                        return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
+                    }
+                    defaultArgument is IrConst -> {
+                        // Nothing can be unlinked here.
+                    }
+                    defaultArgument is IrErrorExpression -> {
+                        // Such expression is used as a placeholder for a real default value in Lazy IR.
+                        // Nothing to check here specifically.
+                    }
+                    defaultArgument.isPartialLinkageRuntimeError() -> {
+                        // Default arg has already been processed by ExpressionsTransformer, and it is known to be a PL error.
+                        isUsableAnnotation = false
+                    }
+                    annotationFile.module.shouldBeSkipped -> {
+                        // It does not make sense to check the default arguments in annotation classes from stdlib.
+                    }
+                    else -> {
+                        // WARNING: Jump to (probably) another file and patch the default argument expression right there.
+                        runInFile(annotationFile) {
+                            defaultArgumentExpressionBody.transformVoid(this@AnnotationChecker)
                         }
                     }
-                    true // Count the current default value as non-missing.
                 }
+                true // Count the current default value as non-missing.
             }
+        }
     }
 
     private fun IrClassifierSymbol.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreSymbol(this)
@@ -1077,18 +1096,23 @@ internal class PartiallyLinkedIrTreePatcher(
         ) { super.visitFunctionAccess(expression) }
 
         override fun visitReturn(expression: IrReturn) = withContext { context ->
-            expression.maybeThrowLinkageError(transformer = this@NonLocalReturnsPatcher) {
-                if (returnTargetSymbol !in context.validReturnTargets)
-                    IllegalNonLocalReturn(expression, context.validReturnTargets)
-                else
-                    null
-            }
+            expression.maybeThrowLinkageError(
+                transformer = this@NonLocalReturnsPatcher,
+                computePartialLinkageCase = {
+                    if (returnTargetSymbol !in context.validReturnTargets)
+                        IllegalNonLocalReturn(expression, context.validReturnTargets)
+                    else
+                        null
+                },
+                doNotLogWhen = { false }
+            )
         }
     }
 
     private inline fun <T : IrExpression> T.maybeThrowLinkageError(
         transformer: FileAwareIrElementTransformerVoid,
-        computePartialLinkageCase: T.() -> PartialLinkageCase?
+        computePartialLinkageCase: T.() -> PartialLinkageCase?,
+        doNotLogWhen: (PartialLinkageCase) -> Boolean,
     ): IrExpression {
         // The codegen uses postorder traversal: Children are evaluated/executed before the containing expression.
         // So it's important to patch children and insert the necessary `throw IrLinkageError(...)` calls if necessary
@@ -1106,7 +1130,8 @@ internal class PartiallyLinkedIrTreePatcher(
         val linkageError = supportForLowerings.throwLinkageError(
             partialLinkageCase,
             element = this,
-            transformer.currentFile
+            transformer.currentFile,
+            doNotLog = doNotLogWhen(partialLinkageCase)
         )
 
         return if (directChildren.statements.isNotEmpty())
@@ -1146,6 +1171,12 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
+        }
+
+        // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
+        private fun IrConstructorSymbol.isSubclassOptInRequiredAnnotationConstructor(): Boolean {
+            val signature = signature as? IdSignature.CommonSignature ?: return false
+            return signature.packageFqName == "kotlin" && signature.declarationFqName == "SubclassOptInRequired.<init>"
         }
 
         private val REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN = FqName("kotlin.ReplaceWith.<init>.expression")
