@@ -220,13 +220,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
         // ---------------------------------------------- FIR tests ----------------------------------------------
 
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractFirPsiWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithPsiTestGenerated") {
-                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirLightTreeWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated") {
-                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
-            }
             testClass<AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated") {
                 model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
@@ -250,17 +243,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     skipTestAllFilesCheck = onlyTypealiases
                 )
             }
-
-            testClass<AbstractFirPsiDiagnosticTest>(
-                suiteTestClassName = "FirPsiOldFrontendDiagnosticsTestGenerated",
-                init = model(allowKts = true)
-            )
-
-
-            testClass<AbstractFirLightTreeDiagnosticsTest>(
-                suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsTestGenerated",
-                init = model(allowKts = false)
-            )
 
             testClass<AbstractTieredFrontendJvmLightTreeTest>(
                 init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
