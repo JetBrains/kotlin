@@ -19,9 +19,20 @@ import org.jetbrains.kotlin.fir.types.*
 object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
+
+        val source = declaration.source?.findContextReceiverListSource() ?: return
+
+        if (declaration is FirTypeAlias) {
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED,
+                "Context parameters on type aliases are unsupported.",
+                context
+            )
+        }
+
         val contextReceivers = declaration.getContextReceiver()
         if (contextReceivers.isEmpty()) return
-        val source = declaration.source?.findContextReceiverListSource() ?: return
 
         val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)

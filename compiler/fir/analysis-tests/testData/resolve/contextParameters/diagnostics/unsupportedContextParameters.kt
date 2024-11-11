@@ -24,7 +24,7 @@ annotation class A
 <!UNSUPPORTED!>context(_: String)<!>
 object O
 
-context(_: String)
+<!UNSUPPORTED!>context(_: String)<!>
 typealias TA = Any
 
 val objectExpression = <!UNRESOLVED_REFERENCE!>context<!>(<!UNRESOLVED_REFERENCE!>_<!><!SYNTAX!>: String<!>)<!SYNTAX!><!> object<!SYNTAX!><!> {}
