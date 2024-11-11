@@ -34,8 +34,8 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
             )
         }
 
-        val contextReceivers = declaration.getContextReceiver()
-        if (contextReceivers.isEmpty()) return
+        val contextParameters = declaration.getContextParameters()
+        if (contextParameters.isEmpty()) return
 
         val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
@@ -51,7 +51,7 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         }
 
         if (contextReceiversEnabled) {
-            if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
+            if (checkSubTypes(contextParameters.map { it.returnTypeRef.coneType }, context)) {
                 reporter.reportOn(
                     source,
                     FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
@@ -89,6 +89,12 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     "Context parameters on delegated properties are unsupported.",
                     context
                 )
+            } else {
+                for (parameter in contextParameters) {
+                    if (parameter.isLegacyContextReceiver()) {
+                        reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
+                    }
+                }
             }
         }
     }
@@ -97,7 +103,7 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         return this is FirCallableDeclaration && this.isOperator && this.nameOrSpecialName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
     }
 
-    private fun FirDeclaration.getContextReceiver(): List<FirValueParameter> {
+    private fun FirDeclaration.getContextParameters(): List<FirValueParameter> {
         return when (this) {
             is FirCallableDeclaration -> contextReceivers
             is FirRegularClass -> contextReceivers

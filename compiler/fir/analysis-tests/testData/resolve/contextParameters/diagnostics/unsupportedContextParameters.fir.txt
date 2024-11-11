@@ -96,3 +96,16 @@ FILE: unsupportedContextParameters.kt
         }
 
     }
+    context(R|kotlin/String|)
+    public final fun contextReceiverSyntax(): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|kotlin/Int|, R|kotlin/String|)
+    public final fun mixedSyntax(): R|kotlin/Unit| {
+    }
+    context(R|kotlin/String|)
+    public final class ClassWithContextReceiverSyntax : R|kotlin/Any| {
+        public constructor(): R|ClassWithContextReceiverSyntax| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

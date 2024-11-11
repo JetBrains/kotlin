@@ -57,3 +57,15 @@ fun emptyContext() {}
 
 context(<!SYNTAX!><!>)
 class EmptyContextClass
+
+context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
+fun contextReceiverSyntax() {}
+
+context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, _: Int)
+fun mixedSyntax() {}
+
+<!UNSUPPORTED!>context(String)<!>
+class ClassWithContextReceiverSyntax {
+    <!UNSUPPORTED!>context(String)<!>
+    constructor() {}
+}
