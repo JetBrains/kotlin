@@ -193,14 +193,25 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents a [KotlinTarget] that includes test runs.
  */
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {
-    /** The container with the test run executions.
-     * A target may automatically create and configure a test run by the name [DEFAULT_TEST_RUN_NAME]. */
+
+    /**
+     * The container that holds test run executions.
+     *
+     * A test run by the name [DEFAULT_TEST_RUN_NAME] is automatically created and configured.
+     */
     val testRuns: NamedDomainObjectContainer<T>
 
+    /**
+     * [KotlinTargetWithTests] constants.
+     */
     companion object {
+
+        /**
+         * The name of the default [KotlinTargetTestRun] created by [KotlinTargetWithTests].
+         */
         const val DEFAULT_TEST_RUN_NAME = "test"
     }
 }
