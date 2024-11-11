@@ -78,7 +78,6 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
             val dumpFileName = buildString {
                 append(testDataFile.nameWithoutExtension)
                 append(".accessors")
-                append("-narrowed")
                 append(".txt")
             }
 
