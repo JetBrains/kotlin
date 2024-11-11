@@ -730,40 +730,5 @@ internal object FirReferenceResolveHelper {
         return listOfNotNull(type.toTargetSymbol(session, symbolBuilder))
     }
 
-    private fun findPossibleTypeQualifier(
-        qualifier: KtSimpleNameExpression,
-        wholeTypeFir: FirResolvedTypeRef,
-    ): ClassId? {
-        val qualifierToResolve = qualifier.parent as KtUserType
-        // FIXME make it work with generics in functional types (like () -> AA.BB<CC, AA.DD>)
-        val wholeType = when (val psi = wholeTypeFir.psi) {
-            is KtUserType -> psi
-            is KtTypeReference -> psi.typeElement?.unwrapNullability() as? KtUserType
-            else -> null
-        } ?: return null
-
-        val qualifiersToDrop = countQualifiersToDrop(wholeType, qualifierToResolve)
-        return wholeTypeFir.coneType.classId?.dropLastNestedClasses(qualifiersToDrop)
-    }
-
-    /**
-     * @return class id without [classesToDrop] last nested classes, or `null` if [classesToDrop] is too big.
-     *
-     * Example: `foo.bar.Baz.Inner` with 1 dropped class is `foo.bar.Baz`, and with 2 dropped class is `null`.
-     */
-    private fun ClassId.dropLastNestedClasses(classesToDrop: Int) =
-        generateSequence(this) { it.outerClassId }.drop(classesToDrop).firstOrNull()
-
-    /**
-     * @return How many qualifiers needs to be dropped from [wholeType] to get [nestedType].
-     *
-     * Example: to get `foo.bar` from `foo.bar.Baz.Inner`, you need to drop 2 qualifiers (`Inner` and `Baz`).
-     */
-    private fun countQualifiersToDrop(wholeType: KtUserType, nestedType: KtUserType): Int {
-        val qualifierIndex = generateSequence(wholeType) { it.qualifier }.indexOf(nestedType)
-        require(qualifierIndex != -1) { "Whole type $wholeType should contain $nestedType, but it didn't" }
-        return qualifierIndex
-    }
-
     private val syntheticTokenTypes = TokenSet.create(KtTokens.ELVIS, KtTokens.EXCLEXCL)
 }
