@@ -20,29 +20,29 @@ FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public? final? [ResolvedTo(TYPES)] fun test([ResolvedTo(TYPES)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun test([ResolvedTo(TYPES)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(STATUS)] fun test([ResolvedTo(STATUS)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun test([ResolvedTo(STATUS)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
     }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|kotlin/ParameterName|(String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
     }
 
 ANNOTATION_ARGUMENTS:
