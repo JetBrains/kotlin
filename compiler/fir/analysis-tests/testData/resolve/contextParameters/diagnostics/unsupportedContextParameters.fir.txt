@@ -1,0 +1,56 @@
+FILE: unsupportedContextParameters.kt
+    context(<unused var>: R|kotlin/String|)
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C2 : R|kotlin/Any| {
+        public constructor(): R|C2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(<unused var>: R|kotlin/String|)
+    public abstract interface I : R|kotlin/Any| {
+    }
+    context(<unused var>: R|kotlin/String|)
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    context(<unused var>: R|kotlin/String|)
+    public final annotation class A : R|kotlin/Annotation| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(<unused var>: R|kotlin/String|)
+    public final object O : R|kotlin/Any| {
+        private constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias TA = R|kotlin/Any|
+    public final val objectExpression: <ERROR TYPE REF: Unresolved name: context> = <Unresolved name: context>#(<Unresolved name: _>#)
+        public get(): <ERROR TYPE REF: Unresolved name: context>
+    public final object <no name provided> : R|kotlin/Any| {
+        private constructor(): R|<no name provided>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

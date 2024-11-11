@@ -45,6 +45,17 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                 )
             }
         }
+
+        if (contextParametersEnabled) {
+            if (declaration is FirClass) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.UNSUPPORTED,
+                    "Context parameters on classes are unsupported.",
+                    context
+                )
+            }
+        }
     }
 
     private fun FirDeclaration.getContextReceiver(): List<FirValueParameter> {

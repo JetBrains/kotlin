@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-context(s: String)
+<!UNSUPPORTED!>context(s: String)<!>
 class C {
     context(s: String)
     constructor() {}
