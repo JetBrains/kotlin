@@ -22,6 +22,19 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 
+enum class ImplicitInvokeMode {
+    // Supposed to be the most regular situation: we're just resolving to simple functions or properties
+    None,
+
+    // For `f(..)`, we've found some property named `f` and looking to resolve `f.invoke(..)` without any additional magic
+    Regular,
+
+    // For `f()`, we've found some property named `f` which types with a function type with extension receiver.
+    // Also, we've found a receiver candidate (implicit or explicit), and now we're going to resolve the `invoke` call with
+    // the receiver bound as a first argument `f.invoke(receiver,...)`
+    ReceiverAsArgument,
+}
+
 open class CallInfo(
     final override val callSite: FirElement,
     val callKind: CallKind,
@@ -29,7 +42,6 @@ open class CallInfo(
 
     override val explicitReceiver: FirExpression?,
     override val argumentList: FirArgumentList,
-    override val isImplicitInvoke: Boolean,
     val isUsedAsGetClassReceiver: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
@@ -41,7 +53,11 @@ open class CallInfo(
 
     val resolutionMode: ResolutionMode,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+    val implicitInvokeMode: ImplicitInvokeMode,
 ) : AbstractCallInfo() {
+    override val isImplicitInvoke: Boolean
+        get() = implicitInvokeMode != ImplicitInvokeMode.None
+
     /**
      * If [argumentList] is a [FirResolvedArgumentList],
      * returns the [FirArgumentList.arguments] of the [FirResolvedArgumentList.originalArgumentList].
@@ -69,7 +85,8 @@ open class CallInfo(
             argumentList = buildArgumentList {
                 arguments += receiverExpression
                 arguments += argumentList.arguments
-            }
+            },
+            implicitInvokeMode = ImplicitInvokeMode.ReceiverAsArgument
         )
 
     open fun copy(
@@ -78,13 +95,13 @@ open class CallInfo(
         argumentList: FirArgumentList = this.argumentList,
         explicitReceiver: FirExpression? = this.explicitReceiver,
         name: Name = this.name,
-        isImplicitInvoke: Boolean = this.isImplicitInvoke,
+        implicitInvokeMode: ImplicitInvokeMode = this.implicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate? = this.candidateForCommonInvokeReceiver,
     ): CallInfo = CallInfo(
         callSite, callKind, name, explicitReceiver, argumentList,
-        isImplicitInvoke, isUsedAsGetClassReceiver, typeArguments,
+        isUsedAsGetClassReceiver, typeArguments,
         session, containingFile, containingDeclarations,
-        candidateForCommonInvokeReceiver, resolutionMode, origin
+        candidateForCommonInvokeReceiver, resolutionMode, origin, implicitInvokeMode
     )
 }
 
@@ -105,9 +122,10 @@ class CallableReferenceInfo(
     origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
 ) : CallInfo(
     callSite, CallKind.CallableReference, name, explicitReceiver, FirEmptyArgumentList,
-    isImplicitInvoke = false, isUsedAsGetClassReceiver = false, typeArguments = emptyList(),
+    isUsedAsGetClassReceiver = false, typeArguments = emptyList(),
     session, containingFile, containingDeclarations,
-    candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin
+    candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin,
+    implicitInvokeMode = ImplicitInvokeMode.None,
 ) {
     override fun copy(
         callKind: CallKind,
@@ -115,7 +133,7 @@ class CallableReferenceInfo(
         argumentList: FirArgumentList,
         explicitReceiver: FirExpression?,
         name: Name,
-        isImplicitInvoke: Boolean,
+        implicitInvokeMode: ImplicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate?,
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,

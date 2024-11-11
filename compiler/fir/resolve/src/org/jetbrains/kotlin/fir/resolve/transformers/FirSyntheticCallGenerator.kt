@@ -414,13 +414,13 @@ class FirSyntheticCallGenerator(
         name = name,
         explicitReceiver = null,
         argumentList = argumentList,
-        isImplicitInvoke = false,
         isUsedAsGetClassReceiver = false,
         typeArguments = emptyList(),
         session = session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations,
         resolutionMode = resolutionMode,
+        implicitInvokeMode = ImplicitInvokeMode.None,
     )
 
     private fun generateSyntheticSelectTypeParameter(
