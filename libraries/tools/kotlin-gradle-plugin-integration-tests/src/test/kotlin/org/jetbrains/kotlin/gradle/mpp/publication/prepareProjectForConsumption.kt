@@ -11,7 +11,7 @@ import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.GradleBuildScriptInjectionContext
+import org.jetbrains.kotlin.gradle.testbase.GradleProjectBuildScriptInjectionContext
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -192,7 +192,7 @@ private abstract class ResolveDependenciesTask : DefaultTask() {
     }
 }
 
-internal fun GradleBuildScriptInjectionContext.registerResolveDependenciesTask(vararg configurationNames: String) {
+internal fun GradleProjectBuildScriptInjectionContext.registerResolveDependenciesTask(vararg configurationNames: String) {
     project.tasks.register("resolveDependencies", ResolveDependenciesTask::class.java) { task ->
         for (configurationName in configurationNames) {
             task.reportForConfiguration(configurationName)
