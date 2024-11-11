@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("generated-sources")
 }
 
 dependencies {
@@ -18,42 +17,13 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-val generatorClasspath by configurations.creating
-
-dependencies {
-    generatorClasspath(project("tree-generator"))
-}
-
-val generationRoot = projectDir.resolve("gen")
-
-val generateTree by tasks.registering(NoDebugJavaExec::class) {
-
-    val generatorRoot = "$projectDir/tree-generator/src/"
-
-    val generatorConfigurationFiles = fileTree(generatorRoot) {
-        include("**/*.kt")
-    }
-
-    inputs.files(generatorConfigurationFiles)
-    outputs.dirs(generationRoot)
-
-    args(generationRoot)
-    workingDir = rootDir
-    classpath = generatorClasspath
-    mainClass.set("org.jetbrains.kotlin.fir.tree.generator.MainKt")
-    systemProperties["line.separator"] = "\n"
-}
-
 sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDir(generateTree)
-    }
+    "main" { projectDefault() }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
-}
+generatedSourcesTask(
+    taskName = "generateTree",
+    generatorProject = ":compiler:fir:tree:tree-generator",
+    generatorRoot = "compiler/fir/tree/tree-generator/src/",
+    generatorMainClass = "org.jetbrains.kotlin.fir.tree.generator.MainKt",
+)
