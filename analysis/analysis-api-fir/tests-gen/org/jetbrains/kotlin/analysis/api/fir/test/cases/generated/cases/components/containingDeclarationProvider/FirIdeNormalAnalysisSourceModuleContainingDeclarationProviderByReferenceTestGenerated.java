@@ -118,6 +118,18 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByRefe
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/topLevelFunctionFromInside.kt");
   }
 
+  @Test
+  @TestMetadata("typeAliasedConstructor.kt")
+  public void testTypeAliasedConstructor() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/typeAliasedConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasedConstructorParameter.kt")
+  public void testTypeAliasedConstructorParameter() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/typeAliasedConstructorParameter.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated")
   @TestDataPath("$PROJECT_ROOT")
