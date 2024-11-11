@@ -354,6 +354,8 @@ class ComposerParamTransformer(
             transformedFunctionSet.add(fn)
             transformedFunctions[oldFn] = fn
 
+            fn.metadata = oldFn.metadata
+
             // The overridden symbols might also be composable functions, so we want to make sure
             // and transform them as well
             fn.overriddenSymbols = oldFn.overriddenSymbols.map {  // TODO use fn`s overriddenSymbols?
