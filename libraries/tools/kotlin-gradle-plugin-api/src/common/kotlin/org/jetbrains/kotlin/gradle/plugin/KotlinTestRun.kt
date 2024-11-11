@@ -10,39 +10,58 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.testing.TestFilter
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * A [KotlinExecution] that runs configured tests.
  */
 interface KotlinTestRun<out SourceType : KotlinExecution.ExecutionSource> : KotlinExecution<SourceType> {
+
+    /**
+     * Configures filtering for executable tests using the provided [configureFilter] configuration.
+     */
     fun filter(configureFilter: TestFilter.() -> Unit)
 
+    /**
+     * Configures filtering for executable tests using the provided [configureFilter] configuration.
+     */
     fun filter(configureFilter: Closure<*>)
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * A [KotlinTargetExecution] that executes configured tests in the context of a specific [KotlinTarget].
  */
 interface KotlinTargetTestRun<ExecutionSource : KotlinExecution.ExecutionSource> :
     KotlinTestRun<ExecutionSource>,
     KotlinTargetExecution<ExecutionSource>
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * A [KotlinExecution.ExecutionSource] that provides the [classpath] and [testClassesDirs] where JVM test classes can be found.
  */
 interface JvmClasspathTestRunSource : KotlinExecution.ExecutionSource {
+
+    /**
+     * The part of the classpath where JVM test classes are located for execution.
+     */
     val testClassesDirs: FileCollection
+
+    /**
+     * The tests classpath.
+     *
+     * This includes dependencies and/or test framework classes such as JUnit, TestNG, or any other test framework classes.
+     */
     val classpath: FileCollection
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Configures the [JvmClasspathTestRunSource].
  */
 interface ClasspathTestRunSourceSupport {
+
     /**
-     * Select the exact [classpath] to run the tests from.
+     * Configures values for the [JvmClasspathTestRunSource].
      *
-     * Only the classes from [testClasses] will be treated as tests.
+     * Calling this method overwrites any already configured values in the [JvmClasspathTestRunSource].
      *
-     * This overrides other [KotlinExecution.executionSource] selection options.
+     * @param [classpath] Tests classpath
+     * @param [testClassesDirs] Only the classes from this [FileCollection] are treated as tests.
      */
     fun setExecutionSourceFrom(classpath: FileCollection, testClassesDirs: FileCollection)
 }
