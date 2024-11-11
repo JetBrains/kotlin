@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticListRenderer
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.util.printCopyright
+import org.jetbrains.kotlin.generators.util.printGeneratedMessage
 import org.jetbrains.kotlin.generators.util.printImports
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File

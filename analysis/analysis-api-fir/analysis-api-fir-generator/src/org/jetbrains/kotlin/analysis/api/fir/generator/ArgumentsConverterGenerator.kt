@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.util.printCopyright
+import org.jetbrains.kotlin.generators.util.printGeneratedMessage
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
