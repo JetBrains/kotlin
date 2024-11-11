@@ -13,5 +13,5 @@ public class P {
 
 fun foo(c: P): MutableList<Int> {
     // Error should be here: see KT-8168 Typechecker fails for platform collection type
-    return <!RETURN_TYPE_MISMATCH!>c.getList() ?: listOf()<!>
+    return <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>c.getList() ?: <!TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>()<!><!>
 }
