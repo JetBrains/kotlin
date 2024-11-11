@@ -5,6 +5,7 @@
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
@@ -13,24 +14,67 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 fun Project.generatedDiagnosticContainersAndCheckerComponents(): TaskProvider<JavaExec> {
+    return generatedSourcesTask(
+        taskName = "generateCheckersComponents",
+        generatorProject = ":compiler:fir:checkers:checkers-component-generator",
+        generatorRoot = "compiler/fir/checkers/checkers-component-generator/src/",
+        generatorMainClass = "org.jetbrains.kotlin.fir.checkers.generator.MainKt",
+        argsProvider = { generationRoot -> listOf(project.name, generationRoot.toString()) },
+    )
+}
+
+/**
+ * This utility function creates [taskName] task, which invokes specified code generator which produces some new
+ *   sources for the current module in the directory ./gen
+ *
+ * @param [taskName] name for the created task
+ * @param [generatorProject] module of the code generator
+ * @param [generatorRoot] path to the `src` directory of the code generator
+ * @param [generatorMainClass] FQN of the generator main class
+ * @param [argsProvider] used for specifying the CLI arguments to the generator.
+ *   By default, it passes the pass to the generated sources (`./gen`)
+ * @param [dependOnTaskOutput] set to false disable the gradle dependency between the generation task and the compilation of the current
+ *   module. This is needed for cases when the module with generator depends on the module for which it generates new sources.
+ *   Use it with caution
+ */
+fun Project.generatedSourcesTask(
+    taskName: String,
+    generatorProject: String,
+    generatorRoot: String,
+    generatorMainClass: String,
+    argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
+    dependOnTaskOutput: Boolean = true
+): TaskProvider<JavaExec> {
     val generatorClasspath: Configuration by configurations.creating
 
     dependencies {
-        generatorClasspath(project(":compiler:fir:checkers:checkers-component-generator"))
+        generatorClasspath(project(generatorProject))
     }
 
     val generationRoot = layout.projectDirectory.dir("gen")
-    val task = tasks.register<JavaExec>("generateCheckersComponents") {
+    val task = tasks.register<JavaExec>(taskName) {
         workingDir = rootDir
         classpath = generatorClasspath
-        mainClass.set("org.jetbrains.kotlin.fir.checkers.generator.MainKt")
+        mainClass.set(generatorMainClass)
         systemProperties["line.separator"] = "\n"
-        args(project.name, generationRoot)
+        args(argsProvider(generationRoot))
+
+        @Suppress("NAME_SHADOWING")
+        val generatorRoot = "$rootDir/$generatorRoot"
+        val generatorConfigurationFiles = fileTree(generatorRoot) {
+            include("**/*.kt")
+        }
+
+        inputs.files(generatorConfigurationFiles)
         outputs.dir(generationRoot)
     }
 
     sourceSets.named("main") {
-        java.srcDirs(task)
+        val dependency: Any = when (dependOnTaskOutput) {
+            true -> task
+            false -> generationRoot
+        }
+        java.srcDirs(dependency)
     }
 
     if (kotlinBuildProperties.isInIdeaSync) {
