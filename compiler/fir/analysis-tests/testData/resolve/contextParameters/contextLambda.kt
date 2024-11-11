@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextReceivers, +ContextParameters
 
-<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(_: String)
+context(_: String)
 fun foo() {}
 
-fun acceptLambda(f: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(String) () -> Unit) {}
+fun acceptLambda(f: context(String) () -> Unit) {}
 
 fun test() {
     acceptLambda {

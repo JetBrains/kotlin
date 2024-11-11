@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return
+
         if (declaration is FirCallableDeclaration &&
             // Skip the lambdas. They don't have `context` explicitly written => `context` is written somewhere else.
             // Plus, I'd not say that lambdas are declarations. They are rather values

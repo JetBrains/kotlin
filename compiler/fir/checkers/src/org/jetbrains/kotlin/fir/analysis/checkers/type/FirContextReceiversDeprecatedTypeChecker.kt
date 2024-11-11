@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.fir.types.hasContextReceivers
 
 object FirContextReceiversDeprecatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return
+
         if (typeRef.source == null || typeRef.source?.kind is KtFakeSourceElementKind) return
         if (typeRef.coneType.hasContextReceivers) {
             reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
