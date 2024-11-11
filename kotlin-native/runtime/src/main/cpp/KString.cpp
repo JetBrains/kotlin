@@ -77,8 +77,6 @@ OBJ_GETTER(convertToUTF16, const char* rawString, size_t rawStringLength, CharCo
 
 template <KStringConversionMode mode>
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KInt start, KInt size) {
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-
     std::string utf8;
     try {
         utf8 = kotlin::to_string<mode>(thiz, static_cast<size_t>(start), static_cast<size_t>(size));
@@ -226,11 +224,6 @@ extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thiz, KChar oldChar, KCha
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
-    RuntimeAssert(thiz != nullptr, "this cannot be null");
-    RuntimeAssert(other != nullptr, "other cannot be null");
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
-    RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-
     auto thizLength = StringUtf16Length(thiz);
     auto otherLength = StringUtf16Length(other);
     RuntimeAssert(thizLength <= MAX_STRING_SIZE, "this cannot be this large");
@@ -482,12 +475,10 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     return StringUtf16Data(message);
 }
 
 extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     return StringRawSize(message);
 }
 
@@ -497,7 +488,6 @@ extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thi
 
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
-    RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
     auto length = StringUtf16Length(kstring);
     RuntimeAssert(start <= length, "start index out of bounds");
     auto utf16 = StringUtf16Data(kstring) + start;

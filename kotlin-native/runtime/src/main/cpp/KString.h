@@ -34,13 +34,22 @@ struct StringHeader {
     ALWAYS_INLINE const char *data() const { return data_; }
     ALWAYS_INLINE size_t size() const { return count_ * sizeof(KChar) - extraLength(flags_); }
 
-    ALWAYS_INLINE static StringHeader* of(KRef string) { return reinterpret_cast<StringHeader*>(string); }
-    ALWAYS_INLINE static const StringHeader* of(KConstRef string) { return reinterpret_cast<const StringHeader*>(string); }
+    ALWAYS_INLINE static StringHeader* of(KRef string) {
+        RuntimeAssert(string != nullptr && string->type_info() == theStringTypeInfo, "Must use String");
+        return reinterpret_cast<StringHeader*>(string);
+    }
+
+    ALWAYS_INLINE static const StringHeader* of(KConstRef string) {
+        RuntimeAssert(string != nullptr && string->type_info() == theStringTypeInfo, "Must use String");
+        return reinterpret_cast<const StringHeader*>(string);
+    }
 
     ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
         return offsetof(StringHeader, data_) - sizeof(ArrayHeader);
     }
 };
+
+static_assert(StringHeader::extraLength(0) % 2 == 0, "String's data is not aligned to Char");
 
 extern "C" {
 
