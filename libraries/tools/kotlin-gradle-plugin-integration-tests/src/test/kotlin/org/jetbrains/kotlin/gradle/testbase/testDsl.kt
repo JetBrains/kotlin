@@ -374,6 +374,11 @@ open class GradleProject(
     fun relativeToProject(
         files: List<Path>,
     ): List<Path> = files.map { projectPath.relativize(it) }
+
+    private var counter = 0
+    fun generateIdentifier(): String {
+        return counter.toString().also { counter += 1 }
+    }
 }
 
 /**

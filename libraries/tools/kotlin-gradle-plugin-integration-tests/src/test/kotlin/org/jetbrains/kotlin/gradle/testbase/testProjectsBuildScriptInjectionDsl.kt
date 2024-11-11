@@ -24,7 +24,7 @@ fun KGPBaseTest.kotlinAndroidLibraryProject(
     }
 }
 
-fun GradleBuildScriptInjectionContext.applyMavenPublishPlugin(): PublishingExtension {
+fun GradleProjectBuildScriptInjectionContext.applyMavenPublishPlugin(): PublishingExtension {
     project.plugins.apply("maven-publish")
     publishing.repositories.apply {
         maven { maven ->
@@ -34,7 +34,7 @@ fun GradleBuildScriptInjectionContext.applyMavenPublishPlugin(): PublishingExten
     return publishing
 }
 
-fun GradleBuildScriptInjectionContext.applyDefaultAndroidLibraryConfiguration() {
+fun GradleProjectBuildScriptInjectionContext.applyDefaultAndroidLibraryConfiguration() {
     androidLibrary.apply {
         compileSdk = 31
         defaultConfig {
