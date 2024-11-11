@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
-open class AbstractReplWithCustomDefDiagnosticsTestBase : AbstractKotlinCompilerTest() {
+open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
         enableLazyResolvePhaseChecking()
