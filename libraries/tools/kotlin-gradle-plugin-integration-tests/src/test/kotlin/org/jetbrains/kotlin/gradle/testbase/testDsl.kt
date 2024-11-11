@@ -647,6 +647,7 @@ internal fun Path.addDefaultSettingsToSettingsGradle(
                 )
             } else {
                 addDependencyManagementToSettings(
+                    gradleRepositoriesMode = dependencyManagement.gradleRepositoriesMode,
                     additionalDependencyRepositories = dependencyManagement.additionalRepos,
                     localRepo = localRepo
                 )
@@ -1022,7 +1023,10 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
  * Represents different types of dependency management provided to tests.
  */
 sealed interface DependencyManagement {
-    class DefaultDependencyManagement(val additionalRepos: Set<String> = emptySet()) : DependencyManagement
+    class DefaultDependencyManagement(
+        val additionalRepos: Set<String> = emptySet(),
+        val gradleRepositoriesMode: RepositoriesMode = RepositoriesMode.PREFER_SETTINGS,
+    ) : DependencyManagement
     data object DisabledDependencyManagement : DependencyManagement
 }
 

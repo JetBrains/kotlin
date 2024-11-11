@@ -24,6 +24,18 @@ kotlin {
     }
 }
 
+tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+    friendPaths.from(
+        configurations.testCompileClasspath.map {
+            it.incoming.artifacts.artifacts.filter {
+                (it.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin"
+            }.also { assert(it.isNotEmpty()) }.map {
+                it.file
+            }
+        }
+    )
+}
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
