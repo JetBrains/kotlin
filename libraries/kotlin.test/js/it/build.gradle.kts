@@ -6,6 +6,7 @@ plugins {
     kotlin("multiplatform")
     alias(libs.plugins.gradle.node)
     idea
+    id("nodejs-cache-redirector-configuration")
 }
 
 description = "Kotlin-test integration tests for JS"

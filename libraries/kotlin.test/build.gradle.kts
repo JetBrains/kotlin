@@ -16,6 +16,7 @@ plugins {
     kotlin("multiplatform")
     `maven-publish`
     signing
+    id("nodejs-cache-redirector-configuration")
 }
 
 description = "Kotlin Test Library"

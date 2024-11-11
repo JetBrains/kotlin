@@ -49,6 +49,7 @@ plugins {
     }
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
+    id("nodejs-cache-redirector-configuration")
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -1146,16 +1147,6 @@ if (disableVerificationTasks) {
 }
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
-
-allprojects {
-    plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin::class) {
-        extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
-            if (kotlinBuildProperties.isCacheRedirectorEnabled) {
-                downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
-            }
-        }
-    }
-}
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {

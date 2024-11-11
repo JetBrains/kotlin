@@ -6,6 +6,7 @@ description = "Runtime library for the Atomicfu compiler plugin"
 plugins {
     kotlin("js")
     `maven-publish`
+    id("nodejs-cache-redirector-configuration")
 }
 
 group = "org.jetbrains.kotlin"
