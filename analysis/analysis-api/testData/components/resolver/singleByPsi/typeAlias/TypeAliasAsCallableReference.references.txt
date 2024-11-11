@@ -1,0 +1,3 @@
+KtNameReferenceExpression(88,95): 'MyAlias'
+  KtSimpleNameReference:
+    (in test.MyClass) constructor()

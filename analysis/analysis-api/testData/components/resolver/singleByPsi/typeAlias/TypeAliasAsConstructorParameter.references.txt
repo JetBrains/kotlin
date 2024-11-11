@@ -1,0 +1,7 @@
+KtNameReferenceExpression(99,104): 'param'
+  KtSimpleNameReference:
+    param: kotlin.String
+
+KtCallExpression(91,115): 'MyAlias(param = "hello")'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

@@ -4406,6 +4406,42 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("TypeAliasAsCallableReference.kt")
+    public void testTypeAliasAsCallableReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsCallableReference_withTypeParameters.kt")
+    public void testTypeAliasAsCallableReference_withTypeParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsCallableReference_withTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsConstructor.kt")
+    public void testTypeAliasAsConstructor() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsConstructorParameter.kt")
+    public void testTypeAliasAsConstructorParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsConstructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsConstructor_fixedTypeParameters.kt")
+    public void testTypeAliasAsConstructor_fixedTypeParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsConstructor_fixedTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsConstructor_withTypeParameters.kt")
+    public void testTypeAliasAsConstructor_withTypeParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsConstructor_withTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("TypeAliasAsSupertypeConstructor.kt")
     public void testTypeAliasAsSupertypeConstructor() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/TypeAliasAsSupertypeConstructor.kt");

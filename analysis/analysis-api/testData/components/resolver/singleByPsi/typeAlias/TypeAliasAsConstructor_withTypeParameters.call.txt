@@ -1,0 +1,31 @@
+KtNameReferenceExpression(122,129): 'MyAlias'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "hello" -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = T
+          symbol = t: T
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.MyClass<T>
+          symbol = <constructor>(t: T): test.MyClass<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = t
+              receiverType = null
+              returnType = T
+              symbol = t: T
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {
+        TT -> (kotlin.String)
+      }
