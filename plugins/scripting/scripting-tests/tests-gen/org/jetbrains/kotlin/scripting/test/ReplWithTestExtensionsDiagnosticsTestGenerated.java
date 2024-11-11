@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/repl")
 @TestDataPath("$PROJECT_ROOT")
-public class ReplWithCustomDefDiagnosticsTestBaseGenerated extends AbstractReplWithCustomDefDiagnosticsTestBase {
+public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractReplWithTestExtensionsDiagnosticsTest {
   @Test
   public void testAllFilesPresentInRepl() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), null, true);
