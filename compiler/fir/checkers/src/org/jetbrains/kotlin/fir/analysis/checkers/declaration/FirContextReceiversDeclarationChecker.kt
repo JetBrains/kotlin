@@ -82,6 +82,13 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     "Context parameters on delegation operators are unsupported.",
                     context
                 )
+            } else if (declaration is FirProperty && declaration.delegate != null) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.UNSUPPORTED,
+                    "Context parameters on delegated properties are unsupported.",
+                    context
+                )
             }
         }
     }
