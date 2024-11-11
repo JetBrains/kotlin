@@ -50,12 +50,14 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         // so `toByteArray(Charsets.UTF_16{LE,BE})` is wrong...
         val high = if (runtime.isBigEndian) 0 else 1
         val data = ByteArray(value.length * 2) { (value[it / 2].code shr if (it % 2 == high) 8 else 0).toByte() }
+        val hashCode = value.hashCode()
         val header = Struct(
                 llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
                 permanentTag(context.ir.symbols.string.owner.typeInfoPtr), // equivalent to CharArray
                 llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // array size in Chars
-                llvm.constInt32(value.hashCode()),
-                llvm.constInt16(1.toShort()), // HASHCODE_COMPUTED
+                llvm.constInt32(hashCode),
+                // flags = HASHCODE_IS_ZERO
+                llvm.constInt16((if (hashCode == 0) 1 else 0).toShort()),
                 ConstArray(llvm.int8Type, data.map(llvm::constInt8))
         )
         return createConstant(header)
