@@ -139,7 +139,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
   }
   if (%dirty and 0b10010010010010010011 != 0b10010010010010010010 || !%composer.skipping) {
     if (%default and 0b0001 != 0) {
-      one = ComposableSingletons%TestKt.lambda-Optional%1
+      one = ComposableSingletons%TestKt.lambda-Optional-fsk0jderr4fs%1
     }
     if (%default and 0b0010 != 0) {
       two = null
@@ -263,7 +263,7 @@ fun UseOptional(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda-Optional%1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+  val lambda-Optional-fsk0jderr4fs%1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {

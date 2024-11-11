@@ -28,21 +28,26 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -51,6 +56,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.util.prefixIfNot
 
 private class CaptureCollector {
     val captures = mutableSetOf<IrValueDeclaration>()
@@ -72,12 +78,12 @@ private class CaptureCollector {
  * ```kotlin
  * @Composable
  * fun Foo() {
- *     Bar { // <- lambda-1
- *         Bar { <- lambda 1$1
+ *     Bar { // <- lambda-Foo-1
+ *         Bar { <- lambda-Foo-1$1
  *
  *         }
  *
- *         Bar { <- lambda 1$2
+ *         Bar { <- lambda-Foo-1$2
  *         }
  *     }
  * }
@@ -91,13 +97,38 @@ private class LambdaNamingContext {
 
     class StackElement(val key: String?) {
 
+        private val occupiedKeys = mutableSetOf<String>()
+
         private var nextGenericKey = START_INDEX
 
-        fun nextGenericKey(): Int {
-            try {
-                return nextGenericKey
-            } finally {
-                nextGenericKey++
+        /**
+         * Creates the next free key in this current [StackElement].
+         *
+         * @param key The 'raw' key name: For example, this could be the name of a declaration that we're currently in. If this key
+         * is free, then it will be returned as it is. If there already exists a key with the given name, then the key will be mangled
+         */
+        fun createNextKey(key: String? = null): String {
+            val proposal = if (key.isNullOrBlank()) {
+                try {
+                    nextGenericKey.toString()
+                } finally {
+                    nextGenericKey++
+                }
+            } else key
+
+            /* Check if the desired key is free */
+            if (occupiedKeys.add(proposal)) {
+                return proposal
+            }
+
+            /* Mangle the key to the next free version by incrementing a suffix */
+            var iteration = START_INDEX
+            while (true) {
+                val mangled = "$proposal-$iteration"
+                if (occupiedKeys.add(mangled)) {
+                    return mangled
+                }
+                iteration++
             }
         }
     }
@@ -126,11 +157,45 @@ private class LambdaNamingContext {
     }
 
     private fun IrElement.createKey(): String {
-        return (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.let { name ->
+        /**
+         * @return Additional hash (encoded as string), which identifies the function by including the extension and value parameters
+         */
+        fun getAdditionalFunctionKeyHash(irFunction: IrFunction): String? {
+            /* Check if creating the additional key is even necessary */
+            if (irFunction.extensionReceiverParameter == null &&
+                irFunction.valueParameters.isEmpty()
+            ) return null
+
+            fun IrValueParameter.fqName(): String? {
+                return (type.classifierOrNull as? IrClassSymbol)?.owner?.fqNameWhenAvailable?.asString()
+            }
+
+            val receiver = irFunction.extensionReceiverParameter?.fqName()
+            val functionName = irFunction.fqNameWhenAvailable?.asString() ?: irFunction.name.asString()
+            val parameterTypes = irFunction.valueParameters.joinToString(", ") { param -> param.fqName().orEmpty() }
+            val signature = buildString {
+                if (receiver != null) append("$receiver.")
+                append(functionName)
+                append("(")
+                append(parameterTypes)
+                append(")")
+            }
+
+            return signature.cityHash64String()
+        }
+
+
+        val rawKey = (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.let { name ->
             /* Fields need to be differentiated from functions, as fun x() and val x can live in the same scope */
-            if (this is IrField) "val-${name.asString()}"
-            else name.asString()
-        } ?: stack.last().nextGenericKey().toString()
+            when (this) {
+                is IrField -> "val-${name.asString()}"
+                is IrFunction -> name.asString() + getAdditionalFunctionKeyHash(this)?.prefixIfNot("-").orEmpty()
+                is IrClass -> name.asString()
+                else -> null
+            }
+        }
+
+        return stack.last().createNextKey(rawKey)
     }
 
     private companion object {

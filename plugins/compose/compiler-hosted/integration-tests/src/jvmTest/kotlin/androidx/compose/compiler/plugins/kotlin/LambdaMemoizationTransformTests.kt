@@ -891,5 +891,32 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """.trimIndent()
     )
-}
 
+    @Test
+    fun testOverloads() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Foo() {
+                Box {}
+            }
+            
+            @Composable fun Foo(x: Int) {
+                Box {}
+            }
+
+            @Composable fun Int.Foo() {
+                Box {}
+            }
+
+            @Composable fun Foo(x: String) {
+                Box {}
+            }
+        """.trimIndent()
+    )
+}
