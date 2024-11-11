@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStu
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderK2CompilerTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyK2CompilerTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
 
 internal fun TestGroupSuite.generateDecompiledTests() {
@@ -28,12 +30,15 @@ internal fun TestGroupSuite.generateDecompiledTests() {
         testClass<AbstractClsStubBuilderK2CompilerTest> {
             model("clsFileStubBuilder", extension = null, recursive = false)
         }
-    }
 
-    testGroup(
-        "analysis/decompiled/decompiler-to-file-stubs/tests",
-        "analysis/decompiled/decompiler-to-file-stubs/testData",
-    ) {
+        testClass<AbstractPsiStubElementTypeConsistencyTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractPsiStubElementTypeConsistencyK2CompilerTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
         testClass<AbstractAdditionalStubInfoTest> {
             model("additionalClsStubInfo", extension = null, recursive = false)
         }
