@@ -146,7 +146,6 @@ OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool en
 
 template <KStringConversionMode mode>
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KInt start, KInt size) {
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
     std::string utf8 = kotlin::to_string<mode>(thiz, static_cast<size_t>(start), static_cast<size_t>(size));
     auto result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT);
     std::copy(utf8.begin(), utf8.end(), ByteArrayAddressOfElementAt(result->array(), 0));
@@ -247,10 +246,6 @@ extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, K
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
-    RuntimeAssert(thiz != nullptr, "this cannot be null");
-    RuntimeAssert(other != nullptr, "other cannot be null");
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
-    RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
     if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
     if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
@@ -555,14 +550,12 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     auto header = StringHeader::of(message);
     if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
     return reinterpret_cast<const KChar*>(header->data());
 }
 
 extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     auto header = StringHeader::of(message);
     if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
     return header->size();
@@ -613,7 +606,6 @@ static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcep
 
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
-    RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
     return encodingAware(kstring, [=](auto kstring) {
         auto length = kstring.sizeInChars();
         RuntimeAssert(start <= length, "start index out of bounds");
