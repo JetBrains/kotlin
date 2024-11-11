@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.konan.test.support
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
@@ -40,9 +45,6 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
 
                     // Enable double-inlining.
                     "-Xklib-no-double-inlining=false",
-
-                    // Enable narrowing of visibility for synthetic accessors.
-                    "-Xsynthetic-accessors-with-narrowed-visibility".takeIf { nativeTestInstances.enclosingTestInstance.narrowedAccessorVisibility }
                 )
 
                 build()
