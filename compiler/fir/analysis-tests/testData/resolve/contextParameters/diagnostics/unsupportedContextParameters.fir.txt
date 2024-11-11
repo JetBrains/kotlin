@@ -54,3 +54,15 @@ FILE: unsupportedContextParameters.kt
         }
 
     }
+    context(<unused var>: R|kotlin/String|)
+    public final operator fun R|kotlin/Any|.getValue(thiz: R|kotlin/Any?|, metadata: R|kotlin/Any?|): R|kotlin/Any| {
+        ^getValue this@R|/getValue|
+    }
+    context(<unused var>: R|kotlin/String|)
+    public final operator fun R|kotlin/Any|.setValue(thiz: R|kotlin/Any?|, metadata: R|kotlin/Any?|, value: R|kotlin/String|): R|kotlin/Any| {
+        ^setValue this@R|/setValue|
+    }
+    context(<unused var>: R|kotlin/String|)
+    public final operator fun R|kotlin/Any|.provideDelegate(thiz: R|kotlin/Any?|, metadata: R|kotlin/Any?|): R|kotlin/Any| {
+        ^provideDelegate this@R|/provideDelegate|
+    }

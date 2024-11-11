@@ -28,3 +28,12 @@ object O
 typealias TA = Any
 
 val objectExpression = <!UNRESOLVED_REFERENCE!>context<!>(<!UNRESOLVED_REFERENCE!>_<!><!SYNTAX!>: String<!>)<!SYNTAX!><!> object<!SYNTAX!><!> {}
+
+<!UNSUPPORTED!>context(_: String)<!>
+operator fun Any.getValue(thiz: Any?, metadata: Any?): Any = this
+
+<!UNSUPPORTED!>context(_: String)<!>
+operator fun Any.setValue(thiz: Any?, metadata: Any?, value: String): Any = this
+
+<!UNSUPPORTED!>context(_: String)<!>
+operator fun Any.provideDelegate(thiz: Any?, metadata: Any?): Any = this

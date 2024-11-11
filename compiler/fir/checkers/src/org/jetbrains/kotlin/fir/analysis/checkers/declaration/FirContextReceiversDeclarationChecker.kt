@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -72,8 +75,19 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     "Context parameters on constructors are unsupported.",
                     context
                 )
+            } else if (declaration.isDelegationOperator()) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.UNSUPPORTED,
+                    "Context parameters on delegation operators are unsupported.",
+                    context
+                )
             }
         }
+    }
+
+    private fun FirDeclaration.isDelegationOperator(): Boolean {
+        return this is FirCallableDeclaration && this.isOperator && this.nameOrSpecialName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
     }
 
     private fun FirDeclaration.getContextReceiver(): List<FirValueParameter> {
