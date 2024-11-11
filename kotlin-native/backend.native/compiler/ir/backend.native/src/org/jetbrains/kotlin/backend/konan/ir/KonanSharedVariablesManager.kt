@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 
-internal class KonanSharedVariablesManager(val context: KonanBackendContext) : SharedVariablesManager {
+internal class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: KonanSymbols) : SharedVariablesManager {
 
-    private val refClass = context.ir.symbols.refClass
+    private val refClass = symbols.refClass
 
     private val refClassConstructor = refClass.constructors.single()
 
@@ -57,7 +57,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
         val sharedVariableInitialization =
                 IrCallImpl(initializer.startOffset, initializer.endOffset,
-                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol,
+                        irBuiltIns.unitType, elementProperty.setter!!.symbol,
                         elementProperty.setter!!.typeParameters.size)
         sharedVariableInitialization.dispatchReceiver =
                 IrGetValueImpl(initializer.startOffset, initializer.endOffset,
@@ -66,7 +66,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
         sharedVariableInitialization.putValueArgument(0, initializer)
 
         return IrCompositeImpl(
-                originalDeclaration.startOffset, originalDeclaration.endOffset, context.irBuiltIns.unitType, null,
+                originalDeclaration.startOffset, originalDeclaration.endOffset, irBuiltIns.unitType, null,
                 listOf(sharedVariableDeclaration, sharedVariableInitialization)
         )
     }
@@ -82,7 +82,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
             }
 
     override fun setSharedValue(sharedVariableSymbol: IrValueSymbol, originalSet: IrSetValue) =
-            IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
+            IrCallImpl(originalSet.startOffset, originalSet.endOffset, irBuiltIns.unitType,
                     elementProperty.setter!!.symbol, elementProperty.setter!!.typeParameters.size
             ).apply {
                 dispatchReceiver = IrGetValueImpl(

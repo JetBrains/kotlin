@@ -23,7 +23,7 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseCon
     override val sharedVariablesManager by lazy {
         // Creating lazily because builtIns module seems to be incomplete during `link` test;
         // TODO: investigate this.
-        KonanSharedVariablesManager(this)
+        KonanSharedVariablesManager(irBuiltIns, ir.symbols)
     }
 
     override val internalPackageFqn = KonanFqNames.internalPackageName
