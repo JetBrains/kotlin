@@ -27,7 +27,7 @@ struct StringHeader {
     alignas(KChar) char data_[];
 
     enum {
-        HASHCODE_COMPUTED = 1,
+        HASHCODE_IS_ZERO = 1 << 0,
     };
 
     ALWAYS_INLINE char *data() { return data_; }
