@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -26,9 +27,11 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -40,7 +43,9 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
 
-open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade) :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
+{
 
     override fun TestConfigurationBuilder.configuration() {
         configureFirParser(FirParser.Psi)
@@ -57,7 +62,7 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
             ::ScriptingPluginEnvironmentConfigurator
         )
 
-        facadeStep(::FirFrontendFacade)
+        facadeStep(frontendFacade)
         firHandlersStep {
             useHandlers(
                 ::FirDiagnosticsHandler
@@ -77,7 +82,6 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
             commonBackendHandlersForCodegenTest()
             useHandlers(
                 ::BytecodeListingHandler,
-                ::FirJvmScriptRunChecker
             )
         }
 
@@ -87,6 +91,19 @@ open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBacken
             ::FirFailingTestSuppressor,
             ::BlackBoxCodegenSuppressor
         )
+    }
+}
+
+open class AbstractFirScriptCodegenTest : AbstractFirScriptAndReplCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            jvmArtifactsHandlersStep {
+                useHandlers(
+                    ::FirJvmScriptRunChecker
+                )
+            }
+        }
     }
 }
 
