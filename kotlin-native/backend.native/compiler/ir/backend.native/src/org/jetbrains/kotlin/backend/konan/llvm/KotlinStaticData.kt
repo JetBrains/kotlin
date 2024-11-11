@@ -58,13 +58,14 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             0 to ByteArray(value.length * 2) { (value[it / 2].code shr if (it % 2 == high) 8 else 0).toByte() }
         }
         val data = encoded + ByteArray(encoded.size % 2) { 0 }
+        val hashCode = value.hashCode()
         val header = Struct(
                 llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
                 permanentTag(context.ir.symbols.string.owner.typeInfoPtr), // equivalent to CharArray
                 llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // array size in Chars
-                llvm.constInt32(value.hashCode()),
-                // flags = HASHCODE_COMPUTED or IGNORE_LAST_BYTE or (encoding shl ENCODING_OFFSET)
-                llvm.constInt16((1 or (2 * (encoded.size % 2)) or (encodingFlag shl 12)).toShort()),
+                llvm.constInt32(hashCode),
+                // flags = HASHCODE_IS_ZERO or IGNORE_LAST_BYTE or (encoding shl ENCODING_OFFSET)
+                llvm.constInt16(((if (hashCode == 0) 1 else 0) or (2 * (encoded.size % 2)) or (encodingFlag shl 12)).toShort()),
                 ConstArray(llvm.int8Type, data.map(llvm::constInt8))
         )
         return createConstant(header)

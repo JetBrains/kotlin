@@ -36,7 +36,7 @@ struct StringHeader {
     alignas(KChar) char data_[];
 
     enum {
-        HASHCODE_COMPUTED = 1 << 0,
+        HASHCODE_IS_ZERO = 1 << 0,
         IGNORE_LAST_BYTE = 1 << 1,
         ENCODING_OFFSET = 12,
     };

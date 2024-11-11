@@ -402,11 +402,9 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
 static std::optional<KInt> Kotlin_String_cachedHashCode(KConstRef thiz) {
     auto header = StringHeader::of(thiz);
     if (header->size() == 0) return 0;
-    if (kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire) & StringHeader::HASHCODE_COMPUTED) {
-        // The condition only enforces an ordering with the first thread to write the hash code,
-        // so if two thread concurrently computed the hash, an atomic read is needed to prevent a data race.
-        // The value is always the same, though, so which write is observed is irrelevant.
-        return kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    auto hash = kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    if (hash || kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_relaxed) & StringHeader::HASHCODE_IS_ZERO) {
+        return hash;
     }
     return {};
 }
@@ -546,8 +544,13 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
         }
     });
     auto header = StringHeader::of(thiz);
-    kotlin::std_support::atomic_ref{header->hashCode_}.store(result, std::memory_order_relaxed);
-    kotlin::std_support::atomic_ref{header->flags_}.fetch_or(StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
+    // Having exactly one write per computation allows them to be relaxed, since there's no need to order them with any other write.
+    // Since most relevant platforms have atomic word-sized writes by default, this is theoretically much faster.
+    if (result != 0) {
+        kotlin::std_support::atomic_ref{header->hashCode_}.store(result, std::memory_order_relaxed);
+    } else {
+        kotlin::std_support::atomic_ref{header->flags_}.fetch_or(StringHeader::HASHCODE_IS_ZERO, std::memory_order_relaxed);
+    }
     return result;
 }
 
