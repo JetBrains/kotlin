@@ -1,6 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
+import org.jetbrains.kotlin.build.binaryen.BinaryenExtension
 import org.jetbrains.kotlin.build.d8.D8Extension
 import java.nio.file.Files
 import java.util.*
@@ -10,6 +11,7 @@ plugins {
     id("jps-compatible")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
+    id("binaryen-configuration")
 }
 
 node {
@@ -125,7 +127,6 @@ dependencies {
 val generationRoot = projectDir.resolve("tests-gen")
 
 useNodeJsPlugin()
-useBinaryenPlugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -283,7 +284,9 @@ fun Project.wasmProjectTest(
             setupV8()
         }
         setupNodeJs()
-        setupBinaryen()
+        with(project.the<BinaryenExtension>()) {
+            setupBinaryen()
+        }
         setupSpiderMonkey()
         setupWasmEdge()
         useJUnitPlatform()
