@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 
-class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariablesManager {
+class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariablesManager() {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val initializer = originalDeclaration.initializer ?: IrConstImpl.defaultValueForType(
             originalDeclaration.startOffset,
