@@ -11,58 +11,78 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinExecution.ExecutionSource
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * An execution of Kotlin code. Executions in a single family (e.g. test runs) are distinguished by [Named.getName].
- * Names may not be unique across different execution families, such as test runs of different targets.
+ * Represents the execution of Kotlin code, such as tests.
  *
- * A particular kind of execution is a [KotlinTestRun] which runs tests.
+ * Executions within a single family, like test runs, are distinguished by [Named.getName].
+ * Names don't have to be globally unique across different execution families.
+ * For example, test runs of different targets can have the same name.
+ *
+ * [KotlinTestRun] is a specific type of execution that runs tests.
  */
 interface KotlinExecution<out SourceType : ExecutionSource> : Named {
+
+    /**
+     * Represents an execution source that provides the necessary inputs to run the execution.
+     */
     interface ExecutionSource
 
     /**
-     * The source of the executable code that this execution runs from. It is usually set via members of  execution source support
-     * interfaces, such as [CompilationExecutionSourceSupport] or [ClasspathTestRunSourceSupport], or `setExecutionSourceFrom*` functions.
+     * The source of the executable code that this execution runs.
+     *
+     * It is typically set via members of [ExecutionSource] support interfaces,
+     * such as [CompilationExecutionSourceSupport] or [ClasspathTestRunSourceSupport].
      */
     val executionSource: SourceType
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Represents an execution in the scope of a [KotlinTarget].
  */
 interface KotlinTargetExecution<out SourceType : ExecutionSource> : KotlinExecution<SourceType> {
+
+    /**
+     * The [KotlinTarget] that this execution belongs to.
+     */
     val target: KotlinTarget
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
- * An execution source that is produced by a [compilation].
+ * An execution source produced by a [compilation].
  *
- * See also: [CompilationExecutionSourceSupport].
+ * @see [CompilationExecutionSourceSupport].
  */
 interface CompilationExecutionSource<CompilationType : KotlinCompilation<*>> : ExecutionSource {
+
+    /**
+     * The [KotlinCompilation] that this [ExecutionSource] belongs to.
+     */
     val compilation: CompilationType
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Provides methods to set a [KotlinCompilation] as an [ExecutionSource].
  */
-@Suppress("deprecation")
+@Suppress("DEPRECATION")
 interface CompilationExecutionSourceSupport<in T : KotlinCompilationToRunnableFiles<*>> {
+
     /**
-     * Select a compilation to run the execution from.
+     * Selects the compilation to run the execution from.
      *
-     * The [compilation]'s [KotlinCompilationToRunnableFiles.runtimeDependencyFiles]
-     * will be treated as runtime dependencies, and its [output] as runnable files.
+     * The [compilation]'s [KotlinCompilation.runtimeDependencyFiles]
+     * are treated as runtime dependencies, while its [KotlinCompilation.output] is treated as runnable files.
      *
-     * This overrides other [KotlinExecution.executionSource] selection options.
+     * Calling this method overwrites an already configured [KotlinExecution.executionSource].
      */
     fun setExecutionSourceFrom(compilation: T)
 }
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Provides a reference to the Gradle task that executes [KotlinExecution].
  */
 interface ExecutionTaskHolder<T : Task> {
+
+    /**
+     * Provides the Gradle task that executes the [KotlinExecution].
+     */
     val executionTask: TaskProvider<T>
 }
