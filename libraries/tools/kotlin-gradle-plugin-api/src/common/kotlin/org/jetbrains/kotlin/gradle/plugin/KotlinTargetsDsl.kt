@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Marks a [KotlinTarget] with the `@DslMarker`.
+ *
+ * @see DslMarker
  */
 @DslMarker
 annotation class KotlinTargetsDsl
