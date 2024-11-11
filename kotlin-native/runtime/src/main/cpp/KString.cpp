@@ -60,7 +60,7 @@ const KChar* StringUtf16Data(KConstRef kstring) {
 }
 
 size_t StringUtf16Length(KConstRef kstring) {
-    return StringRawSize(kstring) / sizeof(KChar);
+    return StringHeader::of(kstring)->length();
 }
 
 template <typename CharCountF /*= uint32_t(const char*, const char*) */, typename ConvertF /*= void(const char*, const char*, KChar*) */>

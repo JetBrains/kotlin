@@ -34,6 +34,8 @@ struct StringHeader {
     ALWAYS_INLINE const char *data() const { return data_; }
     ALWAYS_INLINE size_t size() const { return count_ * sizeof(KChar) - extraLength(flags_); }
 
+    ALWAYS_INLINE size_t length() const { return count_ - 1; }
+
     ALWAYS_INLINE static StringHeader* of(KRef string) { return reinterpret_cast<StringHeader*>(string); }
     ALWAYS_INLINE static const StringHeader* of(KConstRef string) { return reinterpret_cast<const StringHeader*>(string); }
 
