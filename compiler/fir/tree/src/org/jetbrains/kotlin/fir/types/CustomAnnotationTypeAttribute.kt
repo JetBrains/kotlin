@@ -59,10 +59,16 @@ val ConeKotlinType.customAnnotations: List<FirAnnotation> get() = attributes.cus
  * This property is an aggregate of all attributes which contain [FirAnnotation]s.
  */
 val ConeKotlinType.typeAnnotations: List<FirAnnotation>
-    get() = buildList {
-        attributes.parameterNameAttribute?.let {
-            add(it.annotation)
-            addAll(it.others)
+    get() {
+        val customAnnotations = customAnnotations
+
+        // Lambda parameter names are uncommon, so optimize access to skip if not present.
+        val parameterNameAttribute = attributes.parameterNameAttribute
+        if (parameterNameAttribute == null) return customAnnotations
+
+        return buildList {
+            add(parameterNameAttribute.annotation)
+            addAll(parameterNameAttribute.others)
+            addAll(customAnnotations)
         }
-        addAll(customAnnotations)
     }
