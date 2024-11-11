@@ -1,8 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 import java.time.Duration
 
@@ -23,7 +22,23 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
+        freeCompilerArgs.add(
+            // Avoid having to JvmSerializableLambda in build script injections
+            "-Xlambdas=class"
+        )
     }
+}
+
+tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+    friendPaths.from(
+        configurations.testCompileClasspath.map { configuration ->
+            configuration.incoming.artifacts.artifacts.filter { artifact ->
+                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin"
+            }.also { assert(it.isNotEmpty()) }.map { artifact ->
+                artifact.file
+            }
+        }
+    )
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
@@ -403,6 +418,11 @@ fun configureJvmTarget8() {
 
 configureJvmTarget8()
 
+val singleTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
+    from(kotlin.target.compilations.getByName("test").output.classesDirs)
+    into(layout.buildDirectory.dir("testClassesCopy"))
+}
+
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
@@ -443,14 +463,10 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val compileTestDestination = kotlin.target
-        .compilations[KotlinCompilation.TEST_COMPILATION_NAME]
-        .compileTaskProvider
-        .flatMap { task ->
-            (task as KotlinJvmCompile).destinationDirectory
-        }
+    val singleTestClassesDirectory = files(singleTestClassesClasspathTask)
+    inputs.files(singleTestClassesDirectory)
     doFirst {
-        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
+        systemProperty("buildScriptInjectionsClasspath", singleTestClassesDirectory.single())
     }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
