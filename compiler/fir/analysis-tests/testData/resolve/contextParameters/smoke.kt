@@ -3,7 +3,7 @@
 
 <!UNSUPPORTED!>context(s: String)<!>
 class C {
-    context(s: String)
+    <!UNSUPPORTED!>context(s: String)<!>
     constructor() {}
 }
 

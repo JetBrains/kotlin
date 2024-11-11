@@ -2170,6 +2170,9 @@ open class PsiRawFirBuilder(
                     }
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     contextReceivers.addContextReceivers(owner.contextReceiverList, symbol)
+                    if (contextParameterEnabled) {
+                        contextReceivers.addContextReceivers(this@toFirConstructor.getChildOfType(), symbol)
+                    }
                     if (!owner.hasModifier(EXTERNAL_KEYWORD) && !status.isExpect || isExplicitDelegationCall()) {
                         delegatedConstructor = buildOrLazyDelegatedConstructorCall(
                             isThis = isDelegatedCallToThis(),

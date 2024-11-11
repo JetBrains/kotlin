@@ -54,6 +54,13 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     "Context parameters on classes are unsupported.",
                     context
                 )
+            } else if (declaration is FirConstructor) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.UNSUPPORTED,
+                    "Context parameters on constructors are unsupported.",
+                    context
+                )
             }
         }
     }

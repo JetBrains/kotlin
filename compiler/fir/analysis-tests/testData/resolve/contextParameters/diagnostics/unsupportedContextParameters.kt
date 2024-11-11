@@ -3,12 +3,12 @@
 
 <!UNSUPPORTED!>context(_: String)<!>
 class C {
-    context(_: String)
+    <!UNSUPPORTED!>context(_: String)<!>
     constructor() {}
 }
 
 class C2 {
-    context(_: String)
+    <!UNSUPPORTED!>context(_: String)<!>
     constructor() {}
 }
 
