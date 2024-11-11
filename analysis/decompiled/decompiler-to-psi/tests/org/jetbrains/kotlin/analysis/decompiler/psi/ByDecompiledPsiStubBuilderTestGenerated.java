@@ -340,4 +340,10 @@ public class ByDecompiledPsiStubBuilderTestGenerated extends AbstractByDecompile
   public void testUnderscoreParameterName() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
   }
+
+  @Test
+  @TestMetadata("VarargArgumentWithFunctionalType")
+  public void testVarargArgumentWithFunctionalType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/VarargArgumentWithFunctionalType/");
+  }
 }

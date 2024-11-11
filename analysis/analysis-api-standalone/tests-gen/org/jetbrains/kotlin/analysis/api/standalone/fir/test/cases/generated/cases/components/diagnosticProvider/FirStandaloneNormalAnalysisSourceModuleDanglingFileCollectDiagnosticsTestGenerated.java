@@ -256,6 +256,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unusedDestructuring.kt");
   }
 
+  @Test
+  @TestMetadata("varargParameterFromLibraryWithFunctionalType.kt")
+  public void testVarargParameterFromLibraryWithFunctionalType() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/varargParameterFromLibraryWithFunctionalType.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")

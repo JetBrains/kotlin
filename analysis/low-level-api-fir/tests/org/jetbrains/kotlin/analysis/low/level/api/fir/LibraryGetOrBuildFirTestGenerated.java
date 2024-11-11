@@ -180,6 +180,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithTypeAliasOnAnotherValueClass.kt");
   }
 
+  @Test
+  @TestMetadata("varargAndFunctionalType.kt")
+  public void testVarargAndFunctionalType() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/varargAndFunctionalType.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource")
   @TestDataPath("$PROJECT_ROOT")

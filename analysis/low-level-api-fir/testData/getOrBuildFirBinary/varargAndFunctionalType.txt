@@ -1,0 +1,8 @@
+KT element: KtNamedFunction
+KT element text:
+public final fun pets(vararg arguments: Check.(kotlin.Int) -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun pets([ResolvedTo(BODY_RESOLVE)] vararg arguments: R|kotlin/Array<out @ExtensionFunctionType kotlin/Function2<Check, kotlin/Int, kotlin/Unit>>|): R|kotlin/Unit|
