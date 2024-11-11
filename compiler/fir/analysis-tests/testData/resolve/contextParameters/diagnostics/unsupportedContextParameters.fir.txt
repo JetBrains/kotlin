@@ -109,3 +109,18 @@ FILE: unsupportedContextParameters.kt
         }
 
     }
+    context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
+    public final class ClassWithContextDefaultValue : R|kotlin/Any| {
+        public constructor(): R|ClassWithContextDefaultValue| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
+    public final val contextHasDefaultValue: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
+    public final fun contextHasDefaultValue(): R|kotlin/Unit| {
+    }

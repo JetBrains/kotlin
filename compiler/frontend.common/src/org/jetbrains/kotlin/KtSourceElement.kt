@@ -496,6 +496,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object CastToAnyForStubTypes : KtFakeSourceElementKind()
 
     /**
+     * We use the whole context parameter as the fake source for default values.
+     */
+    object ContextParameterDefaultValue : KtFakeSourceElementKind()
+
+    /**
      * For plugin-generated things
      */
     object PluginGenerated : KtFakeSourceElementKind()

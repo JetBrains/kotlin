@@ -97,6 +97,7 @@ internal class ClassDiagnosticRetriever(
             declaration === structureElementDeclaration -> true
             insideFakeDeclaration -> true
             declaration.isImplicitConstructor -> true
+            declaration is FirValueParameter && declaration.valueParameterKind != FirValueParameterKind.Regular -> true
             else -> false
         }
 

@@ -793,7 +793,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter): Pair<EnterValueParameterNode, EnterDefaultArgumentsNode>? {
-        if (valueParameter.defaultValue == null) return null
+        if (valueParameter.defaultValue == null || valueParameter.valueParameterKind != FirValueParameterKind.Regular) return null
 
         val outerEnterNode = createEnterValueParameterNode(valueParameter).also { addNewSimpleNode(it) }
         val enterNode = enterGraph(valueParameter, "default value of ${valueParameter.name}", ControlFlowGraph.Kind.DefaultArgument) {
@@ -804,7 +804,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitValueParameter(valueParameter: FirValueParameter): Triple<ExitDefaultArgumentsNode, ExitValueParameterNode, ControlFlowGraph>? {
-        if (valueParameter.defaultValue == null) return null
+        if (valueParameter.defaultValue == null || valueParameter.valueParameterKind != FirValueParameterKind.Regular) return null
 
         val (exitNode, graph) = exitGraph<ExitDefaultArgumentsNode>()
         val outerExitNode = createExitValueParameterNode(valueParameter)

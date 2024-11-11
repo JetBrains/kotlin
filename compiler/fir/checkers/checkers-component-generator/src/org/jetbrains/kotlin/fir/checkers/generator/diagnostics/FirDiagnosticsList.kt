@@ -759,6 +759,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONTEXT_RECEIVERS_DEPRECATED by warning<KtElement>(PositioningStrategy.CONTEXT_KEYWORD)
 
         val CONTEXT_PARAMETER_WITHOUT_NAME by error<KtContextReceiver>()
+        val CONTEXT_PARAMETER_WITH_DEFAULT by error<KtElement>()
     }
 
     val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {

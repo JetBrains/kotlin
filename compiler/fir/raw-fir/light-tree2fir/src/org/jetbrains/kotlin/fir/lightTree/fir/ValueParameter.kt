@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
+import org.jetbrains.kotlin.fir.diagnostics.ConeContextParameterWithDefaultValue
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
@@ -90,7 +92,16 @@ class ValueParameter(
 
             this.name = this@ValueParameter.name
             symbol = valueParameterSymbol
-            defaultValue = this@ValueParameter.defaultValue
+            defaultValue = this@ValueParameter.defaultValue?.let {
+                if (isContextParameter) {
+                    buildErrorExpression {
+                        source = this@ValueParameter.source.fakeElement(KtFakeSourceElementKind.ContextParameterDefaultValue)
+                        diagnostic = ConeContextParameterWithDefaultValue
+                    }
+                } else {
+                    it
+                }
+            }
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
             valueParameterKind = if (isContextParameter) FirValueParameterKind.ContextParameter else FirValueParameterKind.Regular
