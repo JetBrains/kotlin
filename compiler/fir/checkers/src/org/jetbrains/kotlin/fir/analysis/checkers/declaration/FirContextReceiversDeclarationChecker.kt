@@ -36,12 +36,14 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
             return
         }
 
-        if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
-            reporter.reportOn(
-                source,
-                FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
-                context
-            )
+        if (contextReceiversEnabled) {
+            if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
+                    context
+                )
+            }
         }
     }
 

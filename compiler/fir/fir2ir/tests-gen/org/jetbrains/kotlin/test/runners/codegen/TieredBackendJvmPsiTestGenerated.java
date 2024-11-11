@@ -23210,6 +23210,22 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Diagnostics {
+        @Test
+        @TestMetadata("subtyping.kt")
+        public void testSubtyping() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/subtyping.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {

@@ -1758,6 +1758,22 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Diagnostics {
+        @Test
+        public void testAllFilesPresentInDiagnostics() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("subtyping.kt")
+        public void testSubtyping() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/subtyping.kt");
+        }
+      }
     }
 
     @Nested
