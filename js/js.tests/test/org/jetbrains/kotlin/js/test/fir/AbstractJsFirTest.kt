@@ -226,38 +226,3 @@ open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/firWasmJsInteropJs/"
 )
-
-// TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
-abstract class AbstractFirJsKlibSyntheticAccessorTest(
-    private val narrowedAccessorVisibility: Boolean,
-    testGroupOutputDirPrefix: String
-) : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix,
-) {
-    override val customIgnoreDirective: ValueDirective<TargetBackend>?
-        get() = IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
-
-    override val enableBoxHandlers: Boolean
-        get() = false
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
-                if (narrowedAccessorVisibility) +KlibBasedCompilerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
-            }
-        }
-    }
-}
-
-open class AbstractFirJsKlibSyntheticAccessorInPhase1Test : AbstractFirJsKlibSyntheticAccessorTest(
-    narrowedAccessorVisibility = true,
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase1",
-)
-
-open class AbstractFirJsKlibSyntheticAccessorInPhase2Test : AbstractFirJsKlibSyntheticAccessorTest(
-    narrowedAccessorVisibility = false,
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase2",
-)

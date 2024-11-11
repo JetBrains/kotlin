@@ -1,16 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.syntheticAccessors
+package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -35,25 +35,24 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
-// Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
-open class AbstractNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+open class AbstractFirJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     val targetFrontend = FrontendKinds.FIR
     val parser = FirParser.LightTree
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrNativeResultsConverter
+        get() = ::Fir2IrResultsConverter
     val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::NativeInliningFacade
+        get() = ::JsIrInliningFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirNativeKlibSerializerFacade
+        get() = ::FirJsKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
-        get() = ::NativeDeserializerFacade
+        get() = ::JsIrDeserializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(
@@ -66,16 +65,16 @@ open class AbstractNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithT
             KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS,
         )
         globalDefaults {
-            targetPlatform = NativePlatforms.unspecifiedNativePlatform
+            targetPlatform = JsPlatforms.defaultJsPlatform
         }
         useConfigurators(
-            ::NativeEnvironmentConfigurator,
+            ::JsEnvironmentConfigurator,
         )
         configureFirParser(parser)
     }
 }
 
-// it's a code duplication with same function in AbstractFirJsKlibSyntheticAccessorTest.kt
+// it's a code duplication with same function in AbstractNativeKlibSyntheticAccessorTest.kt
 // consider extracting these functions into one in some common backend module
 private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
     targetFrontend: FrontendKind<FirOutputArtifact>,
