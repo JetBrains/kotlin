@@ -9,10 +9,6 @@ internal inline fun customSetVar(value: Int)
     /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(<set-?> = value)
 internal inline fun customGetVar(): Int
     /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt()
-public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt()
-    /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(<set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt()
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(): Int
     /* TARGET use-site */ <get-privateVar>()
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(<set-?>: Int)

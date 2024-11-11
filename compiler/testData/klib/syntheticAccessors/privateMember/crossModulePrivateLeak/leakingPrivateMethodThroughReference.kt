@@ -1,7 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-// ^^^ Muted because accessor for function/constructor/property references are not generated for JS and first stage. To be fixed in KT-69797.
-// Can be replaced with ignore after KT-69941
+// IGNORE_BACKEND: JS_IR
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 
 // KT-72862: Undefined symbols
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE

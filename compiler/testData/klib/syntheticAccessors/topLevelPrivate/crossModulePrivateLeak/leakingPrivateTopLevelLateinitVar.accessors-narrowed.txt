@@ -2,14 +2,14 @@
 
 /* FILE package=<root> fileName=A.kt */
 
+private lateinit var o: String?
+    /* TARGET declaration */ private fun <get-o>(): String
+    /* TARGET declaration */ private fun <set-o>(<set-?>: String)
 public class A
     internal inline fun inlineMethod(): String
         local fun <anonymous>()
             /* ACCESSOR use-site */ access$<set-o>$tAKt(<set-?> = "O")
         /* ACCESSOR use-site */ access$<get-o>$tAKt()
-private lateinit var o: String?
-    /* TARGET declaration */ private fun <get-o>(): String
-    /* TARGET declaration */ private fun <set-o>(<set-?>: String)
 /* ACCESSOR declaration */ internal fun access$<get-o>$tAKt(): String
     /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ internal fun access$<set-o>$tAKt(<set-?>: String)

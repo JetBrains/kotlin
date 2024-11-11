@@ -1,7 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // ^^^ Muted because accessor for function/constructor/property references are not generated for JS and first stage. To be fixed in KT-69797.
-// Can be replaced with ignore after KT-69941
 
 class A {
     private fun privateMethod() = "OK"

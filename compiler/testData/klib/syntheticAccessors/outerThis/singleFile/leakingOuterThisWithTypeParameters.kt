@@ -1,4 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
 // WITH_STDLIB
 
 class Outer<O>(private val o: O) {

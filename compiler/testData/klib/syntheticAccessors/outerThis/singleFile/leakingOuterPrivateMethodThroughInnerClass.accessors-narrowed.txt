@@ -15,6 +15,3 @@ public class Outer
     /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: Outer): String
         /* TARGET use-site */ $this.privateMethod()
     /* TARGET declaration */ <this>: Outer
-public fun box(): String
-    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
-    /* ACCESSOR use-site */ access$privateMethod($this = access$<outer-this-0>($this = this))

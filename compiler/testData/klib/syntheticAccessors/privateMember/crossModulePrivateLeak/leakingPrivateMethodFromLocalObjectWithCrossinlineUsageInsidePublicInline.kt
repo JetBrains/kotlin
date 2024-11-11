@@ -1,7 +1,5 @@
 // KT-72862: <missing declarations>
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 // MODULE: lib
 // FILE: A.kt
 class A {

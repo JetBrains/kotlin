@@ -2,6 +2,12 @@
 
 /* FILE package=<root> fileName=A.kt */
 
+/* TARGET declaration */ private fun onlyInternal(): String
+/* TARGET declaration */ private fun internalAndPublic(): String
+/* TARGET declaration */ private fun internalAndInternalPA(): String
+/* TARGET declaration */ private fun onlyPublic(): String
+/* TARGET declaration */ private fun onlyInternalPA(): String
+/* TARGET declaration */ private fun allEffectivelyPublic(): String
 internal inline fun inlineOnlyInternal1(): String
     /* ACCESSOR use-site */ access$onlyInternal$tAKt()
 internal inline fun inlineOnlyInternal2(): String
@@ -26,12 +32,6 @@ public inline fun inlineAllEffectivelyPublic1(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
 internal inline fun inlineAllEffectivelyPublic2(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
-/* TARGET declaration */ private fun onlyInternal(): String
-/* TARGET declaration */ private fun internalAndPublic(): String
-/* TARGET declaration */ private fun internalAndInternalPA(): String
-/* TARGET declaration */ private fun onlyPublic(): String
-/* TARGET declaration */ private fun onlyInternalPA(): String
-/* TARGET declaration */ private fun allEffectivelyPublic(): String
 /* ACCESSOR declaration */ internal fun access$onlyInternal$tAKt(): String
     /* TARGET use-site */ onlyInternal()
 /* ACCESSOR declaration */ public fun access$internalAndPublic$tAKt(): String

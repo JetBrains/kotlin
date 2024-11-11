@@ -16,8 +16,9 @@ Tests in this directory include various combinations and corner cases to verify 
 [SyntheticAccessorLowering](../../../ir/ir.inline/src/org/jetbrains/kotlin/ir/inline/SyntheticAccessorLowering.kt).
 
 **NOTE:** 
-* Test runners `*KlibSyntheticAccessorsInPhase*TestGenerated` only compile these tests up to and including the last IR lowering, which means that we don't run LLVM (on Kotlin/Native)
-and obviously don't run the executable (on Kotlin/Native there is no executable).
+* Test runners `*KlibSyntheticAccessorsTestGenerated` only compile these tests up to Klib serialization,
+which means that LLVM (on Kotlin/Native) is not run,
+and obviously the executable is not created and not executed.
 * Test runners `*KlibSyntheticAccessorsBoxTestGenerated` perform usual codegen/box tests, which check
   * general IR Inliner's correctness,
   * correct generation of synthetic accessors in 2nd compilation stage for native caches.

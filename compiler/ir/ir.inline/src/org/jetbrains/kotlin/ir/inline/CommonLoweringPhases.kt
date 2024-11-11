@@ -123,6 +123,11 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
 //    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 //)
 
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<PreSerializationLoweringContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
+)
+
 val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
@@ -134,6 +139,7 @@ val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringCo
     checkInlineDeclarationsAfterInliningOnlyPrivateFunctions,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
+    dumpSyntheticAccessorsPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
 //         TODO KT-72441 add public inlining to this list
 //        inlineAllFunctionsPhase,

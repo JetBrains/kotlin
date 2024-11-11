@@ -13,7 +13,3 @@ public class A
         /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
     /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
-internal fun topLevelSet(a: A, value: Int)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-internal inline fun topLevelInlineSet(a: A, value: Int)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)

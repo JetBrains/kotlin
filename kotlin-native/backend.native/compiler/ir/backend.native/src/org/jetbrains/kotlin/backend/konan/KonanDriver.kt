@@ -216,7 +216,6 @@ class KonanDriver(
             copy(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
             copy(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
             copy(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
-            copy(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
         }
 
         // For the second stage, remove already compiled source files from the configuration.
