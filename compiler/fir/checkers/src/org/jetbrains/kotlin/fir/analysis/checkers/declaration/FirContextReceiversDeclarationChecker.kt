@@ -44,7 +44,7 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
             reporter.reportOn(
                 source,
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.ContextReceivers to context.languageVersionSettings,
+                LanguageFeature.ContextParameters to context.languageVersionSettings,
                 context
             )
             return
