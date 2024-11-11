@@ -23,7 +23,7 @@ class JsSharedVariablesManager(
     private val builtIns: IrBuiltIns,
     private val dynamicType: IrDynamicType,
     intrinsics: JsIntrinsics,
-) : SharedVariablesManager {
+) : SharedVariablesManager() {
 
     private val createBox: IrSimpleFunctionSymbol = intrinsics.createSharedBox
     private val readBox: IrSimpleFunctionSymbol = intrinsics.readSharedBox
