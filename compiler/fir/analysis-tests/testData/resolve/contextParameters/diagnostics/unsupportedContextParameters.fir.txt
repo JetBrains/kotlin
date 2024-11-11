@@ -66,3 +66,11 @@ FILE: unsupportedContextParameters.kt
     public final operator fun R|kotlin/Any|.provideDelegate(thiz: R|kotlin/Any?|, metadata: R|kotlin/Any?|): R|kotlin/Any| {
         ^provideDelegate this@R|/provideDelegate|
     }
+    public final var x: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final var y: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final fun <no name provided>(): R|kotlin/Unit| {
+    }

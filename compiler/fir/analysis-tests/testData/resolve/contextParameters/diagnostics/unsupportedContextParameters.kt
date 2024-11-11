@@ -37,3 +37,11 @@ operator fun Any.setValue(thiz: Any?, metadata: Any?, value: String): Any = this
 
 <!UNSUPPORTED!>context(_: String)<!>
 operator fun Any.provideDelegate(thiz: Any?, metadata: Any?): Any = this
+
+var x: String = ""
+    context(_: String) <!SYNTAX!>get<!>
+    context(_: String) <!SYNTAX!>set<!>
+
+var y: String = ""
+    context(_: String) <!SYNTAX!>get<!><!SYNTAX!>(<!><!SYNTAX!>)<!> <!SYNTAX!>=<!> <!SYNTAX!>"<!><!SYNTAX!>"<!>
+    context(_: String) <!SYNTAX!>set<!><!SYNTAX!>(<!><!SYNTAX!>v<!><!SYNTAX!>)<!> <!FUNCTION_DECLARATION_WITH_NO_NAME!><!SYNTAX!><!>{}<!>
