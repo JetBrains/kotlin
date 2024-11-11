@@ -51,3 +51,9 @@ var Any.d <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ""
 
 context(_: String)
 var b = <!CONTEXT_RECEIVERS_WITH_BACKING_FIELD!>""<!>
+
+context(<!SYNTAX!><!>)
+fun emptyContext() {}
+
+context(<!SYNTAX!><!>)
+class EmptyContextClass
