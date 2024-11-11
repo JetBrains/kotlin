@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseRegularFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.getAbbreviation
 
@@ -92,6 +95,23 @@ internal class KaFe10FunctionType(
                 descriptor.functionTypeKind.isReflectType -> fe10Type.arguments.dropLast(1)
                 else -> fe10Type.getValueParameterTypesFromFunctionType()
             }.map { it.type.toKtType(analysisContext) }
+        }
+
+    @KaExperimentalApi
+    override val parameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion {
+            parameterTypes.mapIndexed { index, type ->
+                val name = type.annotations.firstNotNullOfOrNull { annotation ->
+                    val constantValue = annotation.arguments.firstOrNull { argument ->
+                        argument.name == Name.identifier("name")
+                    }?.expression as? KaAnnotationValue.ConstantValue
+                    constantValue?.value?.value as? String
+                }?.let {
+                    Name.identifier(it)
+                }
+
+                KaBaseRegularFunctionValueParameter(name, type)
+            }
         }
 
     override val returnType: KaType

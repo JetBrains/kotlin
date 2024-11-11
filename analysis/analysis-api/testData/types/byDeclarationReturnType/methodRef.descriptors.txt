@@ -1,0 +1,207 @@
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 3
+  classId: kotlin/reflect/KFunction3
+  contextReceivers: Could not render due to java.lang.AssertionError: Not a function type: KFunction3<A, [@kotlin.ParameterName] String, [@kotlin.ParameterName] Int, String>
+  
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: true
+  isSuspend: false
+  nullability: NON_NULLABLE
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: A
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "parameter1")
+          psi: null
+      ]
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "parameter2")
+          psi: null
+      ]
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+  parameters: [
+    KaRegularFunctionValueParameter [name: null, type: /A]
+    KaRegularFunctionValueParameter [name: parameter1, type: kotlin/String]
+    KaRegularFunctionValueParameter [name: parameter2, type: kotlin/Int]
+  ]
+  qualifiers: [
+    qualifier:
+      name: KFunction3
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction3)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: A
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: A
+              symbol: KaNamedClassSymbol(A)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "parameter1")
+              psi: null
+          ]
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "parameter2")
+              psi: null
+          ]
+          classId: kotlin/Int
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/String
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: String
+        symbol: KaNamedClassSymbol(kotlin/String)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/String)
+    typeArguments: []
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction3)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: A
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "parameter1")
+          psi: null
+      ]
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "parameter2")
+          psi: null
+      ]
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+
+Rendered type:
+kotlin.reflect.KFunction3<A, kotlin.String, kotlin.Int, kotlin.String>

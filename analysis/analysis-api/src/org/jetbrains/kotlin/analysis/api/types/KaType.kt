@@ -154,10 +154,26 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val receiverType: KaType?
     public abstract val hasReceiver: Boolean
     public abstract val parameterTypes: List<KaType>
+
+    @KaExperimentalApi
+    public abstract val parameters: List<KaFunctionValueParameter>
     public abstract val returnType: KaType
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
+}
+
+@KaExperimentalApi
+public sealed interface KaFunctionValueParameter {
+    public val type: KaType
+}
+
+@OptIn(KaExperimentalApi::class)
+public interface KaReceiverFunctionValueParameter : KaFunctionValueParameter
+
+@OptIn(KaExperimentalApi::class)
+public interface KaRegularFunctionValueParameter : KaFunctionValueParameter {
+    public val name: Name?
 }
 
 public abstract class KaUsualClassType : KaClassType() {

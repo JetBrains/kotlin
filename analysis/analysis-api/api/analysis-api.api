@@ -1283,6 +1283,13 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaIntersectionType
 	public abstract fun getConjuncts ()Ljava/util/List;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaReceiverFunctionValueParameter : org/jetbrains/kotlin/analysis/api/types/KaFunctionValueParameter {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaRegularFunctionValueParameter : org/jetbrains/kotlin/analysis/api/types/KaFunctionValueParameter {
+	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaResolvedClassTypeQualifier : org/jetbrains/kotlin/analysis/api/types/KaClassTypeQualifier {
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;
 }

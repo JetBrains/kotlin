@@ -4,6 +4,6 @@ FILE: invokeKFunctionFromMethodReference.kt
             ^action R|<local>/s|.R|kotlin/text/toInt|()
         }
 
-        lval localAction: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Int>| = ::R|<local>/action|
+        lval localAction: R|kotlin/reflect/KFunction1<@R|kotlin/ParameterName|(name = String(s))  kotlin/String, kotlin/Int>| = ::R|<local>/action|
         ^foo R|<local>/localAction|.R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|kotlin/Int|>|(String(hello))
     }

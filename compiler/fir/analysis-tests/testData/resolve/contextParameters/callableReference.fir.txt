@@ -13,7 +13,7 @@ FILE: callableReference.kt
         R|/accept|<R|kotlin/Any|>(::R|/f2|)
         R|/accept|<R|kotlin/Any|>(Q|kotlin/Int|::R|/f3|)
         R|/accept|<R|@ContextFunctionTypeParams kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>|>(::R|/f1|)
-        R|/accept|<R|@ContextFunctionTypeParams kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(::R|/f2|)
+        R|/accept|<R|@ContextFunctionTypeParams kotlin/reflect/KFunction2<kotlin/String, @R|kotlin/ParameterName|(name = String(i))  kotlin/Int, kotlin/Unit>|>(::R|/f2|)
         R|/accept|<R|@ExtensionFunctionType @ContextFunctionTypeParams kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(Q|kotlin/Int|::R|/f3|)
     }
     public final fun testFunctionTypeWithContext(): R|kotlin/Unit| {

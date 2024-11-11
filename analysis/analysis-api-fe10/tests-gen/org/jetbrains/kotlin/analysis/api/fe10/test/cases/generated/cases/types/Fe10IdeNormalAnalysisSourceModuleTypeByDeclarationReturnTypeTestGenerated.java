@@ -52,6 +52,24 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("extensionRef.kt")
+  public void testExtensionRef() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/extensionRef.kt");
+  }
+
+  @Test
+  @TestMetadata("functionRef.kt")
+  public void testFunctionRef() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionRef.kt");
+  }
+
+  @Test
+  @TestMetadata("lambda.kt")
+  public void testLambda() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/lambda.kt");
+  }
+
+  @Test
   @TestMetadata("localClassType.kt")
   public void testLocalClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
@@ -67,5 +85,11 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGen
   @TestMetadata("localNestedClassType.kt")
   public void testLocalNestedClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
+  }
+
+  @Test
+  @TestMetadata("methodRef.kt")
+  public void testMethodRef() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/methodRef.kt");
   }
 }

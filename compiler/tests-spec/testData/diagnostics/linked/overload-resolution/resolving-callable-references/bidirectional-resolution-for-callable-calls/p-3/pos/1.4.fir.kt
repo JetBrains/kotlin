@@ -105,7 +105,7 @@ class Case4() {
     }
     fun case(case: Case4) {
         case(::invoke)
-        case(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.CharSequence, kotlin.Unit>")!>::invoke<!>)
+        case(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.CharSequence, kotlin.Unit>")!>::invoke<!>)
         <!DEBUG_INFO_CALL("fqName: Case4.invoke; typeCall: variable&invoke")!>case(::invoke)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case(::invoke)<!>
     }

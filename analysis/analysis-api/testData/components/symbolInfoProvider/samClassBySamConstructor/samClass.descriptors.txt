@@ -77,6 +77,9 @@ CONSTRUCTOR:
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
         ]
+        parameters: [
+          KaRegularFunctionValueParameter [name: i, type: kotlin/Int]
+        ]
         qualifiers: [
           qualifier:
             name: Function1

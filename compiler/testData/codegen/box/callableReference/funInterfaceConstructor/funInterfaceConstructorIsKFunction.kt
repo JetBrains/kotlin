@@ -3,8 +3,6 @@
 // DONT_TARGET_EXACT_BACKEND: JVM
 //  ^ old JVM BE generates bogus code
 
-// JVM_ABI_K1_K2_DIFF: KT-63861
-
 // WITH_REFLECT
 
 import kotlin.reflect.KFunction

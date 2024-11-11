@@ -1,0 +1,1 @@
+var lamb<caret>da: ((x: Int, y: String) -> String)? = null

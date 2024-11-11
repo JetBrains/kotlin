@@ -26,6 +26,9 @@ KaFunctionType:
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
   ]
+  parameters: [
+    KaRegularFunctionValueParameter [name: null, type: kotlin/String]
+  ]
   qualifiers: [
     qualifier:
       name: Function1
