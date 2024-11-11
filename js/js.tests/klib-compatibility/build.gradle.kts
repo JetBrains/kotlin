@@ -1,7 +1,9 @@
+import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
     kotlin("jvm")
+    id("d8-configuration")
 }
 
 dependencies {
@@ -46,13 +48,14 @@ sourceSets {
 testsJar {}
 
 fun Test.setUpJsBoxTests() {
-    setupV8()
+    with(project.the<D8Extension>()) {
+        setupV8()
+    }
     dependsOn(":dist")
 
     workingDir = rootDir
 }
 
-useD8Plugin()
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(releasedCompilerDist)
     systemProperty("kotlin.internal.js.test.latestReleasedCompilerLocation", releasedCompilerArtifactsTarget.get().asFile.absolutePath)

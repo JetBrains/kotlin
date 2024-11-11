@@ -27,6 +27,7 @@ plugins {
     `maven-publish`
     signing
     id("nodejs-cache-redirector-configuration")
+    id("d8-configuration")
 }
 
 description = "Kotlin Standard Library"
@@ -595,11 +596,6 @@ kotlin {
         }
     }
 }
-
-plugins.apply(D8Plugin::class.java)
-
-@OptIn(ExperimentalWasmDsl::class)
-the<org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec>().version = v8Version
 
 dependencies {
     val jvmMainApi by configurations.getting

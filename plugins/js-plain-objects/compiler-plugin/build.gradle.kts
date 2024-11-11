@@ -7,6 +7,7 @@ description = "JavaScript Plain Objects Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -73,8 +74,6 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 testsJar()
-
-useD8Plugin()
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()

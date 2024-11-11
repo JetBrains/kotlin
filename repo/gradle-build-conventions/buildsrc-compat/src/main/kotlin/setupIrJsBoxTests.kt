@@ -5,6 +5,8 @@
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.build.d8.D8Extension
 
 fun Test.useJsIrBoxTests(
     version: Any,
@@ -13,7 +15,9 @@ fun Test.useJsIrBoxTests(
     reducedStdlibPath: String = "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main",
     domApiCompatPath: String = "libraries/kotlin-dom-api-compat/build/classes/kotlin/main"
 ) {
-    setupV8()
+    with(project.the<D8Extension>()) {
+        setupV8()
+    }
     dependsOn(":kotlin-stdlib:jsJar")
     dependsOn(":kotlin-stdlib:jsJarForTests") // TODO: think how to remove dependency on the artifact in this place
     dependsOn(":kotlin-test:jsJar")

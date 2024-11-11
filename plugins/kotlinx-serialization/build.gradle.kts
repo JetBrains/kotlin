@@ -6,6 +6,7 @@ description = "Kotlin Serialization Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -88,7 +89,6 @@ val runtimeJar = runtimeJar {
 sourcesJar()
 javadocJar()
 testsJar()
-useD8Plugin()
 
 val distCompat by configurations.creating {
     isCanBeResolved = false

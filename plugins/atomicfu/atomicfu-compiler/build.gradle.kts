@@ -9,6 +9,7 @@ description = "Atomicfu Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
@@ -174,7 +175,6 @@ sourceSets {
 }
 
 testsJar()
-useD8Plugin()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform {

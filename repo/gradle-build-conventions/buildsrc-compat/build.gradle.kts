@@ -123,6 +123,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
     implementation(libs.gson)
     implementation(libs.kotlinx.metadataJvm)
+    implementation(project(":d8-configuration"))
 }
 
 tasks.register("checkBuild") {

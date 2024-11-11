@@ -1,6 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
+import org.jetbrains.kotlin.build.d8.D8Extension
 import java.nio.file.Files
 import java.util.*
 
@@ -8,6 +9,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     alias(libs.plugins.gradle.node)
+    id("d8-configuration")
 }
 
 node {
@@ -122,7 +124,6 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
-useD8Plugin()
 useNodeJsPlugin()
 useBinaryenPlugin()
 optInToExperimentalCompilerApi()
@@ -278,7 +279,9 @@ fun Project.wasmProjectTest(
         jUnitMode = JUnitMode.JUnit5
     ) {
         workingDir = rootDir
-        setupV8()
+        with(project.the<D8Extension>()) {
+            setupV8()
+        }
         setupNodeJs()
         setupBinaryen()
         setupSpiderMonkey()

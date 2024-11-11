@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -44,7 +45,6 @@ sourceSets {
     }
 }
 
-useD8Plugin()
 projectTest(
     parallel = true,
     defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)

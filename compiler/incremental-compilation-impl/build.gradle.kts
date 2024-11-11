@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 dependencies {
@@ -40,8 +41,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-useD8Plugin()
 
 projectTest(parallel = true) {
     workingDir = rootDir
