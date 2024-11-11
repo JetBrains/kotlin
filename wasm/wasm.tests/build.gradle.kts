@@ -3,6 +3,7 @@ import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.build.binaryen.BinaryenExtension
 import org.jetbrains.kotlin.build.d8.D8Extension
+import org.jetbrains.kotlin.build.nodejs.NodeJsExtension
 import java.nio.file.Files
 import java.util.*
 
@@ -12,6 +13,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
     id("binaryen-configuration")
+    id("nodejs-configuration")
 }
 
 node {
@@ -126,7 +128,6 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
-useNodeJsPlugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -283,7 +284,9 @@ fun Project.wasmProjectTest(
         with(project.the<D8Extension>()) {
             setupV8()
         }
-        setupNodeJs()
+        with(project.the<NodeJsExtension>()) {
+            setupNodeJs()
+        }
         with(project.the<BinaryenExtension>()) {
             setupBinaryen()
         }
