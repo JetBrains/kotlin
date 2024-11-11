@@ -919,4 +919,30 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """.trimIndent()
     )
+
+    @Test
+    fun testGetterAndSetter() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.Composable
+            @Composable 
+            fun Box(content: @Composable  () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            
+            var foo: @Composable () -> Unit = { Box { print("field") } }
+                get() = {
+                    Box { 
+                        print("get")
+                    }
+                }
+                set(value) {
+                    field = {
+                        Box {
+                            print("set")
+                         }
+                    }
+                }           
+        """.trimIndent()
+    )
 }

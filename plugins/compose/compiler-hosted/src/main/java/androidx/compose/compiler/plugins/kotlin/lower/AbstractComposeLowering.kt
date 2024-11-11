@@ -1188,17 +1188,6 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    protected fun dexSafeName(name: Name): Name {
-        return if (
-            name.isSpecial || name.asString().contains(unsafeSymbolsRegex)
-        ) {
-            val sanitized = name
-                .asString()
-                .replace(unsafeSymbolsRegex, "\\$")
-            Name.identifier(sanitized)
-        } else name
-    }
-
     fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
         IrCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET,
@@ -1601,6 +1590,17 @@ inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
 
 fun FqName.topLevelName() =
     asString().substringBefore(".")
+
+internal fun dexSafeName(name: Name): Name {
+    return if (
+        name.isSpecial || name.asString().contains(unsafeSymbolsRegex)
+    ) {
+        val sanitized = name
+            .asString()
+            .replace(unsafeSymbolsRegex, "\\$")
+        Name.identifier(sanitized)
+    } else name
+}
 
 internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     source: IrFunction,

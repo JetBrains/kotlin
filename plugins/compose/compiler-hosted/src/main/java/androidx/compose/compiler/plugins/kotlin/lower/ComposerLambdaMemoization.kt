@@ -29,14 +29,13 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.isAnonymous
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -184,13 +183,15 @@ private class LambdaNamingContext {
             return signature.cityHash64String()
         }
 
+        val rawKey = (this as? IrDeclarationWithName)?.name?.let rawKey@{ name ->
+            if (name.isAnonymous) return@rawKey null
+            val safeName = dexSafeName(name).asString()
 
-        val rawKey = (this as? IrDeclarationWithName)?.name?.takeUnless { name -> name.isSpecial }?.let { name ->
             /* Fields need to be differentiated from functions, as fun x() and val x can live in the same scope */
             when (this) {
-                is IrField -> "val-${name.asString()}"
-                is IrFunction -> name.asString() + getAdditionalFunctionKeyHash(this)?.prefixIfNot("-").orEmpty()
-                is IrClass -> name.asString()
+                is IrField -> "val-${safeName}"
+                is IrFunction -> safeName + getAdditionalFunctionKeyHash(this)?.prefixIfNot("-").orEmpty()
+                is IrClass -> safeName
                 else -> null
             }
         }
@@ -555,7 +556,7 @@ class ComposerLambdaMemoization(
             declarationContextStack.recordLocalDeclaration(context)
         }
 
-        lambdaNamingContext.withScope(declaration.takeUnless { declaration.name.isSpecial }) {
+        lambdaNamingContext.withScope(declaration.takeUnless { declaration.name.isAnonymous }) {
             declarationContextStack.push(context)
             val result = super.visitFunction(declaration)
             declarationContextStack.pop()
