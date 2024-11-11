@@ -170,7 +170,7 @@ inline fun ImportCollectingPrinter.printFunctionWithBlockBody(
         allParametersOnSeparateLines,
         deprecation = deprecation,
     )
-    printBlock(blockBody)
+    printBlock(body = blockBody)
 }
 
 data class PrimaryConstructorParameter(

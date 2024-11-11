@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
-import org.jetbrains.kotlin.generators.util.inBracketsWithIndent
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.generators.util.printCopyright
 import org.jetbrains.kotlin.generators.util.printGeneratedMessage
 import org.jetbrains.kotlin.generators.util.printImports
@@ -44,7 +44,7 @@ object KeysContainerGenerator {
     }
 
     private fun SmartPrinter.generateKeysContainingClass(container: KeysContainer) {
-        inBracketsWithIndent("object ${container.className}") {
+        printBlock("object ${container.className}") {
             for (key in container.keys) {
                 key.comment?.let {
                     println("// $it")

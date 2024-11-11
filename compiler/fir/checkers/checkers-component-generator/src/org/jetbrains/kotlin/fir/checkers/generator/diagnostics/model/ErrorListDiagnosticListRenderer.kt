@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
 import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.generators.util.inBracketsWithIndent
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.generators.util.printCopyright
 import org.jetbrains.kotlin.generators.util.printImports
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -48,12 +48,12 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
         println("""@Suppress("IncorrectFormatting")""")
-        inBracketsWithIndent("object ${diagnosticList.objectName}") {
+        printBlock("object ${diagnosticList.objectName}") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
             }
-            inBracketsWithIndent("init") {
+            printBlock("init") {
                 println("RootDiagnosticRendererFactory.registerFactory(${diagnosticList.objectName}DefaultMessages)")
             }
         }

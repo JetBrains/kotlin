@@ -97,14 +97,8 @@ fun getGenerationPath(rootPath: File, packageName: String): File {
         .apply { mkdirs() }
 }
 
-inline fun SmartPrinter.inBracketsWithIndent(header: String = "", body: () -> Unit) {
+inline fun IndentingPrinter.printBlock(header: String = "", body: () -> Unit) {
     println("$header {")
-    withIndent(body)
-    println("}")
-}
-
-inline fun IndentingPrinter.printBlock(body: () -> Unit) {
-    println(" {")
     withIndent(body)
     println("}")
 }

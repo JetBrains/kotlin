@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.analysis.api.fir.generator.printTypeWithShortNames
-import org.jetbrains.kotlin.generators.util.inBracketsWithIndent
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.SmartPrinter
 import kotlin.reflect.KType
 
@@ -20,7 +20,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        inBracketsWithIndent("sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
+        printBlock("sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic, diagnosticList)
                 println()
@@ -32,7 +32,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
         print("interface ${diagnostic.className} : KaFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">")
-        inBracketsWithIndent {
+        printBlock {
             println("override val diagnosticClass get() = ${diagnostic.className}::class")
             printDiagnosticParameters(diagnostic, diagnosticList)
         }
