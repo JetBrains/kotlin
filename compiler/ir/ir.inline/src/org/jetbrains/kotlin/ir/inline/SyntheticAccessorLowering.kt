@@ -35,14 +35,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
 class SyntheticAccessorLowering(private val context: CommonBackendContext) : FileLoweringPass {
-    /**
-     * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
-     * in _internal_ inline functions and therefore is not a part of public ABI.
-     * This "narrowing" is supposed to be used only during the first phase of compilation.
-     */
-    private val narrowAccessorVisibilities =
-        context.configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
-
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
     override fun lower(irFile: IrFile) {
@@ -51,7 +43,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Fil
 
         val accessors = transformer.generatedAccessors.freezeAndGetAccessors()
         runIf(accessors.isNotEmpty()) {
-            runIf(narrowAccessorVisibilities) { narrowAccessorVisibilities(accessors) }
+            narrowAccessorVisibilities(accessors)
             addAccessorsToParents(accessors)
         }
     }

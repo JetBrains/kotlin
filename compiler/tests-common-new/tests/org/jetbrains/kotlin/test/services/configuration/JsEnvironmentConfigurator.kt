@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
-import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -248,11 +247,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 testServices.getOrCreateTempDirectory("synthetic-accessors").absolutePath
             )
         }
-
-        configuration.put(
-            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
-            KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY in registeredDirectives
-        )
     }
 }
 
