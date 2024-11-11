@@ -483,8 +483,14 @@ internal object FirReferenceResolveHelper {
         fir: FirResolvedImport,
         session: FirSession,
     ): List<KaSymbol> {
-        val fullFqName = fir.importedFqName
+        // If the selected `FqName` is a known package name, we don't need to search for classes or callables. We only start resolution of
+        // classes/callables at the boundary between the package FQ name and class/callable names.
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
+        if (fir.packageFqName.startsWith(selectedFqName)) {
+            return builder.createPackageSymbolIfOneExists(selectedFqName).let(::listOfNotNull)
+        }
+
+        val fullFqName = fir.importedFqName
         val rawImportForSelectedFqName = buildImport {
             importedFqName = selectedFqName
             isAllUnder = false
