@@ -55,17 +55,26 @@ internal class IncrementalCacheArtifact(
 ) {
     fun getSourceFiles() = srcCacheActions.mapTo(newHashSetWithExpectedSize(srcCacheActions.size)) { it.srcFile }
 
-    fun buildModuleArtifactAndCommitCache(
+    fun commitCache(
+        rebuiltFileFragments: Map<KotlinSourceFile, IrICProgramFragments>,
+        icContext: PlatformDependentICContext,
+    ) {
+        srcCacheActions.forEach { srcFileAction ->
+            val rebuiltFileFragment = rebuiltFileFragments[srcFileAction.srcFile]
+            if (rebuiltFileFragment != null) {
+                srcFileAction.commitBinaryAst(rebuiltFileFragment, icContext)
+            }
+            srcFileAction.commitMetadata()
+        }
+    }
+
+    fun buildModuleArtifact(
         moduleName: String,
         rebuiltFileFragments: Map<KotlinSourceFile, IrICProgramFragments>,
         icContext: PlatformDependentICContext,
     ): ModuleArtifact {
         val fileArtifacts = srcCacheActions.map { srcFileAction ->
             val rebuiltFileFragment = rebuiltFileFragments[srcFileAction.srcFile]
-            if (rebuiltFileFragment != null) {
-                srcFileAction.commitBinaryAst(rebuiltFileFragment, icContext)
-            }
-            srcFileAction.commitMetadata()
             icContext.createSrcFileArtifact(srcFileAction.srcFile.path, rebuiltFileFragment, srcFileAction.binaryAstFile)
         }
         return icContext.createModuleArtifact(moduleName, fileArtifacts, artifactsDir, forceRebuildJs, externalModuleName)

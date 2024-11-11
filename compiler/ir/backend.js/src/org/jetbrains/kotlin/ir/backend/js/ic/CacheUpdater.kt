@@ -106,7 +106,7 @@ class CacheUpdater(
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
     checkForClassStructuralChanges: Boolean = false,
-    private val completeLoadForKotlinTest: Boolean = false
+    private val commitIncrementalCache: Boolean = true
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -636,9 +636,11 @@ class CacheUpdater(
         }
 
         fun buildAndCommitCacheArtifacts(loadedIr: LoadedJsIr): Map<KotlinLibraryFile, IncrementalCacheArtifact> {
-            removedIncrementalCaches.forEach {
-                if (!it.cacheDir.deleteRecursively()) {
-                    icError("can not delete cache directory ${it.cacheDir.absolutePath}")
+            if (commitIncrementalCache) {
+                removedIncrementalCaches.forEach {
+                    if (!it.cacheDir.deleteRecursively()) {
+                        icError("can not delete cache directory ${it.cacheDir.absolutePath}")
+                    }
                 }
             }
 
@@ -647,9 +649,13 @@ class CacheUpdater(
                 val libFile = KotlinLibraryFile(library)
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
-                val signatureToIndexMapping = providers.associate { it.srcFile to it.getSignatureToIndexMapping() }
 
-                val cacheArtifact = incrementalCache.buildAndCommitCacheArtifact(signatureToIndexMapping, stubbedSignatures)
+                val cacheArtifact = if (commitIncrementalCache) {
+                    val signatureToIndexMapping = providers.associate { it.srcFile to it.getSignatureToIndexMapping() }
+                    incrementalCache.buildAndCommitCacheArtifact(signatureToIndexMapping, stubbedSignatures)
+                } else {
+                    incrementalCache.buildCacheArtifact()
+                }
 
                 val libFragment = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
                 val sourceNames = loadedIr.getIrFileNames(libFragment)
@@ -673,10 +679,17 @@ class CacheUpdater(
         rebuiltFileFragments: KotlinSourceFileMap<IrICProgramFragments>
     ): List<ModuleArtifact> = stopwatch.measure("Incremental cache - committing artifacts") {
         incrementalCacheArtifacts.map { (libFile, incrementalCacheArtifact) ->
-            incrementalCacheArtifact.buildModuleArtifactAndCommitCache(
+            val rebuildFileFragments = rebuiltFileFragments[libFile] ?: emptyMap()
+            if (commitIncrementalCache) {
+                incrementalCacheArtifact.commitCache(
+                    rebuiltFileFragments = rebuildFileFragments,
+                    icContext = icContext
+                )
+            }
+            incrementalCacheArtifact.buildModuleArtifact(
                 moduleName = moduleNames[libFile] ?: notFoundIcError("module name", libFile),
-                rebuiltFileFragments = rebuiltFileFragments[libFile] ?: emptyMap(),
-                icContext = icContext
+                rebuiltFileFragments = rebuildFileFragments,
+                icContext = icContext,
             )
         }
     }

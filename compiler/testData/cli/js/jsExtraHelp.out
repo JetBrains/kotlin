@@ -80,6 +80,7 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Add sources to a specific fragment of a multiplatform compilation.
   -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
+  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xwasm-source-map-include-mappings-from-unavailable-sources

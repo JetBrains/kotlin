@@ -118,6 +118,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(value = "-Xwasm-ic-cache-readonly", description = "Do not commit IC cache updates.")
+    var icCacheReadonly = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",

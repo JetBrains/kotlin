@@ -92,6 +92,22 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         return File(cacheDir, "${File(path).name}.$id.$pathHash.$suffix")
     }
 
+    fun buildCacheArtifact(): IncrementalCacheArtifact {
+        val klibSrcFiles = if (cacheHeaderShouldBeUpdated) {
+            val newCacheHeader = CacheHeader(library)
+            newCacheHeader.sourceFileFingerprints.keys
+        } else {
+            cacheHeaderFromDisk?.sourceFileFingerprints?.keys ?: notFoundIcError("source file fingerprints", library.libraryFile)
+        }
+
+        val fileArtifacts = klibSrcFiles.map { srcFile ->
+            val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
+            SourceFileCacheArtifact.DoNotChangeMetadata(srcFile, binaryAstFile)
+        }
+        return IncrementalCacheArtifact(cacheDir, removedSrcFiles.isNotEmpty(), fileArtifacts, library.jsOutputName)
+    }
+
+
     fun buildAndCommitCacheArtifact(
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>,
         stubbedSignatures: Set<IdSignature>

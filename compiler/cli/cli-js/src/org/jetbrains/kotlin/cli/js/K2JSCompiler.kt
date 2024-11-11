@@ -809,6 +809,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerConfiguration = configurationJs,
                 icContext = icContext,
                 checkForClassStructuralChanges = arguments.wasm,
+                commitIncrementalCache = !arguments.wasm || !arguments.icCacheReadonly
             )
 
             val artifacts = cacheUpdater.actualizeCaches()
