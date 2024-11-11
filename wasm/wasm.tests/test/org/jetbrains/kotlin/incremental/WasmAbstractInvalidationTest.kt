@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ModelTarget
+import org.jetbrains.kotlin.codegen.ModuleInfo
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
+import kotlin.test.assertEquals
 
 abstract class WasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
@@ -59,49 +61,66 @@ abstract class WasmAbstractInvalidationTest(
         buildDir: File,
         jsDir: File,
     ) : AbstractProjectStepsExecutor(projectInfo, moduleInfos, testDir, sourceDir, buildDir, jsDir) {
+
+        private fun compileVerifyAndRun(
+            stepId: Int,
+            cacheDir: File,
+            mainModuleInfo: TestStepInfo,
+            configuration: CompilerConfiguration,
+            allModules: Collection<String>,
+            testInfo: List<TestStepInfo>,
+            removedModulesInfo: List<TestStepInfo>,
+            commitIncrementalCache: Boolean,
+        ) {
+            val icContext = WasmICContextForTesting(allowIncompleteImplementations = false, skipLocalNames = false)
+
+            val cacheUpdater = CacheUpdater(
+                mainModule = mainModuleInfo.modulePath,
+                allModules = allModules,
+                mainModuleFriends = mainModuleInfo.friends,
+                cacheDir = cacheDir.absolutePath,
+                compilerConfiguration = configuration,
+                icContext = icContext,
+                checkForClassStructuralChanges = true,
+                commitIncrementalCache = commitIncrementalCache,
+            )
+
+            val icCaches = cacheUpdater.actualizeCaches()
+            val fileFragments =
+                icCaches.flatMap { it.fileArtifacts }.mapNotNull { it.loadIrFragments()?.mainFragment as? WasmCompiledFileFragment }
+
+            verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+
+            val res = compileWasm(
+                wasmCompiledFileFragments = fileFragments,
+                moduleName = mainModuleInfo.moduleName,
+                configuration = configuration,
+                typeScriptFragment = null,
+                baseFileName = mainModuleInfo.moduleName,
+                emitNameSection = false,
+                generateSourceMaps = false,
+                generateWat = false
+            )
+
+            writeCompilationResult(res, buildDir, mainModuleInfo.moduleName, false)
+
+            WasmVM.NodeJs.run(
+                "./test.mjs",
+                emptyList(),
+                workingDirectory = buildDir,
+                useNewExceptionHandling = false,
+            )
+        }
+
         override fun execute() {
+            prepareExternalJsFiles()
+
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
-
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
-
-                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
-
-                val icContext = WasmICContextForTesting(allowIncompleteImplementations = false, skipLocalNames = false)
-
-                val cacheUpdater = CacheUpdater(
-                    mainModule = mainModuleInfo.modulePath,
-                    allModules = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath },
-                    mainModuleFriends = mainModuleInfo.friends,
-                    cacheDir = buildDir.resolve("incremental-cache").absolutePath,
-                    compilerConfiguration = configuration,
-                    icContext = icContext,
-                    checkForClassStructuralChanges = true
-                )
-
-                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
-
-                val icCaches = cacheUpdater.actualizeCaches()
-                val fileFragments =
-                    icCaches.flatMap { it.fileArtifacts }.mapNotNull { it.loadIrFragments()?.mainFragment as? WasmCompiledFileFragment }
-
-                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
-
-                val res = compileWasm(
-                    wasmCompiledFileFragments = fileFragments,
-                    moduleName = mainModuleInfo.moduleName,
-                    configuration = configuration,
-                    typeScriptFragment = null,
-                    baseFileName = mainModuleInfo.moduleName,
-                    emitNameSection = false,
-                    generateSourceMaps = false,
-                    generateWat = false
-                )
-
-                writeCompilationResult(res, buildDir, mainModuleInfo.moduleName, false)
 
                 val testRunnerContent = """
                     let boxTestPassed = false;
@@ -125,13 +144,39 @@ abstract class WasmAbstractInvalidationTest(
                 val runnerFile = File(buildDir, "test.mjs")
                 runnerFile.writeText(testRunnerContent)
 
-                prepareExternalJsFiles()
 
-                WasmVM.NodeJs.run(
-                    "./test.mjs",
-                    emptyList(),
-                    workingDirectory = buildDir,
-                    useNewExceptionHandling = false,
+                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
+                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
+                val allModules = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
+
+                val cacheDir = buildDir.resolve("incremental-cache")
+                val totalSizeBefore =
+                    cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+
+                compileVerifyAndRun(
+                    stepId = projStep.id,
+                    cacheDir = cacheDir,
+                    mainModuleInfo = mainModuleInfo,
+                    configuration = configuration,
+                    allModules = allModules,
+                    testInfo = testInfo,
+                    removedModulesInfo = removedModulesInfo,
+                    commitIncrementalCache = false
+                )
+
+                val totalSizeAfterNotCommit =
+                    cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+                assertEquals(totalSizeBefore, totalSizeAfterNotCommit)
+
+                compileVerifyAndRun(
+                    stepId = projStep.id,
+                    cacheDir = cacheDir,
+                    mainModuleInfo = mainModuleInfo,
+                    configuration = configuration,
+                    allModules = allModules,
+                    testInfo = testInfo,
+                    removedModulesInfo = removedModulesInfo,
+                    commitIncrementalCache = true
                 )
             }
         }
