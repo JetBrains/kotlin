@@ -1,9 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("generators.checkers.generated-sources")
+    id("generated-sources")
 }
 
 dependencies {
@@ -32,9 +30,4 @@ sourceSets {
     "test" { none() }
 }
 
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(projectDir.resolve("gen"))
-    }
-}
+generatedDiagnosticContainersAndCheckerComponents()

@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("generators.checkers.generated-sources")
+    id("generated-sources")
 }
 
 dependencies {
@@ -24,3 +24,5 @@ sourceSets {
     }
     "test" { none() }
 }
+
+generatedDiagnosticContainersAndCheckerComponents()
