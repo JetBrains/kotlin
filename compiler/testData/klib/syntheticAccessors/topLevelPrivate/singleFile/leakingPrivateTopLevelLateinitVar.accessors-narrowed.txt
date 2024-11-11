@@ -10,10 +10,6 @@ public class A
         local fun <anonymous>()
             /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
         /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
-public fun box(): String
-    local fun <anonymous>()
-        /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
-    /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
 /* ACCESSOR declaration */ internal fun access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt(): String
     /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ internal fun access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?>: String)

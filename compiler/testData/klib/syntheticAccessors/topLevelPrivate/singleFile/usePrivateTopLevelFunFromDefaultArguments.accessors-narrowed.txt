@@ -10,10 +10,6 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     kk: Function0<String>
         local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
-public fun box(): String
-    val oo: String =
-        /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
-    /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
 /* ACCESSOR declaration */ internal fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
     /* TARGET use-site */ o()
 /* ACCESSOR declaration */ internal fun access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String

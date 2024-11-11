@@ -1,5 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 class A {
     private fun privateMethod() = "O"
 

@@ -1,5 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 class Outer private constructor(val s: String) {
     constructor() : this("")
 

@@ -10,5 +10,3 @@ public class A
         /* ACCESSOR use-site */ access$<init>(s = s)
     /* ACCESSOR declaration */ internal /* static */ fun access$<init>(s: String): A
         /* TARGET use-site */ A(s = s)
-public fun box(): String
-    /* ACCESSOR use-site */ access$<init>(s = s)

@@ -158,10 +158,12 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             }
         }
 
+        configureInlinedIrHandlersStep {
+            useHandlers(::SyntheticAccessorsDumpHandler)
+        }
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsSourceMapPathRewriter,
-                ::JsSyntheticAccessorsDumpHandler,
             )
         }
 

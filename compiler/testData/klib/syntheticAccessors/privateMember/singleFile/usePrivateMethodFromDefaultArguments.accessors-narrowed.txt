@@ -15,7 +15,3 @@ public class Foo
         /* TARGET use-site */ $this.o()
     /* ACCESSOR declaration */ internal /* static */ fun access$k($this: Foo): String
         /* TARGET use-site */ $this.k()
-public fun box(): String
-    val oo: String =
-        /* ACCESSOR use-site */ access$o($this = tmp0)
-    /* ACCESSOR use-site */ access$k($this = this)

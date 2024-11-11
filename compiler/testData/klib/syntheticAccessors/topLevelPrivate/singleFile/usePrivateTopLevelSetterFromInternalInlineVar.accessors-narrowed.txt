@@ -7,7 +7,5 @@ public var privateSetterVar: Int
 internal var inlineVar: Int
     internal inline fun <set-inlineVar>(value: Int)
         /* ACCESSOR use-site */ access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?> = value)
-public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?> = value)
 /* ACCESSOR declaration */ internal fun access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?>: Int)
     /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)
