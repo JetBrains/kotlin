@@ -2,60 +2,25 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: java/util/ArrayList
+  containingClassId: test/MyClass
   contextReceivers: []
-  hasStableParameterNames: false
+  hasStableParameterNames: true
   isActual: false
   isExpect: false
   isExtension: false
-  isPrimary: false
+  isPrimary: true
   location: CLASS
   modality: FINAL
-  origin: JAVA_LIBRARY
+  origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotations: []
-        type: E
-    ]
-    type: java/util/ArrayList<E>
-  typeParameters: [
-    KaTypeParameterSymbol(E)
-  ]
-  valueParameters: [
-    KaValueParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Local
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isActual: false
-      isCrossinline: false
-      isExpect: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVal: true
-      isVararg: false
-      location: LOCAL
-      modality: FINAL
-      name: p0
-      origin: JAVA_LIBRARY
-      receiverParameter: null
-      returnType: KaFlexibleType:
-        annotations: []
-        type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
-      visibility: LOCAL
-      getContainingFileSymbol: null
-      getContainingJvmClassName: java.util.ArrayList
-      getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
-  ]
+    typeArguments: []
+    type: test/MyClass
+  typeParameters: []
+  valueParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: null
-  getContainingJvmClassName: java.util.ArrayList
-  getContainingModule: KaLibraryModule "SDK jdk"
+  getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias.kt)
+  getContainingJvmClassName: test.MyClass
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

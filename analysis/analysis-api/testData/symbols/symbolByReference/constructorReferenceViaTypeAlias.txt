@@ -20,7 +20,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(constructorReferenceViaTypeAlias.kt)
   getContainingJvmClassName: test.MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

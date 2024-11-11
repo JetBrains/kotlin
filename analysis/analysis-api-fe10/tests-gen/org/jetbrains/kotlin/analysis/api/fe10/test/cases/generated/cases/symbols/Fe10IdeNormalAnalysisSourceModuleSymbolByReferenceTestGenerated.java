@@ -53,6 +53,42 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("constructorParameterViaTypeAlias.kt")
+  public void testConstructorParameterViaTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorParameterViaTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorParameterViaTypeAlias_withTypeParameters.kt")
+  public void testConstructorParameterViaTypeAlias_withTypeParameters() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorParameterViaTypeAlias_withTypeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorParameterViaTypeAlias_withTypeParametersFixed.kt")
+  public void testConstructorParameterViaTypeAlias_withTypeParametersFixed() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorParameterViaTypeAlias_withTypeParametersFixed.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorReferenceViaTypeAlias.kt")
+  public void testConstructorReferenceViaTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorReferenceViaTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorReferenceViaTypeAlias_withTypeParameters.kt")
+  public void testConstructorReferenceViaTypeAlias_withTypeParameters() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorReferenceViaTypeAlias_withTypeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorReferenceViaTypeAlias_withTypeParametersFixed.kt")
+  public void testConstructorReferenceViaTypeAlias_withTypeParametersFixed() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorReferenceViaTypeAlias_withTypeParametersFixed.kt");
+  }
+
+  @Test
   @TestMetadata("constructorValueParameter.kt")
   public void testConstructorValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorValueParameter.kt");
@@ -62,6 +98,36 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   @TestMetadata("constructorViaTypeAlias.kt")
   public void testConstructorViaTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorViaTypeAlias_arrayList.kt")
+  public void testConstructorViaTypeAlias_arrayList() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias_arrayList.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorViaTypeAlias_differentModules.kt")
+  public void testConstructorViaTypeAlias_differentModules() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias_differentModules.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorViaTypeAlias_withTypeParameters.kt")
+  public void testConstructorViaTypeAlias_withTypeParameters() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias_withTypeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorViaTypeAlias_withTypeParametersAltered.kt")
+  public void testConstructorViaTypeAlias_withTypeParametersAltered() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias_withTypeParametersAltered.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorViaTypeAlias_withTypeParametersFixed.kt")
+  public void testConstructorViaTypeAlias_withTypeParametersFixed() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias_withTypeParametersFixed.kt");
   }
 
   @Test

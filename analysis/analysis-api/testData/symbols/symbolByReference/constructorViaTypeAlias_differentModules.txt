@@ -2,7 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: test/MyClass
+  containingClassId: one/SimpleClass
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -16,11 +16,11 @@ KaConstructorSymbol:
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: test/MyClass
+    type: one/SimpleClass
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias.kt)
-  getContainingJvmClassName: test.MyClass
-  getContainingModule: KaSourceModule "Sources of main"
+  getContainingFileSymbol: KaFileSymbol(Lib.kt)
+  getContainingJvmClassName: one.SimpleClass
+  getContainingModule: KaSourceModule "Sources of lib"
   deprecationStatus: null

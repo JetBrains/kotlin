@@ -6,5 +6,5 @@ class MyClass
 typealias MyAlias = MyClass
 
 fun usage() {
-    <caret>MyAlias()
+    val reference = ::<caret>MyAlias
 }

@@ -1,0 +1,81 @@
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  containingClassId: java/util/ArrayList
+  contextReceivers: []
+  hasStableParameterNames: false
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isPrimary: false
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: E
+    ]
+    type: java/util/ArrayList<E>
+  typeParameters: [
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: E
+      origin: SOURCE
+      upperBounds: [
+        KaFlexibleType:
+          annotations: []
+          type: kotlin/Any!
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeParameterSymbol
+
+      deprecationStatus: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: p0
+      origin: JAVA_LIBRARY
+      receiverParameter: null
+      returnType: KaFlexibleType:
+        annotations: []
+        type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java.util.ArrayList
+      getContainingModule: KaLibraryModule "SDK jdk"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java.util.ArrayList
+  getContainingModule: KaLibraryModule "SDK jdk"
+  deprecationStatus: null

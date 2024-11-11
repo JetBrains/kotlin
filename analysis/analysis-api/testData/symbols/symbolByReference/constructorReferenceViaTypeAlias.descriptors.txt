@@ -11,7 +11,7 @@ KaConstructorSymbol:
   isPrimary: true
   location: CLASS
   modality: FINAL
-  origin: SOURCE_MEMBER_GENERATED
+  origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -20,7 +20,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(constructorReferenceViaTypeAlias.kt)
   getContainingJvmClassName: test.MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
