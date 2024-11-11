@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.ir.generator.print.symbol
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.Model
-import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
-import org.jetbrains.kotlin.ir.generator.declaredSymbolRemapperType
-import org.jetbrains.kotlin.ir.generator.emptySymbolRemapperType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.ir.generator.model.symbol.findFieldsWithSymbols
 import org.jetbrains.kotlin.ir.generator.model.symbol.symbolRemapperMethodName
-import org.jetbrains.kotlin.ir.generator.referencedSymbolRemapperType
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.withIndent
 

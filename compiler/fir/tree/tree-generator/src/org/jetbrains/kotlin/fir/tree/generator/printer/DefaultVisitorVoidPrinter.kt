@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.util.printBlock
 
 internal class DefaultVisitorVoidPrinter(
     printer: ImportCollectingPrinter,

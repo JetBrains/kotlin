@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.generators.util
 
+import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
-import kotlin.collections.forEach
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -99,6 +99,12 @@ fun getGenerationPath(rootPath: File, packageName: String): File {
 
 inline fun SmartPrinter.inBracketsWithIndent(header: String = "", body: () -> Unit) {
     println("$header {")
+    withIndent(body)
+    println("}")
+}
+
+inline fun IndentingPrinter.printBlock(body: () -> Unit) {
+    println(" {")
     withIndent(body)
     println("}")
 }

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val printer: ImportCollectingPrinter)

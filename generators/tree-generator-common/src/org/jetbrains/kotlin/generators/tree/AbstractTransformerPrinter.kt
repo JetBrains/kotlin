@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
+import org.jetbrains.kotlin.generators.util.printBlock
 
 abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
     printer: ImportCollectingPrinter,

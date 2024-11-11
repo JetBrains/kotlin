@@ -7,7 +7,7 @@ dependencies {
     api(project(":core:compiler.common"))
 
     implementation(project(":compiler:util"))
-    implementation(project(":generators"))
+    api(project(":generators"))
 }
 
 sourceSets {

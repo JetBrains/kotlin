@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.util.printBlock
 
 abstract class AbstractVisitorVoidPrinter<Element, Field>(
     printer: ImportCollectingPrinter,

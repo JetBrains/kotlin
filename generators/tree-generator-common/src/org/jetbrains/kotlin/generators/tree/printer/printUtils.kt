@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tree.printer
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
@@ -259,12 +260,6 @@ fun ImportCollectingPrinter.printPropertyDeclaration(
 }
 
 enum class VariableKind { VAL, VAR, PARAMETER }
-
-inline fun IndentingPrinter.printBlock(body: () -> Unit) {
-    println(" {")
-    withIndent(body)
-    println("}")
-}
 
 private val dataTP = TypeVariable("D")
 private val dataParameter = FunctionParameter("data", dataTP)

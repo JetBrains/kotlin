@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.call
+import org.jetbrains.kotlin.generators.tree.printer.printAcceptChildrenMethod
+import org.jetbrains.kotlin.generators.tree.printer.printTransformChildrenMethod
+import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.withIndent
 
 private class ImplementationFieldPrinter(printer: ImportCollectingPrinter) : AbstractFieldPrinter<Field>(printer) {

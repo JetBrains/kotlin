@@ -9,19 +9,12 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.*
-import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.IrTree.declaration
-import org.jetbrains.kotlin.ir.generator.deepCopyTypeRemapperType
-import org.jetbrains.kotlin.ir.generator.irDeepCopyBaseType
-import org.jetbrains.kotlin.ir.generator.irImplementationDetailType
-import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
-import org.jetbrains.kotlin.ir.generator.irTypeType
+import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.symbol.symbolRemapperMethodName
-import org.jetbrains.kotlin.ir.generator.symbolRemapperType
-import org.jetbrains.kotlin.ir.generator.typeRemapperType
 import org.jetbrains.kotlin.utils.withIndent
 
 internal class DeepCopyIrTreeWithSymbolsPrinter(
