@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.baseFirNativeDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.builders.baseNativeDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
@@ -25,19 +26,13 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
@@ -69,36 +64,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
 
         if (InTextDirectivesUtils.isDirectiveDefined(File(filePath).readText(), WITH_PLATFORM_LIBS.name))
             Assumptions.abort<Nothing>("Diagnostic tests using platform libs are not supported at non-Mac hosts. Test source: $filePath")
-    }
-}
-
-fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativeDiagnosticTestConfiguration(
-    frontendFacade: Constructor<FrontendFacade<R>>,
-) {
-    defaultDirectives {
-        +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
-        +ConfigurationDirectives.WITH_STDLIB
-    }
-
-    enableMetaInfoHandler()
-
-    useConfigurators(
-        ::CommonEnvironmentConfigurator,
-        ::NativeEnvironmentConfigurator,
-    )
-
-    useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
-    useAdditionalSourceProviders(
-        ::AdditionalDiagnosticsSourceFilesProvider,
-        ::CoroutineHelpersSourceFilesProvider,
-    )
-
-    facadeStep(frontendFacade)
-
-    forTestsMatching("testData/diagnostics/nativeTests/*") {
-        defaultDirectives {
-            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-        }
     }
 }
 
@@ -167,20 +132,6 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
         }
     }
 }
-
-fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
-    firHandlersStep {
-        useHandlers(
-            ::FirDiagnosticsHandler,
-            ::FirDumpHandler,
-            ::FirCfgDumpHandler,
-            ::FirCfgConsistencyHandler,
-            ::FirResolvedTypesVerifier,
-            ::FirScopeDumpHandler,
-        )
-    }
-}
-
 
 abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
