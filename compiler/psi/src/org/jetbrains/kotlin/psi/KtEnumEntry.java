@@ -35,7 +35,7 @@ public class KtEnumEntry extends KtClass {
     }
 
     public KtEnumEntry(@NotNull KotlinClassStub stub) {
-        super(stub);
+        super(stub, KtStubElementTypes.ENUM_ENTRY);
     }
 
     @NotNull

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
@@ -17,6 +18,7 @@ open class KtClass : KtClassOrObject {
 
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassStub) : super(stub, KtStubElementTypes.CLASS)
+    constructor(stub: KotlinClassStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitClass(this, data)
