@@ -741,15 +741,17 @@ tasks {
     val coreLibsPublishable = coreLibProjects + listOf(":kotlin-stdlib-common")
     val coreLibsBuildable = coreLibProjects + listOf(":kotlin-stdlib-jvm-minimal-for-test", ":kotlin-stdlib-js-ir-minimal-for-test")
 
-    aggregateLibsTask("coreLibsClean", "clean",
+    aggregateLibsTask(
+        "coreLibsClean", "clean",
         (coreLibProjects + coreLibsBuildable + coreLibsPublishable).distinct() +
-            ":kotlin-stdlib:samples"
+                ":kotlin-stdlib:samples"
     )
 
     aggregateLibsTask("coreLibsAssemble", "assemble", coreLibsBuildable)
     aggregateLibsTask("coreLibsInstall", "install", coreLibsPublishable)
     aggregateLibsTask("coreLibsPublish", "publish", coreLibsPublishable)
-    aggregateLibsTask("coreLibsTest", "check",
+    aggregateLibsTask(
+        "coreLibsTest", "check",
         coreLibsBuildable + listOfNotNull(
             ":kotlin-stdlib:samples",
             ":kotlin-test:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
@@ -1164,17 +1166,12 @@ plugins.withType(com.github.gradle.node.NodePlugin::class) {
     }
 }
 
-@Suppress("DEPRECATION")
 afterEvaluate {
     if (kotlinBuildProperties.isCacheRedirectorEnabled) {
-        allprojects {
-            plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl =
-                    "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
-            }
-        }
-
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl =
+                "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
+
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
                 YarnLockMismatchReport.WARNING
         }
