@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 
 object FirContextReceiversPropertyBackingFieldChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) return
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) &&
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
+        ) {
+            return
+        }
         if (declaration.contextReceivers.isEmpty()) return
 
         if (declaration.hasBackingField) {

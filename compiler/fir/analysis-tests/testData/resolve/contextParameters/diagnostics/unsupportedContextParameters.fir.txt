@@ -82,3 +82,7 @@ FILE: unsupportedContextParameters.kt
         public set(<set-?>: R|kotlin/Any|): R|kotlin/Unit| {
             ^ D|/d|.R|/setValue<Inapplicable(INAPPLICABLE): /setValue>#|(this@R|/d|, ::R|/d|, R|<local>/d|)
         }
+    context(<unused var>: R|kotlin/String|)
+    public final var b: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
