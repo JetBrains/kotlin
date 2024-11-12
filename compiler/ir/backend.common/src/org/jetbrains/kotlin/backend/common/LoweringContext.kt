@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
  */
 interface LoweringContext {
     val ir: Ir<LoweringContext>
-    val builtIns: KotlinBuiltIns
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext
     val irFactory: IrFactory

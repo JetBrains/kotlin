@@ -25,10 +25,6 @@ class PreSerializationLoweringContext(
     override val irBuiltIns: IrBuiltIns,
     override val configuration: CompilerConfiguration,
 ) : CommonBackendContext {
-
-    override val builtIns: KotlinBuiltIns
-        get() = shouldNotBeCalled()
-
     override val mapping: Mapping = Mapping()
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)

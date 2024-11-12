@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
 internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseContext(config), CommonBackendContext {
-    abstract override val builtIns: KonanBuiltIns
+    abstract val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr
 

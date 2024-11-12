@@ -84,8 +84,6 @@ class JsIrBackendContext(
 
     val fieldDataCache = WeakHashMap<IrClass, Map<IrField, String>>()
 
-    override val builtIns = module.builtIns
-
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
     override val irFactory: IrFactory = symbolTable.irFactory

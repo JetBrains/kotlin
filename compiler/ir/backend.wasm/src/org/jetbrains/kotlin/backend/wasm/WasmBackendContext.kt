@@ -39,7 +39,6 @@ class WasmBackendContext(
     propertyLazyInitialization: Boolean,
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
-    override val builtIns = module.builtIns
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
     override val irFactory: IrFactory = symbolTable.irFactory
