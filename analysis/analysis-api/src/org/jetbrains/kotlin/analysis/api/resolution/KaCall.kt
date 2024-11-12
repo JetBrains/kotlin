@@ -9,13 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -108,9 +102,6 @@ public interface KaCompoundAccessCall {
      * The corresponding compound operation.
      */
     public val compoundOperation: KaCompoundOperation
-
-    @Deprecated("Use `compoundOperation` instead", ReplaceWith("compoundOperation"))
-    public val compoundAccess: KaCompoundOperation get() = compoundOperation
 }
 
 /**
@@ -158,10 +149,6 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
      * Represents a symbol of the mutated variable.
      */
     public val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
-
-    @Deprecated("Use 'variablePartiallyAppliedSymbol' instead", ReplaceWith("variablePartiallyAppliedSymbol"))
-    public val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
-        get() = variablePartiallyAppliedSymbol
 }
 
 /**

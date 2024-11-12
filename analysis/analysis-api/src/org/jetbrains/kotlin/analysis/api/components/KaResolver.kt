@@ -53,15 +53,6 @@ public interface KaResolver {
      */
     public fun KtElement.resolveToCall(): KaCallInfo?
 
-    @Deprecated(
-        message = "The API will be changed soon. Use 'resolveToCall()' in a transit period",
-        replaceWith = ReplaceWith("resolveToCall()"),
-    )
-    public fun KtElement.resolveCall(): KaCallInfo? = resolveToCall()
-
-    @Deprecated("Use 'resolveToCall()' instead", ReplaceWith("resolveToCall()"))
-    public fun KtElement.resolveCallOld(): KaCallInfo? = resolveToCall()
-
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
      * corresponding to this [KtElement].
@@ -70,13 +61,4 @@ public interface KaResolver {
      * i.e., the most specific callable passing all compatibility checks.
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
-
-    @Deprecated(
-        message = "The API will be changed soon. Use 'collectCallCandidatesOld()' in a transit period",
-        replaceWith = ReplaceWith("collectCallCandidatesOld()"),
-    )
-    public fun KtElement.collectCallCandidates(): List<KaCallCandidateInfo> = resolveToCallCandidates()
-
-    @Deprecated("Use 'resolveToCallCandidates() instead.", replaceWith = ReplaceWith("resolveToCallCandidates()"))
-    public fun KtElement.collectCallCandidatesOld(): List<KaCallCandidateInfo> = resolveToCallCandidates()
 }

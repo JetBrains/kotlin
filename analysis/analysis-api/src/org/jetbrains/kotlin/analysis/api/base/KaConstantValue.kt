@@ -36,9 +36,6 @@ public sealed interface KaConstantValue {
      */
     public fun render(): String
 
-    @Deprecated("Use 'render()' instead.", replaceWith = ReplaceWith("render()"))
-    public fun renderAsKotlinConstant(): String = render()
-
     /** Represents a `null` value of some class type. */
     public interface NullValue : KaConstantValue
 

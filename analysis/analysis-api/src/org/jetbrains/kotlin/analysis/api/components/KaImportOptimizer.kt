@@ -20,12 +20,6 @@ public interface KaImportOptimizer {
     @KaIdeApi
     public fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult
 
-    @KaIdeApi
-    @Deprecated("Use 'analyzeImportsToOptimize()' instead.", replaceWith = ReplaceWith("analyzeImportsToOptimize()"))
-    public fun analyseImports(file: KtFile): KaImportOptimizerResult {
-        return analyzeImportsToOptimize(file)
-    }
-
     /**
      * A [FqName] which can be used to import the given symbol or `null` if the symbol cannot be imported.
      */

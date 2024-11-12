@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
@@ -18,10 +18,6 @@ public interface KaExpressionInformationProvider {
      */
     @KaIdeApi
     public val KtReturnExpression.targetSymbol: KaCallableSymbol?
-
-    @KaIdeApi
-    @Deprecated("Use 'targetSymbol' instead.", replaceWith = ReplaceWith("targetSymbol"))
-    public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? = targetSymbol
 
     /**
      * Computes missing case branches of the given [KtWhenExpression].
@@ -54,10 +50,6 @@ public interface KaExpressionInformationProvider {
      */
     @KaIdeApi
     public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase>
-
-    @KaIdeApi
-    @Deprecated("Use 'computeMissingCases()' instead.", ReplaceWith("computeMissingCases()"))
-    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = computeMissingCases()
 
     /**
      * `true` is the value of the given expression is used.

@@ -20,21 +20,10 @@ public interface KaDiagnosticProvider {
     @KaExperimentalApi
     public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
-    @KaExperimentalApi
-    @Deprecated("Use 'diagnostics()' instead.", replaceWith = ReplaceWith("diagnostic(filter)"))
-    public fun KtElement.getDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
-        return diagnostics(filter)
-    }
-
     /**
      * Computes all diagnostics for the given file.
      */
     public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
-
-    @Deprecated("Use 'collectDiagnostics()' instead.", replaceWith = ReplaceWith("collectDiagnostics(filter)"))
-    public fun KtFile.collectDiagnosticsForFile(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
-        return collectDiagnostics(filter)
-    }
 }
 
 public enum class KaDiagnosticCheckerFilter {

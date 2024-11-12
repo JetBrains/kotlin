@@ -392,21 +392,6 @@ internal class KaFirSymbolRelationProvider(
             return unwrappedDeclaration.buildSymbol(analysisSession.firSymbolBuilder) as KaCallableSymbol
         }
 
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val KaCallableSymbol.originalContainingClassForOverride: KaClassSymbol?
-        get() = withValidityAssertion {
-            if (this is KaReceiverParameterSymbol) return null
-
-            require(this is KaFirSymbol<*>)
-
-            val targetDeclaration = firSymbol.fir as FirCallableDeclaration
-            val unwrappedDeclaration = targetDeclaration.unwrapFakeOverridesOrDelegated()
-
-            val unwrappedFirSymbol = unwrappedDeclaration.symbol
-            val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol)
-            return with(analysisSession) { unwrappedKtSymbol.containingDeclaration as? KaClassSymbol }
-        }
-
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
             this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()

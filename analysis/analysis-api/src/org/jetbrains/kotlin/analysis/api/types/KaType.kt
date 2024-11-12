@@ -107,15 +107,6 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
      */
     public val abbreviation: KaUsualClassType?
 
-    @Deprecated("Use 'abbreviation' instead", ReplaceWith("abbreviation"))
-    public val abbreviatedType: KaUsualClassType?
-        get() = abbreviation
-
-    @Deprecated("Use 'toString()' instead.", replaceWith = ReplaceWith("toString()"))
-    public fun asStringForDebugging(): String {
-        return withValidityAssertion { toString() }
-    }
-
     @KaExperimentalApi
     public fun createPointer(): KaTypePointer<KaType>
 }
@@ -137,10 +128,6 @@ public interface KaErrorType : KaType {
     @KaNonPublicApi
     public val presentableText: String?
 
-    @KaNonPublicApi
-    @Deprecated("Use 'presentableText' instead.")
-    public fun tryRenderAsNonErrorType(): String? = presentableText
-
     @KaExperimentalApi
     public override fun createPointer(): KaTypePointer<KaErrorType>
 }
@@ -151,14 +138,6 @@ public sealed class KaClassType : KaType {
     public abstract val typeArguments: List<KaTypeProjection>
 
     public abstract val qualifiers: List<KaResolvedClassTypeQualifier>
-
-    @Deprecated("Use 'symbol' instead.", ReplaceWith("symbol"))
-    public val classSymbol: KaClassLikeSymbol
-        get() = symbol
-
-    @Deprecated("Use 'typeArguments' instead.", ReplaceWith("typeArguments"))
-    public val ownTypeArguments: List<KaTypeProjection>
-        get() = typeArguments
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
@@ -190,10 +169,6 @@ public abstract class KaClassErrorType : KaErrorType {
     public abstract val qualifiers: List<KaClassTypeQualifier>
 
     public abstract val candidateSymbols: Collection<KaClassLikeSymbol>
-
-    @Deprecated("Use 'candidateSymbols' instead.", ReplaceWith("candidateSymbols"))
-    public val candidateClassSymbols: Collection<KaClassLikeSymbol>
-        get() = candidateSymbols
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>

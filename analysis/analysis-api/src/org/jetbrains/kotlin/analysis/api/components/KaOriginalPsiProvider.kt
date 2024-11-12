@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
+/**
+ * TODO: KT-73059
+ */
 @Deprecated("Obsolete API")
 public interface KaOriginalPsiProvider {
     /**

@@ -14,14 +14,6 @@ import org.jetbrains.kotlin.name.ClassId
  * Annotation owners are usually implement [KaAnnotated]
  */
 public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
-    @Deprecated("Use the annotation list as a 'List'.")
-    public val annotations: List<KaAnnotation>
-        get() = this
-
-    @Deprecated("Use the annotation list as a 'List'.")
-    public val annotationInfos: List<KaAnnotation>
-        get() = this
-
     /**
      * Checks if entity contains annotation with specified [classId].
      *
@@ -32,9 +24,6 @@ public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
      * @param classId [ClassId] to search
      */
     public operator fun contains(classId: ClassId): Boolean
-
-    @Deprecated("Use 'contains' instead.", replaceWith = ReplaceWith("contains(classId)"))
-    public fun hasAnnotation(classId: ClassId): Boolean = contains(classId)
 
     /**
      * A list of annotations applied with specified [classId].
@@ -48,9 +37,6 @@ public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
      */
     public operator fun get(classId: ClassId): List<KaAnnotation>
 
-    @Deprecated("Use 'get' instead.", replaceWith = ReplaceWith("get(classId)"))
-    public fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = get(classId)
-
     /**
      * A list of annotations [ClassId].
      *
@@ -62,8 +48,4 @@ public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
      * ```
      */
     public val classIds: Collection<ClassId>
-
-    @Deprecated("Use 'classIds' instead.", replaceWith = ReplaceWith("classIds"))
-    public val annotationClassIds: Collection<ClassId>
-        get() = classIds
 }

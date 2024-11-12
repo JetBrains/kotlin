@@ -31,10 +31,6 @@ public interface KaTypeInformationProvider {
      */
     public val KaType.isFunctionalInterface: Boolean
 
-    @Deprecated("Use 'isFunctionalInterface' instead.", replaceWith = ReplaceWith("isFunctionalInterface"))
-    public val KaType.isFunctionalInterfaceType: Boolean
-        get() = isFunctionalInterface
-
     /**
      * A [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
      */
@@ -142,57 +138,6 @@ public interface KaTypeInformationProvider {
     /** `true` if the type is a [UByte] type. */
     public val KaType.isUByteType: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uByte) }
 
-    @Deprecated("Use 'isUnitType' instead.", replaceWith = ReplaceWith("isUnitType"))
-    public val KaType.isUnit: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.UNIT) }
-
-    @Deprecated("Use 'isIntType' instead.", replaceWith = ReplaceWith("isIntType"))
-    public val KaType.isInt: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.INT) }
-
-    @Deprecated("Use 'isLongType' instead.", replaceWith = ReplaceWith("isLongType"))
-    public val KaType.isLong: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.LONG) }
-
-    @Deprecated("Use 'isShortType' instead.", replaceWith = ReplaceWith("isShortType"))
-    public val KaType.isShort: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.SHORT) }
-
-    @Deprecated("Use 'isByteType' instead.", replaceWith = ReplaceWith("isByteType"))
-    public val KaType.isByte: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.BYTE) }
-
-    @Deprecated("Use 'isFloatType' instead.", replaceWith = ReplaceWith("isFloatType"))
-    public val KaType.isFloat: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.FLOAT) }
-
-    @Deprecated("Use 'isDoubleType' instead.", replaceWith = ReplaceWith("isDoubleType"))
-    public val KaType.isDouble: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.DOUBLE) }
-
-    @Deprecated("Use 'isCharType' instead.", replaceWith = ReplaceWith("isCharType"))
-    public val KaType.isChar: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.CHAR) }
-
-    @Deprecated("Use 'isBooleanType' instead.", replaceWith = ReplaceWith("isBooleanType"))
-    public val KaType.isBoolean: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.BOOLEAN) }
-
-    @Deprecated("Use 'isStringType' instead.", replaceWith = ReplaceWith("isStringType"))
-    public val KaType.isString: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.STRING) }
-
-    @Deprecated("Use 'isCharSequenceType' instead.", replaceWith = ReplaceWith("isCharSequenceType"))
-    public val KaType.isCharSequence: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.CHAR_SEQUENCE) }
-
-    @Deprecated("Use 'isAnyType' instead.", replaceWith = ReplaceWith("isAnyType"))
-    public val KaType.isAny: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.ANY) }
-
-    @Deprecated("Use 'isNothingType' instead.", replaceWith = ReplaceWith("isNothingType"))
-    public val KaType.isNothing: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.NOTHING) }
-
-    @Deprecated("Use 'isUIntType' instead.", replaceWith = ReplaceWith("isUIntType"))
-    public val KaType.isUInt: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uInt) }
-
-    @Deprecated("Use 'isULongType' instead.", replaceWith = ReplaceWith("isULongType"))
-    public val KaType.isULong: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uLong) }
-
-    @Deprecated("Use 'isUShortType' instead.", replaceWith = ReplaceWith("isUShortType"))
-    public val KaType.isUShort: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uShort) }
-
-    @Deprecated("Use 'isUByteType' instead.", replaceWith = ReplaceWith("isUByteType"))
-    public val KaType.isUByte: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uByte) }
-
     /** The class symbol backing the given type, if available. */
     public val KaType.expandedSymbol: KaClassSymbol?
         get() = withValidityAssertion {
@@ -204,12 +149,6 @@ public interface KaTypeInformationProvider {
                 else -> null
             }
         }
-
-    /** The class symbol backing the given type, if available. */
-    @Deprecated("Use 'expandedSymbol' instead.", ReplaceWith("expandedSymbol"))
-    public val KaType.expandedClassSymbol: KaClassSymbol?
-        get() = expandedSymbol
-
 
     /**
      * Unwraps type aliases.
@@ -245,9 +184,6 @@ public interface KaTypeInformationProvider {
         if (this !is KaClassType) return false
         return this.classId == classId
     }
-
-    @Deprecated("Use 'isClassType()' instead.", replaceWith = ReplaceWith("isClassType(classId)"))
-    public fun KaType.isClassTypeWithClassId(classId: ClassId): Boolean = isClassType(classId)
 
     /**
      * `true` if the given [KaType] is a primitive type.

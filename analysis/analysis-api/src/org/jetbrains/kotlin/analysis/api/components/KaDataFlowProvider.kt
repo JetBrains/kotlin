@@ -35,12 +35,6 @@ public interface KaDataFlowProvider {
 
     @KaNonPublicApi
     public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
-
-    @KaNonPublicApi
-    @Deprecated("Use 'computeExitPointSnapshot()' instead.", replaceWith = ReplaceWith("computeExitPointSnapshot(statements)"))
-    public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
-        return computeExitPointSnapshot(statements)
-    }
 }
 
 /**

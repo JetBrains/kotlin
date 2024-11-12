@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -42,27 +40,6 @@ public interface KaAnnotation : KaLifetimeOwner {
     public val useSiteTarget: AnnotationUseSiteTarget?
 
     /**
-     * This property can be used to optimize some argument processing logic.
-     * For example, if you have [KaAnnotationApplicationInfo] from [KaAnnotated.annotationInfos] and [hasArguments] is **false**,
-     * then you can avoid [KaAnnotated.annotationsByClassId] call,
-     * because effectively you already have all necessary information in [KaAnnotationApplicationInfo]
-     */
-    @Deprecated("Use 'arguments.isNotEmpty()' instead.", replaceWith = ReplaceWith("arguments.isNotEmpty()"))
-    public val hasArguments: Boolean
-        get() = arguments.isNotEmpty()
-
-    @Deprecated("Use 'arguments.isNotEmpty()' instead.", replaceWith = ReplaceWith("arguments.isNotEmpty()"))
-    public val isCallWithArguments: Boolean
-        get() = arguments.isNotEmpty()
-
-    /**
-     * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations
-     */
-    @Deprecated("The API is not reliable and will be removed soon. Implement on the use site if needed.")
-    public val index: Int?
-        get() = null
-
-    /**
      * A list of explicitly provided annotation values.
      */
     public val arguments: List<KaNamedAnnotationValue>
@@ -71,8 +48,4 @@ public interface KaAnnotation : KaLifetimeOwner {
      * An annotation constructor symbol.
      */
     public val constructorSymbol: KaConstructorSymbol?
-
-    @Deprecated("Use 'constructorSymbol' instead.")
-    public val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?
-        get() = withValidityAssertion { constructorSymbol?.createPointer() }
 }

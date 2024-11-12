@@ -27,14 +27,6 @@ public interface KaSymbolInformationProvider {
     @KaExperimentalApi
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
 
-    @Deprecated(
-        "Use 'deprecationStatus' instead.",
-        replaceWith = ReplaceWith("deprecationStatus(annotationUseSiteTarget)")
-    )
-    @KaExperimentalApi
-    public fun KaSymbol.getDeprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? =
-        deprecationStatus(annotationUseSiteTarget)
-
     /**
      * Deprecation status of the given property getter, or `null` if the getter is not deprecated.
      */

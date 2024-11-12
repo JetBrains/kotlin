@@ -4,12 +4,6 @@ public final class org/jetbrains/kotlin/analysis/api/AnalyzeKt {
 	public static final fun analyzeCopy (Lorg/jetbrains/kotlin/psi/KtElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaAnalysisApiInternals : java/lang/annotation/Annotation {
-}
-
-public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaAnalysisNonPublicApi : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaExperimentalApi : java/lang/annotation/Annotation {
 }
 
@@ -26,7 +20,6 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaP
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/KaSession : org/jetbrains/kotlin/analysis/api/components/KaAnalysisScopeProvider, org/jetbrains/kotlin/analysis/api/components/KaCompilerFacility, org/jetbrains/kotlin/analysis/api/components/KaCompilerPluginGeneratedDeclarationsProvider, org/jetbrains/kotlin/analysis/api/components/KaCompletionCandidateChecker, org/jetbrains/kotlin/analysis/api/components/KaDataFlowProvider, org/jetbrains/kotlin/analysis/api/components/KaDiagnosticProvider, org/jetbrains/kotlin/analysis/api/components/KaEvaluator, org/jetbrains/kotlin/analysis/api/components/KaExpressionInformationProvider, org/jetbrains/kotlin/analysis/api/components/KaExpressionTypeProvider, org/jetbrains/kotlin/analysis/api/components/KaImportOptimizer, org/jetbrains/kotlin/analysis/api/components/KaJavaInteroperabilityComponent, org/jetbrains/kotlin/analysis/api/components/KaMetadataCalculator, org/jetbrains/kotlin/analysis/api/components/KaOriginalPsiProvider, org/jetbrains/kotlin/analysis/api/components/KaReferenceShortener, org/jetbrains/kotlin/analysis/api/components/KaRenderer, org/jetbrains/kotlin/analysis/api/components/KaResolveExtensionInfoProvider, org/jetbrains/kotlin/analysis/api/components/KaResolver, org/jetbrains/kotlin/analysis/api/components/KaScopeProvider, org/jetbrains/kotlin/analysis/api/components/KaSignatureSubstitutor, org/jetbrains/kotlin/analysis/api/components/KaSourceProvider, org/jetbrains/kotlin/analysis/api/components/KaSubstitutorProvider, org/jetbrains/kotlin/analysis/api/components/KaSymbolInformationProvider, org/jetbrains/kotlin/analysis/api/components/KaSymbolRelationProvider, org/jetbrains/kotlin/analysis/api/components/KaTypeCreator, org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProvider, org/jetbrains/kotlin/analysis/api/components/KaTypeProvider, org/jetbrains/kotlin/analysis/api/components/KaTypeRelationChecker, org/jetbrains/kotlin/analysis/api/components/KaVisibilityChecker, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner, org/jetbrains/kotlin/analysis/api/symbols/KaSymbolProvider {
-	public fun getAnalysisSession ()Lorg/jetbrains/kotlin/analysis/api/KaSession;
 	public abstract fun getUseSiteModule ()Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 	public fun getUseSiteSession ()Lorg/jetbrains/kotlin/analysis/api/KaSession;
 	public fun restore (Lorg/jetbrains/kotlin/analysis/api/types/KaTypePointer;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -39,38 +32,20 @@ public final class org/jetbrains/kotlin/analysis/api/KaSessionKt {
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated {
 	public abstract fun getAnnotations ()Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotationList;
-	public fun getAnnotationsList ()Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotationList;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotatedKt {
-	public static final fun annotationsByClassId (Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotated;Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
-	public static final fun getAnnotationClassIds (Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotated;)Ljava/util/Collection;
-	public static final fun getAnnotationInfos (Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotated;)Ljava/util/List;
-	public static final fun getAnnotations (Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotated;)Ljava/util/List;
-	public static final fun hasAnnotation (Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotated;Lorg/jetbrains/kotlin/name/ClassId;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotation : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getArguments ()Ljava/util/List;
 	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
 	public abstract fun getConstructorSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol;
-	public fun getConstructorSymbolPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
-	public fun getHasArguments ()Z
-	public fun getIndex ()Ljava/lang/Integer;
 	public abstract fun getPsi ()Lorg/jetbrains/kotlin/psi/KtCallElement;
 	public abstract fun getUseSiteTarget ()Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
-	public fun isCallWithArguments ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
-	public fun annotationsByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
 	public abstract fun contains (Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
-	public fun getAnnotationClassIds ()Ljava/util/Collection;
-	public fun getAnnotationInfos ()Ljava/util/List;
-	public fun getAnnotations ()Ljava/util/List;
 	public abstract fun getClassIds ()Ljava/util/Collection;
-	public fun hasAnnotation (Lorg/jetbrains/kotlin/name/ClassId;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
@@ -87,7 +62,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/Ka
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue$ConstantValue : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue {
-	public fun getConstantValue ()Lorg/jetbrains/kotlin/analysis/api/base/KaConstantValue;
 	public abstract fun getValue ()Lorg/jetbrains/kotlin/analysis/api/base/KaConstantValue;
 }
 
@@ -97,7 +71,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/Ka
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue$NestedAnnotationValue : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue {
 	public abstract fun getAnnotation ()Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotation;
-	public fun getAnnotationValue ()Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotation;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue$UnsupportedValue : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotationValue {
@@ -116,7 +89,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstan
 	public abstract fun getSourcePsi ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public abstract fun getValue ()Ljava/lang/Object;
 	public abstract fun render ()Ljava/lang/String;
-	public fun renderAsKotlinConstant ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$BooleanValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
@@ -179,18 +151,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstan
 	public abstract fun getValue-Mh2AYeg ()S
 }
 
-public final class org/jetbrains/kotlin/analysis/api/calls/KaCallKt {
-	public static final synthetic fun getCalls (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Ljava/util/List;
-	public static final synthetic fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
-	public static final synthetic fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
-	public static final synthetic fun singleConstructorCallOrNull (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
-	public static final synthetic fun singleFunctionCallOrNull (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
-	public static final synthetic fun singleVariableAccessCall (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall;
-	public static final synthetic fun successfulConstructorCallOrNull (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
-	public static final synthetic fun successfulFunctionCallOrNull (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
-	public static final synthetic fun successfulVariableAccessCall (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall;
-}
-
 public final class org/jetbrains/kotlin/analysis/api/components/DefaultTypeClassIds {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/components/DefaultTypeClassIds;
 	public final fun getANY ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -216,36 +176,21 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaA
 
 public abstract class org/jetbrains/kotlin/analysis/api/components/KaBuiltinTypes : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public fun <init> ()V
-	public final fun getANY ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getAnnotationType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getAny ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getBOOLEAN ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getBYTE ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getBoolean ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getByte ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getCHAR ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getChar ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getDOUBLE ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getDouble ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getFLOAT ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getFloat ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getINT ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getInt ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getLONG ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getLong ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getNOTHING ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getNULLABLE_ANY ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getNULLABLE_NOTHING ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getNothing ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getNullableAny ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getNullableNothing ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getSHORT ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getSTRING ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getShort ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getString ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getTHROWABLE ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getThrowable ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public final fun getUNIT ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getUnit ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
@@ -273,7 +218,6 @@ public final class org/jetbrains/kotlin/analysis/api/components/KaDiagnosticChec
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaDiagnosticProvider {
 	public abstract fun collectDiagnostics (Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;)Ljava/util/Collection;
-	public fun collectDiagnosticsForFile (Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;)Ljava/util/Collection;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaEvaluator {
@@ -288,11 +232,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaE
 	public abstract fun getExpectedType (Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getExpressionType (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getFunctionType (Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getFunctionalType (Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getKaType (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getKtType (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getReturnKaType (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getReturnKtType (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReturnType (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun isDefinitelyNotNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 	public abstract fun isDefinitelyNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
@@ -330,11 +269,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaO
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaResolver {
-	public fun collectCallCandidates (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
-	public fun collectCallCandidatesOld (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
 	public abstract fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/idea/references/KtReference;)Z
-	public fun resolveCall (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;
-	public fun resolveCallOld (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;
 	public abstract fun resolveToCall (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;
 	public abstract fun resolveToCallCandidates (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
 	public abstract fun resolveToSymbol (Lorg/jetbrains/kotlin/idea/references/KtReference;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
@@ -392,15 +327,12 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 	public static synthetic fun compositeScope$default (Lorg/jetbrains/kotlin/analysis/api/components/KaScopeProvider;Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getCombinedDeclaredMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public fun getCombinedMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
-	public fun getCompositeScope (Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
-	public static synthetic fun getCompositeScope$default (Lorg/jetbrains/kotlin/analysis/api/components/KaScopeProvider;Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getDeclaredMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getDelegatedMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getFileScope (Lorg/jetbrains/kotlin/analysis/api/symbols/KaFileSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getImportingScopeContext (Lorg/jetbrains/kotlin/psi/KtFile;)Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;
 	public abstract fun getMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getPackageScope (Lorg/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
-	public fun getScopeContextForPosition (Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;
 	public abstract fun getStaticDeclaredMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun getStaticMemberScope (Lorg/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol;)Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;
 	public abstract fun scopeContext (Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/components/KaScopeContext;
@@ -433,10 +365,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 	public abstract fun getDirectlyOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lkotlin/sequences/Sequence;
 	public abstract fun getFakeOverrideOriginal (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
 	public abstract fun getIntersectionOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Ljava/util/List;
-	public abstract fun getOriginalContainingClassForOverride (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getSamConstructor (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSamConstructorSymbol;
 	public abstract fun getSealedClassInheritors (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Ljava/util/List;
-	public fun getUnwrapFakeOverrides (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
 	public abstract fun isDirectSubClassOf (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;)Z
 	public abstract fun isSubClassOf (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;)Z
 }
@@ -455,56 +385,36 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProvider {
 	public abstract fun getCanBeNull (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun getExpandedClassSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isAny (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isAnyType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isArrayOrPrimitiveArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isBoolean (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isBooleanType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isByte (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isChar (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isCharSequence (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isCharSequenceType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isCharType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isClassType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
-	public fun isClassTypeWithClassId (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public abstract fun isDenotable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isDouble (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isFloat (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isFunctionalInterface (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isFunctionalInterfaceType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isInt (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isKFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isKSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isLong (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isLongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isNothing (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isShort (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isString (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isStringType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUByte (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isUByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUInt (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isUIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isULong (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isULongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUShort (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isUShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUnit (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isUnitType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 }
 
@@ -515,12 +425,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeProvider {
 	public abstract fun allSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lkotlin/sequences/Sequence;
-	public fun buildSelfClassType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun collectImplicitReceiverTypes (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
-	public fun commonSuperType (Ljava/util/Collection;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun directSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lkotlin/sequences/Sequence;
-	public fun getAllSuperTypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Ljava/util/List;
-	public static synthetic fun getAllSuperTypes$default (Lorg/jetbrains/kotlin/analysis/api/components/KaTypeProvider;Lorg/jetbrains/kotlin/analysis/api/types/KaType;ZILjava/lang/Object;)Ljava/util/List;
 	public fun getAllSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
 	public abstract fun getArrayElementType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getBuiltinTypes ()Lorg/jetbrains/kotlin/analysis/api/components/KaBuiltinTypes;
@@ -528,17 +434,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun getCommonSupertype ([Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public synthetic fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getDirectSuperTypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Ljava/util/List;
-	public static synthetic fun getDirectSuperTypes$default (Lorg/jetbrains/kotlin/analysis/api/components/KaTypeProvider;Lorg/jetbrains/kotlin/analysis/api/types/KaType;ZILjava/lang/Object;)Ljava/util/List;
 	public fun getDirectSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
 	public abstract fun getDispatchReceiverType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getImplicitReceiverTypesAtPosition (Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
-	public fun getKaType (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getKtType (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getReceiverKtType (Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReceiverType (Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getType (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun hasCommonSubTypeWith (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -546,12 +445,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeRelationChecker {
-	public fun isEqualTo (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isEqualTo (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
-	public fun isNotSubTypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
-	public static synthetic fun isNotSubTypeOf$default (Lorg/jetbrains/kotlin/analysis/api/components/KaTypeRelationChecker;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;ILjava/lang/Object;)Z
-	public fun isSubTypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
-	public static synthetic fun isSubTypeOf$default (Lorg/jetbrains/kotlin/analysis/api/components/KaTypeRelationChecker;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;ILjava/lang/Object;)Z
 	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
 	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
 	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
@@ -679,7 +572,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructu
 	public abstract fun getDirectDependsOnDependencies ()Ljava/util/List;
 	public abstract fun getDirectFriendDependencies ()Ljava/util/List;
 	public abstract fun getDirectRegularDependencies ()Ljava/util/List;
-	public fun getPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
 	public abstract fun getProject ()Lcom/intellij/openapi/project/Project;
 	public abstract fun getTargetPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
 	public abstract fun getTransitiveDependsOnDependencies ()Ljava/util/List;
@@ -701,7 +593,6 @@ public final class org/jetbrains/kotlin/analysis/api/projectStructure/KaModulePr
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule : org/jetbrains/kotlin/analysis/api/projectStructure/KaModule {
 	public abstract fun getLanguageVersionSettings ()Lorg/jetbrains/kotlin/config/LanguageVersionSettings;
-	public fun getModuleName ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
 }
 
@@ -742,7 +633,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall {
-	public fun getCompoundAccess ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCompoundOperation;
 	public abstract fun getCompoundOperation ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCompoundOperation;
 }
 
@@ -757,7 +647,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall {
-	public fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 	public abstract fun getVariablePartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
 
@@ -845,16 +734,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/scopes/KaScope
 	public abstract fun classifiers (Ljava/util/Collection;)Lkotlin/sequences/Sequence;
 	public abstract fun classifiers (Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
 	public fun classifiers ([Lorg/jetbrains/kotlin/name/Name;)Lkotlin/sequences/Sequence;
-	public fun getAllSymbols ()Lkotlin/sequences/Sequence;
-	public fun getCallableSymbols (Ljava/util/Collection;)Lkotlin/sequences/Sequence;
-	public fun getCallableSymbols (Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
-	public fun getCallableSymbols ([Lorg/jetbrains/kotlin/name/Name;)Lkotlin/sequences/Sequence;
-	public static synthetic fun getCallableSymbols$default (Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public fun getCallables ()Lkotlin/sequences/Sequence;
-	public fun getClassifierSymbols (Ljava/util/Collection;)Lkotlin/sequences/Sequence;
-	public fun getClassifierSymbols (Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
-	public fun getClassifierSymbols ([Lorg/jetbrains/kotlin/name/Name;)Lkotlin/sequences/Sequence;
-	public static synthetic fun getClassifierSymbols$default (Lorg/jetbrains/kotlin/analysis/api/scopes/KaScope;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public fun getClassifiers ()Lkotlin/sequences/Sequence;
 	public abstract fun getConstructors ()Lkotlin/sequences/Sequence;
 	public fun getDeclarations ()Lkotlin/sequences/Sequence;
@@ -863,7 +743,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/scopes/KaScope
 public abstract interface class org/jetbrains/kotlin/analysis/api/signatures/KaCallableSignature : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
-	public fun getCallableIdIfNonLocal ()Lorg/jetbrains/kotlin/name/CallableId;
 	public abstract fun getReceiverType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReturnType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
@@ -1348,15 +1227,12 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaCapturedType : o
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaClassErrorType : org/jetbrains/kotlin/analysis/api/types/KaErrorType {
 	public fun <init> ()V
-	public final fun getCandidateClassSymbols ()Ljava/util/Collection;
 	public abstract fun getCandidateSymbols ()Ljava/util/Collection;
 	public abstract fun getQualifiers ()Ljava/util/List;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaClassType : org/jetbrains/kotlin/analysis/api/types/KaType {
 	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
-	public final fun getClassSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
-	public final fun getOwnTypeArguments ()Ljava/util/List;
 	public abstract fun getQualifiers ()Ljava/util/List;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 	public abstract fun getTypeArguments ()Ljava/util/List;
@@ -1411,8 +1287,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaStarTy
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaType : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
-	public fun asStringForDebugging ()Ljava/lang/String;
-	public fun getAbbreviatedType ()Lorg/jetbrains/kotlin/analysis/api/types/KaUsualClassType;
 	public abstract fun getAbbreviation ()Lorg/jetbrains/kotlin/analysis/api/types/KaUsualClassType;
 	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 }
@@ -1469,9 +1343,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaUsualClassType :
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeUtilsKt {
-	public static final fun getAbbreviatedTypeOrSelf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun getAbbreviationOrSelf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public static final fun getClassSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 }
 

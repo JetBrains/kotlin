@@ -69,9 +69,6 @@ public interface KaTypeProvider {
     @Deprecated("Use `defaultType` from `KaClassifierSymbol` directly", level = DeprecationLevel.HIDDEN)
     public val KaNamedClassSymbol.defaultType: KaType get() = defaultType
 
-    @Deprecated("Use 'defaultType' instead.", replaceWith = ReplaceWith("defaultType"))
-    public fun KaNamedClassSymbol.buildSelfClassType(): KaType = defaultType
-
     /**
      * Computes the common super type of the given collection of [KaType].
      *
@@ -82,11 +79,6 @@ public interface KaTypeProvider {
     public val Array<KaType>.commonSupertype: KaType
         get() = asList().commonSupertype
 
-    @Deprecated("Use 'commonSupertype' instead.", replaceWith = ReplaceWith("types.commonSupertype"))
-    public fun commonSuperType(types: Collection<KaType>): KaType? {
-        return if (types.isEmpty()) null else types.commonSupertype
-    }
-
     /**
      * Resolve [KtTypeReference] and return corresponding [KaType] if resolved.
      *
@@ -94,21 +86,12 @@ public interface KaTypeProvider {
      */
     public val KtTypeReference.type: KaType
 
-    @Deprecated("Use 'type' instead.", replaceWith = ReplaceWith("type"))
-    public fun KtTypeReference.getKaType(): KaType = type
-
-    @Deprecated("Use 'type' instead.", replaceWith = ReplaceWith("type"))
-    public fun KtTypeReference.getKtType(): KaType = type
-
     /**
      * Resolve [KtDoubleColonExpression] and return [KaType] of its receiver.
      *
      * Return `null` if the resolution fails or the resolved callable reference is not a reflection type.
      */
     public val KtDoubleColonExpression.receiverType: KaType?
-
-    @Deprecated("Use 'receiverType' instead.", replaceWith = ReplaceWith("receiverType"))
-    public fun KtDoubleColonExpression.getReceiverKtType(): KaType? = receiverType
 
     public fun KaType.withNullability(newNullability: KaTypeNullability): KaType
 
@@ -123,20 +106,11 @@ public interface KaTypeProvider {
     /** Check whether this type is compatible with that type. If they are compatible, it means they can have a common subtype. */
     public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean
 
-    @Deprecated("Use 'hasCommonSubtypeWith() instead.", replaceWith = ReplaceWith("hasCommonSubtypeWith(that)"))
-    public fun KaType.hasCommonSubTypeWith(that: KaType): Boolean = hasCommonSubtypeWith(that)
-
     /**
      * Gets all the implicit receiver types available at the given position. The type of the outermost receiver appears at the beginning
      * of the returned list.
      */
     public fun collectImplicitReceiverTypes(position: KtElement): List<KaType>
-
-    @Deprecated(
-        "Use 'collectImplicitReceiverTypes()' instead.",
-        replaceWith = ReplaceWith("collectImplicitReceiverTypes(position)")
-    )
-    public fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KaType> = collectImplicitReceiverTypes(position)
 
     /**
      * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
@@ -160,14 +134,11 @@ public interface KaTypeProvider {
     public val KaType.directSupertypes: Sequence<KaType>
         get() = directSupertypes(shouldApproximate = false)
 
-    @Deprecated("Use 'directSuperTypes()' instead.", replaceWith = ReplaceWith("directSuperTypes(shouldApproximate)"))
-    public fun KaType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KaType> = directSupertypes(shouldApproximate).toList()
-
     /**
      * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
      * duplicates.
      *
-     * @param shouldApproximate see [getDirectSuperTypes]
+     * @param shouldApproximate see [directSupertypes]
      */
     public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
@@ -177,9 +148,6 @@ public interface KaTypeProvider {
      */
     public val KaType.allSupertypes: Sequence<KaType>
         get() = allSupertypes(shouldApproximate = false)
-
-    @Deprecated("Use 'allSupertypes()' instead.", replaceWith = ReplaceWith("allSupertypes(shouldApproximate)"))
-    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> = allSupertypes(shouldApproximate).toList()
 
     /**
      * This function is provided for a few use-cases where it's hard to go without it.
@@ -201,112 +169,51 @@ public interface KaTypeProvider {
     public val KaType.arrayElementType: KaType?
 }
 
-@Suppress("PropertyName")
 public abstract class KaBuiltinTypes : KaLifetimeOwner {
     /** The [Int] class type. */
     public abstract val int: KaType
 
-    @Deprecated("Use 'int' instead.", replaceWith = ReplaceWith("int"))
-    public val INT: KaType
-        get() = int
-
     /** The [Long] class type. */
     public abstract val long: KaType
-
-    @Deprecated("Use 'long' instead.", replaceWith = ReplaceWith("long"))
-    public val LONG: KaType
-        get() = long
 
     /** The [Short] class type. */
     public abstract val short: KaType
 
-    @Deprecated("Use 'short' instead.", replaceWith = ReplaceWith("short"))
-    public val SHORT: KaType
-        get() = short
-
     /** The [Byte] class type. */
     public abstract val byte: KaType
-
-    @Deprecated("Use 'byte' instead.", replaceWith = ReplaceWith("byte"))
-    public val BYTE: KaType
-        get() = byte
 
     /** The [Float] class type. */
     public abstract val float: KaType
 
-    @Deprecated("Use 'float' instead.", replaceWith = ReplaceWith("float"))
-    public val FLOAT: KaType
-        get() = float
-
     /** The [Double] class type. */
     public abstract val double: KaType
-
-    @Deprecated("Use 'double' instead.", replaceWith = ReplaceWith("double"))
-    public val DOUBLE: KaType
-        get() = double
 
     /** The [Boolean] class type. */
     public abstract val boolean: KaType
 
-    @Deprecated("Use 'boolean' instead.", replaceWith = ReplaceWith("boolean"))
-    public val BOOLEAN: KaType
-        get() = boolean
-
     /** The [Char] class type. */
     public abstract val char: KaType
-
-    @Deprecated("Use 'char' instead.", replaceWith = ReplaceWith("char"))
-    public val CHAR: KaType
-        get() = char
 
     /** The [String] class type. */
     public abstract val string: KaType
 
-    @Deprecated("Use 'string' instead.", replaceWith = ReplaceWith("string"))
-    public val STRING: KaType
-        get() = string
-
     /** The [Unit] class type. */
     public abstract val unit: KaType
-
-    @Deprecated("Use 'unit' instead.", replaceWith = ReplaceWith("unit"))
-    public val UNIT: KaType
-        get() = unit
 
     /** The [Nothing] class type. */
     public abstract val nothing: KaType
 
-    @Deprecated("Use 'nothing' instead.", replaceWith = ReplaceWith("nothing"))
-    public val NOTHING: KaType
-        get() = nothing
-
     /** The [Any] class type. */
     public abstract val any: KaType
-
-    @Deprecated("Use 'any' instead.", replaceWith = ReplaceWith("any"))
-    public val ANY: KaType
-        get() = any
 
     /** The [Throwable] class type. */
     public abstract val throwable: KaType
 
-    @Deprecated("Use 'throwable' instead.", replaceWith = ReplaceWith("throwable"))
-    public val THROWABLE: KaType
-        get() = throwable
-
     /** The `Any?` type. */
     public abstract val nullableAny: KaType
 
-    @Deprecated("Use 'nullableAny' instead.", replaceWith = ReplaceWith("nullableAny"))
-    public val NULLABLE_ANY: KaType
-        get() = nullableAny
-
     /** The `Nothing?` type. */
     public abstract val nullableNothing: KaType
-
-    @Deprecated("Use 'nullableNothing' instead.", replaceWith = ReplaceWith("nullableNothing"))
-    public val NULLABLE_NOTHING: KaType
-        get() = nullableNothing
 
     /** The [Annotation] type. */
     public abstract val annotationType: KaType

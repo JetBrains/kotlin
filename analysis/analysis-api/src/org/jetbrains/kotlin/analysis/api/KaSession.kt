@@ -94,10 +94,6 @@ public interface KaSession : KaLifetimeOwner,
     public val useSiteSession: KaSession
         get() = this
 
-    @Deprecated("Use 'useSiteSession' instead.", replaceWith = ReplaceWith("useSiteSession"))
-    public val analysisSession: KaSession
-        get() = this
-
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restoreSymbol(useSiteSession)

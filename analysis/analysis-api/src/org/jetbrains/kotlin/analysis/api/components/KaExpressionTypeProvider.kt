@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,12 +22,6 @@ public interface KaExpressionTypeProvider {
      */
     public val KtExpression.expressionType: KaType?
 
-    @Deprecated("Use 'expressionType' instead.", replaceWith = ReplaceWith("expressionType"))
-    public fun KtExpression.getKaType(): KaType? = expressionType
-
-    @Deprecated("Use 'expressionType' instead.", replaceWith = ReplaceWith("expressionType"))
-    public fun KtExpression.getKtType(): KaType? = expressionType
-
     /**
      * The return type of the given [KtDeclaration].
      *
@@ -36,12 +30,6 @@ public interface KaExpressionTypeProvider {
      * which returns `T`).
      */
     public val KtDeclaration.returnType: KaType
-
-    @Deprecated("Use 'returnType' instead.", ReplaceWith("returnType"))
-    public fun KtDeclaration.getReturnKaType(): KaType = returnType
-
-    @Deprecated("Use 'returnType' instead.", ReplaceWith("returnType"))
-    public fun KtDeclaration.getReturnKtType(): KaType = returnType
 
     /**
      * The functional type of the given [KtFunction].
@@ -54,9 +42,6 @@ public interface KaExpressionTypeProvider {
      * such as `SuspendFunction`, `KFunction`, or `KSuspendFunction`, will be constructed.
      */
     public val KtFunction.functionType: KaType
-
-    @Deprecated("Use 'functionType' instead.", ReplaceWith("functionType"))
-    public fun KtFunction.getFunctionalType(): KaType = functionType
 
     /**
      * The expected [KaType] for the given [PsiElement] if it is an expression, or `null` if the element does not have an expected type.

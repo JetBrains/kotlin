@@ -24,9 +24,6 @@ public interface KaScope : KaScopeLike {
             }
         }
 
-    @Deprecated("Use 'declarations' instead.", replaceWith = ReplaceWith("declarations"))
-    public fun getAllSymbols(): Sequence<KaDeclarationSymbol> = declarations
-
     /**
      * A sequence of [KaCallableSymbol]s contained in this scope.
      *
@@ -44,18 +41,12 @@ public interface KaScope : KaScopeLike {
      */
     public fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol>
 
-    @Deprecated("Use 'callables' instead.", replaceWith = ReplaceWith("callables(nameFilter)"))
-    public fun getCallableSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaCallableSymbol> = callables(nameFilter)
-
     /**
      * Returns a sequence of [KaCallableSymbol]s contained in this scope, limited to callables whose name is contained in [names].
      *
      * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun callables(names: Collection<Name>): Sequence<KaCallableSymbol>
-
-    @Deprecated("Use 'callables' instead.", replaceWith = ReplaceWith("callables(names)"))
-    public fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = callables(names)
 
     /**
      * Returns a sequence of [KaCallableSymbol]s contained in this scope, limited to callables whose name is contained in [names].
@@ -64,9 +55,6 @@ public interface KaScope : KaScopeLike {
      */
     public fun callables(vararg names: Name): Sequence<KaCallableSymbol> =
         callables(names.toList())
-
-    @Deprecated("Use 'callables' instead.", replaceWith = ReplaceWith("callables(names)"))
-    public fun getCallableSymbols(vararg names: Name): Sequence<KaCallableSymbol> = callables(names.toList())
 
     /**
      * A sequence of [KaClassifierSymbol]s contained in this scope.
@@ -91,9 +79,6 @@ public interface KaScope : KaScopeLike {
      */
     public fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol>
 
-    @Deprecated("Use 'classifiers' instead.", replaceWith = ReplaceWith("classifiers(nameFilter)"))
-    public fun getClassifierSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaClassifierSymbol> = classifiers(nameFilter)
-
     /**
      * Returns a sequence of [KaClassifierSymbol]s contained in this scope, limited to classifiers whose name is contained in [names].
      *
@@ -103,9 +88,6 @@ public interface KaScope : KaScopeLike {
      * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol>
-
-    @Deprecated("Use 'classifiers' instead.", replaceWith = ReplaceWith("classifiers(names)"))
-    public fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = classifiers(names)
 
     /**
      * Returns a sequence of [KaClassifierSymbol]s contained in this scope, limited to classifiers whose name is contained in [names].
@@ -117,9 +99,6 @@ public interface KaScope : KaScopeLike {
      */
     public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol> =
         classifiers(names.toList())
-
-    @Deprecated("Use 'classifiers' instead.", replaceWith = ReplaceWith("classifiers(names)"))
-    public fun getClassifierSymbols(vararg names: Name): Sequence<KaClassifierSymbol> = classifiers(names.asList())
 
     /**
      * A sequence of [KaConstructorSymbol] contained in this scope.

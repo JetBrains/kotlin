@@ -213,12 +213,6 @@ public interface KaScopeProvider {
      */
     public fun KtFile.scopeContext(position: KtElement): KaScopeContext
 
-
-    @Deprecated("Use 'scopeContext()' instead", replaceWith = ReplaceWith("scopeContext(positionInFakeFile)"))
-    public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KaScopeContext {
-        return scopeContext(positionInFakeFile)
-    }
-
     /**
      * A [KaScopeContext] formed by all imports in the [KtFile].
      *
@@ -234,11 +228,6 @@ public interface KaScopeProvider {
     public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope = withValidityAssertion {
         val subScopes = scopes.filter { filter(it.kind) }.map { it.scope }
         subScopes.asCompositeScope()
-    }
-
-    @Deprecated("Use 'compositeScope()' instead.", replaceWith = ReplaceWith("compositeScope(filter)"))
-    public fun KaScopeContext.getCompositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
-        return compositeScope(filter)
     }
 }
 

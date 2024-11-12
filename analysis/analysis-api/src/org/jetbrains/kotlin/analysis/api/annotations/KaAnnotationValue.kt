@@ -50,10 +50,6 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
      */
     public interface NestedAnnotationValue : KaAnnotationValue {
         public val annotation: KaAnnotation
-
-        @Deprecated("Use 'annotation' instead.", ReplaceWith("annotation"))
-        public val annotationValue: KaAnnotation
-            get() = annotation
     }
 
     /**
@@ -93,10 +89,6 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
      */
     public interface ConstantValue : KaAnnotationValue {
         public val value: KaConstantValue
-
-        @Deprecated("Use 'value' instead.", ReplaceWith("value"))
-        public val constantValue: KaConstantValue
-            get() = value
     }
 }
 

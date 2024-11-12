@@ -15,22 +15,6 @@ package org.jetbrains.kotlin.analysis.api
 @RequiresOptIn("Internal API which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
 public annotation class KaImplementationDetail
 
-@Deprecated("Use 'KaImplementationDetail' instead", ReplaceWith("KaImplementationDetail"))
-@Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.TYPEALIAS
-)
-@RequiresOptIn("Internal Analysis API component which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
-public annotation class KaAnalysisApiInternals
-
-@Deprecated("Use 'KaNonPublicApi' instead", ReplaceWith("KaNonPublicApi"))
-@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
-@RequiresOptIn("Internal API which is used in projects developed by JetBrains")
-public annotation class KaAnalysisNonPublicApi
-
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.PROPERTY,

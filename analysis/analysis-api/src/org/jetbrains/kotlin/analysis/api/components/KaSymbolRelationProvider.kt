@@ -7,16 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.util.ImplementationStatus
 
 public interface KaSymbolRelationProvider {
@@ -148,22 +139,6 @@ public interface KaSymbolRelationProvider {
      * after specialization) and delegation.
      */
     public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
-
-    @Deprecated("Use 'fakeOverrideOriginal' instead.", replaceWith = ReplaceWith("fakeOverrideOriginal"))
-    public val KaCallableSymbol.unwrapFakeOverrides: KaCallableSymbol
-        get() = fakeOverrideOriginal
-
-    /**
-     * Gets the class symbol where the given callable symbol is declared. See [fakeOverrideOriginal] for more details.
-     */
-    @Deprecated(
-        "Use 'fakeOverrideOriginal.containingSymbol as? KaClassSymbol' instead.",
-        replaceWith = ReplaceWith(
-            "fakeOverrideOriginal.containingSymbol as? KaClassSymbol",
-            imports = ["org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol"]
-        )
-    )
-    public val KaCallableSymbol.originalContainingClassForOverride: KaClassSymbol?
 
     /**
      * Returns `expect` symbols for the given `actual` one if it is available.

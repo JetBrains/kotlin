@@ -70,9 +70,6 @@ public interface KaModule {
      */
     public val targetPlatform: TargetPlatform
 
-    @Deprecated("Use 'targetPlatform' instead.", replaceWith = ReplaceWith("targetPlatform"))
-    public val platform: TargetPlatform get() = targetPlatform
-
     /**
      * [Project] to which the current module belongs.
      *
@@ -94,9 +91,6 @@ public interface KaModule {
  */
 public interface KaSourceModule : KaModule {
     public val name: String
-
-    @Deprecated("Use 'name' instead.", replaceWith = ReplaceWith("name"))
-    public val moduleName: String get() = name
 
     /**
      * A stable binary name of module from the *Kotlin* point of view.

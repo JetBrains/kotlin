@@ -73,10 +73,6 @@ public interface KaJavaInteroperabilityComponent {
     @KaExperimentalApi
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
-    @KaExperimentalApi
-    @Deprecated("Use 'asKaType()' instead.", replaceWith = ReplaceWith("asKaType(useSitePosition)"))
-    public fun PsiType.asKtType(useSitePosition: PsiElement): KaType? = asKaType(useSitePosition)
-
     /**
      * Create ASM JVM type by corresponding KaType
      *
@@ -84,10 +80,6 @@ public interface KaJavaInteroperabilityComponent {
      */
     @KaExperimentalApi
     public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
-
-    @KaExperimentalApi
-    @Deprecated("Use 'mapToJvmType()' instead.", replaceWith = ReplaceWith("mapToJvmType(mode)"))
-    public fun KaType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type = mapToJvmType(mode)
 
     /**
      * `true` if the given type is backed by a single JVM primitive type.
