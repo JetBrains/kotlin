@@ -19,7 +19,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     @OptIn(SymbolInternals::class)
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.resolvedType
-        return if (callReturnType.classId in setOf(Names.DF_CLASS_ID, Names.GROUP_BY_CLASS_ID)) {
+        return if (callReturnType.classId in setOf(Names.DF_CLASS_ID, Names.GROUP_BY_CLASS_ID, Names.DATA_ROW_CLASS_ID)) {
             val typeArguments = callReturnType.typeArguments
             typeArguments
                 .mapNotNull {

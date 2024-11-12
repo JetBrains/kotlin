@@ -3,6 +3,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.DataRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
@@ -115,6 +116,15 @@ internal class ReadJsonStr : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return DataFrame.readJsonStr(text, typeClashTactic = typeClashTactic).schema().toPluginDataFrameSchema()
+    }
+}
+
+internal class DataRowReadJsonStr : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.text: String by arg()
+    val Arguments.typeClashTactic: JSON.TypeClashTactic by arg(defaultValue = Present(ARRAY_AND_VALUE_COLUMNS))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return DataRow.readJsonStr(text, typeClashTactic = typeClashTactic).schema().toPluginDataFrameSchema()
     }
 }
 
