@@ -1061,7 +1061,6 @@ class CoroutineTransformerMethodVisitor(
     ): LabelNode {
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
-        var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -1115,48 +1114,15 @@ class CoroutineTransformerMethodVisitor(
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
 
-                if (nextLineNumberNode != null) {
-                    // If there is a clear next linenumber instruction, extend it. Can't use line number of suspension point
-                    // here because both non-suspended execution and re-entering after suspension passes this label.
-                    if (possibleTryCatchBlockStart.next?.opcode?.let {
-                            it != Opcodes.ASTORE && it != Opcodes.CHECKCAST && it != Opcodes.INVOKESTATIC &&
-                                    it != Opcodes.INVOKEVIRTUAL && it != Opcodes.INVOKEINTERFACE
-                        } == true
-                    ) {
-                        visitLineNumber(nextLineNumberNode!!.line, continuationLabelAfterLoadedResult.label)
-                    } else {
-                        // But keep the linenumber if the result of the call is used afterwards
-                        nextLineNumberNode = null
-                    }
-                } else if (suspendPointLineNumber != null) {
+                if (suspendPointLineNumber != null) {
                     // If there is no clear next linenumber instruction, the continuation is still on the
                     // same line as the suspend point.
                     visitLineNumber(suspendPointLineNumber.line, continuationLabelAfterLoadedResult.label)
                 }
             })
-
-            if (nextLineNumberNode != null) {
-                // Remove the line number instruction as it now covered with line number on continuation label.
-                // If both linenumber are present in bytecode, debugger will trigger line specific events twice.
-                remove(nextLineNumberNode)
-            }
         }
 
         return suspension.stateLabel
-    }
-
-    // Find the next line number instruction that is defintely hit. That is, a line number
-    // that comes before any branch or method call.
-    private fun nextDefinitelyHitLineNumber(suspension: SuspensionPoint): LineNumberNode? {
-        var next = suspension.suspensionCallEnd.next
-        while (next != null) {
-            when {
-                next.isBranchOrCall -> return null
-                next is LineNumberNode -> return next
-                else -> next = next.next
-            }
-        }
-        return null
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block
