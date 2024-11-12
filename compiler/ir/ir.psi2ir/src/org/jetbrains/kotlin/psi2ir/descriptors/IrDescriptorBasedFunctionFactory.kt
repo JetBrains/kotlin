@@ -287,6 +287,7 @@ class IrDescriptorBasedFunctionFactory(
             startOffset = offset,
             endOffset = offset,
             origin = classOrigin,
+            kind = IrParameterKind.DispatchReceiver,
             name = SpecialNames.THIS,
             type = typeTranslator.translateType(descriptor.type),
             isAssignable = false,

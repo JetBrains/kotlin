@@ -543,6 +543,7 @@ fun IrClass.setThisReceiverParameter(context: GeneratorContext) {
         symbol.descriptor.thisAsReceiverParameter,
         context.typeTranslator.translateType(symbol.descriptor.thisAsReceiverParameter.type),
     ).also {
+        it.kind = IrParameterKind.DispatchReceiver
         it.parent = this
     }
 }

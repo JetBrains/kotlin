@@ -356,7 +356,9 @@ class IrDeclarationDeserializer(
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                 }
 
-                thisReceiver = deserializeIrValueParameter(proto.thisReceiver)
+                thisReceiver = deserializeIrValueParameter(proto.thisReceiver).also {
+                    it.kind = IrParameterKind.DispatchReceiver
+                }
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null

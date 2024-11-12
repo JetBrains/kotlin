@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfac
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -45,6 +46,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     c: Fir2IrComponents,
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
+    kind: IrParameterKind? = null,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = SpecialNames.THIS,
@@ -55,6 +57,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = thisOrigin,
+        kind = kind,
         name = name,
         type = thisType,
         isAssignable = isAssignable,
@@ -76,6 +79,7 @@ internal fun IrClass.setThisReceiver(c: Fir2IrComponents, typeParameters: List<F
     }
     thisReceiver = declareThisReceiverParameter(
         c,
+        kind = IrParameterKind.DispatchReceiver,
         thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
         thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
     )
