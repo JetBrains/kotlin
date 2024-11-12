@@ -15,7 +15,7 @@ class SourceMap3Builder(
     private val generatedFile: File?,
     private val getCurrentOutputColumn: () -> Int,
     private val pathPrefix: String
-) : SourceMapBuilder {
+) : SourceMapMappingConsumer {
 
     private val out = StringBuilder(8192)
 
@@ -38,9 +38,7 @@ class SourceMap3Builder(
     private var previousPreviousSourceColumn = 0
     private var currentMappingIsEmpty = true
 
-    override fun getOutFile() = File(generatedFile!!.parentFile, "${generatedFile.name}.map")
-
-    override fun build(): String {
+    fun build(): String {
         val json = JsonObject()
         json.properties["version"] = JsonNumber(3.0)
         if (generatedFile != null)
@@ -83,10 +81,6 @@ class SourceMap3Builder(
     override fun newLine() {
         out.append(';')
         previousGeneratedColumn = -1
-    }
-
-    override fun skipLinesAtBeginning(count: Int) {
-        out.insert(0, ";".repeat(count))
     }
 
     private fun getSourceIndex(source: String, fileIdentity: Any?, contentSupplier: Supplier<Reader?>): Int {
