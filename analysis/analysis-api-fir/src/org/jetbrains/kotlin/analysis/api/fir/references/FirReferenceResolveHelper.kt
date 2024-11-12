@@ -476,7 +476,11 @@ internal object FirReferenceResolveHelper {
         return listOf(symbolBuilder.buildSymbol(fir.symbol))
     }
 
-
+    /**
+     * Returns a list of [KaSymbol]s that can be resolved from the given [FirResolvedImport].
+     *
+     * [getSymbolsByResolvedImport] only covers simple imports, but not star imports.
+     */
     private fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
         builder: KaSymbolByFirBuilder,
