@@ -1,9 +1,6 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:6:9: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
         f()
         ^
-compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:7:17: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
-        val a = A()
-                ^
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:8:11: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
         a.p
           ^

@@ -1,18 +1,16 @@
-@file:Suppress("CONTEXT_RECEIVERS_DEPRECATED", "CONTEXT_CLASS_OR_CONSTRUCTOR")
 package test
 
-context(Int) val p get() = 42
+context(_: Int) val p get() = 42
 
-context(Int)
 class A {
-    context(Int) val p get() = 42
+    context(_: Int) val p get() = 42
 
-    context(Int) fun m() {}
+    context(_: Int) fun m() {}
 }
 
-context(String)
+context(s: String)
 fun f() {
-    println(this@String)
+    println(s)
 }
 
 fun ordinary() {

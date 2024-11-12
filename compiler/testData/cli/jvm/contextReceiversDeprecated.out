@@ -1,0 +1,2 @@
+warning: experimental context receivers are superseded by context parameters. Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax. See the new context parameters proposal: https://kotl.in/context-parameters
+OK

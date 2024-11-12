@@ -24,6 +24,15 @@ class OldCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     override val languageVersion: LanguageVersion
         get() = LanguageVersion.KOTLIN_1_9
 
+    override fun muteForK1(test: () -> Unit) {
+        try {
+            test()
+        } catch (e: Throwable) {
+            return
+        }
+        fail("Looks like this test can be unmuted. Remove the call to `muteForK1`.")
+    }
+
     private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
         val environment = createEnvironmentForDescriptorAnalysis(extraClassPath.toList())
 

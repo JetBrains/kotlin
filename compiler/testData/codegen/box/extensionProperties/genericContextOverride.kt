@@ -1,4 +1,6 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: NATIVE
+// ^Native uses the full compilation pipeline which leads to an error about deprecated context receivers
 // MODULE: m1
 // FILE: Base.kt
 abstract class Base<T> {

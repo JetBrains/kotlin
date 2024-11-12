@@ -64,6 +64,10 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    protected open fun muteForK1(test: () -> Unit) {
+        test()
+    }
+
     protected open fun muteForK2(test: () -> Unit) {
         test()
     }
@@ -481,8 +485,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("ABCAB", result)
     }
 
-    fun testContextualDeclarationUse() {
-        val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::contextReceivers.cliArgument))
+    fun testContextualDeclarationUse() = muteForK1 {
+        val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::contextParameters.cliArgument))
         compileKotlin("contextualDeclarationUse.kt", tmpdir, listOf(library), additionalOptions = listOf(CommonCompilerArguments::skipPrereleaseCheck.cliArgument))
     }
 
