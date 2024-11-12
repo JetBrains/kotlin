@@ -429,6 +429,11 @@ tasks.withType<Test>().configureEach {
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
+    // Add debugTargetProcessWhenDebuggingKGP-IT=true to local.properties to run IT withDebug when debugging the test process itself
+    if (kotlinBuildProperties.getBoolean("debugTargetProcessWhenDebuggingKGP-IT", false)) {
+        systemProperty("debugTargetProcessWhenDebuggingKGP-IT", true)
+    }
+
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)
