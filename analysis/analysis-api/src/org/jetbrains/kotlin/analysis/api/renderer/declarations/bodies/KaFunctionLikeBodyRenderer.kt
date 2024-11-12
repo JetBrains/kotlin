@@ -19,7 +19,3 @@ public interface KaFunctionLikeBodyRenderer {
         override fun renderBody(analysisSession: KaSession, symbol: KaFunctionSymbol, printer: PrettyPrinter) {}
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaFunctionLikeBodyRenderer' instead", ReplaceWith("KaFunctionLikeBodyRenderer"))
-public typealias KtFunctionLikeBodyRenderer = KaFunctionLikeBodyRenderer

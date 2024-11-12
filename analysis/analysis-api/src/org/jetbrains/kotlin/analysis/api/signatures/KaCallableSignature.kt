@@ -59,6 +59,3 @@ public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifeti
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int
 }
-
-@Deprecated("Use `KaCallableSignature` instead.", ReplaceWith("KaCallableSignature"))
-public typealias KtCallableSignature<S> = KaCallableSignature<S>

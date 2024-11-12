@@ -52,7 +52,3 @@ public interface KaModifierListRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaModifierListRenderer' instead", ReplaceWith("KaModifierListRenderer"))
-public typealias KtModifierListRenderer = KaModifierListRenderer

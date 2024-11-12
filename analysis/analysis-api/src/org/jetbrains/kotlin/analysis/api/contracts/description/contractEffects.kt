@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 @KaExperimentalApi
 public sealed interface KaContractEffectDeclaration : KaLifetimeOwner
 
-@Deprecated("Use 'KaContractEffectDeclaration' instead", ReplaceWith("KaContractEffectDeclaration"))
-@KaExperimentalApi
-public typealias KtContractEffectDeclaration = KaContractEffectDeclaration
-
 /**
  * Represents [kotlin.contracts.ContractBuilder.callsInPlace].
  */
@@ -29,13 +25,6 @@ public interface KaContractCallsInPlaceContractEffectDeclaration : KaContractEff
     public val occurrencesRange: EventOccurrencesRange
 }
 
-@Deprecated(
-    "Use 'KaContractCallsInPlaceContractEffectDeclaration' instead",
-    ReplaceWith("KaContractCallsInPlaceContractEffectDeclaration")
-)
-@KaExperimentalApi
-public typealias KtContractCallsInPlaceContractEffectDeclaration = KaContractCallsInPlaceContractEffectDeclaration
-
 /**
  * Represents [kotlin.contracts.SimpleEffect.implies].
  */
@@ -44,13 +33,6 @@ public interface KaContractConditionalContractEffectDeclaration : KaContractEffe
     public val effect: KaContractEffectDeclaration
     public val condition: KaContractBooleanExpression
 }
-
-@Deprecated(
-    "Use 'KaContractConditionalContractEffectDeclaration' instead",
-    ReplaceWith("KaContractConditionalContractEffectDeclaration")
-)
-@KaExperimentalApi
-public typealias KtContractConditionalContractEffectDeclaration = KaContractConditionalContractEffectDeclaration
 
 /**
  * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
@@ -77,7 +59,3 @@ public sealed interface KaContractReturnsContractEffectDeclaration : KaContractE
     @KaExperimentalApi
     public interface KaContractReturnsSuccessfullyEffectDeclaration : KaContractReturnsContractEffectDeclaration
 }
-
-@Deprecated("Use 'KaContractReturnsContractEffectDeclaration' instead", ReplaceWith("KaContractReturnsContractEffectDeclaration"))
-@KaExperimentalApi
-public typealias KtContractReturnsContractEffectDeclaration = KaContractReturnsContractEffectDeclaration

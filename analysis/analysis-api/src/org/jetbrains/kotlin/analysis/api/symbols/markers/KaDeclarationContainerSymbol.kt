@@ -8,9 +8,3 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 public interface KaDeclarationContainerSymbol : KaSymbol
-
-@Deprecated("Use 'KaDeclarationContainerSymbol' instead", ReplaceWith("KaDeclarationContainerSymbol"))
-public typealias KaSymbolWithMembers = KaDeclarationContainerSymbol
-
-@Deprecated("Use 'KaDeclarationContainerSymbol' instead", ReplaceWith("KaDeclarationContainerSymbol"))
-public typealias KtSymbolWithMembers = KaDeclarationContainerSymbol

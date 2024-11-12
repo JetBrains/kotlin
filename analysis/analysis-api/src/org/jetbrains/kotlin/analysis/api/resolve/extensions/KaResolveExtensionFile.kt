@@ -86,7 +86,3 @@ public abstract class KaResolveExtensionFile {
      */
     public abstract fun createNavigationTargetsProvider(): KaResolveExtensionNavigationTargetsProvider
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaResolveExtensionFile' instead", ReplaceWith("KaResolveExtensionFile"))
-public typealias KtResolveExtensionFile = KaResolveExtensionFile

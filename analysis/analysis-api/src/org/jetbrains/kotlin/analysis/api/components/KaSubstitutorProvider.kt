@@ -89,7 +89,3 @@ public class KaSubstitutorBuilder
         backingMapping += substitutions
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaSubstitutorBuilder' instead.", replaceWith = ReplaceWith("KaSubstitutorBuilder"))
-public typealias KtSubstitutorBuilder = KaSubstitutorBuilder

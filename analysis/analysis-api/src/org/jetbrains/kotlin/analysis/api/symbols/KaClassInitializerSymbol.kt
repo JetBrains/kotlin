@@ -21,6 +21,3 @@ public abstract class KaClassInitializerSymbol : KaDeclarationSymbol,
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
-
-@Deprecated("Use 'KaClassInitializerSymbol'", ReplaceWith("KaClassInitializerSymbol"))
-public typealias KtClassInitializerSymbol = KaClassInitializerSymbol

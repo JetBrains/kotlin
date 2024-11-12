@@ -120,9 +120,6 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
     public fun createPointer(): KaTypePointer<KaType>
 }
 
-@Deprecated("Use 'KaType' instead.", replaceWith = ReplaceWith("KaType"))
-public typealias KtType = KaType
-
 public enum class KaTypeNullability(public val isNullable: Boolean) {
     NULLABLE(true),
     NON_NULLABLE(false),
@@ -132,9 +129,6 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
         public fun create(isNullable: Boolean): KaTypeNullability = if (isNullable) NULLABLE else NON_NULLABLE
     }
 }
-
-@Deprecated("Use 'KaTypeNullability' instead.", replaceWith = ReplaceWith("KaTypeNullability"))
-public typealias KtTypeNullability = KaTypeNullability
 
 public interface KaErrorType : KaType {
     @KaNonPublicApi
@@ -150,15 +144,6 @@ public interface KaErrorType : KaType {
     @KaExperimentalApi
     public override fun createPointer(): KaTypePointer<KaErrorType>
 }
-
-@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
-public typealias KtErrorType = KaErrorType
-
-@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
-public typealias KaTypeErrorType = KaErrorType
-
-@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
-public typealias KtTypeErrorType = KaErrorType
 
 public sealed class KaClassType : KaType {
     public abstract val classId: ClassId
@@ -179,12 +164,6 @@ public sealed class KaClassType : KaType {
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
 }
 
-@Deprecated("Use 'KaClassType' instead.", replaceWith = ReplaceWith("KaClassType"))
-public typealias KaNonErrorClassType = KaClassType
-
-@Deprecated("Use 'KaClassType' instead.", replaceWith = ReplaceWith("KaClassType"))
-public typealias KtNonErrorClassType = KaClassType
-
 @OptIn(KaExperimentalApi::class)
 public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val isSuspend: Boolean
@@ -202,19 +181,10 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
 }
 
-@Deprecated("Use 'KaFunctionType' instead.", replaceWith = ReplaceWith("KaFunctionType"))
-public typealias KaFunctionalType = KaFunctionType
-
-@Deprecated("Use 'KaFunctionType' instead.", replaceWith = ReplaceWith("KaFunctionType"))
-public typealias KtFunctionalType = KaFunctionType
-
 public abstract class KaUsualClassType : KaClassType() {
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaUsualClassType>
 }
-
-@Deprecated("Use 'KaUsualClassType' instead.", replaceWith = ReplaceWith("KaUsualClassType"))
-public typealias KtUsualClassType = KaUsualClassType
 
 public abstract class KaClassErrorType : KaErrorType {
     public abstract val qualifiers: List<KaClassTypeQualifier>
@@ -229,9 +199,6 @@ public abstract class KaClassErrorType : KaErrorType {
     public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>
 }
 
-@Deprecated("Use 'KaClassErrorType' instead.", replaceWith = ReplaceWith("KaClassErrorType"))
-public typealias KtClassErrorType = KaClassErrorType
-
 public abstract class KaTypeParameterType : KaType {
     public abstract val name: Name
     public abstract val symbol: KaTypeParameterSymbol
@@ -240,18 +207,12 @@ public abstract class KaTypeParameterType : KaType {
     public abstract override fun createPointer(): KaTypePointer<KaTypeParameterType>
 }
 
-@Deprecated("Use 'KaTypeParameterType' instead.", replaceWith = ReplaceWith("KaTypeParameterType"))
-public typealias KtTypeParameterType = KaTypeParameterType
-
 public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaCapturedType>
 }
-
-@Deprecated("Use 'KaCapturedType' instead.", replaceWith = ReplaceWith("KaCapturedType"))
-public typealias KtCapturedType = KaCapturedType
 
 public abstract class KaDefinitelyNotNullType : KaType {
     public abstract val original: KaType
@@ -261,9 +222,6 @@ public abstract class KaDefinitelyNotNullType : KaType {
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
 }
-
-@Deprecated("Use 'KaDefinitelyNotNullType' instead.", replaceWith = ReplaceWith("KaDefinitelyNotNullType"))
-public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
 
 /**
  * A flexible type's [abbreviation] is always `null`, as only [lowerBound] and [upperBound] may actually be expanded types.
@@ -276,18 +234,12 @@ public abstract class KaFlexibleType : KaType {
     public abstract override fun createPointer(): KaTypePointer<KaFlexibleType>
 }
 
-@Deprecated("Use 'KaFlexibleType' instead.", replaceWith = ReplaceWith("KaFlexibleType"))
-public typealias KtFlexibleType = KaFlexibleType
-
 public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaIntersectionType>
 }
-
-@Deprecated("Use 'KaIntersectionType' instead.", replaceWith = ReplaceWith("KaIntersectionType"))
-public typealias KtIntersectionType = KaIntersectionType
 
 /**
  * A special dynamic type, which is used to support interoperability with dynamically typed libraries, platforms or languages.
@@ -299,6 +251,3 @@ public abstract class KaDynamicType : KaType {
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaDynamicType>
 }
-
-@Deprecated("Use 'KaDynamicType' instead.", replaceWith = ReplaceWith("KaDynamicType"))
-public typealias KtDynamicType = KaDynamicType

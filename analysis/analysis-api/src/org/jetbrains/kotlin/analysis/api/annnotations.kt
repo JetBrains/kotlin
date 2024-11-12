@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,10 +25,6 @@ public annotation class KaImplementationDetail
 )
 @RequiresOptIn("Internal Analysis API component which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
 public annotation class KaAnalysisApiInternals
-
-@Deprecated("Use 'KaAnalysisApiInternals' instead", ReplaceWith("KaAnalysisApiInternals"))
-@Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN", "DEPRECATION")
-public typealias KtAnalysisApiInternals = KaAnalysisApiInternals
 
 @Deprecated("Use 'KaNonPublicApi' instead", ReplaceWith("KaNonPublicApi"))
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
@@ -64,10 +60,6 @@ public annotation class KaIdeApi
 )
 @RequiresOptIn("Experimental API with no compatibility guarantees")
 public annotation class KaExperimentalApi
-
-@Deprecated("Use 'KaNonPublicApi' instead", ReplaceWith("KaNonPublicApi"))
-@Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN", "DEPRECATION")
-public typealias KtAnalysisNonPublicApi = KaAnalysisNonPublicApi
 
 /**
  * Marks an API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.

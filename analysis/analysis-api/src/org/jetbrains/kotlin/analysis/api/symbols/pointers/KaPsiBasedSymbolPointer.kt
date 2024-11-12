@@ -16,8 +16,12 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import java.lang.ref.SoftReference
 import kotlin.reflect.KClass
 
@@ -142,10 +146,6 @@ private class SoftSmartPsiElementPointer<T : PsiElement>(
     override fun getPsiRange(): Segment? = throw UnsupportedOperationException("Not supported")
     override fun getRange(): Segment? = throw UnsupportedOperationException("Not supported")
 }
-
-@KaImplementationDetail
-@Deprecated("Use 'KaPsiBasedSymbolPointer' instead", ReplaceWith("KaPsiBasedSymbolPointer"))
-public typealias KtPsiBasedSymbolPointer<S> = KaPsiBasedSymbolPointer<S>
 
 @OptIn(KaImplementationDetail::class)
 @KaExperimentalApi

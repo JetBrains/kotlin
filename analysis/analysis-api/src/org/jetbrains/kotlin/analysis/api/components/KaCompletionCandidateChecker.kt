@@ -47,10 +47,6 @@ public interface KaCompletionExtensionCandidateChecker {
     public fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult
 }
 
-@KaIdeApi
-@Deprecated("Use 'KaCompletionExtensionCandidateChecker' instead.", replaceWith = ReplaceWith("KaCompletionExtensionCandidateChecker"))
-public typealias KtCompletionExtensionCandidateChecker = KaCompletionExtensionCandidateChecker
-
 /**
  * Represents the result of checking the applicability of an extension callable in a specific context.
  */
@@ -94,8 +90,3 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
         override val token: KaLifetimeToken
     ) : KaExtensionApplicabilityResult()
 }
-
-@KaIdeApi
-@KaExperimentalApi
-@Deprecated("Use 'KaExtensionApplicabilityResult' instead.", replaceWith = ReplaceWith("KaExtensionApplicabilityResult"))
-public typealias KtExtensionApplicabilityResult = KaExtensionApplicabilityResult

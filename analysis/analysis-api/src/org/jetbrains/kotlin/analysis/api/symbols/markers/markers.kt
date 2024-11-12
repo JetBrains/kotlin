@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
@@ -19,15 +18,9 @@ public interface KaPossiblyNamedSymbol : KaSymbol {
     public val name: Name?
 }
 
-@Deprecated("Use 'KaPossiblyNamedSymbol' instead", ReplaceWith("KaPossiblyNamedSymbol"))
-public typealias KtPossiblyNamedSymbol = @Suppress("DEPRECATION") KaPossiblyNamedSymbol
-
 public interface KaNamedSymbol : @Suppress("DEPRECATION") KaPossiblyNamedSymbol {
     override val name: Name
 }
-
-@Deprecated("Use 'KaNamedSymbol' instead", ReplaceWith("KaNamedSymbol"))
-public typealias KtNamedSymbol = KaNamedSymbol
 
 /**
  * Shouldn't be used as a type.
@@ -39,17 +32,3 @@ public typealias KtNamedSymbol = KaNamedSymbol
 public interface KaTypeParameterOwnerSymbol : KaSymbol {
     public val typeParameters: List<KaTypeParameterSymbol>
 }
-
-@Deprecated("Use 'KaTypeParameterOwnerSymbol' instead", ReplaceWith("KaTypeParameterOwnerSymbol"))
-@KaImplementationDetail
-public typealias KaSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
-
-@Deprecated("Use 'KaTypeParameterOwnerSymbol' instead", ReplaceWith("KaTypeParameterOwnerSymbol"))
-@KaImplementationDetail
-public typealias KtSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
-
-@Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
-public typealias KaPossibleMultiplatformSymbol = KaDeclarationSymbol
-
-@Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
-public typealias KtPossibleMultiplatformSymbol = KaDeclarationSymbol

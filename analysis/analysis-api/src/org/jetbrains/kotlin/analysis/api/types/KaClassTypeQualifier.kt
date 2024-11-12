@@ -19,6 +19,3 @@ public interface KaResolvedClassTypeQualifier : KaClassTypeQualifier {
 }
 
 public interface KaUnresolvedClassTypeQualifier : KaClassTypeQualifier
-
-@Deprecated("Use 'KaClassTypeQualifier' instead", ReplaceWith("KaClassTypeQualifier"))
-public typealias KtClassTypeQualifier = KaClassTypeQualifier

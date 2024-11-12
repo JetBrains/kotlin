@@ -22,9 +22,3 @@ public interface KaFunctionSignature<out S : KaFunctionSymbol> : KaCallableSigna
     @KaExperimentalApi
     abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionSignature<S>
 }
-
-@Deprecated("Use 'KaFunctionSignature' instead", ReplaceWith("KaFunctionSignature"))
-public typealias KaFunctionLikeSignature<S> = KaFunctionSignature<S>
-
-@Deprecated("Use 'KaFunctionSignature' instead", ReplaceWith("KaFunctionSignature"))
-public typealias KtFunctionLikeSignature<S> = KaFunctionSignature<S>

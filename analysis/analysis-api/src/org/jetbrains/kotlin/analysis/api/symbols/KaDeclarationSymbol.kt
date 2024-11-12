@@ -52,7 +52,3 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
 public val KaDeclarationSymbol.typeParameters: List<KaTypeParameterSymbol>
     @OptIn(KaImplementationDetail::class)
     get() = if (this is KaTypeParameterOwnerSymbol) typeParameters else emptyList()
-
-
-@Deprecated("Use 'KaDeclarationSymbol' instead", ReplaceWith("KaDeclarationSymbol"))
-public typealias KtDeclarationSymbol = KaDeclarationSymbol

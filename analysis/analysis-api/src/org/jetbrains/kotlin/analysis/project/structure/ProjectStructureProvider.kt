@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.analysis.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 
 @Deprecated(
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 public abstract class ProjectStructureProvider {
     public abstract fun getModule(
         element: PsiElement,
-        contextualModule: KtModule?,
-    ): KtModule
+        contextualModule: KaModule?,
+    ): KaModule
 
     public companion object {
         @Deprecated(
@@ -31,7 +32,7 @@ public abstract class ProjectStructureProvider {
         )
         public fun getInstance(project: Project): ProjectStructureProvider =
             object : ProjectStructureProvider() {
-                override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule =
+                override fun getModule(element: PsiElement, contextualModule: KaModule?): KaModule =
                     KaModuleProvider.getInstance(project).getModule(element, contextualModule)
             }
 
@@ -42,7 +43,7 @@ public abstract class ProjectStructureProvider {
                 imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"],
             ),
         )
-        public fun getModule(project: Project, element: PsiElement, contextualModule: KtModule?): KtModule =
+        public fun getModule(project: Project, element: PsiElement, contextualModule: KaModule?): KaModule =
             getInstance(project).getModule(element, contextualModule)
     }
 }

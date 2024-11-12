@@ -22,6 +22,3 @@ public value class KaLifetimeOwnerField<T>(public val value: T) : ReadOnlyProper
         return thisRef.withValidityAssertion { value }
     }
 }
-
-@Deprecated("Use 'KaLifetimeOwnerField' instead", ReplaceWith("KaLifetimeOwnerField<T>"))
-public typealias KtLifetimeOwnerField<T> = KaLifetimeOwnerField<T>

@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.analysis.project.structure
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
@@ -21,18 +23,18 @@ import org.jetbrains.kotlin.psi.KtFile
 
 internal fun isDanglingFile(file: KtFile): Boolean = file.isDangling
 
-internal fun getDanglingFileResolutionMode(file: KtFile): DanglingFileResolutionMode? = file.danglingFileResolutionMode
+internal fun getDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode? = file.danglingFileResolutionMode
 
 @KaImplementationDetail
-public inline fun <reified M : KtModule> KtModule.getDirectRegularDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
+public inline fun <reified M : KaModule> KaModule.getDirectRegularDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
 
 @KaImplementationDetail
-public inline fun <reified M : KtModule> KtModule.getDirectFriendDependenciesOfType(): Sequence<M> = directFriendDependenciesOfType()
+public inline fun <reified M : KaModule> KaModule.getDirectFriendDependenciesOfType(): Sequence<M> = directFriendDependenciesOfType()
 
 @KaImplementationDetail
-public inline fun <reified M : KtModule> KtModule.getDirectDependsOnDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
+public inline fun <reified M : KaModule> KaModule.getDirectDependsOnDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
 
-internal fun KtModule.getAllDirectDependencies(): Sequence<KtModule> = allDirectDependencies()
+internal fun KaModule.getAllDirectDependencies(): Sequence<KaModule> = allDirectDependencies()
 
 @KaImplementationDetail
-public inline fun <reified M : KtModule> KtModule.getAllDirectDependenciesOfType(): Sequence<M> = allDirectDependenciesOfType()
+public inline fun <reified M : KaModule> KaModule.getAllDirectDependenciesOfType(): Sequence<M> = allDirectDependenciesOfType()

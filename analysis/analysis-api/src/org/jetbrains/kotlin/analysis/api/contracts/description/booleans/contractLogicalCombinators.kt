@@ -25,10 +25,6 @@ public interface KaContractBinaryLogicExpression : KaContractBooleanExpression {
     public val operation: KaLogicOperation
 }
 
-@Deprecated("Use 'KaContractBinaryLogicExpression' instead.", ReplaceWith("KaContractBinaryLogicExpression"))
-@KaExperimentalApi
-public typealias KtContractBinaryLogicExpression = KaContractBinaryLogicExpression
-
 /**
  * See: [KaContractBooleanExpression].
  */
@@ -36,7 +32,3 @@ public typealias KtContractBinaryLogicExpression = KaContractBinaryLogicExpressi
 public interface KaContractLogicalNotExpression : KaContractBooleanExpression {
     public val argument: KaContractBooleanExpression
 }
-
-@Deprecated("Use 'KaContractLogicalNotExpression' instead.", ReplaceWith("KaContractLogicalNotExpression"))
-@KaExperimentalApi
-public typealias KtContractLogicalNotExpression = KaContractLogicalNotExpression

@@ -21,9 +21,6 @@ import org.jetbrains.kotlin.types.Variance
 
 public sealed class KaClassifierSymbol : KaSymbol, @Suppress("DEPRECATION") KaPossiblyNamedSymbol, KaDeclarationSymbol
 
-@Deprecated("Use 'KaClassifierSymbol' instead", ReplaceWith("KaClassifierSymbol"))
-public typealias KtClassifierSymbol = KaClassifierSymbol
-
 public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
 
@@ -42,9 +39,6 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
 
-@Deprecated("Use 'KaTypeParameterSymbol' instead", ReplaceWith("KaTypeParameterSymbol"))
-public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
-
 public sealed class KaClassLikeSymbol :
     KaClassifierSymbol(),
     @Suppress("DEPRECATION") KaSymbolWithKind {
@@ -58,9 +52,6 @@ public sealed class KaClassLikeSymbol :
 
     abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
-
-@Deprecated("Use 'KaClassLikeSymbol' instead", ReplaceWith("KaClassLikeSymbol"))
-public typealias KtClassLikeSymbol = KaClassLikeSymbol
 
 @OptIn(KaImplementationDetail::class)
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
@@ -78,9 +69,6 @@ public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
 
     abstract override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol>
 }
-
-@Deprecated("Use 'KaTypeAliasSymbol' instead", ReplaceWith("KaTypeAliasSymbol"))
-public typealias KtTypeAliasSymbol = KaTypeAliasSymbol
 
 public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerSymbol {
 
@@ -104,12 +92,6 @@ public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerS
     abstract override fun createPointer(): KaSymbolPointer<KaClassSymbol>
 }
 
-@Deprecated("Use 'KaClassSymbol' instead", ReplaceWith("KaClassSymbol"))
-public typealias KaClassOrObjectSymbol = KaClassSymbol
-
-@Deprecated("Use 'KaClassSymbol' instead", ReplaceWith("KaClassSymbol"))
-public typealias KtClassOrObjectSymbol = KaClassSymbol
-
 public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
     final override val classId: ClassId? get() = withValidityAssertion { null }
@@ -126,9 +108,6 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
 
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
 }
-
-@Deprecated("Use 'KaAnonymousObjectSymbol' instead", ReplaceWith("KaAnonymousObjectSymbol"))
-public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
@@ -148,12 +127,6 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol>
 }
 
-@Deprecated("Use 'KaNamedClassSymbol' instead", ReplaceWith("KaNamedClassSymbol"))
-public typealias KaNamedClassOrObjectSymbol = KaNamedClassSymbol
-
-@Deprecated("Use 'KaNamedClassSymbol' instead", ReplaceWith("KaNamedClassSymbol"))
-public typealias KtNamedClassOrObjectSymbol = KaNamedClassSymbol
-
 public enum class KaClassKind {
     CLASS,
     ENUM_CLASS,
@@ -166,6 +139,3 @@ public enum class KaClassKind {
     public val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
     public val isClass: Boolean get() = this == CLASS || this == ANNOTATION_CLASS || this == ENUM_CLASS
 }
-
-@Deprecated("Use 'KaClassKind' instead", ReplaceWith("KaClassKind"))
-public typealias KtClassKind = KaClassKind

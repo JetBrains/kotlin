@@ -30,12 +30,6 @@ public sealed class KaFunctionSymbol : KaCallableSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaFunctionSymbol>
 }
 
-@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
-public typealias KaFunctionLikeSymbol = KaFunctionSymbol
-
-@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
-public typealias KtFunctionLikeSymbol = KaFunctionSymbol
-
 public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
@@ -47,9 +41,6 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol>
 }
 
-@Deprecated("Use 'KaAnonymousFunctionSymbol' instead", ReplaceWith("KaAnonymousFunctionSymbol"))
-public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
-
 @OptIn(KaImplementationDetail::class)
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
@@ -57,9 +48,6 @@ public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
 }
-
-@Deprecated("Use 'KaSamConstructorSymbol' instead", ReplaceWith("KaSamConstructorSymbol"))
-public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 
 @OptIn(KaImplementationDetail::class)
 public abstract class KaNamedFunctionSymbol :
@@ -93,9 +81,6 @@ public abstract class KaNamedFunctionSymbol :
     abstract override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol>
 }
 
-@Deprecated("Use 'KaNamedFunctionSymbol' instead", ReplaceWith("KaNamedFunctionSymbol"))
-public typealias KtFunctionSymbol = KaNamedFunctionSymbol
-
 @OptIn(KaImplementationDetail::class)
 public abstract class KaConstructorSymbol :
     KaFunctionSymbol(),
@@ -123,6 +108,3 @@ public abstract class KaConstructorSymbol :
 
     abstract override fun createPointer(): KaSymbolPointer<KaConstructorSymbol>
 }
-
-@Deprecated("Use 'KaConstructorSymbol' instead", ReplaceWith("KaConstructorSymbol"))
-public typealias KtConstructorSymbol = KaConstructorSymbol

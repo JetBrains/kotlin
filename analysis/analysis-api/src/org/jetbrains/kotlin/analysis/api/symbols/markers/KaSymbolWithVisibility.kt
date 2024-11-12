@@ -5,14 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-
-@Deprecated("Use `KaDeclarationSymbol` directly", ReplaceWith("KaDeclarationSymbol"))
-public typealias KaSymbolWithVisibility = KaDeclarationSymbol
-
-@Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
-public typealias KtSymbolWithVisibility = KaDeclarationSymbol
 
 @Deprecated(
     "Use `KaSymbolVisibility.PRIVATE` directly",

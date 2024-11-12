@@ -308,7 +308,3 @@ public class KaDeclarationRenderer private constructor(
         )
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaDeclarationRenderer' instead", ReplaceWith("KaDeclarationRenderer"))
-public typealias KtDeclarationRenderer = KaDeclarationRenderer

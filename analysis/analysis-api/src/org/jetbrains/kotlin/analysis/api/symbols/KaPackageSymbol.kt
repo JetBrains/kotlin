@@ -17,6 +17,3 @@ public abstract class KaPackageSymbol : KaSymbol {
     final override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 }
-
-@Deprecated("Use 'KaPackageSymbol' instead", ReplaceWith("KaPackageSymbol"))
-public typealias KtPackageSymbol = KaPackageSymbol

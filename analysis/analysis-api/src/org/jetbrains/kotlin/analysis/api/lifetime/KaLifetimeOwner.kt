@@ -9,9 +9,6 @@ public interface KaLifetimeOwner {
     public val token: KaLifetimeToken
 }
 
-@Deprecated("Use 'KaLifetimeOwner' instead", ReplaceWith("KaLifetimeOwner"))
-public typealias KtLifetimeOwner = KaLifetimeOwner
-
 public fun KaLifetimeOwner.isValid(): Boolean = token.isValid()
 
 @Suppress("NOTHING_TO_INLINE")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -158,6 +158,3 @@ public sealed interface KaConstantValue {
     @Deprecated("Use 'ErrorValue' instead.", replaceWith = ReplaceWith("ErrorValue"))
     public interface KaErrorConstantValue : ErrorValue
 }
-
-@Deprecated("Use 'KaConstantValue' instead.", ReplaceWith("KaConstantValue"))
-public typealias KtConstantValue = KaConstantValue

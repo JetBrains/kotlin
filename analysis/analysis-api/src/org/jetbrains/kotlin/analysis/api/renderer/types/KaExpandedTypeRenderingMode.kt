@@ -33,7 +33,3 @@ public enum class KaExpandedTypeRenderingMode {
      */
     RENDER_EXPANDED_TYPE_WITH_ABBREVIATED_TYPE_COMMENT,
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaExpandedTypeRenderingMode' instead", ReplaceWith("KaExpandedTypeRenderingMode"))
-public typealias KtExpandedTypeRenderingMode = KaExpandedTypeRenderingMode

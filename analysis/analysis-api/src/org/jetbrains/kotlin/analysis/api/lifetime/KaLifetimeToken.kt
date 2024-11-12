@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,9 +14,6 @@ public abstract class KaLifetimeToken {
     public abstract fun isAccessible(): Boolean
     public abstract fun getInaccessibilityReason(): String
 }
-
-@Deprecated("Use 'KaLifetimeToken' instead", ReplaceWith("KaLifetimeToken"))
-public typealias KtLifetimeToken = KaLifetimeToken
 
 @Suppress("NOTHING_TO_INLINE")
 public inline fun KaLifetimeToken.assertIsValidAndAccessible() {
@@ -43,20 +40,8 @@ public inline fun KaLifetimeToken.assertIsAccessible() {
 @KaImplementationDetail
 public abstract class KaIllegalLifetimeOwnerAccessException : IllegalStateException()
 
-@Deprecated("Use 'KaIllegalLifetimeOwnerAccessException' instead", ReplaceWith("KaIllegalLifetimeOwnerAccessException"))
-@KaImplementationDetail
-public typealias KtIllegalLifetimeOwnerAccessException = KaIllegalLifetimeOwnerAccessException
-
 @KaImplementationDetail
 public class KaInvalidLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
 
-@Deprecated("Use 'KaInvalidLifetimeOwnerAccessException' instead", ReplaceWith("KaInvalidLifetimeOwnerAccessException"))
-@KaImplementationDetail
-public typealias KtInvalidLifetimeOwnerAccessException = KaInvalidLifetimeOwnerAccessException
-
 @KaImplementationDetail
 public class KaInaccessibleLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
-
-@Deprecated("Use 'KaInaccessibleLifetimeOwnerAccessException' instead", ReplaceWith("KaInaccessibleLifetimeOwnerAccessException"))
-@KaImplementationDetail
-public typealias KtInaccessibleLifetimeOwnerAccessException = KaInaccessibleLifetimeOwnerAccessException

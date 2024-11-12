@@ -90,7 +90,3 @@ public abstract class KaResolveExtension : Disposable {
     override fun dispose() {
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaResolveExtension' instead", ReplaceWith("KaResolveExtension"))
-public typealias KtResolveExtension = KaResolveExtension

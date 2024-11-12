@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.Objects
+import java.util.*
 
 public interface KaScopeProvider {
     /**
@@ -259,9 +259,6 @@ public interface KaScopeContext : KaLifetimeOwner {
     public val scopes: List<KaScopeWithKind>
 }
 
-@Deprecated("Use 'KaScopeContext' instead.", replaceWith = ReplaceWith("KaScopeContext"))
-public typealias KtScopeContext = KaScopeContext
-
 /**
  * Represents the implicit receiver available in a particular context.
  */
@@ -281,9 +278,6 @@ public interface KaImplicitReceiver : KaLifetimeOwner {
      */
     public val scopeIndexInTower: Int
 }
-
-@Deprecated("Use 'KaImplicitReceiver' instead.", replaceWith = ReplaceWith("KaImplicitReceiver"))
-public typealias KtImplicitReceiver = KaImplicitReceiver
 
 public sealed interface KaScopeKind {
     /**
@@ -391,9 +385,6 @@ public object KaScopeKinds {
     public class ScriptMemberScope(override val indexInTower: Int) : KaScopeKind.ScriptMemberScope
 }
 
-@Deprecated("Use KaScopeKind' instead.", replaceWith = ReplaceWith("KaScopeKind"))
-public typealias KtScopeKind = KaScopeKind
-
 public interface KaScopeWithKind : KaLifetimeOwner {
     public val scope: KaScope
     public val kind: KaScopeKind
@@ -418,6 +409,3 @@ public class KaScopeWithKindImpl(
 
     override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
 }
-
-@Deprecated("Use 'KaScopeWithKind' instead.", replaceWith = ReplaceWith("KaScopeWithKind"))
-public typealias KtScopeWithKind = KaScopeWithKind

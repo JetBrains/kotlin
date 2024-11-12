@@ -21,17 +21,11 @@ public sealed interface KaCallCandidateInfo : KaLifetimeOwner {
     public val isInBestCandidates: Boolean
 }
 
-@Deprecated("Use 'KaCallCandidateInfo' instead", ReplaceWith("KaCallCandidateInfo"))
-public typealias KtCallCandidateInfo = KaCallCandidateInfo
-
 /**
  * A candidate that is applicable for a call. A candidate is applicable if the call's arguments are complete and are assignable to the
  * candidate's parameters, AND the call's type arguments are complete and fit all the constraints of the candidate's type parameters.
  */
 public interface KaApplicableCallCandidateInfo : KaCallCandidateInfo
-
-@Deprecated("Use 'KaApplicableCallCandidateInfo' instead", ReplaceWith("KaApplicableCallCandidateInfo"))
-public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 
 /**
  * A candidate that is NOT applicable for a call. A candidate is inapplicable if a call argument is missing or is not assignable to the

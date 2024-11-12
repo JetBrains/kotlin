@@ -65,7 +65,3 @@ public interface KaDeclarationNameRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaDeclarationNameRenderer' instead", ReplaceWith("KaDeclarationNameRenderer"))
-public typealias KtDeclarationNameRenderer = KaDeclarationNameRenderer

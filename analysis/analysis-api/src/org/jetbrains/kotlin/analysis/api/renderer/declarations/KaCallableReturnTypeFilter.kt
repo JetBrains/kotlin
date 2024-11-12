@@ -35,7 +35,3 @@ public interface KaCallableReturnTypeFilter {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaCallableReturnTypeFilter' instead", ReplaceWith("KaCallableReturnTypeFilter"))
-public typealias KtCallableReturnTypeFilter = KaCallableReturnTypeFilter

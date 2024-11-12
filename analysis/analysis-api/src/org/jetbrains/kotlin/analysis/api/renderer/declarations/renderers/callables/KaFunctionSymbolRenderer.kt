@@ -67,11 +67,3 @@ public interface KaNamedFunctionSymbolRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaNamedFunctionSymbolRenderer' instead", ReplaceWith("KaNamedFunctionSymbolRenderer"))
-public typealias KaFunctionSymbolRenderer = KaNamedFunctionSymbolRenderer
-
-@KaExperimentalApi
-@Deprecated("Use 'KaNamedFunctionSymbolRenderer' instead", ReplaceWith("KaNamedFunctionSymbolRenderer"))
-public typealias KtFunctionSymbolRenderer = KaNamedFunctionSymbolRenderer

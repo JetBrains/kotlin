@@ -311,6 +311,3 @@ public abstract class KaBuiltinTypes : KaLifetimeOwner {
     /** The [Annotation] type. */
     public abstract val annotationType: KaType
 }
-
-@Deprecated("Use 'KaBuiltinTypes' instead.", replaceWith = ReplaceWith("KaBuiltinTypes"))
-public typealias KtBuiltinTypes = KaBuiltinTypes

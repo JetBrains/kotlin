@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
@@ -107,9 +108,6 @@ public interface KaSession : KaLifetimeOwner,
         restore(useSiteSession)
     }
 }
-
-@Deprecated("Use 'KaSession' instead.", ReplaceWith("KaSession"))
-public typealias KtAnalysisSession = KaSession
 
 public fun KaSession.getModule(element: PsiElement): KaModule =
     KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)

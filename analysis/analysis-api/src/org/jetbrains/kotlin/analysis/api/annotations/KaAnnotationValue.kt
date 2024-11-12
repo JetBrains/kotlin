@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -99,45 +99,6 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
             get() = value
     }
 }
-
-@Deprecated("Use 'KaAnnotationValue' instead", ReplaceWith("KaAnnotationValue"))
-public typealias KtAnnotationValue = KaAnnotationValue
-
-@Deprecated("Use 'KaAnnotationValue.UnsupportedValue' instead", ReplaceWith("KaAnnotationValue.UnsupportedValue"))
-public typealias KaUnsupportedAnnotationValue = KaAnnotationValue.UnsupportedValue
-
-@Deprecated("Use 'KaAnnotationValue.UnsupportedValue' instead", ReplaceWith("KaAnnotationValue.UnsupportedValue"))
-public typealias KtUnsupportedAnnotationValue = KaAnnotationValue.UnsupportedValue
-
-@Deprecated("Use 'KaAnnotationValue.ArrayValue' instead", ReplaceWith("KaAnnotationValue.ArrayValue"))
-public typealias KaArrayAnnotationValue = KaAnnotationValue.ArrayValue
-
-@Deprecated("Use 'KaAnnotationValue.ArrayValue' instead", ReplaceWith("KaAnnotationValue.ArrayValue"))
-public typealias KtArrayAnnotationValue = KaAnnotationValue.ArrayValue
-
-@Deprecated("Use 'KaAnnotationValue.NestedAnnotationValue' instead", ReplaceWith("KaAnnotationValue.NestedAnnotationValue"))
-public typealias KaAnnotationApplicationValue = KaAnnotationValue.NestedAnnotationValue
-
-@Deprecated("Use 'KaAnnotationValue.NestedAnnotationValue' instead", ReplaceWith("KaAnnotationValue.NestedAnnotationValue"))
-public typealias KtAnnotationApplicationValue = KaAnnotationValue.NestedAnnotationValue
-
-@Deprecated("Use 'KaAnnotationValue.ClassLiteralValue' instead", ReplaceWith("KaAnnotationValue.ClassLiteralValue"))
-public typealias KaKClassAnnotationValue = KaAnnotationValue.ClassLiteralValue
-
-@Deprecated("Use 'KaAnnotationValue.ClassLiteralValue' instead", ReplaceWith("KaAnnotationValue.ClassLiteralValue"))
-public typealias KtKClassAnnotationValue = KaAnnotationValue.ClassLiteralValue
-
-@Deprecated("Use 'KaAnnotationValue.EnumEntryValue' instead", ReplaceWith("KaAnnotationValue.EnumEntryValue"))
-public typealias KaEnumEntryAnnotationValue = KaAnnotationValue.EnumEntryValue
-
-@Deprecated("Use 'KaAnnotationValue.EnumEntryValue' instead", ReplaceWith("KaAnnotationValue.EnumEntryValue"))
-public typealias KtEnumEntryAnnotationValue = KaAnnotationValue.EnumEntryValue
-
-@Deprecated("Use 'KaAnnotationValue.ConstantValue' instead", ReplaceWith("KaAnnotationValue.ConstantValue"))
-public typealias KaConstantAnnotationValue = KaAnnotationValue.ConstantValue
-
-@Deprecated("Use 'KaAnnotationValue.ConstantValue' instead", ReplaceWith("KaAnnotationValue.ConstantValue"))
-public typealias KtConstantAnnotationValue = KaAnnotationValue.ConstantValue
 
 /**
  * Render annotation value, resulted string is a valid Kotlin source code.

@@ -53,6 +53,3 @@ public interface KaCompoundUnaryOperation : KaCompoundOperation {
         PREFIX, POSTFIX
     }
 }
-
-@Deprecated("Use `KaCompoundOperation` instead", ReplaceWith("KaCompoundOperation"))
-public typealias KaCompoundAccess = KaCompoundOperation

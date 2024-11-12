@@ -26,10 +26,6 @@ public interface KaContractConstantValue : KaLifetimeOwner {
     public val constantType: KaContractConstantType
 }
 
-@Deprecated("Use 'KaContractConstantValue' instead", ReplaceWith("KaContractConstantValue"))
-@KaExperimentalApi
-public typealias KtContractConstantValue = KaContractConstantValue
-
 /**
  * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace].
  */
@@ -37,7 +33,3 @@ public typealias KtContractConstantValue = KaContractConstantValue
 public interface KaContractParameterValue : KaLifetimeOwner {
     public val parameterSymbol: KaParameterSymbol
 }
-
-@Deprecated("Use 'KaContractParameterValue' instead", ReplaceWith("KaContractParameterValue"))
-@KaExperimentalApi
-public typealias KtContractParameterValue = KaContractParameterValue

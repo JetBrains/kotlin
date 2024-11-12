@@ -34,9 +34,6 @@ public interface KaSymbol : KaLifetimeOwner {
 public val KaSymbol.name: Name?
     get() = if (this is KaNamedSymbol) name else null
 
-@Deprecated("Use 'KaSymbol' instead", replaceWith = ReplaceWith("KaSymbol"))
-public typealias KtSymbol = KaSymbol
-
 /**
  * Get symbol [PsiElement] if its type is [PSI], otherwise throws ClassCastException
  *
@@ -186,6 +183,3 @@ public enum class KaSymbolOrigin {
      */
     NATIVE_FORWARD_DECLARATION,
 }
-
-@Deprecated("Use 'KaSymbolOrigin' instead", ReplaceWith("KaSymbolOrigin"))
-public typealias KtSymbolOrigin = KaSymbolOrigin

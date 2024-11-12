@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.session
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -110,7 +110,3 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
             project.getService(KaSessionProvider::class.java)
     }
 }
-
-@KaImplementationDetail
-@Deprecated("Use 'KaSessionProvider' instead", ReplaceWith("KaSessionProvider"))
-public typealias KtAnalysisSessionProvider = KaSessionProvider

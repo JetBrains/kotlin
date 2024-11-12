@@ -24,9 +24,6 @@ public interface KaSymbolWithKind : KaSymbol {
         }
 }
 
-@Deprecated("Use `location` from `KaSymbol`")
-public typealias KtSymbolWithKind = @Suppress("DEPRECATION") KaSymbolWithKind
-
 @Deprecated("Use `KaSymbolLocation` instead", ReplaceWith("KaSymbolLocation"))
 public enum class KaSymbolKind {
     TOP_LEVEL,
@@ -35,6 +32,3 @@ public enum class KaSymbolKind {
     ACCESSOR,
     SAM_CONSTRUCTOR,
 }
-
-@Deprecated("Use `KaSymbolLocation` instead", ReplaceWith("KaSymbolLocation"))
-public typealias KtSymbolKind = @Suppress("DEPRECATION") KaSymbolKind

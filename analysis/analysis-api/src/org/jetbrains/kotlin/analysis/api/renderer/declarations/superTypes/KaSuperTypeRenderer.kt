@@ -39,7 +39,3 @@ public interface KaSuperTypeRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaSuperTypeRenderer' instead", ReplaceWith("KaSuperTypeRenderer"))
-public typealias KtSuperTypeRenderer = KaSuperTypeRenderer

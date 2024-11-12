@@ -86,7 +86,3 @@ public interface KaAnnotationUseSiteTargetRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaAnnotationUseSiteTargetRenderer' instead", ReplaceWith("KaAnnotationUseSiteTargetRenderer"))
-public typealias KtAnnotationUseSiteTargetRenderer = KaAnnotationUseSiteTargetRenderer

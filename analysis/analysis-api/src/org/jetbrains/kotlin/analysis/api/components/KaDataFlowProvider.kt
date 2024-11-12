@@ -61,9 +61,6 @@ public interface KaSmartCastInfo : KaLifetimeOwner {
     public val smartCastType: KaType
 }
 
-@Deprecated("Use 'KaSmartCastInfo' instead.", replaceWith = ReplaceWith("KaSmartCastInfo"))
-public typealias KtSmartCastInfo = KaSmartCastInfo
-
 /**
  * Represents an implicit smart cast for the receiver expression.
  */
@@ -79,9 +76,6 @@ public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
     public val kind: KaImplicitReceiverSmartCastKind
 }
 
-@Deprecated("Use 'KaImplicitReceiverSmartCast' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCast"))
-public typealias KtImplicitReceiverSmartCast = KaImplicitReceiverSmartCast
-
 /**
  * Represents the kind of implicit smart cast for the receiver expression.
  */
@@ -96,9 +90,6 @@ public enum class KaImplicitReceiverSmartCastKind {
      */
     EXTENSION
 }
-
-@Deprecated("Use 'KaImplicitReceiverSmartCastKind' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCastKind"))
-public typealias KtImplicitReceiverSmartCastKind = KaImplicitReceiverSmartCastKind
 
 @KaNonPublicApi
 public class KaDataFlowExitPointSnapshot(
@@ -183,7 +174,3 @@ public class KaDataFlowExitPointSnapshot(
         public val isAugmented: Boolean
     )
 }
-
-@KaNonPublicApi
-@Deprecated("Use 'KaDataFlowExitPointSnapshot' instead.", replaceWith = ReplaceWith("KaDataFlowExitPointSnapshot"))
-public typealias KtDataFlowExitPointSnapshot = KaDataFlowExitPointSnapshot

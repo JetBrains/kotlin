@@ -38,10 +38,6 @@ public abstract class KaContextReceiver : KaLifetimeOwner {
     public abstract val label: Name?
 }
 
-@KaExperimentalApi
-@Deprecated("Use 'KaContextReceiver' instead", ReplaceWith("KaContextReceiver"))
-public typealias KtContextReceiver = KaContextReceiver
-
 /**
  * Something which can have a [KaContextReceiver] declared. This may be a callable symbol, a class symbol, or a functional type.
  */
@@ -53,7 +49,3 @@ public interface KaContextReceiversOwner : KaLifetimeOwner {
     @KaExperimentalApi
     public val contextReceivers: List<KaContextReceiver>
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaContextReceiversOwner' instead", ReplaceWith("KaContextReceiversOwner"))
-public typealias KtContextReceiversOwner = KaContextReceiversOwner

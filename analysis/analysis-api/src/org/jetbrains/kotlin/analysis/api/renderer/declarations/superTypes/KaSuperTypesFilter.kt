@@ -70,7 +70,3 @@ public fun interface KaSuperTypesFilter {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaSuperTypesFilter' instead", ReplaceWith("KaSuperTypesFilter"))
-public typealias KtSuperTypesFilter = KaSuperTypesFilter

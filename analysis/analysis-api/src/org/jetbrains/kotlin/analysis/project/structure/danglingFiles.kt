@@ -12,25 +12,16 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResoluti
 import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtFile
 
-@Deprecated(
-    "Use 'org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode' instead.",
-    ReplaceWith(
-        "KaDanglingFileResolutionMode",
-        imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode"],
-    ),
-)
-public typealias DanglingFileResolutionMode = KaDanglingFileResolutionMode
-
 @Deprecated("Use 'org.jetbrains.kotlin.analysis.api.projectStructure.isDangling' instead.")
 public val KtFile.isDangling: Boolean
     get() = isDanglingFile(this)
 
 @Deprecated("Use 'org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode' instead.")
-public val KtFile.danglingFileResolutionMode: DanglingFileResolutionMode?
+public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
     get() = getDanglingFileResolutionMode(this)
 
 // Try to preserve binary compatibility of code which has inlined `analyzeCopy`.
 @Deprecated("Use 'org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode' instead.")
 @KaImplementationDetail
-public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: DanglingFileResolutionMode, action: () -> R): R =
+public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: KaDanglingFileResolutionMode, action: () -> R): R =
     withDanglingFileResolutionMode(file, mode) { action() }

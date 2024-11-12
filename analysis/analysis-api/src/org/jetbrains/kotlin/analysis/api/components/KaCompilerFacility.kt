@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
-import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -54,10 +50,6 @@ public sealed class KaCompilationResult {
 }
 
 @KaExperimentalApi
-@Deprecated("Use 'KaCompilationResult' instead.", replaceWith = ReplaceWith("KaCompilationResult"))
-public typealias KtCompilationResult = KaCompilationResult
-
-@KaExperimentalApi
 public interface KaCompiledFile {
     /**
      * Path of the compiled file relative to the root of the output directory.
@@ -74,10 +66,6 @@ public interface KaCompiledFile {
      */
     public val content: ByteArray
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaCompiledFile' instead.", replaceWith = ReplaceWith("KaCompiledFile"))
-public typealias KtCompiledFile = KaCompiledFile
 
 /**
  * `true` if the compiled file is a Java class file.
@@ -146,10 +134,6 @@ public val KaCompilerTarget.classBuilderFactory: ClassBuilderFactory
             }
         }
     }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaCompilerTarget' instead.", replaceWith = ReplaceWith("KaCompilerTarget"))
-public typealias KtCompilerTarget = KaCompilerTarget
 
 @KaExperimentalApi
 public interface KaCompilerFacility {

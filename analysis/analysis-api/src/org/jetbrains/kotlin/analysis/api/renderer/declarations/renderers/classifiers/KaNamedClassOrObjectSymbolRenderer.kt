@@ -94,11 +94,3 @@ public interface KaNamedClassSymbolRenderer {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaNamedClassSymbolRenderer' instead", ReplaceWith("KaNamedClassSymbolRenderer"))
-public typealias KaNamedClassOrObjectSymbolRenderer = KaNamedClassSymbolRenderer
-
-@KaExperimentalApi
-@Deprecated("Use 'KaNamedClassSymbolRenderer' instead", ReplaceWith("KaNamedClassSymbolRenderer"))
-public typealias KtNamedClassOrObjectSymbolRenderer = KaNamedClassSymbolRenderer

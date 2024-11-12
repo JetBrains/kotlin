@@ -25,6 +25,3 @@ public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, K
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
-
-@Deprecated("Use 'KaScriptSymbol' instead", ReplaceWith("KaScriptSymbol"))
-public typealias KtScriptSymbol = KaScriptSymbol

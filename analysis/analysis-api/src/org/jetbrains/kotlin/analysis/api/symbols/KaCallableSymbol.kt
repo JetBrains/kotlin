@@ -33,8 +33,5 @@ public sealed class KaCallableSymbol :
     abstract override fun createPointer(): KaSymbolPointer<KaCallableSymbol>
 }
 
-@Deprecated("Use 'KaCallableSymbol' instead.", ReplaceWith("KaCallableSymbol"))
-public typealias KtCallableSymbol = KaCallableSymbol
-
 public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType

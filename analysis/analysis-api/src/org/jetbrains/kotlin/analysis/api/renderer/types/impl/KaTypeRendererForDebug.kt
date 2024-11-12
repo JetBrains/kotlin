@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaCapturedTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFlexibleTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaErrorTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFlexibleTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaUnresolvedClassErrorTypeRenderer
 
 @KaExperimentalApi
@@ -31,7 +31,3 @@ public object KaTypeRendererForDebug {
         unresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer.WITH_ERROR_MESSAGE
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaTypeRendererForDebug' instead", ReplaceWith("KaTypeRendererForDebug"))
-public typealias KtTypeRendererForDebug = KaTypeRendererForDebug

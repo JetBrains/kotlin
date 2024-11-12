@@ -15,6 +15,3 @@ public abstract class KaFileSymbol : KaAnnotatedSymbol {
     final override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 }
-
-@Deprecated("Use 'KaFileSymbol' instead", ReplaceWith("KaFileSymbol"))
-public typealias KtFileSymbol = KaFileSymbol

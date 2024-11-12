@@ -81,9 +81,3 @@ public interface KaVariableSignature<out S : KaVariableSymbol> : KaCallableSigna
         }
     }
 }
-
-@Deprecated("Use 'KaVariableSignature' instead", ReplaceWith("KaVariableSignature"))
-public typealias KaVariableLikeSignature<S> = KaVariableSignature<S>
-
-@Deprecated("Use 'KaVariableSignature' instead", ReplaceWith("KaVariableSignature"))
-public typealias KtVariableLikeSignature<S> = KaVariableSignature<S>

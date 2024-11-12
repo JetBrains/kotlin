@@ -23,10 +23,6 @@ public interface KaContractIsInstancePredicateExpression : KaContractBooleanExpr
     public fun negated(): KaContractIsInstancePredicateExpression
 }
 
-@Deprecated("Use 'KaContractIsInstancePredicateExpression' instead.", ReplaceWith("KaContractIsInstancePredicateExpression"))
-@KaExperimentalApi
-public typealias KtContractIsInstancePredicateExpression = KaContractIsInstancePredicateExpression
-
 /**
  * See: [KaContractBooleanExpression].
  */
@@ -38,7 +34,3 @@ public interface KaContractIsNullPredicateExpression : KaContractBooleanExpressi
 
     public fun negated(): KaContractIsNullPredicateExpression
 }
-
-@Deprecated("Use 'KaContractIsNullPredicateExpression' instead.", ReplaceWith("KaContractIsNullPredicateExpression"))
-@KaExperimentalApi
-public typealias KtContractIsNullPredicateExpression = KaContractIsNullPredicateExpression

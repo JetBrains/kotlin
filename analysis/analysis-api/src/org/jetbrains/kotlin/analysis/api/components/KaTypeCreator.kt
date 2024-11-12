@@ -9,11 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
@@ -61,9 +57,6 @@ public interface KaTypeCreator {
 
 public interface KaTypeBuilder : KaLifetimeOwner
 
-@Deprecated("Use 'KaTypeBuilder' instead.", replaceWith = ReplaceWith("KaTypeBuilder"))
-public typealias KtTypeBuilder = KaTypeBuilder
-
 /**
  * A builder for class types.
  */
@@ -86,9 +79,6 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
     public fun argument(type: KaType, variance: Variance = Variance.INVARIANT)
 }
 
-@Deprecated("Use 'KaClassTypeBuilder' instead.", replaceWith = ReplaceWith("KaClassTypeBuilder"))
-public typealias KtClassTypeBuilder = KaClassTypeBuilder
-
 /**
  * A builder for type parameter types.
  */
@@ -98,6 +88,3 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
      */
     public var nullability: KaTypeNullability
 }
-
-@Deprecated("Use 'KaTypeParameterTypeBuilder' instead.", replaceWith = ReplaceWith("KaTypeParameterTypeBuilder"))
-public typealias KtTypeParameterTypeBuilder = KaTypeParameterTypeBuilder

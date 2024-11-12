@@ -77,7 +77,3 @@ public interface KaRendererModalityModifierProvider {
         }
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaRendererModalityModifierProvider' instead", ReplaceWith("KaRendererModalityModifierProvider"))
-public typealias KtRendererModalityModifierProvider = KaRendererModalityModifierProvider

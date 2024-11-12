@@ -95,7 +95,3 @@ public object KaDeclarationRendererForSource {
         typeRenderer = KaTypeRendererForSource.WITH_SHORT_NAMES
     }
 }
-
-@KaExperimentalApi
-@Deprecated("Use 'KaDeclarationRendererForSource' instead", ReplaceWith("KaDeclarationRendererForSource"))
-public typealias KtDeclarationRendererForSource = KaDeclarationRendererForSource
