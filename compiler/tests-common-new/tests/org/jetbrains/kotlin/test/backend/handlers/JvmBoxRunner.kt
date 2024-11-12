@@ -311,7 +311,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 }
 
-internal fun generatedTestClassLoader(
+fun generatedTestClassLoader(
     testServices: TestServices,
     module: TestModule,
     classFileFactory: ClassFileFactory,
@@ -337,7 +337,7 @@ internal fun generatedTestClassLoader(
     }
 }
 
-private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
+fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
     val visited = mutableSetOf<TestModule>()
     val result = mutableListOf<File>()
 

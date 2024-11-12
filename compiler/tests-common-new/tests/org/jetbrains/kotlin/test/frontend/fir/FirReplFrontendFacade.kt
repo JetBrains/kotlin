@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -118,7 +116,6 @@ open class FirReplFrontendFacade(
             extensionRegistrars,
             predefinedJavaComponents
         )
-        librarySession.register(FirReplHistoryProvider::class, FirReplHistoryProviderImpl())
         ReplCompilationEnvironment(
             targetPlatform,
             extensionRegistrars,
@@ -416,17 +413,6 @@ open class FirReplFrontendFacade(
             }
             else -> error("Unsupported")
         }
-    }
-
-    private class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
-        private val history = LinkedHashSet<FirReplSnippetSymbol>()
-
-        override fun getSnippets(): Iterable<FirReplSnippetSymbol> = history.asIterable()
-
-        override fun putSnippet(symbol: FirReplSnippetSymbol) {
-            history.add(symbol)
-        }
-
     }
 
     companion object {

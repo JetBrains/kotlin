@@ -465,12 +465,12 @@ class ReplTest : TestCase() {
                 compiledSnippetChecker
             ).forEachIndexed { index, res ->
                 val expectedRes = expectedIter.next()
+                val resReports = res.reports.filter {
+                    it.code != ScriptDiagnostic.incompleteCode && it.severity != ScriptDiagnostic.Severity.DEBUG
+                }
                 when {
                     res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
 
-                        val resReports = res.reports.filter {
-                            it.code != ScriptDiagnostic.incompleteCode
-                        }
                         Assert.assertTrue(
                             "#$index: Expected $expectedRes, got $res. Messages are different",
                             resReports.map { it.message } == expectedRes.reports.map { it.message }
@@ -506,7 +506,7 @@ class ReplTest : TestCase() {
                         }
                         if (!ignoreDiagnostics) {
                             val expectedDiag = expectedRes.reports
-                            val actualDiag = res.reports
+                            val actualDiag = resReports
                             Assert.assertEquals(
                                 "Diagnostics should be same",
                                 expectedDiag.map { it.toString() },
