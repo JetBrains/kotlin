@@ -392,6 +392,10 @@ open class IrFactory(
             factory = this
         ).declarationCreated()
 
+    /**
+     * Please use [createValueParameter] overload that takes [IrParameterKind] parameter.
+     */
+    @DeprecatedCompilerApi
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,
