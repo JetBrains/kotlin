@@ -1769,6 +1769,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("contextParameterSyntaxWithoutLanguageFeature.kt")
+        public void testContextParameterSyntaxWithoutLanguageFeature() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithoutLanguageFeature.kt");
+        }
+
+        @Test
         @TestMetadata("nameClashes.kt")
         public void testNameClashes() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/nameClashes.kt");

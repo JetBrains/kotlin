@@ -101,6 +101,17 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     }
                 }
             }
+        } else {
+            for (parameter in contextParameters) {
+                if (!parameter.isLegacyContextReceiver()) {
+                    reporter.reportOn(
+                        parameter.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.ContextParameters to context.languageVersionSettings,
+                        context
+                    )
+                }
+            }
         }
     }
 
