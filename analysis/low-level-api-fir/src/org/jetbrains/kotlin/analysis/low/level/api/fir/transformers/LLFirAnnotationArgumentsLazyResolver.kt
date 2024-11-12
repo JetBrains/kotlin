@@ -204,24 +204,24 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
     }
 
 internal object AnnotationArgumentsStateKeepers {
-    private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { _, session ->
-        add(ANNOTATION_BASE, session)
-        add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
-        add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
+    private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->
+        builder.add(ANNOTATION_BASE, session)
+        builder.add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
+        builder.add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
     }
 
-    private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { annotation, session ->
+    private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, annotation, session ->
         if (annotation is FirAnnotationCall) {
-            entity(annotation, ANNOTATION_CALL, session)
+            builder.entity(annotation, ANNOTATION_CALL, session)
         }
     }
 
-    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { annotationCall, session ->
-        add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { builder, annotationCall, session ->
+        builder.add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
 
         val argumentList = annotationCall.argumentList
         if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
-            add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+            builder.add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
                 val newArguments = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotationCall, session).arguments
                 buildArgumentList {
                     source = oldList.source
@@ -238,10 +238,10 @@ internal object AnnotationArgumentsStateKeepers {
         }
     }
 
-    val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { target, session ->
+    val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { builder, target, session ->
         val visitor = object : NonLocalAnnotationVisitor<Unit>() {
             override fun processAnnotation(annotation: FirAnnotation, data: Unit) {
-                entity(annotation, ANNOTATION, session)
+                builder.entity(annotation, ANNOTATION, session)
             }
         }
 

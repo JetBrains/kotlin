@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -181,19 +178,19 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
 }
 
 private object TypeStateKeepers {
-    val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { function, context ->
-        add(CALLABLE_DECLARATION, context)
-        entityList(function.valueParameters, CALLABLE_DECLARATION, context)
+    val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { builder, function, context ->
+        builder.add(CALLABLE_DECLARATION, context)
+        builder.entityList(function.valueParameters, CALLABLE_DECLARATION, context)
     }
 
-    val PROPERTY: StateKeeper<FirProperty, Unit> = stateKeeper { property, context ->
-        add(CALLABLE_DECLARATION, context)
-        entity(property.getter, FUNCTION, context)
-        entity(property.setter, FUNCTION, context)
-        entity(property.backingField, CALLABLE_DECLARATION, context)
+    val PROPERTY: StateKeeper<FirProperty, Unit> = stateKeeper { builder, property, context ->
+        builder.add(CALLABLE_DECLARATION, context)
+        builder.entity(property.getter, FUNCTION, context)
+        builder.entity(property.setter, FUNCTION, context)
+        builder.entity(property.backingField, CALLABLE_DECLARATION, context)
     }
 
-    private val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { _, _ ->
-        add(FirCallableDeclaration::returnTypeRef, FirCallableDeclaration::replaceReturnTypeRef)
+    private val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { builder, _, _ ->
+        builder.add(FirCallableDeclaration::returnTypeRef, FirCallableDeclaration::replaceReturnTypeRef)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,8 +22,8 @@ class StateKeeperTest {
             }
         }
 
-        val keeper: StateKeeper<Foo, Unit> = stateKeeper { _, _ ->
-            add(Foo::getValue, Foo::setValue)
+        val keeper: StateKeeper<Foo, Unit> = stateKeeper { builder, _, _ ->
+            builder.add(Foo::getValue, Foo::setValue)
         }
 
         val foo = Foo("Foo")
@@ -41,8 +41,8 @@ class StateKeeperTest {
     fun testProperty() {
         class Foo(var value: String)
 
-        val keeper: StateKeeper<Foo, Unit> = stateKeeper { _, _ ->
-            add(Foo::value::get, Foo::value::set)
+        val keeper: StateKeeper<Foo, Unit> = stateKeeper { builder, _, _ ->
+            builder.add(Foo::value::get, Foo::value::set)
         }
 
         val foo = Foo("Foo")
@@ -60,8 +60,8 @@ class StateKeeperTest {
     fun testArranger() {
         class Foo(var value: String)
 
-        val keeper: StateKeeper<Foo, Unit> = stateKeeper { _, _ ->
-            add(Foo::value::get, Foo::value::set) { "Baz" }
+        val keeper: StateKeeper<Foo, Unit> = stateKeeper { builder, _, _ ->
+            builder.add(Foo::value::get, Foo::value::set) { "Baz" }
         }
 
         val foo = Foo("Foo")
@@ -80,13 +80,13 @@ class StateKeeperTest {
         open class Foo(var one: String)
         class Bar(one: String, var two: Int) : Foo(one)
 
-        val fooKeeper: StateKeeper<Foo, Unit> = stateKeeper { _, _ ->
-            add(Foo::one::get, Foo::one::set)
+        val fooKeeper: StateKeeper<Foo, Unit> = stateKeeper { builder, _, _ ->
+            builder.add(Foo::one::get, Foo::one::set)
         }
 
-        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { _, context ->
-            add(fooKeeper, context)
-            add(Bar::two::get, Bar::two::set)
+        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { builder, _, context ->
+            builder.add(fooKeeper, context)
+            builder.add(Bar::two::get, Bar::two::set)
         }
 
         val bar = Bar("Foo", 1)
@@ -109,10 +109,10 @@ class StateKeeperTest {
         data class Foo(var value: Int)
         class Bar(var one: String, var foo: Foo)
 
-        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { bar, context ->
-            add(Bar::one::get, Bar::one::set)
-            entity(bar.foo, context) { _, _ ->
-                add(Foo::value::get, Foo::value::set)
+        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { builder, bar, context ->
+            builder.add(Bar::one::get, Bar::one::set)
+            builder.entity(bar.foo, context) { _, _ ->
+                builder.add(Foo::value::get, Foo::value::set)
             }
         }
 
@@ -140,13 +140,13 @@ class StateKeeperTest {
         data class Foo(var value: Int)
         class Bar(var one: String, var foo: Foo)
 
-        val fooKeeper: StateKeeper<Foo, Unit> = stateKeeper { _, _ ->
-            add(Foo::value::get, Foo::value::set)
+        val fooKeeper: StateKeeper<Foo, Unit> = stateKeeper { builder, _, _ ->
+            builder.add(Foo::value::get, Foo::value::set)
         }
 
-        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { bar, context ->
-            add(Bar::one::get, Bar::one::set)
-            entity(bar.foo, fooKeeper, context)
+        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { builder, bar, context ->
+            builder.add(Bar::one::get, Bar::one::set)
+            builder.entity(bar.foo, fooKeeper, context)
         }
 
         val foo = Foo(1)
@@ -173,10 +173,10 @@ class StateKeeperTest {
         data class Foo(var value: Int)
         class Bar(var one: String, var foos: List<Foo>)
 
-        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { bar, context ->
-            add(Bar::one::get, Bar::one::set)
-            entityList(bar.foos, context) { _, _ ->
-                add(Foo::value::get, Foo::value::set) { it + 1 }
+        val barKeeper: StateKeeper<Bar, Unit> = stateKeeper { builder, bar, context ->
+            builder.add(Bar::one::get, Bar::one::set)
+            builder.entityList(bar.foos, context) { _, _ ->
+                builder.add(Foo::value::get, Foo::value::set) { it + 1 }
             }
         }
 
@@ -209,10 +209,10 @@ class StateKeeperTest {
     fun testPostProcess() {
         class Foo(var value: String)
 
-        val keeper: StateKeeper<Foo, Unit> = stateKeeper { foo, _ ->
-            add(Foo::value::get, Foo::value::set) { "Baz" }
+        val keeper: StateKeeper<Foo, Unit> = stateKeeper { builder, foo, _ ->
+            builder.add(Foo::value::get, Foo::value::set) { "Baz" }
 
-            postProcess {
+            builder.postProcess {
                 foo.value = "Boo"
             }
         }

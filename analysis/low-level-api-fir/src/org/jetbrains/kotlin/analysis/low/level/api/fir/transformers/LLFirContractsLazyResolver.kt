@@ -92,38 +92,38 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
 }
 
 private object ContractStateKeepers {
-    private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { _, _ ->
-        add(FirContractDescriptionOwner::contractDescription, FirContractDescriptionOwner::replaceContractDescription)
+    private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { builder, _, _ ->
+        builder.add(FirContractDescriptionOwner::contractDescription, FirContractDescriptionOwner::replaceContractDescription)
     }
 
-    private val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { declaration, _ ->
+    private val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { builder, declaration, _ ->
         if (declaration is FirContractDescriptionOwner && declaration.contractDescription is FirRawContractDescription) {
             // No need to change the body, contract is declared separately
             return@stateKeeper
         }
 
         if (!isCallableWithSpecialBody(declaration)) {
-            add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
+            builder.add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
         }
     }
 
-    val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction, FirDesignation> = stateKeeper { _, designation ->
-        add(CONTRACT_DESCRIPTION_OWNER, designation)
-        add(BODY_OWNER, designation)
+    val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction, FirDesignation> = stateKeeper { builder, _, designation ->
+        builder.add(CONTRACT_DESCRIPTION_OWNER, designation)
+        builder.add(BODY_OWNER, designation)
     }
 
-    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignation> = stateKeeper { _, designation ->
-        add(CONTRACT_DESCRIPTION_OWNER, designation)
-        add(BODY_OWNER, designation)
+    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignation> = stateKeeper { builder, _, designation ->
+        builder.add(CONTRACT_DESCRIPTION_OWNER, designation)
+        builder.add(BODY_OWNER, designation)
     }
 
-    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignation> = stateKeeper { _, designation ->
-        add(CONTRACT_DESCRIPTION_OWNER, designation)
-        add(BODY_OWNER, designation)
+    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignation> = stateKeeper { builder, _, designation ->
+        builder.add(CONTRACT_DESCRIPTION_OWNER, designation)
+        builder.add(BODY_OWNER, designation)
     }
 
-    val PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { property, designation ->
-        entity(property.getter, PROPERTY_ACCESSOR, designation)
-        entity(property.setter, PROPERTY_ACCESSOR, designation)
+    val PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { builder, property, designation ->
+        builder.entity(property.getter, PROPERTY_ACCESSOR, designation)
+        builder.entity(property.setter, PROPERTY_ACCESSOR, designation)
     }
 }
