@@ -129,7 +129,7 @@ class LanguageVersionSettingsBuilder {
             }
         }
 
-        if (targetBackend?.isIR == true) {
+        if (targetBackend == TargetBackend.JS_IR || targetBackend == TargetBackend.JS_IR_ES6) {
             specificFeatures[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
         }
 
