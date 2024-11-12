@@ -1121,14 +1121,6 @@ public class JsAstMapper {
         return toVars;
     }
 
-    private JsSingleLineComment mapSingleLineComment(Node node) {
-       return new JsSingleLineComment(node.getString());
-    }
-
-    private JsMultiLineComment mapMultiLineComment(Node node) {
-        return new JsMultiLineComment(node.getString());
-    }
-
     private JsNode mapWithStatement(Node withNode) throws JsParserException {
         // The "with" statement is unsupported because it introduces ambiguity
         // related to whether or not a name is obfuscatable that we cannot resolve
