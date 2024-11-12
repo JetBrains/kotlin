@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -231,7 +230,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirExpression) {
-                    consumer.reportExpressionTypeDiagnostic(element, session)
+                    consumer.reportExpressionTypeDiagnostic(element)
                 }
                 if (shouldRenderDynamic && element is FirResolvable) {
                     reportDynamic(element)
@@ -326,16 +325,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, codeMetaInfos)
     }
 
-    private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression, session: FirSession) {
+    private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
         report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
-            val type = element.resolvedType.fullyExpandedType(session)
-            val originalType = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.resolvedType
-
-            if (originalType != null) {
-                "${originalType.renderForDebugInfo()} & ${type.renderForDebugInfo()}"
-            } else {
-                type.renderForDebugInfo()
-            }
+            element.resolvedType.renderForDebugInfo()
         }
     }
 

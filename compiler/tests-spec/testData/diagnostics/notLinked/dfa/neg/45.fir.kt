@@ -16,8 +16,8 @@
  */
 fun case_1(x: Number?): Long? {
     if (x is Long?) return x
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>
-    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.toLong()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
+    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>.toLong()
 }
 
 /*

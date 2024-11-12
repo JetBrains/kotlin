@@ -17,8 +17,8 @@ fun case_1(a: Any?) {
         if (true) break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }
 
 /*
@@ -31,8 +31,8 @@ fun case_2(a: Any?) {
         if (true) break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 3
@@ -42,8 +42,8 @@ fun case_3(a: Any?) {
         if (true) break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -53,8 +53,8 @@ fun case_4(a: Any?) {
         break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 5
@@ -64,8 +64,8 @@ fun case_5(a: Any?) {
         if (true) break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 6
@@ -75,6 +75,6 @@ fun case_6(a: Any?) {
         break
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>.equals(10)
 }

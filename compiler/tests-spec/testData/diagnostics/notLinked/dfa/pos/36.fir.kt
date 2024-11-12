@@ -21,17 +21,17 @@ fun case_1() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.equals(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>c<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>c<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>c<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>c<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any) {
     if (x is String) {
         val y = x
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>y<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y<!>.length
     }
 }
 
@@ -41,11 +41,11 @@ fun case_3(x: Any?) {
         var y = x
         if (y == null) throw Exception()
         var z = y
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>.toByte()
     }
 }
 
@@ -55,11 +55,11 @@ fun case_4(x: Any?) {
         var y = x
         while (true && y != null) {
             var z = y
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>.toByte()
         }
     }
 }
@@ -70,10 +70,10 @@ fun case_5(x: Any?) {
     while (false || y != null) {
         if (y is Number) {
             val z = select(y)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>.toByte()
         }
     }
@@ -86,9 +86,9 @@ fun case_5(x: Any?) {
 fun case_6(x: Any?) {
     var y = x ?: null!!
     while (false || y is Number) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number")!>y<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
     }
 }
 
@@ -99,7 +99,7 @@ fun case_6(x: Any?) {
 fun case_7(x: Any?, z: Any) {
     var y = x ?: null!!
     while (false || y === z) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
     }
@@ -112,7 +112,7 @@ fun case_7(x: Any?, z: Any) {
 fun case_8(x: Any?, z: Any) {
     var y = x ?: null!!
     y == z || return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
@@ -137,7 +137,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
         null -> throw Exception()
     }
     z === y || if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!! else throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
@@ -147,7 +147,7 @@ fun case_11(x: Any?, z: Any, b: Boolean?) {
     while (true) {
         var y = x ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break <!USELESS_ELVIS!>?: break::class<!>
         z !== y && if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!!else throw Exception()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
     }
@@ -170,10 +170,10 @@ fun case_13(x: Any?) {
         var y = select(select(select(select(select(select(x))))))
         if (y == null) throw Exception()
         var z = select(select(select(select(y), select(y)), select(select(y), select(y))), select(select(select(y), select(y)), select(select(y), select(y))))
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>.toByte()
     }
 }
@@ -182,7 +182,7 @@ fun case_13(x: Any?) {
 fun case_14(x: Any?) {
     if (x is Number?) {
         var y = removeNullable(x)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y<!>.toByte()
     }
@@ -194,10 +194,10 @@ fun case_15(x: Any?) {
         var y = removeNullable(removeNullable(removeNullable(removeNullable(x), removeNullable(x)), removeNullable(removeNullable(x), removeNullable(x))), removeNullable(removeNullable(removeNullable(x), removeNullable(x)), removeNullable(removeNullable(x), removeNullable(x))))
         if (y !is Int) throw Exception()
         var z = select(select(select(select(y), select(y)), select(select(y), select(y))), select(select(select(y), select(y)), select(select(y), select(y))))
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Int")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Int")!>y<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>z<!>.inv()
     }
 }

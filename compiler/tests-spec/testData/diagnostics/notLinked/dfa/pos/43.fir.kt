@@ -19,9 +19,9 @@ fun case_1(a: Interface1?, b: Interface2?) {
     a as Interface2?
     val c = select(a, b)
     if (c != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
     }
 }
 
@@ -98,9 +98,9 @@ fun case_6(a: Interface1?, b: Interface2?) {
 
     val c = select(a, b)
     c ?: return
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest1()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest2()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
 }
 
 /*
@@ -115,9 +115,9 @@ fun case_7(a: Interface1?, b: Interface2?) {
         val bar = l2@ fun() {
             val c = select(a, b)
             c ?: return@l2
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest1()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & Interface2 & Interface1")!>c<!>.itest2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
         }
         return bar
     }

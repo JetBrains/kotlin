@@ -17,8 +17,8 @@ fun case_1(a: Any?) {
         if (true) continue
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 // TESTCASE NUMBER: 2

@@ -1,12 +1,10 @@
-// FIR_IDENTICAL
-
 fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         val otvValue = otvOwner.provide()
         if (otvValue is IntersectionArgument) {
             // expected: IntersectionArgument & ScopeOwner
-            <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner & IntersectionArgument & ScopeOwner")!>otvValue<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("IntersectionArgument & ScopeOwner")!>otvValue<!>
             // should fix OTv := ScopeOwner for scope navigation
             otvValue.function()
         }

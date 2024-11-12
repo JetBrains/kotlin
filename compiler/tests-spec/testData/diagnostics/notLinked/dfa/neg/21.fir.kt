@@ -21,7 +21,7 @@ class Case1 {
         val y = this
         if (y.x != null) {
             x = null
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
             this.x
             y.x
             y.x<!UNSAFE_CALL!>.<!>inv()

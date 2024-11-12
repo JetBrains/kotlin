@@ -23,8 +23,8 @@ fun case_1() {
         } catch (e: Exception) {
             x = null
         }
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }
 }
 
@@ -39,8 +39,8 @@ fun case_2() {
         try {
             x = null
         } finally { }
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }
 }
 

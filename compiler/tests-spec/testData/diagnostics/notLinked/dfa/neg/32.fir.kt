@@ -21,7 +21,7 @@ fun stringArg(number: String) {}
 fun case_1(x: Int?) {
     if (x == null) {
         stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 
@@ -33,7 +33,7 @@ fun case_1(x: Int?) {
 fun case_2(x: Int?, y: Nothing?) {
     if (x == y) {
         stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 
@@ -45,8 +45,8 @@ fun case_2(x: Int?, y: Nothing?) {
 fun case_3(x: Int?) {
     if (x == null) {
         x <!CAST_NEVER_SUCCEEDS!>as<!> Int
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 
@@ -58,8 +58,8 @@ fun case_3(x: Int?) {
 fun case_4(x: Int?) {
     if (x == null) {
         x!!
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 
@@ -72,7 +72,7 @@ fun case_5(x: Int?) {
     if (x == null) {
         var y = x
         y!!
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>y<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>y<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!>
     }
 }

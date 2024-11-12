@@ -1,3 +1,6 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
+// influences only DEBUG_INFO_EXPRESSION_TYPE, so not important
+
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 

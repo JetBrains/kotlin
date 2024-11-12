@@ -18,8 +18,8 @@ fun case_1(): Int? {
     val x: Int? = null
     return when (x != null) {
         true -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
         }
         else -> null
     }
@@ -33,7 +33,7 @@ fun case_2(): Int? {
     val x: Int? = null
     return when (x != null) {
         false -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
         }
         else -> null
     }
@@ -47,7 +47,7 @@ fun case_3(): Int? {
     val x: Int? = null
     return when (x == null) {
         false -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
         }
         else -> null
     }
@@ -61,7 +61,7 @@ fun case_4(): Int? {
     val x: Int? = null
     return when (x == null) {
         true -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
         }
         else -> null
     }

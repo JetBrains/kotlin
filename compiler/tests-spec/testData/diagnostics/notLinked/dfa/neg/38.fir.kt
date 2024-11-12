@@ -23,8 +23,8 @@ fun case_1() {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -40,8 +40,8 @@ fun case_2() {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -57,8 +57,8 @@ fun case_3(y: Nothing?) {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -76,8 +76,8 @@ fun case_4(y: Nothing?) {
             }
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 // TESTCASE NUMBER: 5
@@ -153,8 +153,8 @@ fun case_9() {
         inner@ do {
             x = null
         } while (<!SENSELESS_COMPARISON!>x != null<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -166,8 +166,8 @@ fun case_10() {
         inner@ do {
             x = null
         } while (true)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -180,7 +180,7 @@ fun case_11() {
             x = null
             break
         } while (<!SENSELESS_COMPARISON!>x == null<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }

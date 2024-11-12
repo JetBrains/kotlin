@@ -42,7 +42,7 @@ fun case_2() {
 fun case_3() {
     var x: Any? = null
     while (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         x = x.equals(10)
     }
 }
@@ -51,7 +51,7 @@ fun case_3() {
 fun case_4() {
     var x: Any? = null
     while (x !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         x = x.equals(10)
     }
 }

@@ -14,7 +14,7 @@ class B : PrivateInterface
 
 fun testSmartcast(x: Any) {
     if (x is A || x is B) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & foo.PrivateInterface")!>x<!>.foo()
+        <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>x<!>.foo()
     }
 }
 

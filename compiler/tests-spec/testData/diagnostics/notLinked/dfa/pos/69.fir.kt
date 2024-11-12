@@ -15,31 +15,31 @@
 // TESTCASE NUMBER: 1
 fun test1(x: ClassLevel1?) {
     if (x!! is ClassLevel2) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel2")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel2")!>x<!>.test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2")!>x<!>.test2()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
     (x as ClassLevel1?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>.test1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1")!>x<!>.test1()
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (x as ClassLevel1? is ClassLevel1) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>x<!>.test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1")!>x<!>.test1()
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Any?) {
     if ((x as Class).prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 

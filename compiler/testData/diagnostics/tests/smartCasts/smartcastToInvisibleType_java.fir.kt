@@ -43,7 +43,7 @@ import select
 
 fun testSmartcast(x: Any) {
     if (x is A || x is B) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & foo.PackagePrivateInterface")!>x<!>.foo()
+        <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!>x<!>.foo()
     }
 }
 

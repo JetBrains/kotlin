@@ -20,16 +20,16 @@ fun case_1() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         while (<!USELESS_IS_CHECK!>a is String<!>) {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -42,16 +42,16 @@ fun case_2() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         while (true) {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -64,16 +64,16 @@ fun case_3() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         do {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         } while (true)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -86,16 +86,16 @@ fun case_4() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         do {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         } while (false)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -108,16 +108,16 @@ fun case_5() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         for (i in 0..10) {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -126,16 +126,16 @@ fun case_6() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         if (<!USELESS_IS_CHECK!>a is String<!>) {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -144,15 +144,15 @@ fun case_7() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         when (true) {
             true -> b = a
             else -> {}
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -165,16 +165,16 @@ fun case_8() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         try {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         } catch (e: Exception) {  }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -183,18 +183,18 @@ fun case_9() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         try {
 
         } catch (e: Exception) {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -203,18 +203,18 @@ fun case_10() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         try {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         } finally {
 
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -223,18 +223,18 @@ fun case_11() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         try {
 
         } finally {
             b = a
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -247,8 +247,8 @@ fun case_12() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         while (if (true) { b = a; true } else true) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.<!UNRESOLVED_REFERENCE!>length<!>
@@ -264,12 +264,12 @@ fun case_13() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         a.plus(if (true) { b = a; true } else true)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -282,8 +282,8 @@ fun case_14() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         while (true) {
             if (true) { b = a; } else 3
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
@@ -297,12 +297,12 @@ fun case_15() {
     var a: Any = 4
     if (a is String) {
         var b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         while (true) {
             if (true) { b = a; } else { b = a; }
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
     }
 }

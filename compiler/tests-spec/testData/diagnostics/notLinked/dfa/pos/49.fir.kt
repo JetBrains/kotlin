@@ -17,8 +17,8 @@
  */
 fun case_1(x: Any?) {
     if (x is Int == @RetentionSourceAndTargetExpression true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -29,8 +29,8 @@ fun case_1(x: Any?) {
  */
 fun case_2(x: Int?) {
     if (x != @RetentionSourceAndTargetExpression null == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -41,8 +41,8 @@ fun case_2(x: Int?) {
  */
 fun case_3(x: Int?, y: Int) {
     if (x == y == @RetentionSourceAndTargetExpression true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -53,7 +53,7 @@ fun case_3(x: Int?, y: Int) {
  */
 fun case_4(x: Int?, y: Int) {
     if (@RetentionSourceAndTargetExpression !!(x == y)) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }

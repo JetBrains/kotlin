@@ -47,8 +47,8 @@ fun case_4(x: Any) {
 fun case_5(x: Any?) {
     if (!(x !is Class.NestedClass?) || x is Class.NestedClass? || x !is Class.NestedClass?) {
         if (!!(x !is Class.NestedClass?)) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_4<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_4<!>
         }
     }
 }
@@ -81,8 +81,8 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
         if (!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>get<!>(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>get<!>(0)
         }
     }
 }
@@ -102,9 +102,9 @@ fun case_10(x: Any?) {
 fun case_11(x: Any?) {
     if (x is SealedMixedChildObject1?) else {
         if (x is SealedMixedChildObject1?) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>prop_1<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>prop_2<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>prop_1<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>prop_2<!>
         }
     }
 }

@@ -20,7 +20,7 @@ fun case1(x: Any) {
         checkSubtype<A1>(x)
         checkSubtype<B1>(x)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & A1 & B1")!>x<!>  //   A1 & B1 & kotlin.Any
+        <!DEBUG_INFO_EXPRESSION_TYPE("A1 & B1")!>x<!>  //   A1 & B1 & kotlin.Any
     }
 }
 
@@ -35,7 +35,7 @@ fun <T> case2(x: T) {
         checkSubtype<T>(x)
 
         x //NI A2 & B2 & T & T!! OI A2 & B2 & T
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & B2 & A2 & T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("B2 & A2 & T & Any")!>x<!>
     }
 }
 
@@ -49,7 +49,7 @@ fun <T> case3a(x: T) {
         checkSubtype<A3>(x)
         checkSubtype<B3>(x)
         checkSubtype<T>(x)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A3 & B3 & T & Any")!>x<!>
     }
 }
 fun <T: Any> case3b(x: T) {
@@ -59,7 +59,7 @@ fun <T: Any> case3b(x: T) {
         checkSubtype<B3>(x)
         checkSubtype<T>(x)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A3 & B3 & T")!>x<!>
     }
 }
 fun <T: Any?> case3c(x: T) {
@@ -69,7 +69,7 @@ fun <T: Any?> case3c(x: T) {
         checkSubtype<B3>(x)
         checkSubtype<T>(x)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & A3 & B3 & T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A3 & B3 & T & Any")!>x<!>
     }
 }
 
@@ -81,7 +81,7 @@ interface A3
 fun case4(x: C?) {
     if (x is B4 && <!USELESS_IS_CHECK!>x is A4<!>) {
         x
-        <!DEBUG_INFO_EXPRESSION_TYPE("C? & C")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("C")!>x<!>
         x.foo()
     }
 }
@@ -98,7 +98,7 @@ class C : A4, B4 {
 fun <T : I5> case5(x: T) {
     if (x is B5 && x is A5) {
         x
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & B5 & A5 & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("B5 & A5 & T")!>x<!>
     }
 }
 
