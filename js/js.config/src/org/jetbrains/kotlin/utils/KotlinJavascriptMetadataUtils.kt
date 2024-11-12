@@ -68,16 +68,6 @@ object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
-
-    @JvmStatic
-    fun hasMetadata(text: String): Boolean =
-            KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
-
-    fun formatMetadataAsString(moduleName: String, content: ByteArray, metadataVersion: JsMetadataVersion): String =
-        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${metadataVersion.toInteger()}, \"$moduleName\", " +
-        "\"${Base64.getEncoder().encodeToString(content)}\");\n"
-
     @JvmStatic
     fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
         assert(file.exists()) { "Library $file not found" }

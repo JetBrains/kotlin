@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.Serializable
@@ -132,9 +131,6 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
-
-    @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
 
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray)

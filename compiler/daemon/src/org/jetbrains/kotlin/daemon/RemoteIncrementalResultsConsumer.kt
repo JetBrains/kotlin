@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
-import org.jetbrains.kotlin.incremental.js.FunctionWithSourceInfo
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import java.io.File
 
 class RemoteIncrementalResultsConsumer(
     @Suppress("DEPRECATION") val facade: org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade,
-    eventManager: EventManager,
     val rpcProfiler: Profiler
 ) : IncrementalResultsConsumer {
     override fun processIrFile(
@@ -32,10 +29,6 @@ class RemoteIncrementalResultsConsumer(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    init {
-        eventManager.onCompilationFinished(this::flush)
-    }
-
     override fun processHeader(headerMetadata: ByteArray) {
         rpcProfiler.withMeasure(this) {
             facade.incrementalResultsConsumer_processHeader(headerMetadata)
@@ -48,27 +41,9 @@ class RemoteIncrementalResultsConsumer(
         }
     }
 
-    private class JsInlineFunction(val sourceFilePath: String, val fqName: String, val inlineFunction: FunctionWithSourceInfo)
-
-    private val deferInlineFuncs = mutableListOf<JsInlineFunction>()
-
-    override fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any, line: Int, column: Int) {
-        deferInlineFuncs.add(JsInlineFunction(sourceFile.path, fqName, FunctionWithSourceInfo(inlineFunction, line, column)))
-    }
-
-    override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) = error("Should not be called in Daemon Server")
-
     override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
         rpcProfiler.withMeasure(this) {
             facade.incrementalResultsConsumer_processPackageMetadata(packageName, metadata)
-        }
-    }
-
-    fun flush() {
-        rpcProfiler.withMeasure(this) {
-            facade.incrementalResultsConsumer_processInlineFunctions(deferInlineFuncs.map {
-                JsInlineFunctionHash(it.sourceFilePath, it.fqName, it.inlineFunction.md5)
-            })
         }
     }
 }

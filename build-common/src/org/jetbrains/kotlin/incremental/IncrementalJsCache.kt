@@ -61,7 +61,6 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
-    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, icContext))
     private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile, icContext))
     private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, icContext))
 
@@ -128,10 +127,6 @@ open class IncrementalJsCache(
             translationResults.put(srcFile, binaryMetadata, binaryAst, inlineData)
         }
 
-        for ((srcFile, inlineDeclarations) in incrementalResults.inlineFunctions) {
-            inlineFunctions.process(srcFile, inlineDeclarations, changesCollector)
-        }
-
         for ((packageName, metadata) in incrementalResults.packageMetadata) {
             packageMetadata[packageName] = metadata
         }
@@ -151,7 +146,6 @@ open class IncrementalJsCache(
         dirtySources.forEach {
             translationResults.remove(it, changesCollector)
             irTranslationResults.remove(it)
-            inlineFunctions.remove(it)
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
@@ -386,38 +380,6 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
     }
 
     return classes
-}
-
-private class InlineFunctionsMap(
-    storageFile: File,
-    icContext: IncrementalCompilationContext,
-) : AbstractBasicMap<File, Map<String, Long>>(
-    storageFile,
-    icContext.fileDescriptorForSourceFiles,
-    StringToLongMapExternalizer,
-    icContext
-) {
-
-    @Synchronized
-    fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
-        val oldMap = this[srcFile] ?: emptyMap()
-
-        if (newMap.isNotEmpty()) {
-            this[srcFile] = newMap
-        } else {
-            remove(srcFile)
-        }
-
-        for (fn in oldMap.keys + newMap.keys) {
-            val fqNameSegments = fn.removePrefix("<get>").removePrefix("<set>").split(".")
-            val fqName = FqName.fromSegments(fqNameSegments)
-            changesCollector.collectMemberIfValueWasChanged(fqName.parent(), fqName.shortName().asString(), oldMap[fn], newMap[fn])
-        }
-    }
-
-    @TestOnly
-    override fun dumpValue(value: Map<String, Long>): String =
-        value.dumpMap { java.lang.Long.toHexString(it) }
 }
 
 private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
