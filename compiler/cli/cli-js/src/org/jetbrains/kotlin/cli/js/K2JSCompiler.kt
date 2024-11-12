@@ -328,15 +328,18 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val icCaches = prepareIcCaches(
-            arguments = arguments,
-            messageCollector = messageCollector,
-            outputDir = outputDir,
-            libraries = libraries,
-            friendLibraries = friendLibraries,
-            configurationJs = configurationJs,
-            mainCallArguments = mainCallArguments,
-        )
+        val icCaches = arguments.cacheDirectory?.let { cacheDirectory ->
+            prepareIcCaches(
+                arguments = arguments,
+                cacheDirectory = cacheDirectory,
+                messageCollector = messageCollector,
+                outputDir = outputDir,
+                libraries = libraries,
+                friendLibraries = friendLibraries,
+                configurationJs = configurationJs,
+                mainCallArguments = mainCallArguments,
+            ) ?: return COMPILATION_ERROR
+        }
 
         // Run analysis if main module is sources
         var sourceModule: ModulesStructure? = null
@@ -763,6 +766,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     private fun prepareIcCaches(
         arguments: K2JSCompilerArguments,
+        cacheDirectory: String,
         messageCollector: MessageCollector,
         outputDir: File,
         libraries: List<String>,
@@ -770,82 +774,88 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         configurationJs: CompilerConfiguration,
         mainCallArguments: List<String>?,
     ): IcCachesArtifacts? {
-        val cacheDirectory = arguments.cacheDirectory
 
-        if (cacheDirectory != null) {
-            val cacheGuard = IncrementalCacheGuard(cacheDirectory).also {
-                if (it.acquire() == IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED) {
-                    messageCollector.report(INFO, "Cache guard file detected, cache directory '$cacheDirectory' cleared")
-                }
+        val icCacheReadOnly = arguments.wasm && arguments.icCacheReadonly
+        val cacheGuard = IncrementalCacheGuard(cacheDirectory, icCacheReadOnly)
+        when (cacheGuard.acquire()) {
+            IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
+                messageCollector.report(INFO, "Cache guard file detected, cache directory '$cacheDirectory' cleared")
             }
-
-            messageCollector.report(INFO, "")
-            messageCollector.report(INFO, "Building cache:")
-            messageCollector.report(INFO, "to: $outputDir")
-            messageCollector.report(INFO, "cache directory: $cacheDirectory")
-            messageCollector.report(INFO, libraries.toString())
-
-            val start = System.currentTimeMillis()
-
-            val icContext = if (arguments.wasm) {
-                WasmICContext(
-                    allowIncompleteImplementations = false,
-                    skipLocalNames = !arguments.wasmDebug,
-                    safeFragmentTags = arguments.preserveIcOrder
+            IncrementalCacheGuard.AcquireStatus.INVALID_CACHE -> {
+                messageCollector.report(
+                    ERROR,
+                    "Cache guard file detected in readonly mode, cache directory '$cacheDirectory' should be cleared"
                 )
-            } else {
-                JsICContext(
-                    mainCallArguments,
-                    arguments.granularity,
-                    PhaseConfig(),
-                )
+                return null
             }
-
-            val cacheUpdater = CacheUpdater(
-                mainModule = arguments.includes!!,
-                allModules = libraries,
-                mainModuleFriends = friendLibraries,
-                cacheDir = cacheDirectory,
-                compilerConfiguration = configurationJs,
-                icContext = icContext,
-                checkForClassStructuralChanges = arguments.wasm,
-                commitIncrementalCache = !arguments.wasm || !arguments.icCacheReadonly
-            )
-
-            val artifacts = cacheUpdater.actualizeCaches()
-            cacheGuard.release()
-
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-            for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
-                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+            IncrementalCacheGuard.AcquireStatus.OK -> {
             }
-
-            var libIndex = 0
-            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
-                val singleState = srcFiles.values.firstOrNull()?.singleOrNull()?.let { singleState ->
-                    singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
-                }
-
-                val (msg, showFiles) = when {
-                    singleState == DirtyFileState.NON_MODIFIED_IR -> continue
-                    singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
-                    singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()
-                    srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
-                    else -> "fully rebuilt" to srcFiles
-                }
-                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
-                var fileIndex = 0
-                for ((srcFile, stat) in showFiles) {
-                    val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
-                    val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
-                    // Use index, because MessageCollector ignores already reported messages
-                    messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
-                }
-            }
-
-            return IcCachesArtifacts(artifacts, cacheGuard)
         }
-        return null
+
+        messageCollector.report(INFO, "")
+        messageCollector.report(INFO, "Building cache:")
+        messageCollector.report(INFO, "to: $outputDir")
+        messageCollector.report(INFO, "cache directory: $cacheDirectory")
+        messageCollector.report(INFO, libraries.toString())
+
+        val start = System.currentTimeMillis()
+
+        val icContext = if (arguments.wasm) {
+            WasmICContext(
+                allowIncompleteImplementations = false,
+                skipLocalNames = !arguments.wasmDebug,
+                safeFragmentTags = arguments.preserveIcOrder
+            )
+        } else {
+            JsICContext(
+                mainCallArguments,
+                arguments.granularity,
+                PhaseConfig(),
+            )
+        }
+
+        val cacheUpdater = CacheUpdater(
+            mainModule = arguments.includes!!,
+            allModules = libraries,
+            mainModuleFriends = friendLibraries,
+            cacheDir = cacheDirectory,
+            compilerConfiguration = configurationJs,
+            icContext = icContext,
+            checkForClassStructuralChanges = arguments.wasm,
+            commitIncrementalCache = !icCacheReadOnly,
+        )
+
+        val artifacts = cacheUpdater.actualizeCaches()
+        cacheGuard.release()
+
+        messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+        for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
+            messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+        }
+
+        var libIndex = 0
+        for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
+            val singleState = srcFiles.values.firstOrNull()?.singleOrNull()?.let { singleState ->
+                singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
+            }
+
+            val (msg, showFiles) = when {
+                singleState == DirtyFileState.NON_MODIFIED_IR -> continue
+                singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
+                singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()
+                srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
+                else -> "fully rebuilt" to srcFiles
+            }
+            messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+            var fileIndex = 0
+            for ((srcFile, stat) in showFiles) {
+                val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
+                val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
+                // Use index, because MessageCollector ignores already reported messages
+                messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+            }
+        }
+        return IcCachesArtifacts(artifacts, cacheGuard)
     }
 
     private fun runStandardLibrarySpecialCompatibilityChecks(

@@ -7,27 +7,37 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import java.io.File
 
-class IncrementalCacheGuard(cacheDir: String) {
-    enum class AcquireStatus { OK, CACHE_CLEARED }
+class IncrementalCacheGuard(cacheDir: String, private val readonly: Boolean) {
+    enum class AcquireStatus { OK, CACHE_CLEARED, INVALID_CACHE }
 
     private val cacheRoot = File(cacheDir)
     private val guardFile = cacheRoot.resolve("cache.guard")
 
     fun acquire(): AcquireStatus {
-        val cacheCleared = guardFile.exists()
-        if (cacheCleared) {
-            cacheRoot.deleteRecursively()
+        if (guardFile.exists()) {
+            if (readonly) {
+                return AcquireStatus.INVALID_CACHE
+            } else {
+                cacheRoot.deleteRecursively()
+                tryAcquire()
+                return AcquireStatus.CACHE_CLEARED
+            }
+        } else {
+            tryAcquire()
+            return AcquireStatus.OK
         }
-        tryAcquire()
-        return if (cacheCleared) AcquireStatus.CACHE_CLEARED else AcquireStatus.OK
     }
 
     fun tryAcquire() {
-        cacheRoot.mkdirs()
-        guardFile.createNewFile()
+        if (!readonly) {
+            cacheRoot.mkdirs()
+            guardFile.createNewFile()
+        }
     }
 
     fun release() {
-        guardFile.delete()
+        if (!readonly) {
+            guardFile.delete()
+        }
     }
 }
