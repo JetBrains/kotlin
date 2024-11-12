@@ -33,7 +33,7 @@ object KaConstantValueFactory {
 }
 
 @KaImplementationDetail
-class KaNullConstantValueImpl(override val sourcePsi: KtElement?) : KaConstantValue.NullValue, KaConstantValue.KaNullConstantValue {
+class KaNullConstantValueImpl(override val sourcePsi: KtElement?) : KaConstantValue.NullValue {
     override val value: Nothing?
         get() = null
 
@@ -45,7 +45,7 @@ class KaNullConstantValueImpl(override val sourcePsi: KtElement?) : KaConstantVa
 class KaBooleanConstantValueImpl(
     override val value: Boolean,
     override val sourcePsi: KtElement?
-) : KaConstantValue.BooleanValue, KaConstantValue.KaBooleanConstantValue {
+) : KaConstantValue.BooleanValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -54,7 +54,7 @@ class KaBooleanConstantValueImpl(
 class KaCharConstantValueImpl(
     override val value: Char,
     override val sourcePsi: KtElement?
-) : KaConstantValue.CharValue, KaConstantValue.KaCharConstantValue {
+) : KaConstantValue.CharValue {
     override fun render(): String = "`$value`"
     override fun toString(): String = render()
 }
@@ -63,7 +63,7 @@ class KaCharConstantValueImpl(
 class KaByteConstantValueImpl(
     override val value: Byte,
     override val sourcePsi: KtElement?
-) : KaConstantValue.ByteValue, KaConstantValue.KaByteConstantValue {
+) : KaConstantValue.ByteValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -72,7 +72,7 @@ class KaByteConstantValueImpl(
 class KaUnsignedByteConstantValueImpl(
     override val value: UByte,
     override val sourcePsi: KtElement?
-) : KaConstantValue.UByteValue, KaConstantValue.KaUnsignedByteConstantValue {
+) : KaConstantValue.UByteValue {
     override fun render(): String = "${value}u"
     override fun toString(): String = render()
 }
@@ -81,7 +81,7 @@ class KaUnsignedByteConstantValueImpl(
 class KaShortConstantValueImpl(
     override val value: Short,
     override val sourcePsi: KtElement?
-) : KaConstantValue.ShortValue, KaConstantValue.KaShortConstantValue {
+) : KaConstantValue.ShortValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -90,7 +90,7 @@ class KaShortConstantValueImpl(
 class KaUnsignedShortConstantValueImpl(
     override val value: UShort,
     override val sourcePsi: KtElement?
-) : KaConstantValue.UShortValue, KaConstantValue.KaUnsignedShortConstantValue {
+) : KaConstantValue.UShortValue {
     override fun render(): String = "${value}u"
     override fun toString(): String = render()
 }
@@ -99,7 +99,7 @@ class KaUnsignedShortConstantValueImpl(
 class KaIntConstantValueImpl(
     override val value: Int,
     override val sourcePsi: KtElement?
-) : KaConstantValue.IntValue, KaConstantValue.KaIntConstantValue {
+) : KaConstantValue.IntValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -108,7 +108,7 @@ class KaIntConstantValueImpl(
 class KaUnsignedIntConstantValueImpl(
     override val value: UInt,
     override val sourcePsi: KtElement?
-) : KaConstantValue.UIntValue, KaConstantValue.KaUnsignedIntConstantValue {
+) : KaConstantValue.UIntValue {
     override fun render(): String = "${value}u"
     override fun toString(): String = render()
 }
@@ -117,7 +117,7 @@ class KaUnsignedIntConstantValueImpl(
 class KaLongConstantValueImpl(
     override val value: Long,
     override val sourcePsi: KtElement?
-) : KaConstantValue.LongValue, KaConstantValue.KaLongConstantValue {
+) : KaConstantValue.LongValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -126,7 +126,7 @@ class KaLongConstantValueImpl(
 class KaUnsignedLongConstantValueImpl(
     override val value: ULong,
     override val sourcePsi: KtElement?
-) : KaConstantValue.ULongValue, KaConstantValue.KaUnsignedLongConstantValue {
+) : KaConstantValue.ULongValue {
     override fun render(): String = "${value}uL"
     override fun toString(): String = render()
 }
@@ -135,7 +135,7 @@ class KaUnsignedLongConstantValueImpl(
 class KaStringConstantValueImpl(
     override val value: String,
     override val sourcePsi: KtElement?
-) : KaConstantValue.StringValue, KaConstantValue.KaStringConstantValue {
+) : KaConstantValue.StringValue {
     override fun render(): String = "\"${value}\""
     override fun toString(): String = render()
 }
@@ -144,7 +144,7 @@ class KaStringConstantValueImpl(
 class KaFloatConstantValueImpl(
     override val value: Float,
     override val sourcePsi: KtElement?
-) : KaConstantValue.FloatValue, KaConstantValue.KaFloatConstantValue {
+) : KaConstantValue.FloatValue {
     override fun render(): String = "${value}f"
     override fun toString(): String = render()
 }
@@ -153,7 +153,7 @@ class KaFloatConstantValueImpl(
 class KaDoubleConstantValueImpl(
     override val value: Double,
     override val sourcePsi: KtElement?
-) : KaConstantValue.DoubleValue, KaConstantValue.KaDoubleConstantValue {
+) : KaConstantValue.DoubleValue {
     override fun render(): String = value.toString()
     override fun toString(): String = render()
 }
@@ -162,7 +162,7 @@ class KaDoubleConstantValueImpl(
 class KaErrorConstantValueImpl(
     override val errorMessage: String,
     override val sourcePsi: KtElement?,
-) : KaConstantValue.ErrorValue, KaConstantValue.KaErrorConstantValue {
+) : KaConstantValue.ErrorValue {
     override val value: Nothing
         get() = error("Cannot get value for KaErrorConstantValue")
 
