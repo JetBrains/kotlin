@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSingleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
+import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -275,7 +276,8 @@ interface IdeMultiplatformImport {
              * Will only match SourceSets that will be compiled by the Native compiler
              * Note: this includes shared native SourceSets, sharing code between multiple native targets
              */
-            val isNative = SourceSetConstraint { it.isNativeSourceSet.getOrThrow() }
+            val isNative = SourceSetConstraint { it.isNativeSourceSet.lenient.getOrNull() ?: false }
+
 
             /**
              * Only matches SourceSets that share code between at least two native targets, but no non-native target

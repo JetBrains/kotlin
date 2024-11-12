@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedNativeDistributionKlibsOrNull
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
+import org.jetbrains.kotlin.gradle.utils.lenient
 
 internal object IdeCommonizedNativePlatformDependencyResolver :
     IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
-        val commonizerTarget = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return emptySet()
+        val commonizerTarget = sourceSet.commonizerTarget.lenient.getOrNull() as? SharedCommonizerTarget ?: return emptySet()
         val klibs = project.commonizedNativeDistributionKlibsOrNull(commonizerTarget) ?: return emptySet()
 
         return klibs.get()

@@ -25,6 +25,6 @@ internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver,
     }
 
     override fun dependencies(project: Project): Iterable<Any> {
-        return listOfNotNull(project.future { copyCommonizeCInteropForIdeTask() }.getOrThrow())
+        return listOfNotNull(project.future { copyCommonizeCInteropForIdeTask() }.lenient.getOrNull())
     }
 }

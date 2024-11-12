@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetCo
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
+import org.jetbrains.kotlin.gradle.utils.lenient
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -95,7 +96,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeCommonizedCinteropDependencyResolver,
-            constraint = { sourceSet -> sourceSet.commonizerTarget.getOrThrow() is SharedCommonizerTarget },
+            constraint = { sourceSet -> sourceSet.commonizerTarget.lenient.getOrNull() is SharedCommonizerTarget },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
