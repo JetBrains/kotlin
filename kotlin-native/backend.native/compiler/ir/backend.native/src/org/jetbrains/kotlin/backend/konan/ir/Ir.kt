@@ -69,8 +69,7 @@ internal class KonanSymbols(
         context: PhaseContext,
         val lookup: SymbolLookupUtils,
         irBuiltIns: IrBuiltIns,
-        symbolTable: ReferenceSymbolTable,
-) : Symbols(irBuiltIns, symbolTable) {
+) : Symbols(irBuiltIns) {
     val entryPoint = run {
         val config = context.config.configuration
         if (config.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return@run null

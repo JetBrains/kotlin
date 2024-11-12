@@ -101,7 +101,7 @@ internal fun PsiToIrContext.psiToIr(
             else
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
-    val symbols = KonanSymbols(this, SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable), generatorContext.irBuiltIns, symbolTable.lazyWrapper)
+    val symbols = KonanSymbols(this, SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable), generatorContext.irBuiltIns)
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE
@@ -267,7 +267,7 @@ internal fun PsiToIrContext.psiToIr(
     return if (isProducingLibrary) {
         PsiToIrOutput.ForKlib(mainModule, generatorContext.irBuiltIns, symbols)
     } else if (libraryToCache == null) {
-        PsiToIrOutput.ForBackend(modules, mainModule, generatorContext.irBuiltIns, symbols, irDeserializer as KonanIrLinker)
+        PsiToIrOutput.ForBackend(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer as KonanIrLinker)
     } else {
         val libraryName = libraryToCache.klib.libraryName
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
@@ -276,6 +276,7 @@ internal fun PsiToIrContext.psiToIr(
                 irModule = libraryModule,
                 irBuiltIns = generatorContext.irBuiltIns,
                 symbols = symbols,
+                symbolTable = symbolTable,
                 irLinker = irDeserializer as KonanIrLinker
         )
     }

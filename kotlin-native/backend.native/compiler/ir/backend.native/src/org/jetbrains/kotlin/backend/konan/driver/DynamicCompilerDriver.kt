@@ -236,7 +236,8 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
             psiToIrOutput.irBuiltIns,
             psiToIrOutput.irModules,
             psiToIrOutput.irLinker,
-            psiToIrOutput.symbols
+            psiToIrOutput.symbols,
+            psiToIrOutput.symbolTable,
     ).also {
         additionalDataSetter(it)
     }

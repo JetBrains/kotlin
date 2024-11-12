@@ -118,7 +118,7 @@ internal fun PhaseContext.fir2Ir(
         }
     }
 
-    val symbols = createKonanSymbols(actualizedResult.irBuiltIns, actualizedResult.pluginContext)
+    val symbols = createKonanSymbols(actualizedResult.irBuiltIns)
 
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -132,9 +132,6 @@ internal fun PhaseContext.fir2Ir(
 
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
-        pluginContext: Fir2IrPluginContext,
 ): KonanSymbols {
-    val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), pluginContext.irFactory)
-
-    return KonanSymbols(this, SymbolOverIrLookupUtils(), irBuiltIns, symbolTable.lazyWrapper)
+    return KonanSymbols(this, SymbolOverIrLookupUtils(), irBuiltIns)
 }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
@@ -49,6 +50,7 @@ internal sealed class PsiToIrOutput(
             irModule: IrModuleFragment,
             irBuiltIns: IrBuiltIns,
             symbols: KonanSymbols,
+            val symbolTable: ReferenceSymbolTable,
             val irLinker: KonanIrLinker,
     ) : PsiToIrOutput(irModule, irBuiltIns, symbols)
 
