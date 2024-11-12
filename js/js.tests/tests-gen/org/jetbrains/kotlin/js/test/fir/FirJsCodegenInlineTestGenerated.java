@@ -2320,6 +2320,22 @@ public class FirJsCodegenInlineTestGenerated extends AbstractFirJsCodegenInlineT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/functionReference")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FunctionReference {
+    @Test
+    public void testAllFilesPresentInFunctionReference() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("noInlineForLambda.kt")
+    public void testNoInlineForLambda() {
+      runTest("compiler/testData/codegen/boxInline/functionReference/noInlineForLambda.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineArgsInplace {

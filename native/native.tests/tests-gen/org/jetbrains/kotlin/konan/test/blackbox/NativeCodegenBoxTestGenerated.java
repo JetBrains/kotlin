@@ -47059,6 +47059,23 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/functionReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class FunctionReference {
+      @Test
+      public void testAllFilesPresentInFunctionReference() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("noInlineForLambda.kt")
+      public void testNoInlineForLambda() {
+        runTest("compiler/testData/codegen/boxInline/functionReference/noInlineForLambda.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
     @TestDataPath("$PROJECT_ROOT")
     @UseExtTestCaseGroupProvider()
