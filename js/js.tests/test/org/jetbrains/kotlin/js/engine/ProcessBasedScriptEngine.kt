@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -97,7 +97,7 @@ abstract class ProcessBasedScriptEngine(
             println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
         val builder = ProcessBuilder(
             executablePath,
-            "js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js",
+            "js/js.tests/test/org/jetbrains/kotlin/js/engine/repl.js",
         )
         return builder.start().also {
             process = it

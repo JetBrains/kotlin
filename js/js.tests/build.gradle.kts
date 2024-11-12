@@ -56,7 +56,6 @@ dependencies {
     testApi(project(":compiler:backend.js"))
     testApi(project(":js:js.translator"))
     testApi(project(":js:js.serializer"))
-    testApi(project(":js:js.engines"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
     testApi(projectTests(":kotlin-build-common"))
@@ -220,7 +219,7 @@ fun Test.setUpJsBoxTests(tags: String?) {
     setupNodeJs()
     dependsOn(npmInstall)
 
-    inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
+    inputs.files(rootDir.resolve("js/js.tests/test/org/jetbrains/kotlin/js/engine/repl.js"))
 
     dependsOn(":dist")
     dependsOn(generateTypeScriptTests)

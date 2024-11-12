@@ -132,7 +132,6 @@ include ":benchmarks",
         ":js:js.serializer",
         ":js:js.parser",
         ":js:js.config",
-        ":js:js.engines",
         ":js:js.frontend",
         ":js:js.translator",
         ":js:js.tests",
@@ -907,7 +906,6 @@ project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-ab
 
 project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.tests:klib-compatibility').projectDir = "$rootDir/js/js.tests/klib-compatibility" as File
-project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
 project(':kotlinx-serialization-compiler-plugin').projectDir = "$rootDir/plugins/kotlinx-serialization" as File
 project(':kotlinx-serialization-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.embeddable" as File
