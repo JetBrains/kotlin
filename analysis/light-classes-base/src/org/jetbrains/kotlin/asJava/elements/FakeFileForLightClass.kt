@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,17 +33,6 @@ open class FakeFileForLightClass(
     private val lightClass: KtLightClass,
     private val packageFqName: FqName = ktFile.packageFqName,
 ) : ClsFileImpl(ktFile.viewProvider) {
-    @Deprecated("A light class should be provided directly")
-    constructor(
-        ktFile: KtFile,
-        lightClass: () -> KtLightClass,
-        packageFqName: FqName = ktFile.packageFqName,
-    ) : this(
-        ktFile = ktFile,
-        lightClass = lightClass(),
-        packageFqName = packageFqName,
-    )
-
     override fun getVirtualFile(): VirtualFile =
         ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: super.getVirtualFile()
 
