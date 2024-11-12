@@ -19050,6 +19050,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         public void testElvisWithExpectedTypeComplex() {
           runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithExpectedTypeComplex.kt");
         }
+
+        @Test
+        @TestMetadata("elvisWithUnitExpectedTypeAndNonUnitLHS.kt")
+        public void testElvisWithUnitExpectedTypeAndNonUnitLHS() {
+          runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithUnitExpectedTypeAndNonUnitLHS.kt");
+        }
       }
 
       @Nested

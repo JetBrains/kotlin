@@ -19056,6 +19056,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         public void testElvisWithExpectedTypeComplex() {
           runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithExpectedTypeComplex.kt");
         }
+
+        @Test
+        @TestMetadata("elvisWithUnitExpectedTypeAndNonUnitLHS.kt")
+        public void testElvisWithUnitExpectedTypeAndNonUnitLHS() {
+          runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithUnitExpectedTypeAndNonUnitLHS.kt");
+        }
       }
 
       @Nested
