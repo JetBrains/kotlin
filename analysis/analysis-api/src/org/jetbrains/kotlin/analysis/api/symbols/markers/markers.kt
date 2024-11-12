@@ -13,13 +13,8 @@ import org.jetbrains.kotlin.name.Name
 /**
  * @see org.jetbrains.kotlin.analysis.api.symbols.name
  */
-@Deprecated("This API will be dropped soon. Use `KaSymbol.name`")
-public interface KaPossiblyNamedSymbol : KaSymbol {
-    public val name: Name?
-}
-
-public interface KaNamedSymbol : @Suppress("DEPRECATION") KaPossiblyNamedSymbol {
-    override val name: Name
+public interface KaNamedSymbol : KaSymbol {
+    public val name: Name
 }
 
 /**

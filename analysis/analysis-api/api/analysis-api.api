@@ -979,7 +979,8 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol : 
 	public abstract fun getSuperTypes ()Ljava/util/List;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol, org/jetbrains/kotlin/analysis/api/symbols/KaSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaPossiblyNamedSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol {
+	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
@@ -1351,11 +1352,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/marker
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol : org/jetbrains/kotlin/analysis/api/symbols/markers/KaPossiblyNamedSymbol {
-	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
-}
-
-public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaPossiblyNamedSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
+public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 

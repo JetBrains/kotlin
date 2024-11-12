@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KaClassifierSymbol : KaSymbol,
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol,
-    KaDeclarationSymbol
+public sealed class KaClassifierSymbol : KaDeclarationSymbol {
+    public abstract val name: Name?
+}
 
 public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
