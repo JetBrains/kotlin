@@ -414,6 +414,15 @@ tasks.withType<Test>().configureEach {
     // Trigger task timeout earlier than TC timeout, so we could collect more info what went wrong with IT tests
     // The longest one are on MacOS/X64 agents in release configurations
     timeout.set(Duration.ofHours(7))
+    
+    // Gradle needs these opens to serialize CC and adds them implicitly.
+    // Since runs withDebug will happen in-process, add these to make sure IT that run with CC are debuggable
+    jvmArgs(
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+    )
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
