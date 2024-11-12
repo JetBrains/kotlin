@@ -126,6 +126,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     }
 }
 
+@Suppress("unused") // Used via reflection
 class DefaultErrorMessagesJs : DefaultErrorMessages.Extension {
     override fun getMap(): DiagnosticFactoryToRendererMap = DIAGNOSTIC_FACTORY_TO_RENDERER
 }

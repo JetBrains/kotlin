@@ -4,9 +4,6 @@
  */
 package org.jetbrains.kotlin.js.sourceMap
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.io.IOException

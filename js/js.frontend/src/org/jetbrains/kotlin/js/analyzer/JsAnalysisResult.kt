@@ -28,10 +28,6 @@ open class JsAnalysisResult(
 ) : AnalysisResult(bindingTrace.bindingContext, moduleDescriptor, shouldGenerateCode) {
 
     companion object {
-        @JvmStatic fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
-            return JsAnalysisResult(trace, module, true)
-        }
-
         @JvmStatic fun success(trace: BindingTrace, module: ModuleDescriptor, shouldGenerateCode: Boolean): JsAnalysisResult {
             return JsAnalysisResult(trace, module, shouldGenerateCode)
         }
