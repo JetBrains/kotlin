@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
@@ -65,7 +67,20 @@ class TypeAliasConstructorsSubstitutingScope(
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
                     this.typeParameters.clear()
-                    typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+                    typeParameters.mapTo(this.typeParameters) {
+                        buildConstructedClassTypeParameterRef { symbol = it.symbol }
+                    }
+
+                    valueParameters.clear()
+                    originalConstructorSymbol.fir.valueParameters.mapTo(valueParameters) { originalValueParameter ->
+                        buildValueParameterCopy(originalValueParameter) {
+                            symbol = FirValueParameterSymbol(originalValueParameter.name)
+                            origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                            containingDeclarationSymbol = this@buildConstructorCopy.symbol
+                        }
+                    }
+
+                    // TODO: Copy context receivers?
 
                     if (aliasedTypeExpansionGloballyEnabled) {
                         returnTypeRef = returnTypeRef.withReplacedConeType(
