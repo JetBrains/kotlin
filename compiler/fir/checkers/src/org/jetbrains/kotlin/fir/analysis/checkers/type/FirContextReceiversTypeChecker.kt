@@ -36,12 +36,14 @@ object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind
             return
         }
 
-        reporter.reportOn(
-            source,
-            FirErrors.UNSUPPORTED_FEATURE,
-            LanguageFeature.ContextReceivers to context.languageVersionSettings,
-            context
-        )
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.ContextReceivers to context.languageVersionSettings,
+                context
+            )
+        }
     }
 }
 

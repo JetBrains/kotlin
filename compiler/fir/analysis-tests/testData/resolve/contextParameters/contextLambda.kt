@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers, +ContextParameters
+// LANGUAGE: +ContextParameters
 
 context(_: String)
 fun foo() {}

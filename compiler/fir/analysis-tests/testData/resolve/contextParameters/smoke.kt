@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers, +ContextParameters
+// LANGUAGE: +ContextParameters
 
 context(s: String)
 class C {

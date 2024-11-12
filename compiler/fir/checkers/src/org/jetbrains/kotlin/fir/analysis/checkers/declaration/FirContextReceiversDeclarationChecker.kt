@@ -23,23 +23,26 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         if (contextReceivers.isEmpty()) return
         val source = declaration.source?.findContextReceiverListSource() ?: return
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-            if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
-                    context
-                )
-            }
+        val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
+
+        if (!contextReceiversEnabled && !contextParametersEnabled) {
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.ContextReceivers to context.languageVersionSettings,
+                context
+            )
             return
         }
 
-        reporter.reportOn(
-            source,
-            FirErrors.UNSUPPORTED_FEATURE,
-            LanguageFeature.ContextReceivers to context.languageVersionSettings,
-            context
-        )
+        if (checkSubTypes(contextReceivers.map { it.returnTypeRef.coneType }, context)) {
+            reporter.reportOn(
+                source,
+                FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
+                context
+            )
+        }
     }
 
     private fun FirDeclaration.getContextReceiver(): List<FirValueParameter> {
