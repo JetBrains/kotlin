@@ -47,6 +47,7 @@ internal class IntrinsicType {
         const val INTEROP_WRITE_BITS            = "INTEROP_WRITE_BITS"
         const val CREATE_UNINITIALIZED_INSTANCE = "CREATE_UNINITIALIZED_INSTANCE"
         const val CREATE_UNINITIALIZED_ARRAY    = "CREATE_UNINITIALIZED_ARRAY"
+        const val CREATE_EMPTY_STRING           = "CREATE_EMPTY_STRING"
         const val IDENTITY                      = "IDENTITY"
         const val IMMUTABLE_BLOB                = "IMMUTABLE_BLOB"
         const val INIT_INSTANCE                 = "INIT_INSTANCE"

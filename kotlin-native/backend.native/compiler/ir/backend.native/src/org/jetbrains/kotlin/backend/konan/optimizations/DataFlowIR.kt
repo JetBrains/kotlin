@@ -245,6 +245,8 @@ internal object DataFlowIR {
 
         class AllocArray(type: Type, val size: Edge, irCallSite: IrCall?) : Alloc(type, irCallSite)
 
+        class AllocString(type: Type, irCallSite: IrCall?) : Alloc(type, irCallSite)
+
         class FunctionReference(val symbol: FunctionSymbol, val type: Type, val returnType: Type) : Node()
 
         class FieldRead(val receiver: Edge?, val field: Field, val type: Type, val ir: IrGetField?) : Node()
@@ -315,6 +317,9 @@ internal object DataFlowIR {
 
                 is Node.AllocArray ->
                     "        ALLOC ARRAY ${node.type} of size #${ids[node.size.node]!!}"
+
+                is Node.AllocString ->
+                    "        ALLOC STRING ${node.type}"
 
                 is Node.FunctionReference ->
                     "        FUNCTION REFERENCE ${node.symbol}"
