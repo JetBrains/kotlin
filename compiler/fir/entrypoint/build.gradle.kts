@@ -16,7 +16,6 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:checkers:checkers.wasm"))
-    api(project(":js:js.frontend"))
     api(project(":wasm:wasm.frontend"))
     api(project(":native:frontend.native"))
     api(project(":compiler:ir.actualization"))
