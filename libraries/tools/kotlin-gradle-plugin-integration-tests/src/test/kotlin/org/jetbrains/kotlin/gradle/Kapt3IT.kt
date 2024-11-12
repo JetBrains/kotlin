@@ -89,7 +89,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         forceOutput: Boolean = false,
         enableBuildScan: Boolean = false,
         addHeapDumpOptions: Boolean = true,
-        enableGradleDebug: Boolean = false,
+        enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
         enableGradleDaemonMemoryLimitInMb: Int? = calculateGradleDaemonMemoryLimitInMb(),
         enableKotlinDaemonMemoryLimitInMb: Int? = 2512,
         projectPathAdditionalSuffix: String = "",
