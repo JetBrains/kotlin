@@ -20,7 +20,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 8
         Implicit receiver:
-            FirNamedFunctionSymbol public final fun test_1(a1: R|A|, a2: R|A|): R|kotlin/Unit|
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Algebra<A>|
                 Type: Algebra<A>
 
 FILE: [ResolvedTo(IMPORTS)] receiverInjection.kt

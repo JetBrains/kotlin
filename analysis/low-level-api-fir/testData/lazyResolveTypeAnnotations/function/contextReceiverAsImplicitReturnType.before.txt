@@ -20,5 +20,5 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-        ^foo this@R|/foo|
+        ^foo this@R|context of /foo|
     }

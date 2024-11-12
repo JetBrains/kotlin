@@ -15,7 +15,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Implicit receiver:
-            FirNamedFunctionSymbol public final fun R|kotlin/String|.test(): R|kotlin/Unit|
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
                 Type: kotlin.String
     Element 8
         Scope: FirLocalScope

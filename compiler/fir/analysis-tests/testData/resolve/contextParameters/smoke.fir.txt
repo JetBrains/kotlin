@@ -8,7 +8,7 @@ FILE: smoke.kt
     }
     context(s@R|kotlin/String|)
     public final fun f(): R|kotlin/String| {
-        ^f <Unresolved name: s>#.R|kotlin/plus|(this@R|/f|)
+        ^f <Unresolved name: s>#.R|kotlin/plus|(this@R|context of /f|)
     }
     context(<unused var>@R|kotlin/String|)
     public final val p: R|kotlin/String|
@@ -18,10 +18,10 @@ FILE: smoke.kt
     context(s@R|kotlin/String|)
     public final var p2: R|kotlin/String|
         public get(): R|kotlin/String| {
-            ^ <Unresolved name: s>#.R|kotlin/plus|(this@R|/p2|)
+            ^ <Unresolved name: s>#.R|kotlin/plus|(this@R|context of /p2|)
         }
         public set(value: R|kotlin/String|): R|kotlin/Unit| {
-            <Unresolved name: s>#.R|kotlin/plus|(this@R|/p2|)
+            <Unresolved name: s>#.R|kotlin/plus|(this@R|context of /p2|)
         }
     context(s@R|kotlin/Any|)
     public final val p3: R|kotlin/String|
@@ -38,7 +38,7 @@ FILE: smoke.kt
         }
     context(s@R|kotlin/String|)
     public final fun f2(): R|kotlin/Unit| {
-        this@R|/f2|.R|kotlin/String.length|
+        this@R|context of /f2|.R|kotlin/String.length|
     }
     context(<unused var>@R|kotlin/Any|)
     public final fun escapedBackTick(): R|kotlin/Unit| {

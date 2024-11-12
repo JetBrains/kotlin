@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }
 
 CONSTANT_EVALUATION:
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }
 
 ANNOTATION_ARGUMENTS:
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }
 
 BODY_RESOLVE:
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }
 
 FILE RAW TO BODY:
@@ -245,5 +245,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnType.kt
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }

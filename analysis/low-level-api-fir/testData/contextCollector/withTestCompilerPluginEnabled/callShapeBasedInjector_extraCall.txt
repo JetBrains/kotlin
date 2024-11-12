@@ -24,7 +24,7 @@ Tower Data Context:
                 FirPropertySymbol lval df1_toString: R|kotlin/String|
     Element 8
         Implicit receiver:
-            FirPropertySymbol lval df1_toString: R|kotlin/String|
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
                 Type: <local>.Scope1
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_extraCall.kt

@@ -22,8 +22,7 @@ Tower Data Context:
                 Type: test.MyClass<T>
     Element 8
         Context receivers:
-            FirRegularClassSymbol context(R|test/ContextReceiver|)
-            public final class MyClass<T> : R|kotlin/Any|
+            FirReceiverParameterSymbol R|test/ContextReceiver|
                 Type: test.ContextReceiver
                 Label: ContextReceiver
 

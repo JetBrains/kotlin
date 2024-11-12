@@ -7,7 +7,7 @@ FILE: labelClashesWithContextReceivers.fir.kt
         context(R|Some|, R|kotlin/String|)
         public final fun foo(): R|kotlin/Unit| {
             this@Some#
-            this@R|/Some.foo|
+            this@R|context of /Some.foo|
         }
 
         context(R|Some|)

@@ -18,8 +18,7 @@ Tower Data Context:
                 Type: Test
     Element 7
         Context receivers:
-            FirRegularClassSymbol context(R|Foo|)
-            public final class Test : R|kotlin/Any|
+            FirReceiverParameterSymbol R|Foo|
                 Type: Foo
                 Label: Foo
     Element 8
@@ -39,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-            this@R|/Test|.R|/Foo.foo|()
+            this@R|context of /Test|.R|/Foo.foo|()
         }
 
     }

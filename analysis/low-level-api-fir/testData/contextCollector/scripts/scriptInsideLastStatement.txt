@@ -30,17 +30,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 10
         Implicit receiver:
-            FirScriptSymbol SCRIPT: <script-scriptInsideLastStatement.kts>
-                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                lval args: R|kotlin/Array<kotlin/String>|
-            
-                public final? class ScriptClass : R|kotlin/Any|
-                public final fun scriptFunction(): R|kotlin/Int|
-                public? final? fun unusedScriptFunction(p: String): <implicit>
-                init
-                public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
-                public final val $$result: R|kotlin/Unit|
-                    public get(): R|kotlin/Unit|
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
     Element 11
         Scope: FirLocalScope

@@ -19,7 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 8
         Implicit receiver:
-            FirNamedFunctionSymbol public final fun test_1(df: R|DataFrame<*>|): R|kotlin/Unit|
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
                 Type: <local>.Scope1
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_asReceiver.kt

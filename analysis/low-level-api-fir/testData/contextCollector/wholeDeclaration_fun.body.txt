@@ -21,14 +21,12 @@ Tower Data Context:
                 FirValueParameterSymbol param: R|kotlin/String|
     Element 8
         Context receivers:
-            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
-            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+            FirReceiverParameterSymbol R|test/ContextReceiver|
                 Type: test.ContextReceiver
                 Label: ContextReceiver
     Element 9
         Implicit receiver:
-            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
-            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|test/Receiver|
                 Type: test.Receiver
 
 FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_fun.kt

@@ -29,5 +29,5 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-            ^ this@R|/foo|
+            ^ this@R|context of /foo|
         }

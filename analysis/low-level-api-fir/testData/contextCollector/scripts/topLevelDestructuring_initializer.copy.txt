@@ -28,17 +28,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 10
         Implicit receiver:
-            FirScriptSymbol SCRIPT: <script-topLevelDestructuring_initializer.kts>
-                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                lval args: R|kotlin/Array<kotlin/String>|
-            
-                public final data class TwoValues : R|kotlin/Any|
-                lval <destruct>: R|TwoValues|
-                public final val one: <implicit>
-                    public get(): <implicit>
-            
-                public final val two: <implicit>
-                    public get(): <implicit>
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_initializer.kts

@@ -19,5 +19,5 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     }
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
-        ^foo this@R|/foo|
+        ^foo this@R|context of /foo|
     }

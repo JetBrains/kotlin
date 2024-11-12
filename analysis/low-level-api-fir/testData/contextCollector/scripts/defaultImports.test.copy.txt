@@ -30,18 +30,13 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 10
         Implicit receiver:
-            FirScriptSymbol SCRIPT: <script-defaultImports.test.kts>
-                <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
-                lval args: R|kotlin/Array<out kotlin/String>|
-            
-                public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
-                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
                 Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
     Element 11
         Scope: FirLocalScope
     Element 12
         Implicit receiver:
-            FirAnonymousFunctionSymbol apply@fun R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
                 Type: kotlin.sequences.Sequence<kotlin.String!>
     Element 13
         Scope: FirLocalScope
