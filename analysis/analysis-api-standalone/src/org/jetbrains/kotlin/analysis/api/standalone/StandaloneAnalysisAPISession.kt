@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.standalone
 
 import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.mock.MockProject
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 public class StandaloneAnalysisAPISession internal constructor(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
@@ -26,22 +22,6 @@ public class StandaloneAnalysisAPISession internal constructor(
     public val application: Application = kotlinCoreProjectEnvironment.environment.application
 
     public val project: Project = kotlinCoreProjectEnvironment.project
-
-    @Deprecated(
-        "Use session builder's service registration.",
-        ReplaceWith("project")
-    )
-    public val mockProject: MockProject = kotlinCoreProjectEnvironment.project
-
-    /**
-     * @see org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
-     */
-    @Deprecated(
-        "Use PackagePartProviderFactory instead.",
-        ReplaceWith("project::createPackagePartProvider")
-    )
-    public val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider
-        get() = project::createPackagePartProvider
 
     public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>> by lazy(modulesWithFilesProvider)
 }
