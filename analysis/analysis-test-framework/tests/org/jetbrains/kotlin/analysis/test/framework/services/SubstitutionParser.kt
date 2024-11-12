@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.test.framework.services.TypeParser.parseTypeFromString
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +36,7 @@ object SubstitutionParser {
                 substitutorAsMap.forEach { (typeParameterName, typeString) ->
                     val typeParameterSymbol = getSymbolByNameSafe<KaTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)
                         ?: error("Type parameter with name $typeParameterName was not found")
-                    val type = TypeParser.parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)
+                    val type = parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)
                     substitution(typeParameterSymbol, type)
                 }
             }
