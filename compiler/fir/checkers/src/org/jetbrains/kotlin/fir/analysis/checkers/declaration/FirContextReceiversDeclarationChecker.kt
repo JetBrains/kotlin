@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -93,6 +94,10 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                 for (parameter in contextParameters) {
                     if (parameter.isLegacyContextReceiver()) {
                         reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
+                    }
+
+                    parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
+                        reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter", context)
                     }
                 }
             }

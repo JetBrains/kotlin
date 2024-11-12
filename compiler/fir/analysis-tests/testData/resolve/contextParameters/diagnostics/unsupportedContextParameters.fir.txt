@@ -124,3 +124,6 @@ FILE: unsupportedContextParameters.kt
     context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
     public final fun contextHasDefaultValue(): R|kotlin/Unit| {
     }
+    context(vararg x: R|kotlin/Array<out kotlin/String>|, y: R|kotlin/String|, z: R|kotlin/String|, crossinline f1: R|() -> kotlin/Unit|, noinline f2: R|() -> kotlin/Unit|)
+    public final inline fun contextHasModifier(): R|kotlin/Unit| {
+    }

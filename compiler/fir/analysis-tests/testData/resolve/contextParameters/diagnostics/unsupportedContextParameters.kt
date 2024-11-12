@@ -78,3 +78,6 @@ val contextHasDefaultValue: String get() = ""
 
 context(<!CONTEXT_PARAMETER_WITH_DEFAULT!>x: String = ""<!>)
 fun contextHasDefaultValue() {}
+
+context(<!WRONG_MODIFIER_TARGET!>vararg<!> x: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> y: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> z: String, <!WRONG_MODIFIER_TARGET!>crossinline<!> f1: () -> Unit, <!WRONG_MODIFIER_TARGET!>noinline<!> f2: () -> Unit)
+<!NOTHING_TO_INLINE!>inline<!> fun contextHasModifier() {}

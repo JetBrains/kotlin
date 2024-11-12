@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
@@ -121,14 +123,25 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
 
         for (valueParameter in function.valueParameters) {
-            val source = valueParameter.source
-            if (source?.kind is KtFakeSourceElementKind) continue
-            source.valOrVarKeyword?.let {
-                if (function is FirConstructor) {
-                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
-                } else {
-                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
-                }
+            checkValOrVar(valueParameter, reporter, context)
+        }
+        for (contextParameter in function.contextReceivers) {
+            checkValOrVar(contextParameter, reporter, context)
+        }
+    }
+
+    private fun checkValOrVar(
+        valueParameter: FirValueParameter,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val source = valueParameter.source
+        if (source?.kind is KtFakeSourceElementKind) return
+        source.valOrVarKeyword?.let {
+            if (valueParameter.containingDeclarationSymbol is FirConstructorSymbol) {
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
+            } else {
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
             }
         }
     }
