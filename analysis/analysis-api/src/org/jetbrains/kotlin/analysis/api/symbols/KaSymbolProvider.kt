@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -184,15 +182,3 @@ public interface KaSymbolProvider {
     public val ROOT_PACKAGE_SYMBOL: KaPackageSymbol
         get() = rootPackageSymbol
 }
-
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-@Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as S"))
-public inline fun <reified S : KaSymbol> KtDeclaration.getSymbolOfType(): S =
-    withValidityAssertion { symbol } as S
-
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-@Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as? S"))
-public inline fun <reified S : KaSymbol> KtDeclaration.getSymbolOfTypeSafe(): S? =
-    withValidityAssertion { symbol } as? S
