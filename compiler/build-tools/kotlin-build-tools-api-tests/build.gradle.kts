@@ -68,6 +68,7 @@ fun SourceSet.configureCompatibilitySourceDirectories() {
 val businessLogicTestSuits = setOf(
     "testExample",
     "testEscapableCharacters",
+    "testInputChangesTracking",
 )
 
 testing {

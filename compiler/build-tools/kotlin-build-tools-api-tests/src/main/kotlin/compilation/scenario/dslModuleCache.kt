@@ -35,14 +35,19 @@ internal object GlobalCompiledProjectsCache {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
-    ): ScenarioModuleImpl? {
+        icSourceTracking: Boolean,
+    ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
-        return ScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        return if (icSourceTracking) {
+            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        } else {
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        }
     }
 
     fun putProjectIntoCache(
@@ -50,9 +55,10 @@ internal object GlobalCompiledProjectsCache {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
-    ): ScenarioModuleImpl {
+        icSourceTracking: Boolean,
+    ): BaseScenarioModule {
         module.compileIncrementally(
-            SourcesChanges.Unknown,
+            if (icSourceTracking) SourcesChanges.ToBeCalculated else SourcesChanges.Unknown,
             strategyConfig,
             compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
             incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) }
@@ -69,6 +75,10 @@ internal object GlobalCompiledProjectsCache {
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] = Pair(initialOutputs, moduleCacheDirectory)
-        return ScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        return if (icSourceTracking) {
+            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        } else {
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        }
     }
 }

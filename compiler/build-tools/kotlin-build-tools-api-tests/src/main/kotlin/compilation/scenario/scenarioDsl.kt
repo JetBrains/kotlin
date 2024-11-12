@@ -9,15 +9,16 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
-internal class ScenarioModuleImpl(
+internal abstract class BaseScenarioModule(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: CompilerExecutionStrategyConfiguration,
@@ -37,13 +38,11 @@ internal class ScenarioModuleImpl(
         val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
         Files.delete(file)
         Files.copy(chosenRevision, file)
-        addToModifiedFiles(file)
     }
 
     override fun deleteFile(fileName: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.deleteExisting()
-        addToRemovedFiles(file)
     }
 
     override fun createFile(fileName: String, content: String) {
@@ -54,14 +53,65 @@ internal class ScenarioModuleImpl(
         val file = module.sourcesDirectory.resolve(fileName)
         val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
         Files.copy(chosenRevision, file)
+    }
+
+    protected open fun writeFile(fileName: String, newContent: String) {
+        val file = module.sourcesDirectory.resolve(fileName)
+        file.writeText(newContent)
+    }
+
+    protected abstract fun getSourcesChanges(): SourcesChanges
+
+    override fun compile(
+        forceOutput: LogLevel?,
+        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit,
+    ) {
+        module.compileIncrementally(
+            getSourcesChanges(),
+            strategyConfig,
+            forceOutput,
+            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
+            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
+            assertions = {
+                assertions(this, module, this@BaseScenarioModule)
+            })
+    }
+}
+
+internal class ExternallyTrackedScenarioModuleImpl(
+    module: Module,
+    outputs: MutableSet<String>,
+    strategyConfig: CompilerExecutionStrategyConfiguration,
+    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
+    private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+
+    override fun replaceFileWithVersion(fileName: String, version: String) {
+        super.replaceFileWithVersion(fileName, version)
+        val file = module.sourcesDirectory.resolve(fileName)
         addToModifiedFiles(file)
     }
 
-    private fun writeFile(fileName: String, newContent: String) {
+    override fun deleteFile(fileName: String) {
+        super.deleteFile(fileName)
         val file = module.sourcesDirectory.resolve(fileName)
-        file.writeText(newContent)
+        addToRemovedFiles(file)
+    }
+
+    override fun createPredefinedFile(fileName: String, version: String) {
+        super.createPredefinedFile(fileName, version)
+        val file = module.sourcesDirectory.resolve(fileName)
         addToModifiedFiles(file)
     }
+
+    override fun writeFile(fileName: String, newContent: String) {
+        super.writeFile(fileName, newContent)
+        val file = module.sourcesDirectory.resolve(fileName)
+        addToModifiedFiles(file)
+    }
+
+    override fun getSourcesChanges() = sourcesChanges
 
     private fun addToModifiedFiles(file: Path) {
         sourcesChanges = SourcesChanges.Known(
@@ -76,23 +126,16 @@ internal class ScenarioModuleImpl(
             removedFiles = sourcesChanges.removedFiles + file.toFile(),
         )
     }
+}
 
-    private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
-
-    override fun compile(
-        forceOutput: LogLevel?,
-        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit,
-    ) {
-        module.compileIncrementally(
-            sourcesChanges,
-            strategyConfig,
-            forceOutput,
-            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
-            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
-            assertions = {
-                assertions(this, module, this@ScenarioModuleImpl)
-            })
-    }
+internal class AutoTrackedScenarioModuleImpl(
+    module: Module,
+    outputs: MutableSet<String>,
+    strategyConfig: CompilerExecutionStrategyConfiguration,
+    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
+    override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
 
 private class ScenarioDsl(
@@ -107,11 +150,25 @@ private class ScenarioDsl(
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as ScenarioModuleImpl).module }
+        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
             project.module(moduleName, transformedDependencies, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
+    }
+
+    override fun trackedModule(
+        moduleName: String,
+        dependencies: List<ScenarioModule>,
+        additionalCompilationArguments: List<String>,
+        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    ): ScenarioModule {
+        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
+        val module =
+            project.module(moduleName, transformedDependencies, additionalCompilationArguments)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
     }
 }
 

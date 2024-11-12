@@ -55,4 +55,4 @@ fun CompilationOutcome.assertNoOutputSetChanges(module: Module, scenarioModule: 
 }
 
 private fun requireScenarioModuleImpl(scenarioModule: ScenarioModule) =
-    (scenarioModule as? ScenarioModuleImpl ?: error("Expected an instance of ScenarioModuleImpl"))
+    (scenarioModule as? BaseScenarioModule ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))
