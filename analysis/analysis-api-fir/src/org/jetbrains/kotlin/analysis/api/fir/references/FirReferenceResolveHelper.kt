@@ -487,7 +487,7 @@ internal object FirReferenceResolveHelper {
         // classes/callables at the boundary between the package FQ name and class/callable names.
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
         if (fir.packageFqName.startsWith(selectedFqName)) {
-            return builder.createPackageSymbolIfOneExists(selectedFqName).let(::listOfNotNull)
+            return listOf(builder.createPackageSymbol(selectedFqName))
         }
 
         val fullFqName = fir.importedFqName
@@ -498,6 +498,9 @@ internal object FirReferenceResolveHelper {
         val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
         val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
         val selectedName = resolvedImport.importedName ?: return emptyList()
+
+        // We don't need to build a package symbol here because the selected `FqName` is definitely a class or callable name. If it was not,
+        // the package name check above would have caught it.
         return buildList {
             if (selectedFqName == fullFqName) {
                 // callables cannot be used as receiver expressions in imports
@@ -505,7 +508,6 @@ internal object FirReferenceResolveHelper {
                 scope.processPropertiesByName(selectedName) { add(it.fir.buildSymbol(builder)) }
             }
             scope.processClassifiersByName(selectedName) { addIfNotNull(it.fir.buildSymbol(builder)) }
-            builder.createPackageSymbolIfOneExists(selectedFqName)?.let(::add)
         }
     }
 
