@@ -2665,6 +2665,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("noInlineForLambda.kt")
+    public void testNoInlineForLambda() {
+      runTest("compiler/testData/codegen/boxInline/functionReference/noInlineForLambda.kt");
+    }
+
+    @Test
     @TestMetadata("thirdOrder.kt")
     public void testThirdOrder() {
       runTest("compiler/testData/codegen/boxInline/functionReference/thirdOrder.kt");
