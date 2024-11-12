@@ -113,7 +113,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/Ka
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
-	public abstract fun getConstantValueKind ()Lorg/jetbrains/kotlin/types/ConstantValueKind;
 	public abstract fun getSourcePsi ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public abstract fun getValue ()Ljava/lang/Object;
 	public abstract fun render ()Ljava/lang/String;

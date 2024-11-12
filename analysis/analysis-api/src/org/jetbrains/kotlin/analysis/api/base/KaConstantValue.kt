@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.base
 
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
  * Represents a constant value.
@@ -24,9 +23,6 @@ public sealed interface KaConstantValue {
      * Note that for [NullValue] and [ErrorValue], special values are returned.
      */
     public val value: Any?
-
-    @Deprecated("Check the class type instead.")
-    public val constantValueKind: ConstantValueKind
 
     /**
      * A source element from which the value was created.
