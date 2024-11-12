@@ -289,7 +289,6 @@ private class JsCodeOutlineTransformer(
             File("."),
             sourceMapBuilder,
             SourceFilePathResolver(emptyList()),
-            provideCurrentModuleContent = false,
             provideExternalModuleContent = false,
         )
         JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer).accept(jsFunction)

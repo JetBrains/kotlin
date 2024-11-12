@@ -663,7 +663,6 @@ fun generateSingleWrappedModuleBody(
             File("."),
             sourceMapBuilder,
             pathResolver,
-            sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
             sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER
         )
     } else {
