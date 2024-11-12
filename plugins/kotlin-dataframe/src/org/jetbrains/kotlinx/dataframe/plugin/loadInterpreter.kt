@@ -81,6 +81,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataRowReadJsonStr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
@@ -218,6 +219,7 @@ internal inline fun <reified T> String.load(): T {
         "DataFrameGroupBy" -> DataFrameGroupBy()
         "GroupByInto" -> GroupByInto()
         "ReadJsonStr" -> ReadJsonStr()
+        "DataRowReadJsonStr" -> DataRowReadJsonStr()
         "ReadDelimStr" -> ReadDelimStr()
         "GroupByToDataFrame" -> GroupByToDataFrame()
         "ToDataFrameFrom0" -> ToDataFrameFrom()
