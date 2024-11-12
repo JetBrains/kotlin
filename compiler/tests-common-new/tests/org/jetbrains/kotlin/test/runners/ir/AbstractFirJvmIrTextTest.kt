@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.testTierExceptionInverter
+import org.jetbrains.kotlin.test.backend.handlers.NoPsiParsingErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.builders.*
@@ -68,14 +68,14 @@ fun TestConfigurationBuilder.configureTieredFir2IrJvmTest(
     configureTieredFrontendJvmTest(parser)
 
     configureFirHandlersStep {
-        useHandlers(
-            // Makes the FIR tier fail if there are errors; otherwise, it would fail on meta-infos mismatch.
-            // But it's important to continue processing next modules in diagnostic tests, otherwise
-            // we won't collect their meta-infos and see a difference.
-            { NoFirCompilationErrorsHandler(it, failureDisablesNextSteps = false) },
-            // `<SYNTAX>` is reported separately in LT
-            ::NoLightTreeParsingErrorsHandler,
-        )
+        useHandlers({ NoFirCompilationErrorsHandler(it, failureDisablesNextSteps = false) })
+
+        // "No Psi parsing handler" is not added as it's the same handler as
+        // the one checking "no fir2ir compilation", which is added later.
+        // See: compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/valueParameters.kt
+        if (parser == FirParser.LightTree) {
+            useHandlers(::NoLightTreeParsingErrorsHandler)
+        }
     }
 
     configureAbstractIrTextSettings(targetBackend, converter, klibFacades, includeAllDumpHandlers = false)
@@ -143,14 +143,11 @@ abstract class AbstractTieredFir2IrJvmTest(
 
         configureTieredFir2IrJvmTest(parser, targetBackend, ::Fir2IrResultsConverter, klibFacades)
 
-        configureIrHandlersStep {
-            useHandlers(testTierExceptionInverter(TestTierLabel.FIR2IR, ::NoFir2IrCompilationErrorsHandler))
-        }
-
-        useAfterAnalysisCheckers(
-            { TestTierChecker(TestTierLabel.FIR2IR, numberOfMarkerHandlersPerModule = 1, it) },
-        )
+        val (handlers, checker) = listOf(::NoFir2IrCompilationErrorsHandler).toTieredHandlersAndCheckerOf(TestTierLabel.FIR2IR)
+        configureIrHandlersStep { useHandlers(handlers) }
+        useAfterAnalysisCheckers(checker)
     }
 }
 
 open class AbstractTieredFir2IrJvmLightTreeTest : AbstractTieredFir2IrJvmTest(FirParser.LightTree)
+open class AbstractTieredFir2IrJvmPsiTest : AbstractTieredFir2IrJvmTest(FirParser.Psi)

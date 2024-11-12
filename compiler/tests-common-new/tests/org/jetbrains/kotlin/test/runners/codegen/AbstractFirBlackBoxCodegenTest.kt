@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest.KlibFacades
 import org.jetbrains.kotlin.test.runners.ir.configureTieredFir2IrJvmTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.junit.jupiter.api.Tag
 
 abstract class AbstractFirBlackBoxCodegenTestBase(
     val parser: FirParser
@@ -166,3 +167,6 @@ abstract class AbstractTieredBackendJvmTest(
 }
 
 open class AbstractTieredBackendJvmLightTreeTest : AbstractTieredBackendJvmTest(FirParser.LightTree)
+
+@Tag("FirPsiCodegenTest")
+open class AbstractTieredBackendJvmPsiTest : AbstractTieredBackendJvmTest(FirParser.Psi)

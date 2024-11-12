@@ -248,6 +248,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
             )
 
+            testClass<AbstractTieredFrontendJvmPsiTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
+            )
+
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated",
                 init = model(allowKts = false)
@@ -305,6 +309,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractTieredBackendJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.BACKEND),
+            )
+
+            testClass<AbstractTieredBackendJvmPsiTest>(
                 init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.BACKEND),
             )
 
@@ -465,6 +473,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractTieredFir2IrJvmLightTreeTest>(
+                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FIR2IR),
+            )
+
+            testClass<AbstractTieredFir2IrJvmPsiTest>(
                 init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FIR2IR),
             )
 
