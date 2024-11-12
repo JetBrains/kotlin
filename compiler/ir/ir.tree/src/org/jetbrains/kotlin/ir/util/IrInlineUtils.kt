@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 
 /**
@@ -40,8 +40,13 @@ fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
 
-fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
-    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
+fun IrValueParameter.isInlineParameter() =
+    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction()) && parent.isInlineFunction()
+
+private fun IrDeclarationParent.isInlineFunction(): Boolean {
+    if (this !is IrFunction) return false
+    return this.isInline || this.isInlineArrayConstructor()
+}
 
 fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
