@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmBackendContext(
@@ -81,7 +80,7 @@ class JvmBackendContext(
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
-    override val ir = JvmIr(this.symbolTable)
+    override val ir = JvmIr()
 
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
@@ -157,10 +156,8 @@ class JvmBackendContext(
     override val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = false
 
-    inner class JvmIr(
-        symbolTable: SymbolTable,
-    ) : Ir<JvmBackendContext>(this) {
-        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
+    inner class JvmIr : Ir<JvmBackendContext>(this) {
+        override val symbols = JvmSymbols(this@JvmBackendContext)
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }

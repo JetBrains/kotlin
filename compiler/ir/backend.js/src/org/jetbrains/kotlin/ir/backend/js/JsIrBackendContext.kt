@@ -183,7 +183,7 @@ class JsIrBackendContext(
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this) {
-        override val symbols = object : Symbols(irBuiltIns, symbolTable) {
+        override val symbols = object : Symbols(irBuiltIns) {
             private val context = this@JsIrBackendContext
 
             override val throwNullPointerException =

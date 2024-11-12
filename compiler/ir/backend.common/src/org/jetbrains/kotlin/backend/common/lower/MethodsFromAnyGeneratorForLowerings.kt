@@ -47,13 +47,14 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 
 open class LoweringDataClassMemberGenerator(
     val backendContext: BackendContext,
+    symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean = false
 ) :
     IrBasedDataClassMembersGenerator(
         IrGeneratorContextBase(backendContext.irBuiltIns),
-        backendContext.ir.symbols.symbolTable,
+        symbolTable,
         irClass,
         irClass.kotlinFqName,
         origin,

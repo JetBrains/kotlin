@@ -31,8 +31,6 @@ import kotlin.collections.set
 open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : ExpectSymbolTransformer(),
     FileLoweringPass {
 
-    constructor(context: BackendContext) : this(context.ir.symbols.symbolTable, true)
-
     private val typeParameterSubstitutionMap = mutableMapOf<Pair<IrFunction, IrFunction>, Map<IrTypeParameter, IrTypeParameter>>()
 
     override fun lower(irFile: IrFile) {

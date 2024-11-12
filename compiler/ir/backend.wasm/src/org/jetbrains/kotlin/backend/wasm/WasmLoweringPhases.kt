@@ -51,7 +51,9 @@ private val generateTestsIC = makeIrModulePhase(
 )
 
 private val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::ExpectDeclarationsRemoveLowering,
+    { context: WasmBackendContext ->
+        ExpectDeclarationsRemoveLowering(context.symbolTable)
+    },
     name = "ExpectDeclarationsRemoving",
 )
 

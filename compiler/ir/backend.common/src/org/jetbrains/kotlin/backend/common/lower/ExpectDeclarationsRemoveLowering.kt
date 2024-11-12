@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 
 /**
  * This pass removes all declarations with `isExpect == true`.
  */
-class ExpectDeclarationsRemoveLowering(context: BackendContext) : DeclarationTransformer {
-    private val remover = ExpectDeclarationRemover(context.ir.symbols.symbolTable, true)
+class ExpectDeclarationsRemoveLowering(symbolTable: ReferenceSymbolTable) : DeclarationTransformer {
+    private val remover = ExpectDeclarationRemover(symbolTable, true)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return remover.transformFlat(declaration)

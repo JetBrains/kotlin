@@ -66,7 +66,7 @@ open class AnnotationImplementationLowering(
     }
 }
 
-abstract class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) :
+abstract class AnnotationImplementationTransformer(val context: BackendContext, val symbolTable: ReferenceSymbolTable, val irFile: IrFile?) :
     IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
@@ -259,7 +259,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         }
 
         val generator = AnnotationImplementationMemberGenerator(
-            context, implClass,
+            context, symbolTable, implClass,
             nameForToString = "@" + annotationClass.fqNameWhenAvailable!!.asString(),
             forbidDirectFieldAccess = forbidDirectFieldAccessInMethods
         ) { type, a, b ->
@@ -274,11 +274,12 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
 class AnnotationImplementationMemberGenerator(
     backendContext: BackendContext,
+    symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
     val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
-) : LoweringDataClassMemberGenerator(backendContext, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
+) : LoweringDataClassMemberGenerator(backendContext, symbolTable, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
 
     override fun IrClass.classNameForToString(): String = nameForToString
 

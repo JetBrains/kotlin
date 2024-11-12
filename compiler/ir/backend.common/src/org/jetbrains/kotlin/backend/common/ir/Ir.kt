@@ -185,9 +185,9 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
 }
 
 // Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class Symbols(
-    irBuiltIns: IrBuiltIns, internal val symbolTable: ReferenceSymbolTable
+    irBuiltIns: IrBuiltIns,
 ) : BuiltinSymbolsBase(irBuiltIns) {
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol

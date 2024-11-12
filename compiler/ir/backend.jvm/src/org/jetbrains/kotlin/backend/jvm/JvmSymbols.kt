@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
@@ -45,8 +44,7 @@ import java.lang.invoke.MethodType
 
 class JvmSymbols(
     private val context: JvmBackendContext,
-    symbolTable: SymbolTable
-) : Symbols(context.irBuiltIns, symbolTable) {
+) : Symbols(context.irBuiltIns) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val irFactory = context.irFactory
 

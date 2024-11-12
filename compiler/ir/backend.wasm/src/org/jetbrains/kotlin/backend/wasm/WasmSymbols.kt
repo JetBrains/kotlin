@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 class WasmSymbols(
     private val context: WasmBackendContext,
     private val symbolTable: SymbolTable
-) : Symbols(context.irBuiltIns, symbolTable) {
+) : Symbols(context.irBuiltIns) {
 
     private val kotlinTopLevelPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin"))
