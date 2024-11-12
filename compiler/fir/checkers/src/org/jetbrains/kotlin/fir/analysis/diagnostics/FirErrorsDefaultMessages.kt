@@ -1500,10 +1500,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(CONTEXT_PARAMETER_WITHOUT_NAME, "Context parameters must be named. Use '_' to declare an anonymous context parameter.")
         map.put(CONTEXT_PARAMETER_WITH_DEFAULT, "Context parameters cannot have default values.")
-        map.put(NO_CONTEXT_RECEIVER, "No context receiver for ''{0}'' found.", RENDER_TYPE)
+        map.put(NO_CONTEXT_RECEIVER, "No context argument for ''{0}'' found.", RENDER_TYPE)
         map.put(
             MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER,
-            "Multiple arguments applicable to context receiver ''{0}''.",
+            "Multiple potential context arguments for ''{0}'' in scope.",
             RENDER_TYPE
         )
         map.put(
@@ -1512,7 +1512,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL,
-            "To use contextual declarations, specify the '-Xcontext-receivers' compiler option."
+            "To call contextual declarations, specify the '-Xcontext-parameters' compiler option."
         )
         map.put(
             SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
@@ -1520,7 +1520,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONTEXT_RECEIVERS_WITH_BACKING_FIELD,
-            "Property with context receivers cannot be initialized because it has no backing field."
+            "Property with context parameters cannot be initialized because it has no backing field."
         )
         map.put(
             SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR,
