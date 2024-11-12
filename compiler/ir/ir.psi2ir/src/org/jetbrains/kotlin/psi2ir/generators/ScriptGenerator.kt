@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -52,7 +53,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
             val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
 
-            fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin): IrValueParameter {
+            fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin, kind: IrParameterKind): IrValueParameter {
                 val type = descriptor.type.toIrType()
                 val varargElementType = descriptor.varargElementType?.toIrType()
                 return context.symbolTable.descriptorExtension.declareValueParameter(
@@ -65,6 +66,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
                         origin = origin,
+                        kind = kind,
                         name = context.symbolTable.nameProvider.nameForDeclaration(descriptor),
                         type = type,
                         isAssignable = false,
@@ -77,7 +79,9 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 }.also { it.parent = irScript }
             }
 
-            irScript.thisReceiver = makeParameter(descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER).also {
+            irScript.thisReceiver = makeParameter(
+                descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER, IrParameterKind.DispatchReceiver
+            ).also {
                 @OptIn(DelicateIrParameterIndexSetter::class)
                 it.indexInOldValueParameters = descriptor.thisAsReceiverParameter.indexOrMinusOne
             }
@@ -97,6 +101,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
+                    kind = IrParameterKind.RegularParameter,
                     name = valueParameterDescriptor.name,
                     type = valueParameterDescriptor.type.toIrType(),
                     isAssignable = false,
@@ -125,7 +130,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
             }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
-                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER)
+                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, IrParameterKind.RegularParameter)
             }
 
             descriptor.scriptProvidedProperties.zip(descriptor.scriptProvidedPropertiesParameters) { providedProperty, parameter ->
@@ -140,6 +145,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
                         origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY,
+                        kind = IrParameterKind.RegularParameter,
                         name = descriptor.name,
                         type = type,
                         isAssignable = false,

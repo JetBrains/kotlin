@@ -1109,6 +1109,7 @@ private fun IrDeclarationParent.createThisReceiverParameter(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin,
+        kind = IrParameterKind.DispatchReceiver,
         name = SpecialNames.THIS,
         type = type,
         isAssignable = false,
