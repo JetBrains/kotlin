@@ -44,7 +44,7 @@ open class IrPluginContextImpl constructor(
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
     private val diagnosticReporter: MessageCollector,
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, st)
+    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
 ) : IrPluginContext {
 
     override val afterK2: Boolean = false

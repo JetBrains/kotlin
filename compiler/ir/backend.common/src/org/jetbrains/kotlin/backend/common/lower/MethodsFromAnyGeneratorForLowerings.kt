@@ -53,7 +53,7 @@ open class LoweringDataClassMemberGenerator(
 ) :
     IrBasedDataClassMembersGenerator(
         IrGeneratorContextBase(backendContext.irBuiltIns),
-        backendContext.ir.symbols.externalSymbolTable,
+        backendContext.ir.symbols.symbolTable,
         irClass,
         irClass.kotlinFqName,
         origin,

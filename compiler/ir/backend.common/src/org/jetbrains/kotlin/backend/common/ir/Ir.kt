@@ -29,17 +29,11 @@ abstract class Ir<out T : CommonBackendContext>(val context: T) {
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTable: ReferenceSymbolTable) {
+open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
         irBuiltIns.findClass(name, *packageNameSegments)
             ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
-
-    /**
-     * Use this table to reference external dependencies.
-     */
-    open val externalSymbolTable: ReferenceSymbolTable
-        get() = symbolTable
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
 
@@ -192,8 +186,8 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 abstract class Symbols(
-    irBuiltIns: IrBuiltIns, symbolTable: ReferenceSymbolTable
-) : BuiltinSymbolsBase(irBuiltIns, symbolTable) {
+    irBuiltIns: IrBuiltIns, internal val symbolTable: ReferenceSymbolTable
+) : BuiltinSymbolsBase(irBuiltIns) {
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
  * This pass removes all declarations with `isExpect == true`.
  */
 class ExpectDeclarationsRemoveLowering(context: BackendContext) : DeclarationTransformer {
-    private val remover = ExpectDeclarationRemover(context.ir.symbols.externalSymbolTable, true)
+    private val remover = ExpectDeclarationRemover(context.ir.symbols.symbolTable, true)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return remover.transformFlat(declaration)

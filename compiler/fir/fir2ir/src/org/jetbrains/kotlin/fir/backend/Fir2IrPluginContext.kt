@@ -61,7 +61,7 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, symbolTable)
+    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider
