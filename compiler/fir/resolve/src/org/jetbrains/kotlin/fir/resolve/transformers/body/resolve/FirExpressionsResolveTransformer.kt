@@ -1901,21 +1901,11 @@ private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElem
  */
 @OptIn(PrivateForInline::class)
 fun BodyResolveContext.addReceiversFromExtensions(functionCall: FirFunctionCall, sessionHolder: SessionHolder) {
-    val session = sessionHolder.session
-    val scopeSession = sessionHolder.scopeSession
-
-    val extensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() } ?: return
+    val extensions = sessionHolder.session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() } ?: return
     val boundSymbol = this.containerIfAny?.symbol as? FirCallableSymbol<*> ?: return
 
     for (extension in extensions) {
-        for (receiverType in extension.addNewImplicitReceivers(functionCall)) {
-            val receiverValue = ImplicitExtensionReceiverValue(
-                boundSymbol,
-                receiverType,
-                session,
-                scopeSession
-            )
-
+        for (receiverValue in extension.addNewImplicitReceivers(functionCall, sessionHolder, boundSymbol)) {
             this.addReceiver(name = null, receiverValue)
         }
     }

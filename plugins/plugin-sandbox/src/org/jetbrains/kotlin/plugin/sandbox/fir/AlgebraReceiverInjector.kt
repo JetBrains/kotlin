@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.fir
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.createConeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,11 +34,39 @@ class AlgebraReceiverInjector(session: FirSession) : FirExpressionResolutionExte
         private val ALGEBRA_CLASS_ID = ClassId.topLevel(FqName.topLevel(Name.identifier("Algebra")))
     }
 
-    override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
+    private object Key : GeneratedDeclarationKey() {
+        override fun toString(): String {
+            return "AlgebraReceiverGeneratorKey"
+        }
+    }
+
+    private val algebraOrigin = FirDeclarationOrigin.Plugin(Key)
+
+    override fun addNewImplicitReceivers(
+        functionCall: FirFunctionCall,
+        sessionHolder: SessionHolder,
+        containingCallableSymbol: FirCallableSymbol<*>,
+    ): List<ImplicitExtensionReceiverValue> {
         if (functionCall.calleeReference.name != INJECT_ALGEBRA_NAME) return emptyList()
         val typeProjection = functionCall.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return emptyList()
         val argumentType = typeProjection.typeRef.coneType
         val algebraType = ALGEBRA_CLASS_ID.createConeType(session, arrayOf(argumentType))
-        return listOf(algebraType)
+        val receiverParameter = buildReceiverParameter {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            moduleData = session.moduleData
+            origin = algebraOrigin
+            symbol = FirReceiverParameterSymbol()
+            containingDeclarationSymbol = containingCallableSymbol
+            typeRef = buildResolvedTypeRef {
+                coneType = algebraType
+            }
+        }
+        val extensionReceiverValue = ImplicitExtensionReceiverValue(
+            receiverParameter.symbol,
+            algebraType,
+            sessionHolder.session,
+            sessionHolder.scopeSession
+        )
+        return listOf(extensionReceiverValue)
     }
 }
