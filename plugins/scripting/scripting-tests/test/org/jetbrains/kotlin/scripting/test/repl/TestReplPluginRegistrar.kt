@@ -25,18 +25,11 @@ class FirTestReplCompilerExtensionRegistrar(
 }
 
 @OptIn(ExperimentalCompilerApi::class)
-class TestReplCompilerPluginRegistrar : CompilerPluginRegistrar() {
-    companion object {
-        fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
-            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                // TODO: add jdk path and other params if needed
-            }
+class TestReplCompilerPluginRegistrar(val hostConfiguration: ScriptingHostConfiguration) : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        with(this) {
             FirExtensionRegistrarAdapter.registerExtension(FirTestReplCompilerExtensionRegistrar(hostConfiguration))
         }
-    }
-
-    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        registerComponents(this, configuration)
     }
 
     override val supportsK2: Boolean
