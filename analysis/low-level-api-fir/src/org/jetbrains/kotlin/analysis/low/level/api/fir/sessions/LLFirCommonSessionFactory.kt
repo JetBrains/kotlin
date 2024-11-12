@@ -71,7 +71,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
     }
 
     override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
-        return doCreateDanglingFileSession(module, contextSession) {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -79,7 +79,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                     providers = listOf(
                         firProvider.symbolProvider,
                     ),
-                    dependencyProvider,
+                    context.dependencyProvider,
                 )
             )
 

@@ -63,7 +63,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
     }
 
     override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
-        return doCreateDanglingFileSession(module, contextSession) {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
             registerJsComponents(moduleKind = null)
 
             register(
@@ -72,10 +72,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
                     this,
                     providers = listOfNotNull(
                         firProvider.symbolProvider,
-                        switchableExtensionDeclarationsSymbolProvider,
-                        syntheticFunctionInterfaceProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
                     ),
-                    dependencyProvider,
+                    context.dependencyProvider,
                 )
             )
         }

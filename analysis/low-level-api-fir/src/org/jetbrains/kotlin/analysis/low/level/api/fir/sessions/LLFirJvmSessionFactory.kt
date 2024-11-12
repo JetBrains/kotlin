@@ -86,7 +86,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     }
 
     override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
-        return doCreateDanglingFileSession(module, contextSession) {
+        return doCreateDanglingFileSession(module, contextSession) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
 
             val contextJavaSymbolProvider = contextSession.nullableJavaSymbolProvider
@@ -100,11 +100,11 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                     this,
                     providers = listOfNotNull(
                         firProvider.symbolProvider,
-                        switchableExtensionDeclarationsSymbolProvider,
-                        syntheticFunctionInterfaceProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
                         contextJavaSymbolProvider
                     ),
-                    dependencyProvider
+                    context.dependencyProvider
                 )
             )
 
