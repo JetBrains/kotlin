@@ -31,8 +31,7 @@ internal class SymbolLightSuspendContinuationParameter(
     private val functionSymbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
+    private inline fun <T> withFunctionSymbol(crossinline action: KaSession.(KaNamedFunctionSymbol) -> T): T {
         return functionSymbolPointer.withSymbol(ktModule, action)
     }
 
@@ -46,7 +45,7 @@ internal class SymbolLightSuspendContinuationParameter(
         withFunctionSymbol { functionSymbol ->
             val ktType = buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }
             ktType.asPsiType(
-                this,
+                this@SymbolLightSuspendContinuationParameter,
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 forceValueClassResolution = method.canHaveValueClassInSignature(),

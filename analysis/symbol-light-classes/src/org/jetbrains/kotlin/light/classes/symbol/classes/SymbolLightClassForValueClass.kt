@@ -10,11 +10,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -74,10 +70,10 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
                     (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
                 }
                 .filterNot {
-                    it.hasTypeForValueClassInSignature()
+                    hasTypeForValueClassInSignature(it)
                 }
 
-            createMethods(applicableDeclarations, result, suppressStatic = false)
+            createMethods(this@SymbolLightClassForValueClass, applicableDeclarations, result)
             generateMethodsFromAny(classSymbol, result)
 
             val propertySymbol = propertySymbol(classSymbol)
@@ -87,7 +83,7 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
                 // (inline or) value class primary constructor must have only final read-only (val) property parameter
                 // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
                 // we can enforce immutability here.
-                createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
+                createPropertyAccessors(this@SymbolLightClassForValueClass, result, propertySymbol, isTopLevel = false, isMutable = false)
             }
 
             addDelegatesToInterfaceMethods(result, classSymbol)
@@ -105,7 +101,7 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
                 addFieldsFromCompanionIfNeeded(this, classSymbol, nameGenerator)
 
                 propertySymbol(classSymbol)?.let {
-                    createAndAddField(it, nameGenerator, isStatic = false, result = this)
+                    createAndAddField(this@SymbolLightClassForValueClass, it, nameGenerator, isStatic = false, result = this)
                 }
             }
         }

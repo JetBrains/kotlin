@@ -50,13 +50,13 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
 
     private val _extendsList by lazyPub {
         withClassSymbol {
-            createInheritanceList(forExtendsList = true, it.superTypes)
+            createInheritanceList(this@SymbolLightClassForAnonymousObject, forExtendsList = true, it.superTypes)
         }
     }
 
     private val _implementsList by lazyPub {
         withClassSymbol {
-            createInheritanceList(forExtendsList = false, it.superTypes)
+            createInheritanceList(this@SymbolLightClassForAnonymousObject, forExtendsList = false, it.superTypes)
         }
     }
 
@@ -68,8 +68,8 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
             val result = mutableListOf<PsiMethod>()
             val declaredMemberScope = it.declaredMemberScope
 
-            createMethods(declaredMemberScope.callables, result)
-            createConstructors(declaredMemberScope.constructors, result)
+            createMethods(this@SymbolLightClassForAnonymousObject, declaredMemberScope.callables, result)
+            createConstructors(this@SymbolLightClassForAnonymousObject, declaredMemberScope.constructors, result)
             result
         }
     }
@@ -83,6 +83,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
                 .filterIsInstance<KaPropertySymbol>()
                 .forEach { propertySymbol ->
                     createAndAddField(
+                        this@SymbolLightClassForAnonymousObject,
                         propertySymbol,
                         nameGenerator,
                         isStatic = false,

@@ -9,7 +9,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
+import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -75,8 +78,6 @@ internal class SymbolLightAccessorMethod private constructor(
         suppressStatic = suppressStatic,
     )
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
         get() = if (isGetter) getter!! else setter!!
 
@@ -132,7 +133,8 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun computeThrowsList(builder: LightReferenceListBuilder) {
         withAccessorSymbol { accessorSymbol ->
-            accessorSymbol.computeThrowsList(
+            computeThrowsList(
+                accessorSymbol,
                 builder,
                 this@SymbolLightAccessorMethod,
                 containingClass,
@@ -151,7 +153,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 PsiModifier.ABSTRACT
             } else {
                 withPropertySymbol { propertySymbol ->
-                    propertySymbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier(containingClass, propertySymbol) }
+                    propertySymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, propertySymbol) }
                 }
             }
 
@@ -226,9 +228,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
+    private fun KaSession.forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
         return propertySymbol.returnType.isPrimitiveBacked &&
                 propertySymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
@@ -267,7 +267,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun suppressWildcards(): Boolean? =
         withAccessorSymbol { accessorSymbol ->
-            accessorSymbol.suppressWildcardMode { parent ->
+            suppressWildcardMode(accessorSymbol) { parent ->
                 parent !is KaPropertySymbol
             }
         }

@@ -14,10 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
@@ -92,7 +88,7 @@ internal class GranularModifiersBox(
         ): PersistentMap<String, Boolean> {
             val modality = declarationPointer.withSymbol(ktModule) {
                 if ((it as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
-                    it.enumClassModality()
+                    enumClassModality(it)
                 } else {
                     it.computeSimpleModality()
                 }

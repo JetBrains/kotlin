@@ -57,7 +57,7 @@ internal class SymbolLightClassForScript private constructor(
         result.addScriptDefaultMethods()
 
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            createMethods(scriptSymbol.declaredMemberScope.callables, result)
+            createMethods(this@SymbolLightClassForScript, scriptSymbol.declaredMemberScope.callables, result)
         }
         result
     }
@@ -65,14 +65,14 @@ internal class SymbolLightClassForScript private constructor(
     override fun getOwnFields(): List<PsiField> = cachedValue {
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
             buildList {
-                addPropertyBackingFields(this, scriptSymbol, SymbolLightField.FieldNameGenerator())
+                addPropertyBackingFields(this@SymbolLightClassForScript, this, scriptSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
 
     override fun getOwnInnerClasses(): List<SymbolLightClassBase> = cachedValue {
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            scriptSymbol.createInnerClasses(manager, this@SymbolLightClassForScript, classOrObject = null)
+            createInnerClasses(scriptSymbol, manager, this@SymbolLightClassForScript, classOrObject = null)
         }
     }
 

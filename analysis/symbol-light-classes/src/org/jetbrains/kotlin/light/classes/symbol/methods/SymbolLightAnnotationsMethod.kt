@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_ANNOTATIONS
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeprecatedAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -50,10 +52,8 @@ internal class SymbolLightAnnotationsMethod private constructor(
         containingPropertySymbolPointer = with(ktAnalysisSession) { containingPropertySymbol.createPointer() },
     )
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun propertySymbol(): KaPropertySymbol {
-        return containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed()
+    private fun KaSession.propertySymbol(): KaPropertySymbol {
+        return restoreSymbolOrThrowIfDisposed(containingPropertySymbolPointer)
     }
 
     private fun String.abiName(): String {

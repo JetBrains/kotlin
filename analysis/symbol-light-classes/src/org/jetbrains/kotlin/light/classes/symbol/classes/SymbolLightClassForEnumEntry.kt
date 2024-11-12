@@ -115,13 +115,14 @@ internal class SymbolLightClassForEnumEntry(
             // Then, add instance fields: properties from parameters, and then member properties
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
                 addPropertyBackingFields(
+                    this@SymbolLightClassForEnumEntry,
                     result,
                     initializer,
-                    SymbolLightField.FieldNameGenerator(),
 
                     // `addPropertyBackingFields` detects that property fields should be static when the given symbol with members is an
                     // object. Unfortunately, the enum entry's initializer is an anonymous object, yet we want the enum entry's light class
                     // to have non-static properties.
+                    SymbolLightField.FieldNameGenerator(),
                     forceIsStaticTo = false,
                 )
             }
@@ -138,8 +139,8 @@ internal class SymbolLightClassForEnumEntry(
                 val declaredMemberScope = initializer.declaredMemberScope
                 val visibleDeclarations = declaredMemberScope.callables
 
-                createMethods(visibleDeclarations, result)
-                createConstructors(declaredMemberScope.constructors, result)
+                createMethods(this@SymbolLightClassForEnumEntry, visibleDeclarations, result)
+                createConstructors(this@SymbolLightClassForEnumEntry, declaredMemberScope.constructors, result)
             }
 
             result

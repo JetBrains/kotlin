@@ -17,12 +17,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcard
+import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
@@ -30,8 +36,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
+    private inline fun <T> withReceiverSymbol(crossinline action: KaSession.(KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 
     companion object {
@@ -89,7 +94,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         withReceiverSymbol { receiver ->
             val ktType = receiver.returnType
             val psiType = ktType.asPsiType(
-                this,
+                this@SymbolLightParameterForReceiver,
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),

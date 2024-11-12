@@ -104,7 +104,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
         return if (baseClassOrigin != null && thisClassOrigin != null) {
             analyzeForLightClasses(ktModule) {
-                thisClassOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
+                checkIsInheritor(thisClassOrigin, baseClassOrigin, checkDeep)
             }
         } else {
             hasSuper(baseClass, checkDeep) ||

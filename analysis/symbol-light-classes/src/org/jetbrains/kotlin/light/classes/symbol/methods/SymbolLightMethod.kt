@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiIdentifier
+import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -127,7 +129,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
     override fun computeThrowsList(builder: LightReferenceListBuilder) {
         withFunctionSymbol { functionSymbol ->
-            functionSymbol.computeThrowsList(
+            computeThrowsList(
+                functionSymbol,
                 builder,
                 this@SymbolLightMethod,
                 containingClass,
@@ -161,6 +164,6 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
     override fun suppressWildcards(): Boolean? =
         withFunctionSymbol { functionSymbol ->
-            functionSymbol.suppressWildcardMode()
+            suppressWildcardMode(functionSymbol)
         }
 }

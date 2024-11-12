@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 
 internal class SymbolLightFieldForProperty private constructor(
@@ -58,8 +57,7 @@ internal class SymbolLightFieldForProperty private constructor(
         backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
     )
 
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
+    private inline fun <T> withPropertySymbol(crossinline action: KaSession.(KaPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)
     }
 
@@ -79,7 +77,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 this@SymbolLightFieldForProperty,
                 allowErrorTypes = true,
                 typeMappingMode,
-                suppressWildcards = propertySymbol.suppressWildcardMode(),
+                suppressWildcards = suppressWildcardMode(propertySymbol),
                 allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
@@ -114,7 +112,9 @@ internal class SymbolLightFieldForProperty private constructor(
                 ""
             }
 
-            val containingClass = this.containingClass as? SymbolLightClassForNamedClassLike ?: return@withPropertySymbol baseFieldName
+            val containingClass = this@SymbolLightFieldForProperty.containingClass as? SymbolLightClassForNamedClassLike
+                ?: return@withPropertySymbol baseFieldName
+
             containingClass.withClassSymbol { classSymbol ->
                 val hasClash = if (isStatic) {
                     // Class fields are preferred to the companion ones only in the case of JvmField

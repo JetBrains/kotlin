@@ -84,7 +84,7 @@ internal class SymbolLightSimpleMethod(
                 isTopLevel -> PsiModifier.FINAL
                 containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
                 else -> withFunctionSymbol { functionSymbol ->
-                    functionSymbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier(containingClass, functionSymbol) }
+                    functionSymbol.computeSimpleModality()?.takeUnless { isSuppressedFinalModifier(it, containingClass, functionSymbol) }
                 }
             }
 

@@ -17,8 +17,7 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     private val ktModule: KaModule,
     private val annotatedSymbolPointer: KaSymbolPointer<T>,
 ) : AnnotationsProvider {
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KaSession) (KaAnnotatedSymbol) -> T): T =
+    private inline fun <T> withAnnotatedSymbol(crossinline action: KaSession.(KaAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->

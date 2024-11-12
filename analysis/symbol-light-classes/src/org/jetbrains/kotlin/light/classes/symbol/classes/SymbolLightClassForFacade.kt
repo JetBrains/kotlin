@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -91,22 +94,20 @@ internal class SymbolLightClassForFacade(
                         if (callableSymbol is KaDeclarationSymbol && callableSymbol.isExpect) continue
                         if ((callableSymbol as? KaAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
-                        if (callableSymbol.hasTypeForValueClassInSignature(ignoreReturnType = true)) continue
+                        if (hasTypeForValueClassInSignature(callableSymbol = callableSymbol, ignoreReturnType = true)) continue
                         yield(callableSymbol)
                     }
                 }
             }
 
-            createMethods(methodsAndProperties, result, isTopLevel = true)
+            createMethods(this@SymbolLightClassForFacade, methodsAndProperties, result, isTopLevel = true)
             result
         }
     }
 
     override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun loadFieldsFromFile(
+    private fun KaSession.loadFieldsFromFile(
         fileScope: KaScope,
         nameGenerator: SymbolLightField.FieldNameGenerator,
         result: MutableList<PsiField>
@@ -118,6 +119,7 @@ internal class SymbolLightClassForFacade(
             if (multiFileClass && !propertySymbol.isConst) continue
 
             createAndAddField(
+                this@SymbolLightClassForFacade,
                 propertySymbol,
                 nameGenerator,
                 isStatic = true,

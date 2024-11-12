@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
@@ -57,7 +53,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
             .filterNot { it is KaNamedFunctionSymbol && it.visibility == KaSymbolVisibility.PRIVATE }
             .filterNot { it is KaConstructorSymbol }
 
-        createMethods(visibleDeclarations, result)
+        createMethods(this@SymbolLightClassForAnnotationClass, visibleDeclarations, result)
         result
     }
 

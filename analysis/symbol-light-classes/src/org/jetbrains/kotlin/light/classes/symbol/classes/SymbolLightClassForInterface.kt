@@ -10,11 +10,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -56,26 +52,25 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(this, it) }
 
-            createMethods(visibleDeclarations, result)
+            createMethods(this@SymbolLightClassForInterface, visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classSymbol)
 
             result
         }
     }
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean =
-        !(symbol is KaNamedFunctionSymbol && symbol.visibility == KaSymbolVisibility.PRIVATE || symbol.hasTypeForValueClassInSignature())
+    protected open fun acceptCallableSymbol(session: KaSession, symbol: KaCallableSymbol): Boolean = with(session) {
+        !(symbol is KaNamedFunctionSymbol && symbol.visibility == KaSymbolVisibility.PRIVATE || hasTypeForValueClassInSignature(symbol))
+    }
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
         withClassSymbol { classSymbol ->
-            createInheritanceList(forExtendsList = true, classSymbol.superTypes)
+            createInheritanceList(this@SymbolLightClassForInterface, forExtendsList = true, classSymbol.superTypes)
         }
     }
 

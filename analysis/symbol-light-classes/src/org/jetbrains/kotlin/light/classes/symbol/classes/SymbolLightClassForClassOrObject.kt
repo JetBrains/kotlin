@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -96,13 +92,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     private val _extendsList by lazyPub {
         withClassSymbol { classSymbol ->
-            createInheritanceList(forExtendsList = true, classSymbol.superTypes)
+            createInheritanceList(this@SymbolLightClassForClassOrObject, forExtendsList = true, classSymbol.superTypes)
         }
     }
 
     private val _implementsList by lazyPub {
         withClassSymbol { classSymbol ->
-            createInheritanceList(forExtendsList = false, classSymbol.superTypes)
+            createInheritanceList(this@SymbolLightClassForClassOrObject, forExtendsList = false, classSymbol.superTypes)
         }
     }
 
@@ -130,13 +126,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                     }
                 }
                 .filterNot {
-                    it.hasTypeForValueClassInSignature()
+                    hasTypeForValueClassInSignature(it)
                 }
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
-            createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)
+            createMethods(this@SymbolLightClassForClassOrObject, visibleDeclarations, result, suppressStatic = suppressStatic)
 
-            createConstructors(declaredMemberScope.constructors, result)
+            createConstructors(this@SymbolLightClassForClassOrObject, declaredMemberScope.constructors, result)
 
 
             addMethodsFromCompanionIfNeeded(result, classSymbol)
@@ -154,9 +150,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         if (!classSymbol.isData) return
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
@@ -166,7 +160,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
             .filterIsInstance<KaNamedFunctionSymbol>()
 
-        createMethods(componentAndCopyFunctions, result)
+        createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
         generateMethodsFromAny(classSymbol, result)
     }
 
@@ -202,18 +196,16 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    protected fun addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    protected fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
             result.add(
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@KaSession,
+                    ktAnalysisSession = this,
                     functionSymbol,
                     lightMemberOrigin,
-                    this,
+                    this@SymbolLightClassForClassOrObject,
                     METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                     false,
                     argumentsSkipMask = null,
@@ -239,7 +231,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             addFieldsFromCompanionIfNeeded(result, classSymbol, nameGenerator)
 
             // Then, add instance fields: properties from parameters, and then member properties
-            addPropertyBackingFields(result, classSymbol, nameGenerator)
+            addPropertyBackingFields(this@SymbolLightClassForClassOrObject, result, classSymbol, nameGenerator)
 
             // Next, add INSTANCE field if non-local named object
             addInstanceFieldIfNeeded(result, classSymbol)
@@ -251,16 +243,14 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (classKind() != KaClassKind.OBJECT || isLocal) return
 
         result.add(
             SymbolLightFieldForObject(
-                ktAnalysisSession = this@KaSession,
+                ktAnalysisSession = this,
                 objectSymbol = classSymbol,
-                containingClass = this,
+                containingClass = this@SymbolLightClassForClassOrObject,
                 name = JvmAbi.INSTANCE_FIELD,
                 lightMemberOrigin = null,
                 isCompanion = false,
@@ -268,9 +258,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         )
     }
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (!isEnum) return
 
         classSymbol.staticDeclaredMemberScope.callables
@@ -281,7 +269,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                 SymbolLightFieldForEnumEntry(
                     enumEntry = enumEntry,
                     enumEntryName = name,
-                    containingClass = this,
+                    containingClass = this@SymbolLightClassForClassOrObject,
                 )
             }
     }

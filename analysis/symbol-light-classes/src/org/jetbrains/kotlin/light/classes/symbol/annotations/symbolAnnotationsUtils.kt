@@ -9,7 +9,8 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -46,11 +47,10 @@ internal fun KaSession.isHiddenByDeprecation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
 ): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
+internal fun KaSession.isHiddenOrSynthetic(
+    symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation()
+): Boolean = isHiddenByDeprecation(symbol, annotationUseSiteTarget) || symbol.hasJvmSyntheticAnnotation()
 
 internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 
@@ -66,14 +66,11 @@ internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardCl
 
 internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaDeclarationSymbol.suppressWildcardMode(
+internal fun KaSession.suppressWildcardMode(
+    symbol: KaDeclarationSymbol,
     declarationFilter: (KaDeclarationSymbol) -> Boolean = { true },
-): Boolean? {
-    return getContainingSymbolsWithSelf().firstNotNullOfOrNull { symbol ->
-        symbol.takeIf(declarationFilter)?.suppressWildcard()
-    }
+): Boolean? = getContainingSymbolsWithSelf(symbol).firstNotNullOfOrNull { symbol ->
+    symbol.takeIf(declarationFilter)?.suppressWildcard()
 }
 
 internal fun KaAnnotatedSymbol.suppressWildcard(): Boolean? {
@@ -91,19 +88,18 @@ internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandard
 
 internal fun KaAnnotatedSymbol.findAnnotation(classId: ClassId): KaAnnotation? = annotations[classId].firstOrNull()
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaAnnotatedSymbol.computeThrowsList(
+internal fun KaSession.computeThrowsList(
+    symbol: KaAnnotatedSymbol,
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
 ) {
-    if (containingClass.isEnum && this is KaNamedFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
-        builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
-        builder.addReference(java.lang.NullPointerException::class.qualifiedName)
+    if (containingClass.isEnum && symbol is KaNamedFunctionSymbol && symbol.name == StandardNames.ENUM_VALUE_OF && symbol.isStatic) {
+        builder.addReference(IllegalArgumentException::class.qualifiedName)
+        builder.addReference(NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws) ?: return
+    val annoApp = symbol.findAnnotation(JvmStandardClassIds.Annotations.Throws) ?: return
 
     fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
         when (annotationValue) {
@@ -134,10 +130,8 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @KaImplementationDetail
-fun annotateByKtType(
+fun KaSession.annotateByKtType(
     psiType: PsiType,
     ktType: KaType,
     annotationParent: PsiElement,

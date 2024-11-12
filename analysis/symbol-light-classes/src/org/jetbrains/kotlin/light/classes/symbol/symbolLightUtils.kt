@@ -34,10 +34,8 @@ import java.util.*
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KaDeclarationSymbol> =
-    generateSequence(this) { it.containingDeclaration }
+internal fun KaSession.getContainingSymbolsWithSelf(symbol: KaDeclarationSymbol): Sequence<KaDeclarationSymbol> =
+    generateSequence(symbol) { it.containingDeclaration }
 
 internal fun KaSession.mapType(
     type: KaType,
@@ -62,24 +60,20 @@ internal fun KaDeclarationSymbol.computeSimpleModality(): String? = when (modali
     KaSymbolModality.OPEN -> null
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.enumClassModality(): String? {
-    if (memberScope.callables.any { it.modality == KaSymbolModality.ABSTRACT }) {
+internal fun KaSession.enumClassModality(symbol: KaClassSymbol): String? {
+    if (symbol.memberScope.callables.any { it.modality == KaSymbolModality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 
-    if (staticDeclaredMemberScope.callables.none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
+    if (symbol.staticDeclaredMemberScope.callables.none { it is KaEnumEntrySymbol && requiresSubClass(it) }) {
         return PsiModifier.FINAL
     }
 
     return null
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
-    val initializer = enumEntryInitializer ?: return false
+private fun KaSession.requiresSubClass(symbol: KaEnumEntrySymbol): Boolean {
+    val initializer = symbol.enumEntryInitializer ?: return false
     return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 
@@ -216,7 +210,7 @@ internal fun AnnotationValue.Annotation.normalizedArguments(): List<AnnotationAr
     val element = sourcePsi ?: return args // May work incorrectly. See KT-63568
 
     return analyzeForLightClasses(element) {
-        val constructorSymbol = ctorSymbolPointer.restoreSymbolOrThrowIfDisposed()
+        val constructorSymbol = restoreSymbolOrThrowIfDisposed(ctorSymbolPointer)
         val params = constructorSymbol.valueParameters
         val missingVarargParameterName =
             params.singleOrNull { it.isVararg && !it.hasDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
@@ -281,12 +275,10 @@ internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiEl
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
-    restoreSymbol()
-        ?: errorWithAttachment("${this::class} pointer already disposed") {
-            withEntry("pointer", this@restoreSymbolOrThrowIfDisposed) { it.toString() }
+internal fun <T : KaSymbol> KaSession.restoreSymbolOrThrowIfDisposed(pointer: KaSymbolPointer<T>): T =
+    pointer.restoreSymbol()
+        ?: errorWithAttachment("${pointer::class} pointer already disposed") {
+            withEntry("pointer", pointer) { it.toString() }
         }
 
 internal fun hasTypeParameters(
@@ -301,7 +293,7 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
     get() = (this as? SymbolLightClassForInterfaceDefaultImpls)?.containingClass
 
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
-    get() = interfaceIfDefaultImpls?.hasTypeParameters() ?: false
+    get() = interfaceIfDefaultImpls?.hasTypeParameters() == true
 
 internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
@@ -316,7 +308,7 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
     ktModule: KaModule,
     crossinline action: KaSession.(T) -> R,
-): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }
+): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed(this@withSymbol)) }
 
 internal val KaPropertySymbol.isConstOrJvmField: Boolean get() = isConst || isJvmField
 internal val KaPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.hasJvmFieldAnnotation() == true

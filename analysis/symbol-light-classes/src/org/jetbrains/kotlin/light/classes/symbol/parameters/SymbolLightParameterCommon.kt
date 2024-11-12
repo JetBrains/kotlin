@@ -83,7 +83,7 @@ internal abstract class SymbolLightParameterCommon(
                     this@SymbolLightParameterCommon,
                     allowErrorTypes = true,
                     getTypeMappingMode(ktType),
-                    suppressWildcards = parameterSymbol.suppressWildcardMode(),
+                    suppressWildcards = suppressWildcardMode(parameterSymbol),
                     forceValueClassResolution = method.canHaveValueClassInSignature(),
                     allowNonJvmPlatforms = true,
                 )

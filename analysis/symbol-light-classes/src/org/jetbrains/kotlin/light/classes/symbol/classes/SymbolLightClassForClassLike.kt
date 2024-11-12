@@ -16,12 +16,8 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -104,7 +100,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun getOwnInnerClasses(): List<PsiClass> = cachedValue {
         withClassSymbol {
-            it.createInnerClasses(manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
+            createInnerClasses(it, manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
         }
     }
 
