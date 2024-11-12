@@ -22,7 +22,6 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:java"))
     api(project(":compiler:backend.common.jvm"))
-    api(project(":js:js.config"))
     api(project(":compiler:cli-common"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:analysis-api-fir"))
