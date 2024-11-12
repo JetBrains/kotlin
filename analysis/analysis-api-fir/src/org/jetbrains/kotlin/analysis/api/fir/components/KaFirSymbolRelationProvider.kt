@@ -435,13 +435,4 @@ internal class KaFirSymbolRelationProvider(
                 inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassSymbol }
             }
         }
-
-    @Deprecated("Use the declaration scope instead.")
-    override val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
-        get() = withValidityAssertion {
-            require(classKind == KaClassKind.ENUM_CLASS)
-            return with(analysisSession) {
-                staticDeclaredMemberScope.callables.filterIsInstance<KaEnumEntrySymbol>().toList()
-            }
-        }
 }

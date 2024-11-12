@@ -268,25 +268,6 @@ internal class KaFe10SymbolRelationProvider(
             return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
                 .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassSymbol }
         }
-
-    @Deprecated("Use the declaration scope instead.")
-    override val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
-        get() = withValidityAssertion {
-            val enumDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
-            if (enumDescriptor.kind != ClassKind.ENUM_CLASS) {
-                return emptyList()
-            }
-
-            val result = mutableListOf<KaEnumEntrySymbol>()
-
-            for (entryDescriptor in enumDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
-                if (entryDescriptor is ClassDescriptor && entryDescriptor.kind == ClassKind.ENUM_ENTRY) {
-                    result += KaFe10DescEnumEntrySymbol(entryDescriptor, analysisContext)
-                }
-            }
-
-            return result
-        }
 }
 
 internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: KaSession): KaSymbol {

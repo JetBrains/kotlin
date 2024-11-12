@@ -180,12 +180,4 @@ public interface KaSymbolRelationProvider {
      * @throws IllegalArgumentException if the given class is not a sealed class.
      */
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
-
-    /**
-     * Enum entries of the given enum class.
-     *
-     * @throws IllegalArgumentException if the given class is not an enum class.
-     */
-    @Deprecated("Use the declaration scope instead.")
-    public val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
 }

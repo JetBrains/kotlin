@@ -477,7 +477,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 	public abstract fun getContainingModule (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 	public abstract fun getContainingSymbol (Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
 	public abstract fun getDirectlyOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lkotlin/sequences/Sequence;
-	public abstract fun getEnumEntries (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Ljava/util/List;
 	public abstract fun getFakeOverrideOriginal (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
 	public abstract fun getIntersectionOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Ljava/util/List;
 	public abstract fun getOriginalContainingClassForOverride (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
