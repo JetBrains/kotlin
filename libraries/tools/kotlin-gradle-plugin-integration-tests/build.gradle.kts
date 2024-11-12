@@ -435,6 +435,20 @@ tasks.withType<Test>().configureEach {
     // The longest one are on MacOS/X64 agents in release configurations
     timeout.set(Duration.ofHours(7))
 
+    /**
+     * Gradle needs these opens to serialize CC and adds them implicitly:
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/base-services/src/main/java/org/gradle/internal/jvm/JpmsConfiguration.java#L41
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/client-services/src/main/java/org/gradle/launcher/daemon/client/DefaultDaemonStarter.java#L142
+     *
+     * Since runs withDebug will happen in-process, add these to make sure IT that run with CC are debuggable
+     */
+    jvmArgs(
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+    )
+
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
