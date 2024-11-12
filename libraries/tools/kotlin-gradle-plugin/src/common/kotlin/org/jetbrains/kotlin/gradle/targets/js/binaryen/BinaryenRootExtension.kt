@@ -48,7 +48,7 @@ open class BinaryenRootExtension(
     internal val platform: org.gradle.api.provider.Property<BinaryenPlatform> = rootProject.objects.property<BinaryenPlatform>()
 
     override fun finalizeConfiguration(): BinaryenEnv {
-        return binaryenSpec.produceEnv(rootProject.providers).get()
+        return binaryenSpec.env.get()
     }
 
     companion object {

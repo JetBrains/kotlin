@@ -38,7 +38,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
     override val workingDir: Provider<Directory>
         get() = npmProjectDir
 
-    override val executable: Provider<String> = nodeJs.produceEnv(project.providers).map { it.executable }
+    override val executable: Provider<String> = nodeJs.executable
 
     override val settingsState: String
         get() = "mocha"

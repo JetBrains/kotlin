@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
@@ -24,9 +25,12 @@ abstract class BinaryenRootEnvSpec : EnvSpec<BinaryenEnv>() {
      */
     internal abstract val platform: Property<BinaryenPlatform>
 
-    override fun produceEnv(providerFactory: ProviderFactory): Provider<BinaryenEnv> {
-        return providerFactory.provider {
-            val versionValue = version.get()
+    final override val env: Provider<BinaryenEnv> = produceEnv()
+
+    override val executable: Provider<String> = env.map { it.executable }
+
+    final override fun produceEnv(): Provider<BinaryenEnv> {
+        return version.map { versionValue ->
             val requiredVersionName = "binaryen-version_$versionValue"
             val cleanableStore = CleanableStore[installationDirectory.getFile().absolutePath]
             val targetPath = cleanableStore[requiredVersionName].use()

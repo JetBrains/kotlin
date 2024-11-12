@@ -24,9 +24,12 @@ abstract class NodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
      */
     internal abstract val platform: org.gradle.api.provider.Property<Platform>
 
-    override fun produceEnv(providerFactory: ProviderFactory): Provider<NodeJsEnv> {
-        return providerFactory.provider {
-            val platformValue = platform.get()
+    final override val env: Provider<NodeJsEnv> = produceEnv()
+
+    override val executable: Provider<String> = env.map { it.executable }
+
+    final override fun produceEnv(): Provider<NodeJsEnv> {
+        return platform.map { platformValue ->
             val name = platformValue.name
             val architecture = platformValue.arch
 

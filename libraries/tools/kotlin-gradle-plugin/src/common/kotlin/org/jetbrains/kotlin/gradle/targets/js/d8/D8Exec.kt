@@ -63,7 +63,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
             return project.registerTask(
                 name
             ) {
-                it.executable = d8.produceEnv(project.providers).get().executable
+                it.executable = d8.executable.get()
                 with(d8) {
                     it.dependsOn(project.d8SetupTaskProvider)
                 }

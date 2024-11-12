@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -60,11 +61,15 @@ abstract class YarnRootEnvSpec : EnvSpec<YarnEnv>() {
      */
     abstract val resolutions: ListProperty<YarnResolution>
 
-    override fun produceEnv(providerFactory: ProviderFactory): Provider<YarnEnv> {
-        return providerFactory.provider {
+    final override val env: Provider<YarnEnv> = produceEnv()
+
+    override val executable: Provider<String> = env.map { it.executable }
+
+    final override fun produceEnv(): Provider<YarnEnv> {
+        return platform.map { platformValue ->
             val cleanableStore = CleanableStore[installationDirectory.getFile().path]
 
-            val isWindows = platform.get().isWindows()
+            val isWindows = platformValue.isWindows()
 
             val home = cleanableStore["yarn-v${version.get()}"].use()
 

@@ -37,7 +37,7 @@ constructor(
     @Transient
     private val nodeJs = project.kotlinNodeJsEnvSpec
 
-    private val nodeExecutable = nodeJs.produceEnv(project.providers).map { it.executable }
+    private val nodeExecutable = nodeJs.executable
 
     @Input
     var environment = mutableMapOf<String, String>()

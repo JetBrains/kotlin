@@ -11,6 +11,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -45,9 +46,13 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
      */
     abstract val edition: org.gradle.api.provider.Property<String>
 
-    override fun produceEnv(providerFactory: ProviderFactory): Provider<D8Env> {
-        return providerFactory.provider {
-            val requiredVersion = "${D8Platform.platform}-${edition.get()}-${version.get()}"
+    final override val env: Provider<D8Env> = produceEnv()
+
+    override val executable: Provider<String> = env.map { it.executable }
+
+    final override fun produceEnv(): Provider<D8Env> {
+        return edition.map { editionValue ->
+            val requiredVersion = "${D8Platform.platform}-$editionValue-${version.get()}"
             val requiredVersionName = "v8-$requiredVersion"
             val cleanableStore = CleanableStore[installationDirectory.getFile().absolutePath]
             val targetPath = cleanableStore[requiredVersionName].use()

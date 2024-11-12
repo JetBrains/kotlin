@@ -49,7 +49,7 @@ open class D8Plugin : Plugin<Project> {
         }
 
         project.registerTask<CleanDataTask>("d8" + CleanDataTask.NAME_SUFFIX) {
-            it.cleanableStoreProvider = spec.produceEnv(project.providers).map { it.cleanableStore }
+            it.cleanableStoreProvider = spec.env.map { it.cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local d8 version"
         }

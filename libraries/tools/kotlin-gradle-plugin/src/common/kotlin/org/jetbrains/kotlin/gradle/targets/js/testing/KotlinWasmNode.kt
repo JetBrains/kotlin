@@ -42,7 +42,7 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
             }
         }
 
-    override val executable: Provider<String> = nodeJs.produceEnv(kotlinJsTest.project.providers).map { it.executable }
+    override val executable: Provider<String> = nodeJs.executable
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,

@@ -1,7 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.variant.computeNodeExec
 import org.apache.tools.ant.filters.FixCrLfFilter
-import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -214,7 +213,7 @@ fun Test.setupNodeJs() {
 }
 
 fun Test.setUpJsBoxTests(tags: String?) {
-    with(project.the<D8Extension>()) {
+    with(d8KotlinBuild) {
         setupV8()
     }
 

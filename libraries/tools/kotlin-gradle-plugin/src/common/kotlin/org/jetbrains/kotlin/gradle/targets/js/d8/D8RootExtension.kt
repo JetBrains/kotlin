@@ -51,7 +51,7 @@ open class D8RootExtension(
         .convention("d8")
 
     override fun finalizeConfiguration(): D8Env {
-        return d8EnvSpec.produceEnv(project.providers).get()
+        return d8EnvSpec.env.get()
     }
 
     val setupTaskProvider: TaskProvider<out D8SetupTask>

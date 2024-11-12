@@ -1,9 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
-import org.jetbrains.kotlin.build.binaryen.BinaryenExtension
-import org.jetbrains.kotlin.build.d8.D8Extension
-import org.jetbrains.kotlin.build.nodejs.NodeJsExtension
 import java.nio.file.Files
 import java.util.*
 
@@ -281,13 +278,13 @@ fun Project.wasmProjectTest(
         jUnitMode = JUnitMode.JUnit5
     ) {
         workingDir = rootDir
-        with(project.the<D8Extension>()) {
+        with(d8KotlinBuild) {
             setupV8()
         }
-        with(project.the<NodeJsExtension>()) {
+        with(nodeJsKotlinBuild) {
             setupNodeJs()
         }
-        with(project.the<BinaryenExtension>()) {
+        with(binaryenKotlinBuild) {
             setupBinaryen()
         }
         setupSpiderMonkey()

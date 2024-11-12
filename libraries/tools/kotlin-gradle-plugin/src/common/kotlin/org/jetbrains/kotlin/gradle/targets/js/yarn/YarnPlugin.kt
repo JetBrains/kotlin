@@ -73,7 +73,7 @@ open class YarnPlugin : Plugin<Project> {
         }
 
         yarnRootExtension.nodeJsEnvironment.value(
-            nodeJs.produceEnv(project.providers)
+            nodeJs.env
         ).disallowChanges()
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {

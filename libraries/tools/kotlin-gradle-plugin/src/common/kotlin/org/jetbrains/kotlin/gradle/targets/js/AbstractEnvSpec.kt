@@ -4,13 +4,14 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 
 /**
  * Instance which describes specific runtimes for JS and Wasm targets
  *
  * It encapsulates necessary information about a tool to run application and tests
  */
-abstract class EnvSpec<T> {
+abstract class EnvSpec<T : AbstractEnv> {
 
     /**
      * Specify whether we need to download the tool
@@ -41,7 +42,17 @@ abstract class EnvSpec<T> {
     abstract val command: Property<String>
 
     /**
+     * Full serializable cache-friendly entity without Gradle Provider API
+     */
+    internal abstract val env: Provider<T>
+
+    /**
+     * Provider with full executable path
+     */
+    abstract val executable: Provider<String>
+
+    /**
      * Produce  full serializable cache-friendly entity without Gradle Provider API
      */
-    abstract fun produceEnv(providerFactory: ProviderFactory): Provider<T>
+    protected abstract fun produceEnv(): Provider<T>
 }

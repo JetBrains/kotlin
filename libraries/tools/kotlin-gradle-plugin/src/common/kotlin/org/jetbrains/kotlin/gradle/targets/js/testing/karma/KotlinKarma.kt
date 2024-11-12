@@ -81,7 +81,7 @@ class KotlinKarma(
     override val workingDir: Provider<Directory>
         get() = npmProjectDir
 
-    override val executable: Provider<String> = nodeJsEnvSpec.produceEnv(project.providers).map { it.executable }
+    override val executable: Provider<String> = nodeJsEnvSpec.executable
 
     override fun getPath() = "$basePath:kotlinKarma"
 

@@ -34,7 +34,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     protected abstract val artifactName: String
 
     @get:Internal
-    protected val env: Provider<Env> = spec.produceEnv(project.providers)
+    protected val env: Provider<Env> = spec.env
 
     private val shouldDownload: Provider<Boolean> = env.map { it.download }
 

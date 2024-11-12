@@ -143,7 +143,7 @@ open class NodeJsRootExtension(
 
     @Deprecated("Use NodeJsEnvSpec instead. This will be removed in 2.2")
     fun requireConfigured(): NodeJsEnv {
-        return nodeJs().produceEnv(project.providers).get()
+        return nodeJs().env.get()
     }
 
     companion object {

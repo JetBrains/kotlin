@@ -31,7 +31,7 @@ internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework 
 
     override val workingDir: Provider<Directory> = projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
 
-    override val executable: Provider<String> = d8.produceEnv(compilation.project.providers).map { it.executable }
+    override val executable: Provider<String> = d8.executable
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,

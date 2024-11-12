@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
@@ -48,7 +47,7 @@ sourceSets {
 testsJar {}
 
 fun Test.setUpJsBoxTests() {
-    with(project.the<D8Extension>()) {
+    with(d8KotlinBuild) {
         setupV8()
     }
     dependsOn(":dist")
