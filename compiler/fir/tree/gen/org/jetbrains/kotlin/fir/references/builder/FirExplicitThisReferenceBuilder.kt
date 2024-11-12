@@ -21,14 +21,12 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 class FirExplicitThisReferenceBuilder {
     var source: KtSourceElement? = null
     var labelName: String? = null
-    var contextReceiverNumber: Int = -1
     var diagnostic: ConeDiagnostic? = null
 
     fun build(): FirThisReference {
         return FirExplicitThisReference(
             source,
             labelName,
-            contextReceiverNumber,
             diagnostic,
         )
     }

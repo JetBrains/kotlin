@@ -128,9 +128,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
                 implicitReceiver?.let {
                     callee.replaceBoundSymbol(it.boundSymbol)
-                    if (it is ContextReceiverValue || it is ImplicitReceiverValueForScriptOrSnippet) {
-                        callee.replaceContextReceiverNumber(it.contextReceiverNumber)
-                    }
                 }
                 val implicitType = implicitReceiver?.originalType
                 val resultType: ConeKotlinType = when {

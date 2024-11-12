@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.OverloadCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -1376,7 +1377,7 @@ private class ElementsToShortenCollector(
      * for labeled and regular `this` expressions (KT-63555).
      */
     private fun thisLabelShortenStrategy(thisReference: FirThisReference): ShortenStrategy {
-        val referencedSymbol = thisReference.boundSymbol
+        val referencedSymbol = thisReference.referencedMemberSymbol
 
         val strategy = when (referencedSymbol) {
             is FirClassLikeSymbol<*> -> classShortenStrategy(referencedSymbol)

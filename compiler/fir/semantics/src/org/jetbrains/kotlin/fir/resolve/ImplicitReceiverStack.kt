@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -35,7 +36,7 @@ class ImplicitReceiverStack private constructor(
         return receivers.fold(this) { acc, value -> acc.add(name = null, value) }
     }
 
-    fun addAllContextReceivers(receivers: List<ContextReceiverValue<*>>): ImplicitReceiverStack {
+    fun addAllContextReceivers(receivers: List<ContextReceiverValue>): ImplicitReceiverStack {
         return receivers.fold(this) { acc, value -> acc.addContextReceiver(value) }
     }
 
@@ -58,7 +59,7 @@ class ImplicitReceiverStack private constructor(
         else
             this
 
-    fun addContextReceiver(value: ContextReceiverValue<*>): ImplicitReceiverStack {
+    fun addContextReceiver(value: ContextReceiverValue): ImplicitReceiverStack {
         val labelName = value.labelName ?: return this
 
         val receiversPerLabel = receiversPerLabel.put(labelName, value)
@@ -117,7 +118,9 @@ fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull
 fun Set<ImplicitReceiverValue<*>>.ambiguityDiagnosticFor(labelName: String?): ConeSimpleDiagnostic {
     // This condition helps choose between an error diagnostic and a warning one to better
     // replicate the K1 behavior and avoid breaking changes.
-    val areAlmostAllAnonymousFunctions = count { it.boundSymbol is FirAnonymousFunctionSymbol } >= size - 1
+    val areAlmostAllAnonymousFunctions = count {
+        it.referencedMemberSymbol is FirAnonymousFunctionSymbol
+    } >= size - 1
 
     val diagnostic = when {
         areAlmostAllAnonymousFunctions -> ConeSimpleDiagnostic("Clashing this@$labelName", DiagnosticKind.LabelNameClash)

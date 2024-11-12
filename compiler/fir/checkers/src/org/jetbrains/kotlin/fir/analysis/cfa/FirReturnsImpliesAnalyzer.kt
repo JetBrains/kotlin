@@ -53,11 +53,14 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             if (i > 0) {
                 RealVariable.local(function.valueParameters[i - 1].symbol)
             } else {
-                val receiverOwnerSymbol =
-                    if (function.symbol is FirPropertyAccessorSymbol) context.containingProperty?.symbol ?: function.symbol
-                    else function.symbol
-                val type = receiverOwnerSymbol.resolvedReceiverTypeRef?.coneType ?: return@Array null
-                RealVariable.receiver(receiverOwnerSymbol, type, contextReceiverNumber = -1)
+                val receiverParameter =
+                    if (function.symbol is FirPropertyAccessorSymbol) {
+                        context.containingProperty?.receiverParameter ?: function.receiverParameter
+                    } else {
+                        function.receiverParameter
+                    }
+                val type = receiverParameter?.typeRef?.coneType ?: return@Array null
+                RealVariable.receiver(receiverParameter.symbol, type, -1)
             }
         }
 

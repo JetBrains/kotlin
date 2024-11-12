@@ -195,7 +195,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
 
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
             enclosingSuspendFunction.dispatchReceiverType?.classLikeLookupTagIfAny?.toRegularClassSymbol(session)
-        val enclosingSuspendFunctionExtensionReceiverOwnerSymbol = enclosingSuspendFunction.takeIf { it.receiverParameter != null }?.symbol
+        val enclosingSuspendFunctionExtensionReceiverSymbol = enclosingSuspendFunction.receiverParameter?.symbol
 
         val (dispatchReceiverExpression, extensionReceiverExpression, extensionReceiverParameterType) =
             expression.computeReceiversInfo(session, calledDeclarationSymbol)
@@ -203,20 +203,20 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
             if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
-            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) continue
+            if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) continue
 
             return false
         }
 
-        if (enclosingSuspendFunctionExtensionReceiverOwnerSymbol?.resolvedReceiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) != true) {
+        if (enclosingSuspendFunctionExtensionReceiverSymbol?.resolvedType?.isRestrictSuspensionReceiver(session) != true) {
             return true
         }
 
-        if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
+        if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) {
             return true
         }
 
-        if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
+        if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) {
             if (extensionReceiverParameterType?.isRestrictSuspensionReceiver(session) == true) {
                 return true
             }

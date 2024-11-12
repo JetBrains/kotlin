@@ -22,7 +22,6 @@ abstract class FirThisReference : FirReference() {
     abstract override val source: KtSourceElement?
     abstract val labelName: String?
     abstract val boundSymbol: FirBasedSymbol<*>?
-    abstract val contextReceiverNumber: Int
     abstract val isImplicit: Boolean
     abstract val diagnostic: ConeDiagnostic?
 
@@ -34,8 +33,6 @@ abstract class FirThisReference : FirReference() {
         transformer.transformThisReference(this, data) as E
 
     abstract fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?)
-
-    abstract fun replaceContextReceiverNumber(newContextReceiverNumber: Int)
 
     abstract fun replaceDiagnostic(newDiagnostic: ConeDiagnostic?)
 }

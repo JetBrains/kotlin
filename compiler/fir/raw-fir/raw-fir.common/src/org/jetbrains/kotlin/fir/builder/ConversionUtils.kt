@@ -357,7 +357,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             isExtension && !forDispatchReceiver -> buildThisReceiverExpression {
                 source = fakeSource
                 calleeReference = buildImplicitThisReference {
-                    boundSymbol = this@generateAccessorsByDelegate.symbol
+                    boundSymbol = this@generateAccessorsByDelegate.receiverParameter?.symbol
                 }
             }
             ownerRegularOrAnonymousObjectSymbol != null -> buildThisReceiverExpression {

@@ -1039,7 +1039,7 @@ internal class KaFirResolver(
             this is FirThisReceiverExpression && this.isImplicit -> {
                 val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
-                    is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
+                    is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
                         ?: return null
                     else -> return null
                 }

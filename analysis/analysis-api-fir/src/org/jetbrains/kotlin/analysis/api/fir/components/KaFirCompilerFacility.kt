@@ -70,8 +70,12 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
+import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -564,17 +568,15 @@ internal class KaFirCompilerFacility(
             }
 
             val id = when (calleeReference) {
-                is FirThisReference -> calleeReference.boundSymbol?.let {
-                    val contextReceiverNumber = calleeReference.contextReceiverNumber
-                    if (it is FirCallableSymbol) {
-                        if (contextReceiverNumber == -1) {
-                            CodeFragmentCapturedId(it.receiverParameter!!.symbol)
-                        } else {
-                            CodeFragmentCapturedId(it.resolvedContextReceivers[contextReceiverNumber].symbol)
-                        }
-                    } else {
-                        CodeFragmentCapturedId(it)
+                is FirThisReference -> when (val boundSymbol = calleeReference.boundSymbol) {
+                    is FirClassSymbol -> CodeFragmentCapturedId(boundSymbol)
+                    is FirReceiverParameterSymbol -> when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
+                        // Specific (deprecated) case for a class context receiver
+                        // TODO: remove with KT-72994
+                        is FirClassSymbol -> CodeFragmentCapturedId(referencedSymbol)
+                        else -> CodeFragmentCapturedId(boundSymbol)
                     }
+                    else -> null
                 }
                 else -> calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()?.let { CodeFragmentCapturedId(it) }
             }

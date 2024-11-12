@@ -91,6 +91,7 @@ internal class KaSymbolByFirBuilder(
         is FirCallableSymbol<*> -> callableBuilder.buildCallableSymbol(firSymbol)
         is FirFileSymbol -> buildFileSymbol(firSymbol)
         is FirScriptSymbol -> buildScriptSymbol(firSymbol)
+        is FirReceiverParameterSymbol -> buildReceiverParameterSymbol(firSymbol)
         else -> throwUnexpectedElementError(firSymbol)
     }
 
@@ -99,6 +100,17 @@ internal class KaSymbolByFirBuilder(
     fun buildFileSymbol(firSymbol: FirFileSymbol): KaFileSymbol = KaFirFileSymbol(firSymbol, analysisSession)
 
     fun buildScriptSymbol(firSymbol: FirScriptSymbol): KaScriptSymbol = KaFirScriptSymbol(firSymbol, analysisSession)
+
+    fun buildReceiverParameterSymbol(firSymbol: FirReceiverParameterSymbol): KaDeclarationSymbol {
+        val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol
+        return when (containingDeclarationSymbol) {
+            is FirCallableSymbol -> if (firSymbol.fir is FirReceiverParameter) {
+                callableBuilder.buildExtensionReceiverSymbol(firSymbol)!!
+            } else callableBuilder.buildCallableSymbol(containingDeclarationSymbol)
+            is FirClassSymbol -> classifierBuilder.buildClassLikeSymbol(containingDeclarationSymbol)
+            else -> throwUnexpectedElementError(containingDeclarationSymbol)
+        }
+    }
 
     private val packageProvider: KotlinPackageProvider get() = analysisSession.useSitePackageProvider
 
@@ -384,9 +396,14 @@ internal class KaSymbolByFirBuilder(
             else -> throwUnexpectedElementError(firSymbol)
         }
 
-        fun buildExtensionReceiverSymbol(firSymbol: FirCallableSymbol<*>): KaReceiverParameterSymbol? {
-            if (firSymbol.fir.receiverParameter == null) return null
-            return buildCallableSymbol(firSymbol).receiverParameter
+        fun buildExtensionReceiverSymbol(firSymbol: FirReceiverParameterSymbol): KaReceiverParameterSymbol? {
+            // TODO: KT-73112 we shouldn't return extension receiver in case our receiver parameter symbol points to a context receiver
+            //if (firSymbol.fir !is FirReceiverParameter) return null
+            val referencedSymbol = firSymbol.containingDeclarationSymbol
+            if (referencedSymbol is FirCallableSymbol && referencedSymbol.fir.receiverParameter != null) {
+                return buildCallableSymbol(referencedSymbol).receiverParameter
+            }
+            return null
         }
     }
 

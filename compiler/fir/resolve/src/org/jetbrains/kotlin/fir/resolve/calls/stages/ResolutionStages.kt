@@ -393,8 +393,9 @@ object CheckDslScopeViolation : ResolutionStage() {
         type: ConeKotlinType,
         context: ResolutionContext,
     ): Set<ClassId> {
+        val callableSymbol = (boundSymbol as? FirReceiverParameterSymbol)?.containingDeclarationSymbol
         return buildSet {
-            (boundSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
+            (callableSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
                 // collect annotations in the function type at declaration site. For example, the `@A` and `@B` in the following code.
                 // ```
                 // fun <T> body(block: @A ((@B T).() -> Unit)) { ... }

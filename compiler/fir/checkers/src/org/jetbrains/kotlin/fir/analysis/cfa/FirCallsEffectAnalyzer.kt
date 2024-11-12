@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.isFunctionOrSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.util.SetMultimap
@@ -80,8 +82,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         else -> this
     }
 
-    private fun ControlFlowGraph.findNonInPlaceUsesOf(lambdaSymbols: Set<FirBasedSymbol<*>>): SetMultimap<FirBasedSymbol<*>, FirExpression> {
-        val result = setMultimapOf<FirBasedSymbol<*>, FirExpression>()
+    private fun ControlFlowGraph.findNonInPlaceUsesOf(lambdaSymbols: Set<FirCallableSymbol<*>>): SetMultimap<FirCallableSymbol<*>, FirExpression> {
+        val result = setMultimapOf<FirCallableSymbol<*>, FirExpression>()
 
         fun FirExpression.mark() {
             val symbol = qualifiedAccessSymbol() ?: return
@@ -123,7 +125,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     }
 
     private class InvocationDataCollector(
-        val lambdaSymbols: Set<FirBasedSymbol<*>>
+        val lambdaSymbols: Set<FirCallableSymbol<*>>
     ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
         override fun visitFunctionCallExitNode(
             node: FunctionCallExitNode,
@@ -158,10 +160,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun FirExpression.qualifiedAccessSymbol(): FirBasedSymbol<*>? =
+    private fun FirExpression.qualifiedAccessSymbol(): FirCallableSymbol<*>? =
         when (val callee = (unwrapArgument() as? FirQualifiedAccessExpression)?.calleeReference) {
-            is FirResolvedNamedReference -> callee.resolvedSymbol
-            is FirThisReference -> callee.boundSymbol
+            is FirResolvedNamedReference -> callee.resolvedSymbol as? FirCallableSymbol
+            is FirThisReference -> (callee.boundSymbol as? FirReceiverParameterSymbol)?.containingDeclarationSymbol as? FirCallableSymbol
             else -> null
         }
 }

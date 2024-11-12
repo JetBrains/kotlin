@@ -58,10 +58,9 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
     }
 
     val thisReceiver = ImplicitDispatchReceiverValue(owner.symbol, defaultType, session, scopeSession)
-    val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.mapIndexed { index, receiver ->
-        ContextReceiverValueForClass(
-            owner.symbol, receiver.returnTypeRef.coneType, receiver.labelName, session, scopeSession,
-            contextReceiverNumber = index,
+    val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.map { receiver ->
+        ContextReceiverValue(
+            receiver.symbol, receiver.returnTypeRef.coneType, receiver.labelName, session, scopeSession,
         )
     }.orEmpty()
 
@@ -77,7 +76,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
 
 class TowerElementsForClass(
     val thisReceiver: ImplicitReceiverValue<*>,
-    val contextReceivers: List<ContextReceiverValueForClass>,
+    val contextReceivers: List<ContextReceiverValue>,
     val staticScope: FirScope?,
     val companionReceiver: ImplicitReceiverValue<*>?,
     val companionStaticScope: FirScope?,
@@ -305,15 +304,14 @@ fun FirClass.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareS
 fun FirClass.staticScope(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
     scopeProvider.getStaticScope(this, session, scopeSession)
 
-typealias ContextReceiverGroup = List<ContextReceiverValue<*>>
+typealias ContextReceiverGroup = List<ContextReceiverValue>
 typealias FirLocalScopes = PersistentList<FirLocalScope>
 
 fun FirCallableDeclaration.createContextReceiverValues(
     sessionHolder: SessionHolder,
-): List<ContextReceiverValueForCallable> =
-    contextReceivers.mapIndexed { index, receiver ->
-        ContextReceiverValueForCallable(
-            symbol, receiver.returnTypeRef.coneType, receiver.labelName, sessionHolder.session, sessionHolder.scopeSession,
-            contextReceiverNumber = index,
+): List<ContextReceiverValue> =
+    contextReceivers.map { receiver ->
+        ContextReceiverValue(
+            receiver.symbol, receiver.returnTypeRef.coneType, receiver.labelName, sessionHolder.session, sessionHolder.scopeSession,
         )
     }

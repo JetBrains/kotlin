@@ -280,14 +280,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
-        builder(thisReference, "FirExplicitThisReference") {
-            default("contextReceiverNumber", "-1")
-        }
-
-        builder(thisReference, "FirImplicitThisReference") {
-            default("contextReceiverNumber", "-1")
-        }
-
         builder(anonymousFunction) {
             parents += functionBuilder
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference", "contractDescription")

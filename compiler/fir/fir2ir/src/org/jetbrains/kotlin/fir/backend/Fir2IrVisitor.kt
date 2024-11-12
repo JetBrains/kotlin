@@ -695,14 +695,17 @@ class Fir2IrVisitor(
 
         val boundSymbol = calleeReference.boundSymbol
 
-        if (boundSymbol !is FirClassSymbol || calleeReference.contextReceiverNumber == -1) {
+        // If not a context receiver of a class
+        // TODO: after KT-72994 injectGetValueCall can be used unconditionally
+        // TODO: add tests, currently can be replaced with if (false) without breaking anything
+        if (boundSymbol !is FirReceiverParameterSymbol || boundSymbol.containingDeclarationSymbol.fir !is FirClass) {
             callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
         }
 
-        when (boundSymbol) {
-            is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, boundSymbol)
-            is FirScriptSymbol -> generateThisReceiverAccessForScript(thisReceiverExpression, boundSymbol)
-            is FirCallableSymbol -> generateThisReceiverAccessForCallable(thisReceiverExpression, boundSymbol)
+        when (val declarationSymbol = calleeReference.referencedMemberSymbol) {
+            is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, declarationSymbol)
+            is FirScriptSymbol -> generateThisReceiverAccessForScript(thisReceiverExpression, declarationSymbol)
+            is FirCallableSymbol -> generateThisReceiverAccessForCallable(thisReceiverExpression, declarationSymbol)
             else -> null
         } ?: visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
@@ -754,27 +757,29 @@ class Fir2IrVisitor(
                 callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
             } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
 
-            if (calleeReference.contextReceiverNumber == -1) {
+            val referencedFir = calleeReference.boundSymbol?.fir
+            if (referencedFir !is FirContextReceiver) {
                 return thisRef
             }
+            val contextReceiverNumber = (firClass as FirRegularClass).contextReceivers.indexOf(referencedFir)
 
             val constructorForCurrentlyGeneratedDelegatedConstructor =
                 conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
 
             if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
                 val constructorParameter =
-                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[calleeReference.contextReceiverNumber]
+                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[contextReceiverNumber]
                 IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
             } else {
                 val contextReceivers =
                     c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
-                require(contextReceivers.size > calleeReference.contextReceiverNumber) {
-                    "Not defined context receiver #${calleeReference.contextReceiverNumber} for $irClass. " +
+                require(contextReceivers.size > contextReceiverNumber) {
+                    "Not defined context receiver #$contextReceiverNumber for $irClass. " +
                             "Context receivers found: $contextReceivers"
                 }
 
                 IrGetFieldImpl(
-                    startOffset, endOffset, contextReceivers[calleeReference.contextReceiverNumber].symbol,
+                    startOffset, endOffset, contextReceivers[contextReceiverNumber].symbol,
                     thisReceiverExpression.resolvedType.toIrType(c),
                     thisRef,
                 )
@@ -789,8 +794,9 @@ class Fir2IrVisitor(
         val calleeReference = thisReceiverExpression.calleeReference
         val firScript = firScriptSymbol.fir
         val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
+        val contextReceiverNumber = firScriptSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
         val receiverParameter =
-            irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == calleeReference.contextReceiverNumber } ?: irScript.thisReceiver
+            irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == contextReceiverNumber } ?: irScript.thisReceiver
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
@@ -819,8 +825,9 @@ class Fir2IrVisitor(
             else -> null
         } ?: return null
 
-        val receiver = if (calleeReference.contextReceiverNumber != -1) {
-            irFunction.valueParameters[calleeReference.contextReceiverNumber]
+        val contextReceiverNumber = firCallableSymbol.fir.contextReceivers.indexOf(calleeReference.boundSymbol?.fir)
+        val receiver = if (contextReceiverNumber != -1) {
+            irFunction.valueParameters[contextReceiverNumber]
         } else {
             irFunction.extensionReceiverParameter
         } ?: return null

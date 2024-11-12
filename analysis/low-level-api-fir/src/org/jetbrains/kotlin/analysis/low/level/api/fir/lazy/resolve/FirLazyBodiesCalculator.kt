@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -352,14 +353,19 @@ private fun rebindThisRef(
         boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol) }
     }
 
-    requireWithAttachment(boundSymbol == oldTarget, { "Unexpected bound symbol: ${boundSymbol?.let { it::class.simpleName }}" }) {
+    requireWithAttachment(
+        boundSymbol is FirReceiverParameterSymbol && boundSymbol.containingDeclarationSymbol == oldTarget,
+        {
+            "Unexpected bound symbol: ${boundSymbol?.let { it::class.simpleName }}"
+        }
+    ) {
         withFirSymbolEntry("newTarget", newTarget)
         withFirSymbolEntry("oldTarget", oldTarget)
         boundSymbol?.let { withFirSymbolEntry("boundSymbol", boundSymbol) }
     }
 
     expression.replaceCalleeReference(buildImplicitThisReference {
-        this.boundSymbol = newTarget
+        this.boundSymbol = newTarget.receiverParameter!!.symbol
     })
 }
 

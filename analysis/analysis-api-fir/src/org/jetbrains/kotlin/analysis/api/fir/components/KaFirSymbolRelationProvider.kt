@@ -396,7 +396,12 @@ internal class KaFirSymbolRelationProvider(
         if (this is KaReceiverParameterSymbol) {
             this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
                 .filterIsInstance<FirCallableSymbol<*>>()
-                .mapNotNull { analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it) }
+                // TODO: KT-73050. This code in fact does nothing
+                .mapNotNull { callableSymbol ->
+                    callableSymbol.receiverParameter?.symbol?.let {
+                        analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)
+                    }
+                }
         }
 
         require(this is KaFirSymbol<*>)

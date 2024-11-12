@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsCodeFragmentAware
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -125,46 +127,68 @@ private class CodeFragmentCapturedValueVisitor(
                 }
             }
             is FirThisReference -> {
-                val contextReceiverNumber = element.contextReceiverNumber
                 val symbol = element.boundSymbol
                 if (symbol != null && symbol !in selfSymbols) {
+                    fun registerClassSymbolIfNotObject(classSymbol: FirClassSymbol<*>) {
+                        if (classSymbol.classKind != ClassKind.OBJECT) {
+                            val isCrossingInlineBounds = isCrossingInlineBounds(element, classSymbol)
+                            val capturedValue = CodeFragmentCapturedValue.ContainingClass(classSymbol.classId, isCrossingInlineBounds)
+                            val typeRef = buildResolvedTypeRef { coneType = classSymbol.defaultType() }
+                            register(CodeFragmentCapturedSymbol(capturedValue, classSymbol, typeRef))
+                        }
+                    }
+
                     when (symbol) {
                         is FirClassSymbol<*> -> {
-                            if (symbol.classKind != ClassKind.OBJECT) {
-                                val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                val capturedValue = CodeFragmentCapturedValue.ContainingClass(symbol.classId, isCrossingInlineBounds)
-                                val typeRef = buildResolvedTypeRef { coneType = symbol.defaultType() }
-                                register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef))
-                            }
+                            registerClassSymbolIfNotObject(symbol)
                         }
-                        is FirFunctionSymbol<*>, is FirPropertySymbol -> {
-                            @Suppress("USELESS_IS_CHECK") // Smart-cast is not applied from a 'when' condition in K1
-                            require(symbol is FirCallableSymbol<*>)
+                        is FirReceiverParameterSymbol -> {
+                            when (val receiverParameter = symbol.fir) {
+                                is FirContextReceiver -> {
+                                    val referencedSymbol = element.referencedMemberSymbol
+                                    if (referencedSymbol is FirClassSymbol) {
+                                        // Specific (deprecated) case for a class context receiver
+                                        // TODO: remove with KT-72994
+                                        registerClassSymbolIfNotObject(referencedSymbol)
+                                    } else {
+                                        val labelName = receiverParameter.labelName
+                                        if (labelName != null) {
+                                            val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
+                                            val index = when (val containingDeclaration = symbol.containingDeclarationSymbol.fir) {
+                                                is FirCallableDeclaration -> containingDeclaration.contextReceivers.indexOf(
+                                                    receiverParameter
+                                                )
+                                                is FirRegularClass -> containingDeclaration.contextReceivers.indexOf(receiverParameter)
+                                                else -> errorWithFirSpecificEntries(
+                                                    message = "Unexpected containing declaration ${containingDeclaration::class.simpleName}",
+                                                    fir = containingDeclaration
+                                                )
+                                            }
+                                            val capturedValue = CodeFragmentCapturedValue
+                                                .ContextReceiver(index, labelName, isCrossingInlineBounds)
+                                            register(
+                                                CodeFragmentCapturedSymbol(
+                                                    capturedValue, symbol, receiverParameter.returnTypeRef
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                                is FirReceiverParameter -> {
+                                    val labelName = element.labelName
+                                        ?: (receiverParameter.containingDeclarationSymbol as? FirAnonymousFunctionSymbol)?.label?.name
+                                        ?: (receiverParameter.containingDeclarationSymbol as FirCallableSymbol).name.asString()
 
-                            if (contextReceiverNumber >= 0) {
-                                val contextReceiver = symbol.resolvedContextReceivers[contextReceiverNumber]
-                                val labelName = contextReceiver.labelName
-                                if (labelName != null) {
+                                    val typeRef = receiverParameter.typeRef
                                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                    val capturedValue = CodeFragmentCapturedValue
-                                        .ContextReceiver(contextReceiverNumber, labelName, isCrossingInlineBounds)
+                                    val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds)
                                     register(
-                                        CodeFragmentCapturedSymbol(
-                                            capturedValue, contextReceiver.symbol, contextReceiver.returnTypeRef
-                                        )
+                                        CodeFragmentCapturedSymbol(capturedValue, receiverParameter.symbol, typeRef)
                                     )
                                 }
-                            } else {
-                                val labelName = element.labelName
-                                    ?: (symbol as? FirAnonymousFunctionSymbol)?.label?.name
-                                    ?: symbol.name.asString()
-
-                                val receiverParameter = symbol.receiverParameter ?: error("Receiver parameter not found")
-                                val typeRef = receiverParameter.typeRef
-                                val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds)
-                                register(
-                                    CodeFragmentCapturedSymbol(capturedValue, receiverParameter.symbol, typeRef)
+                                else -> errorWithFirSpecificEntries(
+                                    message = "Unexpected declaration in FirReceiverParameterSymbol ${receiverParameter::class.simpleName}",
+                                    fir = receiverParameter
                                 )
                             }
                         }

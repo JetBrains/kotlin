@@ -266,7 +266,7 @@ class BodyResolveContext(
 
         if (type != null) {
             val receiver = ImplicitExtensionReceiverValue(
-                owner.symbol,
+                owner.receiverParameter!!.symbol,
                 type,
                 holder.session,
                 holder.scopeSession
@@ -625,11 +625,10 @@ class BodyResolveContext(
 
                 replSnippet.receivers.mapIndexed { index, receiver ->
                     ImplicitReceiverValueForScriptOrSnippet(
-                        replSnippet.symbol,
+                        receiver.symbol,
                         receiver.typeRef.coneType,
                         holder.session,
                         holder.scopeSession,
-                        receiverNumber = index
                     )
                 }.asReversed().forEach {
                     val additionalLabelName = it.type.abbreviatedTypeOrSelf.labelName(holder.session)

@@ -107,9 +107,6 @@ internal object ElementContextRenderer {
 
                             appendBlock {
                                 append("Type: ").appendType(implicitReceiver.type).appendLine()
-                                if (implicitReceiver.isContextReceiver) {
-                                    append("Context receiver index: ").appendLine(implicitReceiver.contextReceiverNumber)
-                                }
                             }
                         }
                     }

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
+import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
@@ -309,9 +310,10 @@ internal class KaFirScopeProvider(
             val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
 
             receivers.map { receiver ->
+                val ownerSymbol = receiver.referencedMemberSymbol
                 KaBaseImplicitReceiver(
                     firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
-                    firSymbolBuilder.buildSymbol(receiver.boundSymbol.fir),
+                    firSymbolBuilder.buildSymbol(ownerSymbol),
                     index
                 )
             }

@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -185,7 +187,7 @@ class ConeEffectExtractor(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Nothing?
     ): ConeContractDescriptionElement {
-        val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir
+        val declaration = thisReceiverExpression.calleeReference.referencedMemberSymbol?.fir
             ?: return ConeContractDescriptionError.UnresolvedThis(thisReceiverExpression).asElement()
         val callableOwner = owner as? FirCallableDeclaration
         val ownerHasReceiver = callableOwner?.receiverParameter != null

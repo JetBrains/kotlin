@@ -12,8 +12,12 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.mpp.EnumEntrySymbolMarker
 import org.jetbrains.kotlin.mpp.PropertySymbolMarker
@@ -153,6 +157,32 @@ class FirReceiverParameterSymbol : FirBasedSymbol<FirDeclaration>() {
                 withFirEntry("fir", fir)
             }
         }
+
+    val resolvedType: ConeKotlinType
+        get() = calculateResolvedTypeRef().coneType
+
+    private fun receiverTypeRef(): FirTypeRef {
+        return when (val fir = fir) {
+            is FirReceiverParameter -> fir.typeRef
+            is FirContextReceiver -> fir.returnTypeRef
+            else -> errorWithAttachment(message = "Unexpected declaration in FirReceiverParameterSymbol ${fir::class.simpleName}") {
+                withFirEntry(name = "FIR", fir = fir)
+            }
+        }
+    }
+
+    private fun calculateResolvedTypeRef(): FirResolvedTypeRef {
+        val receiverTypeRef = receiverTypeRef()
+        if (receiverTypeRef is FirResolvedTypeRef) {
+            return receiverTypeRef
+        }
+        lazyResolveToPhase(FirResolvePhase.TYPES)
+        val result = receiverTypeRef()
+        if (result !is FirResolvedTypeRef) {
+            errorInLazyResolve("receiverTypeRef", receiverTypeRef::class, FirResolvedTypeRef::class)
+        }
+        return result
+    }
 
     override fun toString(): String = "FirReceiverParameterSymbol"
 }

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 
 open class FirSymbolRenderer {
 
@@ -22,6 +25,14 @@ open class FirSymbolRenderer {
         return when (symbol) {
             is FirCallableSymbol<*> -> symbol.callableId.toString()
             is FirClassLikeSymbol<*> -> symbol.classId.toString()
+            is FirReceiverParameterSymbol -> {
+                val fir = symbol.fir
+                if (fir is FirContextReceiver) {
+                    "context of ${renderReference(fir.containingDeclarationSymbol)}"
+                } else if (fir is FirReceiverParameter) {
+                    renderReference(fir.containingDeclarationSymbol)
+                } else "?"
+            }
             else -> "?"
         }
     }
