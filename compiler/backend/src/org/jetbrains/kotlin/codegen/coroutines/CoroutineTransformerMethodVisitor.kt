@@ -1067,8 +1067,7 @@ class CoroutineTransformerMethodVisitor(
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
         val continuationLabelAfterLoadedResult = LabelNode()
-        val suspendElementLineNumber = lineNumber
-        var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
+        val nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -1089,7 +1088,7 @@ class CoroutineTransformerMethodVisitor(
                 val returnLabel = LabelNode()
                 visitLabel(returnLabel.label)
                 // Special line number to stop in debugger before suspend return
-                visitLineNumber(suspendElementLineNumber, returnLabel.label)
+                visitLineNumber(lineNumber, returnLabel.label)
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
@@ -1122,31 +1121,12 @@ class CoroutineTransformerMethodVisitor(
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
 
-                if (nextLineNumberNode != null) {
-                    // If there is a clear next linenumber instruction, extend it. Can't use line number of suspension point
-                    // here because both non-suspended execution and re-entering after suspension passes this label.
-                    if (possibleTryCatchBlockStart.next?.opcode?.let {
-                            it != Opcodes.ASTORE && it != Opcodes.CHECKCAST && it != Opcodes.INVOKESTATIC &&
-                                    it != Opcodes.INVOKEVIRTUAL && it != Opcodes.INVOKEINTERFACE
-                        } == true
-                    ) {
-                        visitLineNumber(nextLineNumberNode!!.line, continuationLabelAfterLoadedResult.label)
-                    } else {
-                        // But keep the linenumber if the result of the call is used afterwards
-                        nextLineNumberNode = null
-                    }
-                } else if (suspendPointLineNumber != null) {
+                if (nextLineNumberNode == null && suspendPointLineNumber != null) {
                     // If there is no clear next linenumber instruction, the continuation is still on the
                     // same line as the suspend point.
                     visitLineNumber(suspendPointLineNumber.line, continuationLabelAfterLoadedResult.label)
                 }
             })
-
-            if (nextLineNumberNode != null) {
-                // Remove the line number instruction as it now covered with line number on continuation label.
-                // If both linenumber are present in bytecode, debugger will trigger line specific events twice.
-                remove(nextLineNumberNode)
-            }
         }
 
         return suspension.stateLabel

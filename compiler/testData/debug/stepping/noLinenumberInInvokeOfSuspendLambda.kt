@@ -33,6 +33,7 @@ fun box() {
 // test.kt:-1 create
 // test.kt:15 empty
 // test.kt:19 invokeSuspend
+// test.kt:18 invokeSuspend
 // test.kt:20 invokeSuspend
 // test.kt:10 builder
 // Continuation.kt:... <init>
@@ -42,6 +43,7 @@ fun box() {
 // test.kt:-1 create
 // test.kt:15 empty
 // test.kt:21 invokeSuspend
+// test.kt:20 invokeSuspend
 // test.kt:22 invokeSuspend
 // Continuation.kt:... resumeWith
 // test.kt:11 resumeWith

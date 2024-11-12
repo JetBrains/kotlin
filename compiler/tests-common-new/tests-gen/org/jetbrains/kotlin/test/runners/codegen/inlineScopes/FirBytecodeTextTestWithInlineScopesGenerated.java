@@ -1774,6 +1774,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
       }
 
       @Test
+      @TestMetadata("linenumberDoesNotDuplicate.kt")
+      public void testLinenumberDoesNotDuplicate() {
+        runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/linenumberDoesNotDuplicate.kt");
+      }
+
+      @Test
       @TestMetadata("localVariableCorrectLabel.kt")
       public void testLocalVariableCorrectLabel() {
         runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/localVariableCorrectLabel.kt");

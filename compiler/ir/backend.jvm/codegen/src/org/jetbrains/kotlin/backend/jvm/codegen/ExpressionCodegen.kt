@@ -1068,6 +1068,7 @@ class ExpressionCodegen(
             mv.mark(elseLabel)
         }
         mv.mark(endLabel)
+
         return unitValue
     }
 
