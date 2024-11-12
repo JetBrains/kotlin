@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
+abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val context: C) : BodyLoweringPass {
     companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
     }
@@ -576,6 +577,6 @@ fun getSuspendFunctionKind(
 
 // Suppress since it is used in native
 @Suppress("MemberVisibilityCanBePrivate")
-fun IrCall.isReturnIfSuspendedCall(context: CommonBackendContext) =
-    symbol.owner.run { fqNameWhenAvailable == context.internalPackageFqn.child(Name.identifier("returnIfSuspended")) }
+fun IrCall.isReturnIfSuspendedCall(context: JsCommonBackendContext) =
+    symbol == context.ir.symbols.returnIfSuspended
 

@@ -43,8 +43,6 @@ internal class Context(
 
     override val configuration get() = config.configuration
 
-    override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
-
     override val optimizeLoopsOverUnsignedArrays = true
 
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }

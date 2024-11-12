@@ -102,8 +102,6 @@ class JvmBackendContext(
 
     override val configuration get() = state.configuration
 
-    override val internalPackageFqn = FqName("kotlin.jvm")
-
     val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
     val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)

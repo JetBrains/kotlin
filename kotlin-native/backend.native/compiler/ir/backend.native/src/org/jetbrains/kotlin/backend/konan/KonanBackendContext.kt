@@ -20,8 +20,6 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseCon
 
     abstract override val ir: KonanIr
 
-    override val internalPackageFqn = KonanFqNames.internalPackageName
-
     override val mapping: Mapping = Mapping()
 
     override val irFactory: IrFactory = IrFactoryImpl

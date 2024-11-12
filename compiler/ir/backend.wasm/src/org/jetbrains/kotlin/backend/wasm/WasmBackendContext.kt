@@ -84,8 +84,6 @@ class WasmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    val kotlinWasmInternalPackageFqn = internalPackageFqn.child(Name.identifier("internal"))
-
     val wasmSymbols: WasmSymbols = WasmSymbols(irBuiltIns, configuration)
     override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
