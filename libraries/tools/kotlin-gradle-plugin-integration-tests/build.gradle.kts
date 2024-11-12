@@ -399,6 +399,15 @@ tasks.withType<Test>().configureEach {
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
 
+    // Gradle needs these opens to serialize CC and adds them implicitly.
+    // Since runs withDebug will happen in-process, add these to make sure IT that run with CC are debuggable
+    jvmArgs(
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+    )
+
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
