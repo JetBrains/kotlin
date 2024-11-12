@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -21,10 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-public sealed class KaVariableSymbol :
-    KaCallableSymbol(),
-    KaNamedSymbol,
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
     public abstract val isVal: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
@@ -92,7 +92,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
  *
  * `A` is an enum entry of enum class `E`. `x` is a property of `A`'s initializer and thus not accessible outside the initializer.
  */
-public abstract class KaEnumEntrySymbol : KaVariableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
+public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -138,9 +138,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol(), @Suppress("DEPRECA
  */
 public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
 
-public abstract class KaJavaFieldSymbol :
-    KaVariableSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+public abstract class KaJavaFieldSymbol : KaVariableSymbol(){
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -156,8 +154,7 @@ public abstract class KaJavaFieldSymbol :
 @OptIn(KaImplementationDetail::class)
 public sealed class KaPropertySymbol :
     KaVariableSymbol(),
-    KaTypeParameterOwnerSymbol,
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+    KaTypeParameterOwnerSymbol {
 
     /**
      * Checks if the property has a non-null [getter].
@@ -227,8 +224,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol>
 }
 
-public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -263,8 +259,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaParameterSymbol>
 }
 
-public abstract class KaValueParameterSymbol : KaParameterSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind, KaAnnotatedSymbol {
+public abstract class KaValueParameterSymbol : KaParameterSymbol(), KaAnnotatedSymbol {
     /**
      * Returns true if the function parameter is marked with `noinline` modifier
      */

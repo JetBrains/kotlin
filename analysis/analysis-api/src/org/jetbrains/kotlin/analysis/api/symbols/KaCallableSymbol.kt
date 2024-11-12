@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.CallableId
 
 @OptIn(KaExperimentalApi::class)
 public sealed class KaCallableSymbol :
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind,
     KaDeclarationSymbol,
     KaContextReceiversOwner {
     /**

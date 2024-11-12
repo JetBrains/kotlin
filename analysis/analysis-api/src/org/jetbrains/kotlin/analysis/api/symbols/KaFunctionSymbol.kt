@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-public sealed class KaFunctionSymbol : KaCallableSymbol(),
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
+public sealed class KaFunctionSymbol : KaCallableSymbol() {
     public abstract val valueParameters: List<KaValueParameterSymbol>
 
     /**

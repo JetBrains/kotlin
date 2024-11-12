@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -19,7 +21,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KaClassifierSymbol : KaSymbol, @Suppress("DEPRECATION") KaPossiblyNamedSymbol, KaDeclarationSymbol
+public sealed class KaClassifierSymbol : KaSymbol,
+    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol,
+    KaDeclarationSymbol
 
 public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
@@ -39,9 +43,7 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
 
-public sealed class KaClassLikeSymbol :
-    KaClassifierSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
     /**
      * The [ClassId] of this class, or `null` if this class is local.
      */
