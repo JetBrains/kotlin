@@ -1654,8 +1654,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val contextReceiverRepresentation: KaType
     }
 
-    interface MultipleArgumentsApplicableForContextReceiver : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = MultipleArgumentsApplicableForContextReceiver::class
+    interface AmbiguousContextArgument : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = AmbiguousContextArgument::class
         val contextReceiverRepresentation: KaType
     }
 
