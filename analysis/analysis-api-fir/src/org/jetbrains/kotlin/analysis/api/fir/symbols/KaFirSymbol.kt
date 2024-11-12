@@ -73,6 +73,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     FirDeclarationOrigin.IntersectionOverride -> KaSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KaSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk -> KaSymbolOrigin.LIBRARY
+    FirDeclarationOrigin.Synthetic.TypeAliasConstructor -> KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR
     is FirDeclarationOrigin.Synthetic -> {
         when {
             source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED

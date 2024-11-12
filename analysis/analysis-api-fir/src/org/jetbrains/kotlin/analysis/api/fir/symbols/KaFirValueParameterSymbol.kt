@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -120,6 +119,25 @@ internal class KaFirValueParameterSymbol private constructor(
         )
     }
 
-    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
-    override fun hashCode(): Int = psiOrSymbolHashCode()
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+
+        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructorParameter) {
+            return psiOrSymbolEquals(other)
+        }
+
+        if (other !is KaFirValueParameterSymbol) return false
+
+        // TODO remove manual comparison when KT-72929 is fixed
+        return typeAliasedConstructorParametersEqual(firSymbol, other.firSymbol)
+    }
+
+    override fun hashCode(): Int {
+        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructorParameter) {
+            return psiOrSymbolHashCode()
+        }
+
+        // TODO remove explicit hashing when KT-72929 is fixed
+        return firSymbol.hashCodeForTypeAliasedConstructorParameter()
+    }
 }

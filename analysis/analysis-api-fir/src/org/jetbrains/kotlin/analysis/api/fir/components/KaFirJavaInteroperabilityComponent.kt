@@ -318,6 +318,8 @@ internal class KaFirJavaInteroperabilityComponent(
         get() = withValidityAssertion {
             val symbol = this@containingJvmClassName
 
+            if (symbol.origin == KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR) return null
+
             with(analysisSession) {
                 val platform = symbol.containingModule.targetPlatform
                 if (!platform.has<JvmPlatform>()) return null

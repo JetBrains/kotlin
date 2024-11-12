@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.isTypeAliasedConstructor
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -58,7 +59,10 @@ internal fun FirElement.findPsi(): PsiElement? =
 
 @KaImplementationDetail
 fun FirBasedSymbol<*>.findPsi(): PsiElement? {
-    return if (this is FirCallableSymbol<*>) {
+    return if (
+        this is FirCallableSymbol<*> &&
+        !this.isTypeAliasedConstructor // typealiased constructors should not be unwrapped
+    ) {
         fir.unwrapFakeOverridesOrDelegated().findPsi()
     } else {
         fir.findPsi()
@@ -71,7 +75,10 @@ fun FirBasedSymbol<*>.findPsi(): PsiElement? {
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 internal fun FirDeclaration.findReferencePsi(): PsiElement? {
-    return if (this is FirCallableDeclaration) {
+    return if (
+        this is FirCallableDeclaration &&
+        !this.symbol.isTypeAliasedConstructor // typealiased constructors should not be unwrapped 
+    ) {
         unwrapFakeOverridesOrDelegated().psi
     } else {
         psi

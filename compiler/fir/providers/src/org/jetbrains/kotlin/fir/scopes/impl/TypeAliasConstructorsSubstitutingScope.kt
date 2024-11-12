@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.fir.types.*
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
 
 var <T : FirFunction> T.originalConstructorIfTypeAlias: T? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)
+val <T : FirFunction> FirFunctionSymbol<T>.originalConstructorIfTypeAlias: T?
+    get() = fir.originalConstructorIfTypeAlias
+
 val FirFunctionSymbol<*>.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null
 

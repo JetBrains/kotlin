@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirConstructorSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeAliasedConstructorMemberPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -79,6 +81,7 @@ internal class KaFirConstructorSymbol private constructor(
     override val containingClassId: ClassId?
         get() = withValidityAssertion {
             backingPsi?.getContainingClassOrObject()?.getClassId()
+                ?: firSymbol.typeAliasForConstructor?.classId?.takeUnless { it.isLocal }
                 ?: firSymbol.containingClassLookupTag()?.classId?.takeUnless { it.isLocal }
         }
 
@@ -107,13 +110,39 @@ internal class KaFirConstructorSymbol private constructor(
     override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaConstructorSymbol>()?.let { return it }
 
-        KaFirConstructorSymbolPointer(
-            analysisSession.createOwnerPointer(this),
-            isPrimary,
-            FirCallableSignature.createSignature(firSymbol),
-        )
+        if (firSymbol.isTypeAliasedConstructor) {
+            KaFirTypeAliasedConstructorMemberPointer(
+                analysisSession.createOwnerPointer(this),
+                FirCallableSignature.createSignature(firSymbol),
+            )
+        } else {
+            KaFirConstructorSymbolPointer(
+                analysisSession.createOwnerPointer(this),
+                isPrimary,
+                FirCallableSignature.createSignature(firSymbol),
+            )
+        }
     }
 
-    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
-    override fun hashCode(): Int = psiOrSymbolHashCode()
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+
+        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructor) {
+            return psiOrSymbolEquals(other)
+        }
+
+        if (other !is KaFirConstructorSymbol) return false
+
+        // TODO remove manual comparison when KT-72929 is fixed
+        return typeAliasedConstructorsEqual(firSymbol, other.firSymbol)
+    }
+
+    override fun hashCode(): Int {
+        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructor) {
+            return psiOrSymbolHashCode()
+        }
+
+        // TODO remove explicit hashing when KT-72929 is fixed
+        return firSymbol.hashCodeForTypeAliasedConstructor()
+    }
 }

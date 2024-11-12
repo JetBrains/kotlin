@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.realPsi
@@ -69,7 +70,11 @@ internal interface KaFirPsiSymbol<out P : PsiElement, out S : FirBasedSymbol<*>>
 }
 
 internal val FirBasedSymbol<*>.backingPsiIfApplicable: PsiElement?
-    get() = fir.realPsi
+    get() {
+        if (origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor) return null
+
+        return fir.realPsi
+    }
 
 internal interface KaFirKtBasedSymbol<out P : KtElement, out S : FirBasedSymbol<*>> : KaFirPsiSymbol<P, S> {
     override val origin: KaSymbolOrigin get() = withValidityAssertion { psiOrSymbolOrigin() }

@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -226,8 +226,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildConstructorSymbol(firSymbol: FirConstructorSymbol): KaConstructorSymbol {
-            val originalFirSymbol = firSymbol.fir.originalConstructorIfTypeAlias?.symbol ?: firSymbol
-            val unwrapped = originalFirSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.symbol ?: originalFirSymbol
+            val unwrapped = firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.symbol ?: firSymbol
             return KaFirConstructorSymbol(unwrapped, analysisSession)
         }
 
@@ -540,6 +539,13 @@ internal class KaSymbolByFirBuilder(
      * in signature; `null` otherwise.
      */
     private inline fun <reified T : FirCallableDeclaration> T.unwrapInheritanceSubstitutionOverrideIfNeeded(): T? {
+        if (this is FirConstructor && typeAliasForConstructor != null) {
+            // we don't want to unwrap typealiased constructors
+            // because they are stable from the substitution standpoint
+            // and can be properly handled by KaSymbols
+            return null
+        }
+
         val containingClass = getContainingClass() ?: return null
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 
