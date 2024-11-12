@@ -1258,4 +1258,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
     open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
         visitElement(legacyRawContractDescription)
     }
+
+    final override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: Nothing?) {
+        visitErrorContractDescription(errorContractDescription)
+    }
+
+    open fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription) {
+        visitElement(errorContractDescription)
+    }
 }

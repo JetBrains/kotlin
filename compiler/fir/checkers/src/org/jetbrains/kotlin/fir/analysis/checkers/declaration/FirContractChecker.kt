@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -31,20 +34,29 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
     private val DUPLICATE_CALLS_IN_PLACE_MESSAGE = "A value parameter may not be annotated with callsInPlace twice"
+    private val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
 
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirContractDescriptionOwner) return
-        val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return
+        val contractDescription = declaration.contractDescription ?: return
 
+        // For K1 compatibility, we do not check the contract description if the contract is in a place where contracts aren't allowed.
+        // TODO: (KT-72772) Decide whether some errors should be emitted even for not allowed contracts.
         val reportedNotAllowed = checkContractNotAllowed(declaration, contractDescription, context, reporter)
         if (reportedNotAllowed) return
-        checkUnresolvedEffects(contractDescription, declaration, context, reporter)
-        checkDuplicateCallsInPlace(contractDescription, context, reporter)
-        if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
-            reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
-        }
-        if (contractDescription.diagnostic == ConeContractMayNotHaveLabel) {
-            reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, ConeContractMayNotHaveLabel.reason, context)
+        when (contractDescription) {
+            is FirResolvedContractDescription -> {
+                checkUnresolvedEffects(contractDescription, declaration, context, reporter)
+                checkDuplicateCallsInPlace(contractDescription, context, reporter)
+                if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
+                    reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
+                }
+                checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
+            }
+            is FirErrorContractDescription -> {
+                reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, INVALID_CONTRACT_BLOCK, context)
+                checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
+            }
         }
     }
 
@@ -77,7 +89,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun checkContractNotAllowed(
         declaration: FirFunction,
-        contractDescription: FirResolvedContractDescription,
+        contractDescription: FirContractDescription,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
@@ -109,6 +121,17 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             } else {
                 seenParameterIndices.add(parameterIndex)
             }
+        }
+    }
+
+    private fun checkDiagnosticsFromFirBuilder(
+        diagnostic: ConeDiagnostic?,
+        source: KtSourceElement?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        when (diagnostic) {
+            ConeContractMayNotHaveLabel -> reporter.reportOn(source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, ConeContractMayNotHaveLabel.reason, context)
         }
     }
 

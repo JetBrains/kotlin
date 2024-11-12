@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.*
+import org.jetbrains.kotlin.fir.contracts.builder.buildErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
@@ -173,6 +173,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                     .apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) }
             }
 
+            // We generate a FirContractCallBlock according to a heuristic, which can have false positives,
+            // such as user-defined functions called "contract". In this case, we restore the contract call block
+            // to a normal call.
             if (resolvedContractCall.toResolvedCallableSymbol()?.callableId != FirContractsDslNames.CONTRACT) {
                 if (hasBodyContract) {
                     owner.body.replaceFirstStatement<FirContractCallBlock> { resolvedContractCall }
@@ -182,17 +185,15 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 return owner
             }
 
-            if (hasBodyContract) {
-                // Until the contract description is replaced with a resolved one, a call rests both in the description
-                // and in the callable body (scoped inside a marker block). Here we patch the second call occurrence.
-                owner.body.replaceFirstStatement<FirContractCallBlock> { FirContractCallBlock(resolvedContractCall) }
+            val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
+                ?: return transformOwnerOfErrorContract(owner, contractDescription)
+
+            if (!argument.anonymousFunction.isLambda) {
+                return transformOwnerOfErrorContract(owner, contractDescription)
             }
 
-            val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
-                ?: return transformOwnerOfErrorContract(owner)
-
             val lambdaBody = argument.anonymousFunction.body
-                ?: return transformOwnerOfErrorContract(owner)
+                ?: return transformOwnerOfErrorContract(owner, contractDescription)
 
             val resolvedContractDescription = buildResolvedContractDescription {
                 val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
@@ -369,7 +370,16 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             return enumEntry
         }
 
-        private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(owner: T): T {
+        private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(
+            owner: T,
+            description: FirLegacyRawContractDescription
+        ): T {
+            owner.replaceContractDescription(
+                buildErrorContractDescription {
+                    source = description.source
+                    diagnostic = description.diagnostic
+                }
+            )
             dataFlowAnalyzer.exitContractDescription()
             return owner
         }

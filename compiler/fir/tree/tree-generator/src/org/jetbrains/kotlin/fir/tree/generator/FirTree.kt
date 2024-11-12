@@ -1288,6 +1288,18 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("diagnostic", coneDiagnosticType, nullable = true)
     }
 
+    val errorContractDescription: Element by element(Contracts) {
+        kDoc = """
+                |Represents a contract description that could not be resolved.
+                |
+                |Contract descriptions where the effects are unresolved are handled by [resolvedContractDescription], this type
+                |is specifically for cases where the resolution fails in its entirety.
+               """.trimMargin()
+        parent(contractDescription)
+
+        +field("diagnostic", coneDiagnosticType, nullable = true)
+    }
+
     private object FieldSets {
         val typeArguments = fieldSet(listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true))
 

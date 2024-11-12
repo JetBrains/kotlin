@@ -6,11 +6,20 @@
 import kotlin.contracts.*
 
 fun passLambdaValue(l: ContractBuilder.() -> Unit) {
-    contract(l)
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(l)<!>
 }
 
 fun passAnonymousFunction(x: Boolean) {
-    contract(fun ContractBuilder.() {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(fun ContractBuilder.() {
         returns() implies x
-    })
+    })<!>
+}
+
+// Check combined behaviour when the contract is both ill-formed and on
+// a function that does not allow contracts.
+// TODO: (KT-72772) it may be clearer to generate both errors here.
+open class OpenClass {
+    open fun passLambdaValue(l: ContractBuilder.() -> Unit) {
+        <!CONTRACT_NOT_ALLOWED!>contract<!>(l)
+    }
 }

@@ -22,3 +22,10 @@ inline fun case_8(block: () -> Unit) {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 }
+
+fun builder(): ContractBuilder.() -> Unit = {}
+
+// TESTCASE NUMBER: 9
+inline fun case_9(block: () -> Unit) {
+    (<!CONTRACT_NOT_ALLOWED!>contract<!>(builder()))
+}

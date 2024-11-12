@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -44,5 +45,9 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKi
     }
 
     private val FirContractDescription?.isNonFirstStatement: Boolean
-        get() = this is FirResolvedContractDescription && diagnostic == ConeContractShouldBeFirstStatement
+        get() = when (this) {
+            is FirResolvedContractDescription -> diagnostic == ConeContractShouldBeFirstStatement
+            is FirErrorContractDescription -> diagnostic == ConeContractShouldBeFirstStatement
+            else -> false
+        }
 }

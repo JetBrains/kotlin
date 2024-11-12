@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnno
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -169,7 +169,7 @@ internal fun checkContractDescriptionIsResolved(declaration: FirContractDescript
     val contractDescription = declaration.contractDescription ?: return
     checkWithAttachment(
         condition = contractDescription is FirResolvedContractDescription ||
-                contractDescription is FirLegacyRawContractDescription /* TODO: should be dropped after KT-60310 */,
+                contractDescription is FirErrorContractDescription,
         message = { "Expected ${FirResolvedContractDescription::class.simpleName} but ${contractDescription::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
