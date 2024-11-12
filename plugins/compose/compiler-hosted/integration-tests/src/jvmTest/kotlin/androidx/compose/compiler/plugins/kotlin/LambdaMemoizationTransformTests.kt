@@ -945,4 +945,53 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }           
         """.trimIndent()
     )
+
+
+    @Test
+    fun testDifferentLambdaTypes() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Foo() {
+                val a: @Composable () -> Unit = { }
+                val b: @Composable (x: Int) -> Unit = {}
+                val c: @Composable (x: String) -> Unit = {}
+                val d: @Composable Int.() -> Unit = {}
+            }
+        """.trimIndent()
+    )
+
+    @Test
+    fun testCallingInlineFunction() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Box(child: @Composable () -> Unit) {
+                print("box")
+                child()
+            }
+            
+            @Composable
+            inline fun Foo(crossinline child: @Composable () -> Unit) {
+                val a = @Composable {
+                    print("a")
+                }
+                
+                Box {
+                     print("foo")
+                     a()
+                     child()
+                }
+            }
+        
+            @Composable
+            fun Test() {
+                Foo {
+                    print("test")
+                }           
+            }
+        """.trimIndent()
+    )
 }

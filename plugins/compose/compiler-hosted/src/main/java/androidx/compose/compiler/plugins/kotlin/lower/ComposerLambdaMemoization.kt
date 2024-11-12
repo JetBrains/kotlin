@@ -151,6 +151,14 @@ private class LambdaNamingContext {
         stack.removeLast()
     }
 
+    fun getCurrentLambdaName(originalLambdaExpression: IrFunctionExpression): String = buildString {
+        append("lambda")
+        if (originalLambdaExpression.function.valueParameters.isNotEmpty()) {
+            append(originalLambdaExpression.function.valueParameters.size)
+        }
+        append("-${currentLambdaKey()}")
+    }
+
     fun currentLambdaKey(): String {
         return stack.mapNotNull { it.key }.joinToString("$")
     }
@@ -438,10 +446,6 @@ class ComposerLambdaMemoization(
         // generating remember after call as it was added at the same time as the slot table was
         // modified to support remember after call.
         FeatureFlag.OptimizeNonSkippingGroups.enabled && rememberComposableLambdaFunction != null
-    }
-
-    private fun currentLambdaName(): String {
-        return "lambda-" + lambdaNamingContext.currentLambdaKey()
     }
 
     private fun getOrCreateComposableSingletonsClass(): IrClass {
@@ -885,7 +889,8 @@ class ComposerLambdaMemoization(
             }
             return irGetComposableSingleton(
                 lambdaExpression = wrapped,
-                lambdaType = expression.type
+                lambdaType = expression.type,
+                lambdaName = lambdaNamingContext.getCurrentLambdaName(expression)
             )
         } else {
             return wrapped
@@ -899,9 +904,9 @@ class ComposerLambdaMemoization(
     private fun irGetComposableSingleton(
         lambdaExpression: IrExpression,
         lambdaType: IrType,
+        lambdaName: String,
     ): IrExpression {
         val clazz = getOrCreateComposableSingletonsClass()
-        val lambdaName = currentLambdaName()
         val lambdaProp = clazz.addProperty {
             name = Name.identifier(lambdaName)
             visibility = DescriptorVisibilities.INTERNAL
