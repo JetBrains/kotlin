@@ -207,7 +207,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                 val dependencyProjects = configuration
                     ?.dependencies
-                    ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
+                    ?.mapNotNull { (it as? ProjectDependency)?.let { project.project(it.path)} }
 
                 dependencies {
                     dependencyProjects?.forEach { dependencyProject ->

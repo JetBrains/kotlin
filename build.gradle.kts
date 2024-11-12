@@ -553,7 +553,7 @@ allprojects {
         afterEvaluate {
             configurations.all {
                 // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
-                if (dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }) {
+                if (dependencies.removeIf { (it as? ProjectDependency)?.path == ":kotlin-compiler" }) {
                     logger.warn("Removed :kotlin-compiler project dependency from $this")
                 }
             }

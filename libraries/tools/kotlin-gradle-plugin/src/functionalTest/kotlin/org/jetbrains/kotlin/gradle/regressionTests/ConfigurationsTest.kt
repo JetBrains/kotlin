@@ -100,7 +100,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         commonMainApi.assertHasDependency("project notation of :lib:outputConfiguration") {
             this is ProjectDependency &&
-            dependencyProject == lib &&
+            path == lib.path &&
             targetConfiguration == "outputConfiguration"
         }
 

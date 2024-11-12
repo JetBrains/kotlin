@@ -41,7 +41,7 @@ class KT58280JvmWithJavaTestCompileClasspath {
         val kotlin = project.kotlinJvmExtension
 
         /* This kind of association is not required for java: java plugin handles this separately */
-        kotlin.target.compilations.test.internal.configurations.compileDependencyConfiguration.resolvedConfiguration.files.forEach { file ->
+        kotlin.target.compilations.test.internal.configurations.compileDependencyConfiguration.incoming.files.forEach { file ->
             if (file in kotlin.target.compilations.main.output.allOutputs) {
                 fail("Unexpected file in test compile dependencies: $file")
             }
