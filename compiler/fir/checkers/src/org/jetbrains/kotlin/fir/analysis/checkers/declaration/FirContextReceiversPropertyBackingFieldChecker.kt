@@ -26,7 +26,7 @@ object FirContextReceiversPropertyBackingFieldChecker : FirPropertyChecker(MppCh
         if (declaration.hasBackingField) {
             reporter.reportOn(
                 declaration.initializer?.source,
-                FirErrors.CONTEXT_RECEIVERS_WITH_BACKING_FIELD,
+                FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD,
                 context
             )
         }

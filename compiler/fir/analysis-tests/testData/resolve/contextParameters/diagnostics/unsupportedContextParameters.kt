@@ -50,7 +50,7 @@ var y: String = ""
 var Any.d <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ""
 
 context(_: String)
-var b = <!CONTEXT_RECEIVERS_WITH_BACKING_FIELD!>""<!>
+var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>""<!>
 
 context(<!SYNTAX!><!>)
 fun emptyContext() {}
