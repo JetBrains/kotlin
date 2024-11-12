@@ -19,6 +19,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.checkStickyPhaseConditions = from.checkStickyPhaseConditions
     to.commonSources = from.commonSources?.copyOf()
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
+    to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin

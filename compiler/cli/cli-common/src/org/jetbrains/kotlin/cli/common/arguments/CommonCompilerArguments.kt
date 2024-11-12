@@ -697,6 +697,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xcontext-parameters",
+        description = "Enable experimental context parameters."
+    )
+    @Enables(LanguageFeature.ContextParameters)
+    var contextParameters = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xnon-local-break-continue",
         description = "Enable experimental non-local break and continue."
     )

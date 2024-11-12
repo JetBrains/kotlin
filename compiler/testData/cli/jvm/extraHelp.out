@@ -161,6 +161,7 @@ where advanced options include:
                              They should be a subset of sources passed as free arguments.
   -Xconsistent-data-class-copy-visibility
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
+  -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-receivers        Enable experimental context receivers.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
