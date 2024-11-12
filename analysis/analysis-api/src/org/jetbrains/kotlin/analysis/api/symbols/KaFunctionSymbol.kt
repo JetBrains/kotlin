@@ -92,9 +92,6 @@ public abstract class KaConstructorSymbol :
      */
     public abstract val containingClassId: ClassId?
 
-    @Deprecated("Use `containingClassId` instead.", ReplaceWith("containingClassId"))
-    public val containingClassIdIfNonLocal: ClassId? get() = containingClassId
-
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }

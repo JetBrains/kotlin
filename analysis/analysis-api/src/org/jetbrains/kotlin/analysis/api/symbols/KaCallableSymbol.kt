@@ -21,9 +21,6 @@ public sealed class KaCallableSymbol :
      */
     public abstract val callableId: CallableId?
 
-    @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
-    public val callableIdIfNonLocal: CallableId? get() = callableId
-
     public abstract val returnType: KaType
 
     public abstract val receiverParameter: KaReceiverParameterSymbol?

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -309,10 +308,6 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol(), KaAnnotatedS
  * `String` receiver parameter is such a symbol.
  */
 public abstract class KaReceiverParameterSymbol : KaParameterSymbol() {
-    @Deprecated("Use 'returnType' instead", ReplaceWith("returnType"))
-    public val type: KaType
-        get() = withValidityAssertion { returnType }
-
     /**
      * Link to the corresponding function or property.
      * In terms of the example above -- this is link to the function foo.
