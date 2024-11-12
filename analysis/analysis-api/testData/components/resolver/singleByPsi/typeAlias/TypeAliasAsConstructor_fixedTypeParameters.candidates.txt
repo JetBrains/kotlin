@@ -1,12 +1,12 @@
-KtNameReferenceExpression(163,170): 'MyAlias'
+KtNameReferenceExpression(134,141): 'MyAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Other() -> (KaVariableSignature:
           name = t
           receiverType = null
-          returnType = T
-          symbol = t: T
+          returnType = test.Other
+          symbol = t: test.Other
           callableId = null)
       }
       isImplicitInvoke = false
@@ -15,14 +15,14 @@ KtNameReferenceExpression(163,170): 'MyAlias'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = test.MyClass<T>
-          symbol = <constructor>(t: T): test.MyClass<T>
+          returnType = {test.MyAlias=} test.MyClass<test.Other>
+          symbol = <constructor>(t: test.Other): {test.MyAlias=} test.MyClass<test.Other>
           valueParameters = [
             KaVariableSignature:
               name = t
               receiverType = null
-              returnType = T
-              symbol = t: T
+              returnType = test.Other
+              symbol = t: test.Other
               callableId = null
           ]
           callableId = null

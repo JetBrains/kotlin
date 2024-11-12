@@ -1,4 +1,3 @@
-// IGNORE_STABILITY_K2: call
 package test
 
 class MyClass<T>(t: T)

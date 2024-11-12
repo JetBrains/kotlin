@@ -16,13 +16,14 @@ KaValueParameterSymbol:
   location: LOCAL
   modality: FINAL
   name: param
-  origin: SOURCE
+  origin: TYPEALIASED_CONSTRUCTOR
   receiverParameter: null
-  returnType: KaTypeParameterType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: T
+    typeArguments: []
+    type: kotlin/String
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorParameterViaTypeAlias_withTypeParametersFixed.kt)
-  getContainingJvmClassName: test.MyClass
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

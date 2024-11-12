@@ -2,25 +2,25 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: one/SimpleClass
+  containingClassId: two/SimpleTypeAlias
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
   isExpect: false
   isExtension: false
-  isPrimary: true
+  isPrimary: false
   location: CLASS
   modality: FINAL
-  origin: SOURCE_MEMBER_GENERATED
+  origin: TYPEALIASED_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: one/SimpleClass
+    type: {two/SimpleTypeAlias=} one/SimpleClass
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(Lib.kt)
-  getContainingJvmClassName: one.SimpleClass
-  getContainingModule: KaSourceModule "Sources of lib"
+  getContainingFileSymbol: KaFileSymbol(Dep.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of dep"
   deprecationStatus: null

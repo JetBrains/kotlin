@@ -2,7 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: java/util/ArrayList
+  containingClassId: kotlin/collections/ArrayList
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -11,7 +11,7 @@ KaConstructorSymbol:
   isPrimary: false
   location: CLASS
   modality: FINAL
-  origin: JAVA_LIBRARY
+  origin: TYPEALIASED_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -20,7 +20,7 @@ KaConstructorSymbol:
         annotations: []
         type: E
     ]
-    type: java/util/ArrayList<E>
+    type: {kotlin/collections/ArrayList<E>=} java/util/ArrayList<E>
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
@@ -28,19 +28,15 @@ KaConstructorSymbol:
       isActual: false
       isExpect: false
       isReified: false
-      location: CLASS
+      location: LOCAL
       modality: FINAL
       name: E
-      origin: JAVA_LIBRARY
-      upperBounds: [
-        KaFlexibleType:
-          annotations: []
-          type: kotlin/Any!
-      ]
+      origin: LIBRARY
+      upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: null
-      getContainingModule: KaLibraryModule "SDK jdk"
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   valueParameters: [
@@ -62,19 +58,19 @@ KaConstructorSymbol:
       location: LOCAL
       modality: FINAL
       name: p0
-      origin: JAVA_LIBRARY
+      origin: TYPEALIASED_CONSTRUCTOR
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: ft<kotlin/collections/MutableCollection<out E!>, kotlin/collections/Collection<out E!>?>
       visibility: PUBLIC
       getContainingFileSymbol: null
-      getContainingJvmClassName: java.util.ArrayList
-      getContainingModule: KaLibraryModule "SDK jdk"
+      getContainingJvmClassName: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingJvmClassName: java.util.ArrayList
-  getContainingModule: KaLibraryModule "SDK jdk"
+  getContainingJvmClassName: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

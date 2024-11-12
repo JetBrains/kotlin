@@ -2,43 +2,27 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: test/MyClass
+  containingClassId: test/MyAlias
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
   isExpect: false
   isExtension: false
-  isPrimary: true
+  isPrimary: false
   location: CLASS
   modality: FINAL
-  origin: SOURCE
+  origin: TYPEALIASED_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: [
-      KaTypeParameterType:
+      KaUsualClassType:
         annotations: []
-        type: T
+        typeArguments: []
+        type: kotlin/String
     ]
-    type: test/MyClass<T>
-  typeParameters: [
-    KaTypeParameterSymbol:
-      annotations: []
-      compilerVisibility: Local
-      isActual: false
-      isExpect: false
-      isReified: false
-      location: CLASS
-      modality: FINAL
-      name: T
-      origin: SOURCE
-      upperBounds: []
-      variance: INVARIANT
-      visibility: LOCAL
-      getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersFixed.kt)
-      getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
-  ]
+    type: {test/MyAlias=} test/MyClass<kotlin/String>
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
@@ -58,19 +42,20 @@ KaConstructorSymbol:
       location: LOCAL
       modality: FINAL
       name: t
-      origin: SOURCE
+      origin: TYPEALIASED_CONSTRUCTOR
       receiverParameter: null
-      returnType: KaTypeParameterType:
+      returnType: KaUsualClassType:
         annotations: []
-        type: T
+        typeArguments: []
+        type: kotlin/String
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersFixed.kt)
-      getContainingJvmClassName: test.MyClass
+      getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersFixed.kt)
-  getContainingJvmClassName: test.MyClass
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

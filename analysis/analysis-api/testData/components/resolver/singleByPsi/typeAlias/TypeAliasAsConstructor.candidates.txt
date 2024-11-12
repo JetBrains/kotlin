@@ -8,8 +8,8 @@ KtNameReferenceExpression(76,83): 'MyAlias'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = test.MyClass
-          symbol = <constructor>(): test.MyClass
+          returnType = {test.MyAlias=} test.MyClass
+          symbol = <constructor>(): {test.MyAlias=} test.MyClass
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}

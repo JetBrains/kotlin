@@ -2,25 +2,30 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
-  containingClassId: test/MyClass
+  containingClassId: test/MyAlias
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
   isExpect: false
   isExtension: false
-  isPrimary: true
+  isPrimary: false
   location: CLASS
   modality: FINAL
-  origin: SOURCE
+  origin: TYPEALIASED_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: [
-      KaTypeParameterType:
+      KaUsualClassType:
         annotations: []
-        type: T
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: TT
+        ]
+        type: test/Cell<TT>
     ]
-    type: test/MyClass<T>
+    type: {test/MyAlias<TT>=} test/MyClass<test/Cell<TT>>
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
@@ -28,9 +33,9 @@ KaConstructorSymbol:
       isActual: false
       isExpect: false
       isReified: false
-      location: CLASS
+      location: LOCAL
       modality: FINAL
-      name: T
+      name: TT
       origin: SOURCE
       upperBounds: []
       variance: INVARIANT
@@ -58,19 +63,24 @@ KaConstructorSymbol:
       location: LOCAL
       modality: FINAL
       name: t
-      origin: SOURCE
+      origin: TYPEALIASED_CONSTRUCTOR
       receiverParameter: null
-      returnType: KaTypeParameterType:
+      returnType: KaUsualClassType:
         annotations: []
-        type: T
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: TT
+        ]
+        type: test/Cell<TT>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
-      getContainingJvmClassName: test.MyClass
+      getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
-  getContainingJvmClassName: test.MyClass
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

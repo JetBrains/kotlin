@@ -1,4 +1,4 @@
-KtNameReferenceExpression(122,129): 'MyAlias'
+KtNameReferenceExpression(93,100): 'MyAlias'
   KtSimpleNameReference:
     (in test.MyClass) constructor <T>(t: TT)
 

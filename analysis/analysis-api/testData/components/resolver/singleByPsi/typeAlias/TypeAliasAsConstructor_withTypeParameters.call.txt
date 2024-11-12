@@ -1,12 +1,12 @@
-KtNameReferenceExpression(122,129): 'MyAlias'
+KtNameReferenceExpression(93,100): 'MyAlias'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {
         "hello" -> (KaVariableSignature:
           name = t
           receiverType = null
-          returnType = T
-          symbol = t: T
+          returnType = kotlin.String
+          symbol = t: TT
           callableId = null)
       }
       isImplicitInvoke = false
@@ -15,14 +15,14 @@ KtNameReferenceExpression(122,129): 'MyAlias'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = test.MyClass<T>
-          symbol = <constructor>(t: T): test.MyClass<T>
+          returnType = {test.MyAlias<kotlin.String>=} test.MyClass<kotlin.String>
+          symbol = <constructor>(t: TT): {test.MyAlias<TT>=} test.MyClass<TT>
           valueParameters = [
             KaVariableSignature:
               name = t
               receiverType = null
-              returnType = T
-              symbol = t: T
+              returnType = kotlin.String
+              symbol = t: TT
               callableId = null
           ]
           callableId = null

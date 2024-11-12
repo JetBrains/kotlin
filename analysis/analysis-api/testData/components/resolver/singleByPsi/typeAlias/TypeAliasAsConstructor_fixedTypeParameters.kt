@@ -1,4 +1,3 @@
-// IGNORE_STABILITY_K2: call
 // IGNORE_STABILITY_K1: call
 package test
 

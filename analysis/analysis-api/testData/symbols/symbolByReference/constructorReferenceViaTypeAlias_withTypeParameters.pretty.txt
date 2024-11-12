@@ -1,1 +1,1 @@
-constructor(t: T)
+constructor(t: TT)
