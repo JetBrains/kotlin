@@ -10,7 +10,6 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(project(":js:js.serializer"))
     compileOnly(intellijCore())
 
 }

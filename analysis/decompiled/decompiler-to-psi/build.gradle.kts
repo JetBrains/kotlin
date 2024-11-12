@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":kotlin-util-klib-metadata"))
-    implementation(project(":js:js.serializer"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(intellijCore())
 

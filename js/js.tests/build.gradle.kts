@@ -55,7 +55,6 @@ dependencies {
     testCompileOnly(intellijCore())
     testApi(project(":compiler:backend.js"))
     testApi(project(":js:js.translator"))
-    testApi(project(":js:js.serializer"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
     testApi(projectTests(":kotlin-build-common"))

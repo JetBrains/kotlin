@@ -19,8 +19,10 @@ dependencies {
     api(project(":analysis:decompiled:decompiler-to-file-stubs"))
     api(project(":analysis:decompiled:decompiler-to-psi"))
     api(project(":analysis:decompiled:decompiler-to-stubs"))
-    api(project(":js:js.serializer"))
     api(project(":kotlin-util-klib-metadata"))
+
+    implementation(project(":js:js.serializer"))
+
     compileOnly(intellijCore())
 
     testApi(platform(libs.junit.bom))
