@@ -20,7 +20,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.*
-import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer.ComposeDefaultValueStubOrigin
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -633,9 +632,8 @@ class ComposableFunctionBodyTransformer(
         val scope = currentFunctionScope
         // if the function isn't composable, there's nothing to do
         if (!scope.isComposable) return super.visitFunction(declaration)
-        if (declaration.origin == ComposeDefaultValueStubOrigin) {
-            // this is a synthetic function stub, don't touch the body, only remove the stub origin
-            declaration.origin = IrDeclarationOrigin.DEFINED
+        if (declaration.isDefaultValueStub) {
+            // this is a synthetic function stub, don't touch the body
             return declaration
         }
 
@@ -2903,9 +2901,19 @@ class ComposableFunctionBodyTransformer(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.associatedComposableSingletonStub != null) {
+            // This call has an associated stub in ComposableSingletons class. This stub is not
+            // directly reachable by any code in this module, but might be used by other external libraries.
+            // Transform it the same way as the one above.
+            val getterCall = expression.associatedComposableSingletonStub
+            val property = getterCall?.symbol?.owner?.correspondingPropertySymbol?.owner
+            property?.transformChildrenVoid()
+        }
+
         if (expression.isComposableCall() || expression.isSyntheticComposableCall()) {
             return visitComposableCall(expression)
         }
+
         when {
             expression.symbol.owner.isInline -> {
                 // if it is not a composable call but it is an inline function, then we allow

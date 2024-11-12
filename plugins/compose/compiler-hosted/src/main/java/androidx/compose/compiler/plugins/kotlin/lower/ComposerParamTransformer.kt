@@ -604,10 +604,12 @@ class ComposerParamTransformer(
 
         val source = this
         val copy = source.deepCopyWithSymbols(parent)
+        copy.attributeOwnerId = copy
+        copy.originalBeforeInline = null
         copy.valueParameters.fastForEach {
             it.defaultValue = null
         }
-        copy.origin = ComposeDefaultValueStubOrigin
+        copy.isDefaultValueStub = true
         copy.annotations += IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -644,9 +646,4 @@ class ComposerParamTransformer(
     }
 
     private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()
-
-    object ComposeDefaultValueStubOrigin : IrDeclarationOrigin {
-        override val name = "ComposeDefaultValueStubOrigin"
-        override val isSynthetic = true
-    }
 }

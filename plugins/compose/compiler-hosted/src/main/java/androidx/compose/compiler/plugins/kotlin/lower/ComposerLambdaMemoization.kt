@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -705,8 +706,6 @@ class ComposerLambdaMemoization(
             return functionExpression
         }
 
-        val wrapped = wrapFunctionExpression(declarationContext, functionExpression, collector)
-
         metrics.recordLambda(
             composable = true,
             memoized = true,
@@ -714,6 +713,8 @@ class ComposerLambdaMemoization(
         )
 
         if (!collector.hasCaptures) {
+            val enclosingFunction = declarationContext.functionContext?.declaration
+            val inPublicInlineScope = enclosingFunction?.isInPublicInlineScope == true
             if (!context.platform.isJvm() && hasTypeParameter(expression.type)) {
                 // This is a workaround
                 // for TypeParameters having initial parents (old IrFunctions before deepCopy).
@@ -721,14 +722,30 @@ class ComposerLambdaMemoization(
                 // Ideally we will find a solution to remap symbols of TypeParameters in
                 // ComposableSingletons properties after ComposerParamTransformer
                 // (deepCopy in ComposerParamTransformer didn't help).
-                return wrapped
+                return wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
             }
-            return irGetComposableSingleton(
-                lambdaExpression = wrapped,
+            val singleton = irGetComposableSingleton(
+                lambdaExpression = wrapFunctionExpression(
+                    declarationContext,
+                    functionExpression,
+                    collector,
+                    false
+                ),
                 lambdaType = expression.type
             )
+            return if (inPublicInlineScope) {
+                // Public inline functions can't use singleton instance because changes to the function body
+                // can cause ABI incompatibilities. Note that we still generate singleton instances
+                // to ensure that we don't break existing consumers.
+                wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
+                    .also {
+                        it.associatedComposableSingletonStub = singleton
+                    }
+            } else {
+                singleton
+            }
         } else {
-            return wrapped
+            return wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
         }
     }
 
@@ -739,7 +756,7 @@ class ComposerLambdaMemoization(
     private fun irGetComposableSingleton(
         lambdaExpression: IrExpression,
         lambdaType: IrType,
-    ): IrExpression {
+    ): IrCall {
         val clazz = getOrCreateComposableSingletonsClass()
         val lambdaName = "lambda-${clazz.declarations.size}"
         val lambdaProp = clazz.addProperty {
@@ -786,10 +803,11 @@ class ComposerLambdaMemoization(
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         val declarationContext = declarationContextStack.peek()
             ?: return super.visitFunctionExpression(expression)
-        return if (expression.function.allowsComposableCalls)
+        return if (expression.function.allowsComposableCalls) {
             visitComposableFunctionExpression(expression, declarationContext)
-        else
+        } else {
             visitNonComposableFunctionExpression(expression)
+        }
     }
 
     private fun startCollector(collector: CaptureCollector) {
@@ -808,7 +826,8 @@ class ComposerLambdaMemoization(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression,
         collector: CaptureCollector,
-    ): IrExpression {
+        useComposableFactory: Boolean
+    ): IrCall {
         val function = expression.function
         val argumentCount = function.valueParameters.size
 
@@ -821,7 +840,6 @@ class ComposerLambdaMemoization(
         }
 
         val useComposableLambdaN = argumentCount > MAX_RESTART_ARGUMENT_COUNT
-        val useComposableFactory = collector.hasCaptures && declarationContext.composable
         val rememberComposable = rememberComposableLambdaFunction ?: composableLambdaFunction
         val requiresExplicitComposerParameter = useComposableFactory &&
                 rememberComposableLambdaFunction == null
