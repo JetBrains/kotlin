@@ -146,11 +146,11 @@ open class DeepCopyIrTreeWithSymbols(
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
             returnType = declaration.returnType.remapType()
+            body = declaration.body?.transform()
+            valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
             dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
             extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
             contextReceiverParametersCount = declaration.contextReceiverParametersCount
-            body = declaration.body?.transform()
-            valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
@@ -300,14 +300,14 @@ open class DeepCopyIrTreeWithSymbols(
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
             returnType = declaration.returnType.remapType()
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
             body = declaration.body?.transform()
             overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap { symbolRemapper.getReferencedSimpleFunction(it) }
             correspondingPropertySymbol = declaration.correspondingPropertySymbol?.let(symbolRemapper::getReferencedProperty)
             processAttributes(declaration)
             valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
+            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
+            extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+            contextReceiverParametersCount = declaration.contextReceiverParametersCount
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
@@ -586,7 +586,6 @@ open class DeepCopyIrTreeWithSymbols(
             getter = symbolRemapper.getReferencedSimpleFunction(expression.getter),
             setter = expression.setter?.let(symbolRemapper::getReferencedSimpleFunction),
             typeArguments = initializeTypeArguments(0),
-            valueArguments = initializeParameterArguments(0),
         ).apply {
             processAttributes(expression)
         }

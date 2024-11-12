@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.IrTree.declaration
 import org.jetbrains.kotlin.ir.generator.deepCopyTypeRemapperType
 import org.jetbrains.kotlin.ir.generator.irDeepCopyBaseType
 import org.jetbrains.kotlin.ir.generator.irImplementationDetailType
@@ -144,7 +145,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                     }
                     if (element.isSubclassOf(IrTree.localDelegatedPropertyReference)) {
                         println("typeArguments = initializeTypeArguments(0),")
-                        println("valueArguments = initializeParameterArguments(0),")
                     }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
@@ -242,6 +242,10 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             }
             if (element.isSubclassOf(IrTree.function)) {
                 println("valueParameters = ${element.visitorParameterName}.valueParameters.memoryOptimizedMap { it.transform() }")
+                println("dispatchReceiverParameter = ${element.visitorParameterName}.dispatchReceiverParameter?.transform()")
+                println("extensionReceiverParameter = ${element.visitorParameterName}.extensionReceiverParameter?.transform()")
+                println("contextReceiverParametersCount = ${element.visitorParameterName}.contextReceiverParametersCount")
+
             }
             if (element.isSubclassOf(IrTree.file)) {
                 println("module = transformedModule ?: ${element.visitorParameterName}.module")

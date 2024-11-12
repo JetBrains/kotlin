@@ -414,10 +414,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("isInline", boolean)
         +field("isExpect", boolean)
         +field("returnType", irTypeType)
-        +field("dispatchReceiverParameter", valueParameter, nullable = true)
-        +field("extensionReceiverParameter", valueParameter, nullable = true)
-        // The first `contextReceiverParametersCount` value parameters are context receivers.
-        +field("contextReceiverParametersCount", int)
         +field("body", body, nullable = true)
     }
     val constructor: Element by element(Declaration) {
@@ -674,22 +670,8 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true) {
-            deepCopyExcludeFromApply = true
-        }
-        +field("extensionReceiver", expression, nullable = true) {
-            deepCopyExcludeFromApply = true
-        }
         +referencedSymbol(s, mutable = false)
         +field("origin", statementOriginType, nullable = true)
-        +listField(
-            name = "valueArguments",
-            baseType = expression.copy(nullable = true),
-            mutability = Array,
-        ) {
-            visibility = Visibility.PROTECTED
-            deepCopyExcludeFromConstructor = true
-        }
         +listField(
             name = "typeArguments",
             baseType = irTypeType.copy(nullable = true),

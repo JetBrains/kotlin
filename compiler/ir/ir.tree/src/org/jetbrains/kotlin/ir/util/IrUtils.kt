@@ -294,6 +294,19 @@ val IrFunction.explicitParameters: List<IrValueParameter>
         addExplicitParametersTo(it)
     }
 
+/**
+ * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
+ */
+val IrFunction.nonDispatchParameters: List<IrValueParameter>
+    get() = parameters.filterTo(ArrayList(parameters.size)) { it.kind != IrParameterKind.DispatchReceiver }
+
+/**
+ * [IrFunctionAccessExpression.arguments], except the argument for the dispatch receiver, the target function has one.
+ */
+@UnsafeDuringIrConstructionAPI
+val IrFunctionAccessExpression.nonDispatchArguments: List<IrExpression?>
+    get() = if (symbol.owner.dispatchReceiverParameter != null) arguments.drop(1) else arguments.toList()
+
 val IrBody.statements: List<IrStatement>
     get() = when (this) {
         is IrBlockBody -> statements
@@ -924,7 +937,8 @@ fun IrValueParameter.copyTo(
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline,
-    isAssignable: Boolean = this.isAssignable
+    isAssignable: Boolean = this.isAssignable,
+    kind: IrParameterKind? = this._kind,
 ): IrValueParameter {
     val symbol = IrValueParameterSymbolImpl()
     val defaultValueCopy = defaultValue?.let { originalDefault ->
@@ -947,6 +961,7 @@ fun IrValueParameter.copyTo(
         isNoinline = isNoinline,
         isHidden = false,
     ).also {
+        it._kind = kind
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
         it.copyAnnotationsFrom(this)

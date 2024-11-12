@@ -45,6 +45,10 @@ class IrLazyFunction(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : AbstractIrLazyFunction(), IrLazyFunctionBase {
+    init {
+        this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
+    }
+
     override var startOffset: Int = startOffset
         set(_) = shouldNotBeCalled()
     override var endOffset: Int = endOffset
@@ -61,8 +65,6 @@ class IrLazyFunction(
     }
 
     override val initialSignatureFunction: IrFunction? by createInitialSignatureFunction()
-
-    override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
 
     override var metadata: MetadataSource?
         get() = null

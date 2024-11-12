@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -419,6 +420,41 @@ open class IrFactory(
             factory = this
         ).declarationCreated()
 
+    fun createValueParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        kind: IrParameterKind?,
+        name: Name,
+        type: IrType,
+        isAssignable: Boolean,
+        symbol: IrValueParameterSymbol,
+        varargElementType: IrType?,
+        isCrossinline: Boolean,
+        isNoinline: Boolean,
+        isHidden: Boolean,
+    ): IrValueParameter =
+        IrValueParameterImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            type = type,
+            varargElementType = varargElementType,
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline,
+            isHidden = isHidden,
+            isAssignable = isAssignable,
+            factory = this
+        ).apply {
+            _kind = kind
+        }.declarationCreated()
+
+    /**
+     * Please use the overload accepting `kind` argument.
+     */
+    @DeprecatedCompilerApi
     @Suppress("unused") // Deprecated, parameter [index] is ignored. Kept for backward compatibility only.
     fun createValueParameter(
         startOffset: Int,

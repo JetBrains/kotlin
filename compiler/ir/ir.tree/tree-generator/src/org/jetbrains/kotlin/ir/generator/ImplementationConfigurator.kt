@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.generator
 
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.Visibility
+import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
+import org.jetbrains.kotlin.ir.generator.model.Implementation
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.utils.withIndent
@@ -56,8 +59,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         allImplOf(function) {
-            defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body")
-            default("contextReceiverParametersCount", "0")
+            defaultNull("body")
             isLateinit("returnType")
         }
 
@@ -350,15 +352,13 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             }
         }
 
-        allImplOf(memberAccessExpression) {
-            defaultNull("dispatchReceiver", "extensionReceiver")
-        }
-
         impl(call) {
             implementation.generationCallback = {
                 println()
                 println("companion object")
             }
+
+            recordTargetShapeOnSymbolChange()
         }
 
         impl(constructorCall) {
@@ -368,6 +368,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
+
+            recordTargetShapeOnSymbolChange()
         }
 
         impl(delegatingConstructorCall) {
@@ -375,6 +377,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
+
+            recordTargetShapeOnSymbolChange()
         }
 
         impl(enumConstructorCall) {
@@ -382,6 +386,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
+
+            recordTargetShapeOnSymbolChange()
         }
 
         impl(functionReference) {
@@ -389,6 +395,27 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
+
+            recordTargetShapeOnSymbolChange()
+        }
+
+        impl(propertyReference) {
+            recordTargetShapeOnSymbolChange()
+        }
+
+        impl(localDelegatedPropertyReference) {
+            recordTargetShapeOnSymbolChange()
+        }
+    }
+
+    private fun ImplementationContext.recordTargetShapeOnSymbolChange() {
+        default("symbol") {
+            customSetter = """
+                if (field !== value) {
+                    field = value
+                    updateTargetSymbol()
+                }
+            """.trimIndent()
         }
     }
 

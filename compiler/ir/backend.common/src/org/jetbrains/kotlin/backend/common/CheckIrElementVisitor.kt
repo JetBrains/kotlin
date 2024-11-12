@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
@@ -253,15 +255,42 @@ internal class CheckIrElementVisitor(
         super.visitFunction(declaration)
         declaration.checkFunction(declaration)
 
-        for ((i, p) in declaration.valueParameters.withIndex()) {
-            if (p.indexInOldValueParameters != i) {
-                reportError(declaration, "Inconsistent index of value parameter ${p.indexInOldValueParameters} != $i")
+        for ((i, param) in declaration.valueParameters.withIndex()) {
+            if (param.indexInOldValueParameters != i) {
+                reportError(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")
             }
         }
 
-        for ((i, p) in declaration.typeParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of type parameter ${p.index} != $i")
+        var lastKind: IrParameterKind? = null
+        for ((i, param) in declaration.parameters.withIndex()) {
+            if (param.indexInParameters != i) {
+                reportError(declaration, "Inconsistent index (new API) of value parameter ${param.indexInParameters} != $i")
+            }
+
+            val kind = param.kind
+            if (lastKind != null) {
+                if (kind < lastKind) {
+                    reportError(
+                        declaration,
+                        "Invalid order of function parameters: $kind is placed after $lastKind.\n" +
+                                "Parameters must follow a strict order: " +
+                                "[dispatch receiver, context parameters, extension receiver, regular parameters]."
+                    )
+                }
+
+                if (kind == IrParameterKind.DispatchReceiver || kind == IrParameterKind.ExtensionReceiver) {
+                    if (kind == lastKind) {
+                        reportError(declaration, "Function may have only one $kind parameter")
+                    }
+                }
+            }
+
+            lastKind = kind
+        }
+
+        for ((i, param) in declaration.typeParameters.withIndex()) {
+            if (param.index != i) {
+                reportError(declaration, "Inconsistent index of type parameter ${param.index} != $i")
             }
         }
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -22,6 +23,63 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     abstract val isAssignable: Boolean
 
     abstract override val symbol: IrValueParameterSymbol
+
+
+    /**
+     * Severely deprecated, kept only for source compatibility.
+     *
+     * Please replace with [indexInOldValueParameters],
+     * or migrate to new parameter API with [indexInParameters].
+     */
+    @DeprecatedCompilerApi
+    var index: Int = -1
+        @DelicateIrParameterIndexSetter
+        set
+
+    /**
+     * Index of this parameter in [IrFunction.valueParameters] list, or -1 if it is not present in that list
+     * (which often means it is either [IrFunction.dispatchReceiverParameter] or [IrFunction.extensionReceiverParameter]).
+     *
+     * It is automatically updated when adding or removing from [IrFunction.parameters].
+     * Only in rare cases it may need to be set manually.
+     *
+     * ##### This is a deprecated API
+     * Instead, use [IrFunction.parameters] together with [indexInParameters].
+     *
+     * Details on the API migration: KT-68003
+     */
+    @DeprecatedCompilerApi
+    var indexInOldValueParameters: Int by ::index
+        @DelicateIrParameterIndexSetter
+        set
+
+    /**
+     * Index of this parameter in [IrFunction.parameters] list, or -1 if not present in that list.
+     *
+     * It is automatically updated when adding or removing from [IrFunction.parameters].
+     * Only in rare cases it may need to be set manually.
+     *
+     * Note: after removal of old parameter API (KT-68003), once `index` property is removed, this property
+     * is going to be renamed to back to `index`.
+     */
+    var indexInParameters: Int = -1
+        @DelicateIrParameterIndexSetter
+        set
+
+    // When using old parameter API, kind is assigned automatically when adding a parameter
+    // to a function. However, up until that moment it is `null`.
+    // When using new API (IrFunction.parameters), `kind` must be set explicitly before adding
+    // a parameter to a function, such as by filling IrFactory.createValueParameter(kind = ...).
+    // It is expected that after migration, all parameters will have a proper kind set upon creation,
+    // and the nullable `_kind` will be dropped.
+    // Before that happens, please use `_kind` in lower level code, that might see a not-yet-attached parameter,
+    // and non-nullable `kind` otherwise, which e.g. enables exhaustive when.
+    internal var _kind: IrParameterKind? = null
+    var kind: IrParameterKind
+        get() = _kind!!
+        set(value) {
+            _kind = value
+        }
 
     abstract var varargElementType: IrType?
 
@@ -59,19 +117,6 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     abstract var isHidden: Boolean
 
     abstract var defaultValue: IrExpressionBody?
-
-    /**
-     * Deprecated, kept only for source compatibility.
-     *
-     * Please replace with [indexInOldValueParameters].
-     */
-    var index: Int = -1
-        @DelicateIrParameterIndexSetter
-        set
-
-    var indexInOldValueParameters: Int by ::index
-        @DelicateIrParameterIndexSetter
-        set
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
