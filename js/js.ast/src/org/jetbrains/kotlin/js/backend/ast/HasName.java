@@ -4,12 +4,10 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.HasSymbol;
-
 /**
  * Implemented by JavaScript objects that have a name.
  */
-public interface HasName extends HasSymbol {
+public interface HasName {
   JsName getName();
 
   void setName(JsName name);

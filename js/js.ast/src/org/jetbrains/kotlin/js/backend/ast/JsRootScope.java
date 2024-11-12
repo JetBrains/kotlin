@@ -21,11 +21,6 @@ public final class JsRootScope extends JsScope {
   }
 
   @Override
-  public JsProgram getProgram() {
-    return program;
-  }
-
-  @Override
   protected JsName findOwnName(@NotNull String ident) {
     JsName name = super.findOwnName(ident);
     if (name == null) {

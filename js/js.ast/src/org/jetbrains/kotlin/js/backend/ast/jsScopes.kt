@@ -67,7 +67,7 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
          * Safe call is necessary, because hasOwnName can be called
          * in constructor before labelName is initialized (see KT-4394)
          */
-        @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+        @Suppress("UNNECESSARY_SAFE_CALL")
         override fun hasOwnName(name: String): Boolean =
                 name in RESERVED_WORDS
                 || name == ident
@@ -90,32 +90,3 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
     }
 }
 
-class DelegatingJsFunctionScopeWithTemporaryParent(
-        private val delegatingScope: JsFunctionScope,
-        parent: JsScope
-) : JsFunctionScope(parent, "<delegating scope to delegatingScope>") {
-
-    override fun hasOwnName(name: String): Boolean =
-            delegatingScope.hasOwnName(name)
-
-    override fun findOwnName(ident: String): JsName? =
-            delegatingScope.findOwnName(ident)
-
-    override fun declareNameUnsafe(identifier: String): JsName =
-            delegatingScope.declareNameUnsafe(identifier)
-
-    override fun declareName(identifier: String): JsName =
-            delegatingScope.declareName(identifier)
-
-    override fun declareFreshName(suggestedName: String): JsName =
-            delegatingScope.declareFreshName(suggestedName)
-
-    override fun enterLabel(label: String, outputName: String): JsName =
-            delegatingScope.enterLabel(label, outputName)
-
-    override fun exitLabel() =
-            delegatingScope.exitLabel()
-
-    override fun findLabel(label: String): JsName? =
-            delegatingScope.findLabel(label)
-}

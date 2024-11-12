@@ -4,7 +4,6 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,12 +26,6 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     @Override
     public void setName(@NotNull JsName name) {
         this.name = name;
-    }
-
-    @Override
-    @NotNull
-    public Symbol getSymbol() {
-        return name;
     }
 
     @Override

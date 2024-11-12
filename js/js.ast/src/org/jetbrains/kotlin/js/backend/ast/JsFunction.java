@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.backend.ast;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.common.Symbol;
 import org.jetbrains.kotlin.js.util.AstUtil;
 
 import java.util.EnumSet;
@@ -51,11 +50,6 @@ public final class JsFunction extends JsLiteral implements HasName {
 
     @Override
     public JsName getName() {
-        return name;
-    }
-
-    @Override
-    public Symbol getSymbol() {
         return name;
     }
 

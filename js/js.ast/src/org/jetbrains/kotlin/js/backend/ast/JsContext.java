@@ -25,10 +25,6 @@ public abstract class JsContext<T extends JsNode> {
     }
   }
 
-  public <R extends T> void addNext(R node) {
-    throw new UnsupportedOperationException();
-  }
-
   public abstract void removeMe();
 
   public abstract <R extends T> void replaceMe(R node);

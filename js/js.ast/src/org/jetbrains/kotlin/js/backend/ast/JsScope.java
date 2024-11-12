@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.util.Maps;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -45,8 +43,6 @@ public abstract class JsScope {
     private Map<String, JsName> names = Collections.emptyMap();
     private final JsScope parent;
 
-    private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
-
     public JsScope(JsScope parent, @NotNull String description) {
         this.description = description;
         this.parent = parent;
@@ -55,11 +51,6 @@ public abstract class JsScope {
     protected JsScope(@NotNull String description) {
         this.description = description;
         parent = null;
-    }
-
-    @NotNull
-    public JsScope innerObjectScope(@NotNull String scopeName) {
-        return new JsObjectScope(this, scopeName);
     }
 
     /**
@@ -77,34 +68,10 @@ public abstract class JsScope {
         return name != null ? name : doCreateName(identifier);
     }
 
-    /**
-     * Creates a new variable with an unique ident in this scope.
-     * The generated JsName is guaranteed to have an identifier that does not clash with any existing variables in the scope.
-     * Future declarations of variables might however clash with the temporary
-     * (unless they use this function).
-     */
-    @NotNull
-    public JsName declareFreshName(@NotNull String suggestedName) {
-        assert !suggestedName.isEmpty();
-        String ident = getFreshIdent(suggestedName);
-        return doCreateName(ident);
-    }
-
     @NotNull
     public static JsName declareTemporaryName(@NotNull String suggestedName) {
         assert !suggestedName.isEmpty();
         return new JsName(suggestedName, true);
-    }
-
-    /**
-     * Creates a temporary variable with an unique name in this scope.
-     * The generated temporary is guaranteed to have an identifier (but not short
-     * name) that does not clash with any existing variables in the scope.
-     * Future declarations of variables might however clash with the temporary.
-     */
-    @NotNull
-    public static JsName declareTemporary() {
-        return declareTemporaryName("tmp$");
     }
 
     /**
@@ -136,11 +103,6 @@ public abstract class JsScope {
      */
     public final JsScope getParent() {
         return parent;
-    }
-
-    public JsProgram getProgram() {
-        assert (parent != null) : "Subclasses must override getProgram() if they do not set a parent";
-        return parent.getProgram();
     }
 
     @Override
@@ -180,38 +142,5 @@ public abstract class JsScope {
      */
     protected JsName findOwnName(@NotNull String ident) {
         return names.get(ident);
-    }
-
-    /**
-     * During inlining names can be refreshed multiple times,
-     * so "a" becomes "a_0", then becomes "a_0_0"
-     * in case a_0 has been declared in calling scope.
-     *
-     * That's ugly. To resolve it, we rename
-     * clashing names with "[_$]\\d+" suffix,
-     * incrementing last number.
-     *
-     * Fresh name for "a0" should still be "a0_0".
-     */
-    @NotNull
-    protected String getFreshIdent(@NotNull String suggestedIdent) {
-        char sep = '_';
-        String baseName = suggestedIdent;
-        int counter = 0;
-
-        Matcher matcher = FRESH_NAME_SUFFIX.matcher(suggestedIdent);
-        if (matcher.find()) {
-            String group = matcher.group();
-            baseName = matcher.replaceAll("");
-            sep = group.charAt(0);
-            counter = Integer.valueOf(group.substring(1));
-        }
-
-        String freshName = suggestedIdent;
-        while (hasName(freshName)) {
-            freshName = baseName + sep + counter++;
-        }
-
-        return freshName;
     }
 }

@@ -17,13 +17,8 @@ class JsImport(
     sealed class Target {
         object Effect : Target()
         class Elements(val elements: MutableList<Element>) : Target()
-        class Default(val name: JsNameRef) : Target() {
-            constructor(name: String) : this(JsNameRef(name))
-        }
-
-        class All(val alias: JsNameRef) : Target() {
-            constructor(alias: String) : this(JsNameRef(alias))
-        }
+        class Default(val name: JsNameRef) : Target()
+        class All(val alias: JsNameRef) : Target()
     }
 
     class Element(
