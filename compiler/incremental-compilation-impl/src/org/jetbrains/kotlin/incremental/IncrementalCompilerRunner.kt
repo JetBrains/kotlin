@@ -118,6 +118,9 @@ abstract class IncrementalCompilerRunner<
         changedFiles: ChangedFiles,
         fileLocations: FileLocations? = null, // Must be not-null if the build system needs to support build cache relocatability
     ): ExitCode = reporter.measure(GradleBuildTime.INCREMENTAL_COMPILATION_DAEMON) {
+        reporter.debug {
+            "Source changes: $changedFiles"
+        }
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
         val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector)) {
             is ICResult.Completed -> {

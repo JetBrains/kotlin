@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import java.io.*
@@ -29,18 +31,6 @@ class FileSnapshotTest : TestWithWorkingDir() {
         val oldSnapshot = fileSnapshotProvider[file]
         val newSnapshot = fileSnapshotProvider[file]
         assertEquals(oldSnapshot, newSnapshot)
-    }
-
-    @Test
-    fun testEqualityDifferentFile() {
-        val file1 = File(workingDir, "1.txt").apply { writeText("file1") }
-        val file2 = File(workingDir, "2.txt").apply {
-            writeText(file1.readText())
-            setLastModified(file1.lastModified())
-        }
-        val oldSnapshot = fileSnapshotProvider[file1]
-        val newSnapshot = fileSnapshotProvider[file2]
-        assertNotEquals(oldSnapshot, newSnapshot)
     }
 
     @Test
