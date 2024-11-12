@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider
 
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -28,13 +29,14 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
                 expression.evaluate()
             }
         }
+
         val actual = buildString {
             appendLine("expression: ${expression.text}")
             appendLine("constant: ${constantValue?.render() ?: "NOT_EVALUATED"}")
 
-            @Suppress("DEPRECATION")
-            appendLine("constantValueKind: ${constantValue?.constantValueKind ?: "NOT_EVALUATED"}")
+            appendLine("constantValueKind: ${constantValue?.let { renderFrontendIndependentKClassNameOf(it) } ?: "NOT_EVALUATED"}")
         }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }
