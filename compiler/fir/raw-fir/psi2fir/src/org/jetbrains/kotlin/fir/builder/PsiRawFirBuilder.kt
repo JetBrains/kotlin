@@ -1417,7 +1417,7 @@ open class PsiRawFirBuilder(
             fileName: String,
             setup: FirReplSnippetBuilder.() -> Unit = {},
         ): FirReplSnippet {
-            val snippetName = Name.special("<snippet-$fileName>")
+            val snippetName = Name.special("<$fileName>")
             val snippetSymbol = FirReplSnippetSymbol(snippetName)
 
             return buildReplSnippet {
@@ -1459,10 +1459,8 @@ open class PsiRawFirBuilder(
                                         }
                                     }
                                     is KtProperty -> {
-                                        withForcedLocalContext {
-                                            val firProperty = convertProperty(declaration, null, forceLocal = true)
-                                            statements.add(firProperty)
-                                        }
+                                        val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                        statements.add(firProperty)
                                     }
                                     else -> {
                                         val firStatement = declaration.toFirStatement()

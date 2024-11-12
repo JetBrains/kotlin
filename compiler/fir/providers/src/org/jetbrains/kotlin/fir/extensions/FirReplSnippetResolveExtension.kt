@@ -36,7 +36,6 @@ val FirExtensionService.replSnippetResolveExtensions: List<FirReplSnippetResolve
 abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun getSnippets(): Iterable<FirReplSnippetSymbol>
     abstract fun putSnippet(symbol: FirReplSnippetSymbol)
+    abstract fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean
 }
-
-val FirSession.replHistoryProvider: FirReplHistoryProvider by FirSession.sessionComponentAccessor()
 
