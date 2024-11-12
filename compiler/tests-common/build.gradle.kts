@@ -45,7 +45,6 @@ dependencies {
     testApi(project(":daemon-common"))
     testApi(project(":js:js.serializer"))
     testApi(project(":js:js.frontend"))
-    testApi(project(":js:js.translator"))
     testApi(project(":native:frontend.native"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testApi(projectTests(":generators:test-generator"))

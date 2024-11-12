@@ -7,7 +7,6 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":js:js.ast"))
-    api(project(":js:js.translator"))
     api(intellijCore())
 }
 
