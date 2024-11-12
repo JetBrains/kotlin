@@ -25,6 +25,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -342,11 +344,21 @@ class ComposerParamTransformer(
         }
     }
 
+    internal inline fun <reified T : IrElement> T.deepCopyWithSymbolsAndMetadata(
+        initialParent: IrDeclarationParent? = null,
+        createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper,
+    ): T {
+        val symbolRemapper = DeepCopySymbolRemapper()
+        acceptVoid(symbolRemapper)
+        val typeRemapper = createTypeRemapper(symbolRemapper)
+        return (transform(DeepCopyPreservingMetadata(symbolRemapper, typeRemapper), null) as T).patchDeclarationParents(initialParent)
+    }
+
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
         assert(explicitParameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
-        return deepCopyWithSymbols(parent).also { fn ->
+        return deepCopyWithSymbolsAndMetadata(parent).also { fn ->
             val oldFn = this
 
             // NOTE: it's important to add these here before we recurse into the body in
