@@ -12,11 +12,11 @@ fun B.f() {}
 fun main() {
     val b = B()
 
-    b.<!NO_CONTEXT_RECEIVER!>f<!>()
+    b.<!NO_CONTEXT_ARGUMENT!>f<!>()
     with(A()) {
         b.f()
     }
     with(C()) {
-        b.<!NO_CONTEXT_RECEIVER!>f<!>()
+        b.<!NO_CONTEXT_ARGUMENT!>f<!>()
     }
 }

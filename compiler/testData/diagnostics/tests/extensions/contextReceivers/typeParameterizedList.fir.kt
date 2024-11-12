@@ -15,6 +15,6 @@ fun main() {
         A<Int>().f()
     }
     with(listOf("1", "2", "3")) {
-        A<Int>().<!NO_CONTEXT_RECEIVER!>f<!>()
+        A<Int>().<!NO_CONTEXT_ARGUMENT!>f<!>()
     }
 }

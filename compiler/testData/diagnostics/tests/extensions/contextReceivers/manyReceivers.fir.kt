@@ -33,7 +33,7 @@ fun main(a: A, b: B, c: C) {
     }
     with(a) {
         with(c) {
-            <!NO_CONTEXT_RECEIVER!>f<!>()
+            <!NO_CONTEXT_ARGUMENT!>f<!>()
         }
     }
 }

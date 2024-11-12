@@ -1976,11 +1976,11 @@ internal class AmbiguousFunctionTypeKindImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousFunctionTypeKind
 
-internal class NoContextReceiverImpl(
+internal class NoContextArgumentImpl(
     override val contextReceiverRepresentation: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoContextReceiver
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoContextArgument
 
 internal class MultipleArgumentsApplicableForContextReceiverImpl(
     override val contextReceiverRepresentation: KaType,

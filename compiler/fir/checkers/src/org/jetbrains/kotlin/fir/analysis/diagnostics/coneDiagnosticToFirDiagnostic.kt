@@ -342,7 +342,7 @@ private fun mapInapplicableCandidateError(
             is NoReceiverAllowed -> FirErrors.NO_RECEIVER_ALLOWED.createOn(qualifiedAccessSource ?: source)
 
             is NoApplicableValueForContextReceiver ->
-                FirErrors.NO_CONTEXT_RECEIVER.createOn(
+                FirErrors.NO_CONTEXT_ARGUMENT.createOn(
                     qualifiedAccessSource ?: source,
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )

@@ -30,7 +30,7 @@ fun test() {
         listOf(1, 2, 3).sum()
     }
     with(StringMonoid) {
-        listOf(1, 2, 3).<!NO_CONTEXT_RECEIVER!>sum<!>()
+        listOf(1, 2, 3).<!NO_CONTEXT_ARGUMENT!>sum<!>()
         listOf("1", "2", "3").sum()
     }
 }

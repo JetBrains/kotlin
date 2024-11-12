@@ -13,7 +13,7 @@ fun test() {
     2U.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>
     2U.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
     with (2U) {
-        <!NO_CONTEXT_RECEIVER!>c<!>
-        <!NO_CONTEXT_RECEIVER!>d<!>()
+        <!NO_CONTEXT_ARGUMENT!>c<!>
+        <!NO_CONTEXT_ARGUMENT!>d<!>()
     }
 }

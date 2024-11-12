@@ -1649,8 +1649,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val kinds: List<FunctionTypeKind>
     }
 
-    interface NoContextReceiver : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NoContextReceiver::class
+    interface NoContextArgument : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NoContextArgument::class
         val contextReceiverRepresentation: KaType
     }
 

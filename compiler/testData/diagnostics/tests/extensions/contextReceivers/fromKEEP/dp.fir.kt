@@ -20,5 +20,5 @@ fun Int.g(v: View) {
 }
 
 fun h() {
-    123.<!NO_CONTEXT_RECEIVER!>dp<!>
+    123.<!NO_CONTEXT_ARGUMENT!>dp<!>
 }

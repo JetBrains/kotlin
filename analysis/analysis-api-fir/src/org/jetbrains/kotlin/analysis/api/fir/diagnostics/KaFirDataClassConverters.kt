@@ -2315,8 +2315,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NO_CONTEXT_RECEIVER) { firDiagnostic ->
-        NoContextReceiverImpl(
+    add(FirErrors.NO_CONTEXT_ARGUMENT) { firDiagnostic ->
+        NoContextArgumentImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
