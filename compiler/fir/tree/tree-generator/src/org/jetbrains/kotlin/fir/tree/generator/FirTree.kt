@@ -1130,7 +1130,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(reference)
 
         +field("labelName", string, nullable = true)
-        +referencedSymbol("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
+        +referencedSymbol("boundSymbol", firThisOwnerSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
         +field("isImplicit", boolean)
         +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
     }

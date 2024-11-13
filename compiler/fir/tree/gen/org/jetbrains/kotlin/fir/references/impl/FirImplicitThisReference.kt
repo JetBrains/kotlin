@@ -13,12 +13,12 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirImplicitThisReference(
-    override val boundSymbol: FirBasedSymbol<*>?,
+    override val boundSymbol: FirThisOwnerSymbol<*>?,
     override var diagnostic: ConeDiagnostic?,
 ) : FirThisReference() {
     override val source: KtSourceElement?
@@ -33,7 +33,7 @@ internal class FirImplicitThisReference(
         return this
     }
 
-    override fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?) {}
+    override fun replaceBoundSymbol(newBoundSymbol: FirThisOwnerSymbol<*>?) {}
 
     override fun replaceDiagnostic(newDiagnostic: ConeDiagnostic?) {
         diagnostic = newDiagnostic

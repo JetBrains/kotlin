@@ -148,7 +148,9 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
         get() = fir.containingDeclarationSymbol
 }
 
-class FirReceiverParameterSymbol : FirBasedSymbol<FirDeclaration>() {
+sealed class FirThisOwnerSymbol<out E : FirDeclaration> : FirBasedSymbol<E>()
+
+class FirReceiverParameterSymbol : FirThisOwnerSymbol<FirDeclaration>() {
     val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = when (val fir = fir) {
             is FirReceiverParameter -> fir.containingDeclarationSymbol

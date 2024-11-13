@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +23,7 @@ class ImplicitReceiverStack private constructor(
     private val stack: PersistentList<ImplicitReceiverValue<*>>,
     // This multi-map holds indexes of the stack ^
     private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
-    private val indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>,
+    private val indexesPerSymbol: PersistentMap<FirThisOwnerSymbol<*>, Int>,
 ) : Iterable<ImplicitReceiverValue<*>> {
     val size: Int get() = stack.size
 

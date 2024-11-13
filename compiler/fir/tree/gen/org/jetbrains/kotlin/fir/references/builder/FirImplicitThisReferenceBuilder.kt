@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 
 @FirBuilderDsl
 class FirImplicitThisReferenceBuilder {
-    var boundSymbol: FirBasedSymbol<*>? = null
+    var boundSymbol: FirThisOwnerSymbol<*>? = null
     var diagnostic: ConeDiagnostic? = null
 
     fun build(): FirThisReference {

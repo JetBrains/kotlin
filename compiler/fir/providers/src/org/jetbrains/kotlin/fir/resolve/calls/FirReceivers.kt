@@ -24,11 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
@@ -78,7 +74,7 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
     }
 }
 
-sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
+sealed class ImplicitReceiverValue<S : FirThisOwnerSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,
     val useSiteSession: FirSession,
@@ -173,7 +169,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
 }
 
 private fun receiverExpression(
-    symbol: FirBasedSymbol<*>,
+    symbol: FirThisOwnerSymbol<*>,
     type: ConeKotlinType,
     inaccessibleReceiver: Boolean
 ): FirExpression {

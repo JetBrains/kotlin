@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.fir.references
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 abstract class FirThisReference : FirReference() {
     abstract override val source: KtSourceElement?
     abstract val labelName: String?
-    abstract val boundSymbol: FirBasedSymbol<*>?
+    abstract val boundSymbol: FirThisOwnerSymbol<*>?
     abstract val isImplicit: Boolean
     abstract val diagnostic: ConeDiagnostic?
 
@@ -32,7 +32,7 @@ abstract class FirThisReference : FirReference() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformThisReference(this, data) as E
 
-    abstract fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?)
+    abstract fun replaceBoundSymbol(newBoundSymbol: FirThisOwnerSymbol<*>?)
 
     abstract fun replaceDiagnostic(newDiagnostic: ConeDiagnostic?)
 }

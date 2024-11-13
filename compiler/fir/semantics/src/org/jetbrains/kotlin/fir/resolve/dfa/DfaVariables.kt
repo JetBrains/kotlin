@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -62,7 +63,7 @@ class RealVariable(
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
             RealVariable(symbol, isReceiver = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType, contextReceiverNumber = -1)
 
-        fun receiver(symbol: FirBasedSymbol<*>, type: ConeKotlinType, contextReceiverNumber: Int): RealVariable =
+        fun receiver(symbol: FirThisOwnerSymbol<*>, type: ConeKotlinType, contextReceiverNumber: Int): RealVariable =
             RealVariable(symbol, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type, contextReceiverNumber)
     }
 

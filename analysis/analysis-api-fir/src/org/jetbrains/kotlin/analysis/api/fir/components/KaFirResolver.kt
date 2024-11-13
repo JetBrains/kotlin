@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
@@ -1041,7 +1042,11 @@ internal class KaFirResolver(
                     is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
                     is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
                         ?: return null
-                    else -> return null
+                    is FirTypeAliasSymbol, is FirTypeParameterSymbol -> errorWithFirSpecificEntries(
+                        message = "Unexpected FirThisOwnerSymbol ${partiallyAppliedSymbol::class.simpleName}",
+                        fir = partiallyAppliedSymbol.fir
+                    )
+                    null -> return null
                 }
 
                 KaBaseImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())

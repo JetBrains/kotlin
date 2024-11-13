@@ -192,6 +192,9 @@ private class CodeFragmentCapturedValueVisitor(
                                 )
                             }
                         }
+                        is FirTypeAliasSymbol, is FirTypeParameterSymbol -> errorWithFirSpecificEntries(
+                            message = "Unexpected FirThisOwnerSymbol ${symbol::class.simpleName}", fir = symbol.fir
+                        )
                     }
                 }
             }

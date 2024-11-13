@@ -389,7 +389,7 @@ object CheckDslScopeViolation : ResolutionStage() {
     }
 
     private fun getDslMarkersOfImplicitReceiver(
-        boundSymbol: FirBasedSymbol<*>?,
+        boundSymbol: FirThisOwnerSymbol<*>?,
         type: ConeKotlinType,
         context: ResolutionContext,
     ): Set<ClassId> {
