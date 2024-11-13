@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -47,22 +46,11 @@ enum class ProcessResult {
 }
 
 abstract class TowerLevel {
-    abstract fun processFunctionsByName(info: CallInfo, processor: LevelProcessor<FirFunctionSymbol<*>>): ProcessResult
+    abstract fun processFunctionsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult
 
-    abstract fun processPropertiesByName(info: CallInfo, processor: LevelProcessor<FirVariableSymbol<*>>): ProcessResult
+    abstract fun processPropertiesByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult
 
-    abstract fun processObjectsByName(info: CallInfo, processor: LevelProcessor<FirBasedSymbol<*>>): ProcessResult
-
-    interface LevelProcessor<in T : FirBasedSymbol<*>> {
-        fun consumeCandidate(
-            symbol: T,
-            dispatchReceiver: FirExpression?,
-            givenExtensionReceiverOptions: List<FirExpression>,
-            scope: FirScope,
-            objectsByName: Boolean = false,
-            isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
-        ): CandidateApplicability
-    }
+    abstract fun processObjectsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult
 }
 
 /**
@@ -84,7 +72,7 @@ class DispatchReceiverMemberScopeTowerLevel(
 
     private fun <T : FirCallableSymbol<*>> processMembers(
         info: CallInfo,
-        output: LevelProcessor<T>,
+        output: TowerLevelProcessor,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessResult {
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
@@ -256,7 +244,7 @@ class DispatchReceiverMemberScopeTowerLevel(
     }
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
-        output: LevelProcessor<T>,
+        output: TowerLevelProcessor,
         candidatesWithoutSmartcast: Collection<MemberWithBaseScope<T>>?,
         // The map is not null only if there's a smart cast type on a dispatch receiver
         // and candidates are present both in smart cast and original types.
@@ -305,7 +293,7 @@ class DispatchReceiverMemberScopeTowerLevel(
 
     override fun processFunctionsByName(
         info: CallInfo,
-        processor: LevelProcessor<FirFunctionSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
@@ -324,7 +312,7 @@ class DispatchReceiverMemberScopeTowerLevel(
 
     override fun processPropertiesByName(
         info: CallInfo,
-        processor: LevelProcessor<FirVariableSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
@@ -338,7 +326,7 @@ class DispatchReceiverMemberScopeTowerLevel(
 
     override fun processObjectsByName(
         info: CallInfo,
-        processor: LevelProcessor<FirBasedSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         return ProcessResult.FOUND
     }
@@ -357,15 +345,15 @@ class ContextReceiverGroupMemberScopeTowerLevel(
         DispatchReceiverMemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
     }
 
-    override fun processFunctionsByName(info: CallInfo, processor: LevelProcessor<FirFunctionSymbol<*>>): ProcessResult {
+    override fun processFunctionsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
         return dispatchReceiverMemberScopeTowerLevels.minOf { it.processFunctionsByName(info, processor) }
     }
 
-    override fun processPropertiesByName(info: CallInfo, processor: LevelProcessor<FirVariableSymbol<*>>): ProcessResult {
+    override fun processPropertiesByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
         return dispatchReceiverMemberScopeTowerLevels.minOf { it.processPropertiesByName(info, processor) }
     }
 
-    override fun processObjectsByName(info: CallInfo, processor: LevelProcessor<FirBasedSymbol<*>>): ProcessResult {
+    override fun processObjectsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
         return dispatchReceiverMemberScopeTowerLevels.minOf { it.processObjectsByName(info, processor) }
     }
 }
@@ -459,10 +447,10 @@ internal class ScopeBasedTowerLevel(
         }
     }
 
-    private fun <T : FirBasedSymbol<*>> consumeCallableCandidate(
+    private fun consumeCallableCandidate(
         candidate: FirCallableSymbol<*>,
         callInfo: CallInfo,
-        processor: LevelProcessor<T>
+        processor: TowerLevelProcessor
     ) {
         candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
@@ -478,9 +466,8 @@ internal class ScopeBasedTowerLevel(
             return
         }
         val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol ?: candidate
-        @Suppress("UNCHECKED_CAST")
         processor.consumeCandidate(
-            unwrappedCandidate as T,
+            unwrappedCandidate,
             dispatchReceiverValue?.receiverExpression,
             givenExtensionReceiverOptions,
             scope
@@ -489,7 +476,7 @@ internal class ScopeBasedTowerLevel(
 
     override fun processFunctionsByName(
         info: CallInfo,
-        processor: LevelProcessor<FirFunctionSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         var empty = true
@@ -509,7 +496,7 @@ internal class ScopeBasedTowerLevel(
 
     override fun processPropertiesByName(
         info: CallInfo,
-        processor: LevelProcessor<FirVariableSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         var empty = true
@@ -524,7 +511,7 @@ internal class ScopeBasedTowerLevel(
 
     override fun processObjectsByName(
         info: CallInfo,
-        processor: LevelProcessor<FirBasedSymbol<*>>
+        processor: TowerLevelProcessor
     ): ProcessResult {
         var empty = true
         session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)

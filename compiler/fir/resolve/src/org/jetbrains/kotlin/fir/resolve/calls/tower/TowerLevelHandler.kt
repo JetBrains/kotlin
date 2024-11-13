@@ -72,20 +72,20 @@ internal class TowerLevelHandler {
     }
 }
 
-private class TowerLevelProcessor(
+class TowerLevelProcessor(
     val callInfo: CallInfo,
     val explicitReceiverKind: ExplicitReceiverKind,
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
     val group: TowerGroup
-) : TowerLevel.LevelProcessor<FirBasedSymbol<*>> {
-    override fun consumeCandidate(
+) {
+    fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
         dispatchReceiver: FirExpression?,
         givenExtensionReceiverOptions: List<FirExpression>,
         scope: FirScope,
-        objectsByName: Boolean,
-        isFromOriginalTypeInPresenceOfSmartCast: Boolean,
+        objectsByName: Boolean = false,
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     ): CandidateApplicability {
         return resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
