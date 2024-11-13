@@ -77,7 +77,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * Enable strong skipping.
          *
          * Strong Skipping is a mode that improves the runtime performance of your application by skipping unnecessary
-         * invocations of composable functions for which the parameters have not changed. In particular, when enabled, Composable functions
+         * invocations of composable functions for which the parameters have not changed. In particular, when enabled, composable functions
          * with unstable parameters become skippable and lambdas with unstable captures will be memoized.
          *
          * For more information, see this link:
@@ -116,10 +116,11 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * Removing groups around non-skipping composable function is an experimental mode which improves the runtime performance of your
          * application by skipping unnecessary groups around composable functions which do not skip (and thus do not require a group). This
          * optimization will remove the groups around functions that are not skippable such as explicitly marked as
-         * `@NonSkippableComposable` and functions that are implicitly not skippable such inline functions and functions that return a
-         * non-Unit value such as remember.
+         * `@NonSkippableComposable` and functions that are implicitly not skippable, such as inline functions and functions that return a
+         * non-`Unit` value such as `remember`.
          *
-         * This feature is still considered experimental and is thus disabled by default. To enable,
+         * This feature is still considered experimental and is thus disabled by default. To enable, add this line
+         * to the `composeCompiler {}` block:
          * ```
          * composeCompiler {
          *     featureFlags = setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups)
@@ -130,13 +131,14 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
         val OptimizeNonSkippingGroups: ComposeFeatureFlag = Enabled(Feature.OptimizeNonSkippingGroups)
 
         /**
-         * Change the code generation of composable function to enable pausing when part of pausable composition.
+         * Change the code generation of composable functions to enable pausing when a composable function is part of a pausable composition.
          *
          * Pausable composition is an experimental runtime feature. Experiments with this feature can be run by enabling this feature flag
          * and using a runtime version that supports pausable composition. If the runtime used does not support pausable composition, no
          * change is made to the code generation.
          *
-         * This feature is still considered experimental and is thus disabled by default. It can be enabled by adding,
+         * This feature is still considered experimental and is thus disabled by default. To enable, add this line
+         * to the `composeCompiler {}` block:
          *```
          * composeCompiler {
          *   featureFlag = setOf(ComposeFeatureFlag.PausableComposition)
