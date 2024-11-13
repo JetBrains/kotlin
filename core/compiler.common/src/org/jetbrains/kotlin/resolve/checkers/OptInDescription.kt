@@ -21,7 +21,7 @@ data class OptInDescription(
 
         val WRONG_TARGETS_FOR_MARKER = setOf(
             KotlinTarget.EXPRESSION,
-            KotlinTarget.FILE,
+//            KotlinTarget.FILE,
             KotlinTarget.TYPE,
             KotlinTarget.TYPE_PARAMETER
         )

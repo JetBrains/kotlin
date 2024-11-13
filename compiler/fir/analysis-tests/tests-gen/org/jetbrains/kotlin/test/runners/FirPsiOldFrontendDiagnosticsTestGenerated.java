@@ -6849,6 +6849,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("defaultAnnotationsTargetSet.kt")
+      public void testDefaultAnnotationsTargetSet() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/defaultAnnotationsTargetSet.kt");
+      }
+
+      @Test
       @TestMetadata("importClassInClassObject.kt")
       public void testImportClassInClassObject() {
         runTest("compiler/testData/diagnostics/tests/classObjects/importClassInClassObject.kt");

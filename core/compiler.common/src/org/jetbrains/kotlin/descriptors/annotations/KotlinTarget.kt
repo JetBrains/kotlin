@@ -24,7 +24,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     PROPERTY_SETTER("setter"),
     TYPE("type usage", false),
     EXPRESSION("expression", false),           // includes FUNCTION_LITERAL, OBJECT_LITERAL
-    FILE("file", false),
+    FILE("file", true),
     TYPEALIAS("typealias", false),
 
     TYPE_PROJECTION("type projection", false),
