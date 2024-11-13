@@ -1067,7 +1067,7 @@ internal class PartiallyLinkedIrTreePatcher(
             { oldContext ->
                 val functionSymbol = expression.symbol
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
-                if (!function.isInline && !function.isInlineArrayConstructor(builtIns)) return@withContext oldContext
+                if (!function.isInline && !function.isInlineArrayConstructor()) return@withContext oldContext
 
                 fun IrValueParameter?.canHaveNonLocalReturns(): Boolean = this != null && !isCrossinline && !isNoinline
 

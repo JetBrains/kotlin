@@ -41,7 +41,7 @@ abstract class CommonInlineCallableReferenceToLambdaPhase(
         super.visitFunctionReference(expression, data)
 
         val owner = expression.symbol.owner
-        if (!owner.isInlineArrayConstructor(context.irBuiltIns)) return expression
+        if (!owner.isInlineArrayConstructor()) return expression
 
         return expression.transformToLambda(data)
     }
