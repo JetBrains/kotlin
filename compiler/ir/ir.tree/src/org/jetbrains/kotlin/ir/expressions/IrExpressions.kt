@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -35,6 +36,7 @@ var IrDynamicOperatorExpression.right: IrExpression
             arguments[0] = value
     }
 
+@DeprecatedCompilerApi
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
 
@@ -96,6 +98,7 @@ val CallableDescriptor.typeParametersCount: Int
             else -> typeParameters.size
         }
 
+@DeprecatedCompilerApi
 fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
     when (parameter) {
         callee.dispatchReceiverParameter -> dispatchReceiver = argument

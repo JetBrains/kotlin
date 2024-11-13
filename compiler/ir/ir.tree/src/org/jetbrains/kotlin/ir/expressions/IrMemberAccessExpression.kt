@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstractOrFail
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -33,7 +35,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * It corresponds 1 to 1 with [IrFunction.parameters], and therefore should have the same size.
      * `null` value usually means that the default value of the corresponding parameter will be used.
      */
-    val arguments: ArrayList<IrExpression?> = ArrayList()
+    val arguments: ValueArgumentsList = ValueArgumentsList()
 
     // Those properties indicate the shape of `this.symbol.owner`. They are filled
     // when the element is created, and whenever `symbol` changes. They are used
@@ -466,5 +468,25 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         arguments.transformInPlace(transformer, data)
+    }
+
+
+    inner class ValueArgumentsList : ArrayList<IrExpression?>() {
+        operator fun get(parameter: IrValueParameter): IrExpression? {
+            checkIndexingByParameter(parameter)
+            return this[parameter.index]
+        }
+
+        operator fun set(parameter: IrValueParameter, value: IrExpression?): IrExpression? {
+            checkIndexingByParameter(parameter)
+            return this.set(parameter.index, value)
+        }
+
+        private fun checkIndexingByParameter(parameter: IrValueParameter) {
+            require(parameter.parent == symbol.owner) {
+                "Attempting to access argument corresponding to a parameter of different function.\n" +
+                        "This IR element references ${symbol.owner.render()}, while asking about a parameter of ${parameter.parent.render()}"
+            }
+        }
     }
 }
