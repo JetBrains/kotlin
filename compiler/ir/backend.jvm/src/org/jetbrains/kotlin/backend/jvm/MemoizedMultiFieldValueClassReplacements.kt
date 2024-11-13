@@ -357,7 +357,7 @@ class MemoizedMultiFieldValueClassReplacements(
             types.isEmpty() || types.any { !it.needsMfvcFlattening() } -> null
             parent !is IrClass -> null
             property.isFakeOverride -> null
-            property.getter.let { it != null && (it.contextReceiverParametersCount > 0 || it.extensionReceiverParameter != null) } -> null
+            property.getter.let { it != null && it.nonDispatchParameters.isNotEmpty() } -> null
             useRootNode(parent, property) -> null
             else -> getRegularClassMfvcPropertyNodeImpl(property)
         }
