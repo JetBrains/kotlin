@@ -62,7 +62,8 @@ internal fun Project.registerSwiftExportTask(
         exportConfiguration = target.exportedSwiftExportApiConfiguration(buildType),
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
-        exportedModules = swiftExportExtension.exportedModules
+        exportedModules = swiftExportExtension.exportedModules,
+        customSetting = swiftExportExtension.advancedConfiguration.settings
     )
 
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
@@ -123,6 +124,7 @@ private fun Project.registerSwiftExportRun(
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>>,
+    customSetting: Provider<Map<String, String>>
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
         taskNamePrefix,
@@ -144,6 +146,7 @@ private fun Project.registerSwiftExportRun(
         // Input
         task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
         task.parameters.bridgeModuleName.set("SharedBridge")
+        task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
             configurationProvider.zip(exportedModules) { configuration, modules ->
                 configuration.swiftExportedModules(modules)

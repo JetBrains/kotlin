@@ -38,9 +38,11 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
 
     override fun execute() {
 
-        val exportModules = parameters.swiftModules.get().map { module ->
-            module.toInputModule(config(module.flattenPackage))
-        }.toSet()
+        val exportModules = parameters.swiftModules.zip(parameters.swiftExportSettings) { modules, settings ->
+            modules.map { module ->
+                module.toInputModule(config(module.flattenPackage, settings))
+            }.toSet()
+        }.get()
 
         val modules = GradleSwiftExportModules(
             runSwiftExport(exportModules).getOrThrow().toPlainList(),
@@ -51,15 +53,21 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         parameters.swiftModulesFile.getFile().writeText(json)
     }
 
-    private fun config(flattenPackage: String?): SwiftExportConfig {
+    private fun config(flattenPackage: String?, customSettings: Map<String, String>): SwiftExportConfig {
+        val swiftExportSettings = mutableMapOf(
+            SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
+            SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
+            SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
+        ).also { settings ->
+            flattenPackage?.let { settings[SwiftExportConfig.ROOT_PACKAGE] = it }
+
+            customSettings.forEach { (key, value) ->
+                settings[key] = value
+            }
+        }
+
         return SwiftExportConfig(
-            settings = mutableMapOf(
-                SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
-                SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-                SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
-            ).also { settings ->
-                flattenPackage?.let { settings[SwiftExportConfig.ROOT_PACKAGE] = it }
-            },
+            settings = swiftExportSettings,
             logger = swiftExportLogger,
             distribution = parameters.konanDistribution.get(),
             outputPath = parameters.outputPath.getFile().toPath()

@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import javax.inject.Inject
 
 interface SwiftExportedModuleMetadata {
@@ -37,6 +39,15 @@ interface SwiftExportedModuleMetadata {
     @get:Input
     @get:Optional
     val flattenPackage: Property<String>
+}
+
+interface SwiftExportAdvancedConfiguration {
+    /**
+     * Configure SwiftExportConfig.settings parameters
+     */
+    @get:Input
+    @get:Optional
+    val settings: MapProperty<String, String>
 }
 
 interface SwiftExportedModuleVersionMetadata : SwiftExportedModuleMetadata {
@@ -57,6 +68,38 @@ abstract class SwiftExportExtension @Inject constructor(
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
 ) : SwiftExportedModuleMetadata {
+
+    /**
+     * Configure Link task.
+     */
+    fun linkTask(configure: KotlinNativeLink.() -> Unit = {}) {
+        forAllSwiftExportBinaries {
+            linkTaskProvider.configure { linkTask ->
+                configure(linkTask)
+            }
+        }
+    }
+
+    /**
+     * Configure Link task.
+     */
+    fun linkTask(configure: Action<KotlinNativeLink>) = linkTask {
+        configure.execute(this)
+    }
+
+    /**
+     * Configure Swift Export Advanced parameters.
+     */
+    fun configure(configure: SwiftExportAdvancedConfiguration.() -> Unit = {}) {
+        advancedConfiguration.configure()
+    }
+
+    /**
+     * Configure Swift Export Advanced parameters.
+     */
+    fun export(configure: Action<SwiftExportAdvancedConfiguration>) = configure {
+        configure.execute(this)
+    }
 
     /**
      * Configure Swift Export modules export.
@@ -114,6 +157,11 @@ abstract class SwiftExportExtension @Inject constructor(
     internal val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
         _exportedModules
     }
+
+    /**
+     * Advanced configuration settings.
+     */
+    internal val advancedConfiguration = objectFactory.newInstance(SwiftExportAdvancedConfiguration::class.java)
 
     private val _swiftExportBinaries = objectFactory.domainObjectSet<AbstractNativeLibrary>()
 
