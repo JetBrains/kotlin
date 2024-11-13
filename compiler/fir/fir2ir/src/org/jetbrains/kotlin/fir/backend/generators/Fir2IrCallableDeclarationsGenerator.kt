@@ -606,7 +606,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         result: MutableList<IrValueParameter>,
     ) {
         contextReceivers.mapIndexedTo(result) { index, contextReceiver ->
-            createIrParameterFromContextReceiver(contextReceiver, index).apply {
+            if (contextReceiver.isLegacyContextReceiver()) {
+                createIrParameterFromContextReceiver(contextReceiver, index)
+            } else {
+                this.declarationStorage.createAndCacheParameter(contextReceiver)
+            }.apply {
                 this.parent = parent
             }
         }

@@ -7226,6 +7226,15 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @Tag("klib")
+    public class ContextParameters {
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("frontend-fir")
