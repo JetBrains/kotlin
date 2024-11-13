@@ -121,7 +121,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
                     // If the field is static, evaluate the receiver for potential side effects.
-                    +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
+                    +receiver.coerceToUnit(context.irBuiltIns)
                 }
                 if (accessor.valueParameters.isNotEmpty()) {
                     +irSetField(

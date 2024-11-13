@@ -45,7 +45,7 @@ internal class IterableLoopHeader(
             // Find and replace the call to preserve any type-casts.
             loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
-            listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns, backendContext.typeSystem))
+            listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {

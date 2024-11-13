@@ -303,7 +303,7 @@ open class FunctionInlining(
 
                         if (expression.returnTargetSymbol == copiedCallee.symbol) {
                             val expr = if (returnType.isUnit()) {
-                                expression.value.coerceToUnit(context.irBuiltIns, context.typeSystem)
+                                expression.value.coerceToUnit(context.irBuiltIns)
                             } else {
                                 expression.value.doImplicitCastIfNeededTo(returnType)
                             }

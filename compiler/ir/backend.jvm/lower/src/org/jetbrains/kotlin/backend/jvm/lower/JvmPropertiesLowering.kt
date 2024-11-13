@@ -143,7 +143,7 @@ internal class JvmPropertiesLowering(
     private fun IrBuilderWithScope.patchReceiver(expression: IrFieldAccessExpression): IrExpression =
         if (expression.symbol.owner.isStatic && expression.receiver != null) {
             irBlock {
-                +expression.receiver!!.coerceToUnit(context.irBuiltIns, backendContext.typeSystem)
+                +expression.receiver!!.coerceToUnit(context.irBuiltIns)
                 expression.receiver = null
                 +expression
             }

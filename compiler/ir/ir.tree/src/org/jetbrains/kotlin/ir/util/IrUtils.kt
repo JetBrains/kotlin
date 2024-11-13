@@ -161,12 +161,12 @@ fun IrExpression.isFalseConst() = this is IrConst && this.kind == IrConstKind.Bo
 
 fun IrExpression.isIntegerConst(value: Int) = this is IrConst && this.kind == IrConstKind.Int && this.value == value
 
-fun IrExpression.coerceToUnit(builtins: IrBuiltIns, typeSystem: IrTypeSystemContext): IrExpression {
-    return coerceToUnitIfNeeded(type, builtins, typeSystem)
+fun IrExpression.coerceToUnit(builtins: IrBuiltIns): IrExpression {
+    return coerceToUnitIfNeeded(type, builtins)
 }
 
-fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns, typeSystem: IrTypeSystemContext): IrExpression {
-    return if (valueType.isSubtypeOf(irBuiltIns.unitType, typeSystem))
+fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns): IrExpression {
+    return if (valueType.isUnit() || valueType.isNothing())
         this
     else
         IrTypeOperatorCallImpl(
