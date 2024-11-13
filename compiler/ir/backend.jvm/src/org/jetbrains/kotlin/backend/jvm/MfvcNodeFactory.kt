@@ -373,9 +373,8 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
 
     val customEqualsMfvc = mfvc.functions.singleOrNull {
         it.name == OperatorNameConventions.EQUALS &&
-                it.contextReceiverParametersCount == 0 &&
-                it.extensionReceiverParameter == null &&
-                it.valueParameters.singleOrNull()?.type?.erasedUpperBound == mfvc
+                it.hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                it.parameters[1].type.erasedUpperBound == mfvc
     }
 
     val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, oldFields, customEqualsAny, customEqualsMfvc)
