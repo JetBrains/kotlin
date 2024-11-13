@@ -78,9 +78,6 @@ class WasmBackendContext(
     //TODO Move to CrossFileContext
     override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
-    override val coroutineSymbols =
-        JsCommonCoroutineSymbols(symbolTable, module)
-
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
@@ -93,7 +90,7 @@ class WasmBackendContext(
     override val sharedVariablesManager = WasmSharedVariablesManager(this)
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
-    override val jsCommonSymbols = wasmSymbols
+    override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
     override val enumEntries = wasmSymbols.enumEntries

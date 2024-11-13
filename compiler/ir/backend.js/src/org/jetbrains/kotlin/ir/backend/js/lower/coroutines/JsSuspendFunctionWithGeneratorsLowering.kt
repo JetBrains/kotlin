@@ -32,7 +32,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
     private val getContinuationSymbol = context.ir.symbols.getContinuation
     private val jsYieldFunctionSymbol = context.intrinsics.jsYieldFunctionSymbol
     private val suspendOrReturnFunctionSymbol = context.intrinsics.suspendOrReturnFunctionSymbol
-    private val coroutineSuspendedGetterSymbol = context.coroutineSymbols.coroutineSuspendedGetter
+    private val coroutineSuspendedGetterSymbol = context.symbols.coroutineSymbols.coroutineSuspendedGetter
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.isSuspend) {

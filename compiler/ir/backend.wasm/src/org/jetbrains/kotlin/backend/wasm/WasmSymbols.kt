@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 class WasmSymbols(
     private val context: WasmBackendContext,
     private val symbolTable: SymbolTable
-) : JsCommonSymbols(context.module, context.irBuiltIns) {
+) : JsCommonSymbols(context.module, context.irBuiltIns, symbolTable) {
 
     private val kotlinTopLevelPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin"))
@@ -92,15 +92,15 @@ class WasmSymbols(
     override val stringBuilder =
         getIrClass(FqName("kotlin.text.StringBuilder"))
     override val coroutineImpl =
-        context.coroutineSymbols.coroutineImpl
+        coroutineSymbols.coroutineImpl
     override val coroutineSuspendedGetter =
-        context.coroutineSymbols.coroutineSuspendedGetter
+        coroutineSymbols.coroutineSuspendedGetter
     override val getContinuation =
         getInternalFunction("getContinuation")
     override val continuationClass =
-        context.coroutineSymbols.continuationClass
+        coroutineSymbols.continuationClass
     override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
+        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
     override val suspendCoroutineUninterceptedOrReturn =
         getInternalFunction("suspendCoroutineUninterceptedOrReturn")
     override val coroutineGetContext =

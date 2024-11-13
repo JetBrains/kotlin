@@ -26,14 +26,16 @@ import org.jetbrains.kotlin.types.isNullable
 abstract class JsCommonSymbols(
     module: ModuleDescriptor,
     irBuiltIns: IrBuiltIns,
-) : Symbols(irBuiltIns)
+    symbolTable: SymbolTable,
+) : Symbols(irBuiltIns) {
+    val coroutineSymbols = JsCommonCoroutineSymbols(symbolTable, module)
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsSymbols(
     private val context: JsIrBackendContext,
-    irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-) : JsCommonSymbols(context.module, irBuiltIns) {
+) : JsCommonSymbols(context.module, context.irBuiltIns, symbolTable) {
     override val throwNullPointerException =
         symbolTable.descriptorExtension.referenceSimpleFunction(context.getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
@@ -62,9 +64,9 @@ class JsSymbols(
     override val stringBuilder
         get() = TODO("not implemented")
     override val coroutineImpl =
-        context.coroutineSymbols.coroutineImpl
+        coroutineSymbols.coroutineImpl
     override val coroutineSuspendedGetter =
-        context.coroutineSymbols.coroutineSuspendedGetter
+        coroutineSymbols.coroutineSuspendedGetter
 
     private val _arraysContentEquals = context.getFunctions(FqName("kotlin.collections.contentEquals")).mapNotNull {
         if (it.extensionReceiverParameter != null && it.extensionReceiverParameter!!.type.isNullable())
@@ -78,10 +80,10 @@ class JsSymbols(
 
     override val getContinuation = symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalFunction("getContinuation"))
 
-    override val continuationClass = context.coroutineSymbols.continuationClass
+    override val continuationClass = coroutineSymbols.continuationClass
 
     override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
+        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
 
     override val suspendCoroutineUninterceptedOrReturn =
         symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))

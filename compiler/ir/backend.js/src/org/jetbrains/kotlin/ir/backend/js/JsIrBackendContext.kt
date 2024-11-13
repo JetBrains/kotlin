@@ -164,9 +164,6 @@ class JsIrBackendContext(
                 candidates.singleOrNull { it.owner.valueParameters[0].type.classifierOrNull == rhsType.classifier }
         }
 
-    override val coroutineSymbols =
-        JsCommonCoroutineSymbols(symbolTable, module)
-
     override val jsPromiseSymbol: IrClassSymbol?
         get() = intrinsics.promiseClassSymbol
 
@@ -175,9 +172,9 @@ class JsIrBackendContext(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
-    override val jsCommonSymbols = JsSymbols(this@JsIrBackendContext, irBuiltIns, symbolTable)
+    override val symbols = JsSymbols(this@JsIrBackendContext, symbolTable)
     override val ir = object : Ir<JsIrBackendContext>(this) {
-        override val symbols = jsCommonSymbols
+        override val symbols = this@JsIrBackendContext.symbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
