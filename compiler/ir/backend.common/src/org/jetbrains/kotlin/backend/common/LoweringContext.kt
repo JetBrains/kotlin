@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 
 /**
  * A context that is used to pass data to both first (before IR serialization) and second (after IR deserialization) stage compiler
@@ -32,7 +31,6 @@ interface LoweringContext {
     val configuration: CompilerConfiguration
     val ir: Ir<LoweringContext>
     val irBuiltIns: IrBuiltIns
-    val typeSystem: IrTypeSystemContext
     val irFactory: IrFactory
 
     // TODO(KT-73155): Pull this down to CommonBackendContext

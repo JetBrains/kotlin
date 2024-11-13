@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
  */
 interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReportingContext, BackendContextHolder {
+    val typeSystem: IrTypeSystemContext
+
     override val heldBackendContext: CommonBackendContext
         get() = this
 
