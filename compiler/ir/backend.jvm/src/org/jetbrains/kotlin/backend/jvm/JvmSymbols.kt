@@ -178,10 +178,14 @@ class JvmSymbols(
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNullExpressionValue" }
 
     val checkNotNull: IrSimpleFunctionSymbol =
-        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 1 }.symbol
+        intrinsicsClass.owner.functions.single {
+            it.name.asString() == "checkNotNull" && it.hasShape(regularParameters = 1)
+        }.symbol
 
     val checkNotNullWithMessage: IrSimpleFunctionSymbol =
-        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 2 }.symbol
+        intrinsicsClass.owner.functions.single {
+            it.name.asString() == "checkNotNull" && it.hasShape(regularParameters = 2)
+        }.symbol
 
     val throwNpe: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
