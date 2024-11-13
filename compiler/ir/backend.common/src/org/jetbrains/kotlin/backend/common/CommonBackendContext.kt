@@ -43,10 +43,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
 
     val mapping: Mapping
 
-    fun isSideEffectFree(call: IrCall): Boolean {
-        return false
-    }
-
     val preferJavaLikeCounterLoop: Boolean
         get() = false
 

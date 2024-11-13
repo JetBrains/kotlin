@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -231,6 +232,10 @@ abstract class Symbols(
     open val setWithoutBoundCheckName: Name? = null
 
     open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
+
+    open fun isSideEffectFree(call: IrCall): Boolean {
+        return false
+    }
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =

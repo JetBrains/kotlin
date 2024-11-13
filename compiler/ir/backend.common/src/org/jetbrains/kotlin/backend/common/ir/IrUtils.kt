@@ -49,7 +49,7 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    context: CommonBackendContext? = null
+    symbols: Symbols? = null
 ): Boolean {
     if (this == null) return true
 
@@ -67,16 +67,16 @@ fun IrExpression?.isPure(
                         operator == IrTypeOperator.INSTANCEOF ||
                                 operator == IrTypeOperator.REINTERPRET_CAST ||
                                 operator == IrTypeOperator.NOT_INSTANCEOF
-                        ) && argument.isPure(anyVariable, checkFields, context)
-            is IrCall -> if (context?.isSideEffectFree(this) == true) {
+                        ) && argument.isPure(anyVariable, checkFields, symbols)
+            is IrCall -> if (symbols?.isSideEffectFree(this) == true) {
                 for (i in 0 until valueArgumentsCount) {
                     val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
+                    if (!valueArgument.isPure(anyVariable, checkFields, symbols)) return false
                 }
                 true
             } else false
             is IrGetObjectValue -> type.isUnit()
-            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
+            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
             else -> false
         }
     }
