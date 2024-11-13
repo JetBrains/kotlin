@@ -34,7 +34,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val PARAMETERS_METADATA by key<Boolean>("Parameters metadata for java 1.8 reflection")
 
-    val INCREMENTAL_COMPILATION_COMPONENTS by key<IncrementalCompilationComponents>("incremental cache provider")
+    val INCREMENTAL_COMPILATION_COMPONENTS by key<IncrementalCompilationComponents>("incremental cache provider", throwOnNull = false)
 
     val MODULE_XML_FILE by key<File>("path to module.xml")
 

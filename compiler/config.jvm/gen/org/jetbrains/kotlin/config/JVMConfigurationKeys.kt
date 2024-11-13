@@ -222,7 +222,7 @@ var CompilerConfiguration.parametersMetadata: Boolean
 
 var CompilerConfiguration.incrementalCompilationComponents: IncrementalCompilationComponents?
     get() = get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-    set(value) { put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, value) }
 
 var CompilerConfiguration.moduleXmlFile: File?
     get() = get(JVMConfigurationKeys.MODULE_XML_FILE)

@@ -38,6 +38,7 @@ class SimpleKey(
     override val importsToAdd: List<String>,
     override val accessorName: String,
     override val comment: String?,
+    val throwOnNull: Boolean,
 ) : Key() {
     override val typeString: String
         get() = type.name
@@ -116,6 +117,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
         importsToAdd: List<String> = emptyList(),
         accessorName: String? = null,
         comment: String? = null,
+        throwOnNull: Boolean = true,
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -148,6 +150,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                     importsToAdd,
                     accessorName ?: name.toCamelCase(),
                     comment,
+                    throwOnNull
                 )
             }
             _keys += key

@@ -117,23 +117,23 @@ var CompilerConfiguration.reportOutputFiles: Boolean
 
 var CompilerConfiguration.lookupTracker: LookupTracker?
     get() = get(CommonConfigurationKeys.LOOKUP_TRACKER)
-    set(value) { put(CommonConfigurationKeys.LOOKUP_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, value) }
 
 var CompilerConfiguration.expectActualTracker: ExpectActualTracker?
     get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER)
-    set(value) { put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, value) }
 
 var CompilerConfiguration.inlineConstTracker: InlineConstTracker?
     get() = get(CommonConfigurationKeys.INLINE_CONST_TRACKER)
-    set(value) { put(CommonConfigurationKeys.INLINE_CONST_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, value) }
 
 var CompilerConfiguration.enumWhenTracker: EnumWhenTracker?
     get() = get(CommonConfigurationKeys.ENUM_WHEN_TRACKER)
-    set(value) { put(CommonConfigurationKeys.ENUM_WHEN_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(CommonConfigurationKeys.ENUM_WHEN_TRACKER, value) }
 
 var CompilerConfiguration.importTracker: ImportTracker?
     get() = get(CommonConfigurationKeys.IMPORT_TRACKER)
-    set(value) { put(CommonConfigurationKeys.IMPORT_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, value) }
 
 var CompilerConfiguration.metadataVersion: BinaryVersion?
     get() = get(CommonConfigurationKeys.METADATA_VERSION)
