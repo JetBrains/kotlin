@@ -5,6 +5,9 @@ This project assembles API reference for Kotlin Gradle plugins to publish it to 
 ### Configuration
 
 - `build/templates` dir is used for Kotlinlang website templates. Currently, they should be put there manually.
+- `build/documentation/kotlinlangOld` directory is used for previously generated documentation.
+  Inside the structure of subdirectories 
+should follow [this specification](https://github.com/Kotlin/dokka/tree/1.9.20/dokka-subprojects/plugin-versioning#directory-structure).
 
 ### Assembling
 
