@@ -17,5 +17,6 @@ abstract class PluginsApiDocumentationExtension @Inject constructor(
     abstract val documentationOldVersions: DirectoryProperty
     abstract val templatesArchiveUrl: Property<String>
     val templatesArchiveSubDirectoryPattern: Property<String> = objectFactory.property(String::class.java).convention("")
+    val templatesArchivePrefixToRemove: Property<String> = objectFactory.property(String::class.java).convention("")
     abstract val gradlePluginsProjects: SetProperty<Project>
 }
