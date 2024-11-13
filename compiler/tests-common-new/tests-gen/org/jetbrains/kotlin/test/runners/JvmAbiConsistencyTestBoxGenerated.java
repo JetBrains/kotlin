@@ -20049,6 +20049,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("cceAfterReceiverSmartCast.kt")
+      public void testCceAfterReceiverSmartCast() {
+        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/cceAfterReceiverSmartCast.kt");
+      }
+
+      @Test
       @TestMetadata("compoundAssignmentOperators.kt")
       public void testCompoundAssignmentOperators() {
         runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/compoundAssignmentOperators.kt");
