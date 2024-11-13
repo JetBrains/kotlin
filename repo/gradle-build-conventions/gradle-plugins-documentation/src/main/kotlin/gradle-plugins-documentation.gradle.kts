@@ -17,18 +17,33 @@ dependencies {
 val downloadTask = tasks.register<Download>("downloadTemplates") {
     src(documentationExtension.templatesArchiveUrl)
     dest(layout.buildDirectory.file("templateDist.zip"))
+    onlyIf(
+        "Kotlinlang Dokka template is not working in the standalone mode: KT-73082"
+    ) {
+        false
+    }
+
     onlyIfModified(true)
     overwrite(false)
 }
 
 val unzipTemplates = tasks.register<Copy>("unzipTemplates") {
     dependsOn(downloadTask)
+    onlyIf(
+        "Kotlinlang Dokka template is not working in the standalone mode: KT-73082"
+    ) {
+        false
+    }
+
+    val dirPrefix = documentationExtension.templatesArchivePrefixToRemove
     from(
         zipTree(downloadTask.map { it.dest })
             .matching {
                 include(documentationExtension.templatesArchiveSubDirectoryPattern.get())
             }
-    )
+    ).eachFile {
+        path = path.removePrefix(dirPrefix.get())
+    }
     into(layout.buildDirectory.dir("template"))
 }
 
@@ -54,12 +69,12 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
     dependsOn(unzipTemplates)
     pluginsMapConfiguration.put(
         "org.jetbrains.dokka.base.DokkaBase",
-        "{ \"templatesDir\": \"${unzipTemplates.map { it.destinationDir }.get()}\" }"
+        "{ \"templatesDir\": \"${unzipTemplates.map { it.destinationDir }.get().also { it.mkdirs() }}\" }"
     )
     pluginsMapConfiguration.put(
         "org.jetbrains.dokka.versioning.VersioningPlugin",
         documentationExtension.documentationOldVersions.map { olderVersionsDir ->
-            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile}\" }"
+            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile.also { it.mkdirs() }}\" }"
         }
     )
 
