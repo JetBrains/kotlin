@@ -47,11 +47,12 @@ public interface KaScopeProvider {
      * The behavior of the scope differs based on whether the given [KaDeclarationContainerSymbol] is a Kotlin or Java class:
      *
      * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
-     *   directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin classes is equivalent to [declaredMemberScope].
-     * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaDeclarationContainerSymbol] or any of its
-     *   superclasses (excluding static callables from super-interfaces), and classes declared directly in the [KaDeclarationContainerSymbol]. This
-     *   follows Kotlin's rules about static inheritance in Java classes, where static callables are propagated from superclasses, but
-     *   nested classes are not.
+     *   directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin classes is equivalent to
+     *   [staticDeclaredMemberScope].
+     * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaDeclarationContainerSymbol] or
+     *   any of its superclasses (excluding static callables from super-interfaces), and classes declared directly in the
+     *   [KaDeclarationContainerSymbol]. This follows Kotlin's rules about static inheritance in Java classes, where static callables are
+     *   propagated from superclasses, but nested classes are not.
      *
      * #### Kotlin Example
      *
@@ -189,7 +190,7 @@ public interface KaScopeProvider {
      * Returned [KaTypeScope] includes synthetic Java properties.
      *
      * @see KaTypeScope
-     * @see KaTypeProviderMixIn.getKaType
+     * @see KaTypeProvider.type
      */
     @KaExperimentalApi
     public val KaType.scope: KaTypeScope?
