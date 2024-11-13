@@ -29,7 +29,7 @@ class PreSerializationLoweringContext(
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
-    override val ir: Ir<PreSerializationLoweringContext>
+    override val ir: Ir
         get() = TODO("Not yet implemented") // Should be implemented in scope of KT-71415
 
     override val innerClassesSupport: InnerClassesSupport

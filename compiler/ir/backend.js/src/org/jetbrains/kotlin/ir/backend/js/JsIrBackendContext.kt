@@ -156,7 +156,7 @@ class JsIrBackendContext(
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
-    override val ir = object : Ir<JsIrBackendContext>(this) {
+    override val ir = object : Ir() {
         override val symbols = this@JsIrBackendContext.symbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 // This is what Context collects about IR.
-abstract class Ir<out T : LoweringContext>(val context: T) {
+abstract class Ir {
 
     abstract val symbols: Symbols
 

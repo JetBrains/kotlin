@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
  */
 interface LoweringContext {
     val configuration: CompilerConfiguration
-    val ir: Ir<LoweringContext>
+    val ir: Ir
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
 

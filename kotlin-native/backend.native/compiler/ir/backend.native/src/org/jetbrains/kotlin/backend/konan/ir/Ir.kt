@@ -59,7 +59,7 @@ internal interface SymbolLookupUtils {
 }
 
 // This is what Context collects about IR.
-internal class KonanIr(context: Context, override val symbols: KonanSymbols): Ir<Context>(context)
+internal class KonanIr(override val symbols: KonanSymbols): Ir()
 
 internal class KonanSymbols(
         context: PhaseContext,

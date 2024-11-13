@@ -93,7 +93,7 @@ class WasmBackendContext(
     override val propertyLazyInitialization: PropertyLazyInitialization =
         PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
 
-    override val ir = object : Ir<WasmBackendContext>(this) {
+    override val ir = object : Ir() {
         override val symbols: WasmSymbols = wasmSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }

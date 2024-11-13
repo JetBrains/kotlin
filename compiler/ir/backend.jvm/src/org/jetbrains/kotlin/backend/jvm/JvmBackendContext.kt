@@ -148,7 +148,7 @@ class JvmBackendContext(
     override val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = false
 
-    inner class JvmIr : Ir<JvmBackendContext>(this) {
+    inner class JvmIr : Ir() {
         override val symbols = JvmSymbols(this@JvmBackendContext)
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
