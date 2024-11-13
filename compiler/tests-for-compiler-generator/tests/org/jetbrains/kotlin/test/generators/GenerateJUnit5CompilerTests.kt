@@ -140,10 +140,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
             testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
             testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
@@ -338,10 +340,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
             testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
             testClass<AbstractComposeLikeIrBlackBoxCodegenTest> {

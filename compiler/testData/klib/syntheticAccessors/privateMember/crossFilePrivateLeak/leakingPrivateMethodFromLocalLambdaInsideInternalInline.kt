@@ -1,3 +1,4 @@
+// IGNORE_INLINER_K2: IR
 // FILE: A.kt
 class A {
     private fun privateMethod() = "OK"

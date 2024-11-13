@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: a.kt
 class Foo {
     private fun o() = "O"

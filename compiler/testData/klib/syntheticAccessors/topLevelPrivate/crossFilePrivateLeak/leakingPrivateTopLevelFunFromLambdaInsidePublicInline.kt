@@ -1,4 +1,5 @@
 // IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+// IGNORE_INLINER_K2: IR
 
 // FILE: A.kt
 private fun privateMethod() = "OK"

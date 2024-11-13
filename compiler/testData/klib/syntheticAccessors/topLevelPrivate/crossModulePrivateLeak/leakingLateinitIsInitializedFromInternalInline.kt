@@ -4,7 +4,6 @@
 // KT-72862: No function found for symbol
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
-// KT-72840: java.lang.AssertionError: Trying to inline an anonymous object which is not part of the public ABI: OK$doInitializeAndReadOK$1
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 

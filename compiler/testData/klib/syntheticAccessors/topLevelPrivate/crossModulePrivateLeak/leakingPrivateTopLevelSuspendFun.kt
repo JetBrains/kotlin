@@ -1,10 +1,12 @@
-// KT-72883: org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl cannot be cast to org.jetbrains.kotlin.ir.expressions.IrBlockBody
 // IGNORE_BACKEND: JS_IR
 // IGNORE_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
+// ^^^ To be fixed in KT-72883: org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl cannot be cast to org.jetbrains.kotlin.ir.expressions.IrBlockBody
 // WITH_COROUTINES
+// WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 
-// KT-72862: No function found for symbol
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// ^^^ To be fixed in KT-72862: No function found for symbol
 
 // MODULE: lib
 // FILE: a.kt

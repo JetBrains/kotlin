@@ -1,5 +1,6 @@
-// KT-72862: <missing declarations>
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// ^^^ To be fixed in KT-72862: <missing declarations>
+// NO_CHECK_LAMBDA_INLINING
 // MODULE: lib
 // FILE: a.kt
 private fun o() = "O"

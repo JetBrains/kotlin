@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: a.kt
 private val privateVal = 21
 private val privateValFunctional = { 21 }

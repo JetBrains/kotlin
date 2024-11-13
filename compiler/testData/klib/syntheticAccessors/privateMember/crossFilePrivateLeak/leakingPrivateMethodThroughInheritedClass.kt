@@ -5,6 +5,8 @@
 //     - `translateCall(IrCall, ...): JsExpression` processes `super.x()` call and attempts to
 //       obtain a dispatch receiver, which is missing for top level declaration.
 
+// IGNORE_BACKEND: JVM_IR
+
 // FILE: A.kt
 open class Parent {
     private fun x() = "OK"
