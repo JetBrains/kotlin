@@ -57,22 +57,20 @@ class RealVariable(
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?,
     val originalType: ConeKotlinType,
-    val contextReceiverNumber: Int,
 ) : DataFlowVariable() {
     companion object {
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
-            RealVariable(symbol, isReceiver = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType, contextReceiverNumber = -1)
+            RealVariable(symbol, isReceiver = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
 
-        fun receiver(symbol: FirThisOwnerSymbol<*>, type: ConeKotlinType, contextReceiverNumber: Int): RealVariable =
-            RealVariable(symbol, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type, contextReceiverNumber)
+        fun receiver(symbol: FirThisOwnerSymbol<*>, type: ConeKotlinType): RealVariable =
+            RealVariable(symbol, isReceiver = true, dispatchReceiver = null, extensionReceiver = null, type)
     }
 
     // `originalType` cannot be included into equality comparisons because it can be a captured type.
     // Those are normally not equal to each other, but if this variable is stable, then it is in fact the same type.
     override fun equals(other: Any?): Boolean =
         other is RealVariable && symbol == other.symbol && isReceiver == other.isReceiver &&
-                dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver &&
-                contextReceiverNumber == other.contextReceiverNumber
+                dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver
 
     override fun hashCode(): Int =
         Objects.hash(symbol, isReceiver, dispatchReceiver, extensionReceiver)

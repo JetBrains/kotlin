@@ -62,7 +62,7 @@ class VariableStorage(private val session: FirSession) {
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
             (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
-        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType, -1)
+        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
         val real = if (createReal) rememberWithKnownReceivers(prototype) else realVariables[prototype] ?: return null
         return unwrapAlias(real)
     }
@@ -82,7 +82,7 @@ class VariableStorage(private val session: FirSession) {
         }
 
     private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable =
-        RealVariable(symbol, isReceiver, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType, contextReceiverNumber)
+        RealVariable(symbol, isReceiver, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
 
     /**
      * Call a lambda with every known [RealVariable] that represents a member property of another [RealVariable].
