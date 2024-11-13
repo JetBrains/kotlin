@@ -10,11 +10,11 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /**
- * Represents a configuration for specifying the desired variant of Klib dependency.
+ * Represents a configuration that specifies the desired klib packaging type.
  *
- * Use [NON_PACKED] when the artifact will undergo introspection, as this avoids unnecessary packaging and unpackaging steps.
+ * Use [NON_PACKED] when the artifact will undergo introspection to avoid unnecessary packaging and unpackaging steps.
  *
- * If a variant with attribute value [NON_PACKED] is not available, a variant with attribute value [PACKED] will be selected.
+ * If a variant with the attribute value [NON_PACKED] isn't available, a variant with the attribute value [PACKED] is selected.
  *
  * @since 2.1.0
  */
@@ -25,19 +25,19 @@ interface KlibPackaging : Named {
      */
     companion object {
         /**
-         * Represents the attribute key for specifying the Klib packaging type.
+         * Represents the attribute key that specifies the klib packaging type.
          */
         @JvmField
         val ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.klib.packaging", KlibPackaging::class.java)
 
         /**
-         * Represents the packed variant of Klib
+         * Represents the packed variant of klibs.
          */
         @JvmField
         val PACKED = "packed"
 
         /**
-         * Represents the non-packed variant of Klib
+         * Represents the non-packed variant of klibs.
          */
         @JvmField
         val NON_PACKED = "non-packed"
