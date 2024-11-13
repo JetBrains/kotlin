@@ -189,7 +189,7 @@ private fun IrTemporaryVariable.toValueDisplay(
  *   | <- display offset: 0
  * ```
  */
-private fun findDisplayOffset(
+internal fun findDisplayOffset(
     expression: IrExpression,
     sourceRangeInfo: SourceRangeInfo,
     source: String,
