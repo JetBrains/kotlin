@@ -64,7 +64,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
         val arrayConstructor = if (unwrappedArrayType.isBoxedArray)
             builder.irSymbols.arrayOfNulls
         else
-            unwrappedArrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
+            unwrappedArrayType.classOrNull!!.constructors.single { it.owner.hasShape(regularParameters = 1) }
 
         return builder.irCall(arrayConstructor, unwrappedArrayType).apply {
             if (typeArgumentsCount != 0)
