@@ -36,16 +36,23 @@ class KaGlobalSearchScope(
     }
 
     override fun contains(file: VirtualFile): Boolean {
-        return (baseScope.contains(file) && !shadowedScope.contains(file)) || isFromGeneratedModule(file, useSiteModule)
+        return (baseScope.contains(file) && !shadowedScope.contains(file)) || isFromGeneratedModule(file)
     }
 
     override fun toString(): String {
         return "Analysis scope for $useSiteModule (base: $baseScope, shadowed: $shadowedScope)"
     }
 
-    fun isFromGeneratedModule(file: VirtualFile, useSiteModule: KaModule): Boolean {
+    /**
+     * To support files from [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
+     * which are not dangling files
+     */
+    fun isFromGeneratedModule(file: VirtualFile): Boolean {
         val analysisContextModule = file.analysisContextModule ?: return false
-        if (analysisContextModule == useSiteModule) return true
-        return analysisContextModule in useSiteModule.allDirectDependencies()
+        return isFromGeneratedModule(analysisContextModule)
+    }
+
+    fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
+        return analysisContextModule == useSiteModule || analysisContextModule in useSiteModule.allDirectDependencies()
     }
 }
