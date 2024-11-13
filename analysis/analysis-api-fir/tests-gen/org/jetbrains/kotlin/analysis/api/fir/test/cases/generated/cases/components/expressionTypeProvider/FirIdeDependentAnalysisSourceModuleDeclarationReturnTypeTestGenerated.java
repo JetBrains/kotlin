@@ -46,6 +46,24 @@ public class FirIdeDependentAnalysisSourceModuleDeclarationReturnTypeTestGenerat
   }
 
   @Test
+  @TestMetadata("constantsFunction.kt")
+  public void testConstantsFunction() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/constantsFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("constantsGetter.kt")
+  public void testConstantsGetter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/constantsGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("constantsProperty.kt")
+  public void testConstantsProperty() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/constantsProperty.kt");
+  }
+
+  @Test
   @TestMetadata("declarationInPrimaryConstructor.kt")
   public void testDeclarationInPrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/declarationInPrimaryConstructor.kt");

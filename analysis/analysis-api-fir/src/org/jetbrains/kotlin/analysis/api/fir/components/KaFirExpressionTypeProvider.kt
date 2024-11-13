@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
@@ -31,6 +32,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.parsing.hasIllegalUnderscore
+import org.jetbrains.kotlin.parsing.hasLongSuffix
+import org.jetbrains.kotlin.parsing.hasUnsignedLongSuffix
+import org.jetbrains.kotlin.parsing.hasUnsignedSuffix
+import org.jetbrains.kotlin.parsing.parseBoolean
+import org.jetbrains.kotlin.parsing.parseNumericLiteral
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
@@ -178,6 +187,8 @@ internal class KaFirExpressionTypeProvider(
 
     override val KtDeclaration.returnType: KaType
         get() = withValidityAssertion {
+            getReturnTypeByPsi(this)?.let { return it }
+
             val firDeclaration = if (this is KtParameter && ownerFunction == null) {
                 getOrBuildFir(firResolveSession)
             } else {
@@ -189,6 +200,62 @@ internal class KaFirExpressionTypeProvider(
                 else -> unexpectedElementError<FirElement>(firDeclaration)
             }
         }
+
+    private fun getReturnTypeByPsi(declaration: KtDeclaration): KaType? {
+        val callableDeclaration = declaration as? KtCallableDeclaration ?: return null
+        if (callableDeclaration.typeReference != null) return null
+
+        val singleExpression = when (declaration) {
+            is KtProperty -> declaration.initializer
+            is KtNamedFunction -> declaration.bodyExpression
+            is KtPropertyAccessor -> declaration.bodyExpression
+            else -> null
+        } ?: return null
+
+        return when (singleExpression) {
+            is KtStringTemplateExpression -> analysisSession.builtinTypes.string
+            is KtConstantExpression -> {
+                val classId = singleExpression.getClassId()
+                classId?.let { analysisSession.buildClassType(it) }
+            }
+            else -> null
+        }
+    }
+
+    private fun KtConstantExpression.getClassId(): ClassId? {
+        val convertedText: Any? = when (elementType) {
+            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> when {
+                hasIllegalUnderscore(text, elementType) -> return null
+                else -> parseNumericLiteral(text, elementType)
+            }
+
+            KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
+            else -> null
+        }
+        return when (elementType) {
+            KtNodeTypes.INTEGER_CONSTANT -> when {
+                convertedText !is Long -> null
+                hasUnsignedLongSuffix(text) -> StandardClassIds.ULong
+                hasLongSuffix(text) -> StandardClassIds.Long
+                hasUnsignedSuffix(text) -> if (convertedText.toULong() > UInt.MAX_VALUE || convertedText.toULong() < UInt.MIN_VALUE) {
+                    StandardClassIds.ULong
+                } else {
+                    StandardClassIds.UInt
+                }
+
+                else -> if (convertedText > Int.MAX_VALUE || convertedText < Int.MIN_VALUE) {
+                    StandardClassIds.Long
+                } else {
+                    StandardClassIds.Int
+                }
+            }
+
+            KtNodeTypes.FLOAT_CONSTANT -> if (convertedText is Float) StandardClassIds.Float else StandardClassIds.Double
+            KtNodeTypes.CHARACTER_CONSTANT -> StandardClassIds.Char
+            KtNodeTypes.BOOLEAN_CONSTANT -> StandardClassIds.Boolean
+            else -> null
+        }
+    }
 
     override val KtFunction.functionType: KaType
         get() = withValidityAssertion {

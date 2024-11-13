@@ -1,0 +1,11 @@
+int@(1,1) : kotlin.Int
+string@(2,1) : kotlin.String
+boolean@(3,1) : kotlin.Boolean
+double@(4,1) : kotlin.Double
+float@(5,1) : kotlin.Float
+char@(6,1) : kotlin.Char
+long@(7,1) : kotlin.Long
+uint@(8,1) : ERROR
+ulong@(9,1) : ERROR
+ulong2@(10,1) : ERROR
+unit@(11,1) : kotlin.Unit
