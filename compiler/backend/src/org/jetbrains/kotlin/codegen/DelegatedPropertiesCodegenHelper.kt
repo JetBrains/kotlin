@@ -70,7 +70,15 @@ class DelegatedPropertiesCodegenHelper(private val state: GenerationState) {
         val containerId = KotlinTypeMapper.getContainingClassesForDeserializedCallable(calleeDescriptor).implClassId
         val asmMethod = state.typeMapper.mapAsmMethod(calleeDescriptor)
         val isMangled = requiresFunctionNameManglingForReturnType(calleeDescriptor)
-        val methodNode = loadCompiledInlineFunction(containerId, asmMethod, calleeDescriptor.isSuspend, isMangled, state).node
+        val methodNode = loadCompiledInlineFunction(
+            containerId,
+            asmMethod,
+            calleeDescriptor.isSuspend,
+            isMangled,
+            // Do not change the old BE behavior
+            isInternalToBeMatchedIgnoringSuffix = false,
+            state
+        ).node
         return methodNode.usesLocalExceptParameterNullCheck(metadataParameterIndex)
     }
 

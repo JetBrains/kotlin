@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
@@ -88,7 +89,14 @@ class IrSourceCompilerForInline(
             }
         }
         callee.parentClassId?.let {
-            return loadCompiledInlineFunction(it, jvmSignature.asmMethod, callee.isSuspend, callee.hasMangledReturnType, state)
+            return loadCompiledInlineFunction(
+                it,
+                jvmSignature.asmMethod,
+                callee.isSuspend,
+                callee.hasMangledReturnType,
+                codegen.context.evaluatorData != null && callee.visibility == DescriptorVisibilities.INTERNAL,
+                state
+            )
         }
         return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
     }

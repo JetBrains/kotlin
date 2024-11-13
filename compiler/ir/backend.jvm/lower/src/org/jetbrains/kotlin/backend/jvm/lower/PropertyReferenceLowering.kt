@@ -279,8 +279,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             val localIndex = signature.valueParameters.take(index + if (replaced.extensionReceiverParameter != null) 1 else 0)
                 .sumOf { it.asmType.size } + (if (replaced.dispatchReceiverParameter != null) 1 else 0)
             // Null checks are removed during inlining, so we can ignore them.
-            return loadCompiledInlineFunction(containerId, signature.asmMethod, isSuspend, hasMangledReturnType, context.state)
-                .node.usesLocalExceptParameterNullCheck(localIndex)
+            return loadCompiledInlineFunction(
+                containerId,
+                signature.asmMethod,
+                isSuspend,
+                hasMangledReturnType,
+                context.evaluatorData != null && visibility == DescriptorVisibilities.INTERNAL,
+                context.state
+            ).node.usesLocalExceptParameterNullCheck(localIndex)
         }
         return hasChild { it is IrGetValue && it.symbol == valueParameters[index].symbol }
     }
