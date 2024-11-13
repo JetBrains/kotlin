@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
