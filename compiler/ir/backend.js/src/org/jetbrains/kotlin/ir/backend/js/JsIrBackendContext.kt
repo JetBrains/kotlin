@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeInt
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -176,9 +175,9 @@ class JsIrBackendContext(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
-    val jsSymbols = JsSymbols(this@JsIrBackendContext, irBuiltIns, symbolTable)
+    override val jsCommonSymbols = JsSymbols(this@JsIrBackendContext, irBuiltIns, symbolTable)
     override val ir = object : Ir<JsIrBackendContext>(this) {
-        override val symbols: JsSymbols = jsSymbols
+        override val symbols = jsCommonSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 

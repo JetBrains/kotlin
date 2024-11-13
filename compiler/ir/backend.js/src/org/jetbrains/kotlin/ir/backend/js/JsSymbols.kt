@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -22,12 +23,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.isNullable
 
+abstract class JsCommonSymbols(
+    module: ModuleDescriptor,
+    irBuiltIns: IrBuiltIns,
+) : Symbols(irBuiltIns)
+
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsSymbols(
     private val context: JsIrBackendContext,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-) : Symbols(irBuiltIns) {
+) : JsCommonSymbols(context.module, irBuiltIns) {
     override val throwNullPointerException =
         symbolTable.descriptorExtension.referenceSimpleFunction(context.getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
