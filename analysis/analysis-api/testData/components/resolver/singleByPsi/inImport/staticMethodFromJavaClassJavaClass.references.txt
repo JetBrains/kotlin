@@ -1,3 +1,0 @@
-KtNameReferenceExpression(17,21): 'Math'
-  KtSimpleNameReference:
-    (in java.lang) class Math

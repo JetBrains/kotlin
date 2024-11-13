@@ -269,16 +269,6 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveReferenceTestGenerated
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/inImport")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InImport {
-    @Test
-    public void testAllFilesPresentInInImport() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/inImport"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke")
   @TestDataPath("$PROJECT_ROOT")
   public class Invoke {

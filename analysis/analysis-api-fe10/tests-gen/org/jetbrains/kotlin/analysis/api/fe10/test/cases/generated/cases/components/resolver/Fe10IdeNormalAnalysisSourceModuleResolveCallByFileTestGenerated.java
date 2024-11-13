@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallByFileTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -235,5 +236,69 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
   @TestMetadata("unaryOperators.kt")
   public void testUnaryOperators() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/unaryOperators.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/imports")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Imports {
+    @Test
+    public void testAllFilesPresentInImports() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/imports"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("enumEntry.kt")
+    public void testEnumEntry() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/enumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("javaClass.kt")
+    public void testJavaClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/javaClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaClassWithBaseClass.kt")
+    public void testJavaClassWithBaseClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/javaClassWithBaseClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaClass_rootPackage.kt")
+    public void testJavaClass_rootPackage() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/javaClass_rootPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("star.kt")
+    public void testStar() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/star.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelObject.kt")
+    public void testTopLevelObject() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/topLevelObject.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelObjectWithBaseClass.kt")
+    public void testTopLevelObjectWithBaseClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/topLevelObjectWithBaseClass.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelObject_rootPackage.kt")
+    public void testTopLevelObject_rootPackage() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/imports/topLevelObject_rootPackage.kt");
+    }
   }
 }

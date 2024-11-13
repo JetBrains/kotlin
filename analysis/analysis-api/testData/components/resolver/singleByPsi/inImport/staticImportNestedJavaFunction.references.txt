@@ -1,3 +1,0 @@
-KtNameReferenceExpression(69,72): 'foo'
-  KtSimpleNameReference:
-    (in Dependency.Nested) open fun foo()

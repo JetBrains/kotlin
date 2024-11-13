@@ -1,3 +1,0 @@
-KtNameReferenceExpression(12,16): 'util'
-  KtSimpleNameReference:
-    package java.util

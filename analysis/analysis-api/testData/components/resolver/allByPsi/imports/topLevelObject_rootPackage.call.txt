@@ -1,0 +1,113 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(31,43): 'package main'
+  null
+
+KtNameReferenceExpression(39,43): 'main'
+  null
+
+KtImportList(45,291): 'import TopLevelObject.NestedClass'
+  null
+
+KtImportDirective(45,78): 'import TopLevelObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(52,78): 'TopLevelObject.NestedClass'
+  null
+
+KtNameReferenceExpression(52,66): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(67,78): 'NestedClass'
+  null
+
+KtImportDirective(79,113): 'import TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(86,113): 'TopLevelObject.NestedObject'
+  null
+
+KtNameReferenceExpression(86,100): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(101,113): 'NestedObject'
+  null
+
+KtImportDirective(114,139): 'import TopLevelObject.foo'
+  null
+
+KtDotQualifiedExpression(121,139): 'TopLevelObject.foo'
+  null
+
+KtNameReferenceExpression(121,135): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(136,139): 'foo'
+  null
+
+KtImportDirective(140,165): 'import TopLevelObject.bar'
+  null
+
+KtDotQualifiedExpression(147,165): 'TopLevelObject.bar'
+  null
+
+KtNameReferenceExpression(147,161): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(162,165): 'bar'
+  null
+
+KtImportDirective(167,213): 'import TopLevelObject.NestedObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(174,213): 'TopLevelObject.NestedObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(174,201): 'TopLevelObject.NestedObject'
+  null
+
+KtNameReferenceExpression(174,188): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(189,201): 'NestedObject'
+  null
+
+KtNameReferenceExpression(202,213): 'NestedClass'
+  null
+
+KtImportDirective(214,252): 'import TopLevelObject.NestedObject.foo'
+  null
+
+KtDotQualifiedExpression(221,252): 'TopLevelObject.NestedObject.foo'
+  null
+
+KtDotQualifiedExpression(221,248): 'TopLevelObject.NestedObject'
+  null
+
+KtNameReferenceExpression(221,235): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(236,248): 'NestedObject'
+  null
+
+KtNameReferenceExpression(249,252): 'foo'
+  null
+
+KtImportDirective(253,291): 'import TopLevelObject.NestedObject.bar'
+  null
+
+KtDotQualifiedExpression(260,291): 'TopLevelObject.NestedObject.bar'
+  null
+
+KtDotQualifiedExpression(260,287): 'TopLevelObject.NestedObject'
+  null
+
+KtNameReferenceExpression(260,274): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(275,287): 'NestedObject'
+  null
+
+KtNameReferenceExpression(288,291): 'bar'
+  null

@@ -1,0 +1,39 @@
+KtNameReferenceExpression(23,27): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(61,72): 'collections'
+  KtSimpleNameReference:
+    package kotlin.collections
+
+KtNameReferenceExpression(82,88): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(89,93): 'text'
+  KtSimpleNameReference:
+    package kotlin.text
+
+KtNameReferenceExpression(120,124): 'java'
+  KtSimpleNameReference:
+    package java
+
+KtNameReferenceExpression(125,129): 'util'
+  KtSimpleNameReference:
+    package java.util
+
+KtNameReferenceExpression(139,143): 'java'
+  KtSimpleNameReference:
+    package java
+
+KtNameReferenceExpression(144,148): 'lang'
+  KtSimpleNameReference:
+    package java.lang
+
+KtNameReferenceExpression(149,153): 'Math'
+  KtSimpleNameReference:
+    (in java.lang) class Math

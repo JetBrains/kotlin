@@ -1,2 +1,0 @@
-KtNameReferenceExpression(7,11): 'java'
-  null
