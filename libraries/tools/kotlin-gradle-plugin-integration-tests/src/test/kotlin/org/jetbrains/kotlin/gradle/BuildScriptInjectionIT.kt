@@ -57,8 +57,8 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 project.version = publisherVersion
 
                 with(kotlinMultiplatform) {
-                    iosArm64()
-                    iosX64()
+                    linuxArm64()
+                    linuxX64()
                 }
 
                 val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
@@ -90,8 +90,8 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
 
                     with(kotlinMultiplatform) {
-                        iosArm64()
-                        iosX64()
+                        linuxArm64()
+                        linuxX64()
 
                         sourceSets.commonMain.dependencies {
                             implementation("${publisherGroup}:${publisherName}:${publisherVersion}")
@@ -116,7 +116,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
                 assertEquals(
                     listOf(
-                        listOf("foo", "producer", "1.0", "appleMain"),
+                        listOf("foo", "producer", "1.0", "linuxMain"),
                         listOf("foo", "producer", "1.0", "commonMain"),
                     ),
                     transformedFiles.map { it.nameWithoutExtension.split("-").dropLast(1) },
