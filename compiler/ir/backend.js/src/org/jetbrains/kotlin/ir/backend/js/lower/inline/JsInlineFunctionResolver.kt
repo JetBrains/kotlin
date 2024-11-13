@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.InlineMode
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 internal class JsInlineFunctionResolver(
-    context: JsIrBackendContext,
+    context: LoweringContext,
     inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<JsIrBackendContext>(context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
     override val allowExternalInlining: Boolean = true
 }

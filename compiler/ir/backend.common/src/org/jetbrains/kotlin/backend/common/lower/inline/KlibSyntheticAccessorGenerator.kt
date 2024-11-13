@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.name.Name
 typealias InlineFunctionInfo = Nothing?
 
 class KlibSyntheticAccessorGenerator(
-    context: CommonBackendContext
-) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context) {
+    context: LoweringContext
+) : SyntheticAccessorGenerator<LoweringContext, InlineFunctionInfo>(context) {
 
     private data class OuterThisAccessorKey(val innerClass: IrClass)
 

@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
+abstract class IrValidationPhase<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {
     protected abstract val defaultValidationConfig: IrValidatorConfig
 
     final override fun lower(irModule: IrModuleFragment) {
         val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
         val phaseName = this.javaClass.simpleName
-        validateIr(context.messageCollector, verificationMode) {
+        validateIr(context.configuration.messageCollector, verificationMode) {
             performBasicIrValidation(
                 irModule,
                 context.irBuiltIns,
@@ -30,7 +30,7 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
 }
 
 @PhaseDescription(name = "ValidateIrBeforeLowering")
-open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
+open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
@@ -46,7 +46,7 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
         )
 }
 
-class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : CommonBackendContext>(
+class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker
 ) : IrValidationPhase<Context>(context) {

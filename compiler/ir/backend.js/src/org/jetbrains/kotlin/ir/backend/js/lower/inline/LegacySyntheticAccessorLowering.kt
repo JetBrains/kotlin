@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  *
  * TODO: Drop in favor of [SyntheticAccessorLowering].
  */
-class LegacySyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+class LegacySyntheticAccessorLowering(private val context: LoweringContext) : BodyLoweringPass {
 
     private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid {
 

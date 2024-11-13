@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * }
  * ```
  */
-abstract class KlibAssertionWrapperLowering(val context: CommonBackendContext) : FileLoweringPass {
+abstract class KlibAssertionWrapperLowering(val context: LoweringContext) : FileLoweringPass {
     private val asserts = context.ir.symbols.asserts.toSet()
 
     protected abstract val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol

@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.KlibAssertionRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.KlibAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-internal class NativeAssertionWrapperLowering(context: Context) : KlibAssertionWrapperLowering(context) {
-    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = context.ir.symbols.isAssertionArgumentEvaluationEnabled
+internal class NativeAssertionWrapperLowering(context: LoweringContext) : KlibAssertionWrapperLowering(context) {
+    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = (context.ir.symbols as KonanSymbols).isAssertionArgumentEvaluationEnabled
 }
 
 internal class NativeAssertionRemoverLowering(context: Context) : KlibAssertionRemoverLowering(

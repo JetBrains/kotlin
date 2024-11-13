@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -166,10 +167,10 @@ private val sharedVariablesPhase = createFileLoweringPhase(
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
-        { context, irFile ->
+        { context: LoweringContext ->
             // Make accessors public if `SyntheticAccessorLowering` is disabled.
-            val generatePublicAccessors = context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
-            OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors).lower(irFile)
+            val generatePublicAccessors = context.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
+            OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors)
         },
         name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
 )
