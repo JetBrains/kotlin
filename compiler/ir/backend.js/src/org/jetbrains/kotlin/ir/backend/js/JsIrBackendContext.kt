@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.reportWarning
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.*
@@ -127,10 +125,6 @@ class JsIrBackendContext(
         private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
         private val COLLECTION_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("collections"))
-
-        // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
-        private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
-        private val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
@@ -182,117 +176,9 @@ class JsIrBackendContext(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
+    val jsSymbols = JsSymbols(this@JsIrBackendContext, irBuiltIns, symbolTable)
     override val ir = object : Ir<JsIrBackendContext>(this) {
-        override val symbols = object : Symbols(irBuiltIns) {
-            private val context = this@JsIrBackendContext
-
-            override val throwNullPointerException =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
-
-            init {
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))).single())
-            }
-
-            override val throwTypeCastException =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).single())
-
-            override val throwUninitializedPropertyAccessException =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
-
-            override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(FqName("kotlin.throwKotlinNothingValueException")).single())
-
-            override val defaultConstructorMarker =
-                symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DefaultConstructorMarker"))
-
-            override val throwISE: IrSimpleFunctionSymbol =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
-
-            override val throwIAE: IrSimpleFunctionSymbol =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
-
-            override val stringBuilder
-                get() = TODO("not implemented")
-            override val coroutineImpl =
-                coroutineSymbols.coroutineImpl
-            override val coroutineSuspendedGetter =
-                coroutineSymbols.coroutineSuspendedGetter
-
-            private val _arraysContentEquals = getFunctions(FqName("kotlin.collections.contentEquals")).mapNotNull {
-                if (it.extensionReceiverParameter != null && it.extensionReceiverParameter!!.type.isNullable())
-                    symbolTable.descriptorExtension.referenceSimpleFunction(it)
-                else null
-            }
-
-            // Can't use .owner until ExternalStubGenerator is invoked, hence get() = here.
-            override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
-                get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
-
-            override val getContinuation = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
-
-            override val continuationClass = context.coroutineSymbols.continuationClass
-
-            override val coroutineContextGetter =
-                symbolTable.descriptorExtension.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
-
-            override val suspendCoroutineUninterceptedOrReturn =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
-
-            override val coroutineGetContext =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
-
-            override val returnIfSuspended =
-                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
-
-            override val functionAdapter =
-                symbolTable.descriptorExtension.referenceClass(getJsInternalClass("FunctionAdapter"))
-
-            override fun functionN(n: Int): IrClassSymbol {
-                return irFactory.stageController.withInitialIr { super.functionN(n) }
-            }
-
-            override fun suspendFunctionN(n: Int): IrClassSymbol {
-                return irFactory.stageController.withInitialIr { super.suspendFunctionN(n) }
-            }
-
-
-            private val getProgressionLastElementSymbols =
-                irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
-
-            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-                getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
-            }
-
-            private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
-
-            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-                toUIntSymbols.associateBy {
-                    it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: irError("Expected extension receiver for") {
-                            withIrEntry("it.owner", it.owner)
-                        }
-                }
-            }
-
-            private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
-
-            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-                toULongSymbols.associateBy {
-                    it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: irError("Expected extension receiver for") {
-                            withIrEntry("it.owner", it.owner)
-                        }
-                }
-            }
-
-            override fun isSideEffectFree(call: IrCall): Boolean =
-                call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
-                        call.symbol == intrinsics.arrayLiteral ||
-                        call.symbol == intrinsics.arrayConcat ||
-                        call.symbol == intrinsics.jsBoxIntrinsic ||
-                        call.symbol == intrinsics.jsUnboxIntrinsic
-        }
-
+        override val symbols: JsSymbols = jsSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
