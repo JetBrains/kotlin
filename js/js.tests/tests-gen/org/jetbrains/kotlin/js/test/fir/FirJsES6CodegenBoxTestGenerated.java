@@ -16259,6 +16259,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt73087.kt")
+    public void testKt73087() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt73087.kt");
+    }
+
+    @Test
     @TestMetadata("methodOfAnyFromInterface.kt")
     public void testMethodOfAnyFromInterface() {
       runTest("compiler/testData/codegen/box/fakeOverride/methodOfAnyFromInterface.kt");
