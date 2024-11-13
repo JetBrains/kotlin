@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
-import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
+import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsByResolvedImport
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -490,7 +487,8 @@ internal object FirReferenceResolveHelper {
         // If the selected `FqName` is a known package name, we don't need to search for classes or callables. We only start resolution of
         // classes/callables at the boundary between the package FQ name and class/callable names.
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
-        if (fir.packageFqName.startsWith(selectedFqName)) {
+        val packageFqName = fir.packageFqName
+        if (packageFqName.startsWith(selectedFqName)) {
             return listOf(builder.createPackageSymbol(selectedFqName))
         }
 
@@ -499,7 +497,20 @@ internal object FirReferenceResolveHelper {
             importedFqName = selectedFqName
             isAllUnder = false
         }
-        val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
+
+        // For e.g. a selected name `org.example.MyClass.NestedClass`, we need `MyClass` for the relative parent class name, as we are
+        // always dealing with simple imports.
+        val parentClassNames = selectedFqName.pathSegments()
+            .slice(packageFqName.pathSegments().size until (selectedFqName.pathSegments().size - 1))
+            .map(Name::asString)
+            .takeIf { it.isNotEmpty() }
+
+        val resolvedImport = buildResolvedImport {
+            delegate = rawImportForSelectedFqName
+            this.packageFqName = packageFqName
+            this.relativeParentClassName = parentClassNames?.let { FqName.fromSegments(it) }
+        }
+
         val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
         val selectedName = resolvedImport.importedName ?: return emptyList()
 
