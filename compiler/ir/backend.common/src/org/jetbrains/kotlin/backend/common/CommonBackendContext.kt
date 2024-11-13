@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -31,8 +30,6 @@ interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReporting
 
     override val heldBackendContext: CommonBackendContext
         get() = this
-
-    val configuration: CompilerConfiguration
 
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
