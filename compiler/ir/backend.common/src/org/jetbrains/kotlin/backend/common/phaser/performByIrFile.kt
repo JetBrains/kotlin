@@ -18,14 +18,13 @@ import java.util.concurrent.atomic.AtomicReference
 fun <Context : LoweringContext> performByIrFile(
     name: String,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-    supportParallel: Boolean,
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
-        name, emptySet(), PerformByIrFilePhase(lower, supportParallel), emptySet(), emptySet(), emptySet(),
+        name, emptySet(), PerformByIrFilePhase(lower, supportParallel = false), emptySet(), emptySet(), emptySet(),
         setOf(getIrDumper()), nlevels = 1,
     )
 
-private class PerformByIrFilePhase<Context : LoweringContext>(
+class PerformByIrFilePhase<Context : LoweringContext>(
     private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
     private val supportParallel: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {

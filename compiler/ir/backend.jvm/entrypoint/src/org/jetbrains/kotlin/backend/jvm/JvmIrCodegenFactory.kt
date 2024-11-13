@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -43,8 +47,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
@@ -69,8 +72,6 @@ open class JvmIrCodegenFactory(
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) : CodegenFactory {
-    private val phaseConfig: PhaseConfig = configuration.phaseConfig ?: PhaseConfig()
-
     /**
      * @param shouldStubAndNotLinkUnboundSymbols
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
@@ -321,7 +322,7 @@ open class JvmIrCodegenFactory(
         val allBuiltins = irModuleFragment.files.filter { it.isJvmBuiltin }
         irModuleFragment.files.removeIf { it.isBytecodeGenerationSuppressed }
 
-        jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
+        jvmLoweringPhases.invokeToplevel(state.configuration.phaseConfig ?: PhaseConfig(), context, irModuleFragment)
 
         return JvmIrCodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
     }
@@ -334,7 +335,20 @@ open class JvmIrCodegenFactory(
         if (hasErrors()) return
 
         notifyCodegenStart()
-        jvmCodegenPhases.invokeToplevel(phaseConfig, context, module)
+
+        // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
+        // when serializing metadata in the multifile parts.
+        // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
+        for (generateMultifileFacades in listOf(true, false)) {
+            val codegen = createSimpleNamedCompilerPhase(
+                "Codegen",
+                outputIfNotEnabled = { _, _, _, it -> it },
+                op = generateFile(generateMultifileFacades)
+            )
+            PerformByIrFilePhase(listOf(codegen), supportParallel = true).invokeToplevel(PhaseConfig(), context, module)
+        }
+
+        context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
 
         if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group
@@ -346,6 +360,19 @@ open class JvmIrCodegenFactory(
             require(state.config.useFir) { "Stdlib is expected to be compiled by K2" }
             serializeBuiltinsMetadata(allBuiltins, context)
         }
+    }
+
+    private fun generateFile(generateMultifileFacades: Boolean) = fun(context: JvmBackendContext, file: IrFile): IrFile {
+        val isMultifileFacade = file.fileEntry is MultifileFacadeFileEntry
+        if (isMultifileFacade == generateMultifileFacades) {
+            for (loweredClass in file.declarations) {
+                if (loweredClass !is IrClass) {
+                    throw AssertionError("File-level declaration should be IrClass after JvmLower: " + loweredClass.render())
+                }
+                ClassCodegen.getOrCreate(loweredClass, context).generate()
+            }
+        }
+        return file
     }
 
     private fun serializeBuiltinsMetadata(allBuiltins: List<IrFile>, context: JvmBackendContext) {

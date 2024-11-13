@@ -139,7 +139,6 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
         ::JvmStaticInObjectLowering,
         ::RepeatedAnnotationLowering,
         ::JvmInlineCallableReferenceToLambdaWithDefaultsPhase,
-
         ::JvmIrInliner,
         ::ApiVersionIsAtLeastEvaluationLowering,
         ::CreateSeparateCallForInlinedLambdasLowering,
@@ -147,11 +146,7 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
         ::InlinedClassReferencesBoxingLowering,
         ::RestoreInlineLambda,
     ).then(
-        performByIrFile(
-            name = "PerformByIrFile",
-            lower = jvmFilePhases,
-            supportParallel = false,
-        )
+        performByIrFile("PerformByIrFile", jvmFilePhases)
     ) then buildModuleLoweringsPhase(
         ::GenerateMultifileFacades,
         ::ResolveInlineCalls,
