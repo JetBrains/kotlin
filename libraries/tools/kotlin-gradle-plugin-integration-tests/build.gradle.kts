@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
 
@@ -15,6 +15,7 @@ plugins {
 testsJar()
 
 kotlin {
+    jvmToolchain(17)
     compilerOptions {
         optIn.addAll(
             "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
@@ -116,6 +117,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.oshi.core)
 
     testApi(project(":compiler:tests-mutes:mutes-junit5"))
 
@@ -378,6 +380,26 @@ tasks.named<Task>("check") {
         swiftExportTestsTask,
     )
 }
+
+/**
+ * The JVM toolchain is configured to version 17.
+ * However, that breaks buildscript injection for tests that are ran on JDK 8.
+ * Such setup allows to use new Java API in the test infrastructure.
+ */
+fun configureJvmTarget8() {
+    tasks.compileTestJava {
+        sourceCompatibility = "8"
+        targetCompatibility = "8"
+    }
+
+    tasks.compileTestKotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
+    }
+}
+
+configureJvmTarget8()
 
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests

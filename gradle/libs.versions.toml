@@ -48,6 +48,7 @@ opentelemetry-api = "1.41.0"
 wasmedge = "0.14.0"
 vavr = "0.10.4"
 downloadTask = "5.6.0"
+oshi = "6.6.5"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -117,6 +118,7 @@ javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.
 kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 
 androidx-collections = { module = "androidx.collection:collection", version.ref = "androidx-collections" }
+oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
