@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 /**
  * @return The **declared** super interfaces (**not the transitive closure**)
  */
-internal fun KaSession.getDeclaredSuperInterfaceSymbols(symbol: KaClassSymbol): List<KaClassSymbol> {
+internal fun getDeclaredSuperInterfaceSymbols(symbol: KaClassSymbol): List<KaClassSymbol> {
     return symbol.superTypes
         .asSequence()
         .mapNotNull { type -> type.symbol as? KaClassSymbol }

@@ -13,75 +13,83 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
     require(
         symbol.classKind == KaClassKind.CLASS ||
-                symbol.classKind == KaClassKind.ENUM_CLASS ||
-                symbol.classKind == KaClassKind.COMPANION_OBJECT ||
-                symbol.classKind == KaClassKind.OBJECT
+            symbol.classKind == KaClassKind.ENUM_CLASS ||
+            symbol.classKind == KaClassKind.COMPANION_OBJECT ||
+            symbol.classKind == KaClassKind.OBJECT
     ) {
         "Unsupported symbol.classKind: ${symbol.classKind}"
     }
     if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
 
-    val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
-    val final = symbol.modality == KaSymbolModality.FINAL
-
     val name = getObjCClassOrProtocolName(symbol)
-    val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
 
-    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
-    val origin = analysisSession.getObjCExportStubOrigin(symbol)
+    if (analysisSession.isUnavailableObjCClassifier(symbol)) {
+        analysisSession.unavailableObjCInterface(
+            name.objCName,
+            symbol
+        )
+    } else {
+        val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
+        val final = symbol.modality == KaSymbolModality.FINAL
 
-    val superClass = translateSuperClass(symbol)
-    val superProtocols: List<String> = superProtocols(symbol)
 
-    val members = buildList<ObjCExportStub> {
-        /* The order of members tries to replicate the K1 implementation explicitly */
-        this += translateToObjCConstructors(symbol)
+        val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
 
-        if (symbol.isCompanion || analysisSession.hasCompanionObject(symbol)) {
-            this += buildCompanionProperty(symbol)
+        val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
+        val origin = analysisSession.getObjCExportStubOrigin(symbol)
+
+        val superClass = translateSuperClass(symbol)
+        val superProtocols: List<String> = superProtocols(symbol)
+
+        val members = buildList<ObjCExportStub> {
+            /* The order of members tries to replicate the K1 implementation explicitly */
+            this += translateToObjCConstructors(symbol)
+
+            if (symbol.isCompanion || analysisSession.hasCompanionObject(symbol)) {
+                this += buildCompanionProperty(symbol)
+            }
+
+            this += analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
+                .sortedWith(analysisSession.getStableCallableOrder())
+                .flatMap { translateToObjCExportStub(it) }
+
+            if (symbol.classKind == KaClassKind.ENUM_CLASS) {
+                this += translateEnumMembers(symbol)
+            }
+
+            if (analysisSession.isThrowable(symbol)) {
+                this += buildThrowableAsErrorMethod()
+            }
         }
 
-        this += analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
-            .sortedWith(analysisSession.getStableCallableOrder())
-            .flatMap { translateToObjCExportStub(it) }
+        val categoryName: String? = null
 
-        if (symbol.classKind == KaClassKind.ENUM_CLASS) {
-            this += translateEnumMembers(symbol)
+        @OptIn(KaExperimentalApi::class)
+        val generics: List<ObjCGenericTypeDeclaration> = symbol.typeParameters.map { typeParameter ->
+            ObjCGenericTypeParameterDeclaration(
+                typeParameter.nameOrAnonymous.asString().toValidObjCSwiftIdentifier(),
+                ObjCVariance.fromKotlinVariance(typeParameter.variance)
+            )
         }
 
-        if (analysisSession.isThrowable(symbol)) {
-            this += buildThrowableAsErrorMethod()
-        }
-    }
-
-    val categoryName: String? = null
-
-    @OptIn(KaExperimentalApi::class)
-    val generics: List<ObjCGenericTypeDeclaration> = symbol.typeParameters.map { typeParameter ->
-        ObjCGenericTypeParameterDeclaration(
-            typeParameter.nameOrAnonymous.asString().toValidObjCSwiftIdentifier(),
-            ObjCVariance.fromKotlinVariance(typeParameter.variance)
+        ObjCInterfaceImpl(
+            name = name.objCName,
+            comment = comment,
+            origin = origin,
+            attributes = attributes,
+            superProtocols = superProtocols,
+            members = members,
+            categoryName = categoryName,
+            generics = generics,
+            superClass = superClass.superClassName.objCName,
+            superClassGenerics = superClass.superClassGenerics
         )
     }
-
-    ObjCInterfaceImpl(
-        name = name.objCName,
-        comment = comment,
-        origin = origin,
-        attributes = attributes,
-        superProtocols = superProtocols,
-        members = members,
-        categoryName = categoryName,
-        generics = generics,
-        superClass = superClass.superClassName.objCName,
-        superClassGenerics = superClass.superClassGenerics
-    )
 }
 
 /**

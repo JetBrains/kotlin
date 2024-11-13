@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.objcexport.isUnavailableObjCClassifier
 import org.jetbrains.kotlin.tooling.core.withClosure
 
 
@@ -36,7 +37,7 @@ internal fun KaSession.getAllVisibleInObjClassifiers(symbols: Sequence<KaClassSy
 
 internal fun KaSession.getAllVisibleInObjClassifiers(symbols: Iterable<KaClassSymbol>): List<KaClassSymbol> {
     return symbols.withClosure<KaClassSymbol> { symbol ->
-        if (isVisibleInObjC(symbol)) {
+        if (isVisibleInObjC(symbol) && !isUnavailableObjCClassifier(symbol)) {
             symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>().asIterable()
         } else {
             emptyList()

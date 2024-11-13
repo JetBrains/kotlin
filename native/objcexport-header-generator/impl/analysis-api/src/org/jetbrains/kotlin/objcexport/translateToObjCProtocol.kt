@@ -23,25 +23,32 @@ fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtoc
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName(symbol)
 
-    val members = analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
-        .filter { analysisSession.isObjCBaseCallable(it) }
-        .sortedWith(analysisSession.getStableCallableOrder())
-        .flatMap { translateToObjCExportStub(it) }
+    if (analysisSession.isUnavailableObjCClassifier(symbol)) {
+        analysisSession.unavailableObjCProtocol(
+            name.objCName,
+            symbol
+        )
+    } else {
+        val members = analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
+            .filter { analysisSession.isObjCBaseCallable(it) }
+            .sortedWith(analysisSession.getStableCallableOrder())
+            .flatMap { translateToObjCExportStub(it) }
 
-    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
+        val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
 
-    ObjCProtocolImpl(
-        name = name.objCName,
-        comment = comment,
-        origin = analysisSession.getObjCExportStubOrigin(symbol),
-        attributes = name.toNameAttributes(),
-        superProtocols = superProtocols(symbol),
-        members = members
-    )
+        ObjCProtocolImpl(
+            name = name.objCName,
+            comment = comment,
+            origin = analysisSession.getObjCExportStubOrigin(symbol),
+            attributes = name.toNameAttributes(),
+            superProtocols = superProtocols(symbol),
+            members = members
+        )
+    }
 }
 
 internal fun ObjCExportContext.superProtocols(symbol: KaClassSymbol): List<String> {
-    return analysisSession.getDeclaredSuperInterfaceSymbols(symbol)
+    return getDeclaredSuperInterfaceSymbols(symbol)
         .filter { analysisSession.isVisibleInObjC(it) }
         .map { superInterface -> getObjCClassOrProtocolName(superInterface).objCName }
         .toList()

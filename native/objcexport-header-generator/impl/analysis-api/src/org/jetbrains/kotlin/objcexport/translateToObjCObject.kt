@@ -19,38 +19,45 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? =
     require(symbol.classKind == KaClassKind.OBJECT || symbol.classKind == KaClassKind.COMPANION_OBJECT)
     if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
 
-    val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
-    val final = symbol.modality == KaSymbolModality.FINAL
     val name = getObjCClassOrProtocolName(symbol)
-    val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
-    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
-    val origin = analysisSession.getObjCExportStubOrigin(symbol)
-    val superProtocols: List<String> = superProtocols(symbol)
-    val categoryName: String? = null
-    val generics: List<ObjCGenericTypeDeclaration> = emptyList()
-    val superClass = translateSuperClass(symbol)
 
-    val objectMembers = mutableListOf<ObjCExportStub>()
-    objectMembers += translateToObjCConstructors(symbol)
-    objectMembers += getDefaultMembers(symbol, objectMembers)
-    objectMembers += with(analysisSession) {
-        symbol.declaredMemberScope.callables
-            .sortedWith(getStableCallableOrder())
-            .flatMap { translateToObjCExportStub(it) }
+    if (analysisSession.isUnavailableObjCClassifier(symbol)) {
+        analysisSession.unavailableObjCInterface(
+            name.objCName,
+            symbol
+        )
+    } else {
+        val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
+        val final = symbol.modality == KaSymbolModality.FINAL
+        val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
+        val comment = analysisSession.translateToObjCComment(symbol.annotations)
+        val origin = analysisSession.getObjCExportStubOrigin(symbol)
+        val superProtocols = superProtocols(symbol)
+        val generics = emptyList<ObjCGenericTypeDeclaration>()
+        val superClass = translateSuperClass(symbol)
+
+        val objectMembers = mutableListOf<ObjCExportStub>()
+        objectMembers += translateToObjCConstructors(symbol)
+        objectMembers += getDefaultMembers(symbol, objectMembers)
+        objectMembers += with(analysisSession) {
+            symbol.declaredMemberScope.callables
+                .sortedWith(getStableCallableOrder())
+                .flatMap { translateToObjCExportStub(it) }
+        }
+
+        ObjCInterfaceImpl(
+            name = name.objCName,
+            comment = comment,
+            origin = origin,
+            attributes = attributes,
+            superProtocols = superProtocols,
+            members = objectMembers,
+            categoryName = null,
+            generics = generics,
+            superClass = superClass.superClassName.objCName,
+            superClassGenerics = superClass.superClassGenerics
+        )
     }
-
-    ObjCInterfaceImpl(
-        name = name.objCName,
-        comment = comment,
-        origin = origin,
-        attributes = attributes,
-        superProtocols = superProtocols,
-        members = objectMembers,
-        categoryName = categoryName,
-        generics = generics,
-        superClass = superClass.superClassName.objCName,
-        superClassGenerics = superClass.superClassGenerics
-    )
 }
 
 private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: List<ObjCExportStub>): List<ObjCExportStub> {

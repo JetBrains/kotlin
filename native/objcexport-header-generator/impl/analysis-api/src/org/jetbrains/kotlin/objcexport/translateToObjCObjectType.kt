@@ -51,7 +51,7 @@ private fun ObjCExportContext.translateToObjCObjectType(symbol: KaClassSymbol): 
         requiresForwardDeclaration = true
     })
 
-    if (analysisSession.isExternalObjCClass(symbol) || analysisSession.isObjCForwardDeclaration(symbol)) {
+    if (isAnnotatedAsExternalObjCClass(symbol) || isObjCForwardDeclaration(symbol)) {
         return if (symbol.classKind == KaClassKind.INTERFACE) {
             ObjCProtocolType(symbol.nameOrAnonymous.asString().removeSuffix("Protocol"), extras = objCTypeExtras {
                 requiresForwardDeclaration = true
@@ -77,16 +77,16 @@ private fun KaSession.isObjCMetaClass(symbol: KaClassSymbol): Boolean {
     return getDeclaredSuperInterfaceSymbols(symbol).any { superInterfaceSymbol -> isObjCMetaClass(superInterfaceSymbol) }
 }
 
-private fun KaSession.isObjCProtocolClass(symbol: KaClassSymbol): Boolean {
+internal fun KaSession.isObjCProtocolClass(symbol: KaClassSymbol): Boolean {
     if (symbol.classId == objCProtocolClassId) return true
     return getDeclaredSuperInterfaceSymbols(symbol).any { superInterfaceSymbol -> isObjCProtocolClass(superInterfaceSymbol) }
 }
 
-private fun KaSession.isExternalObjCClass(symbol: KaClassSymbol): Boolean {
+private fun isAnnotatedAsExternalObjCClass(symbol: KaClassSymbol): Boolean {
     return NativeStandardInteropNames.externalObjCClassClassId in symbol.annotations
 }
 
-private fun KaSession.isObjCForwardDeclaration(symbol: KaClassSymbol): Boolean {
+private fun isObjCForwardDeclaration(symbol: KaClassSymbol): Boolean {
     val classId = symbol.classId ?: return false
     return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {
         null, NativeForwardDeclarationKind.Struct -> false

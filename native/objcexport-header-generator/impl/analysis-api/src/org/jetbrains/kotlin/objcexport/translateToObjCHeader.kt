@@ -149,25 +149,26 @@ private class KtObjCExportHeaderGenerator(
         objCStubsByClassId[classId] = objCClass
         objCClass ?: return null
 
-        /*
-        To replicate the translation (and result stub order) of the K1 implementation:
-        1) Super interface / superclass symbols have to be translated right away
-        2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
-        original stub
-         */
-        analysisSession.getDeclaredSuperInterfaceSymbols(symbol).filter { analysisSession.isVisibleInObjC(it) }
-            .forEach { superInterfaceSymbol ->
-                translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
-                    objCProtocolForwardDeclarations += it.name
+        if (!analysisSession.isUnavailableObjCClassifier(symbol)) {
+            /*
+            To replicate the translation (and result stub order) of the K1 implementation:
+            1) Super interface / superclass symbols have to be translated right away
+            2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
+            original stub
+             */
+            getDeclaredSuperInterfaceSymbols(symbol).filter { analysisSession.isVisibleInObjC(it) }
+                .forEach { superInterfaceSymbol ->
+                    translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
+                        objCProtocolForwardDeclarations += it.name
+                    }
+                }
+
+            analysisSession.getSuperClassSymbolNotAny(symbol)?.takeIf { analysisSession.isVisibleInObjC(it) }?.let { superClassSymbol ->
+                translateClassOrObjectSymbol(superClassSymbol)?.let {
+                    objCClassForwardDeclarations += ObjCClassKey(it.name, superClassSymbol.classId?.packageFqName?.asString())
                 }
             }
-
-        analysisSession.getSuperClassSymbolNotAny(symbol)?.takeIf { analysisSession.isVisibleInObjC(it) }?.let { superClassSymbol ->
-            translateClassOrObjectSymbol(superClassSymbol)?.let {
-                objCClassForwardDeclarations += ObjCClassKey(it.name, superClassSymbol.classId?.packageFqName?.asString())
-            }
         }
-
 
         /* Note: It is important to add *this* stub to the result list only after translating/processing the superclass symbols */
         addObjCStubIfNotTranslated(objCClass, symbol.classId?.packageFqName?.asString())
