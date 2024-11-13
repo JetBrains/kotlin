@@ -40,7 +40,7 @@ object KlibConfigurationKeys {
 
 }
 
-var CompilerConfiguration.klibRelativePathBases: MutableList<String>
+var CompilerConfiguration.klibRelativePathBases: List<String>
     get() = getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES)
     set(value) { put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, value) }
 

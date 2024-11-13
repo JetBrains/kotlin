@@ -135,11 +135,11 @@ object JSConfigurationKeys {
 
 }
 
-var CompilerConfiguration.transitiveLibraries: MutableList<String>
+var CompilerConfiguration.transitiveLibraries: List<String>
     get() = getList(JSConfigurationKeys.TRANSITIVE_LIBRARIES)
     set(value) { put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, value) }
 
-var CompilerConfiguration.libraries: MutableList<String>
+var CompilerConfiguration.libraries: List<String>
     get() = getList(JSConfigurationKeys.LIBRARIES)
     set(value) { put(JSConfigurationKeys.LIBRARIES, value) }
 
@@ -159,7 +159,7 @@ var CompilerConfiguration.sourceMapPrefix: String?
     get() = get(JSConfigurationKeys.SOURCE_MAP_PREFIX)
     set(value) { put(JSConfigurationKeys.SOURCE_MAP_PREFIX, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.sourceMapSourceRoots: MutableList<String>
+var CompilerConfiguration.sourceMapSourceRoots: List<String>
     get() = getList(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS)
     set(value) { put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, value) }
 
@@ -203,7 +203,7 @@ var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, value) }
 
-var CompilerConfiguration.friendPaths: MutableList<String>
+var CompilerConfiguration.friendPaths: List<String>
     get() = getList(JSConfigurationKeys.FRIEND_PATHS)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS, value) }
 
@@ -243,7 +243,7 @@ var CompilerConfiguration.generateRegionComments: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
     set(value) { put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, value) }
 
-var CompilerConfiguration.filePathsPrefixMap: MutableMap<String, String>
+var CompilerConfiguration.filePathsPrefixMap: Map<String, String>
     get() = getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
     set(value) { put(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP, value) }
 

@@ -68,7 +68,7 @@ object CLIConfigurationKeys {
 
 }
 
-var CompilerConfiguration.contentRoots: MutableList<ContentRoot>
+var CompilerConfiguration.contentRoots: List<ContentRoot>
     get() = getList(CLIConfigurationKeys.CONTENT_ROOTS)
     set(value) { put(CLIConfigurationKeys.CONTENT_ROOTS, value) }
 

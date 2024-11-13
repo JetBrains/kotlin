@@ -118,7 +118,7 @@ object KeysContainerGenerator {
     }
 
     private fun SmartPrinter.generateCollectionKeyAccessors(container: KeysContainer, key: CollectionKey) {
-        println("var CompilerConfiguration.${key.accessorName}: ${key.mutableTypeString}")
+        println("var CompilerConfiguration.${key.accessorName}: ${key.typeString}")
         val keyAccess = container.keyAccessString(key)
         withIndent {
             val getterFunction = when (key) {

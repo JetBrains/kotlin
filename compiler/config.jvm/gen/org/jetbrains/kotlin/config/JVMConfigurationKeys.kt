@@ -228,11 +228,11 @@ var CompilerConfiguration.moduleXmlFile: File?
     get() = get(JVMConfigurationKeys.MODULE_XML_FILE)
     set(value) { put(JVMConfigurationKeys.MODULE_XML_FILE, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.modules: MutableList<Module>
+var CompilerConfiguration.modules: List<Module>
     get() = getList(JVMConfigurationKeys.MODULES)
     set(value) { put(JVMConfigurationKeys.MODULES, value) }
 
-var CompilerConfiguration.friendPaths: MutableList<String>
+var CompilerConfiguration.friendPaths: List<String>
     get() = getList(JVMConfigurationKeys.FRIEND_PATHS)
     set(value) { put(JVMConfigurationKeys.FRIEND_PATHS, value) }
 
@@ -252,7 +252,7 @@ var CompilerConfiguration.compileJava: Boolean
     get() = getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
     set(value) { put(JVMConfigurationKeys.COMPILE_JAVA, value) }
 
-var CompilerConfiguration.additionalJavaModules: MutableList<String>
+var CompilerConfiguration.additionalJavaModules: List<String>
     get() = getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES)
     set(value) { put(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, value) }
 
@@ -276,7 +276,7 @@ var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
     get() = get(JVMConfigurationKeys.LAMBDAS)
     set(value) { put(JVMConfigurationKeys.LAMBDAS, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.klibPaths: MutableList<String>
+var CompilerConfiguration.klibPaths: List<String>
     get() = getList(JVMConfigurationKeys.KLIB_PATHS)
     set(value) { put(JVMConfigurationKeys.KLIB_PATHS, value) }
 
