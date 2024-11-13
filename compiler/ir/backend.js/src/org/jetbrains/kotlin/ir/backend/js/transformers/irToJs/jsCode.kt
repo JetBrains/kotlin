@@ -9,11 +9,12 @@ import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.google.gwt.dev.js.rhino.CodePosition
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PropertyLazyInitLowering
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -24,27 +25,25 @@ import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 /**
  * Returns null if constant expression could not be parsed.
  */
-fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendContext?, container: IrDeclaration) =
+fun translateJsCodeIntoStatementList(code: IrExpression, container: IrDeclaration) =
     translateJsCodeIntoStatementList(
         code,
-        context,
         code.getStartSourceLocation(container) ?: container.fileOrNull?.fileEntry?.let { JsLocation(it.name, 0, 0) }
     )
 
 /**
  * Returns null if constant expression could not be parsed.
  */
-fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendContext?, fileEntry: IrFileEntry) =
-    translateJsCodeIntoStatementList(code, context, code.getStartSourceLocation(fileEntry) ?: JsLocation(fileEntry.name, 0, 0))
+fun translateJsCodeIntoStatementList(code: IrExpression, fileEntry: IrFileEntry) =
+    translateJsCodeIntoStatementList(code, code.getStartSourceLocation(fileEntry) ?: JsLocation(fileEntry.name, 0, 0))
 
 private fun translateJsCodeIntoStatementList(
     code: IrExpression,
-    context: JsIrBackendContext?,
     sourceInfo: JsLocation?
 ): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
     val (fileName, startLine, offset) = sourceInfo ?: JsLocation("<js-code>", 0, 0)
-    val jsCode = foldString(code, context) ?: return null
+    val jsCode = foldString(code) ?: return null
 
     // Parser can change local or global scope.
     // In case of js we want to keep new local names,
@@ -63,7 +62,9 @@ private fun translateJsCodeIntoStatementList(
     return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
 }
 
-private fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? {
+private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(followAttributeOwner = false)
+
+private fun foldString(expression: IrExpression): String? {
     val builder = StringBuilder()
     var foldingFailed = false
     expression.acceptVoid(object : IrElementVisitorVoid {
@@ -86,8 +87,8 @@ private fun foldString(expression: IrExpression, context: JsIrBackendContext?): 
 
         override fun visitGetField(expression: IrGetField) {
             val owner = expression.symbol.owner
-            owner.initializer?.expression?.acceptVoid(this)
-                ?: context?.fieldToInitializer?.get(owner)?.acceptVoid(this)
+            (owner.initializer?.expression ?: owner.lazyInitializerExpression)
+                ?.acceptVoid(this)
         }
 
         override fun visitCall(expression: IrCall) {
@@ -96,8 +97,8 @@ private fun foldString(expression: IrExpression, context: JsIrBackendContext?): 
             return when {
                 expression.origin == IrStatementOrigin.PLUS ->
                     expression.acceptChildrenVoid(this)
-                expression.origin == PropertyLazyInitLowering.Companion.PROPERTY_INIT_FUN_CALL -> {
-                    owner.body?.acceptChildrenVoid(InitFunVisitor(context))
+                expression.origin == PropertyLazyInitLowering.PROPERTY_INIT_FUN_CALL -> {
+                    owner.body?.acceptChildrenVoid(InitFunVisitor())
                     expression.acceptChildrenVoid(this)
                 }
                 propertySymbol != null && owner == propertySymbol.owner.getter -> {
@@ -133,12 +134,12 @@ private fun foldString(expression: IrExpression, context: JsIrBackendContext?): 
     return builder.toString()
 }
 
-private class InitFunVisitor(private val context: JsIrBackendContext?) : IrElementVisitorVoid {
+private class InitFunVisitor : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
     override fun visitSetField(expression: IrSetField) {
-        context?.fieldToInitializer?.set(expression.symbol.owner, expression.value)
+        expression.symbol.owner.lazyInitializerExpression = expression.value
     }
 }
