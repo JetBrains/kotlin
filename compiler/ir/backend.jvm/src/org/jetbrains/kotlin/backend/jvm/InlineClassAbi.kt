@@ -162,13 +162,13 @@ val IrClass.inlineClassFieldName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
-            contextReceiverParametersCount == 0 && !isStatic &&
+    get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction &&
+            hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 
 val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
-            contextReceiverParametersCount == 0 && !isStatic &&
+    get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction &&
+            hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let {
                 val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
                     ?: error("Multi-field value class must have multiFieldValueClassRepresentation: ${parentAsClass.render()}")
