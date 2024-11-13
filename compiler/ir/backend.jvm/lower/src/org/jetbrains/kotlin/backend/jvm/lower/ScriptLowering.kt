@@ -645,7 +645,7 @@ private class ScriptToClassTransformer(
             transformAnnotations(data)
             typeRemapper.withinScope(this) {
                 val newDispatchReceiverParameter = dispatchReceiverParameter?.transform(data) ?: run {
-                    if (this.isCurrentScriptTopLevelDeclaration(data)) {
+                    if (this is IrSimpleFunction && this.isCurrentScriptTopLevelDeclaration(data)) {
                         createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiver.type)
                     } else null
                 }
