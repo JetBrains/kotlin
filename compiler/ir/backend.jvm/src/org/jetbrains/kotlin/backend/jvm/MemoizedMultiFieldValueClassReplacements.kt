@@ -375,7 +375,7 @@ class MemoizedMultiFieldValueClassReplacements(
 
     private fun useRootNode(parent: IrClass, property: IrProperty): Boolean {
         val getter = property.getter
-        if (getter != null && (getter.contextReceiverParametersCount > 0 || getter.extensionReceiverParameter != null)) return false
+        if (getter != null && getter.nonDispatchParameters.isNotEmpty()) return false
         return parent.isMultiFieldValueClass && (getter?.isStatic ?: property.backingFieldIfNotToRemove?.isStatic) == false
     }
 
