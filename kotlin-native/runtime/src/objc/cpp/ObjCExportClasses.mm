@@ -325,10 +325,20 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
       case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
       case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
       case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
+      case 'l': if constexpr (sizeof(long) == 8) {
+                  RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
+                } else {
+                  RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
+                }
       case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
       case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
       case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
       case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+      case 'L': if constexpr (sizeof(long) == 8) {
+                  RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
+                } else {
+                  RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+                }
       case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
       case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
       case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
