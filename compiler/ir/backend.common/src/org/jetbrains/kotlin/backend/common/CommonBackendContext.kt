@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
  */
 interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReportingContext, BackendContextHolder {
-    override val ir: Ir<CommonBackendContext>
-
     override val heldBackendContext: CommonBackendContext
         get() = this
 
