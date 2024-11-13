@@ -142,8 +142,6 @@ class JsIrBackendContext(
     override val catchAllThrowableType: IrType
         get() = dynamicType
 
-    override val sharedVariablesManager = JsSharedVariablesManager(this.irBuiltIns, this.dynamicType, this.intrinsics)
-
     override val internalPackageFqn = JS_PACKAGE_FQNAME
 
     private val operatorMap = referenceOperators()

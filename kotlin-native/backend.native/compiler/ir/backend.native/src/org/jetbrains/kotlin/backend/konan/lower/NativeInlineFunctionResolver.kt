@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.ir.KonanSharedVariablesManager
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -48,7 +49,7 @@ internal class NativeInlineFunctionResolver(
         NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
         LateinitUsageLowering(context).lower(body, function)
 
-        SharedVariablesLowering(context).lower(body, function)
+        SharedVariablesLowering(KonanSharedVariablesManager(context.irBuiltIns, context.ir.symbols)).lower(body, function)
 
         OuterThisInInlineFunctionsSpecialAccessorLowering(
                 context,

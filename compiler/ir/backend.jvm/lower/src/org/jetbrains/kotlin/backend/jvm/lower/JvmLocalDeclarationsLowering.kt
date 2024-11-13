@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
  */
 @PhaseDescription(
     name = "JvmLocalDeclarations",
-    prerequisite = [FunctionReferenceLowering::class, SharedVariablesLowering::class]
+    prerequisite = [FunctionReferenceLowering::class, JvmSharedVariablesLowering::class]
 )
 internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalDeclarationsLowering(
     context,

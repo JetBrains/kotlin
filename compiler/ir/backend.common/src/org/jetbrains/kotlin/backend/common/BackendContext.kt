@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -31,7 +30,6 @@ interface BackendContext {
     val builtIns: KotlinBuiltIns
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext
-    val sharedVariablesManager: SharedVariablesManager
     val internalPackageFqn: FqName
     val irFactory: IrFactory
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -38,9 +37,6 @@ class PreSerializationLoweringContext(
         get() = TODO("Not yet implemented") // Should be implemented in scope of KT-71415
 
     override val innerClassesSupport: InnerClassesSupport
-        get() = TODO("Not yet implemented") // Should be implemented in scope of KT-71415
-
-    override val sharedVariablesManager: SharedVariablesManager
         get() = TODO("Not yet implemented") // Should be implemented in scope of KT-71415
 
     override val internalPackageFqn: FqName
