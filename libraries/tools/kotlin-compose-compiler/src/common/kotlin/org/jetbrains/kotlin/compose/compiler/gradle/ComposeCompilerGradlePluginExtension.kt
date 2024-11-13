@@ -29,7 +29,7 @@ import javax.inject.Inject
 /**
  * Provides DSL to configure Compose compiler plugin options.
  *
- * It is available in the build scripts under "composeCompiler" name:
+ * It is available in the build scripts as the `composeCompiler {}` block:
  * ```
  * composeCompiler {
  *    ...
@@ -38,7 +38,7 @@ import javax.inject.Inject
  */
 abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor(objectFactory: ObjectFactory) {
     /**
-     * Generate function key meta classes with annotations indicating the functions and their group keys.
+     * Generate function key metaclasses with annotations indicating the functions and their group keys.
      *
      * Generally used for tooling.
      */
@@ -48,15 +48,15 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      * Include source information in generated code.
      *
      * Records source information that can be used for tooling to determine the source location of the corresponding composable function.
-     * By default, this function is declared as having no side-effects. It is safe for code shrinking tools (such as R8 or ProGuard) to
+     * By default, this function is declared as having no side effects. It is safe for code shrinking tools (such as R8 or ProGuard) to
      * remove it. This option does NOT impact the presence of symbols or line information normally added by the Kotlin compiler; this option
-     * controls additional source information added by the Compose Compiler.
+     * controls only additional source information added by the Compose Compiler.
      */
     val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
-     * Save compose build metrics to this folder.
-     * When specified, the Compose Compiler will dump metrics about the current module which can be useful when manually optimizing your
+     * Save Compose build metrics to this folder.
+     * When specified, the Compose compiler will dump metrics about the current module, which can be useful when manually optimizing your
      * application's runtime performance. The module.json will include the statistics about processed composables and classes, including
      * number of stable classes/parameters, skippable functions, etc.
      *
@@ -67,10 +67,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     abstract val metricsDestination: DirectoryProperty
 
     /**
-     * Save compose build reports to this folder.
+     * Save Compose build reports to this folder.
      *
-     * When specified, the Compose Compiler will dump reports about the compilation which can be useful when manually optimizing
-     * your application's runtime performance. These reports include information about which of your composable functions are skippable,
+     * When specified, the Compose compiler will dump reports about the compilation, which can be useful when manually optimizing
+     * your application's runtime performance. These reports include information on which of your composable functions are skippable,
      * which are restartable, which are readonly, etc.
      *
      * For more information, see these links:
@@ -134,7 +134,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     abstract val stabilityConfigurationFile: RegularFileProperty
 
     /**
-     * List of paths to the stability configuration file.
+     * List of paths to stability configuration files.
      *
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
@@ -154,7 +154,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     /**
      * Include composition trace markers in the generated code.
      *
-     * When `true`, this flag tells the compose compiler to inject additional tracing information into the bytecode, which allows showing
+     * When `true`, this flag tells the Compose compiler to inject additional tracing information into the bytecode, which allows showing
      * composable functions in the Android Studio system trace profiler.
      *
      * For more information, see this link:
@@ -163,7 +163,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
-     * A set of Kotlin platforms to which the Compose plugin will be applied.
+     * A set of Kotlin platforms to which the Compose compiler plugin will be applied.
      *
      * By default, all Kotlin platforms are enabled.
      *
@@ -192,9 +192,9 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
         .convention(KotlinPlatformType.values().asIterable())
 
     /**
-     * A set of feature flags to enable. A feature requires a feature flags when it is in the process of becoming the default
-     * behavior of the Compose compiler. Features in this set will eventually be removed and disabling will no longer be
-     * supported. See [ComposeFeatureFlag] for the list of features currently recognized by the plugin.
+     * A set of feature flags to enable. A feature requires a feature flag when it is in the process of becoming the default
+     * behavior of the Compose compiler. Features in this set will eventually be removed and integrated as baseline behavior;
+     * after that, disabling them will no longer be supported. See [ComposeFeatureFlag] for the list of features currently recognized by the plugin.
      *
      * @see ComposeFeatureFlag
      */
