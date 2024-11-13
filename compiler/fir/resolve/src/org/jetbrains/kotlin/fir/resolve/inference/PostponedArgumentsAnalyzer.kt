@@ -79,7 +79,31 @@ class PostponedArgumentsAnalyzer(
 
     private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
         if (atom.needsResolution) {
+            // Needed only for the assertion below
+            val stateBeforeResolution = atom.state
+
             callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
+
+            if (atom.isPostponedBecauseOfAmbiguity
+                && candidate.callInfo.session.languageVersionSettings.supportsFeature(
+                    LanguageFeature.CallableReferenceOverloadResolutionInLambda
+                )
+            ) {
+                // If the current state is POSTPONED_BECAUSE_OF_AMBIGUITY, the previous might be only NOT_RESOLVED_YET
+                // That effectively means that it's not `foo(::bar)` case and neither `::foo` in the air because for them,
+                // we would resolve it once at `EagerResolveOfCallableReferences` stage for the containing call.
+                check(stateBeforeResolution == ConeResolvedCallableReferenceAtom.State.NOT_RESOLVED_YET)
+
+                // Here, it's very likely the case like `foo { :::bar }` where we look at the `::bar` as a new atom which might
+                // be resolved at any time as it has empty `inputTypes` and `outputTypes` dependencies
+                //  (see ConeResolvedCallableReferenceAtom.inputTypes).
+                //
+                // So, the idea is to leave the atom postponed and to finalize it until `inputTypes` are ready.
+                //
+                // See similar code in K1
+                // at org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver.processCallableReferenceArgument
+                return
+            }
         }
 
         val callableReferenceAccess = atom.expression

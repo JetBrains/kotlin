@@ -364,6 +364,7 @@ enum class LanguageFeature(
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_2, kind = BUG_FIX), // KT-60305
     // TODO: Remove org.jetbrains.kotlin.fir.resolve.calls.stages.ConstraintSystemForks together with this LF (KT-72961)
     ConsiderForkPointsWhenCheckingContradictions(KOTLIN_2_2), // KT-68768
+    CallableReferenceOverloadResolutionInLambda(KOTLIN_2_2), // KT-73011
 
     // 2.3
 
