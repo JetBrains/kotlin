@@ -327,7 +327,7 @@ fun collectPropertiesOrFieldsAfterLowering(irClass: IrClass, context: JvmBackend
         }
 
         fun handleAccessor(element: IrSimpleFunction) {
-            if (element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
+            if (element.parameters.none { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }) {
                 element.correspondingPropertySymbol?.owner?.let { add(Property(it)) }
             }
         }
