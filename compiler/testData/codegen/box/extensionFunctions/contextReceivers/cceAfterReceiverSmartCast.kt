@@ -1,6 +1,5 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-73065
 
 interface A {

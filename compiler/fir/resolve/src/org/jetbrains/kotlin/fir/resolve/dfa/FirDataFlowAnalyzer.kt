@@ -1539,7 +1539,7 @@ abstract class FirDataFlowAnalyzer(
         val previous = currentSmartCastPosition
         if (previous == flow) return
         receiverStack.forEach {
-            val variable = RealVariable.receiver(it.boundSymbol, it.originalType)
+            val variable = RealVariable.receiver(it.boundSymbol, it.originalType, it.contextReceiverNumber)
             val newStatement = flow?.getTypeStatement(variable)
             if (newStatement != previous?.getTypeStatement(variable)) {
                 receiverUpdated(newStatement ?: MutableTypeStatement(variable))

@@ -57,7 +57,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                     if (function.symbol is FirPropertyAccessorSymbol) context.containingProperty?.symbol ?: function.symbol
                     else function.symbol
                 val type = receiverOwnerSymbol.resolvedReceiverTypeRef?.coneType ?: return@Array null
-                RealVariable.receiver(receiverOwnerSymbol, type)
+                RealVariable.receiver(receiverOwnerSymbol, type, contextReceiverNumber = -1)
             }
         }
 
