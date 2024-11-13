@@ -71,6 +71,8 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
         "org.jetbrains.dokka.base.DokkaBase",
         "{ \"templatesDir\": \"${unzipTemplates.map { it.destinationDir }.get().also { it.mkdirs() }}\" }"
     )
+
+    // Documentation: https://github.com/Kotlin/dokka/tree/1.9.20/dokka-subprojects/plugin-versioning
     pluginsMapConfiguration.put(
         "org.jetbrains.dokka.versioning.VersioningPlugin",
         documentationExtension.documentationOldVersions.map { olderVersionsDir ->
