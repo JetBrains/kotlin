@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -15,9 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -424,11 +424,26 @@ class FirCallResolver(
         return qualifiedAccess
     }
 
+    /**
+     *
+     * It should always change the [ConeResolvedCallableReferenceAtom.state]
+     * (either by calling [ConeResolvedCallableReferenceAtom.initializeResultingReference]
+     * or by setting it to POSTPONED_BECAUSE_OF_AMBIGUITY).
+     *
+     * Might be called twice on the same callable reference.
+     *
+     * @return The best [CandidateApplicability] and a [Boolean] indicating
+     *         whether the result is successful or can be successful in future (after another round of resolution)
+     *
+     * Thus, `false` would mean that this callable reference just doesn't have any chances to be resolved successfully
+     */
     fun resolveCallableReference(
         containingCallCandidate: Candidate,
         resolvedCallableReferenceAtom: ConeResolvedCallableReferenceAtom,
         hasSyntheticOuterCall: Boolean,
     ): Pair<CandidateApplicability, Boolean> = components.context.inferenceSession.runCallableReferenceResolution(containingCallCandidate) {
+        require(resolvedCallableReferenceAtom.needsResolution)
+
         val constraintSystemBuilder = containingCallCandidate.csBuilder
         val callableReferenceAccess = resolvedCallableReferenceAtom.expression
         val calleeReference = callableReferenceAccess.calleeReference
@@ -458,8 +473,6 @@ class FirCallResolver(
             reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
         )
 
-        resolvedCallableReferenceAtom.hasBeenResolvedOnce = true
-
         when {
             !nonEmptyAndAllSuccessful -> {
                 val errorReference = buildReferenceWithErrorCandidate(
@@ -480,7 +493,7 @@ class FirCallResolver(
                 return@runCallableReferenceResolution applicability to false
             }
             reducedCandidates.size > 1 -> {
-                if (resolvedCallableReferenceAtom.hasBeenPostponed) {
+                if (resolvedCallableReferenceAtom.isPostponedBecauseOfAmbiguity) {
                     val errorReference = buildReferenceWithErrorCandidate(
                         info,
                         ConeAmbiguityError(info.name, applicability, reducedCandidates),
@@ -489,7 +502,7 @@ class FirCallResolver(
                     resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
                     return@runCallableReferenceResolution applicability to false
                 }
-                resolvedCallableReferenceAtom.hasBeenPostponed = true
+                resolvedCallableReferenceAtom.state = ConeResolvedCallableReferenceAtom.State.POSTPONED_BECAUSE_OF_AMBIGUITY
                 return@runCallableReferenceResolution applicability to true
             }
         }

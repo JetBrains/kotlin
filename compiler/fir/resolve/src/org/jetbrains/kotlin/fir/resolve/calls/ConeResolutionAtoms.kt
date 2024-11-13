@@ -241,10 +241,24 @@ class ConeResolvedCallableReferenceAtom(
     var subAtom: ConeAtomWithCandidate? = null
         private set
 
-    var hasBeenResolvedOnce: Boolean = false
-    var hasBeenPostponed: Boolean = false
+    enum class State(val needsResolution: Boolean) {
+        // Regularly, the first time we resolve `::bar` of `foo(::bar)` at `EagerResolveOfCallableReferences` of `foo`
+        // Might be transformed both to `POSTPONED_BECAUSE_OF_AMBIGUITY` or `RESOLVED`
+        NOT_RESOLVED_YET(needsResolution = true),
 
-    val mightNeedAdditionalResolution: Boolean get() = !hasBeenResolvedOnce || hasBeenPostponed
+        // Means that we should try resolving again at the completion stage when the expected type is ready
+        // Might be transformed only to `RESOLVED`
+        POSTPONED_BECAUSE_OF_AMBIGUITY(needsResolution = true),
+
+        // That would correspond both to successful and failed results (including final ambiguity)
+        RESOLVED(needsResolution = false),
+    }
+
+    var state: State = State.NOT_RESOLVED_YET
+
+    val isPostponedBecauseOfAmbiguity: Boolean get() = state == State.POSTPONED_BECAUSE_OF_AMBIGUITY
+
+    val needsResolution: Boolean get() = state.needsResolution
 
     var resultingReference: FirNamedReference? = null
         private set
@@ -252,6 +266,7 @@ class ConeResolvedCallableReferenceAtom(
     fun initializeResultingReference(resultingReference: FirNamedReference) {
         require(this.resultingReference == null) { "resultingReference already initialized" }
         this.resultingReference = resultingReference
+        this.state = State.RESOLVED
         val candidate = (resultingReference as? FirNamedReferenceWithCandidate)?.candidate
         if (candidate != null) {
             subAtom = ConeAtomWithCandidate(expression, candidate)
@@ -262,28 +277,28 @@ class ConeResolvedCallableReferenceAtom(
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
-            if (!hasBeenPostponed) return emptyList()
+            if (!isPostponedBecauseOfAmbiguity) return emptyList()
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.inputTypes
                 ?: listOfNotNull(expectedType)
         }
     override val outputType: ConeKotlinType?
         get() {
-            if (!hasBeenPostponed) return null
+            if (!isPostponedBecauseOfAmbiguity) return null
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.outputType
         }
 
     override val expectedType: ConeKotlinType?
-        get() = if (!hasBeenPostponed)
+        get() = if (!isPostponedBecauseOfAmbiguity)
             initialExpectedType
         else
             revisedExpectedType ?: initialExpectedType
 
     override var revisedExpectedType: ConeKotlinType? = null
-        get() = if (hasBeenPostponed) field else expectedType
+        get() = if (isPostponedBecauseOfAmbiguity) field else expectedType
         private set
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
-        if (!mightNeedAdditionalResolution) return
+        if (!needsResolution) return
         require(expectedType is ConeKotlinType)
         revisedExpectedType = expectedType
     }

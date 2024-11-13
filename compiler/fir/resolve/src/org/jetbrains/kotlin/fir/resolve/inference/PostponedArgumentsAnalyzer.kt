@@ -78,7 +78,7 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
-        if (atom.mightNeedAdditionalResolution) {
+        if (atom.needsResolution) {
             callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
         }
 
