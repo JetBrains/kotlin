@@ -79,8 +79,8 @@ fun GradleProject.enableBuildScriptInjectionsIfNecessary() {
     error("build.gradle.kts nor build.gradle files not found in Test Project '$projectName'. Please check if it is a valid gradle project")
 }
 
-fun invokeBuildScriptInjection(project: Project, serializedInjectionPath: String) {
-    java.io.File(serializedInjectionPath).inputStream().use {
+fun invokeBuildScriptInjection(project: Project, serializedInjectionName: String) {
+    project.projectDir.resolve(serializedInjectionName).inputStream().use {
         (ObjectInputStream(it).readObject() as GradleBuildScriptInjection).inject(project)
     }
 }
@@ -129,7 +129,7 @@ inline fun <reified T> TestProject.buildScriptReturn(
 ): BuildScriptAfterEvaluationReturn<T> {
     enableBuildScriptInjectionsIfNecessary()
     val injectionUuid = UUID.randomUUID().toString()
-    val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration${injectionUuid}").toFile()
+    val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration_${injectionUuid}").toFile()
     val injection = object : GradleBuildScriptInjection {
         override fun inject(project: Project) {
             val serializeOutput = @JvmSerializableLambda {
@@ -154,7 +154,8 @@ inline fun <reified T> TestProject.buildScriptReturn(
         }
     }
 
-    val serializedInjectionPath = projectPath.resolve("serializedInjection${injectionUuid}")
+    val serializedInjectionName = "serializedInjection_${injectionUuid}"
+    val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
     serializedInjectionPath.toFile().outputStream().use {
         ObjectOutputStream(it).writeObject(injection)
     }
@@ -163,13 +164,13 @@ inline fun <reified T> TestProject.buildScriptReturn(
         buildGradleKts.exists() -> buildGradleKts.appendText(
             whenPropertySpecified(
                 injectionUuid,
-                injectionLoad(serializedInjectionPath)
+                injectionLoad(serializedInjectionName)
             )
         )
         buildGradle.exists() -> buildGradle.appendText(
             whenPropertySpecified(
                 injectionUuid,
-                injectionLoadGroovy(serializedInjectionPath)
+                injectionLoadGroovy(serializedInjectionName)
             )
         )
         else -> error("Can't find the build script to append the return injection")
@@ -201,14 +202,15 @@ inline fun GradleProject.buildScriptInjection(
         }
     }
 
-    val serializedInjectionPath = projectPath.resolve("serializedConfiguration${UUID.randomUUID()}")
+    val serializedInjectionName = "serializedConfiguration_${UUID.randomUUID()}"
+    val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
     serializedInjectionPath.toFile().outputStream().use {
         ObjectOutputStream(it).writeObject(injection)
     }
 
     when {
-        buildGradleKts.exists() -> buildGradleKts.appendText(injectionLoad(serializedInjectionPath))
-        buildGradle.exists() -> buildGradle.appendText(injectionLoadGroovy(serializedInjectionPath))
+        buildGradleKts.exists() -> buildGradleKts.appendText(injectionLoad(serializedInjectionName))
+        buildGradle.exists() -> buildGradle.appendText(injectionLoadGroovy(serializedInjectionName))
         else -> error("Can't find the build script to append the injection")
     }
 }
@@ -233,17 +235,17 @@ fun whenPropertySpecified(
 """.trimIndent()
 
 fun injectionLoad(
-    serializedInjectionPath: Path,
+    serializedInjectionName: String,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "${serializedInjectionPath.toFile().path}")
+    org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "$serializedInjectionName")
     """.trimIndent()
 
 fun injectionLoadGroovy(
-    serializedInjectionPath: Path,
+    serializedInjectionName: String,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.TestGradleBuildInjectionKt.invokeBuildScriptInjection(project, '$serializedInjectionPath')
+    org.jetbrains.kotlin.gradle.testbase.TestGradleBuildInjectionKt.invokeBuildScriptInjection(project, '$serializedInjectionName')
 """.trimIndent()
 
 fun copyRepositoriesFromSettingsIntoProject(): String = """
