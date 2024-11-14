@@ -27,7 +27,9 @@ val packagesToRelocate =
         "it.unimi.dsi.fastutil",
         "kotlinx.collections.immutable",
         "com.fasterxml",
-        "org.codehaus"
+        "org.codehaus",
+        "io.opentelemetry",
+        "io.vavr",
     )
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
