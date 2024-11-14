@@ -13,7 +13,6 @@ package org.jetbrains.kotlin.cli.common
  */
 
 import java.io.File
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -57,9 +56,6 @@ object CLIConfigurationKeys {
     val METADATA_DESTINATION_DIRECTORY = CompilerConfigurationKey.create<File>("metadata destination directory")
 
     @JvmField
-    val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
-
-    @JvmField
     val FLEXIBLE_PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfigurationService>("flexible phase configuration")
 
     // used in FIR IDE uast tests
@@ -95,10 +91,6 @@ var CompilerConfiguration.intellijPluginRoot: String?
 var CompilerConfiguration.metadataDestinationDirectory: File?
     get() = get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
     set(value) { put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.phaseConfig: PhaseConfig?
-    get() = get(CLIConfigurationKeys.PHASE_CONFIG)
-    set(value) { put(CLIConfigurationKeys.PHASE_CONFIG, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.flexiblePhaseConfig: PhaseConfigurationService?
     get() = get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)

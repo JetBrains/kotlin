@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -153,7 +154,7 @@ fun generateCodeFromIr(
     // IR
     val codegenFactory = JvmIrCodegenFactory(
         input.configuration,
-        input.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
+        input.configuration.phaseConfig,
     )
     val project = environment.projectEnvironment.project
 

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
@@ -138,7 +138,7 @@ object GenerationUtils {
 
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
-            configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
+            configuration.phaseConfig,
         )
 
         val generationState = GenerationState.Builder(
@@ -197,7 +197,7 @@ object GenerationUtils {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                JvmIrCodegenFactory(configuration, configuration.get(CLIConfigurationKeys.PHASE_CONFIG)),
+                JvmIrCodegenFactory(configuration, configuration.phaseConfig),
             )
         }
         return generationState

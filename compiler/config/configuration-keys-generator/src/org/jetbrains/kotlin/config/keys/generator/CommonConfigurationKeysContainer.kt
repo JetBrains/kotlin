@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.HmppCliModuleStructure
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -52,4 +53,5 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val VERIFY_IR by key<IrVerificationMode>("IR verification mode")
     val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Check pre-lowering IR for visibility violations")
     val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Check IR for vararg types mismatches")
+    val PHASE_CONFIG by key<PhaseConfig>("phase configuration")
 }

@@ -345,12 +345,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val dumpDirectory = testServices.getOrCreateTempDirectory(PhasedIrDumpHandler.DUMPED_IR_FOLDER_NAME)
         val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES].toSet()
         if (phases.isNotEmpty()) {
-            val phaseConfig = PhaseConfig(
+            phaseConfig = PhaseConfig(
                 toDumpStateBefore = phases,
                 toDumpStateAfter = phases,
                 dumpToDirectory = dumpDirectory.absolutePath
             )
-            put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig)
         }
     }
 

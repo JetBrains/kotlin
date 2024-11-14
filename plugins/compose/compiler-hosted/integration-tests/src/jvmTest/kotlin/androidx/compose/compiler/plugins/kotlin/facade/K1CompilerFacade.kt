@@ -18,13 +18,13 @@ package androidx.compose.compiler.plugins.kotlin.facade
 
 import androidx.compose.compiler.plugins.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -95,7 +95,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val codegenFactory = JvmIrCodegenFactory(
             environment.configuration,
-            environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+            environment.configuration.phaseConfig
         )
 
         val state = GenerationState.Builder(

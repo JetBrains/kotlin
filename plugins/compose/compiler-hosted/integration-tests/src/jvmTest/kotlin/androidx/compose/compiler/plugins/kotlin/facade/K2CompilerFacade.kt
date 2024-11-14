@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -241,7 +242,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         generationState.beforeCompile()
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
-            configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+            configuration.phaseConfig
         )
         codegenFactory.generateModuleInFrontendIRMode(
             generationState,

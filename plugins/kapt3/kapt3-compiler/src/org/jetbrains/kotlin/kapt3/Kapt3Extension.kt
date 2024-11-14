@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -253,7 +253,7 @@ abstract class AbstractKapt3Extension(
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
+                JvmIrCodegenFactory(configuration, configuration.phaseConfig)
             )
         }
 

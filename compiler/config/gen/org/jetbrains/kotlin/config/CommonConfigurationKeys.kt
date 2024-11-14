@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -96,6 +97,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("Check IR for vararg types mismatches")
+
+    @JvmField
+    val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
 
 }
 
@@ -198,4 +202,8 @@ var CompilerConfiguration.enableIrVisibilityChecks: Boolean
 var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
     get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS)
     set(value) { put(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS, value) }
+
+var CompilerConfiguration.phaseConfig: PhaseConfig?
+    get() = get(CommonConfigurationKeys.PHASE_CONFIG)
+    set(value) { put(CommonConfigurationKeys.PHASE_CONFIG, requireNotNull(value) { "nullable values are not allowed" }) }
 
