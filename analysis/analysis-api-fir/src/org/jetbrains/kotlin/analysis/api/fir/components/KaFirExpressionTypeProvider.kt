@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
@@ -31,9 +32,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.parsing.hasIllegalUnderscore
+import org.jetbrains.kotlin.parsing.hasLongSuffix
+import org.jetbrains.kotlin.parsing.hasUnsignedLongSuffix
+import org.jetbrains.kotlin.parsing.hasUnsignedSuffix
+import org.jetbrains.kotlin.parsing.parseBoolean
+import org.jetbrains.kotlin.parsing.parseNumericLiteral
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
@@ -178,6 +188,8 @@ internal class KaFirExpressionTypeProvider(
 
     override val KtDeclaration.returnType: KaType
         get() = withValidityAssertion {
+            inferReturnTypeByPsi()?.let { return it }
+
             val firDeclaration = if (this is KtParameter && ownerFunction == null) {
                 getOrBuildFir(firResolveSession)
             } else {
@@ -189,6 +201,54 @@ internal class KaFirExpressionTypeProvider(
                 else -> unexpectedElementError<FirElement>(firDeclaration)
             }
         }
+
+    /**
+     * Optimization: try to determine the return type of the declaration (function, property, or property getter)
+     * by inspecting its body expression if it has an implicit return type.
+     */
+    private fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
+        fun KtDeclaration.isPropertyGetter() = this is KtPropertyAccessor && isGetter
+
+        fun KtDeclaration.hasDeclaredReturnType() = when (this) {
+            is KtNamedFunction -> typeReference != null
+            is KtProperty -> typeReference != null || getter?.returnTypeReference != null
+            is KtPropertyAccessor -> returnTypeReference != null
+            else -> false
+        }
+
+        fun KtDeclaration.isEmptyFunction() =
+            this is KtNamedFunction && hasBlockBody() && bodyBlockExpression?.statements?.isEmpty() == true
+
+        if (this !is KtNamedFunction && this !is KtProperty && !isPropertyGetter()) return null
+        if (hasDeclaredReturnType()) return null
+
+        if (isEmptyFunction()) return analysisSession.builtinTypes.unit
+        val singleExpression = when (this) {
+            is KtNamedFunction -> bodyExpression
+            is KtProperty -> initializer ?: getter?.bodyExpression
+            is KtPropertyAccessor -> bodyExpression
+            else -> null
+        }
+        return when (singleExpression) {
+            is KtStringTemplateExpression -> analysisSession.builtinTypes.string
+            is KtConstantExpression -> {
+                val classId = singleExpression.inferClassIdByPsi()
+                primitiveTypesMap[classId]?.value
+            }
+            else -> null
+        }
+    }
+
+    private val primitiveTypesMap: Map<ClassId, Lazy<KaType>> = mapOf(
+        StandardClassIds.Int to lazy { analysisSession.builtinTypes.int },
+        StandardClassIds.Long to lazy { analysisSession.builtinTypes.long },
+        StandardClassIds.Float to lazy { analysisSession.builtinTypes.float },
+        StandardClassIds.Double to lazy { analysisSession.builtinTypes.double },
+        StandardClassIds.Char to lazy { analysisSession.builtinTypes.char },
+        StandardClassIds.Boolean to lazy { analysisSession.builtinTypes.boolean },
+        StandardClassIds.UInt to lazy { analysisSession.buildClassType(StandardClassIds.UInt) },
+        StandardClassIds.ULong to lazy { analysisSession.buildClassType(StandardClassIds.ULong) },
+    )
 
     override val KtFunction.functionType: KaType
         get() = withValidityAssertion {
