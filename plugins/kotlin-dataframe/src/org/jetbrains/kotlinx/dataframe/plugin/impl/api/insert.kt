@@ -14,19 +14,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.columnAccessor
-import org.jetbrains.kotlinx.dataframe.plugin.impl.columnPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnAccessorApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.InsertClauseApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.enum
-import org.jetbrains.kotlinx.dataframe.plugin.impl.insertClause
-import org.jetbrains.kotlinx.dataframe.plugin.impl.kproperty
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
@@ -34,7 +28,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.type
  * @see DataFrame.insert
  */
 internal class Insert0 : AbstractInterpreter<InsertClauseApproximation>() {
-    val Arguments.column: SimpleCol by dataColumn()
+    val Arguments.column: SimpleCol by arg()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
@@ -43,7 +37,7 @@ internal class Insert0 : AbstractInterpreter<InsertClauseApproximation>() {
 }
 
 internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
-    val Arguments.name: String by string()
+    val Arguments.name: String by arg()
     val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
     val Arguments.expression: TypeApproximation by type()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -54,7 +48,7 @@ internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
 }
 
 internal class Insert2 : AbstractInterpreter<InsertClauseApproximation>() {
-    val Arguments.column: ColumnAccessorApproximation by columnAccessor()
+    val Arguments.column: ColumnAccessorApproximation by arg()
     val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
     val Arguments.expression: TypeApproximation by type()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -65,7 +59,7 @@ internal class Insert2 : AbstractInterpreter<InsertClauseApproximation>() {
 }
 
 internal class Insert3 : AbstractInterpreter<InsertClauseApproximation>() {
-    val Arguments.column: KPropertyApproximation by kproperty()
+    val Arguments.column: KPropertyApproximation by arg()
     val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
     val Arguments.expression: TypeApproximation by type()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -77,7 +71,7 @@ internal class Insert3 : AbstractInterpreter<InsertClauseApproximation>() {
 
 internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.column: SingleColumnApproximation by arg()
-    val Arguments.receiver: InsertClauseApproximation by insertClause()
+    val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val path = column.resolve(receiver.df).single().path
@@ -88,8 +82,8 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.columnPath: ColumnPathApproximation by columnPath()
-    val Arguments.receiver: InsertClauseApproximation by insertClause()
+    val Arguments.columnPath: ColumnPathApproximation by arg()
+    val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
@@ -99,8 +93,8 @@ internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under2 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.column: ColumnAccessorApproximation by columnAccessor()
-    val Arguments.receiver: InsertClauseApproximation by insertClause()
+    val Arguments.column: ColumnAccessorApproximation by arg()
+    val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
@@ -110,8 +104,8 @@ internal class Under2 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under3 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.column: KPropertyApproximation by kproperty()
-    val Arguments.receiver: InsertClauseApproximation by insertClause()
+    val Arguments.column: KPropertyApproximation by arg()
+    val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
@@ -121,8 +115,8 @@ internal class Under3 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.column: String by string()
-    val Arguments.receiver: InsertClauseApproximation by insertClause()
+    val Arguments.column: String by arg()
+    val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()

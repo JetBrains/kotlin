@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.DataRow
@@ -22,12 +21,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.deserializeToPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.toPluginDataFrameSchema
 import java.io.File
 
 internal class Read0 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.path by string()
+    val Arguments.path: String by arg()
     val Arguments.header: List<String> by arg(defaultValue = Present(listOf()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
