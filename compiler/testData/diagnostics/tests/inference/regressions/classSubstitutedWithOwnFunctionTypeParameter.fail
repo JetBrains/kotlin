@@ -1,0 +1,13 @@
+java.lang.StackOverflowError
+	at org.jetbrains.kotlin.fir.declarations.FirResolveStateKt.getResolvePhase(FirResolveState.kt:57)
+	at org.jetbrains.kotlin.test.frontend.fir.handlers.FirCompilerLazyDeclarationResolverWithPhaseChecking.lazyResolveToPhase(FirCompilerLazyDeclarationResolverWithPhaseChecking.kt:26)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt$lazyResolveToPhase$1.invoke(FirLazyDeclarationResolver.kt:100)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt$lazyResolveToPhase$1.invoke(FirLazyDeclarationResolver.kt:100)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.invokeLazyResolveToPhase(FirLazyDeclarationResolver.kt:179)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.lazyResolveToPhase(FirLazyDeclarationResolver.kt:100)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.lazyResolveToPhase(FirLazyDeclarationResolver.kt:91)
+	at org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol.getResolvedBounds(FirTypeParameterSymbol.kt:33)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.shouldBeFlexible(CreateFreshTypeVariableSubstitutorStage.kt:172)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.shouldBeFlexible(CreateFreshTypeVariableSubstitutorStage.kt:175)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.shouldBeFlexible(CreateFreshTypeVariableSubstitutorStage.kt:175)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.shouldBeFlexible(CreateFreshTypeVariableSubstitutorStage.kt:175)

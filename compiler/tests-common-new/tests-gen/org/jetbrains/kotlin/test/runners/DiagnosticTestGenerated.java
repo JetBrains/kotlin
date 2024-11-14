@@ -21926,6 +21926,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("classSubstitutedWithOwnFunctionTypeParameter.kt")
+        public void testClassSubstitutedWithOwnFunctionTypeParameter() {
+          runTest("compiler/testData/diagnostics/tests/inference/regressions/classSubstitutedWithOwnFunctionTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("compareBy.kt")
         public void testCompareBy() {
           runTest("compiler/testData/diagnostics/tests/inference/regressions/compareBy.kt");

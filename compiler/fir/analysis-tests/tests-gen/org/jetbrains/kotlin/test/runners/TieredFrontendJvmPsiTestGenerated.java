@@ -12136,6 +12136,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Regressions {
         @Test
+        @TestMetadata("classSubstitutedWithOwnFunctionTypeParameter.kt")
+        public void testClassSubstitutedWithOwnFunctionTypeParameter() {
+          runTest("compiler/testData/diagnostics/tests/inference/regressions/classSubstitutedWithOwnFunctionTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("kt1029.kt")
         public void testKt1029() {
           runTest("compiler/testData/diagnostics/tests/inference/regressions/kt1029.kt");
