@@ -4,9 +4,7 @@
  */
 
 #include "polyhash/common.h"
-#include "polyhash/x86.h"
-
-#if defined(__x86_64__) or defined(__i386__)
+#include "polyhash/PolyHash.h"
 
 #define __SSE41__ __attribute__((target("sse4.1")))
 #define __AVX2__ __attribute__((target("avx2")))
@@ -27,12 +25,12 @@ alignas(32) constexpr auto b4  = RepeatingPowers<8>(31, 4);  // [base^4,  base^4
 struct SSETraits {
     using VecType = __m128i;
     using Vec128Type = __m128i;
-    using U16VecType = __m128i;
 
     static VecType initVec() { return _mm_setzero_si128(); }
     static Vec128Type initVec128() { return _mm_setzero_si128(); }
     static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    static VecType u16Load(U16VecType const* x) { return _mm_cvtepu16_epi32(_mm_loadl_epi64(x)); }
+    static VecType load(uint16_t const* x) { return _mm_cvtepu16_epi32(_mm_loadl_epi64(reinterpret_cast<__m128i const*>(x))); }
+    static VecType load(uint8_t const* x) { return _mm_cvtepu8_epi32(_mm_set_epi32(0, 0, 0, *reinterpret_cast<uint32_t const*>(x))); }
     static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
     static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
     static VecType vecMul(VecType x, VecType y) { return _mm_mullo_epi32(x, y); }
@@ -48,7 +46,8 @@ struct SSETraits {
 
 #include "polyhash/attributeSensitiveFunctions.inc"
 
-    static int polyHashUnalignedUnrollUpTo8(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo8(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll2<SSETraits>(n, str, res, &b8[0], &p64[56]);
@@ -57,7 +56,8 @@ struct SSETraits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo16(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll4<SSETraits>(n, str, res, &b16[0], &p64[48]);
@@ -75,12 +75,12 @@ struct SSETraits {
 struct AVX2Traits {
     using VecType = __m256i;
     using Vec128Type = __m128i;
-    using U16VecType = __m128i;
 
     static VecType initVec() { return _mm256_setzero_si256(); }
     static Vec128Type initVec128() { return _mm_setzero_si128(); }
     static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    static VecType u16Load(U16VecType const* x) { return _mm256_cvtepu16_epi32(*x); }
+    static VecType load(uint16_t const* x) { return _mm256_cvtepu16_epi32(*reinterpret_cast<__m128i const*>(x)); }
+    static VecType load(uint8_t const* x) { return _mm256_cvtepu8_epi32(_mm_loadl_epi64(reinterpret_cast<__m128i const*>(x))); }
     static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
     static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
     static VecType vecMul(VecType x, VecType y) { return _mm256_mullo_epi32(x, y); }
@@ -99,7 +99,8 @@ struct AVX2Traits {
 
 #include "polyhash/attributeSensitiveFunctions.inc"
 
-    static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo16(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll2<AVX2Traits>(n, str, res, &b16[0], &p64[48]);
@@ -109,7 +110,8 @@ struct AVX2Traits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo32(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo32(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll4<AVX2Traits>(n, str, res, &b32[0], &p64[32]);
@@ -120,7 +122,8 @@ struct AVX2Traits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo64(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo64(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll8<AVX2Traits>(n, str, res, &b64[0], &p64[0]);
@@ -146,7 +149,8 @@ struct AVX2Traits {
 
 }
 
-int polyHash_x86(int length, uint16_t const* str) {
+template <typename UnitType>
+int polyHash(int length, UnitType const* str) {
     if (!initialized) {
         initialized = true;
         sseSupported = __builtin_cpu_supports("sse4.1");
@@ -173,5 +177,3 @@ int polyHash_x86(int length, uint16_t const* str) {
         res = res * 31 + str[i];
     return res;
 }
-
-#endif
