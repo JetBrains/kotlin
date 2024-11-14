@@ -17,13 +17,13 @@ class SourceMapBuilderConsumer(
     private val provideExternalModuleContent: Boolean
 ) : SourceLocationConsumer {
 
-    private val sourceStack = mutableListOf<Any?>()
+    private val sourceStack = mutableListOf<JsLocationWithSource?>()
 
     override fun newLine() {
         mappingConsumer.newLine()
     }
 
-    override fun pushSourceInfo(info: Any?) {
+    override fun pushSourceInfo(info: JsLocationWithSource?) {
         sourceStack.add(info)
         addMapping(info)
     }
@@ -33,34 +33,32 @@ class SourceMapBuilderConsumer(
         addMapping(sourceStack.lastOrNull())
     }
 
-    private fun addMapping(sourceInfo: Any?) {
-        when (sourceInfo) {
-            null -> mappingConsumer.addEmptyMapping()
-            is JsLocationWithSource -> {
-                val contentSupplier = if (provideExternalModuleContent) sourceInfo.sourceProvider else {
-                    { null }
-                }
-                val sourceFile = File(sourceInfo.file)
-                val absFile = if (sourceFile.isAbsolute) sourceFile else File(sourceBaseDir, sourceInfo.file)
-                val path = if (absFile.isAbsolute) {
-                    try {
-                        pathResolver.getPathRelativeToSourceRoots(absFile)
-                    } catch (e: IOException) {
-                        sourceInfo.file
-                    }
-                } else {
-                    sourceInfo.file
-                }
-                mappingConsumer.addMapping(
-                    path,
-                    sourceInfo.fileIdentity,
-                    contentSupplier,
-                    sourceInfo.startLine,
-                    sourceInfo.startChar,
-                    sourceInfo.name
-                )
-            }
-            else -> {}
+    private fun addMapping(sourceInfo: JsLocationWithSource?) {
+        if (sourceInfo == null) {
+            mappingConsumer.addEmptyMapping()
+            return
         }
+        val contentSupplier = if (provideExternalModuleContent) sourceInfo.sourceProvider else {
+            { null }
+        }
+        val sourceFile = File(sourceInfo.file)
+        val absFile = if (sourceFile.isAbsolute) sourceFile else File(sourceBaseDir, sourceInfo.file)
+        val path = if (absFile.isAbsolute) {
+            try {
+                pathResolver.getPathRelativeToSourceRoots(absFile)
+            } catch (e: IOException) {
+                sourceInfo.file
+            }
+        } else {
+            sourceInfo.file
+        }
+        mappingConsumer.addMapping(
+            path,
+            sourceInfo.fileIdentity,
+            contentSupplier,
+            sourceInfo.startLine,
+            sourceInfo.startChar,
+            sourceInfo.name
+        )
     }
 }

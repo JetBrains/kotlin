@@ -558,7 +558,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitExpressionStatement(@NotNull JsExpressionStatement x) {
-        Object source = x.getSource();
+        JsLocationWithSource source = x.getSource();
         if (source == null && !(x.getExpression() instanceof JsFunction)) {
             source = x.getExpression().getSource();
         }
@@ -1465,7 +1465,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.newLine();
     }
 
-    private void pushSourceInfo(Object location) {
+    private void pushSourceInfo(JsLocationWithSource location) {
         p.maybeIndent();
         sourceInfoStack.add(location);
         if (location != null) {
@@ -1505,7 +1505,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
-    private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable Object defaultClosingBraceLocation) {
+    private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable JsLocationWithSource defaultClosingBraceLocation) {
         if (!lineBreakAfterBlock) {
             finalNewline = false;
             lineBreakAfterBlock = true;
@@ -1585,7 +1585,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             sourceLocationConsumer.popSourceInfo();
 
-            Object closingBraceLocation = x.getClosingBraceSource();
+            JsLocationWithSource closingBraceLocation = x.getClosingBraceSource();
             if (closingBraceLocation == null)
                 closingBraceLocation = defaultClosingBraceLocation;
 

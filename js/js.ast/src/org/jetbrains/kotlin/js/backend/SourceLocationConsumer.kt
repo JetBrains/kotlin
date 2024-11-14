@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.js.backend
 
+import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource
+
 interface SourceLocationConsumer {
     fun newLine()
 
-    fun pushSourceInfo(info: Any?)
+    fun pushSourceInfo(info: JsLocationWithSource?)
 
     fun popSourceInfo()
 }
