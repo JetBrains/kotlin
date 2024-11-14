@@ -13,3 +13,7 @@ enum class FirValueParameterKind {
     //  Afterwards, the enum can be replaced with a bool flag `isContextParameter`.
     LegacyContextReceiver,
 }
+
+fun FirValueParameter.isLegacyContextReceiver(): Boolean {
+    return valueParameterKind == FirValueParameterKind.LegacyContextReceiver
+}

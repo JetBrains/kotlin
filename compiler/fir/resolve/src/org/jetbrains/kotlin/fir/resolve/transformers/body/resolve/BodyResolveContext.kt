@@ -269,7 +269,7 @@ class BodyResolveContext(
         val contextParameters = mutableListOf<ContextParameterValue>()
 
         owner.contextReceivers.forEach { receiver ->
-            if (receiver.valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+            if (receiver.isLegacyContextReceiver()) {
                 contextReceivers += ContextReceiverValue(
                     receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
                 )
@@ -766,7 +766,7 @@ class BodyResolveContext(
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
                 for (contextParameter in function.contextReceivers) {
-                    if (contextParameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
+                    if (!contextParameter.isLegacyContextReceiver()) {
                         storeVariable(contextParameter, holder.session)
                     }
                 }
@@ -903,7 +903,7 @@ class BodyResolveContext(
         session: FirSession,
         f: () -> T
     ): T {
-        if ((!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) && valueParameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
+        if ((!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) && !valueParameter.isLegacyContextReceiver()) {
             storeVariable(valueParameter, session)
         }
         return withContainer(valueParameter, f)

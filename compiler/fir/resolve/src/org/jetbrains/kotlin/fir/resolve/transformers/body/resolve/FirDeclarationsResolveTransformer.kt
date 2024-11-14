@@ -713,7 +713,7 @@ open class FirDeclarationsResolveTransformer(
             }
 
             for (parameter in owner.contextReceivers) {
-                if (parameter.valueParameterKind != FirValueParameterKind.LegacyContextReceiver) {
+                if (!parameter.isLegacyContextReceiver()) {
                     context.storeVariable(parameter, session)
                 }
             }

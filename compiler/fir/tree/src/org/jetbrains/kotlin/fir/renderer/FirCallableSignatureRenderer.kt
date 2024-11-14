@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
+import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.classId
@@ -38,7 +38,7 @@ open class FirCallableSignatureRenderer {
         annotationRenderer?.render(valueParameter)
         modifierRenderer?.renderModifiers(valueParameter)
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
-            if (valueParameter.valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+            if (valueParameter.isLegacyContextReceiver()) {
                 val typeName = when (val typeRef = valueParameter.returnTypeRef) {
                     is FirUserTypeRef -> typeRef.qualifier.lastOrNull()?.name
                     is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName

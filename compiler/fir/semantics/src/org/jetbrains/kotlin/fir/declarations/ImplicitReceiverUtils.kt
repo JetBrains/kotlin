@@ -58,7 +58,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
 
     val thisReceiver = ImplicitDispatchReceiverValue(owner.symbol, defaultType, session, scopeSession)
     val contextReceivers = (owner as? FirRegularClass)?.contextReceivers?.mapNotNull { receiver ->
-        if (receiver.valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+        if (receiver.isLegacyContextReceiver()) {
             ContextReceiverValue(
                 receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, session, scopeSession,
             )
