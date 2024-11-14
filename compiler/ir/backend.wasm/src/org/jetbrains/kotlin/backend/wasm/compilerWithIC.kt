@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile

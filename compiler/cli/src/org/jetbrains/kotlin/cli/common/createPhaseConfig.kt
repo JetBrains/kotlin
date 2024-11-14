@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector

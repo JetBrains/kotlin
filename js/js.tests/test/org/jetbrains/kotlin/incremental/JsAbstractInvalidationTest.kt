@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices

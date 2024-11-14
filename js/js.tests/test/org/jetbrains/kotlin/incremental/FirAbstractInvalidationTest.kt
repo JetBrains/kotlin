@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.collectSources

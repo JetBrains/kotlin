@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
