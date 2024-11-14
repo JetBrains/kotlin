@@ -976,6 +976,36 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("isCheckAndVariance.kt")
+    public void testIsCheckAndVariance() {
+      runTest("compiler/testData/diagnostics/tests/isCheckAndVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("isCheckAndVarianceWithRecursiveBound.kt")
+    public void testIsCheckAndVarianceWithRecursiveBound() {
+      runTest("compiler/testData/diagnostics/tests/isCheckAndVarianceWithRecursiveBound.kt");
+    }
+
+    @Test
+    @TestMetadata("isCheckAndVarianceWithSmartcast.kt")
+    public void testIsCheckAndVarianceWithSmartcast() {
+      runTest("compiler/testData/diagnostics/tests/isCheckAndVarianceWithSmartcast.kt");
+    }
+
+    @Test
+    @TestMetadata("isCheckAndVarianceWithSubRec.kt")
+    public void testIsCheckAndVarianceWithSubRec() {
+      runTest("compiler/testData/diagnostics/tests/isCheckAndVarianceWithSubRec.kt");
+    }
+
+    @Test
+    @TestMetadata("isCheckForVarianceWithTwoSideBoundedVariable.kt")
+    public void testIsCheckForVarianceWithTwoSideBoundedVariable() {
+      runTest("compiler/testData/diagnostics/tests/isCheckForVarianceWithTwoSideBoundedVariable.kt");
+    }
+
+    @Test
     @TestMetadata("IsExpressions.kt")
     public void testIsExpressions() {
       runTest("compiler/testData/diagnostics/tests/IsExpressions.kt");
