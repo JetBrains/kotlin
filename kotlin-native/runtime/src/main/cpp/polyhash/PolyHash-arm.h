@@ -4,17 +4,7 @@
  */
 
 #include "polyhash/common.h"
-#include "polyhash/arm.h"
-
-#if defined(__arm__) or defined(__aarch64__)
-
-#ifndef __ARM_NEON
-
-int polyHash_arm(int length, uint16_t const* str) {
-    return polyHash_naive(length, str);
-}
-
-#else
+#include "polyhash/PolyHash.h"
 
 #include <arm_neon.h>
 
@@ -29,12 +19,12 @@ alignas(32) constexpr auto b4  = RepeatingPowers<8>(31, 4);  // [base^4,  base^4
 struct NeonTraits {
     using VecType = uint32x4_t;
     using Vec128Type = uint32x4_t;
-    using U16VecType = uint16x4_t;
 
     ALWAYS_INLINE static VecType initVec() { return vdupq_n_u32(0); }
     ALWAYS_INLINE static Vec128Type initVec128() { return vdupq_n_u32(0); }
     ALWAYS_INLINE static int vec128toInt(Vec128Type x) { return vgetq_lane_u32(x, 0); }
-    ALWAYS_INLINE static VecType u16Load(U16VecType const* x) { return vmovl_u16(*x); }
+    ALWAYS_INLINE static VecType load(uint16_t const* x) { return vmovl_u16(vld1_u16(x)); }
+    ALWAYS_INLINE static VecType load(uint8_t const* x) { return vmovl_u16(vget_low_u16(vmovl_u8(vcreate_u8(*reinterpret_cast<uint32_t const*>(x))))); }
     ALWAYS_INLINE static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return vmulq_u32(x, y); }
     ALWAYS_INLINE static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return vaddq_u32(x, y); }
     ALWAYS_INLINE static VecType vecMul(VecType x, VecType y) { return vmulq_u32(x, y); }
@@ -57,7 +47,8 @@ struct NeonTraits {
 
 #include "polyhash/attributeSensitiveFunctions.inc"
 
-    static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo16(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll4<NeonTraits>(n, str, res, &b16[0], &p32[16]);
@@ -67,7 +58,8 @@ struct NeonTraits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo32(int n, uint16_t const* str) {
+    template <typename UnitType>
+    static int polyHashUnalignedUnrollUpTo32(int n, UnitType const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll8<NeonTraits>(n, str, res, &b32[0], &p32[0]);
@@ -96,7 +88,8 @@ struct NeonTraits {
 
 }
 
-int polyHash_arm(int length, uint16_t const* str) {
+template <typename UnitType>
+int polyHash(int length, UnitType const* str) {
     if (!neonSupported) {
         // Vectorization is not supported.
         return polyHash_naive(length, str);
@@ -111,7 +104,3 @@ int polyHash_arm(int length, uint16_t const* str) {
         res = res * 31 + str[i];
     return res;
 }
-
-#endif // __ARM_NEON
-
-#endif // defined(__arm__) or defined(__aarch64__)

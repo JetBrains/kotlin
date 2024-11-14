@@ -531,10 +531,9 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
         return *cached;
     }
     KInt result = encodingAware(thiz, [](auto thiz) {
-        if constexpr (thiz.encoding == StringEncoding::kUTF16) {
+        if constexpr (thiz.encoding == StringEncoding::kUTF16 || thiz.encoding == StringEncoding::kLatin1) {
             return polyHash(thiz.sizeInUnits(), thiz.begin().ptr());
         } else {
-            // TODO: faster specific implementations
             return polyHash_naive(thiz.begin(), thiz.end());
         }
     });
