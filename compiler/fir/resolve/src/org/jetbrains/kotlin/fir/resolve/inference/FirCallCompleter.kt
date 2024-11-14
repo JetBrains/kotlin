@@ -170,7 +170,7 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType || resolutionMode.arrayLiteralPosition == ArrayLiteralPosition.AnnotationArgument) return
-        val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
+        val expectedType = resolutionMode.expectedType.fullyExpandedType(session)
 
         val system = candidate.system
         when {

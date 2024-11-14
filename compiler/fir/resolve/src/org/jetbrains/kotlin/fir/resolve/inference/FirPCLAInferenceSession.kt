@@ -242,7 +242,7 @@ class FirPCLAInferenceSession(
             is ResolutionMode.WithExpectedType -> when {
                 // For assignments like myVarContainingTV = SomeCallWithNonTrivialInference(...)
                 // We should integrate even simple calls into the PCLA tree, too
-                callInfo.resolutionMode.expectedTypeRef.coneType.containsNotFixedTypeVariables() -> return false
+                callInfo.resolutionMode.expectedType.containsNotFixedTypeVariables() -> return false
             }
             is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution ->
                 error("$this call should not be analyzed in ${callInfo.resolutionMode}")

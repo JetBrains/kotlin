@@ -148,7 +148,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 //    val myList: MutableList<String> = this
                 // }
                 // We need to add a constraint `MutableList<Ev> <: MutableList<String>`
-                data.expectedType?.coneTypeOrNull?.let { expectedType ->
+                data.expectedType?.let { expectedType ->
                     context.inferenceSession.addSubtypeConstraintIfCompatible(
                         lowerType = resultType,
                         upperType = expectedType,
@@ -554,7 +554,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
      */
     private fun transformCallArgumentsInsideAnnotationContext(call: FirFunctionCall, data: ResolutionMode.WithExpectedType) {
         // Special handling of nested calls inside annotation calls/default values.
-        val expectedType = data.expectedTypeRef.coneType
+        val expectedType = data.expectedType
         if (expectedType.fullyExpandedType(session).toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS) {
             // Annotation calls inside annotation calls are treated similar to regular annotation calls,
             // mainly so that array literals are resolved with the correct expected type.
@@ -659,7 +659,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return if (approximationIsNeeded) {
             integerOperatorCall.transformSingle<FirFunctionCall, ConeKotlinType?>(
                 components.integerLiteralAndOperatorApproximationTransformer,
-                resolutionMode.expectedType?.coneTypeSafe()
+                resolutionMode.expectedType
             )
         } else {
             integerOperatorCall
@@ -690,9 +690,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
-        if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnitOrFlexibleUnit == true) {
+        if (data is ResolutionMode.WithExpectedType && data.expectedType.isUnitOrFlexibleUnit) {
             // Unit-coercion
-            block.resultType = data.expectedTypeRef.coneType
+            block.resultType = data.expectedType
         } else {
             // Bottom-up propagation: from the return type of the last expression in the block to the block type
             block.writeResultType(session)
@@ -1300,7 +1300,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     isTypePresent = { it.lookupTag.toSymbol(session) != null },
                     isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
-                val expectedTypeRef = data.expectedType
+                val expectedType = data.expectedType
                 when {
                     expressionType is ConeErrorType -> {
                         expressionType
@@ -1313,9 +1313,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
                         ConeIntegerConstantOperatorTypeImpl(expressionType.isUnsigned, isMarkedNullable = false)
                     }
-                    expectedTypeRef != null -> {
+                    data is ResolutionMode.WithExpectedType ||
+                            data is ResolutionMode.ContextIndependent ||
+                            data is ResolutionMode.AssignmentLValue ||
+                            data is ResolutionMode.ReceiverResolution -> {
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
-                        val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
+                        val coneType = expectedType?.fullyExpandedType(session)
                         val approximatedType = expressionType.getApproximatedType(coneType)
                         literalExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind)
                         approximatedType
@@ -1805,13 +1808,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
                     arrayLiteral.transformChildren(
                         transformer,
-                        data.expectedType?.coneTypeOrNull?.arrayElementType()?.let { withExpectedType(it) }
+                        data.expectedType.arrayElementType()?.let { withExpectedType(it) }
                             ?: ResolutionMode.ContextDependent,
                     )
 
                     val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
                         arrayLiteral,
-                        data.expectedTypeRef,
+                        data.expectedType,
                         resolutionContext,
                         data,
                     )
@@ -1825,7 +1828,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // because arguments need to have a type during resolution of the synthetic call.
                     // We remove the type so that it will be set during completion to the CST of the arguments.
                     arrayLiteral.replaceConeTypeOrNull(
-                        (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.coneType
+                        (data as? ResolutionMode.WithExpectedType)?.expectedType
                             ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                     )
                     val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(

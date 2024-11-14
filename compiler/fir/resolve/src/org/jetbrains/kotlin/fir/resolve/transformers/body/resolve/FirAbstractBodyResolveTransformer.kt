@@ -90,9 +90,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
 
-    val ResolutionMode.expectedType: FirTypeRef?
-        get() = expectedType(components)
-
     open class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,

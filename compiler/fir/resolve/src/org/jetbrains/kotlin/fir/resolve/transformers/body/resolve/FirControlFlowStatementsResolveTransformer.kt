@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
@@ -247,7 +248,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         elvisExpression.transformRhs(
             transformer,
             withExpectedType(
-                data.expectedType?.coneTypeSafe<ConeKotlinType>(),
+                data.expectedType,
                 mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
             )
         )
@@ -302,7 +303,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     private fun computeResolutionModeForElvisLHS(
         data: ResolutionMode,
     ): ResolutionMode {
-        val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
+        val expectedType = data.expectedType
         val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
 
         val isObsoleteCompilerMode =

@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -1161,7 +1160,7 @@ open class FirDeclarationsResolveTransformer(
                 transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
             is ResolutionMode.WithExpectedType -> {
-                transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, data.expectedTypeRef, data)
+                transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, data.expectedType, data)
             }
 
 
@@ -1169,7 +1168,7 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.AssignmentLValue,
             is ResolutionMode.ReceiverResolution,
             is ResolutionMode.Delegate,
-            -> transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, FirImplicitTypeRefImplWithoutSource, data)
+            -> transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, null, data)
             is ResolutionMode.WithStatus -> error("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }
     }
@@ -1193,13 +1192,13 @@ open class FirDeclarationsResolveTransformer(
 
     private fun transformAnonymousFunctionWithExpectedType(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
-        expectedTypeRef: FirTypeRef,
+        expectedType: ConeKotlinType?,
         data: ResolutionMode
     ): FirAnonymousFunction {
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
-        val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
+        val resolvedLambdaAtom = expectedType?.let {
             extractLambdaInfoFromFunctionType(
-                it.coneType,
+                it,
                 anonymousFunctionExpression,
                 anonymousFunction,
                 returnTypeVariable = null,
@@ -1211,7 +1210,7 @@ open class FirDeclarationsResolveTransformer(
         var lambda = anonymousFunction
         val valueParameters = when {
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
-            else -> obtainValueParametersFromExpectedType(expectedTypeRef.coneTypeSafe(), lambda)
+            else -> obtainValueParametersFromExpectedType(expectedType, lambda)
         }
 
         lambda.replaceReceiverParameter(
@@ -1351,15 +1350,10 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode,
         shouldResolveEverything: Boolean,
     ): FirBackingField = whileAnalysing(session, backingField) {
-        val propertyType = data.expectedType
         val initializerData = when {
             backingField.returnTypeRef is FirResolvedTypeRef -> withExpectedType(backingField.returnTypeRef)
-
-            propertyType is FirResolvedTypeRef ->
-                ResolutionMode.WithExpectedType(propertyType, shouldBeStrictlyEnforced = false)
-
-            propertyType != null -> ResolutionMode.ContextIndependent
-
+            data is ResolutionMode.WithExpectedType -> data.copy(shouldBeStrictlyEnforced = false)
+            data is ResolutionMode.ContextIndependent -> ResolutionMode.ContextIndependent
             else -> ResolutionMode.ContextDependent
         }
         backingField.transformInitializer(transformer, initializerData)
@@ -1373,8 +1367,10 @@ open class FirDeclarationsResolveTransformer(
         ) {
             return backingField
         }
+
+        @OptIn(ResolutionMode.WithExpectedType.ExpectedTypeRefAccess::class)
         val inferredType = if (backingField is FirDefaultPropertyBackingField) {
-            propertyType
+            (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef
         } else {
             backingField.initializer?.unwrapSmartcastExpression()?.resolvedType?.toFirResolvedTypeRef()
         }

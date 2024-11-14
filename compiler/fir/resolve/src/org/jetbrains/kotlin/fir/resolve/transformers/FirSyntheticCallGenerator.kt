@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -192,12 +192,12 @@ class FirSyntheticCallGenerator(
 
     fun generateSyntheticArrayOfCall(
         arrayLiteral: FirArrayLiteral,
-        expectedTypeRef: FirTypeRef,
+        expectedType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
         val argumentList = arrayLiteral.argumentList
-        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
+        val arrayOfSymbol = calculateArrayOfSymbol(expectedType)
         return buildFunctionCall {
             this.argumentList = argumentList
             calleeReference = arrayOfSymbol?.let {
@@ -221,8 +221,8 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun calculateArrayOfSymbol(expectedTypeRef: FirTypeRef): FirNamedFunctionSymbol? {
-        val coneType = expectedTypeRef.coneType.fullyExpandedType(session)
+    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
+        val coneType = expectedType.fullyExpandedType(session)
         val arrayCallName = when {
             coneType.isPrimitiveArray -> {
                 val arrayElementClassId = coneType.arrayElementType()!!.classId
@@ -248,22 +248,22 @@ class FirSyntheticCallGenerator(
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
         callableReferenceAccess: FirCallableReferenceAccess,
-        expectedTypeRef: FirTypeRef?,
+        expectedType: ConeKotlinType?,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirCallableReferenceAccess {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
-        val parameterTypeRef =
+        val parameterType =
             when {
-                expectedTypeRef is FirResolvedTypeRef && !expectedTypeRef.coneType.isUnitOrFlexibleUnit -> expectedTypeRef
-                else -> context.session.builtinTypes.anyType
+                expectedType != null && !expectedType.isUnitOrFlexibleUnit -> expectedType
+                else -> context.session.builtinTypes.anyType.coneType
             }
 
         var reference = generateCalleeReferenceWithCandidate(
             callableReferenceAccess,
             argumentList,
-            parameterTypeRef,
+            parameterType,
             context,
             resolutionMode,
         )
@@ -281,7 +281,7 @@ class FirSyntheticCallGenerator(
                 generateCalleeReferenceWithCandidate(
                     callableReferenceAccess,
                     argumentList,
-                    context.session.builtinTypes.anyType,
+                    context.session.builtinTypes.anyType.coneType,
                     context,
                     resolutionMode,
                 )
@@ -343,7 +343,7 @@ class FirSyntheticCallGenerator(
     private fun generateCalleeReferenceWithCandidate(
         callableReferenceAccess: FirCallableReferenceAccess,
         argumentList: FirArgumentList,
-        parameterTypeRef: FirResolvedTypeRef,
+        parameterType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirNamedReferenceWithCandidate {
@@ -352,7 +352,7 @@ class FirSyntheticCallGenerator(
         // fun accept(p: <parameterTypeRef>): Unit
         val function =
             generateMemberFunction(functionSymbol, callableId.callableName, returnType = context.session.builtinTypes.unitType).apply {
-                valueParameters += parameterTypeRef.toValueParameter("reference", functionSymbol, isVararg = false)
+                valueParameters += parameterType.toValueParameter("reference", functionSymbol, isVararg = false)
             }.build()
 
         return generateCalleeReferenceWithCandidate(
@@ -426,7 +426,7 @@ class FirSyntheticCallGenerator(
     private fun generateSyntheticSelectTypeParameter(
         functionSymbol: FirSyntheticFunctionSymbol,
         isNullableBound: Boolean = true,
-    ): Pair<FirTypeParameter, FirResolvedTypeRef> {
+    ): Pair<FirTypeParameter, ConeKotlinType> {
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
             buildTypeParameter {
@@ -446,8 +446,8 @@ class FirSyntheticCallGenerator(
                 }
             }
 
-        val typeParameterTypeRef = buildResolvedTypeRef { coneType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false) }
-        return typeParameter to typeParameterTypeRef
+        val typeParameterType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false)
+        return typeParameter to typeParameterType
     }
 
 
@@ -458,15 +458,14 @@ class FirSyntheticCallGenerator(
 
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
-        val argumentType = buildResolvedTypeRef { coneType = returnType.coneType.createArrayType() }
         val typeArgument = buildTypeProjectionWithVariance {
-            typeRef = returnType
+            typeRef = returnType.toFirResolvedTypeRef()
             variance = Variance.INVARIANT
         }
 
         return generateMemberFunction(functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter("branches", functionSymbol, isVararg = true)
+            valueParameters += returnType.createArrayType().toValueParameter("branches", functionSymbol, isVararg = true)
         }.build()
     }
 
@@ -474,27 +473,21 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterTypeRef) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = true)
+        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = true)
 
         return generateMemberFunction(
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
-            returnType = typeParameterTypeRef.withReplacedConeType(
-                typeParameterTypeRef.coneType.makeConeTypeDefinitelyNotNullOrNotNull(
-                    session.typeContext,
-                    // No checks are necessary because we're sure that the type parameter has default (nullable) upper bound.
-                    // At the same time, not having `avoidComprehensiveCheck = true` might lead to plugin initialization issues.
-                    avoidComprehensiveCheck = true,
-                )
-            ),
+            returnType = typeParameterType.makeConeTypeDefinitelyNotNullOrNotNull(
+                session.typeContext,
+                // No checks are necessary because we're sure that the type parameter has default (nullable) upper bound.
+                // At the same time, not having `avoidComprehensiveCheck = true` might lead to plugin initialization issues.
+                avoidComprehensiveCheck = true,
+            ).toFirResolvedTypeRef(),
         ).apply {
             typeParameters += typeParameter
-
-            val valueParameterTypeRef = buildResolvedTypeRef {
-                coneType = typeParameterTypeRef.coneType.withNullability(nullable = true, session.typeContext)
-            }
-
-            valueParameters += valueParameterTypeRef.toValueParameter("arg", functionSymbol)
+            valueParameters += typeParameterType
+                .withNullability(nullable = true, session.typeContext).toValueParameter("arg", functionSymbol)
         }.build()
     }
 
@@ -508,15 +501,9 @@ class FirSyntheticCallGenerator(
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS_NOT_NULL)
         val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
-        val leftArgumentType = buildResolvedTypeRef {
-            coneType = rightArgumentType.coneTypeUnsafe<ConeKotlinType>().withNullability(nullable = true, session.typeContext)
-        }
-
-        val returnType = rightArgumentType.resolvedTypeFromPrototype(
-            rightArgumentType.coneType.withAttributes(
-                ConeAttributes.create(listOf(CompilerConeAttributes.Exact)),
-            )
-        )
+        val returnType = rightArgumentType
+            .withAttributes(ConeAttributes.create(listOf(CompilerConeAttributes.Exact)))
+            .toFirResolvedTypeRef()
 
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
@@ -529,8 +516,11 @@ class FirSyntheticCallGenerator(
             typeArgument.typeRef
         ).apply {
             typeParameters += typeParameter
-            valueParameters += leftArgumentType.toValueParameter("x", functionSymbol)
-            valueParameters += rightArgumentType.toValueParameter("y", functionSymbol)
+            valueParameters += rightArgumentType
+                .withNullability(nullable = true, session.typeContext)
+                .toValueParameter("x", functionSymbol)
+            valueParameters += rightArgumentType
+                .toValueParameter("y", functionSymbol)
         }.build()
     }
 
@@ -548,7 +538,7 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun FirResolvedTypeRef.toValueParameter(
+    private fun ConeKotlinType.toValueParameter(
         nameAsString: String, functionSymbol: FirFunctionSymbol<*>, isVararg: Boolean = false
     ): FirValueParameter {
         val name = Name.identifier(nameAsString)
@@ -557,7 +547,7 @@ class FirSyntheticCallGenerator(
             containingDeclarationSymbol = functionSymbol
             origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.name = name
-            returnTypeRef = this@toValueParameter
+            returnTypeRef = this@toValueParameter.toFirResolvedTypeRef()
             isCrossinline = false
             isNoinline = false
             this.isVararg = isVararg

@@ -24,7 +24,9 @@ sealed class ResolutionMode(
         companion object : ReceiverResolution(forCallableReference = false)
     }
 
+    @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
     class WithExpectedType(
+        @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
@@ -53,10 +55,19 @@ sealed class ResolutionMode(
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
 
+        @RequiresOptIn(
+            "Accessing 'expectedTypeRef' is generally not necessary unless the caller needs access to its source. " +
+                    "Prefer using 'expectedType' instead."
+        )
+        annotation class ExpectedTypeRefAccess
+
+        val expectedType: ConeKotlinType get() = expectedTypeRef.coneType
+
         fun copy(
             expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
             mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
             forceFullCompletion: Boolean = this.forceFullCompletion,
+            shouldBeStrictlyEnforced: Boolean = this.shouldBeStrictlyEnforced,
         ): WithExpectedType = WithExpectedType(
             expectedTypeRef = expectedTypeRef,
             mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
@@ -119,13 +130,11 @@ sealed class ResolutionMode(
     }
 }
 
-fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? = when (this) {
-    is ResolutionMode.WithExpectedType -> expectedTypeRef.takeIf { !this.fromCast }
-    is ResolutionMode.ContextIndependent,
-    is ResolutionMode.AssignmentLValue,
-    is ResolutionMode.ReceiverResolution -> components.noExpectedType
-    else -> null
-}
+val ResolutionMode.expectedType: ConeKotlinType?
+    get() = when (this) {
+        is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast }
+        else -> null
+    }
 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,
