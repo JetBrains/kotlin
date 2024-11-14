@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
 import org.junit.Assert
 import java.io.File
@@ -221,7 +222,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             } finally {
                 rawFiles.clear()
                 unitTestDescriptions.clear()
-                Disposer.dispose(disposable)
+                disposeRootInWriteAction(disposable)
             }
         }
 

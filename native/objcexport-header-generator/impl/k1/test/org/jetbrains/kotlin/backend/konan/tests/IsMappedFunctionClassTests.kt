@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.createKotlinCoreEnvironment
 import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
 import org.jetbrains.kotlin.backend.konan.testUtils.getTopLevelFunExtensionType
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -37,6 +38,6 @@ class IsMappedFunctionClassTests : InlineSourceTestEnvironment {
 
     @AfterEach
     fun dispose() {
-        Disposer.dispose(testDisposable)
+        disposeRootInWriteAction(testDisposable)
     }
 }

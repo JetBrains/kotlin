@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.test
 
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.AnalysisHandler
-import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.IOException
 
@@ -35,7 +34,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                 println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
             }
             beforeDispose(testConfiguration)
-            Disposer.dispose(testConfiguration.rootDisposable)
+            disposeRootInWriteAction(testConfiguration.rootDisposable)
         }
     }
 

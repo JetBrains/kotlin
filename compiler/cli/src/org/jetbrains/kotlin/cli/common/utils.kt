@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -131,3 +135,13 @@ fun <PathProvider : Any> getLibraryFromHome(
     DeprecationLevel.ERROR
 )
 fun MessageCollector.toLogger(): Logger = toLoggerNew()
+
+fun disposeRootInWriteAction(disposable: Disposable) {
+    if (ApplicationManager.getApplication() != null) {
+        runWriteAction {
+            Disposer.dispose(disposable)
+        }
+    } else {
+        Disposer.dispose(disposable)
+    }
+}

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.getClassIfCategory
 import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertEquals
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -122,7 +123,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @AfterEach
     fun dispose() {
-        Disposer.dispose(testDisposable)
+        disposeRootInWriteAction(testDisposable)
     }
 }
 

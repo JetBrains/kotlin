@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -45,7 +46,7 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
     override fun afterEach(context: ExtensionContext) {
         val disposable = context.getStore(namespace).get(disposableKey, Disposable::class.java) ?: return
-        Disposer.dispose(disposable)
+        disposeRootInWriteAction(disposable)
     }
 }
 

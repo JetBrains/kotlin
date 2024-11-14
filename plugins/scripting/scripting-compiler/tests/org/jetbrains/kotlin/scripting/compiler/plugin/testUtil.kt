@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -255,7 +256,7 @@ internal fun <R> withDisposable(body: (Disposable) -> R) {
     try {
         body(disposable)
     } finally {
-        Disposer.dispose(disposable)
+        disposeRootInWriteAction(disposable)
     }
 }
 

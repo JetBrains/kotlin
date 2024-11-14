@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -44,7 +45,7 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     @AfterEach
     fun dispose() {
-        Disposer.dispose(testDisposable)
+        disposeRootInWriteAction(testDisposable)
     }
 
     @Test
