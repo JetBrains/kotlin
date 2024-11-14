@@ -37,8 +37,21 @@ fun NonInlined(%composer: Composer?, %changed: Int) {
 }
 @Composable
 fun Inlined(%composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Inlined):Test.kt")
-  val b = ComposableSingletons%TestKt.lambda%1918458719
+  sourceInformationMarkerStart(%composer, <>, "CC(Inlined)<{}>:Test.kt")
+  val b = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }, %composer, 0b00110110)
   sourceInformationMarkerEnd(%composer)
 }
 internal object ComposableSingletons%TestKt {

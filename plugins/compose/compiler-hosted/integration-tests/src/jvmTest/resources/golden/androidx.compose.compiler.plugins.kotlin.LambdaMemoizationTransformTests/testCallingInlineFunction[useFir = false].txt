@@ -62,8 +62,21 @@ fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: I
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<Box>:Test.kt")
-  val a = ComposableSingletons%TestKt.lambda%1624704495
+  sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<{>,<Box>:Test.kt")
+  val a = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("a")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }, %composer, 0b00110110)
   Box(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<a()>,<child(...>:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
