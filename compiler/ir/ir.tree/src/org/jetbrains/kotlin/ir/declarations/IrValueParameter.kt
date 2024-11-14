@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -75,6 +76,16 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     // Before that happens, please use `_kind` in lower level code, that might see a not-yet-attached parameter,
     // and non-nullable `kind` otherwise, which e.g. enables exhaustive when.
     internal var _kind: IrParameterKind? = null
+        set(value) {
+            if (field === value) return
+            field = value
+
+            // When a parameter is already in a function, changing its kind e.g. from regular parameter to
+            // a receiver will make it not appear in valueParameters anymore, so it and subsequent parameters
+            // will have different index in that list. We try to update it.
+            // This only affects old-API index, new API is alright.
+            (_parent as? IrFunction)?.reindexValueParameters()
+        }
     var kind: IrParameterKind
         get() = _kind!!
         set(value) {

@@ -260,6 +260,18 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         }
     }
 
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    internal fun reindexValueParameters() {
+        var indexInOldValueParameters = 0
+        for (param in _parameters) {
+            param.indexInOldValueParameters = when (param._kind) {
+                null -> -1
+                IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
+                IrParameterKind.ContextParameter, IrParameterKind.RegularParameter -> indexInOldValueParameters++
+            }
+        }
+    }
+
 
     abstract var body: IrBody?
 
