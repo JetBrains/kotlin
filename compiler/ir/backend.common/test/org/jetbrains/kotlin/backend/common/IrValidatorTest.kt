@@ -358,7 +358,154 @@ class IrValidatorTest {
     }
 
     @Test
-    fun `private declarations can't be referenced from a different file`() {
+    fun `private functions can't be referenced from a different file`() {
+        val file1 = createIrFile("a.kt")
+        val function1 = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+            visibility = DescriptorVisibilities.PRIVATE
+        }
+        file1.addChild(function1)
+        val file2 = createIrFile("b.kt")
+        val function2 = IrFactoryImpl.buildFun {
+            name = Name.identifier("bar")
+            returnType = TestIrBuiltins.unitType
+        }
+        val functionCall =
+            IrCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, function1.symbol,
+                typeArgumentsCount = 0,
+            )
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionCall)
+        function2.body = body
+        file2.addChild(function2)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file2,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CALL 'private final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Unit origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `private classes can't be referenced from a different file`() {
+        val file1 = createIrFile("a.kt")
+        val privateClass = IrFactoryImpl.buildClass {
+            name = Name.identifier("PrivateClass")
+            visibility = DescriptorVisibilities.PRIVATE
+        }
+        val constructor = IrFactoryImpl.createConstructor(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = SpecialNames.INIT,
+            visibility = DescriptorVisibilities.PRIVATE,
+            isInline = false,
+            isExpect = false,
+            returnType = null,
+            symbol = IrConstructorSymbolImpl(),
+            isPrimary = true
+        )
+        privateClass.addChild(constructor)
+        val file2 = createIrFile("b.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val constructorCall = IrConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = constructor.symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+        )
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(constructorCall)
+        function.body = body
+        file1.addChild(privateClass)
+        file2.addChild(function)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file2,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.PrivateClass' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `private properties can't be referenced from a different file`() {
+        val file1 = createIrFile("a.kt")
+        val privateProperty = IrFactoryImpl.buildProperty {
+            name = Name.identifier("privateProperty")
+            visibility = DescriptorVisibilities.PRIVATE
+        }
+        val file2 = createIrFile("b.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val propertyReference = IrPropertyReferenceImplWithShape(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.unitType,
+            symbol = privateProperty.symbol,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false,
+            typeArgumentsCount = 0,
+            field = null,
+            getter = null,
+            setter = null,
+        )
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(propertyReference)
+        function.body = body
+        file1.addChild(privateProperty)
+        file2.addChild(function)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file2,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    PROPERTY_REFERENCE 'private final privateProperty [val] declared in org.sample' field=null getter=null setter=null type=kotlin.Unit origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `private types can't be referenced from a different file`() {
         val file1 = createIrFile("a.kt")
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
