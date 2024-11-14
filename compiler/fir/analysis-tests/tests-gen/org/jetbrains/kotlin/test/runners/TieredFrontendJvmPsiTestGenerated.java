@@ -25801,6 +25801,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
           }
 
           @Test
+          @TestMetadata("nonLambdaLiteralAsArgument.kt")
+          public void testNonLambdaLiteralAsArgument() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nonLambdaLiteralAsArgument.kt");
+          }
+
+          @Test
           @TestMetadata("notFirstStatement.kt")
           public void testNotFirstStatement() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/notFirstStatement.kt");

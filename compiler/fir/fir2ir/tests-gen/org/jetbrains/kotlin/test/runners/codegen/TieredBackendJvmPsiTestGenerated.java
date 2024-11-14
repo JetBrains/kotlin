@@ -20277,12 +20277,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
         @TestDataPath("$PROJECT_ROOT")
         public class Errors {
           @Test
-          @TestMetadata("nonLambdaLiteralAsArgument.kt")
-          public void testNonLambdaLiteralAsArgument() {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nonLambdaLiteralAsArgument.kt");
-          }
-
-          @Test
           @TestMetadata("recursiveContractCustomContractFunction.kt")
           public void testRecursiveContractCustomContractFunction() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/recursiveContractCustomContractFunction.kt");
