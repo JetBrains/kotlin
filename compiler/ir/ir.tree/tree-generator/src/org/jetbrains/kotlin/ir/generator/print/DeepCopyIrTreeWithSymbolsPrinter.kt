@@ -245,7 +245,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 println("dispatchReceiverParameter = ${element.visitorParameterName}.dispatchReceiverParameter?.transform()")
                 println("extensionReceiverParameter = ${element.visitorParameterName}.extensionReceiverParameter?.transform()")
                 println("contextReceiverParametersCount = ${element.visitorParameterName}.contextReceiverParametersCount")
-
+            }
+            if (element.isSubclassOf(IrTree.valueParameter)) {
+                println("_kind = ${element.visitorParameterName}._kind")
             }
             if (element.isSubclassOf(IrTree.file)) {
                 println("module = transformedModule ?: ${element.visitorParameterName}.module")

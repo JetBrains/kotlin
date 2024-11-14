@@ -62,6 +62,7 @@ open class DeepCopyIrTreeWithSymbols(
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             defaultValue = declaration.defaultValue?.transform()
+            _kind = declaration._kind
         }
 
     override fun visitClass(declaration: IrClass): IrClass =
