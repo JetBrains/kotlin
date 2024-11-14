@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -126,7 +127,7 @@ open class FirKaptAnalysisHandlerExtension(
                 }
             }
         } finally {
-            Disposer.dispose(disposable)
+            disposeRootInWriteAction(disposable)
         }
 
         if (!options.mode.runAnnotationProcessing) return true
