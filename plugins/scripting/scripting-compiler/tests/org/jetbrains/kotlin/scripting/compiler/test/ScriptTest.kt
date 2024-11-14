@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.Assert
 import java.io.File
@@ -156,7 +157,7 @@ class ScriptTest : TestCase() {
                 throw t
             }
         } finally {
-            Disposer.dispose(rootDisposable)
+            disposeRootInWriteAction(rootDisposable)
         }
     }
 }

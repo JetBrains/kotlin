@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.Assert
 import java.io.File
 
@@ -69,7 +70,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
             Assert.assertTrue(res)
         } finally {
-            Disposer.dispose(disposable)
+            disposeRootInWriteAction(disposable)
             resetApplicationToNull()
         }
     }
