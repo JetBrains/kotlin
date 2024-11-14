@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeAttributes
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -39,7 +40,7 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
 
     @AfterEach
     fun dispose() {
-        Disposer.dispose(testDisposable)
+        disposeRootInWriteAction(testDisposable)
     }
 
     /**

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 import java.io.IOException
@@ -114,7 +115,7 @@ object KlibTestUtil {
 
             analysisResult.moduleDescriptor
         } finally {
-            Disposer.dispose(rootDisposable)
+            disposeRootInWriteAction(rootDisposable)
         }
 
         serializeCommonModuleToKlib(module, libraryName, klibFile)

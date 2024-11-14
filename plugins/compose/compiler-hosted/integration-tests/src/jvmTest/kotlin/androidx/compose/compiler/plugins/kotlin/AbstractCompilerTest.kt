@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
@@ -79,7 +80,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     @After
     fun disposeTestRootDisposable() {
-        Disposer.dispose(testRootDisposable)
+        disposeRootInWriteAction(testRootDisposable)
     }
 
     protected open fun CompilerConfiguration.updateConfiguration() {}
