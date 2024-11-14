@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.config.phaser.CompilerPhase
+import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+
 fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
     getNamedSubphases().fold(mutableMapOf()) { acc, (_, phase) ->
         check(phase.name !in acc) { "Duplicate phase name '${phase.name}'" }

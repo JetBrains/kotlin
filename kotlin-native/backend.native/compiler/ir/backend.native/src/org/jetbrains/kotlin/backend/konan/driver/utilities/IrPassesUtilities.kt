@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
-import org.jetbrains.kotlin.backend.common.phaser.Action
+import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.getIrDumper
 import org.jetbrains.kotlin.backend.common.phaser.getIrValidator
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext

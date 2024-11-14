@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.konan.driver.utilities
 import kotlinx.cinterop.*
 import llvm.LLVMModuleRef
 import llvm.LLVMPrintModuleToFile
-import org.jetbrains.kotlin.backend.common.phaser.Action
-import org.jetbrains.kotlin.backend.common.phaser.ActionState
+import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.getName

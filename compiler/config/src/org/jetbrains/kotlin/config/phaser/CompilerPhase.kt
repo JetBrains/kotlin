@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.phaser
+package org.jetbrains.kotlin.config.phaser
 
 import org.jetbrains.kotlin.config.LoggingContext
 import kotlin.system.measureTimeMillis
@@ -56,7 +56,7 @@ interface CompilerPhase<in Context : LoggingContext, Input, Output> {
 }
 
 fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
-    phaseConfig: PhaseConfig,
+    phaseConfig: PhaseConfigurationService,
     context: Context,
     input: Input
 ): Output = invoke(phaseConfig, PhaserState(), context, input)

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 /**

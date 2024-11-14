@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.TargetInliner
 import org.jetbrains.kotlin.test.backend.handlers.*

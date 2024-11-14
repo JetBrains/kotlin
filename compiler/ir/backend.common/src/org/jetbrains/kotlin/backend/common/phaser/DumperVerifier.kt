@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.config.phaser.ActionState
+import org.jetbrains.kotlin.config.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
