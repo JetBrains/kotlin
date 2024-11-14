@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 fun test_1(x: Int?) {
     val y = if (x == null) {

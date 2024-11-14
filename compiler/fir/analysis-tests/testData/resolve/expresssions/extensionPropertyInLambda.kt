@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class C<T>(var x: T)
 
 var <T> C<T>.y

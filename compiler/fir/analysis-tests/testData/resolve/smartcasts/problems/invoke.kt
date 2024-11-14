@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun Any.withInvoke(f: String.() -> Unit) {
     if (this is String) {
         f() // Should be OK

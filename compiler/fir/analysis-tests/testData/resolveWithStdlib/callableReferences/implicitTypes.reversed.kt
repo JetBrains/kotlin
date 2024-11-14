@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T, R> use(x: (T) -> R): (T) -> R = x
 
 fun foo() = use(::bar)

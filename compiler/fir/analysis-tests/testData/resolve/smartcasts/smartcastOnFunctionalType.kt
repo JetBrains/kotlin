@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-4113
 
 class MyClass(val provider: (() -> String)?) {

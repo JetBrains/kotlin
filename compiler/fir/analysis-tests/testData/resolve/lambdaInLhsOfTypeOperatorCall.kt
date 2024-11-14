@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39046
 
 fun foo(b: B<Int, Int>) {}

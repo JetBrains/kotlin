@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-44511, also relates to KT-8492 and KT-26357
 
 class A(val b: Boolean) {

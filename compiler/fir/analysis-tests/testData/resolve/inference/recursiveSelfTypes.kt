@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-52860
 
 abstract class Child<R : Recursive<R>> : Parent<ChildParameter<*>, R> {

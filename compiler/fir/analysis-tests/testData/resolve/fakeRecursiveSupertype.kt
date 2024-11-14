@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import <!UNRESOLVED_IMPORT!>incorrect<!>.directory.My
 
 open class My : <!CYCLIC_INHERITANCE_HIERARCHY!>My<!>()

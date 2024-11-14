@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 fun test_0(x: Any) {
     if (x is String) {

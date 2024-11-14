@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun goo() {
     var a = 2
     val b = 4

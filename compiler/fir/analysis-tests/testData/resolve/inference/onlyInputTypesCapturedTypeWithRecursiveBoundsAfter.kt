@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // WITH_STDLIB
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN

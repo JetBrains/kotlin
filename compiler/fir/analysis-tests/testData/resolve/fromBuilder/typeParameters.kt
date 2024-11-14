@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface List<out T : Any> {
     operator fun get(index: Int): T
 

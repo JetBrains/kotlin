@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Test1{
     fun foo()
     fun boo()

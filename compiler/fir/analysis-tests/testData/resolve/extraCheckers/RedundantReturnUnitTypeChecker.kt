@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class My(val x: Unit)
 
 interface I {

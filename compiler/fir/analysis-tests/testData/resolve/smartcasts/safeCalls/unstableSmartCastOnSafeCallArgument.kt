@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 abstract class Foo {
     abstract val bar: Bar?

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-56714
 
 fun test(m: MyMap<EditorData, Any>) {

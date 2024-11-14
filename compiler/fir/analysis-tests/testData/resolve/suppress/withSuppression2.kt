@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A
 
 fun foo(i: Int) {}

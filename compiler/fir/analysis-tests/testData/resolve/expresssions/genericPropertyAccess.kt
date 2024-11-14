@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Base<T>(val x: T) {
     abstract fun foo(): T
 }

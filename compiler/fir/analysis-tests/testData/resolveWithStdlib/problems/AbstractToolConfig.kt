@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: AbstractToolConfig.kt
 
 abstract class AbstractToolConfig {

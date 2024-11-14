@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun prefixIncrement() {
     val intArray = IntArray(10)
     val a1 = Array(10) { i -> { ++intArray[i] } }

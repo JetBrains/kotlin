@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 annotation class InnerAnnotation(val text: String)
 annotation class OuterAnnotation(val inner: InnerAnnotation)
 

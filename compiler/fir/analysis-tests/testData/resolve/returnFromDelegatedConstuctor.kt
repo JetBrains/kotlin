@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-24503
 data class StringPair(val a: String, val b: String) {
     constructor() : this(<!RETURN_NOT_ALLOWED!>return<!>, <!RETURN_NOT_ALLOWED!>return<!>)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_REFLECT
 
 import kotlin.reflect.KFunction0

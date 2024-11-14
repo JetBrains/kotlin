@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 
 fun foo(p: AAA<String>, s: Int?) {

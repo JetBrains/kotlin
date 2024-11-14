@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class MyStringList : List<String>
 abstract class MyMutableStringList : MutableList<String>
 

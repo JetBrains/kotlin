@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val x = "123"
     @Suppress(<!ERROR_SUPPRESSION!>"CONST_VAL_WITH_GETTER"<!>)
     get() = field

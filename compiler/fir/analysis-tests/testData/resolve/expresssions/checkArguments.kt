@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A
 open class B
 class C : <!SUPERTYPE_NOT_INITIALIZED!>B<!>

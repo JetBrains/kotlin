@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val x = 1
 val y = 2 as Any
 

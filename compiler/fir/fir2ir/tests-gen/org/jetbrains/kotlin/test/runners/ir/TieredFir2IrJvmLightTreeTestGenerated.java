@@ -1098,4 +1098,20 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
       }
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/fir/analysis-tests/testData/resolve")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Resolve {
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scopes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scopes {
+      @Test
+      @TestMetadata("kotlinAccessorsLikeFunctionsThrowJavaClass.kt")
+      public void testKotlinAccessorsLikeFunctionsThrowJavaClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/scopes/kotlinAccessorsLikeFunctionsThrowJavaClass.kt");
+      }
+    }
+  }
 }

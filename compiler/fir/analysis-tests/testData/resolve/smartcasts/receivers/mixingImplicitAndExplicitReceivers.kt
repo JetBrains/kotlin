@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!CONFLICTING_OVERLOADS!>fun takeString(s: String)<!> {}
 
 class Wrapper(val s: String?) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface State
 interface Complex {
     val superClass: Complex?

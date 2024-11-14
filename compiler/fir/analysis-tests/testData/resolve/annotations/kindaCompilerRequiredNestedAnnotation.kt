@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-61388
 // FILE: a.kt
 @SinceKotlin

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Test.java
 
 public class Test extends KotlinBase {

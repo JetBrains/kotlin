@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 interface A {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-40327
 
 interface Foo {

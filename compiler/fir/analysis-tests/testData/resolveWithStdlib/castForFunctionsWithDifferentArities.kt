@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-63865
 
 fun test(b: Boolean, block1: Any.() -> Unit, block2: (Any.(Any?) -> Unit)?) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {

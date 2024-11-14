@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import My.bar
 import My.baz
 import My.gau

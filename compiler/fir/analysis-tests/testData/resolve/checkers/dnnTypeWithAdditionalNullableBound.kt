@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-51742
 
 // This test mostly makes sure that frontend is not failing with an exception as in K1

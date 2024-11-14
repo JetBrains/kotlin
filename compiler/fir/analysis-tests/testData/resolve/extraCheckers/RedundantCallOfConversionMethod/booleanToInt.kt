@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // IS_APPLICABLE: false
 
 fun Boolean.toInt() = if (this) 1 else 0

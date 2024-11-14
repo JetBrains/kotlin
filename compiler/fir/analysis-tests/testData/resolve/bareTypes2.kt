@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A<D : A<D>> {
     fun foo(): Any
 

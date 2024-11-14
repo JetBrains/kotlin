@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class A {
     fun String.foo(from: String, to: String): Int {
         return 1

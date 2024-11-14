@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     val x: Int
 

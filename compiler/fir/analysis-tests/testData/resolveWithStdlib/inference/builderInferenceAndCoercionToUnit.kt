@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class DropDownComponent<T : Any>(val initialValues: List<T>)
 
 fun test(strings: List<String>) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyRunnable.java
 public interface MyRunnable {
     boolean foo(int x);

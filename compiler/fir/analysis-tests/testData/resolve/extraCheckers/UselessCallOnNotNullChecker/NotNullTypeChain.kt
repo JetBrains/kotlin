@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
 val list1: List<Int> = listOf(1)

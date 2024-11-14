@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66328
 // LANGUAGE: +ProhibitJavaClassInheritingPrivateKotlinClass
 // FILE: J1.java

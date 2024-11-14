@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * If kotlin property hides some getter from java superclass this property should win in resolve
  */

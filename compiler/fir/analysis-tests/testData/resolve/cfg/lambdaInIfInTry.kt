@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-52934
 
 suspend fun <R> suspendRun(block: suspend () -> R): R = null!!

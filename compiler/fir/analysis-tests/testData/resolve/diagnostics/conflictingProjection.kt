@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class None<T>
 class In<in T>
 class Out<out T>

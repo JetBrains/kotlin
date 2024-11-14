@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Some {
     <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun foo()
     open fun bar() {}

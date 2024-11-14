@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Some.java
 
 public class Some {
@@ -9,7 +10,7 @@ public class Some {
         String[] result = new String[arr.length];
         int i = 0;
         for (int elem: arr) {
-            result[i++] = elem;
+            result[i++] = "" + elem;
         }
         return result;
     }

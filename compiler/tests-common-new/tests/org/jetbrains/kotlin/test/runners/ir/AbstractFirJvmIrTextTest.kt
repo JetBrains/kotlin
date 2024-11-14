@@ -92,14 +92,16 @@ fun TestConfigurationBuilder.configureTieredFir2IrJvmTest(
         -DIAGNOSTICS
     }
 
-    // Otherwise, GlobalMetadataInfoHandler may want to write differences to the K1 test data file, not K2
-    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
-
     // Needed for `compiler/testData/diagnostics/tests/modifiers/const/kotlinJavaCycle.kt`.
     configureIrHandlersStep {
         useHandlers(
             ::IrConstCheckerHandler,
         )
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/*") {
+        // Otherwise, GlobalMetadataInfoHandler may want to write differences to the K1 test data file, not K2
+        useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }
 
     forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {

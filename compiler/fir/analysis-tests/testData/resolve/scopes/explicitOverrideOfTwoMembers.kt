@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: C:foo;x
 
 interface A {

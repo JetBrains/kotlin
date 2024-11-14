@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: SomeUtil.java
 
 public class SomeUtil {

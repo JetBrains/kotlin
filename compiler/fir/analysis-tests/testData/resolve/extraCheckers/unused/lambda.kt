@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun f(t: (v: Int) -> Unit) {
     1.run(t)
 }

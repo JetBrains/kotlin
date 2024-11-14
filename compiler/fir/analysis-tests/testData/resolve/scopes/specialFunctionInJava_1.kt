@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SCOPE_DUMP: Some:toByte;byteValue;toShort;shortValue;toInt;intValue;toLong;longValue  MyNumber:toByte;byteValue
 
 // FILE: MyBaseNumber.java

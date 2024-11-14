@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: ComponentSerializationUtil.java
 
 import org.jetbrains.annotations.NotNull;

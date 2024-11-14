@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: useSite.kt
 
 import InspectionProfileImpl.INIT_INSPECTIONS
@@ -5,7 +7,7 @@ import InspectionProfileImpl.INIT_INSPECTIONS
 fun foo(): Int = 4
 
 // FILE: InspectionProfileImpl.java
-import static Configuration.StaticConfigurationClass
+import static Configuration.StaticConfigurationClass;
 
 public class InspectionProfileImpl extends InspectionProfile<StaticConfigurationClass> {
     public static boolean INIT_INSPECTIONS;

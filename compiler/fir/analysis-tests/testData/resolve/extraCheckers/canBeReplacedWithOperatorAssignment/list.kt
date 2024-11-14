@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 fun foo() {
     var list = listOf(1, 2, 3)

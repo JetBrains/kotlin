@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 infix fun Int.good(x: Int) {}
 
 <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun Int.foo(x: Int, y: Int) {}

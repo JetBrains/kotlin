@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)

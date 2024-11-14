@@ -67,7 +67,10 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
 
         forTestsMatching(
             "compiler/testData/diagnostics/tests/*" or
-                    "compiler/testData/diagnostics/testsWithStdLib/*"
+                    "compiler/testData/diagnostics/testsWithStdLib/*" or
+                    "compiler/fir/analysis-tests/testData/resolve/*" or
+                    "compiler/fir/analysis-tests/testData/resolveWithStdlib/*" or
+                    "compiler/fir/analysis-tests/testData/resolveFreezesIDE/*"
         ) {
             useAfterAnalysisCheckers(::PartialTestTierChecker)
         }
@@ -182,8 +185,6 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
     @OptIn(TestInfrastructureInternals::class)
     useModuleStructureTransformers(DuplicateFileNameChecker)
 }
-
-open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)
 
 open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
 open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractFirLightTreeWithActualizerDiagnosticsTest() {

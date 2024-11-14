@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: a.kt
 object A {
     val O = object : B() {

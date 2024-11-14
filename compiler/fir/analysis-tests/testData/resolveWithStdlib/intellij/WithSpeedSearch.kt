@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class JList<E>
 
 class ListSpeedSearch<T>(list: JList<T>)

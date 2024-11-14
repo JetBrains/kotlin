@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: ObjectPattern.java
 
 import org.jetbrains.annotations.NotNull;

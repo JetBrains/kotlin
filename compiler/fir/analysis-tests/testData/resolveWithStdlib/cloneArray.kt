@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test_1(array: Array<String>) {
     array.clone()
 }

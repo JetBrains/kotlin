@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //  Ignore reason: KT-57619
 import <!UNRESOLVED_IMPORT!>my<!>.println
 

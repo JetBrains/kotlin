@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface G {
     val a: Array<out G>
 }

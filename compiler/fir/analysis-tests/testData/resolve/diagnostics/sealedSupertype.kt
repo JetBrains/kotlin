@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class A
 
 class <!CLASSIFIER_REDECLARATION!>B<!> : A()

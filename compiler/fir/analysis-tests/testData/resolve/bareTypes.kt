@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A<out T>
 
 interface MutableA<T> : A<T> {

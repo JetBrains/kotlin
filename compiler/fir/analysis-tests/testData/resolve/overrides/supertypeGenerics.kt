@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface I<F> {
     fun <T : Comparable<T>> f(t: List<T>, f: List<F>): Any// T = D, List<D> == List<D>
 }

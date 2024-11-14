@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val it: Number
         field = 4

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-70157
 // LANGUAGE: +ProhibitJavaClassInheritingPrivateKotlinClass
 // FILE: Some.java

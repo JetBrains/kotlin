@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val sb = StringBuilder()
 val o = object : Any() {
     val name = "123"

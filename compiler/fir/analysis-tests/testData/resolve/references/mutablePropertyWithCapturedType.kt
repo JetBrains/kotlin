@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Generic<T>
 class Klass<T> {
     var mutableProperty: Generic<T> = Generic()

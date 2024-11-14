@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A {
     open var it: Number
         private field = 3

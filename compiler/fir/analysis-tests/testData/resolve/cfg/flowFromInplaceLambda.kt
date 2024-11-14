@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 

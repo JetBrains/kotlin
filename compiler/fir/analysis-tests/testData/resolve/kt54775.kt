@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> bar(): T {
     return null <!UNCHECKED_CAST!>as T<!>
 }

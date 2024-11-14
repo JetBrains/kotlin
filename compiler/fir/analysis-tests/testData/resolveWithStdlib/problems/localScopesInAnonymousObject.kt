@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val x = object {
     val someString = "123"
 

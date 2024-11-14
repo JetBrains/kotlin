@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class Ann(val x: Int, val y: String, val z: String = "z")
 
 @Ann(y = "y", x = 10)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: ImplDerived:foo, DerivedImpl:foo
 // FILE: Base.java
 

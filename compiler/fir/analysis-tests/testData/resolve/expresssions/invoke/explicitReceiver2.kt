@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 class Bar {
     operator fun invoke(): Foo { return <!RETURN_TYPE_MISMATCH!>this<!> } // (1)

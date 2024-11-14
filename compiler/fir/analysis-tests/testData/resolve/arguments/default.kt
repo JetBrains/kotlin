@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(first: Int, second: Double = 3.14, third: Boolean = false) {}
 fun bar(first: Int, second: Double = 2.71, third: Boolean, fourth: String = "") {}
 fun baz(x: Int, vararg y: String, z: Boolean = false) {}

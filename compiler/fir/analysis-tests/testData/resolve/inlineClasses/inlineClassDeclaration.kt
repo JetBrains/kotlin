@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_EXTRA_CHECKERS
 class A {
     <!INLINE_CLASS_DEPRECATED, VALUE_CLASS_NOT_TOP_LEVEL!>inline<!> inner class B(val x: Int)

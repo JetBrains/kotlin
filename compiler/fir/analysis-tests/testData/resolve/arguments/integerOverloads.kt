@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: J.java
 public class J {
     public static void f(Byte x) {}

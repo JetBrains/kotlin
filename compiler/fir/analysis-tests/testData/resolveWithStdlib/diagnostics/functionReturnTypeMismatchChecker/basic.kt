@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // bug: type of the expression in return statement is Char
 fun illegalReturnIf(): Char {
     return <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1 }<!>

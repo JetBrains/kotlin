@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: useSite.kt
 
 fun foo() {

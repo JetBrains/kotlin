@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 inline fun <T> myRun(block: () -> T) = block()
 

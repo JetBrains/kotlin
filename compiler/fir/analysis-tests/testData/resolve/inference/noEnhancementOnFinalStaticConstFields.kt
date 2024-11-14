@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57811, KT-61786
 
 // FILE: JavaClass.java

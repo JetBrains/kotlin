@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-30497
 import kotlin.contracts.ExperimentalContracts

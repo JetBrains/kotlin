@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <K> materialize(): K = null!!
 
 open class A1(val x: String)

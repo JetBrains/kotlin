@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface PsiMember
 
 interface PsiField : PsiMember

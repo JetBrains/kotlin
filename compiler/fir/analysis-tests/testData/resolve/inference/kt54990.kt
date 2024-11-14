@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-54990
 
 class A<T1, T2: B<T1, Double>>

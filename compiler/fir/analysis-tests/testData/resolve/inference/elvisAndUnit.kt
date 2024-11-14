@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(x: (Int) -> Unit) {}
 
 class A {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62018, KT-62019
 
 fun take(f: suspend () -> Unit) {}

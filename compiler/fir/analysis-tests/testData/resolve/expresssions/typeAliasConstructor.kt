@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A(i: Int)
 
 typealias AA = A

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo() {
     val ext: String.(Int) -> Unit
 

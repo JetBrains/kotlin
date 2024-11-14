@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 fun checkIsString(x: Any): Boolean {

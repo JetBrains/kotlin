@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_EXTRA_CHECKERS
 
 fun foo(a: (Int) -> Unit) {}

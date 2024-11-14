@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DUMP_CFG
 inline fun run(block: () -> Unit) {
     block()

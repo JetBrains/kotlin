@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: LookupElement.java
 
 public abstract class LookupElement {

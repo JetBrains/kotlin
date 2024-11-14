@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContractSyntaxV2
 // SKIP_JAVAC
 // This directive is needed to skip this test in LazyBodyIsNotTouchedTilContractsPhaseTestGenerated,

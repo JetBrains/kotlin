@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-7389
 
 class Inv<T> (val value: T) where T: A, T: B

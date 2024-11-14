@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     fun bar() {
         val foo: String.() -> Unit = {} // (1)

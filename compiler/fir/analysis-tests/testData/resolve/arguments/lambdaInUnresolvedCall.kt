@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <R> materialize(): R = null!!
 
 fun test_1() {

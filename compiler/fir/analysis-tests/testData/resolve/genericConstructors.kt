@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A<T>(t: T) {
     fun foo(x: T) {}
 }

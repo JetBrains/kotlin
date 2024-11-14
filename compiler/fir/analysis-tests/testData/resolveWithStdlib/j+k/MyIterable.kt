@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: MyIterable.java
-public interface MyIterable<T> extends Iterable<T>
+public interface MyIterable<T> extends Iterable<T> {}
 
 // FILE: test.kt
 interface UseIterable : MyIterable<String> {

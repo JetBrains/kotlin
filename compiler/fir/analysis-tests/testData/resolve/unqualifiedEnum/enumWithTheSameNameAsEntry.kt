@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveEnumResolutionInWhen
 // KT-58939
 

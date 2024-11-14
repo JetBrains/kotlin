@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun case(): String {
     val x0 = false
     val x1: String

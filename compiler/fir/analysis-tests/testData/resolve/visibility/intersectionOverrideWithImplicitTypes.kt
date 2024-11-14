@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Common {
     fun <T, R> foo(value: T, producer: (T) -> R): R
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 
 val sRef = ::String

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Base {
     class A : Base() {
         class B : Base()

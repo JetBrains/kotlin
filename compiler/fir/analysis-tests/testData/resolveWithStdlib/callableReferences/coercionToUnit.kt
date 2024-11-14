@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun <T> T.myAlso(block: (T) -> Unit): T = TODO()
 
 class B {

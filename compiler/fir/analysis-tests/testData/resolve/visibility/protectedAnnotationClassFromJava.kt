@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-47870
 
 // FILE: example/JavaSuper.java

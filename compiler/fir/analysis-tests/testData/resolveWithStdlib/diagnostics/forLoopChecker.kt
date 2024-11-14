@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.util.*;
 
 class NotRange1() {

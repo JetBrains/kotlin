@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class B
 <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> class C

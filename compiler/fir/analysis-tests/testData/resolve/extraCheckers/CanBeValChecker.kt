@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 import kotlin.contracts.*
 import kotlin.reflect.KProperty

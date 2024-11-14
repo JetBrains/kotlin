@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KProperty
 
 class FreezableVar<T>(private var value: T)  {

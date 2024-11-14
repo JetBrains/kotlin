@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A(x: Int) {
     constructor(z: String) : this(10)
 }

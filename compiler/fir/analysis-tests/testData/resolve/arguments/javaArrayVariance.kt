@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: A.java
 public class A {
     public static void take(A[] array) {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
 
 <!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}

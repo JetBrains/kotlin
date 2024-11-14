@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val Any?.meaning: Int
     get() = 42
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: some/Nls.java
 package some
 public @interface Nls {

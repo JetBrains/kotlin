@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Ann

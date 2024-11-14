@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DUMP_CFG
 
 import kotlin.properties.ReadWriteProperty

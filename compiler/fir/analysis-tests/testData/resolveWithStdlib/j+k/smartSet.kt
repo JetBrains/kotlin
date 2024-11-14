@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import java.util.AbstractSet
 
 class SmartSet<T> : AbstractSet<T>() {

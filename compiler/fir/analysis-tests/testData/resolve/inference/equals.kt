@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47409
 fun <T> materialize(): T = TODO()
 

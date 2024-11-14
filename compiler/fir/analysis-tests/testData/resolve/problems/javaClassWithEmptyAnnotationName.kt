@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: main.kt
 
 fun main() {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 private val x = object {
     fun foo(x: Int) = /* here we have not computed return type for "bar" */bar(x)
     fun bar(y: Int) = this.hashCode() + y > 0

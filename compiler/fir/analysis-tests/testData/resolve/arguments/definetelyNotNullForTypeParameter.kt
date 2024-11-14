@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Out<out E>
 
 fun <X> id(x: Out<X>): Out<X> = TODO()

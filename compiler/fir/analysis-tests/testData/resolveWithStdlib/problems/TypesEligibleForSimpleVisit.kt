@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Extracted from ReflectKotlinClass.kt
 
 private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(

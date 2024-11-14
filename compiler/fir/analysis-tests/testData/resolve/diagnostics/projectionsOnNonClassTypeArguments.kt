@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A<in T, out K>
 class B
 

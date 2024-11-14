@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: K1.kt
 class K2: J1() {
     fun bar() {

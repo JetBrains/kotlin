@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface DailyAggregatedDoubleFactor
 
 private fun DailyAggregatedDoubleFactor.aggregateBy(reduce: (Double, Double) -> Double): Map<String, Double> {

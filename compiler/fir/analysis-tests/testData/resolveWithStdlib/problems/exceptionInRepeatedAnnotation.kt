@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 typealias EventHandler<E> = (e: E) -> Unit
 
 class EventListener<E: Event>() {

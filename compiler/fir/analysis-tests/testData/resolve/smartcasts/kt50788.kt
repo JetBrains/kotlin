@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-50788
 // FILE: Mapper.java
 public class Mapper {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 private <!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var Int.readOnlyWrapper: CharSequence?<!> get() = null
 private <!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var Int.mutableWrapper: CharSequence?<!> get() = null
 

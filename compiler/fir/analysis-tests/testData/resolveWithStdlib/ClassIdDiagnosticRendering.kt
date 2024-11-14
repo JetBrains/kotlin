@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_EXTRA_CHECKERS
 
 package a.b.c

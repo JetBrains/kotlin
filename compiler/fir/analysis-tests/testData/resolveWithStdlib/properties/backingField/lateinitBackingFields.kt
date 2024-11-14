@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 var that: Int
     lateinit field: String
     get() = field.length

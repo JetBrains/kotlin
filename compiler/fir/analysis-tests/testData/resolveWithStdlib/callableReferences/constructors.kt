@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Klass {
     constructor(a: Int) {}
     constructor(a: String) {}

@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 
 public class A {
     public int x;
 
     public String getX() {
-        return ""
+        return "";
     }
 }
 

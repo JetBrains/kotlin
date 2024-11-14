@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: VarHandle.java
 public class VarHandle {
     public void set(Object... args) {}

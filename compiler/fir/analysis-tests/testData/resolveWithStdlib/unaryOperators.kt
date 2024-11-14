@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class U {
     operator fun contains(g: String): Boolean {
         return false

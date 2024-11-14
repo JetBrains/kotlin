@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     private inner class Inner
 }

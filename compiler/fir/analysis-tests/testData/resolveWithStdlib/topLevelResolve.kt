@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 fun testPlus() {
     val x = 1 + 2

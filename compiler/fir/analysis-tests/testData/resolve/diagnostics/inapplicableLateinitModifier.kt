@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object Delegate {
     operator fun getValue(instance: Any?, property: Any) : String = ""
     operator fun setValue(instance: Any?, property: Any, value: String) {}

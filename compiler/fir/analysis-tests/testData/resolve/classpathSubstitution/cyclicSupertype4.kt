@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: topmost
 // FILE: topmost.kt
 package org.example

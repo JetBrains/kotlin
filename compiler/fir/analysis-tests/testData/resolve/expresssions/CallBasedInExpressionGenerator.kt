@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 interface ExpressionCodegen

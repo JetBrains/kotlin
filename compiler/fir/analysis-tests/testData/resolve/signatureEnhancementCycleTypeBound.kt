@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-70327
 // MODULE: main
 // FILE: JavaA.java

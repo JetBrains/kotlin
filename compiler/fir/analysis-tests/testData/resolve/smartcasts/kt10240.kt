@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun a(): Int {
     fun b(): Int {
         var c: Int? = null

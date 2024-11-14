@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ContractSyntaxV2
 // WITH_STDLIB
 

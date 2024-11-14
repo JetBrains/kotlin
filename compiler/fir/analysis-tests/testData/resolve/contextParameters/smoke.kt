@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextReceivers
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(s: String)

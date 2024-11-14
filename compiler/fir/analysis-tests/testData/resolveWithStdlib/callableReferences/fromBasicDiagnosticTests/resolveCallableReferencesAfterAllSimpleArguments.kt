@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A
 interface B
 

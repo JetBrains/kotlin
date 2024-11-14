@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyFunction.java
 public interface MyFunction<T, R> {
     R foo(T x);

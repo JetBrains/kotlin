@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(f: () -> Unit) {}
 fun bar(x: Int, f: () -> Unit) {}
 fun baz(f: () -> Unit, other: Boolean = true) {}

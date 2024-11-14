@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(first: Int, second: Double, third: Boolean, fourth: String) {}
 
 fun test() {

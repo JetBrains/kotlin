@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package a.b
 
 class C<T, out S> {

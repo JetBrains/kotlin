@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo() {
     <!CAN_BE_VAL!>var<!> a = 1
     var b = <!VARIABLE_INITIALIZER_IS_REDUNDANT!>2<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     annotation <!LOCAL_ANNOTATION_CLASS_ERROR!>class Ann<!>
 

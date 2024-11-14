@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun case1(a: A?) {
     val test = a?.let {
 

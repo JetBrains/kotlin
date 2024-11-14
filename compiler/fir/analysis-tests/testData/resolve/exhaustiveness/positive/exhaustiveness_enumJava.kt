@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaEnum.java
 public enum JavaEnum {
     A, B, C;

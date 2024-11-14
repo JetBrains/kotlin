@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-42715
 
 fun foo(x: (a: Int) -> Unit): Int = 1 // (1)

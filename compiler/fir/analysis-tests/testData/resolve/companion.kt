@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package test
 
 abstract class Some {

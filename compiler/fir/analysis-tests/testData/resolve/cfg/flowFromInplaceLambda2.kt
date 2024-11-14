@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 
 fun <T> foo(x: T?, i: Int, y: T) {}

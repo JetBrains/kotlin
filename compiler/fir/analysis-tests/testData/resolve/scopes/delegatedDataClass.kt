@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: Data:equals, Data:hashCode, Data:toString
 
 interface AnyNeighbor {

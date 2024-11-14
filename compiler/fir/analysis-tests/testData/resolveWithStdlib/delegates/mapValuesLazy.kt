@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface TDat
 
 fun resolve(str: String): TDat = null!!

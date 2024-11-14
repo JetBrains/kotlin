@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 const val a = 1
 
 object B {

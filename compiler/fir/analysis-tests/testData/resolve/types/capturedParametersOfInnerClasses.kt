@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A<T1, T2> {
     inner class B<K1, K2> {
         inner class C<U1, U2>

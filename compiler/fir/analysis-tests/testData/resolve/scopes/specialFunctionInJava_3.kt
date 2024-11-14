@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: D:x;getX;y;getY
 
 // FILE: B.java

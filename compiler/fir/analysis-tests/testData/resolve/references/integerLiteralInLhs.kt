@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun Short.foo(): Int = 1
 fun Int.foo(): Int = 2
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: dependency
 // FILE: dependency.kt
 interface ToSubstitute

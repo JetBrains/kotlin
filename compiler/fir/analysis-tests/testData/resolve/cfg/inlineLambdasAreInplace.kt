@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 inline fun callsInPlaceInline(x: () -> Unit) = x()
 
 <!NOTHING_TO_INLINE!>inline<!> fun <T> any(x: T) = x

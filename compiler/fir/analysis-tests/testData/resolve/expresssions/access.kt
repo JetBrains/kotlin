@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 class Foo {
     val x = 1

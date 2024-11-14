@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface SomeInterface {
     fun foo(x: Int, y: String): String
 

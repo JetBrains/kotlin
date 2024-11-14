@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import Derived.foo
 
 interface Base {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.generators.TestGroup
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.TestTierDirectives
 import org.jetbrains.kotlin.test.runners.TestTierLabel
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -59,16 +58,40 @@ fun configureTierModelsForDeclaredAs(
 }
 
 /**
- * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests
+ * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests alongside K1
  */
-fun configureTierModelsForDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
+fun configureTierModelsForK1AlongsideDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
     configureTierModelsForDeclaredAs(
         *tiers,
         relativeRootPaths = listOf(
-            "diagnostics/tests",
-            "diagnostics/testsWithStdLib",
+            "testData/diagnostics/tests",
+            "testData/diagnostics/testsWithStdLib",
+            "fir/analysis-tests/testData/resolve",
+            "fir/analysis-tests/testData/resolveWithStdlib",
+            // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+            // file extension `nkt` for it.
+            "fir/analysis-tests/testData/resolveFreezesIDE",
         ),
         excludeDirs = listOf("declarations/multiplatform/k1"),
-        pattern = "^(.*)\\.kts?$",
+        pattern = "^(.*)\\.(kts?|nkt)$",
         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
     )
+
+///**
+// * [...][configureTierModelsForDeclaredAs] for the common locations of K2-only diagnostic tests
+// */
+//fun configureTierModelsForK2OnlyDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
+//    configureTierModelsForDeclaredAs(
+//        *tiers,
+//        relativeRootPaths = listOf(
+//            "resolve",
+//            "resolveWithStdlib",
+//            // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+//            // file extension `nkt` for it.
+//            "resolveFreezesIDE",
+//        ),
+//        excludeDirs = listOf("declarations/multiplatform/k1"),
+//        pattern = "^(.*)\\.(kts?|nkt)$",
+//        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+//    )
+

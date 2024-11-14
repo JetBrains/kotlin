@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DUMP_CFG
 <!NOTHING_TO_INLINE!>inline<!> fun foo(vararg x: Any) {}
 

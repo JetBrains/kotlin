@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Out<out T>
 
 interface X : <!INTERFACE_WITH_SUPERCLASS!>Out<String><!>

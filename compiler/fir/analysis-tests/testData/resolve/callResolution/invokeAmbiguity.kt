@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class A {
     operator fun invoke(f: () -> Unit): Int = 1
 }

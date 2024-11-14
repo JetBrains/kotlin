@@ -155,7 +155,7 @@ open class PartialTestTierChecker(testServices: TestServices) : AfterAnalysisChe
             }
         }
 
-        val originalFile = testServices.moduleStructure.modules.first().files.first().originalFile.originalTestDataFile
+        val originalFile = testServices.moduleStructure.modules.first().files.first().originalFile.originalOrNktTestDataFile
         val failFile = originalFile.withExtension(TIERED_FAILURE_EXTENSION)
 
         if (failFile.exists()) {
@@ -173,8 +173,14 @@ open class PartialTestTierChecker(testServices: TestServices) : AfterAnalysisChe
 
     private val isDirectiveSetInTest: Boolean
         get() {
-            val originalFile = testServices.moduleStructure.modules.first().files.first().originalFile.originalTestDataFile
+            val originalFile = testServices.moduleStructure.modules.first().files.first().originalFile.originalOrNktTestDataFile
             return originalFile.featuresDirective(RUN_PIPELINE_TILL.name)
+        }
+
+    private val File.originalOrNktTestDataFile: File
+        get() {
+            val baseFile = testServices.moduleStructure.modules.first().files.first().originalFile
+            return baseFile.takeIf { it.path.endsWith(".nkt") } ?: baseFile.originalTestDataFile
         }
 
     private fun File.featuresDirective(directive: String): Boolean =

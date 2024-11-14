@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class A {
     abstract class Nested
 }

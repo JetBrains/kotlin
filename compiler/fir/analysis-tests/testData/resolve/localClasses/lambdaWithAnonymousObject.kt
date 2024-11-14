@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-57839
 
 fun <R> myRun(block: () -> R): R {

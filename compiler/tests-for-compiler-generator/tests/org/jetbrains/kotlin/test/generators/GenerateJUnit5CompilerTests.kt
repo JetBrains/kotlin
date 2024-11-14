@@ -246,14 +246,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
-            testClass<AbstractTieredFrontendJvmLightTreeTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
-            )
-
-            testClass<AbstractTieredFrontendJvmPsiTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FRONTEND),
-            )
-
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated",
                 init = model(allowKts = false)
@@ -309,14 +301,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
-
-            testClass<AbstractTieredBackendJvmLightTreeTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.BACKEND),
-            )
-
-            testClass<AbstractTieredBackendJvmPsiTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.BACKEND),
-            )
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir)
@@ -462,8 +446,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
-            testClass<AbstractFirPsiDiagnosticTest>(init = model(allowKts = true))
-            testClass<AbstractFirLightTreeDiagnosticsTest>(init = model(allowKts = false))
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = model(allowKts = false))
             testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = model(allowKts = false, onlyTypealiases = true))
         }
@@ -475,14 +457,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )
             }
-
-            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FIR2IR),
-            )
-
-            testClass<AbstractTieredFir2IrJvmPsiTest>(
-                init = configureTierModelsForDiagnosticTestsStating(TestTierLabel.FIR2IR),
-            )
 
             testClass<AbstractFirPsiJvmIrTextTest> {
                 model(
@@ -506,6 +480,36 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
+        }
+
+        // ---------------------------------------------- Tiered tests ----------------------------------------------
+
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
+            testClass<AbstractTieredFrontendJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND),
+            )
+
+            testClass<AbstractTieredFrontendJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND),
+            )
+        }
+
+        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/") {
+            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR),
+            )
+
+            testClass<AbstractTieredFir2IrJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR),
+            )
+
+            testClass<AbstractTieredBackendJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND),
+            )
+
+            testClass<AbstractTieredBackendJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND),
+            )
         }
     }
 }

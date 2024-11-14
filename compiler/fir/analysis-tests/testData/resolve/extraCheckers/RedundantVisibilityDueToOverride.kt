@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class A {
     open var attribute = "a"
         protected set

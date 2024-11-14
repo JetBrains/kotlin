@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Some(classNames: () -> Collection<String>) {
     internal val first by lazy {
         classNames().toSet()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>() = "Hello"
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?) = true
