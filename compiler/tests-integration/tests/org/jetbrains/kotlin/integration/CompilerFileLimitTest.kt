@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.integration
 
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
@@ -73,8 +73,8 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
     }
 
     private fun assertIsLargeButNotTooLarge(file: File) {
-        Assert.assertTrue(file.length() > 15 * FileUtil.MEGABYTE)
-        Assert.assertTrue(file.length() < 20 * FileUtil.MEGABYTE)
+        Assert.assertTrue(file.length() > 15 * FileUtilRt.MEGABYTE)
+        Assert.assertTrue(file.length() < 20 * FileUtilRt.MEGABYTE)
     }
 
     private fun generateKotlinFileThatUsesLargeJavaFile(size: Int): String {
