@@ -34,6 +34,7 @@ if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
         setDelete(layout.buildDirectory.dir("functionalTest"))
     }
 
+    val publicationPath = layout.buildDirectory.dir("repo")
     tasks.register<Test>("functionalTest") {
         testClassesDirs = functionalTest.output.classesDirs
         classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
@@ -43,6 +44,7 @@ if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
         )
         dependsOnKotlinGradlePluginInstall()
         systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+        systemProperty("privacyManifestsPluginPublicationPath", publicationPath.map { it.asFile.path }.get())
         useJUnitPlatform()
     }
 
@@ -67,7 +69,7 @@ if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
 
     publishing {
         repositories {
-            maven(layout.buildDirectory.dir("repo")) {
+            maven(publicationPath) {
                 name = "BuildDirectory"
             }
         }

@@ -3,10 +3,13 @@ package org.jetbrains.kotlin
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import java.lang.System
 import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.io.path.createFile
 
 
@@ -126,6 +129,9 @@ class PrivacyManifestsPluginTests {
         )
     }
 
+    @TempDir
+    lateinit var workingDir: Path
+
     private fun testEmbedAndSignIntegration(
         target: String,
         testNameSuffix: String = "",
@@ -162,7 +168,7 @@ class PrivacyManifestsPluginTests {
         },
     ) {
         val testName = "embedAndSign_${target}_${kotlinVersion}${testNameSuffix}".pathFriendly()
-        val projectDir = File("build/functionalTest").resolve(testName)
+        val projectDir = workingDir.toFile().resolve(testName)
         val embedAndSignOutputs = projectDir.resolve("embedAndSignOutputs")
         embedAndSignOutputs.resolve(appName).resolve(frameworks).mkdirs()
 
@@ -212,7 +218,7 @@ class PrivacyManifestsPluginTests {
     @MethodSource("kotlinVersions")
     fun `xcframework creation`(kotlinVersion: String) {
         val testName = "xcframework_${kotlinVersion}".pathFriendly()
-        val projectDir = File("build/functionalTest").resolve(testName)
+        val projectDir = workingDir.toFile().resolve(testName)
 
         buildAndTestProject(
             projectDir = projectDir,
@@ -279,7 +285,7 @@ class PrivacyManifestsPluginTests {
     @MethodSource("kotlinVersions")
     fun `xcframework creation with CocoaPods`(kotlinVersion: String) {
         val testName = "xcframeworkCocoaPods_${kotlinVersion}".pathFriendly()
-        val projectDir = File("build/functionalTest").resolve(testName)
+        val projectDir = workingDir.toFile().resolve(testName)
 
         buildAndTestProject(
             projectDir = projectDir,
@@ -345,7 +351,7 @@ class PrivacyManifestsPluginTests {
     @MethodSource("kotlinVersions")
     fun `CocoaPods syncFramework integration`(kotlinVersion: String) {
         val testName = "cocoaPodsSyncFramework_${kotlinVersion}".pathFriendly()
-        val projectDir = File("build/functionalTest").resolve(testName)
+        val projectDir = workingDir.toFile().resolve(testName)
 
         buildAndTestProject(
             projectDir = projectDir,
@@ -435,7 +441,7 @@ class PrivacyManifestsPluginTests {
                 pluginManagement {
                     repositories {
                         mavenLocal()
-                        maven("file://${projectDir.absoluteFile.parentFile.parentFile.parentFile.resolve("build/repo").canonicalPath}")
+                        maven("file://${java.lang.System.getProperty("privacyManifestsPluginPublicationPath")}")
                         gradlePluginPortal()
                     }
                 }
