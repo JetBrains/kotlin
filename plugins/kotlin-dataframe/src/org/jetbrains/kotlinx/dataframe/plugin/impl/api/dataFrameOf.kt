@@ -14,11 +14,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.varargString
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
 
 class DataFrameOf0 : AbstractInterpreter<DataFrameBuilderApproximation>() {
-    val Arguments.header: List<String> by varargString()
+    val Arguments.header: List<String> by arg()
 
     override fun Arguments.interpret(): DataFrameBuilderApproximation {
         return DataFrameBuilderApproximation(header)
