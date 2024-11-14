@@ -347,6 +347,7 @@ if (cacheRedirectorEnabled.get()) {
     logger.info("Redirecting repositories for settings in ${settingsDir.absolutePath}")
 
     pluginManagement.repositories.redirect()
+    dependencyResolutionManagement.repositories.redirect()
     buildscript.repositories.redirect()
 
     gradle.beforeProject {
