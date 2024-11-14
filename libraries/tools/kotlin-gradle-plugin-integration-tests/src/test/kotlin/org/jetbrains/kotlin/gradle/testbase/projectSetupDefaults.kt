@@ -112,9 +112,6 @@ internal fun getGroovyRepositoryBlock(
     |                artifact()
     |            }
     |        }
-    |        maven {
-    |            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
-    |        }
     |        ivy {
     |            url = "https://github.com/yarnpkg/yarn/releases/download"
     |            patternLayout {
