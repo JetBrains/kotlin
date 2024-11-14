@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.util.render
 
 /**
  * Unlike other [IrElement]s, this class is only an implementation detail, introduced
@@ -14,5 +15,14 @@ import org.jetbrains.kotlin.ir.IrElementBase
  * tree generator: [org.jetbrains.kotlin.ir.generator.IrTree.declarationBase]
  */
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
-    final override lateinit var parent: IrDeclarationParent
+    internal var _parent: IrDeclarationParent? = null
+        private set
+    final override var parent: IrDeclarationParent
+        get() = _parent ?: error(
+            "Parent of element (${this.render()}) is not initialized.\n" +
+                    "Please assign it explicitly or use utility such as IrElement.patchDeclarationParents()."
+        )
+        set(value) {
+            _parent = value
+        }
 }
