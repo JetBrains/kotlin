@@ -137,7 +137,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                     throw e
                 }
             } finally {
-                Disposer.dispose(rootDisposable)
+                disposeRootInWriteAction(rootDisposable)
             }
         } catch (e: CompilationErrorException) {
             return COMPILATION_ERROR
