@@ -183,3 +183,12 @@ FILE: RedundantVisibilityModifierChecker.kt
         }
 
     }
+    private open class ProtectedInOpenPrivateClass : R|kotlin/Any| {
+        public constructor(): R|ProtectedInOpenPrivateClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final fun foo(): R|kotlin/Unit| {
+        }
+
+    }

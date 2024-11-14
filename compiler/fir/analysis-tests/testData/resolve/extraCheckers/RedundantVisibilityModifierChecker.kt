@@ -89,3 +89,7 @@ open class J {
 private class Foo {
     <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> fun barBarian() {}
 }
+
+private open class ProtectedInOpenPrivateClass {
+    protected fun foo() {}
+}

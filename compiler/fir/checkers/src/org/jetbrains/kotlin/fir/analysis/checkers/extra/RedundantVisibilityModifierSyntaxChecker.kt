@@ -184,13 +184,16 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
 
     private fun Visibility?.isEffectivelyHiddenBy(declaration: FirMemberDeclaration?): Boolean {
+        if (this == null || this == Visibilities.Protected) {
+            return false
+        }
         val containerVisibility = declaration?.effectiveVisibility?.toVisibility() ?: return false
 
         if (containerVisibility == Visibilities.Local && this == Visibilities.Internal) {
             return true
         }
 
-        val difference = this?.compareTo(containerVisibility) ?: return false
+        val difference = this.compareTo(containerVisibility) ?: return false
         return difference > 0
     }
 
