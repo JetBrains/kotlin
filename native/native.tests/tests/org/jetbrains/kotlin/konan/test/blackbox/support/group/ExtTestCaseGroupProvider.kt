@@ -15,6 +15,7 @@ import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -915,7 +916,7 @@ internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
         val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
         return isIgnoredTarget(extTestDataFileStructure.directives)
     } finally {
-        Disposer.dispose(disposable)
+        disposeRootInWriteAction(disposable)
     }
 }
 

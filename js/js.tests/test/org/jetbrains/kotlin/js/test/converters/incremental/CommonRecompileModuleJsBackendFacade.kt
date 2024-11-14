@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 
 @Suppress("warnings")
 abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
@@ -80,7 +81,7 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             incrementalRunner.reportFailures(incrementalServices)
             incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
-            Disposer.dispose(incrementalConfiguration.rootDisposable)
+            disposeRootInWriteAction(incrementalConfiguration.rootDisposable)
         }
 
         return BinaryArtifacts.Js.IncrementalJsArtifact(inputArtifact, incrementalArtifact)
