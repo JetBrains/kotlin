@@ -4,7 +4,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
@@ -27,7 +26,7 @@ class Add : AbstractSchemaModificationInterpreter() {
 }
 
 class From : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: AddDslApproximation by arg(lens = Interpreter.Value)
+    val Arguments.dsl: AddDslApproximation by arg()
     val Arguments.receiver: String by string()
     val Arguments.type: TypeApproximation by type(name("expression"))
 
@@ -37,7 +36,7 @@ class From : AbstractInterpreter<Unit>() {
 }
 
 class Into : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: AddDslApproximation by arg(lens = Interpreter.Value)
+    val Arguments.dsl: AddDslApproximation by arg()
     val Arguments.receiver: TypeApproximation by type()
     val Arguments.name: String by string()
 
@@ -60,7 +59,7 @@ class AddWithDsl : AbstractSchemaModificationInterpreter() {
 }
 
 class AddDslStringInvoke : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: AddDslApproximation by arg(lens = Interpreter.Value)
+    val Arguments.dsl: AddDslApproximation by arg()
     val Arguments.receiver: String by string()
     val Arguments.body by dsl()
 
