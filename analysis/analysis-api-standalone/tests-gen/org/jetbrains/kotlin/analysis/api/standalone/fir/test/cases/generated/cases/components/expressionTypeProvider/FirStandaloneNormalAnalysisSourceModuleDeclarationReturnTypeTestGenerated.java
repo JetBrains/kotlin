@@ -88,15 +88,15 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
-  @TestMetadata("functionWithoutParameterList.kt")
-  public void testFunctionWithoutParameterList() {
-    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionWithoutParameterList.kt");
+  @TestMetadata("functionType.kt")
+  public void testFunctionType() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionType.kt");
   }
 
   @Test
-  @TestMetadata("funtionType.kt")
-  public void testFuntionType() {
-    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/funtionType.kt");
+  @TestMetadata("functionWithoutParameterList.kt")
+  public void testFunctionWithoutParameterList() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionWithoutParameterList.kt");
   }
 
   @Test
