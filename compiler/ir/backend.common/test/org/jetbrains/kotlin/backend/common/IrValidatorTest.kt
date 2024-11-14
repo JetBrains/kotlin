@@ -138,6 +138,7 @@ class IrValidatorTest {
                         checkValueScopes = true,
                         checkTypeParameterScopes = true,
                         checkCrossFileFieldUsage = true,
+                        checkAllKotlinFieldsArePrivate = true,
                         checkVisibilities = true,
                         checkVarargTypes = true,
                     )
@@ -442,6 +443,7 @@ class IrValidatorTest {
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("myField")
             type = TestIrBuiltins.anyType
+            visibility = DescriptorVisibilities.PRIVATE
         }
         field.initializer = IrFactoryImpl.createExpressionBody(12, 43, IrGetValueImpl(13, 42, vp.symbol))
         file.addChild(field)
@@ -455,11 +457,75 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: The following expression references a value that is not available in the current scope.
                     GET_VAR 'myVP: kotlin.Any declared in org.sample.foo' type=kotlin.Any origin=null
                       inside EXPRESSION_BODY
-                        inside FIELD name:myField type:kotlin.Any visibility:public
+                        inside FIELD name:myField type:kotlin.Any visibility:private
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 4, null),
                 )
+            ),
+        )
+    }
+
+    // TODO: Ensure errors for public `const` fields are reported as part of resolving KT-71243.
+    @Test
+    fun `non-private fields are reported`() {
+        val file = createIrFile()
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+        val publicField = IrFactoryImpl.buildField {
+            name = Name.identifier("publicField")
+            type = TestIrBuiltins.anyType
+        }
+        val lateinitProperty = IrFactoryImpl.buildProperty {
+            name = Name.identifier("lateinitProperty")
+            isLateinit = true
+        }
+        val lateinitField = IrFactoryImpl.buildField {
+            name = Name.identifier("lateinitField")
+            type = TestIrBuiltins.anyType
+        }
+        lateinitProperty.backingField = lateinitField
+        lateinitField.correspondingPropertySymbol = lateinitProperty.symbol
+        val constProperty = IrFactoryImpl.buildProperty {
+            name = Name.identifier("constProperty")
+            isConst = true
+        }
+        val constField = IrFactoryImpl.buildField {
+            name = Name.identifier("constField")
+            type = TestIrBuiltins.anyType
+        }
+        constProperty.backingField = constField
+        constField.correspondingPropertySymbol = constProperty.symbol
+        klass.addChild(publicField)
+        klass.addChild(lateinitProperty)
+        klass.addChild(constProperty)
+        file.addChild(klass)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Kotlin fields are expected to always be private
+                    FIELD name:publicField type:kotlin.Any visibility:public
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Kotlin fields are expected to always be private
+                    FIELD name:lateinitField type:kotlin.Any visibility:public
+                      inside PROPERTY name:lateinitProperty visibility:public modality:FINAL [lateinit,val]
+                        inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
             ),
         )
     }
@@ -581,6 +647,7 @@ class IrValidatorTest {
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("myField")
             type = IrSimpleTypeImpl(tp.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+            visibility = DescriptorVisibilities.PRIVATE
         }
         file.addChild(field)
         testValidation(
@@ -591,7 +658,7 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:E index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
-                    FIELD name:myField type:E of org.sample.MyClass visibility:public
+                    FIELD name:myField type:E of org.sample.MyClass visibility:private
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
