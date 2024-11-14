@@ -215,7 +215,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 }
 
 private fun BridgeFunctionDescriptor.cDeclaration() =
-    "${returnType.cType.repr} ${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
+    "${returnType.cType.repr.format("${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.cType.repr.format(it.name) }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""}")};"
 
 private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunctionDescriptor.() -> String) =
     FunctionBridge(
@@ -225,8 +225,21 @@ private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunc
 
 private fun SirCallable.bridgeParameters() = allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
-private fun bridgeType(type: SirType): Bridge {
-    require(type is SirNominalType)
+private fun bridgeType(type: SirType): Bridge = when (type) {
+    is SirNominalType -> bridgeNominalType(type)
+    is SirFunctionalType -> bridgeFunctionalType(type)
+    else -> error("Attempt to bridge unbridgeable type: $type.")
+}
+
+private fun bridgeFunctionalType(type: SirFunctionalType): Bridge = Bridge.AsBlock(
+    swiftType = type,
+    cType = CType.BlockPointer(
+        parameters = type.parameterTypes.map { bridgeType(it) },
+        returnType = bridgeType(type.returnType)
+    ),
+)
+
+private fun bridgeNominalType(type: SirNominalType): Bridge {
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
 
@@ -310,33 +323,40 @@ private data class BridgeParameter(
     var isRenderable: Boolean = bridge !is Bridge.AsOptionalNothing
 }
 
-private enum class CType(val repr: String) {
-    Void("void"),
+private sealed class CType {
+    abstract val repr: String
 
-    Bool("_Bool"),
+    sealed class Predefined(override val repr: String) : CType()
 
-    Int8("int8_t"),
-    Int16("int16_t"),
-    Int32("int32_t"),
-    Int64("int64_t"),
+    data object Void : Predefined("void %s")
+    data object Bool : Predefined("_Bool %s")
+    data object Int8 : Predefined("int8_t %s")
+    data object Int16 : Predefined("int16_t %s")
+    data object Int32 : Predefined("int32_t %s")
+    data object Int64 : Predefined("int64_t %s")
+    data object UInt8 : Predefined("uint8_t %s")
+    data object UInt16 : Predefined("uint16_t %s")
+    data object UInt32 : Predefined("uint32_t %s")
+    data object UInt64 : Predefined("uint64_t %s")
+    data object Float : Predefined("float %s")
+    data object Double : Predefined("double %s")
+    data object Object : Predefined("uintptr_t %s")
+    data object NSString : Predefined("NSString * %s")
+    data object NSNumber : Predefined("NSNumber * %s")
+    data object NSArray : Predefined("NSArray * %s")
+    data object NSSet : Predefined("NSSet * %s")
+    data object NSDictionary : Predefined("NSDictionary * %s")
 
-    UInt8("uint8_t"),
-    UInt16("uint16_t"),
-    UInt32("uint32_t"),
-    UInt64("uint64_t"),
+    class BlockPointer(val parameters: List<Bridge>, val returnType: Bridge) : CType() {
+        override val repr: String
+            get() = returnType.cType.repr.format("(^%s)(${parameters.printCParametersForBlock()})")
 
-    Float("float"),
-    Double("double"),
-
-    Object("uintptr_t"),
-
-    NSString("NSString *"),
-
-    NSNumber("NSNumber *"),
-
-    NSArray("NSArray *"),
-    NSSet("NSSet *"),
-    NSDictionary("NSDictionary *"),
+        private fun List<Bridge>.printCParametersForBlock(): String = if (isEmpty()) {
+            "void" // A block declaration without a prototype is deprecated
+        } else {
+            joinToString { it.cType.repr }
+        }
+    }
 }
 
 private enum class KotlinType(val repr: kotlin.String) {
@@ -513,6 +533,8 @@ private sealed class Bridge(
     class AsNSArray(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSArray)
     class AsNSSet(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSSet)
     class AsNSDictionary(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSDictionary)
+
+    class AsBlock(swiftType: SirType, cType: CType) : AsObjCBridged(swiftType, cType)
 
     data object AsOptionalNothing : Bridge(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),

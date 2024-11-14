@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -25,15 +26,31 @@ abstract class AbstractKotlinSirBridgeTest {
 
         val generator = createBridgeGenerator(object : SirTypeNamer {
             override fun swiftFqName(type: SirType): String {
-                require(type is SirNominalType)
-                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
-                return type.typeDeclaration.name
+                return when (type) {
+                    is SirNominalType -> {
+                        require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                        type.typeDeclaration.name
+                    }
+                    is SirFunctionalType -> {
+                        // todo: KT-72993
+                        (listOf("function") + type.parameterTypes.map { it.swiftName }).joinToString("_")
+                    }
+                    else -> error("Unsupported type: $type")
+                }
             }
 
             override fun kotlinFqName(type: SirType): String {
-                require(type is SirNominalType)
-                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
-                return type.typeDeclaration.name
+                return when (type) {
+                    is SirNominalType -> {
+                        require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                        type.typeDeclaration.name
+                    }
+                    is SirFunctionalType -> {
+                        // todo: KT-72993
+                        (listOf("function") + type.parameterTypes.map { it.swiftName }).joinToString("_")
+                    }
+                    else -> error("Unsupported type: $type")
+                }
             }
         })
         val kotlinBridgePrinter = createKotlinBridgePrinter()
@@ -64,26 +81,51 @@ private fun parseRequestsFromTestDir(testDir: File): List<FunctionBridgeRequest>
         ?: emptyList()
 
 private fun parseType(typeName: String): SirType {
-    return when (typeName.lowercase()) {
-        "boolean" -> SirSwiftModule.bool
+    val tn = typeName.lowercase()
 
-        "byte" -> SirSwiftModule.int8
-        "short" -> SirSwiftModule.int16
-        "int" -> SirSwiftModule.int32
-        "long" -> SirSwiftModule.int64
-
-        "ubyte" -> SirSwiftModule.uint8
-        "ushort" -> SirSwiftModule.uint16
-        "uint" -> SirSwiftModule.uint32
-        "ulong" -> SirSwiftModule.uint64
-
-        "any" -> buildClass {
-            name = "MyClass"
-            origin = SirOrigin.ExternallyDefined(name = "MyClass")
+    return if (tn.startsWith("closure")) {
+        when (tn) {
+            "closure_void" -> {
+                SirFunctionalType(
+                    returnType = SirNominalType(SirSwiftModule.void),
+                    parameterTypes = emptyList(),
+                )
+            }
+            "closure_closure" -> {
+                SirFunctionalType(
+                    returnType = SirFunctionalType(
+                        returnType = SirNominalType(SirSwiftModule.void),
+                        parameterTypes = emptyList(),
+                    ),
+                    parameterTypes = emptyList(),
+                )
+            }
+            else -> error("unknown tag for predefined closure")
         }
+    } else {
+        when (tn) {
+            "boolean" -> SirSwiftModule.bool
 
-        else -> error("Unknown type: $typeName")
-    }.let { SirNominalType(it) }
+            "byte" -> SirSwiftModule.int8
+            "short" -> SirSwiftModule.int16
+            "int" -> SirSwiftModule.int32
+            "long" -> SirSwiftModule.int64
+
+            "ubyte" -> SirSwiftModule.uint8
+            "ushort" -> SirSwiftModule.uint16
+            "uint" -> SirSwiftModule.uint32
+            "ulong" -> SirSwiftModule.uint64
+
+            "void" -> SirSwiftModule.void
+
+            "any" -> buildClass {
+                name = "MyClass"
+                origin = SirOrigin.ExternallyDefined(name = "MyClass")
+            }
+
+            else -> error("Unknown type: $typeName")
+        }.let { SirNominalType(it) }
+    }
 }
 
 private fun readRequestFromFile(file: File): FunctionBridgeRequest {

@@ -9,6 +9,11 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 sealed interface SirType
 
+class SirFunctionalType(
+    val parameterTypes: List<SirType>,
+    val returnType: SirType,
+) : SirType
+
 open class SirNominalType(
     val typeDeclaration: SirNamedDeclaration,
     val typeArguments: List<SirType> = emptyList(),
