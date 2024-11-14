@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
@@ -80,13 +81,17 @@ import java.io.File
  *
  * The outlined functions are inlined again later by [FunctionWithJsFuncAnnotationInliner] during the codegen phase.
  */
-class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLoweringPass {
+class JsCodeOutliningLowering(
+    val backendContext: BackendContext,
+    val intrinsics: JsIntrinsics,
+    val dynamicType: IrDynamicType,
+) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // Fast path to avoid tracking locals scopes for bodies without js() calls
-        if (!irBody.containsCallsTo(backendContext.intrinsics.jsCode))
+        if (!irBody.containsCallsTo(intrinsics.jsCode))
             return
 
-        val replacer = JsCodeOutlineTransformer(backendContext, container)
+        val replacer = JsCodeOutlineTransformer(backendContext, intrinsics, dynamicType, container)
         irBody.transformChildrenVoid(replacer)
 
         val outlinedFunctions = replacer.outlinedFunctions
@@ -142,7 +147,9 @@ private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
 }
 
 private class JsCodeOutlineTransformer(
-    val backendContext: JsIrBackendContext,
+    val backendContext: BackendContext,
+    val intrinsics: JsIntrinsics,
+    val dynamicType: IrDynamicType,
     val container: IrDeclaration,
 ) : IrElementTransformerVoid() {
     val outlinedFunctions = mutableListOf<IrFunction>()
@@ -207,7 +214,7 @@ private class JsCodeOutlineTransformer(
     }
 
     fun outlineJsCodeIfNeeded(expression: IrCall): IrExpression? {
-        if (expression.symbol != backendContext.intrinsics.jsCode)
+        if (expression.symbol != intrinsics.jsCode)
             return null
 
         val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
@@ -244,7 +251,7 @@ private class JsCodeOutlineTransformer(
     private fun addSpecialAnnotation(outlinedFunction: IrSimpleFunction): IrConstructorCall {
         val builder = backendContext.createIrBuilder(outlinedFunction.symbol)
         val annotation = builder.irCallConstructor(
-            backendContext.intrinsics.jsOutlinedFunctionAnnotationSymbol.constructors.first(),
+            intrinsics.jsOutlinedFunctionAnnotationSymbol.constructors.first(),
             typeArguments = emptyList(),
         )
         outlinedFunction.annotations += annotation
@@ -293,7 +300,7 @@ private class JsCodeOutlineTransformer(
         val outlinedFunction = backendContext.irFactory.buildFun {
             val containerName = (container as? IrDeclarationWithName)?.name?.asString()
             name = Name.identifier(containerName?.let { "$it\$outlinedJsCode\$" } ?: "outlinedJsCode\$")
-            returnType = backendContext.dynamicType
+            returnType = dynamicType
             visibility = DescriptorVisibilities.LOCAL
             isExternal = true
             origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN

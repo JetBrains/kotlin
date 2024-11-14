@@ -172,7 +172,7 @@ private val stripTypeAliasDeclarationsPhase = makeIrModulePhase<JsIrBackendConte
 )
 
 private val jsCodeOutliningPhase = makeIrModulePhase(
-    ::JsCodeOutliningLowering,
+    { context: JsIrBackendContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
     name = "JsCodeOutliningLowering",
 )
 
