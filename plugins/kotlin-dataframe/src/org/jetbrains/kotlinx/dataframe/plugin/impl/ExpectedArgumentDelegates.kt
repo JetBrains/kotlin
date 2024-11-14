@@ -78,3 +78,8 @@ internal fun <T> AbstractInterpreter<T>.dsl(
 ): ExpectedArgumentProvider<(Any, Map<String, Interpreter.Success<Any?>>) -> Unit> =
     arg(name, lens = Interpreter.Dsl, defaultValue = Present(value = {_, _ -> }))
 
+internal fun <T> AbstractInterpreter<T>.ignore(
+    name: ArgumentName? = null
+): ExpectedArgumentProvider<Nothing?> =
+    arg(name, lens = Interpreter.Id, defaultValue = Present(null))
+

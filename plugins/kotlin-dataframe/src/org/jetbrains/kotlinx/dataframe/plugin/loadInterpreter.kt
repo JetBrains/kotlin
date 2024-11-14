@@ -100,6 +100,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimMargin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Update0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
@@ -248,6 +249,7 @@ internal inline fun <reified T> String.load(): T {
         "Update0" -> Update0()
         "Aggregate" -> Aggregate()
         "DataFrameOf3" -> DataFrameOf3()
+        "ValueCounts" -> ValueCounts()
         else -> error("$this")
     } as T
 }
