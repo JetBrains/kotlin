@@ -66,6 +66,10 @@ class TypeAliasConstructorsSubstitutingScope(
                     symbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
+                    // We consider typealiased constructors to be coming
+                    // from the module of the typealias
+                    moduleData = typeAliasSymbol.moduleData
+
                     this.typeParameters.clear()
                     typeParameters.mapTo(this.typeParameters) {
                         buildConstructedClassTypeParameterRef { symbol = it.symbol }
@@ -75,6 +79,7 @@ class TypeAliasConstructorsSubstitutingScope(
                     originalConstructorSymbol.fir.valueParameters.mapTo(valueParameters) { originalValueParameter ->
                         buildValueParameterCopy(originalValueParameter) {
                             symbol = FirValueParameterSymbol(originalValueParameter.name)
+                            moduleData = typeAliasSymbol.moduleData
                             origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                             containingDeclarationSymbol = this@buildConstructorCopy.symbol
                         }
@@ -118,7 +123,7 @@ class TypeAliasConstructorsSubstitutingScope(
                             buildReceiverParameter {
                                 typeRef = it
                                 symbol = FirReceiverParameterSymbol()
-                                moduleData = originalConstructorSymbol.moduleData
+                                moduleData = typeAliasSymbol.moduleData
                                 origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                                 containingDeclarationSymbol = this@buildConstructorCopy.symbol
                             }
