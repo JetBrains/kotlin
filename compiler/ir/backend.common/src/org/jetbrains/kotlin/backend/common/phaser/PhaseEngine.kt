@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.DisposableContext
-import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.config.LoggingContext
 
 /**
  * PhaseEngine is the heart of the dynamic compiler driver.

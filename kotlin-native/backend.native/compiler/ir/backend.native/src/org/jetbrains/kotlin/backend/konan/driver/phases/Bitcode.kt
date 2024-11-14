@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
