@@ -16,7 +16,8 @@ inline int polyHash_naive(It begin, It end) {
     return res;
 }
 
-inline int polyHash_naive(int length, uint16_t const* str) {
+template <typename UnitType>
+inline int polyHash_naive(int length, UnitType const* str) {
     return polyHash_naive(str, str + length);
 }
 
