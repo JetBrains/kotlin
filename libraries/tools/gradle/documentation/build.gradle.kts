@@ -8,8 +8,6 @@ pluginsApiDocumentation {
     templatesArchiveUrl = "https://github.com/JetBrains/kotlin-web-site/archive/refs/heads/master.zip"
     templatesArchiveSubDirectoryPattern = "kotlin-web-site-master/dokka-templates/**"
     templatesArchivePrefixToRemove = "kotlin-web-site-master/dokka-templates/"
-    gradlePluginsProjects = setOf(
-        project(":kotlin-gradle-plugin-api"),
-        project(":compose-compiler-gradle-plugin")
-    )
+    addGradlePluginProject(project(":kotlin-gradle-plugin-api"))
+    addGradlePluginProject(project(":compose-compiler-gradle-plugin"))
 }

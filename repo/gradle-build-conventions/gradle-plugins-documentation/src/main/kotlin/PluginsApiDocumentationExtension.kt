@@ -12,11 +12,17 @@ import javax.inject.Inject
 
 abstract class PluginsApiDocumentationExtension @Inject constructor(
     objectFactory: ObjectFactory,
+    private val childProjectConfiguration: (Project) -> Unit
 ) {
     abstract val documentationOutput: DirectoryProperty
     abstract val documentationOldVersions: DirectoryProperty
     abstract val templatesArchiveUrl: Property<String>
     val templatesArchiveSubDirectoryPattern: Property<String> = objectFactory.property(String::class.java).convention("")
     val templatesArchivePrefixToRemove: Property<String> = objectFactory.property(String::class.java).convention("")
-    abstract val gradlePluginsProjects: SetProperty<Project>
+    internal abstract val gradlePluginsProjects: SetProperty<Project>
+
+    fun addGradlePluginProject(project: Project) {
+        gradlePluginsProjects.add(project)
+        childProjectConfiguration(project)
+    }
 }
