@@ -35910,12 +35910,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           public void testTopLevelProperty() {
             runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
           }
-
-          @Test
-          @TestMetadata("topLevelPropertyMultiModule.kt")
-          public void testTopLevelPropertyMultiModule() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelPropertyMultiModule.kt");
-          }
         }
 
         @Nested
