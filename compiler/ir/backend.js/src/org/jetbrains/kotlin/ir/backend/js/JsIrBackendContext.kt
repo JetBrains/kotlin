@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolOverDescriptorsLookupUtils
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolOverIrLookupUtils
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -172,7 +175,11 @@ class JsIrBackendContext(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
-    override val symbols = JsSymbols(this@JsIrBackendContext, symbolTable)
+    val lookup = if (configuration.get(CommonConfigurationKeys.USE_FIR) == true)
+        BaseSymbolOverIrLookupUtils()
+    else
+        BaseSymbolOverDescriptorsLookupUtils(symbolTable)
+    override val symbols = JsSymbols(this@JsIrBackendContext, lookup)
     override val ir = object : Ir<JsIrBackendContext>(this) {
         override val symbols = this@JsIrBackendContext.symbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true

@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolOverDescriptorsLookupUtils
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolOverIrLookupUtils
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -89,7 +92,11 @@ class WasmBackendContext(
 
     override val sharedVariablesManager = WasmSharedVariablesManager(this)
 
-    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
+    val lookup = if (configuration.get(CommonConfigurationKeys.USE_FIR) == true)
+        BaseSymbolOverIrLookupUtils()
+    else
+        BaseSymbolOverDescriptorsLookupUtils(symbolTable)
+    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, lookup)
     override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 

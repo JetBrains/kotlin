@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
  * Transforms suspend function into a `CoroutineImpl` instance and builds a state machine.
  */
 class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx) {
+    private val symbols = ctx.symbols
     private val coroutineSymbols = ctx.symbols.coroutineSymbols
 
     private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter
@@ -264,7 +265,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         return irComposite(resultType = expectedType) {
             val tmp = createTmpVariable(delegatingCall, irType = functionReturnType)
-            val coroutineSuspended = irCall(coroutineSymbols.coroutineSuspendedGetter)
+            val coroutineSuspended = irCall(symbols.coroutineSuspendedGetter)
             val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
             +irIfThen(context.irBuiltIns.unitType, condition, irReturn(irGet(tmp)))
             +irImplicitCast(irGet(tmp), expectedType)
