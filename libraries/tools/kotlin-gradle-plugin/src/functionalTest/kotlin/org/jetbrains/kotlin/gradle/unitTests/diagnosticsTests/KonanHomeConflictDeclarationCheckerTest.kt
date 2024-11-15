@@ -22,7 +22,6 @@ class KonanHomeConflictDeclarationCheckerTest {
                 project.extraProperties.set(NativeProperties.NATIVE_HOME.name, "kotlin_naitve_home_non_existed_path")
                 project.extraProperties.set(NativeProperties.KONAN_DATA_DIR.name, "konan_data_dir_non_existed_path")
             }) {
-            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
             project.multiplatformExtension.applyDefaultHierarchyTemplate()
             project.multiplatformExtension.linuxX64()
         }
@@ -35,7 +34,6 @@ class KonanHomeConflictDeclarationCheckerTest {
             preApplyCode = {
                 project.extraProperties.set(NativeProperties.KONAN_DATA_DIR.name, "build/konan")
             }) {
-            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
             project.multiplatformExtension.applyDefaultHierarchyTemplate()
             project.multiplatformExtension.linuxX64()
         }

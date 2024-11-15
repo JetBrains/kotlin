@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
@@ -475,9 +476,14 @@ class KotlinTargetVariantResourcesResolutionTests {
                             val variantPath = { "$resolvableConfiguration -> $resolvedComponent -> $variant" }
                             val typedUsage = variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
                             val stringUsage = variant.attributes.getAttribute(Attribute.of(Usage.USAGE_ATTRIBUTE.name, String::class.java))
+                            val isKotlinNativeBundleConfiguration =
+                                variant.attributes.getAttribute(KotlinNativeBundleArtifactFormat.attribute)
+                                    ?: variant.attributes.getAttribute(
+                                        Attribute.of(KotlinNativeBundleArtifactFormat.attribute.name, String::class.java)
+                                    )
                             val isKotlinCompilerClasspath = variant.attributes.keySet().isEmpty()
                             assert(
-                                typedUsage != null || stringUsage != null || isKotlinCompilerClasspath,
+                                typedUsage != null || stringUsage != null || isKotlinNativeBundleConfiguration != null || isKotlinCompilerClasspath,
                                 variantPath
                             )
                             assert(

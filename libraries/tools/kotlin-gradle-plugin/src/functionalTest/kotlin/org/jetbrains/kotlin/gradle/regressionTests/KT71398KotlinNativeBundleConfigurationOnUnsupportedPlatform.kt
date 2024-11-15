@@ -19,10 +19,7 @@ class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
     @Test
     fun `KT-71398 - project with multiplatform plugin should not add kotlinNativeBundleConfiguration`() {
         Assume.assumeTrue(!HostManager.hostIsMac)
-        val project = buildProjectWithMPP(preApplyCode = {
-            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
-            project.extraProperties.set("kotlin.native.toolchain.enabled", "true")
-        }) {
+        val project = buildProjectWithMPP {
             val kotlin = project.multiplatformExtension
             kotlin.macosArm64()
         }

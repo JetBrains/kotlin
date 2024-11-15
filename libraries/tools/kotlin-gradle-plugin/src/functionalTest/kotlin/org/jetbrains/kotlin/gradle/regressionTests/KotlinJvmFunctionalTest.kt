@@ -43,10 +43,7 @@ class KotlinJvmFunctionalTest {
 
     @Test
     fun `KT-66750 - check that disabled native toolchain flag in subproject does not affect root project`() {
-        val project = buildProjectWithJvm(preApplyCode = {
-            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
-            project.extraProperties.set("kotlin.native.toolchain.enabled", "true")
-        })
+        val project = buildProjectWithJvm()
 
         project.evaluate()
 

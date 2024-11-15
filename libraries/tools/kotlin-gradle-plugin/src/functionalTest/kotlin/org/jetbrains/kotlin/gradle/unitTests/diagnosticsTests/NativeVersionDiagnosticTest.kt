@@ -16,7 +16,6 @@ class NativeVersionDiagnosticTest {
         val project = buildProjectWithJvm(
             preApplyCode = {
                 project.extraProperties.set("kotlin.native.version", nativeVersion)
-                project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
             }
         )
         project.evaluate()

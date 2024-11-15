@@ -79,6 +79,5 @@ class KotlinNativeToolchainTest {
 
     private fun Project.setUpKotlinNativeToolchainWithStableVersion() {
         project.extraProperties.set("kotlin.native.version", STABLE_VERSION)
-        project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
     }
 }
