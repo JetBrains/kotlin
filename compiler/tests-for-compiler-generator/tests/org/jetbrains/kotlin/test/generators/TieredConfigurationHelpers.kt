@@ -18,11 +18,10 @@ fun File.shouldBeRunByRunnerOf(vararg tiers: TestTierLabel): Boolean {
     val lines = readLines()
     val directiveParts = lines.find { it.startsWith(TIERED_OVERRIDE_DIRECTIVE) }?.split(TIERED_OVERRIDE_DIRECTIVE)
         ?: lines.find { it.startsWith(TIERED_DIRECTIVE) }?.split(TIERED_DIRECTIVE)
-        ?: return false
 
     val declaredTier = directiveParts
-        .getOrNull(1)?.trim()?.let(TestTierLabel::valueOf)
-        ?: return false
+        ?.getOrNull(1)?.trim()?.let(TestTierLabel::valueOf)
+        ?: TestTierLabel.FRONTEND
 
     val minDeclaredTier = tiers.min()
     val maxDeclaredTier = tiers.max()
@@ -58,7 +57,7 @@ fun configureTierModelsForDeclaredAs(
 }
 
 /**
- * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests alongside K1
+ * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests
  */
 fun configureTierModelsForK1AlongsideDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
     configureTierModelsForDeclaredAs(
@@ -76,22 +75,3 @@ fun configureTierModelsForK1AlongsideDiagnosticTestsStating(vararg tiers: TestTi
         pattern = "^(.*)\\.(kts?|nkt)$",
         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
     )
-
-///**
-// * [...][configureTierModelsForDeclaredAs] for the common locations of K2-only diagnostic tests
-// */
-//fun configureTierModelsForK2OnlyDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
-//    configureTierModelsForDeclaredAs(
-//        *tiers,
-//        relativeRootPaths = listOf(
-//            "resolve",
-//            "resolveWithStdlib",
-//            // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
-//            // file extension `nkt` for it.
-//            "resolveFreezesIDE",
-//        ),
-//        excludeDirs = listOf("declarations/multiplatform/k1"),
-//        pattern = "^(.*)\\.(kts?|nkt)$",
-//        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-//    )
-
