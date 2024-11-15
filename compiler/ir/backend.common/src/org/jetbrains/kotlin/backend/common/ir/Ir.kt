@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -257,4 +259,19 @@ abstract class Symbols(
                         && function.extensionReceiverParameter == null
             }
     }
+}
+
+interface BaseSymbolLookupUtils {
+    fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class BaseSymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : BaseSymbolLookupUtils {
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
+        symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
+}
+
+class BaseSymbolOverIrLookupUtils() : BaseSymbolLookupUtils {
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
+        property.owner.getter?.symbol
 }

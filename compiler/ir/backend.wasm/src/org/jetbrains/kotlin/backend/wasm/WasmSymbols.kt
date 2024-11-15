@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolLookupUtils
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
@@ -31,8 +29,8 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
     private val context: WasmBackendContext,
-    symbolTable: SymbolTable
-) : JsCommonSymbols(context.irBuiltIns) {
+    lookup: BaseSymbolLookupUtils,
+) : JsCommonSymbols(context.irBuiltIns, lookup) {
 
     private val enumsInternalPackageFqName = FqName("kotlin.enums")
     private val wasmInternalFqName = FqName("kotlin.wasm.internal")
@@ -83,14 +81,17 @@ class WasmSymbols(
         getIrClass(FqName("kotlin.text.StringBuilder"))
     override val coroutineImpl =
         coroutineSymbols.coroutineImpl
-    override val coroutineSuspendedGetter =
+    override val coroutineSuspendedGetter by lazy {
         coroutineSymbols.coroutineSuspendedGetter
+    }
     override val getContinuation =
         getInternalFunction("getContinuation")
     override val continuationClass =
         coroutineSymbols.continuationClass
-    override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
+    override val coroutineContextGetter by lazy {
+        lookup.findGetter(coroutineSymbols.coroutineContextProperty)
+            ?: error("Cannot find getter of ${coroutineSymbols.coroutineContextProperty}")
+    }
     override val suspendCoroutineUninterceptedOrReturn =
         getInternalFunction("suspendCoroutineUninterceptedOrReturn")
     override val coroutineGetContext =

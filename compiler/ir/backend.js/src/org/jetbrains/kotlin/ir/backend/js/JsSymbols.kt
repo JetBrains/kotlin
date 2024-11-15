@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.ir.BaseSymbolLookupUtils
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -15,15 +16,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.Name
 
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
+    lookup: BaseSymbolLookupUtils,
 ) : Symbols(irBuiltIns) {
-    val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns)
+    val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns, lookup)
 }
 
 val jsPackageFqn = kotlinPackageFqn.child(Name.identifier("js"))
@@ -32,8 +33,8 @@ val collectionsPackageFqn = kotlinPackageFqn.child(Name.identifier("collections"
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsSymbols(
     private val context: JsIrBackendContext,
-    symbolTable: SymbolTable,
-) : JsCommonSymbols(context.irBuiltIns) {
+    lookup: BaseSymbolLookupUtils,
+) : JsCommonSymbols(context.irBuiltIns, lookup) {
     override val throwNullPointerException =
         irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
@@ -77,9 +78,6 @@ class JsSymbols(
     override val getContinuation = irBuiltIns.topLevelFunction(jsPackageFqn, "getContinuation")
 
     override val continuationClass = coroutineSymbols.continuationClass
-
-    override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
 
     override val suspendCoroutineUninterceptedOrReturn = irBuiltIns.topLevelFunction(JsIrBackendContext.JS_PACKAGE_FQNAME, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
 
@@ -133,6 +131,11 @@ class JsSymbols(
                 call.symbol == context.intrinsics.arrayConcat ||
                 call.symbol == context.intrinsics.jsBoxIntrinsic ||
                 call.symbol == context.intrinsics.jsUnboxIntrinsic
+
+    override val coroutineContextGetter by lazy {
+        lookup.findGetter(coroutineSymbols.coroutineContextProperty)
+            ?: error("Cannot find getter of ${coroutineSymbols.coroutineContextProperty}")
+    }
 
     companion object {
         // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
