@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -30,12 +28,6 @@ abstract class FirAbstractImportingScope(
     protected val scopeSession: ScopeSession,
     lookupInFir: Boolean
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
-    private val FirClassLikeSymbol<*>.fullyExpandedSymbol: FirClassSymbol<*>?
-        get() = when (this) {
-            is FirTypeAliasSymbol -> fir.expandedConeType?.lookupTag?.toSymbol(session)?.fullyExpandedSymbol
-            is FirClassSymbol<*> -> this
-        }
-
     private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
         if (fir.classKind == ClassKind.OBJECT) {
             unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS)
@@ -44,7 +36,7 @@ abstract class FirAbstractImportingScope(
         }
 
     fun getStaticsScope(classId: ClassId): FirContainingNamesAwareScope? =
-        provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedSymbol?.getStaticsScope()
+        provider.getClassLikeSymbolByClassId(classId)?.fullyExpandedClass(session)?.getStaticsScope()
 
     protected abstract fun isExcluded(import: FirResolvedImport, name: Name): Boolean
 
@@ -76,7 +68,7 @@ abstract class FirAbstractImportingScope(
             if (isExcluded(import, importedName)) continue
             val parentClassId = import.resolvedParentClassId
             if (parentClassId != null) {
-                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedSymbol
+                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
                 val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
                 if (staticsScope != null) {
                     staticsScope.processCallablesByName(importedName) {
