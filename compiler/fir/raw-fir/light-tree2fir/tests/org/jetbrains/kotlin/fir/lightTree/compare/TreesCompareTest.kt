@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.junit.runner.RunWith
@@ -100,10 +100,17 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             if (file.isCustomTestData) {
                 return@compareBase true
             }
-            if (file.path.replace("\\", "/") == "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") {
-                // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
-                return@compareBase true
+            when (file.path.replace("\\", "/")) {
+                "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt" -> {
+                    // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
+                    return@compareBase true
+                }
+                "compiler/testData/diagnostics/tests/visibility/checkCastToInaccessibleInterface.kt" -> {
+                    // KT-73138
+                    return@compareBase true
+                }
             }
+
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 
