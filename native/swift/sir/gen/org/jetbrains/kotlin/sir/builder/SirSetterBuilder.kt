@@ -21,6 +21,7 @@ class SirSetterBuilder {
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
     var body: SirFunctionBody? = null
+    var errorType: SirType = SirType.never
     var parameterName: String = "newValue"
 
     fun build(): SirSetter {
@@ -30,6 +31,7 @@ class SirSetterBuilder {
             documentation,
             attributes,
             body,
+            errorType,
             parameterName,
         )
     }
@@ -55,6 +57,7 @@ inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Uni
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.body = original.body
+    copyBuilder.errorType = original.errorType
     copyBuilder.parameterName = original.parameterName
     return copyBuilder.apply(init).build()
 }

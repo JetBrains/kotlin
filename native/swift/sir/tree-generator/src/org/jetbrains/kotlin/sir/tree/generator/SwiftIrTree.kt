@@ -123,6 +123,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
 
         +field("body", functionBodyType, nullable = true, mutable = true)
+
+        +field("errorType", typeType)
     }
 
     val init by element {

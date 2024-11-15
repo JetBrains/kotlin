@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -137,6 +138,7 @@ internal class SirGetterFromKtSymbol(
     override val documentation: String? by lazy { ktSymbol.documentation() }
     override lateinit var parent: SirDeclarationParent
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
     override var body: SirFunctionBody? = null
 }
 
@@ -150,6 +152,7 @@ internal class SirSetterFromKtSymbol(
     override val documentation: String? by lazy { ktSymbol.documentation() }
     override lateinit var parent: SirDeclarationParent
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val errorType: SirType get() = SirType.never
     override var body: SirFunctionBody? = null
     override val parameterName: String = "newValue"
 }

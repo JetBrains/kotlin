@@ -21,6 +21,7 @@ class SirInitBuilder {
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
     var body: SirFunctionBody? = null
+    var errorType: SirType = SirType.never
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val parameters: MutableList<SirParameter> = mutableListOf()
     var isConvenience: Boolean = false
@@ -34,6 +35,7 @@ class SirInitBuilder {
             documentation,
             attributes,
             body,
+            errorType,
             isFailable,
             parameters,
             isConvenience,
@@ -63,6 +65,7 @@ inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): Si
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.body = original.body
+    copyBuilder.errorType = original.errorType
     copyBuilder.isFailable = original.isFailable
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.isConvenience = original.isConvenience

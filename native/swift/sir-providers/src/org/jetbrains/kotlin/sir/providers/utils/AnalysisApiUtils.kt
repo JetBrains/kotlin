@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import kotlin.Throws
 
 public fun KaSymbolModality.isAbstract(): Boolean = when (this) {
     KaSymbolModality.FINAL, KaSymbolModality.OPEN -> false
@@ -39,4 +42,14 @@ public val KaDeclarationSymbol.deprecatedAnnotation: Deprecated?
             } ?: ""
 
         Deprecated(message, level = level, replaceWith = ReplaceWith(replaceWith))
+    }
+
+public val KaDeclarationSymbol.throwsAnnotation: Throws?
+    get() = this.annotations[ClassId.topLevel(FqName.fromSegments(listOf("kotlin", "Throws")))].firstOrNull()?.let {
+        val arguments = it.arguments.associate { it.name.asString() to it.expression }
+
+        val classes = (arguments["exceptionClasses"] as? KaAnnotationValue.ArrayValue?)
+            ?.values?.filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
+
+        Throws()
     }

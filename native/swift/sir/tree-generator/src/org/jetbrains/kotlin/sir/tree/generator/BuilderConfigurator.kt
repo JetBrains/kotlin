@@ -43,6 +43,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "false")
         }
 
+        configureFieldInAllLeafBuilders("errorType") {
+            default(it, "SirType.never")
+        }
+
         builder(setter) {
             default("parameterName", "\"newValue\"")
         }

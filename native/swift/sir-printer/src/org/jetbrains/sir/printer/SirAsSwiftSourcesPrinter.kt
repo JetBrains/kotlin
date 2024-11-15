@@ -186,6 +186,7 @@ public class SirAsSwiftSourcesPrinter(
         if (this !is SirAccessor) {
             print(")")
         }
+        printEffects()
         printReturnType()
         println(" {")
         withIndent {
@@ -366,6 +367,15 @@ public class SirAsSwiftSourcesPrinter(
         is SirSetter -> emptyList()
         is SirFunction -> listOfNotNull(extensionReceiverParameter) + parameters
         is SirInit -> parameters
+    }
+
+    private fun SirCallable.printEffects() {
+        if (this !is SirSetter && errorType != SirType.never) {
+            print(" throws")
+            if (errorType != SirType.any) {
+                print("(", errorType.swiftRender, ")")
+            }
+        }
     }
 
     private fun SirCallable.printReturnType() = print(

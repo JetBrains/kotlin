@@ -37,10 +37,12 @@ public class SirTrampolineFunction(
         }
     }
 
+    override val errorType: SirType get() = source.errorType
+
     override var body: SirFunctionBody?
         get() = SirFunctionBody(
             listOf(
-                "${source.swiftFqName}(${this.parameters.joinToString { it.forward ?: error("unreachable") }})"
+                "${"try ".takeIf { source.errorType != SirType.never } ?: ""}${source.swiftFqName}(${this.parameters.joinToString { it.forward ?: error("unreachable") }})"
             )
         )
         set(_) = Unit

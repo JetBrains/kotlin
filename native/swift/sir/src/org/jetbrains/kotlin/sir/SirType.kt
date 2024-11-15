@@ -7,7 +7,13 @@ package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
-sealed interface SirType
+sealed interface SirType {
+    companion object {
+        val any get() = SirExistentialType()
+        val never get() = SirNominalType(SirSwiftModule.never)
+        val void get() = SirNominalType(SirSwiftModule.void)
+    }
+}
 
 class SirFunctionalType(
     val parameterTypes: List<SirType>,

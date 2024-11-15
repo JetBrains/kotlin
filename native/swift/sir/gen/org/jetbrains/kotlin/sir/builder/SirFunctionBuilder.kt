@@ -21,6 +21,7 @@ class SirFunctionBuilder {
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
     var body: SirFunctionBody? = null
+    var errorType: SirType = SirType.never
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
@@ -36,6 +37,7 @@ class SirFunctionBuilder {
             documentation,
             attributes,
             body,
+            errorType,
             isOverride,
             isInstance,
             modality,
@@ -67,6 +69,7 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.body = original.body
+    copyBuilder.errorType = original.errorType
     copyBuilder.isOverride = original.isOverride
     copyBuilder.isInstance = original.isInstance
     copyBuilder.modality = original.modality

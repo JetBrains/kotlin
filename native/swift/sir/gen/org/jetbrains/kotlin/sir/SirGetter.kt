@@ -18,4 +18,5 @@ abstract class SirGetter : SirAccessor() {
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
     abstract override var body: SirFunctionBody?
+    abstract override val errorType: SirType
 }

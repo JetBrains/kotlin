@@ -285,6 +285,140 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
+    fun `should print throwing functions`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "nothrow"
+                    returnType = SirType.void
+                    errorType = SirType.never
+                }
+            )
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "throwsAny"
+                    returnType = SirType.void
+                    errorType = SirType.any
+                }
+            )
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "throwsVoid"
+                    returnType = SirType.void
+                    errorType = SirType.void
+                }
+            )
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/throwing_functions"
+        )
+    }
+
+    @Test
+    fun `should print throwing inits`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildStruct {
+                    origin = SirOrigin.Unknown
+                    name = "Foo"
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            errorType = SirType.never
+                        }
+                    )
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            errorType = SirType.any
+                        }
+                    )
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            errorType = SirType.void
+                        }
+                    )
+                }
+            )
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/throwing_inits"
+        )
+    }
+
+    @Test
+    fun `should print throwing accessors`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildVariable {
+                    origin = SirOrigin.Unknown
+                    name = "nonThrowing"
+                    type = SirType.void
+                    getter = buildGetter {
+                        errorType = SirType.never
+                    }
+                    setter = buildSetter {
+                        errorType = SirType.never
+                    }
+
+                }
+            )
+            declarations.add(
+                buildVariable {
+                    origin = SirOrigin.Unknown
+                    name = "throwingAny"
+                    type = SirType.void
+                    getter = buildGetter {
+                        errorType = SirType.any
+                    }
+                    setter = buildSetter {
+                        errorType = SirType.any
+                    }
+                }
+            )
+            declarations.add(
+                buildVariable {
+                    origin = SirOrigin.Unknown
+                    name = "throwingVoid"
+                    type = SirType.void
+                    getter = buildGetter {
+                        errorType = SirType.void
+                    }
+                    setter = buildSetter {
+                        errorType = SirType.void
+                    }
+                }
+            )
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/throwing_accessors"
+        )
+    }
+
+    @Test
     fun `should print DocC comment on function`() {
 
         val module = buildModule {

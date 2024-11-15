@@ -60,6 +60,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("exceptions")
+  public void testExceptions() {
+    runTest("native/swift/swift-export-standalone/testData/generation/exceptions/");
+  }
+
+  @Test
   @TestMetadata("functionAndClassWithSameName")
   public void testFunctionAndClassWithSameName() {
     runTest("native/swift/swift-export-standalone/testData/generation/functionAndClassWithSameName/");

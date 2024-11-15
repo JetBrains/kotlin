@@ -18,6 +18,7 @@ abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclar
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
     abstract override var body: SirFunctionBody?
+    abstract override val errorType: SirType
     abstract override val isOverride: Boolean
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality

@@ -21,6 +21,7 @@ class SirGetterBuilder {
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
     var body: SirFunctionBody? = null
+    var errorType: SirType = SirType.never
 
     fun build(): SirGetter {
         return SirGetterImpl(
@@ -29,6 +30,7 @@ class SirGetterBuilder {
             documentation,
             attributes,
             body,
+            errorType,
         )
     }
 
@@ -53,5 +55,6 @@ inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Uni
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.body = original.body
+    copyBuilder.errorType = original.errorType
     return copyBuilder.apply(init).build()
 }
