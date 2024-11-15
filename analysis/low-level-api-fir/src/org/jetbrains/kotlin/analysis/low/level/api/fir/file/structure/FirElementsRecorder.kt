@@ -123,6 +123,8 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                 it is KtRealPsiSourceElement ||
                         it.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
                         it.kind == KtFakeSourceElementKind.FromUseSiteTarget ||
+                        // To allow type retrieval from erroneous typealias even though it is erroneous
+                        it.kind == KtFakeSourceElementKind.ErroneousTypealiasExpansion ||
                         // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty
                         // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
                         it.kind == KtFakeSourceElementKind.ImplicitConstructor ||
