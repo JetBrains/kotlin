@@ -48,7 +48,7 @@ class WasmBackendContext(
     override var inVerbosePhase: Boolean = false
     override val irFactory: IrFactory = symbolTable.irFactory
 
-    val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
+    val isWasmJsTarget: Boolean = configuration.isWasmJsTarget
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
@@ -82,7 +82,7 @@ class WasmBackendContext(
     override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val jsPromiseSymbol: IrClassSymbol?
-        get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
+        get() = if (configuration.isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
     override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
@@ -96,7 +96,7 @@ class WasmBackendContext(
         BaseSymbolOverIrLookupUtils()
     else
         BaseSymbolOverDescriptorsLookupUtils(symbolTable)
-    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, lookup)
+    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext.irBuiltIns, configuration, lookup)
     override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
@@ -138,3 +138,6 @@ class WasmBackendContext(
     )
 
 }
+
+val CompilerConfiguration.isWasmJsTarget: Boolean
+    get() = wasmTarget == WasmTarget.JS

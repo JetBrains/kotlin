@@ -179,7 +179,7 @@ class JsIrBackendContext(
         BaseSymbolOverIrLookupUtils()
     else
         BaseSymbolOverDescriptorsLookupUtils(symbolTable)
-    override val symbols = JsSymbols(this@JsIrBackendContext, lookup)
+    override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics, lookup)
     override val ir = object : Ir<JsIrBackendContext>(this) {
         override val symbols = this@JsIrBackendContext.symbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true

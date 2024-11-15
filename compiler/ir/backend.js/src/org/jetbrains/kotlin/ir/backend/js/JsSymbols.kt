@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.BaseSymbolLookupUtils
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -32,9 +33,11 @@ val collectionsPackageFqn = kotlinPackageFqn.child(Name.identifier("collections"
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsSymbols(
-    private val context: JsIrBackendContext,
+    irBuiltIns: IrBuiltIns,
+    private val stageController: StageController,
+    private val intrinsics: JsIntrinsics,
     lookup: BaseSymbolLookupUtils,
-) : JsCommonSymbols(context.irBuiltIns, lookup) {
+) : JsCommonSymbols(irBuiltIns, lookup) {
     override val throwNullPointerException =
         irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
@@ -88,11 +91,11 @@ class JsSymbols(
     override val functionAdapter = irBuiltIns.topLevelClass(JsIrBackendContext.JS_PACKAGE_FQNAME, "FunctionAdapter")
 
     override fun functionN(n: Int): IrClassSymbol {
-        return context.irFactory.stageController.withInitialIr { super.functionN(n) }
+        return stageController.withInitialIr { super.functionN(n) }
     }
 
     override fun suspendFunctionN(n: Int): IrClassSymbol {
-        return context.irFactory.stageController.withInitialIr { super.suspendFunctionN(n) }
+        return stageController.withInitialIr { super.suspendFunctionN(n) }
     }
 
 
@@ -126,11 +129,11 @@ class JsSymbols(
     }
 
     override fun isSideEffectFree(call: IrCall): Boolean =
-        call.symbol in context.intrinsics.primitiveToLiteralConstructor.values ||
-                call.symbol == context.intrinsics.arrayLiteral ||
-                call.symbol == context.intrinsics.arrayConcat ||
-                call.symbol == context.intrinsics.jsBoxIntrinsic ||
-                call.symbol == context.intrinsics.jsUnboxIntrinsic
+        call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
+                call.symbol == intrinsics.arrayLiteral ||
+                call.symbol == intrinsics.arrayConcat ||
+                call.symbol == intrinsics.jsBoxIntrinsic ||
+                call.symbol == intrinsics.jsUnboxIntrinsic
 
     override val coroutineContextGetter by lazy {
         lookup.findGetter(coroutineSymbols.coroutineContextProperty)
