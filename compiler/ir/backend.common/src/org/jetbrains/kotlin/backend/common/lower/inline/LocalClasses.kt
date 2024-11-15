@@ -173,7 +173,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
  * Rewrites local classes so that they don't capture any locals. Locals are passed to the class explicitly, and usages of those locals
  * inside the class are replaced with accesses to the class fields.
  */
-class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+class LocalClassesInInlineFunctionsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }
