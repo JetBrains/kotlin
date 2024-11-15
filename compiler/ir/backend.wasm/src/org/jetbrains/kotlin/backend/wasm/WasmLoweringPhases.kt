@@ -61,7 +61,7 @@ private val stringConcatenationLowering = makeIrModulePhase(
 )
 
 private val lateinitPhase = makeIrModulePhase(
-    ::LateinitLowering,
+    { context: WasmBackendContext -> LateinitLowering(context, UninitializedPropertyAccessExceptionThrower(context.ir.symbols)) },
     name = "LateinitLowering",
 )
 

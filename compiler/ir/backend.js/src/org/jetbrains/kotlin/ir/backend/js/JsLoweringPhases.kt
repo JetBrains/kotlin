@@ -145,7 +145,7 @@ private val stringConcatenationLoweringPhase = makeIrModulePhase(
 )
 
 private val lateinitPhase = makeIrModulePhase(
-    ::LateinitLowering,
+    { context: JsIrBackendContext -> LateinitLowering(context, UninitializedPropertyAccessExceptionThrower(context.ir.symbols)) },
     name = "LateinitLowering",
 )
 

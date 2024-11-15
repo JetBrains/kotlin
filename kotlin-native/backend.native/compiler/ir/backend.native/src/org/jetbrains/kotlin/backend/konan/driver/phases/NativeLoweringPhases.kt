@@ -155,7 +155,7 @@ private val arrayConstructorPhase = createFileLoweringPhase(
 )
 
 private val lateinitPhase = createFileLoweringPhase(
-        ::LateinitLowering,
+        { context: KonanBackendContext -> LateinitLowering(context, UninitializedPropertyAccessExceptionThrower(context.ir.symbols)) },
         name = "Lateinit",
 )
 

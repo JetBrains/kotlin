@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 @PhaseDescription(
     name = "LateinitLowering",
 )
-open class LateinitLowering(private val backendContext: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+open class LateinitLowering(
+    private val backendContext: BackendContext,
+    private val uninitializedPropertyAccessExceptionThrower: UninitializedPropertyAccessExceptionThrower,
+) : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -88,7 +91,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
             irIfThenElse(
                 expression.type,
                 irEqualsNull(irGet(irValue)),
-                backendContext.throwUninitializedPropertyAccessException(this, irValue.name.asString()),
+                uninitializedPropertyAccessExceptionThrower.build(this, irValue.name.asString()),
                 irGet(irValue)
             )
         }
@@ -171,7 +174,16 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
     }
 
     private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
-        backendContext.throwUninitializedPropertyAccessException(this, name)
+        uninitializedPropertyAccessExceptionThrower.build(this, name)
+}
+
+open class UninitializedPropertyAccessExceptionThrower(private val symbols: Symbols) {
+    open fun build(builder: IrBuilderWithScope, name: String): IrExpression {
+        val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException.owner
+        return builder.irCall(throwExceptionFunction).apply {
+            putValueArgument(0, builder.irString(name))
+        }
+    }
 }
 
 private inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {

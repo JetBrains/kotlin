@@ -34,13 +34,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
 
-    fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
-        return builder.irCall(throwErrorFunction).apply {
-            putValueArgument(0, builder.irString(name))
-        }
-    }
-
     val mapping: Mapping
 
     fun isSideEffectFree(call: IrCall): Boolean {

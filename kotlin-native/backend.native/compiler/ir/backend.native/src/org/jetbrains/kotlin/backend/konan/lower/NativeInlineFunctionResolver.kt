@@ -44,7 +44,7 @@ internal class NativeInlineFunctionResolver(
 
         NativeAssertionWrapperLowering(context).lower(function)
 
-        LateinitLowering(context).lower(body)
+        LateinitLowering(context, UninitializedPropertyAccessExceptionThrower(context.ir.symbols)).lower(body)
 
         SharedVariablesLowering(context).lower(body, function)
 
