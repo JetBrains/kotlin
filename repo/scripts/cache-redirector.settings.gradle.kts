@@ -281,7 +281,8 @@ fun Project.addCheckRepositoriesTask() {
 fun URI.isCachedOrLocal() = scheme == "file" ||
         host == "cache-redirector.jetbrains.com" ||
         host == "teamcity.jetbrains.com" ||
-        host == "buildserver.labs.intellij.net"
+        host == "buildserver.labs.intellij.net" ||
+        host == "packages.jetbrains.team"
 
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
@@ -318,7 +319,7 @@ fun Task.logNonCachedRepo(
 ) {
     val msg = "Repository $repoUrl in ${project.displayName} should be cached with cache-redirector"
     val details = "Using non cached repository may lead to download failures in CI builds." +
-            " Check https://github.com/JetBrains/kotlin/blob/master/gradle/cacheRedirector.gradle.kts for details."
+            " Check https://github.com/JetBrains/kotlin/blob/master/repo/scripts/cache-redirector.settings.gradle.kts for details."
 
     if (isTeamcityBuild) {
         testFailed(testName, msg, details)
