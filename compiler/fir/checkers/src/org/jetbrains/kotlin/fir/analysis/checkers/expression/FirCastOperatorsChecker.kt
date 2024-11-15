@@ -72,6 +72,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         context: CheckerContext,
     ): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
+        val checkCompatibility = !context.languageVersionSettings.supportsFeature(LanguageFeature.SaferGenericDowncastsWrtVariance)
 
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
@@ -79,7 +80,11 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 oneIsNotNull -> impossible
                 else -> useless
             }
-            isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
+            isCastErased(l.directType, r.directType, context, makeOldFashionedCheck = false) -> when {
+                !checkCompatibility -> Applicability.CAST_ERASED
+                isCastErased(l.directType, r.directType, context, makeOldFashionedCheck = true) -> Applicability.CAST_ERASED
+                else -> Applicability.CAST_ERASED_DEPRECATION_WARNING
+            }
             else -> Applicability.APPLICABLE
         }
     }
@@ -100,6 +105,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         USELESS_CAST,
         USELESS_IS_CHECK,
         CAST_ERASED,
+        CAST_ERASED_DEPRECATION_WARNING,
     }
 
     private inline fun Applicability.ifInapplicable(block: (Applicability) -> Unit) = when (this) {
@@ -129,14 +135,20 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             Applicability.USELESS_IS_CHECK -> reportOn(
                 expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
             )
-            Applicability.CAST_ERASED -> when {
+            Applicability.CAST_ERASED, Applicability.CAST_ERASED_DEPRECATION_WARNING -> when {
                 expression.operation == FirOperation.AS || expression.operation == FirOperation.SAFE_AS -> {
                     reportOn(expression.source, FirErrors.UNCHECKED_CAST, lUserType, rUserType, context)
                 }
-                else -> reportOn(expression.conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, rUserType, context)
+                else -> reportOn(expression.conversionTypeRef.source, getCannotCheckForErasedDiagnostic(applicability), rUserType, context)
             }
             else -> error("Shouldn't be here")
         }
+    }
+
+    private fun getCannotCheckForErasedDiagnostic(applicability: Applicability) = when (applicability) {
+        Applicability.CAST_ERASED -> FirErrors.CANNOT_CHECK_FOR_ERASED
+        Applicability.CAST_ERASED_DEPRECATION_WARNING -> FirErrors.CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING
+        else -> error("Shouldn't be here")
     }
 
     private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType, context: CheckerContext) = when {

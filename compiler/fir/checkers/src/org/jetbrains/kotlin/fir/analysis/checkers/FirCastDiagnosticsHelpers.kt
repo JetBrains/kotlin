@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {
+fun isCastErased(
+    supertype: ConeKotlinType,
+    subtype: ConeKotlinType,
+    context: CheckerContext,
+    makeOldFashionedCheck: Boolean,
+): Boolean {
     val typeContext = context.session.typeContext
 
     val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()
@@ -40,7 +45,8 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
         return isCastErased(
             supertype.withNullability(nullable = false, typeContext),
             subtype.withNullability(nullable = false, typeContext),
-            context
+            context,
+            makeOldFashionedCheck,
         )
     }
 
@@ -60,14 +66,20 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
         return true
     }
 
-    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol, context)
+    if (!makeOldFashionedCheck) {
+        return when {
+            regularClassSymbol.typeParameterSymbols.isEmpty() -> false
+            else -> context.session.typeCastSupport.isCastToTargetTypeErased(subtype, supertype, context.session)
+        }
+    }
 
+    val staticallyKnownRhs = createStaticallyKnownSubtypeViaUnification(supertype, regularClassSymbol, context)
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
     // In this case, we can't guarantee anything, so the cast is considered to be erased
 
     // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
     // If not, it's wrong to use it
-    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype, stubTypesEqualToAnything = false)
+    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownRhs, subtype, stubTypesEqualToAnything = false)
 }
 
 /**
@@ -86,7 +98,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
  * subtype = List<...>
  * result = List<*>, some arguments were not inferred, replaced with '*'
  */
-fun findStaticallyKnownSubtype(
+fun createStaticallyKnownSubtypeViaUnification(
     supertype: ConeKotlinType,
     subTypeClassSymbol: FirRegularClassSymbol,
     context: CheckerContext

@@ -111,13 +111,13 @@ fun test12(x: Any?) {
 }
 
 fun test13(list: List<String>?) {
-    if (list is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>ArrayList<!> || list == null) {
+    if (list is <!CANNOT_CHECK_FOR_ERASED!>ArrayList<!> || list == null) {
         var k: ArrayList<String>? = list
     }
 }
 
 fun test14(list: List<String>?) {
-    if (list is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>ArrayList<!> || list != null) {
+    if (list is <!CANNOT_CHECK_FOR_ERASED!>ArrayList<!> || list != null) {
         var k: ArrayList<String>? = <!INITIALIZER_TYPE_MISMATCH!>list<!>
     }
 }

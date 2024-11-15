@@ -71,6 +71,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
     register(TypeComponents::class, TypeComponents(this))
     register(InferenceComponents::class, InferenceComponents(this))
+    register(TypeCastSupport::class, DefaultTypeCastSupport())
 
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(this))
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))

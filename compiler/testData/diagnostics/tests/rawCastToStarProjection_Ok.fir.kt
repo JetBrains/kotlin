@@ -6,5 +6,5 @@ open class ValueType<T> {
 }
 
 private fun checkType(type: ValueType<out Any?>) {
-    type as ValueType.Optional
+    type <!UNCHECKED_CAST!>as ValueType.Optional<!>
 }

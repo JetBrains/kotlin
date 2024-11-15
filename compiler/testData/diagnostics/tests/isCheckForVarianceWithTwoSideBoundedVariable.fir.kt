@@ -19,11 +19,11 @@ fun foo(p: P<IDerived, Collection<IBase>>, d: IDerived) {
     // P<T, Collection<T>> <: P<IDerived, Collection<IBase>>
     // IDerived <: T <: IBase
 
-    if (p is <!CANNOT_CHECK_FOR_ERASED!>Inv<in IDerived><!>) {
+    if (p is Inv<in IDerived>) {
         p.add(d)
     }
 
-    if (p is <!CANNOT_CHECK_FOR_ERASED!>Inv<out IBase><!>) {
+    if (p is Inv<out IBase>) {
         p.get().b()
     }
 }
