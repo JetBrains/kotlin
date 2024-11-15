@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -107,7 +105,7 @@ class JsCommonCoroutineSymbols(
             return contextGetter.symbol
         }
 
-    val coroutineContextProperty: PropertyDescriptor = irBuiltIns.topLevelProperty(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString()).descriptor
+    val coroutineContextProperty = irBuiltIns.topLevelProperty(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString())
 
     companion object {
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")

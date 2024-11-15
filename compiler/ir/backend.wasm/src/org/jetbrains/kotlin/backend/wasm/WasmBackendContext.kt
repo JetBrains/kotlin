@@ -89,7 +89,7 @@ class WasmBackendContext(
 
     override val sharedVariablesManager = WasmSharedVariablesManager(this)
 
-    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
+    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext)
     override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
