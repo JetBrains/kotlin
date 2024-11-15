@@ -104,7 +104,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
         return expression
     }
 
-    protected fun IrField.isLateinitBackingField(): Boolean {
+    private fun IrField.isLateinitBackingField(): Boolean {
         val property = this.correspondingPropertySymbol?.owner
         return property != null && property.isRealLateinit()
     }

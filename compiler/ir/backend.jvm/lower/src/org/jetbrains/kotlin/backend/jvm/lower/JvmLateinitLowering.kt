@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 
-
-@PhaseDescription(
-    name = "JvmLateinitLowering",
-)
+@PhaseDescription(name = "JvmLateinitLowering")
 class JvmLateinitLowering(context: CommonBackendContext) : LateinitLowering(context) {
     override fun transformLateinitBackingField(backingField: IrField, property: IrProperty) {
         super.transformLateinitBackingField(backingField, property)
         backingField.visibility = property.setter?.visibility ?: property.visibility
     }
 }
-
