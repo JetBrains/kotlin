@@ -346,6 +346,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
             LANGUAGE + "+MultiPlatformProjects"
         }
     }
+
+    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/*") {
+        defaultDirectives {
+            LANGUAGE + "+NestedTypeAliases"
+        }
+    }
 }
 
 fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
