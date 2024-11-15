@@ -43,6 +43,8 @@ NSArray * ENUM_entries_get();
 
 uintptr_t ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
 
+uintptr_t SEALED_O_get();
+
 uintptr_t __root___DATA_CLASS_WITH_REF_init_allocate();
 
 void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(uintptr_t __kt, uintptr_t o);

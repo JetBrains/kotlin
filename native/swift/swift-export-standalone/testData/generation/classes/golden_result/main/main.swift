@@ -403,6 +403,43 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
+open class SEALED : KotlinRuntime.KotlinBase {
+    public final class C : main.SEALED {
+        public override init() {
+            let __kt = SEALED_C_init_allocate()
+            super.init(__externalRCRef: __kt)
+            SEALED_C_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public final class O : main.SEALED {
+        public static var shared: main.SEALED.O {
+            get {
+                return main.SEALED.O(__externalRCRef: SEALED_O_get())
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    package override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public extension ExportedKotlinPackages.namespace.deeper {
     public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {

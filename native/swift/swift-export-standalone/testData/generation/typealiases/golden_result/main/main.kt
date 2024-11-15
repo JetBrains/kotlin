@@ -10,6 +10,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "4main24INHERITANCE_SINGLE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_CLASS_INHERITANCE::class, "4main29OBJECT_WITH_CLASS_INHERITANCEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS::class, "4main10OPEN_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -154,6 +156,12 @@ public fun ENUM_entries_get(): kotlin.native.internal.NativePtr {
 public fun ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = interpretObjCPointer<kotlin.String>(value)
     val _result = ENUM.valueOf(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("SEALED_O_get")
+public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
+    val _result = SEALED.O
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

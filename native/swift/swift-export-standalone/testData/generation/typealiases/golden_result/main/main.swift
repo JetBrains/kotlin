@@ -16,6 +16,7 @@ public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
+public typealias sealedClass = main.SEALED
 open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
     package override init() {
         fatalError()
@@ -199,6 +200,31 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
         __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+open class SEALED : KotlinRuntime.KotlinBase {
+    public final class O : main.SEALED {
+        public static var shared: main.SEALED.O {
+            get {
+                return main.SEALED.O(__externalRCRef: SEALED_O_get())
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    package override init() {
+        fatalError()
     }
     package override init(
         __externalRCRef: Swift.UInt

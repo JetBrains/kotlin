@@ -111,6 +111,12 @@ int32_t OBJECT_NO_PACKAGE_variable_get(uintptr_t self);
 
 void OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(uintptr_t self, int32_t newValue);
 
+uintptr_t SEALED_C_init_allocate();
+
+void SEALED_C_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t SEALED_O_get();
+
 uintptr_t __root___CLASS_WITH_SAME_NAME_init_allocate();
 
 void __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);

@@ -30,6 +30,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_NO_PACKAGE.Bar.NamedCompanion::class, "4main17OBJECT_NO_PACKAGEC3BarC14NamedCompanionC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_NO_PACKAGE.Foo::class, "4main17OBJECT_NO_PACKAGEC3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT::class, "4main17OBJECT_NO_PACKAGEC20OBJECT_INSIDE_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.C::class, "4main6SEALEDC1CC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -406,6 +409,24 @@ public fun OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self:
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
     val __newValue = newValue
     __self.variable = __newValue
+}
+
+@ExportedBridge("SEALED_C_init_allocate")
+public fun SEALED_C_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<SEALED.C>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("SEALED_C_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun SEALED_C_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    kotlin.native.internal.initInstance(____kt, SEALED.C())
+}
+
+@ExportedBridge("SEALED_O_get")
+public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
+    val _result = SEALED.O
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_allocate")

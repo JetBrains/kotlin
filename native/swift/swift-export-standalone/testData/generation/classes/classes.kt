@@ -259,8 +259,11 @@ inline class INLINE_CLASS(val a: Int)
 inline class INLINE_CLASS_WITH_REF(val i: DATA_CLASS_WITH_REF)
 
 sealed class SEALED {
+    class C : SEALED()
     object O : SEALED()
 }
+
+sealed interface SEALED_INTERFACE
 
 // copied from std, the simpliest generic inheritance that I could come up with.
 object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {
