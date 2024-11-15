@@ -351,6 +351,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_C
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFIX_MODIFIER_REQUIRED
@@ -1416,6 +1418,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NULLABLE_ON_DEFINITELY_NOT_NULLABLE,
             "'!!' type cannot be marked as nullable."
+        )
+        map.put(
+            INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT,
+            "Type argument for reified type parameter ''{0}'' is inferred as invisible type ''{1}''.",
+            SYMBOL,
+            RENDER_TYPE,
+        )
+        map.put(
+            INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT,
+            "Type argument for type parameter ''{0}'' used as type of vararg parameter ''{2}'' is inferred as invisible type ''{1}''.",
+            SYMBOL,
+            RENDER_TYPE,
+            DECLARATION_NAME,
         )
         map.put(
             INCORRECT_LEFT_COMPONENT_OF_INTERSECTION,

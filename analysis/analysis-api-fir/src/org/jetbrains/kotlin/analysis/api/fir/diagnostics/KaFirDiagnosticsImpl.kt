@@ -2456,6 +2456,36 @@ internal class NullableOnDefinitelyNotNullableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NullableOnDefinitelyNotNullable
 
+internal class InferredInvisibleReifiedTypeArgumentErrorImpl(
+    override val typeParameter: KaTypeParameterSymbol,
+    override val typeArgumentType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleReifiedTypeArgumentError
+
+internal class InferredInvisibleReifiedTypeArgumentWarningImpl(
+    override val typeParameter: KaTypeParameterSymbol,
+    override val typeArgumentType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleReifiedTypeArgumentWarning
+
+internal class InferredInvisibleVarargTypeArgumentErrorImpl(
+    override val typeParameter: KaTypeParameterSymbol,
+    override val typeArgumentType: KaType,
+    override val valueParameter: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleVarargTypeArgumentError
+
+internal class InferredInvisibleVarargTypeArgumentWarningImpl(
+    override val typeParameter: KaTypeParameterSymbol,
+    override val typeArgumentType: KaType,
+    override val valueParameter: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleVarargTypeArgumentWarning
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KaCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,

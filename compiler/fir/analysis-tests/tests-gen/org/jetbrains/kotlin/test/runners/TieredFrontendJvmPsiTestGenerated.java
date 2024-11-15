@@ -24316,6 +24316,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("checkCastToInaccessibleInterface.kt")
+      public void testCheckCastToInaccessibleInterface() {
+        runTest("compiler/testData/diagnostics/tests/visibility/checkCastToInaccessibleInterface.kt");
+      }
+
+      @Test
       @TestMetadata("innerNestedAndAnonymousClasses.kt")
       public void testInnerNestedAndAnonymousClasses() {
         runTest("compiler/testData/diagnostics/tests/visibility/innerNestedAndAnonymousClasses.kt");

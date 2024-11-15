@@ -44863,6 +44863,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("checkCastToInaccessibleInterface.kt")
+      public void testCheckCastToInaccessibleInterface() {
+        runTest("compiler/testData/diagnostics/tests/visibility/checkCastToInaccessibleInterface.kt");
+      }
+
+      @Test
       @TestMetadata("innerClassDelegatingConstructorCallToPrivate.kt")
       public void testInnerClassDelegatingConstructorCallToPrivate() {
         runTest("compiler/testData/diagnostics/tests/visibility/innerClassDelegatingConstructorCallToPrivate.kt");

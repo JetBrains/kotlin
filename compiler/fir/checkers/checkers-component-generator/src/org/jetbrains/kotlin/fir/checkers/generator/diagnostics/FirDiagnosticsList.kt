@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
-import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -976,6 +973,19 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION by error<KtElement>()
         val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error<KtElement>()
         val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error<KtElement>()
+        val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT by deprecationError<KtElement>(
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
+        ) {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<ConeKotlinType>("typeArgumentType")
+        }
+        val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT by deprecationError<KtElement>(
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
+        ) {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<ConeKotlinType>("typeArgumentType")
+            parameter<FirValueParameterSymbol>("valueParameter")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
