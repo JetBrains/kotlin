@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -56,6 +57,8 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
         }
+
+        useDirectives(CodegenTestDirectives)
 
         enableMetaInfoHandler()
 

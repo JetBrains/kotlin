@@ -2047,6 +2047,32 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NullableOnDefinitelyNotNullable::class
     }
 
+    interface InferredInvisibleReifiedTypeArgumentError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleReifiedTypeArgumentError::class
+        val typeParameter: KaTypeParameterSymbol
+        val typeArgumentType: KaType
+    }
+
+    interface InferredInvisibleReifiedTypeArgumentWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleReifiedTypeArgumentWarning::class
+        val typeParameter: KaTypeParameterSymbol
+        val typeArgumentType: KaType
+    }
+
+    interface InferredInvisibleVarargTypeArgumentError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleVarargTypeArgumentError::class
+        val typeParameter: KaTypeParameterSymbol
+        val typeArgumentType: KaType
+        val valueParameter: KaSymbol
+    }
+
+    interface InferredInvisibleVarargTypeArgumentWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleVarargTypeArgumentWarning::class
+        val typeParameter: KaTypeParameterSymbol
+        val typeArgumentType: KaType
+        val valueParameter: KaSymbol
+    }
+
     interface ExtensionInClassReferenceNotAllowed : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         val referencedDeclaration: KaCallableSymbol

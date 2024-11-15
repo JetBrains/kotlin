@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
+import org.jetbrains.kotlin.config.LanguageFeature.entries
 import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
@@ -365,6 +366,7 @@ enum class LanguageFeature(
     // TODO: Remove org.jetbrains.kotlin.fir.resolve.calls.stages.ConstraintSystemForks together with this LF (KT-72961)
     ConsiderForkPointsWhenCheckingContradictions(KOTLIN_2_2), // KT-68768
     CallableReferenceOverloadResolutionInLambda(KOTLIN_2_2), // KT-73011
+    ForbidInferOfInvisibleTypeAsReifiedOrVararg(KOTLIN_2_2, kind = BUG_FIX), // KT-25513
 
     // 2.3
 

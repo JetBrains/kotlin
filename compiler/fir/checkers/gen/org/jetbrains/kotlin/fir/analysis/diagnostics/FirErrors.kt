@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidCompanionInLocalInnerClass
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidParenthesizedLhsInAssignments
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidProjectionsInAnnotationProperties
@@ -542,6 +543,8 @@ object FirErrors {
     val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INCORRECT_LEFT_COMPONENT_OF_INTERSECTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val NULLABLE_ON_DEFINITELY_NOT_NULLABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_ON_DEFINITELY_NOT_NULLABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactoryForDeprecation2<FirTypeParameterSymbol, ConeKotlinType> = KtDiagnosticFactoryForDeprecation2("INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT", ForbidInferOfInvisibleTypeAsReifiedOrVararg, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT: KtDiagnosticFactoryForDeprecation3<FirTypeParameterSymbol, ConeKotlinType, FirValueParameterSymbol> = KtDiagnosticFactoryForDeprecation3("INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT", ForbidInferOfInvisibleTypeAsReifiedOrVararg, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtExpression::class)
