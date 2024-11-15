@@ -41,8 +41,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
         }
     }
 
-    val mapping: Mapping
-
     val preferJavaLikeCounterLoop: Boolean
         get() = false
 

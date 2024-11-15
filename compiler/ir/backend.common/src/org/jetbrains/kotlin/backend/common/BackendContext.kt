@@ -32,4 +32,7 @@ interface BackendContext {
     val sharedVariablesManager: SharedVariablesManager
     val internalPackageFqn: FqName
     val irFactory: IrFactory
+
+    // TODO(KT-73155): Pull this down to CommonBackendContext
+    val mapping: Mapping
 }
