@@ -48,25 +48,14 @@ struct NeonTraits {
 #include "polyhash/attributeSensitiveFunctions.inc"
 
     template <typename UnitType>
-    static int polyHashUnalignedUnrollUpTo16(int n, UnitType const* str) {
+    static int polyHashUnaligned(int n, UnitType const* str) {
         Vec128Type res = initVec128();
-
+        if (n >= 122) {
+            polyHashUnroll8<NeonTraits>(n, str, res, &b32[0], &p32[0]);
+        }
         polyHashUnroll4<NeonTraits>(n, str, res, &b16[0], &p32[16]);
         polyHashUnroll2<NeonTraits>(n, str, res, &b8[0], &p32[24]);
         polyHashTail<NeonTraits>(n, str, res, &b4[0], &p32[28]);
-
-        return vec128toInt(res);
-    }
-
-    template <typename UnitType>
-    static int polyHashUnalignedUnrollUpTo32(int n, UnitType const* str) {
-        Vec128Type res = initVec128();
-
-        polyHashUnroll8<NeonTraits>(n, str, res, &b32[0], &p32[0]);
-        polyHashUnroll4<NeonTraits>(n, str, res, &b16[0], &p32[16]);
-        polyHashUnroll2<NeonTraits>(n, str, res, &b8[0], &p32[24]);
-        polyHashTail<NeonTraits>(n, str, res, &b4[0], &p32[28]);
-
         return vec128toInt(res);
     }
 };
@@ -91,15 +80,9 @@ struct NeonTraits {
 template <typename UnitType>
 int polyHash(int length, UnitType const* str) {
     if (!neonSupported) {
-        // Vectorization is not supported.
         return polyHash_naive(length, str);
     }
-    uint32_t res;
-    if (length < 488)
-        res = NeonTraits::polyHashUnalignedUnrollUpTo16(length / 4, str);
-    else
-        res = NeonTraits::polyHashUnalignedUnrollUpTo32(length / 4, str);
-    // Handle the tail naively.
+    uint32_t res = NeonTraits::polyHashUnaligned(length / 4, str);
     for (int i = length & 0xFFFFFFFC; i < length; ++i)
         res = res * 31 + str[i];
     return res;
