@@ -373,7 +373,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         dslMarkersProvider: () -> Set<ClassId>,
         isImplicitReceiverMatching: (ImplicitReceiverValue<*>) -> Boolean,
     ) {
-        val implicitReceivers = context.bodyResolveContext.implicitValueStack.implicitReceivers
+        val implicitReceivers = context.bodyResolveContext.implicitValueStorage.implicitReceivers
         val resolvedReceiverIndex = implicitReceivers.indexOfFirst { isImplicitReceiverMatching(it) }
         if (resolvedReceiverIndex == -1) return
         val closerReceivers = implicitReceivers.drop(resolvedReceiverIndex + 1)

@@ -410,7 +410,7 @@ internal class ScopeBasedTowerLevel(
                 val lookupTag = candidate.fir.propertySymbol.dispatchReceiverClassLookupTagOrNull()
                 return when {
                     lookupTag != null -> {
-                        bodyResolveComponents.implicitValueStack.lastDispatchReceiver { implicitReceiverValue ->
+                        bodyResolveComponents.implicitValueStorage.lastDispatchReceiver { implicitReceiverValue ->
                             implicitReceiverValue.type.fullyExpandedType(session).lookupTagIfAny == lookupTag
                         }
                     }

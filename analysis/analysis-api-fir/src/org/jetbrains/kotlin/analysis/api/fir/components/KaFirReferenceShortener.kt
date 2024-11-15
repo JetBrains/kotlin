@@ -1357,7 +1357,7 @@ private class ElementsToShortenCollector(
         if (labelName == null) return true
 
         val psi = psi as? KtThisExpression ?: return false
-        val implicitReceivers = towerContextProvider.getClosestAvailableParentContext(psi)?.implicitValueStack ?: return false
+        val implicitReceivers = towerContextProvider.getClosestAvailableParentContext(psi)?.implicitValueStorage ?: return false
         val closestImplicitReceiver = implicitReceivers.implicitReceivers.lastOrNull() ?: return false
 
         return boundSymbol == closestImplicitReceiver.boundSymbol

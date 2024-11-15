@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.ImplicitValueStack
+import org.jetbrains.kotlin.fir.resolve.ImplicitValueStorage
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
@@ -53,7 +53,7 @@ internal open class StubBodyResolveTransformerComponents(
             override val logicSystem: LogicSystem
                 get() = error("Should not be called")
 
-            override val receiverStack: ImplicitValueStack
+            override val receiverStack: ImplicitValueStorage
                 get() = error("Should not be called")
 
             override fun implicitUpdated(info: TypeStatement) =

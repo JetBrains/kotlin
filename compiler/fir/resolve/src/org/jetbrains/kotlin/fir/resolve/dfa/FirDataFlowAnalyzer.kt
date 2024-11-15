@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -73,12 +73,13 @@ abstract class FirDataFlowAnalyzer(
             dataFlowAnalyzerContext: DataFlowAnalyzerContext,
         ): FirDataFlowAnalyzer =
             object : FirDataFlowAnalyzer(components, dataFlowAnalyzerContext) {
-                override val receiverStack: ImplicitValueStack
-                    get() = components.implicitValueStack
+                override val receiverStack: ImplicitValueStorage
+                    get() = components.implicitValueStorage
 
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
+                @OptIn(ImplicitValue.ImplicitValueInternals::class)
                 override fun implicitUpdated(info: TypeStatement) {
                     receiverStack.replaceImplicitValueType(info.variable.symbol, info.smartCastedType(typeContext))
                 }
@@ -114,7 +115,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     protected abstract val logicSystem: LogicSystem
-    protected abstract val receiverStack: ImplicitValueStack
+    protected abstract val receiverStack: ImplicitValueStorage
     protected abstract fun implicitUpdated(info: TypeStatement)
 
     private val graphBuilder get() = context.graphBuilder
@@ -1535,6 +1536,7 @@ abstract class FirDataFlowAnalyzer(
     // This method can be used to change the smart cast state to some node that is not the one at which the graph
     // builder is currently stopped. This is temporary: adding any more nodes to the graph will restart tracking
     // of the current position in the graph.
+    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun resetSmartCastPositionTo(flow: Flow?) {
         val previous = currentSmartCastPosition
         if (previous == flow) return

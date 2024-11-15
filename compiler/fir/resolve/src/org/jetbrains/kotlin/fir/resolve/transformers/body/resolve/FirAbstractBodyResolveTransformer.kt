@@ -79,7 +79,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     protected inline val symbolProvider: FirSymbolProvider get() = components.symbolProvider
 
-    protected inline val implicitValueStack: ImplicitValueStack get() = components.implicitValueStack
+    protected inline val implicitValueStorage: ImplicitValueStorage get() = components.implicitValueStorage
     protected inline val inferenceComponents: InferenceComponents get() = session.inferenceComponents
     protected inline val resolutionStageRunner: ResolutionStageRunner get() = components.resolutionStageRunner
     protected inline val samResolver: FirSamResolver get() = components.samResolver
@@ -104,7 +104,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val towerDataContext: FirTowerDataContext get() = context.towerDataContext
 
         override val file: FirFile get() = context.file
-        override val implicitValueStack: ImplicitValueStack get() = context.implicitValueStack
+        override val implicitValueStorage: ImplicitValueStorage get() = context.implicitValueStorage
         override val containingDeclarations: List<FirDeclaration> get() = context.containers
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!

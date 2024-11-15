@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ContextParameterValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitContextParameterValue
 import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -75,8 +75,8 @@ class BodyResolveContext(
             regularTowerDataContexts = regularTowerDataContexts.replaceTowerDataMode(newMode = value)
         }
 
-    val implicitValueStack: ImplicitValueStack
-        get() = towerDataContext.implicitValueStack
+    val implicitValueStorage: ImplicitValueStorage
+        get() = towerDataContext.implicitValueStorage
 
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
@@ -266,7 +266,7 @@ class BodyResolveContext(
         f: () -> T
     ): T = withTowerDataCleanup {
         val contextReceivers = mutableListOf<ContextReceiverValue>()
-        val contextParameters = mutableListOf<ContextParameterValue>()
+        val contextParameters = mutableListOf<ImplicitContextParameterValue>()
 
         owner.contextReceivers.forEach { receiver ->
             if (receiver.isLegacyContextReceiver()) {
@@ -274,7 +274,7 @@ class BodyResolveContext(
                     receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
                 )
             } else {
-                contextParameters += ContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
+                contextParameters += ImplicitContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
             }
         }
 

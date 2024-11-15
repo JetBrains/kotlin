@@ -478,7 +478,7 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         }
         is FirThisReference -> {
             val labelName = calleeReference.labelName
-            val possibleImplicitReceivers = implicitValueStack[labelName]
+            val possibleImplicitReceivers = implicitValueStorage[labelName]
             buildResolvedTypeRef {
                 source = null
                 coneType = when {

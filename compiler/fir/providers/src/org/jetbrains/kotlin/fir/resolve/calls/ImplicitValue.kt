@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.types.SmartcastStability
  * These values need special treatment in smart casts.
  * For an explanation, see the KDoc of [computeExpression].
  *
- * The two implementors are [ContextParameterValue] and [ImplicitReceiverValue].
+ * The two implementors are [ImplicitContextParameterValue] and [ImplicitReceiverValue].
  *
  * Both implementors can be used as context arguments.
  *
- * [ImplicitReceiverValue] also implements [ReceiverValue] but [ContextParameterValue] does **not**.
+ * [ImplicitReceiverValue] also implements [ReceiverValue] but [ImplicitContextParameterValue] does **not**.
  * That's because context parameters **cannot** be implicit receivers of calls.
  *
  * See the KDoc of [ReceiverValue] for further details.
@@ -99,7 +99,7 @@ sealed class ImplicitValue(
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue
 }
 
-class ContextParameterValue(
+class ImplicitContextParameterValue(
     override val boundSymbol: FirValueParameterSymbol,
     type: ConeKotlinType,
     mutable: Boolean = true,
@@ -113,7 +113,7 @@ class ContextParameterValue(
         coneTypeOrNull = type
     }
 
-    override fun createSnapshot(keepMutable: Boolean): ContextParameterValue {
-        return ContextParameterValue(boundSymbol, type, keepMutable)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue {
+        return ImplicitContextParameterValue(boundSymbol, type, keepMutable)
     }
 }

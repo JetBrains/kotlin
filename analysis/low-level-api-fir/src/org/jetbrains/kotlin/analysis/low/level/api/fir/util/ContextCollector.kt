@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
@@ -267,8 +268,9 @@ private class ContextCollectorVisitor(
         }
     }
 
+    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun computeContext(fir: FirElement, kind: ContextKind): Context {
-        val implicitReceiverStack = context.towerDataContext.implicitValueStack
+        val implicitReceiverStack = context.towerDataContext.implicitValueStorage
 
         val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
 
