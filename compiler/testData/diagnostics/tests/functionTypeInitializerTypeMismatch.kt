@@ -18,3 +18,5 @@ val f10: Function0<Int> = {  -> <!TYPE_MISMATCH!>""<!> }
 val f11: Function0<<!REDUNDANT_PROJECTION!>out<!> Int> = {  -> <!TYPE_MISMATCH!>""<!> }
 val f12: Function0<<!CONFLICTING_PROJECTION!>in<!> Int> = {  -> <!TYPE_MISMATCH!>""<!> }
 val f13: Function0<*> = {  -> "" }
+val f14: Function<Int> = <!TYPE_MISMATCH!>{  -> "" }<!>
+val f15: Function<Int> = <!TYPE_MISMATCH!>{ "" }<!>

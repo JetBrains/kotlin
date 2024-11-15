@@ -43,10 +43,10 @@ fun expectedFlexibleUnitEmptyReturnAndExplicitReturnNull() {
     }
 }
 
-val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = <!INITIALIZER_TYPE_MISMATCH("kotlin.Function0<kotlin.Unit?>; kotlin.Function0<kotlin.Any>")!>l@ {
+val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = l@ {
     if ("0".hashCode() == 42) return@l Unit
-    ""
-}<!>
+    <!RETURN_TYPE_MISMATCH!>""<!>
+}
 
 fun expectedFlexibleUnitImplicitReturnString() {
     A.foo = l@ {
@@ -61,9 +61,9 @@ fun expectedFlexibleUnitExplicitReturnUnitAndString() {
     }
 }
 
-val expectedNullableUnitExplicitReturnString: () -> Unit? = <!INITIALIZER_TYPE_MISMATCH!>l@ {
-    return@l ""
-}<!>
+val expectedNullableUnitExplicitReturnString: () -> Unit? = l@ {
+    return@l <!RETURN_TYPE_MISMATCH!>""<!>
+}
 
 fun expectedFlexibleUnitExplicitReturnString() {
     A.foo = l@ {

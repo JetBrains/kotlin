@@ -9,12 +9,12 @@ val foo = fun(a: Int): String {
     return ""
 }
 
-val bar: (Int) -> String = <!INITIALIZER_TYPE_MISMATCH!>l@{ a ->
+val bar: (Int) -> String = l@{ a ->
     if (a == 1) return@l "4"
     when (a) {
         5 -> return@l "2"
-        3 -> return@l null
-        2 -> return@l 2
+        3 -> return@l <!RETURN_TYPE_MISMATCH!>null<!>
+        2 -> return@l <!RETURN_TYPE_MISMATCH!>2<!>
     }
     return@l ""
-}<!>
+}

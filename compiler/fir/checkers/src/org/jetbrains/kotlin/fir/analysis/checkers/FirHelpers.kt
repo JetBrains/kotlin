@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
@@ -528,6 +529,15 @@ fun checkTypeMismatch(
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, lValueType, context)
         }
         isInitializer -> {
+            if (reportReturnTypeMismatchInLambda(
+                    lValueType = lValueType.fullyExpandedType(context.session),
+                    rValue = rValue,
+                    rValueType = rValueType.fullyExpandedType(context.session),
+                    context = context,
+                    reporter = reporter
+                )
+            ) return
+
             reporter.reportOn(
                 source,
                 FirErrors.INITIALIZER_TYPE_MISMATCH,
@@ -560,6 +570,47 @@ fun checkTypeMismatch(
             )
         }
     }
+}
+
+/**
+ * Instead of reporting type mismatch on the whole lambda, tries to report more granular type mismatch on the return expressions.
+ */
+private fun reportReturnTypeMismatchInLambda(
+    lValueType: ConeKotlinType,
+    rValue: FirExpression,
+    rValueType: ConeKotlinType,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+): Boolean {
+    if (rValue !is FirAnonymousFunctionExpression) return false
+    if (!lValueType.isSomeFunctionType(context.session) && lValueType.classId != StandardClassIds.Function) return false
+
+    val expectedReturnType = lValueType.typeArguments.lastOrNull()?.type ?: return false
+
+    val rValueTypeWithExpectedReturnType = rValueType.withArguments(
+        rValueType.typeArguments.dropLast(1).plus(expectedReturnType).toTypedArray()
+    )
+
+    if (!isSubtypeForTypeMismatch(context.session.typeContext, rValueTypeWithExpectedReturnType, lValueType)) return false
+
+    var reported = false
+
+    for (expression in rValue.anonymousFunction.getReturnedExpressions()) {
+        if (!isSubtypeForTypeMismatch(context.session.typeContext, expression.resolvedType, expectedReturnType)) {
+            reported = true
+            reporter.reportOn(
+                expression.source,
+                FirErrors.RETURN_TYPE_MISMATCH,
+                expectedReturnType,
+                expression.resolvedType,
+                rValue.anonymousFunction,
+                context.session.typeContext.isTypeMismatchDueToNullability(expression.resolvedType, expectedReturnType),
+                context
+            )
+        }
+    }
+
+    return reported
 }
 
 fun ConeCapturedType.projectionKindAsString(): String {
@@ -915,5 +966,5 @@ fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
         }
     }
 
-    return exitNode.previousNodes.mapNotNull(::extractReturnedExpression)
+    return exitNode.previousNodes.mapNotNull(::extractReturnedExpression).distinct()
 }
