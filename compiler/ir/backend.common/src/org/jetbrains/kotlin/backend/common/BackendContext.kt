@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.name.FqName
 
@@ -35,4 +37,11 @@ interface BackendContext {
 
     // TODO(KT-73155): Pull this down to CommonBackendContext
     val mapping: Mapping
+
+    fun remapMultiFieldValueClassStructure(
+        oldFunction: IrFunction,
+        newFunction: IrFunction,
+        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?,
+    ) {
+    }
 }

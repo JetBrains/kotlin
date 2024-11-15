@@ -56,11 +56,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
     val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = true
 
-    fun remapMultiFieldValueClassStructure(
-        oldFunction: IrFunction, newFunction: IrFunction,
-        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?
-    ) = Unit
-
     /**
      * See [InlineClassesUtils].
      */
