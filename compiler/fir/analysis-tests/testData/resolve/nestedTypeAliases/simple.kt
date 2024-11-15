@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 class A
 
 class C {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias TA = A<!>
+    typealias TA = A
 
     fun test(): TA = TA()
 }
