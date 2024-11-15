@@ -4628,6 +4628,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING) { firDiagnostic ->
+        CannotCheckForErasedDeprecationWarningImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CAST_NEVER_SUCCEEDS) { firDiagnostic ->
         CastNeverSucceedsImpl(
             firDiagnostic as KtPsiDiagnostic,

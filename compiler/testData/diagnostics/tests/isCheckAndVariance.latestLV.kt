@@ -5,7 +5,7 @@
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 private fun <E> List<E>.addAnything(element: E) {
-    if (this is MutableList<E>) {
+    if (this is <!CANNOT_CHECK_FOR_ERASED!>MutableList<E><!>) {
         this.add(element)
     }
 }

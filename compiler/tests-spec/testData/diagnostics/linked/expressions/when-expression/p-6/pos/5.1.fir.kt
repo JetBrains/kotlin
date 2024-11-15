@@ -113,7 +113,7 @@ fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collect
         value_2 as List<Int> -> {}
         value_2 <!USELESS_CAST!>as? List<Int><!> -> {}
         value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!> -> {}
-        (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int> -> {}
+        (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) <!UNCHECKED_CAST!>as MutableMap<Int, Int><!> -> {}
     }
 }
 

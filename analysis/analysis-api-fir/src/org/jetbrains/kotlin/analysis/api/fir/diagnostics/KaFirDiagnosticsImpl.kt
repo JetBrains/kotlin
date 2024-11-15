@@ -3886,6 +3886,12 @@ internal class CannotCheckForErasedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CannotCheckForErased
 
+internal class CannotCheckForErasedDeprecationWarningImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CannotCheckForErasedDeprecationWarning
+
 internal class CastNeverSucceedsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

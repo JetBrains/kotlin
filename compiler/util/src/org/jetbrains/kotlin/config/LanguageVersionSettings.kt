@@ -381,6 +381,7 @@ enum class LanguageFeature(
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, kind = BUG_FIX),
     ForbidImplementationByDelegationWithDifferentGenericSignature(KOTLIN_2_3, kind = BUG_FIX), // KT-72140
     ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, kind = BUG_FIX), // KT-71906
+    SaferGenericDowncastsWrtVariance(KOTLIN_2_3, kind = BUG_FIX), // KT-7972
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, kind = BUG_FIX), // KT-11914 Deprecation phase 2
 
     // End of 2.* language features --------------------------------------------------

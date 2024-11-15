@@ -6,7 +6,7 @@ interface MutableMap<K, V>: Map<K, V> {
 }
 
 fun p(p: Map<String, Int>) {
-    if (p is MutableMap<String, Int>) {
-        <!DEBUG_INFO_SMARTCAST!>p<!>[""] = 1
+    if (p is <!CANNOT_CHECK_FOR_ERASED!>MutableMap<String, Int><!>) {
+        p[""] = 1
     }
 }

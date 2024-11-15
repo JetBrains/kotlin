@@ -269,7 +269,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             data: Nothing?
         ): ConeDiagnostic? {
             val parameterType = getParameterType(isInstancePredicate.arg.parameterIndex)
-            return isCastErased(parameterType, isInstancePredicate.type, context).ifTrue {
+            return isCastErased(parameterType, isInstancePredicate.type, context, makeOldFashionedCheck = false).ifTrue {
                 ConeContractDescriptionError.ErasedIsCheck
             }
         }

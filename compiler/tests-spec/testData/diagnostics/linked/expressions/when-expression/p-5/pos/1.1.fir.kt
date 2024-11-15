@@ -154,7 +154,7 @@ fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
         1 -> value_2 as List<Int>
         2 -> value_2 as? List<Int>
         3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
-        4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
+        4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) <!UNCHECKED_CAST!>as MutableMap<Int, Int><!>
     }
 }
 

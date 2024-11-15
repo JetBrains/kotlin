@@ -2,4 +2,4 @@
 // LATEST_LV_DIFFERENCE
 open class Base
 class Derived<E : CharSequence> : Base()
-fun f(entry: Base) = entry is Derived<out CharSequence>
+fun f(entry: Base) = entry is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>Derived<out CharSequence><!>

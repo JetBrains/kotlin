@@ -1,8 +1,8 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-7972
 // WITH_STDLIB
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LATEST_LV_DIFFERENCE
 
 fun <E> Iterable<E>.windowed() = this is RandomAccess && this is List
 
