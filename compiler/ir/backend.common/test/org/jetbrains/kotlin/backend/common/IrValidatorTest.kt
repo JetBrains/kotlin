@@ -141,6 +141,7 @@ class IrValidatorTest {
                         checkAllKotlinFieldsArePrivate = true,
                         checkVisibilities = true,
                         checkVarargTypes = true,
+                        checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
                     )
                 )
                 assertEquals(expectedMessages, messageCollector.messages)
@@ -1068,6 +1069,114 @@ class IrValidatorTest {
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `accesses to not permitted inline function use site are reported`() {
+        val function1 = IrFactoryImpl.buildFun {
+            name = Name.identifier("inlineFunctionUseSiteNotPermitted")
+            returnType = TestIrBuiltins.anyType
+            isInline = true
+        }
+        val function2 = IrFactoryImpl.buildFun {
+            name = Name.identifier("inlineFunctionUseSitePermitted")
+            returnType = TestIrBuiltins.anyType
+            isInline = true
+        }
+        val function3 = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        val functionCall1 = IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function1.symbol,
+            typeArgumentsCount = 0,
+        )
+        val functionCall2 = IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function2.symbol,
+            typeArgumentsCount = 0,
+        )
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionCall1)
+        body.statements.add(functionCall2)
+        function3.body = body
+        val file = createIrFile()
+        file.addChild(function1)
+        file.addChild(function2)
+        file.addChild(function3)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references public inline function inlineFunctionUseSiteNotPermitted
+                    CALL 'public final fun inlineFunctionUseSiteNotPermitted (): kotlin.Any [inline] declared in org.sample' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `references to not permitted inline function use site are reported`() {
+        val function1 = IrFactoryImpl.buildFun {
+            name = Name.identifier("inlineFunctionUseSiteNotPermitted")
+            returnType = TestIrBuiltins.anyType
+            isInline = true
+        }
+        val function2 = IrFactoryImpl.buildFun {
+            name = Name.identifier("inlineFunctionUseSitePermitted")
+            returnType = TestIrBuiltins.anyType
+            isInline = true
+        }
+        val function3 = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        val functionReference1 = IrFunctionReferenceImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = function1.symbol,
+            typeArgumentsCount = 0
+        )
+        val functionReference2 = IrFunctionReferenceImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = function2.symbol,
+            typeArgumentsCount = 0
+        )
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionReference1)
+        body.statements.add(functionReference2)
+        function3.body = body
+        val file = createIrFile()
+        file.addChild(function1)
+        file.addChild(function2)
+        file.addChild(function3)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references public inline function inlineFunctionUseSiteNotPermitted
+                    FUNCTION_REFERENCE 'public final fun inlineFunctionUseSiteNotPermitted (): kotlin.Any [inline] declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
             )
         )
