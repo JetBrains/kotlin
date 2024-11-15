@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.*
  *    are copied. But the compiler could optimize the usage of some local classes and not copy them.
  *    So in this case all local classes MIGHT BE COPIED.
  */
-class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : BodyLoweringPass {
+class LocalClassesInInlineLambdasLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }
