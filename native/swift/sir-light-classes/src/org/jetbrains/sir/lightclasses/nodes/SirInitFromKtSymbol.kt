@@ -15,7 +15,10 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.*
+import org.jetbrains.sir.lightclasses.utils.LazyVar
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.lazyVar
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -45,7 +48,7 @@ internal class SirInitFromKtSymbol(
 
     override val isConvenience: Boolean = false
 
-    override val isOverride: Boolean get() = computeIsOverride()
+    override val isOverride: Boolean by lazyVar { computeIsOverride() }
 
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -58,4 +61,11 @@ internal class SirInitFromKtSymbol(
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
     override var body: SirFunctionBody? = null
+
+    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    override fun onParentChange(from: SirDeclarationParent?, to: SirDeclarationParent) {
+        super.onParentChange(from, to)
+
+        LazyVar.reset(this::isOverride)
+    }
 }

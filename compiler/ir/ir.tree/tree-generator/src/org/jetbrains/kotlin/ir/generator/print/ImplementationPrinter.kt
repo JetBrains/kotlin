@@ -36,8 +36,6 @@ internal class ImplementationPrinter(
         get() = true
 
     override fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
-        implementation.generationCallback?.invoke(this)
-
         if (implementation.element.isSubclassOf(IrTree.symbolOwner) && implementation.bindOwnedSymbol) {
             val symbolField = implementation.getOrNull("symbol")
             if (symbolField != null) {

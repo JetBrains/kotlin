@@ -16,6 +16,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.LazyVar
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirTypealiasFromKtSymbol(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.Importable
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 /**
  * A class representing a non-abstract implementation of an abstract class/interface of a tree node.
@@ -76,11 +77,13 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     private fun withDefault(field: Field) =
         !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
-    val fieldsInConstructor by lazy { allFields.filter { !withDefault(it) || it.customSetter != null } }
+    val fieldsInConstructor by lazy { allFields.filterNot(this::withDefault) }
 
     val fieldsInBody by lazy { allFields.filter { withDefault(it) || it.customSetter != null } }
 
     var requiresOptIn = false
+
+    var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 
     override var kind: ImplementationKind? = null
         set(value) {

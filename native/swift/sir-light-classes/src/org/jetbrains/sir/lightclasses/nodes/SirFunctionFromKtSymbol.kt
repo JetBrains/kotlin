@@ -54,13 +54,14 @@ internal class SirFunctionFromKtSymbol(
         }
         set(_) = Unit
 
-    override val isOverride: Boolean
-        get() = isInstance && overridableCandidates.any {
+    override val isOverride: Boolean by lazyVar {
+        isInstance && overridableCandidates.any {
             this.name == it.name &&
-            this.parameters.isSuitableForOverrideOf(it.parameters) &&
-            this.returnType.isSubtypeOf(it.returnType) &&
-            this.isInstance == it.isInstance
+                    this.parameters.isSuitableForOverrideOf(it.parameters) &&
+                    this.returnType.isSubtypeOf(it.returnType) &&
+                    this.isInstance == it.isInstance
         }
+    }
 
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && !ktSymbol.isStatic
@@ -73,4 +74,11 @@ internal class SirFunctionFromKtSymbol(
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
     override var body: SirFunctionBody? = null
+
+    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    override fun onParentChange(from: SirDeclarationParent?, to: SirDeclarationParent) {
+        super.onParentChange(from, to)
+
+        LazyVar.reset(this::isOverride)
+    }
 }

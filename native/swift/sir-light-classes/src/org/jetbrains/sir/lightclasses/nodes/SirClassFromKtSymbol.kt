@@ -25,7 +25,9 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.LazyVar
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.lazyVar
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal fun createSirClassFromKtSymbol(
@@ -186,9 +188,16 @@ internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() 
     override val documentation: String? = null
     override val isRequired: Boolean = false
     override val isConvenience: Boolean = false
-    override val isOverride: Boolean get() = computeIsOverride()
+    override val isOverride: Boolean by lazyVar { computeIsOverride() }
     override lateinit var parent: SirDeclarationParent
     override val attributes: MutableList<SirAttribute> = mutableListOf()
     override val errorType: SirType get() = SirType.never
     override var body: SirFunctionBody? = null
+
+    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    override fun onParentChange(from: SirDeclarationParent?, to: SirDeclarationParent) {
+        super.onParentChange(from, to)
+
+        LazyVar.reset(this::isOverride)
+    }
 }

@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declaration]
  */
-sealed interface SirDeclaration : SirElement {
+sealed interface SirDeclaration : SirElement, SirHierarchyParticipant {
     val origin: SirOrigin
     val visibility: SirVisibility
     val documentation: String?

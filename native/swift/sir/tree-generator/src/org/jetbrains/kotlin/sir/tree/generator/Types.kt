@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 
 val pureAbstractElementType = type(BASE_PACKAGE, "SirElementBase", TypeKind.Class)
+val hierarchyParticipant = type(BASE_PACKAGE, "SirHierarchyParticipant", TypeKind.Interface)
 val swiftVisibilityType = type(BASE_PACKAGE, "SirVisibility", TypeKind.Class)
 val originType = type(BASE_PACKAGE, "SirOrigin", TypeKind.Class)
 val parameterType = type(BASE_PACKAGE, "SirParameter", TypeKind.Class)

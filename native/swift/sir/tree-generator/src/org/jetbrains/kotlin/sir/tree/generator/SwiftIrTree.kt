@@ -44,6 +44,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
     val declaration by sealedElement {
         customParentInVisitor = rootElement
+        parent(hierarchyParticipant)
         +field("origin", originType)
         +field("visibility", swiftVisibilityType)
         +field(name = "documentation", string, nullable = true, mutable = false)

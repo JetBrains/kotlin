@@ -22,7 +22,9 @@ import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.isSubtypeOf
+import org.jetbrains.sir.lightclasses.utils.lazyVar
 import org.jetbrains.sir.lightclasses.utils.overridableCandidates
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
@@ -72,17 +74,25 @@ internal abstract class SirAbstractVariableFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val attributes: List<SirAttribute> by lazyVar { this.translatedAttributes }
 
-    override val isOverride: Boolean
-        get() = isInstance && overridableCandidates.any {
+    override val isOverride: Boolean by lazyVar {
+        isInstance && overridableCandidates.any {
             this.name == it.name &&
-            (it.setter == null && this.type.isSubtypeOf(it.type) || this.type == it.type) &&
-            this.isInstance == it.isInstance
+                    (it.setter == null && this.type.isSubtypeOf(it.type) || this.type == it.type) &&
+                    this.isInstance == it.isInstance
         }
+    }
 
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
+
+    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    override fun onParentChange(from: SirDeclarationParent?, to: SirDeclarationParent) {
+        super.onParentChange(from, to)
+
+        LazyVar.reset(this::isOverride)
+    }
 }
 
 internal class SirVariableFromKtSymbol(

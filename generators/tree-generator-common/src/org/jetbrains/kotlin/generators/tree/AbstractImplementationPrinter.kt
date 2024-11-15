@@ -126,6 +126,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                         )
                     }
 
+                    implementation.generationCallback?.invoke(this)
                     printAdditionalMethods(implementation)
                 }
             }

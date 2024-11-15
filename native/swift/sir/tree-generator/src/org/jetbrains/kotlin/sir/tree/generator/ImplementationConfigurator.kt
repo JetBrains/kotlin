@@ -18,8 +18,19 @@ object ImplementationConfigurator : AbstractSwiftIrTreeImplementationConfigurato
         configureFieldInAllImplementations(
             fieldName = "parent",
         ) {
-            isMutable(it)
-            isLateinit(it)
+            implementation.generationCallback = {
+                println()
+                println("private lateinit var _parent: ", SwiftIrTree.declarationParent.render())
+            }
+            default(it) {
+                value = "_parent"
+                withGetter = true
+                customSetter = """
+                               val oldParent = if (this::_parent.isInitialized) _parent else null
+                               _parent = value
+                               onParentChange(from = oldParent, to = _parent)
+                               """
+            }
         }
     }
 }

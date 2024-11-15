@@ -25,5 +25,13 @@ internal class SirVariableImpl(
     override val getter: SirGetter,
     override val setter: SirSetter?,
 ) : SirVariable() {
-    override lateinit var parent: SirDeclarationParent
+    override var parent: SirDeclarationParent
+        get() = _parent
+        set(value) {
+            val oldParent = if (this::_parent.isInitialized) _parent else null
+            _parent = value
+            onParentChange(from = oldParent, to = _parent)
+        }
+
+    private lateinit var _parent: SirDeclarationParent
 }

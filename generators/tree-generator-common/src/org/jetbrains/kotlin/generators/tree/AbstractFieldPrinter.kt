@@ -69,7 +69,7 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
             )
             println()
 
-            if (defaultValue != null && defaultValue.withGetter) {
+            if (!inConstructor && defaultValue != null && defaultValue.withGetter) {
                 withIndent {
                     println("get() = ${defaultValue.defaultValue}")
                 }

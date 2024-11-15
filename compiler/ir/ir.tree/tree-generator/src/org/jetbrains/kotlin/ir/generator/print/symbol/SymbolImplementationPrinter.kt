@@ -40,8 +40,4 @@ class SymbolImplementationPrinter(
             add(FunctionParameter("signature", idSignatureType.copy(nullable = true), "null"))
         }
     }
-
-    override fun ImportCollectingPrinter.printAdditionalMethods(implementation: SymbolImplementation) {
-        implementation.generationCallback?.invoke(this)
-    }
 }
