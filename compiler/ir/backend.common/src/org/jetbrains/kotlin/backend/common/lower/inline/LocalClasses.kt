@@ -190,11 +190,9 @@ class LocalClassesInInlineFunctionsLowering(val context: BackendContext) : BodyL
 }
 
 /**
- * Moves local classes from inline functions into nearest declaration container.
+ * Moves local classes from inline functions into the nearest declaration container.
  */
-class LocalClassesExtractionFromInlineFunctionsLowering(
-    context: CommonBackendContext,
-) : LocalClassPopupLowering(context) {
+class LocalClassesExtractionFromInlineFunctionsLowering(context: BackendContext) : LocalClassPopupLowering(context) {
     private val classesToExtract = mutableSetOf<IrClass>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
