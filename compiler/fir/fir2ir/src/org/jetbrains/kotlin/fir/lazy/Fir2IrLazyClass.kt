@@ -81,7 +81,7 @@ class Fir2IrLazyClass(
         get() = if (fir.classKind.isAnnotationClass) Modality.OPEN else fir.symbol.resolvedStatus.modality
         set(_) = mutationNotSupported()
 
-    override var attributeOwnerId: IrAttributeContainer
+    override var attributeOwnerId: IrElement
         get() = this
         set(_) = mutationNotSupported()
 

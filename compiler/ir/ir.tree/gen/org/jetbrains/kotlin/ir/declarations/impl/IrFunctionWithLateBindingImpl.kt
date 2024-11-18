@@ -56,7 +56,7 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
 
     override var body: IrBody? = null
 
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 

@@ -112,7 +112,7 @@ class IrLazyClass(
         }
     }
 
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
     override var originalBeforeInline: IrElement? = null
 
     val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto

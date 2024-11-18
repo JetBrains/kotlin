@@ -43,7 +43,7 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
 
     override var metadata: MetadataSource? = null
 
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 

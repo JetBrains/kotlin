@@ -94,7 +94,7 @@ class IrLazyFunction(
         }
     }
 
-    override var attributeOwnerId: IrAttributeContainer
+    override var attributeOwnerId: IrElement
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 

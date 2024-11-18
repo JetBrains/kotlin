@@ -51,7 +51,7 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
             target.entryBlock.type = value
         }
 
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
     override var originalBeforeInline: IrElement? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
