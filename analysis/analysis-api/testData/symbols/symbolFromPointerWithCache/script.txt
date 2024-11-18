@@ -1,0 +1,10 @@
+KaScriptSymbol:
+  annotations: []
+  compilerVisibility: Local
+  isActual: false
+  isExpect: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: <script-script.kts>
+  origin: SOURCE
+  visibility: LOCAL

@@ -61,7 +61,7 @@ internal class KaFirDestructuringDeclarationSymbol private constructor(
         }
 
     override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaDestructuringDeclarationSymbol>()
+        psiBasedSymbolPointerOfTypeIfSource<KaDestructuringDeclarationSymbol>(analysisSession.project)
             ?: throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())
     }
 

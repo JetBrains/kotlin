@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolPointerSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -19,13 +20,14 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import java.lang.ref.WeakReference
 
 internal class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
     private val callableId: CallableId,
-    private val signature: String
-) : KaSymbolPointer<T>() {
+    private val signature: String, override var cachedSymbol: WeakReference<T>?
+) : KaBaseSymbolPointer<T>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): T? {
+    override fun restoreIfNotCached(analysisSession: KaSession): T? {
         check(analysisSession is KaFe10Session)
         val analysisContext = analysisSession.analysisContext
 

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPsiBasedSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -25,7 +25,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
+        classSymbolPointer = KaPsiBasedSymbolPointerCreator.getInstance(ktModule.project).symbolPointerOfType(anonymousObjectDeclaration),
         ktModule = ktModule,
         manager = anonymousObjectDeclaration.manager,
     )

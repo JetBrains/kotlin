@@ -14,8 +14,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
+import java.lang.ref.WeakReference
 
-internal class KaFirTopLevelPropertySymbolPointer(callableId: CallableId, private val signature: FirCallableSignature) :
+internal class KaFirTopLevelPropertySymbolPointer(
+    callableId: CallableId, private val signature: FirCallableSignature,
+    override var cachedSymbol: WeakReference<KaKotlinPropertySymbol>?
+) :
     KaTopLevelCallableSymbolPointer<KaKotlinPropertySymbol>(callableId) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,

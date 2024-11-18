@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import java.lang.ref.WeakReference
 
 internal class KaFirJavaFieldSymbol(
     override val firSymbol: FirFieldSymbol,
@@ -47,7 +48,7 @@ internal class KaFirJavaFieldSymbol(
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = withValidityAssertion {
-        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic)
+        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic, WeakReference(this))
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.lang.ref.WeakReference
 
 /**
  * Note: current implementation doesn't support explicit backing field
@@ -56,7 +57,7 @@ internal class KaFirBackingFieldSymbol private constructor(
         get() = withValidityAssertion { owningKaProperty.isVal }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
-        KaFirBackingFieldSymbolPointer(owningKaProperty.createPointer())
+        KaFirBackingFieldSymbolPointer(owningKaProperty.createPointer(), WeakReference(this))
     }
 
     override fun equals(other: Any?): Boolean = this === other ||

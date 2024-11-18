@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import java.lang.ref.WeakReference
 
 internal class KaFirNamedFunctionSymbol private constructor(
     override val backingPsi: KtNamedFunction?,
@@ -194,21 +195,23 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>(analysisSession.project)?.let { return it }
 
         when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(
                 firSymbol.callableId,
                 FirCallableSignature.createSignature(firSymbol),
+                WeakReference(this)
             )
 
             KaSymbolLocation.CLASS -> when (origin) {
-                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name)
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name, WeakReference(this))
                 else -> KaFirMemberFunctionSymbolPointer(
                     analysisSession.createOwnerPointer(this),
                     name,
                     FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
+                    cachedSymbol = WeakReference(this)
                 )
             }
 

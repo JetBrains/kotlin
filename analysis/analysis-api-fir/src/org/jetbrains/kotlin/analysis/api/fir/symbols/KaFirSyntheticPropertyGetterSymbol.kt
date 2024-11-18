@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
+import java.lang.ref.WeakReference
 
 internal class KaFirSyntheticPropertyGetterSymbol(
     override val firSymbol: FirSyntheticPropertyAccessorSymbol,
@@ -75,7 +76,7 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         get() = withValidityAssertion { firSymbol.delegateFunctionSymbol.callableId }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this))
+        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this), WeakReference(this))
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

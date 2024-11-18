@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import java.lang.ref.WeakReference
 
 internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
     final override val backingPsi: KtDeclaration?,
@@ -54,10 +55,10 @@ internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
         get() = withValidityAssertion { firSymbol.returnType(builder) }
 
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>(analysisSession.project)?.let { return it }
 
         if (firSymbol.fir.source?.kind == KtFakeSourceElementKind.ScriptParameter) {
-            return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this))
+            return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this), WeakReference(this))
         }
 
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())

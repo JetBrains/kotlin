@@ -86,7 +86,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaAnonymousFunctionSymbol>()
+        psiBasedSymbolPointerOfTypeIfSource<KaAnonymousFunctionSymbol>(analysisSession.project)
             ?: throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 

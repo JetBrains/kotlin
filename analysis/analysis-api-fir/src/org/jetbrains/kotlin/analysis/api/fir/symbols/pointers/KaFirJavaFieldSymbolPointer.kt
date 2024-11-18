@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.name.Name
+import java.lang.ref.WeakReference
 
 internal class KaFirJavaFieldSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val fieldName: Name,
     isStatic: Boolean,
+    override var cachedSymbol: WeakReference<KaJavaFieldSymbol>?,
 ) : KaFirMemberSymbolPointer<KaJavaFieldSymbol>(ownerPointer, isStatic) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,

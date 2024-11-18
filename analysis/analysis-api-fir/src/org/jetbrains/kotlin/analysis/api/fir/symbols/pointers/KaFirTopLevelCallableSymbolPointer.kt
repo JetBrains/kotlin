@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -18,9 +19,9 @@ import org.jetbrains.kotlin.name.CallableId
 
 internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
     private val callableId: CallableId
-) : KaSymbolPointer<S>() {
+) : KaBaseSymbolPointer<S>() {
     @KaImplementationDetail
-    final override fun restoreSymbol(analysisSession: KaSession): S? {
+    final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)
         val candidates = analysisSession.getCallableSymbols(callableId)
         if (candidates.isEmpty()) return null

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.isNullableAny
+import java.lang.ref.WeakReference
 
 /**
  * [KaFirTypeParameterSymbolBase] provides shared implementations for [KaFirTypeParameterSymbol] and [KaFirPsiJavaTypeParameterSymbol].
@@ -32,7 +33,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
 
     override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = withValidityAssertion {
         if (this is KaFirKtBasedSymbol<*, *>) {
-            psiBasedSymbolPointerOfTypeIfSource<KaTypeParameterSymbol>()?.let { return it }
+            psiBasedSymbolPointerOfTypeIfSource<KaTypeParameterSymbol>(analysisSession.project)?.let { return it }
         }
 
         val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol
@@ -43,6 +44,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = typeParameters.indexOf(firSymbol),
+            cachedSymbol = WeakReference(this)
         )
     }
 

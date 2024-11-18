@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import java.lang.ref.WeakReference
 
 internal class KaFirSamConstructorSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
@@ -72,7 +73,7 @@ internal class KaFirSamConstructorSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol> = withValidityAssertion {
         val callableId = firSymbol.callableId
-        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName))
+        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName), WeakReference(this))
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -16,11 +17,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import java.lang.ref.WeakReference
 
-internal class KaFirResultPropertySymbolPointer(private val scriptPointer: KaSymbolPointer<KaScriptSymbol>) :
-    KaSymbolPointer<KaKotlinPropertySymbol>() {
+internal class KaFirResultPropertySymbolPointer(
+    private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
+    override var cachedSymbol: WeakReference<KaKotlinPropertySymbol>?
+) : KaBaseSymbolPointer<KaKotlinPropertySymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaKotlinPropertySymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? {
         require(analysisSession is KaFirSession)
         val script = with(analysisSession) {
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript

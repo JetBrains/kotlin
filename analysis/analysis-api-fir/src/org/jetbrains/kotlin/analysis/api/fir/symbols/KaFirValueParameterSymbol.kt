@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
+import java.lang.ref.WeakReference
 
 internal class KaFirValueParameterSymbol private constructor(
     override val backingPsi: KtParameter?,
@@ -105,7 +106,7 @@ internal class KaFirValueParameterSymbol private constructor(
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>(analysisSession.project)?.let { return it }
 
         val ownerSymbol = with(analysisSession) { containingDeclaration }
             ?: error("Containing function is expected for a value parameter symbol")
@@ -116,6 +117,7 @@ internal class KaFirValueParameterSymbol private constructor(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+            cachedSymbol = WeakReference(this)
         )
     }
 

@@ -11,16 +11,17 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
+import java.lang.ref.WeakReference
 
 internal class KaFe10DescConstructorSymbol(
     override val descriptor: ConstructorDescriptor,
@@ -66,7 +67,7 @@ internal class KaFe10DescConstructorSymbol(
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
             val signature = descriptor.getSymbolPointerSignature()
-            return KaFe10DescFunctionSymbolPointer(callableId, signature)
+            return KaFe10DescFunctionSymbolPointer(callableId, signature, WeakReference(this))
         }
 
         return KaFe10NeverRestoringSymbolPointer()

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import java.lang.ref.WeakReference
 
 internal class KaFe10ReceiverParameterSymbol(
     override val descriptor: ReceiverParameterDescriptor,
@@ -39,7 +40,7 @@ internal class KaFe10ReceiverParameterSymbol(
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
-        KaBaseReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
+        KaBaseReceiverParameterSymbolPointer(owningCallableSymbol.createPointer(), WeakReference(this))
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
