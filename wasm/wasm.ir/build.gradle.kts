@@ -58,7 +58,7 @@ dependencies {
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
+    testImplementation(libs.kotlinx.serialization.json)
 
     testSuite("webassembly:testsuite:$testSuiteRevision@zip")
     wabt("webassembly:wabt:$wabtVersion:$wabtOS@tar.gz")

@@ -7,7 +7,7 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.gson)
     implementation("org.apache.velocity:velocity-engine-core:2.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0")
+    implementation(libs.kotlinx.serialization.core)
 }
 
 val generateNpmVersions by generator(

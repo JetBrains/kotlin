@@ -84,7 +84,7 @@ fun decodeCDPResponse(
 sealed interface CDPMethodCallEncodingInfo
 
 private class CDPMethodCallEncodingInfoImpl(
-    val serializer: DeserializationStrategy<out CDPMethodInvocationResult>
+    val serializer: DeserializationStrategy<CDPMethodInvocationResult>
 ) : CDPMethodCallEncodingInfo
 
 /**

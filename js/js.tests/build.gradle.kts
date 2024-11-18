@@ -81,7 +81,7 @@ dependencies {
 
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
+    testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.ktor.client.cio)
     testImplementation(libs.ktor.client.core)
     testImplementation(libs.ktor.client.websockets)
