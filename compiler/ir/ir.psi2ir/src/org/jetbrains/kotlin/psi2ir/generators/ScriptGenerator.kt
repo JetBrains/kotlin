@@ -101,7 +101,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
-                    kind = IrParameterKind.RegularParameter,
+                    kind = IrParameterKind.Regular,
                     name = valueParameterDescriptor.name,
                     type = valueParameterDescriptor.type.toIrType(),
                     isAssignable = false,
@@ -130,7 +130,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
             }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
-                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, IrParameterKind.RegularParameter)
+                makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, IrParameterKind.Regular)
             }
 
             descriptor.scriptProvidedProperties.zip(descriptor.scriptProvidedPropertiesParameters) { providedProperty, parameter ->
@@ -145,7 +145,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
                         origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY,
-                        kind = IrParameterKind.RegularParameter,
+                        kind = IrParameterKind.Regular,
                         name = descriptor.name,
                         type = type,
                         isAssignable = false,

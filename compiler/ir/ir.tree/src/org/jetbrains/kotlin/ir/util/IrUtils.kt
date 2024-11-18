@@ -1526,8 +1526,8 @@ fun IrFunction.hasShape(
         when (param.kind) {
             IrParameterKind.DispatchReceiver -> actuallyHasDispatchReceiver = true
             IrParameterKind.ExtensionReceiver -> actuallyHasExtensionReceiver = true
-            IrParameterKind.ContextParameter -> actualContextParameters++
-            IrParameterKind.RegularParameter -> actualRegularParameters++
+            IrParameterKind.Context -> actualContextParameters++
+            IrParameterKind.Regular -> actualRegularParameters++
         }
     }
 

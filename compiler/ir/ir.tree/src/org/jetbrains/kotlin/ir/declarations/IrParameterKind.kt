@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 enum class IrParameterKind {
     DispatchReceiver,
-    ContextParameter,
+    Context,
     ExtensionReceiver,
-    RegularParameter,
+    Regular,
 }

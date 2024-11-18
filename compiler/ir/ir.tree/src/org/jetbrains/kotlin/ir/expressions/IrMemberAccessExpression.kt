@@ -125,8 +125,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                     when (param.kind) {
                         IrParameterKind.DispatchReceiver -> hasDispatchReceiver = true
                         IrParameterKind.ExtensionReceiver -> hasExtensionReceiver = true
-                        IrParameterKind.ContextParameter -> contextParameterCount++
-                        IrParameterKind.RegularParameter -> regularParameterCount++
+                        IrParameterKind.Context -> contextParameterCount++
+                        IrParameterKind.Regular -> regularParameterCount++
                     }
                 }
 
@@ -188,13 +188,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     /**
-     * Number of those arguments that correspond to [IrParameterKind.ContextParameter] and [IrParameterKind.RegularParameter] parameters.
+     * Number of those arguments that correspond to [IrParameterKind.Context] and [IrParameterKind.Regular] parameters.
      *
      * ##### This is a deprecated API!
      * Only use [arguments] instead. If you need to know the meaning of the arguments, reach out to the corresponding function's parameters.
      * A drop-in replacement:
      * ```
-     * symbol.owner.parameters.count { it.kind == IrParameterKind.RegularParameter || it.kind == IrParameterKind.ContextParameter }
+     * symbol.owner.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
      * ```
      *
      * Details on the API migration: KT-68003
@@ -385,7 +385,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
 
     /**
-     * Gets one of arguments that correspond to [IrParameterKind.ContextParameter] or [IrParameterKind.RegularParameter] parameters.
+     * Gets one of arguments that correspond to [IrParameterKind.Context] or [IrParameterKind.Regular] parameters.
      * This is, the index corresponds to the deprecated [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
      * receiver parameters.
      *
@@ -413,7 +413,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     /**
-     * Sets one of arguments that correspond to [IrParameterKind.ContextParameter] or [IrParameterKind.RegularParameter] parameters.
+     * Sets one of arguments that correspond to [IrParameterKind.Context] or [IrParameterKind.Regular] parameters.
      * This is, the index corresponds to the deprecated [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
      * receiver parameters.
      *

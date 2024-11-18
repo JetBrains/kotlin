@@ -63,10 +63,10 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
                 parameter.indexInParameters = index
                 parameter.indexInOldValueParameters = when (kind) {
                     IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
-                    IrParameterKind.ContextParameter, IrParameterKind.RegularParameter -> oldIndex++
+                    IrParameterKind.Context, IrParameterKind.Regular -> oldIndex++
                 }
 
-                if (kind == IrParameterKind.ContextParameter) {
+                if (kind == IrParameterKind.Context) {
                     newContextParametersCount++
                 }
             }
@@ -156,13 +156,13 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
     /**
      * The number of context parameters in the [parameters] and [valueParameters] lists.
      *
-     * There first `contextReceiverParametersCount` parameters in [valueParameters] are [IrParameterKind.ContextParameter],
-     * the following are [IrParameterKind.RegularParameter].
+     * There first `contextReceiverParametersCount` parameters in [valueParameters] are [IrParameterKind.Context],
+     * the following are [IrParameterKind.Regular].
      *
      * ##### This is a deprecated API
      * Instead, use [parameters] directly. A drop-in replacement:
      * ```
-     * parameters.count { it.kind == IrParameterKind.ContextParameter }
+     * parameters.count { it.kind == IrParameterKind.Context }
      * ```
      *
      * Details on the API migration: KT-68003
@@ -181,21 +181,21 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     /**
      * A filtered list of [parameters], that contains only
-     * [IrParameterKind.ContextParameter] and [IrParameterKind.RegularParameter] parameters.
+     * [IrParameterKind.Context] and [IrParameterKind.Regular] parameters.
      * Setting this property, likewise, only replaces those kinds of parameters with the provided list,
      * leaving dispatch and extension receiver intact.
      *
      * ##### This is a deprecated API
      * Use [parameters] instead. A drop-in replacement:
      * ```
-     * parameters.filter { it.kind == IrParameterKind.RegularParameter || it.kind == IrParameterKind.ContextParameter }
+     * parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
      * ```
      *
      * Details on the API migration: KT-68003
      */
     @DeprecatedCompilerApi
     var valueParameters: List<IrValueParameter>
-        get() = _parameters.filter { it.kind == IrParameterKind.RegularParameter || it.kind == IrParameterKind.ContextParameter }
+        get() = _parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         set(value) {
             replaceRegularAndExtensionParameters(value, _contextReceiverParametersCount)
         }
@@ -245,14 +245,14 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             val param = valueParameters[i]
             parameters += param
             param.indexInOldValueParameters = i
-            param.kind = IrParameterKind.ContextParameter
+            param.kind = IrParameterKind.Context
         }
         parameters.addIfNotNull(extensionReceiver)
         for (i in actualContextParameterCount..<valueParameters.size) {
             val param = valueParameters[i]
             parameters += param
             param.indexInOldValueParameters = i
-            param.kind = IrParameterKind.RegularParameter
+            param.kind = IrParameterKind.Regular
         }
 
         for ((i, param) in parameters.withIndex()) {
@@ -267,7 +267,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             param.indexInOldValueParameters = when (param._kind) {
                 null -> -1
                 IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
-                IrParameterKind.ContextParameter, IrParameterKind.RegularParameter -> indexInOldValueParameters++
+                IrParameterKind.Context, IrParameterKind.Regular -> indexInOldValueParameters++
             }
         }
     }
