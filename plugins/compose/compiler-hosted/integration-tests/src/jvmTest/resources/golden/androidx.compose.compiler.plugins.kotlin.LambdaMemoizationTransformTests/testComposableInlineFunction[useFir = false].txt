@@ -84,4 +84,7 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-2: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%1918458719
+    }
 }

@@ -272,6 +272,9 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-1: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%-1027889013
+    }
   val lambda%1629446639: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
@@ -287,6 +290,9 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-2: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%1629446639
+    }
   val lambda%-1268429142: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
@@ -330,6 +336,9 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-5: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%-1508969271
+    }
   val lambda%1148366381: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
@@ -345,6 +354,9 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-6: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%1148366381
+    }
   val lambda%-1749509400: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
@@ -360,6 +372,9 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-7: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%-1749509400
+    }
   val lambda%907826252: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
@@ -375,4 +390,7 @@ internal object ComposableSingletons%TestKt {
     }
   }
   val lambda-8: Function2<Composer, Int, Unit>
+    get() {
+      return lambda%907826252
+    }
 }

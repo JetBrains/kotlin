@@ -822,7 +822,6 @@ class ComposerLambdaMemoization(
                     p.addGetter {
                         returnType = lambdaType
                         visibility = DescriptorVisibilities.INTERNAL
-                        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     }.also { fn ->
                         val thisParam = clazz.thisReceiver!!.copyTo(fn)
                         fn.parent = clazz
