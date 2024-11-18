@@ -122,7 +122,6 @@ class Fir2IrLazyPropertyForPureField(
         get() = null
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override val factory: IrFactory
         get() = IrFactoryImpl

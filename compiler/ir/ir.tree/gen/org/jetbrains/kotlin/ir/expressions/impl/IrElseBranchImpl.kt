@@ -23,6 +23,4 @@ class IrElseBranchImpl internal constructor(
     override var result: IrExpression,
 ) : IrElseBranch() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

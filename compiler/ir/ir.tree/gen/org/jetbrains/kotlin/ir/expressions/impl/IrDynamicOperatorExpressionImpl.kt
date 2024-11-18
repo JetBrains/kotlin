@@ -27,8 +27,6 @@ class IrDynamicOperatorExpressionImpl internal constructor(
 ) : IrDynamicOperatorExpression() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override lateinit var receiver: IrExpression
 
     override val arguments: MutableList<IrExpression> = SmartList()

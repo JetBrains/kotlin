@@ -52,7 +52,6 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
         }
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 }

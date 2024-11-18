@@ -25,7 +25,5 @@ class IrConstantArrayImpl internal constructor(
 ) : IrConstantArray() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val elements: MutableList<IrConstantValue> = SmartList()
 }

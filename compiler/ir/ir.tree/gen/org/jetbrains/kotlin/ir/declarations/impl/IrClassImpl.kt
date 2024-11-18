@@ -36,8 +36,6 @@ class IrClassImpl @IrImplementationDetail constructor(
 ) : IrClass() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var isExternal: Boolean = false

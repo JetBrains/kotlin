@@ -66,11 +66,6 @@ class Fir2IrLazyTypeAlias(
         get() = this
         set(_) = mutationNotSupported()
 
-    override var originalBeforeInline: IrElement?
-        get() = null
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
 
     override var metadata: MetadataSource?
         get() = null

@@ -31,7 +31,5 @@ class IrRichPropertyReferenceImpl internal constructor(
 ) : IrRichPropertyReference() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }

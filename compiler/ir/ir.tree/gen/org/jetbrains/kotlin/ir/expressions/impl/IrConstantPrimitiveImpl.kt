@@ -24,6 +24,4 @@ class IrConstantPrimitiveImpl internal constructor(
     override var value: IrConst,
 ) : IrConstantPrimitive() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

@@ -44,15 +44,6 @@ interface IrElement {
     var attributeOwnerId: IrElement
 
     /**
-     * original element before inlining. Useful only with IR
-     * inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
-     * idempotence invariant and can contain a chain of declarations.
-     *
-     * `null` <=> `this` element wasn't inlined.
-     */
-    var originalBeforeInline: IrElement?
-
-    /**
      * Runs the provided [visitor] on the IR subtree with the root at this node.
      *
      * @param visitor The visitor to accept.
