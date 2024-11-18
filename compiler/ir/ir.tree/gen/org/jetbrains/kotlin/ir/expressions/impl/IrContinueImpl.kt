@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.IrType
@@ -24,7 +23,7 @@ class IrContinueImpl internal constructor(
     override var type: IrType,
     override var loop: IrLoop,
 ) : IrContinue() {
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 

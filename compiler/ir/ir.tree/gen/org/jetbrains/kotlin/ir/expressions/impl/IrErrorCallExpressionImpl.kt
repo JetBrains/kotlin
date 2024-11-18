@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -25,7 +24,7 @@ class IrErrorCallExpressionImpl internal constructor(
     override var type: IrType,
     override var description: String,
 ) : IrErrorCallExpression() {
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 

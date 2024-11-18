@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
@@ -27,7 +26,7 @@ class IrSuspensionPointImpl internal constructor(
     override var result: IrExpression,
     override var resumeResult: IrExpression,
 ) : IrSuspensionPoint() {
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 }

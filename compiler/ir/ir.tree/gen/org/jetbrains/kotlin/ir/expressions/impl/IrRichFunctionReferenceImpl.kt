@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -35,7 +34,7 @@ class IrRichFunctionReferenceImpl internal constructor(
     override var hasVarargConversion: Boolean,
     override var isRestrictedSuspension: Boolean,
 ) : IrRichFunctionReference() {
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
 
     override var originalBeforeInline: IrElement? = null
 
