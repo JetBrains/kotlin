@@ -24,4 +24,9 @@ interface ScriptEvaluationExtension {
         configuration: CompilerConfiguration,
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
     ): ExitCode
+
+    fun eval(
+        configuration: CompilerConfiguration,
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
+    ): ExitCode
 }

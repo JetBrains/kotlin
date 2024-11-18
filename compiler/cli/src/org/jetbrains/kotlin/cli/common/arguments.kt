@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -67,33 +66,12 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
-    switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
     val usesK2 = languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
-}
-
-private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
-    fun warn(message: String) {
-        if (!arguments.suppressVersionWarnings) messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-    }
-
-    if (arguments !is K2JVMCompilerArguments) return
-    //coordinated with org.jetbrains.kotlin.incremental.CompilerRunnerUtils.isK1ForcedByKapt
-    val isK2 = arguments.languageVersion?.startsWith('2') != false
-    val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-    if (isK2 && isKaptUsed && !arguments.useK2Kapt) {
-        arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
-        if (arguments.apiVersion?.startsWith("2") == true) {
-            arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
-        }
-        arguments.skipMetadataVersionCheck = true
-        arguments.skipPrereleaseCheck = true
-        arguments.allowUnstableDependencies = true
-    }
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {

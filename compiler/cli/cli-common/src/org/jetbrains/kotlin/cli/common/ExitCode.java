@@ -33,4 +33,8 @@ public enum ExitCode {
     public int getCode() {
         return code;
     }
+
+    public boolean isOk() {
+        return this == OK;
+    }
 }

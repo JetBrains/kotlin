@@ -133,7 +133,7 @@ object KotlinToJVMBytecodeCompiler {
                 sourceFiles
             } else null
 
-            val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+            val moduleConfiguration = compilerConfiguration.createConfigurationForModule(module, buildFile)
             val backendInput = (if (ktFiles != null) {
                 codegenFactory.getModuleChunkBackendInput(backendInput, ktFiles)
             } else {
@@ -308,8 +308,9 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     internal fun Fir2IrActualizedResult.codegenFactoryWithJvmIrBackendInput(
-        configuration: CompilerConfiguration
-    ): Pair<CodegenFactory, CodegenFactory.BackendInput> {
+        configuration: CompilerConfiguration,
+        jvmBackendExtension: FirJvmBackendExtension? = null
+    ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.JvmIrBackendInput> {
         val phaseConfig = configuration.phaseConfig
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         return codegenFactory to JvmIrCodegenFactory.JvmIrBackendInput(
@@ -319,7 +320,7 @@ object KotlinToJVMBytecodeCompiler {
             phaseConfig,
             components.irProviders,
             JvmGeneratorExtensionsImpl(configuration),
-            JvmBackendExtension.Default,
+            jvmBackendExtension ?: JvmBackendExtension.Default,
             pluginContext,
         ) {}
     }

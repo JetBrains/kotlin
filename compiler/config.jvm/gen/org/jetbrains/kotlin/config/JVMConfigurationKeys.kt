@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val SKIP_BODIES = CompilerConfigurationKey.create<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
 
+    @JvmField
+    val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.useInlineScopesNumbers: Boolean
 var CompilerConfiguration.skipBodies: Boolean
     get() = getBoolean(JVMConfigurationKeys.SKIP_BODIES)
     set(value) { put(JVMConfigurationKeys.SKIP_BODIES, value) }
+
+var CompilerConfiguration.expressionToEvaluate: String?
+    get() = get(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE)
+    set(value) { putIfNotNull(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE, value) }
 

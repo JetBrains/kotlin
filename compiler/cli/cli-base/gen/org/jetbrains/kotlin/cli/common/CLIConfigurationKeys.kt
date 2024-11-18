@@ -15,6 +15,7 @@ package org.jetbrains.kotlin.cli.common
 import java.io.File
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -72,6 +73,21 @@ object CLIConfigurationKeys {
     @JvmField
     val KOTLIN_PATHS = CompilerConfigurationKey.create<KotlinPaths>("Kotlin paths")
 
+    @JvmField
+    val ALLOW_NO_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("allow no source files compilation")
+
+    @JvmField
+    val MODULE_CHUNK = CompilerConfigurationKey.create<ModuleChunk>("Module chunk")
+
+    @JvmField
+    val BUILD_FILE = CompilerConfigurationKey.create<File>("Build file")
+
+    @JvmField
+    val FREE_ARGS_FOR_SCRIPT = CompilerConfigurationKey.create<List<String>>("Free args from arguments. Used only for scripts execution")
+
+    @JvmField
+    val DEFAULT_EXTENSION_FOR_SCRIPTS = CompilerConfigurationKey.create<String>("Default extension for scripts")
+
 }
 
 var CompilerConfiguration.contentRoots: List<ContentRoot>
@@ -121,4 +137,24 @@ var CompilerConfiguration.scriptMode: Boolean
 var CompilerConfiguration.kotlinPaths: KotlinPaths?
     get() = get(CLIConfigurationKeys.KOTLIN_PATHS)
     set(value) { put(CLIConfigurationKeys.KOTLIN_PATHS, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.allowNoSourceFiles: Boolean
+    get() = getBoolean(CLIConfigurationKeys.ALLOW_NO_SOURCE_FILES)
+    set(value) { put(CLIConfigurationKeys.ALLOW_NO_SOURCE_FILES, value) }
+
+var CompilerConfiguration.moduleChunk: ModuleChunk?
+    get() = get(CLIConfigurationKeys.MODULE_CHUNK)
+    set(value) { put(CLIConfigurationKeys.MODULE_CHUNK, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.buildFile: File?
+    get() = get(CLIConfigurationKeys.BUILD_FILE)
+    set(value) { put(CLIConfigurationKeys.BUILD_FILE, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.freeArgsForScript: List<String>
+    get() = getList(CLIConfigurationKeys.FREE_ARGS_FOR_SCRIPT)
+    set(value) { put(CLIConfigurationKeys.FREE_ARGS_FOR_SCRIPT, value) }
+
+var CompilerConfiguration.defaultExtensionForScripts: String?
+    get() = get(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS)
+    set(value) { putIfNotNull(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS, value) }
 

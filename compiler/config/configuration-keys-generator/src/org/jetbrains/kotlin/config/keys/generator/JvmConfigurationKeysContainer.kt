@@ -97,4 +97,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val USE_INLINE_SCOPES_NUMBERS by key<Boolean>("Use inline scopes numbers for inline marker variables")
 
     val SKIP_BODIES by key<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
+
+    val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode", throwOnNull = false)
 }

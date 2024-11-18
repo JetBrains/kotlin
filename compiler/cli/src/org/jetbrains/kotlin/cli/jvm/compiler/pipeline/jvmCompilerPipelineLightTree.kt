@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.codegen
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBackend
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
+import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -218,7 +218,7 @@ private fun compileSingleModuleUsingFrontendIrAndLightTree(
     module: Module,
     groupedSources: GroupedKtSources,
 ): Boolean {
-    val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+    val moduleConfiguration = compilerConfiguration.createConfigurationForModule(module, buildFile)
 
     val context = FrontendContextForSingleModuleLightTree(
         module,
