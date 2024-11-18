@@ -40955,6 +40955,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("mutlimoduleActualizationByJavaClasses.kt")
+        public void testMutlimoduleActualizationByJavaClasses() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/mutlimoduleActualizationByJavaClasses.kt");
+        }
+
+        @Test
         @TestMetadata("stdlibClassRedefine.kt")
         public void testStdlibClassRedefine() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/stdlibClassRedefine.kt");
