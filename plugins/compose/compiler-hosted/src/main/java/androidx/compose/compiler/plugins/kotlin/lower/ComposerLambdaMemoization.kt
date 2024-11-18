@@ -350,6 +350,7 @@ class ComposerLambdaMemoization(
             try {
                 currentFile = declaration
                 composableSingletonsClass = null
+                usedSingletonLambdaNames.clear()
                 val file = super.visitFile(declaration)
                 // if there were no constants found in the entire file, then we don't need to
                 // create this class at all
