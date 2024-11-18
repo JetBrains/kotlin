@@ -200,6 +200,9 @@ abstract class IrBuiltIns {
         return elements.single()
     }
 
+    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+    // KT-73194: Consider moving here also functions from SymbolLookupUtils
+
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 
     abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>

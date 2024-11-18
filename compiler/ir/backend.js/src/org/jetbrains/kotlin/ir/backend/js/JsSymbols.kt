@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -15,9 +16,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 import org.jetbrains.kotlin.name.Name
 
 abstract class JsCommonSymbols(
@@ -26,13 +27,9 @@ abstract class JsCommonSymbols(
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns)
 }
 
-val jsPackageFqn = kotlinPackageFqn.child(Name.identifier("js"))
-val collectionsPackageFqn = kotlinPackageFqn.child(Name.identifier("collections"))
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsSymbols(
     private val context: JsIrBackendContext,
-    symbolTable: SymbolTable,
 ) : JsCommonSymbols(context.irBuiltIns) {
     override val throwNullPointerException =
         irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
@@ -51,7 +48,7 @@ class JsSymbols(
         irBuiltIns.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
 
     override val defaultConstructorMarker =
-        irBuiltIns.topLevelClass(jsPackageFqn, "DefaultConstructorMarker")
+        irBuiltIns.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
     override val throwISE: IrSimpleFunctionSymbol =
         irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_ISE")
@@ -66,7 +63,7 @@ class JsSymbols(
     override val coroutineSuspendedGetter =
         coroutineSymbols.coroutineSuspendedGetter
 
-    private val _arraysContentEquals = irBuiltIns.topLevelFunctions(collectionsPackageFqn, "contentEquals").filter {
+    private val _arraysContentEquals = irBuiltIns.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
         it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
     }
 
@@ -74,20 +71,19 @@ class JsSymbols(
     override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
         get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
-    override val getContinuation = irBuiltIns.topLevelFunction(jsPackageFqn, "getContinuation")
+    override val getContinuation = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
 
     override val continuationClass = coroutineSymbols.continuationClass
 
-    override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
+    override val coroutineContextGetter = coroutineSymbols.coroutineContextGetter
 
-    override val suspendCoroutineUninterceptedOrReturn = irBuiltIns.topLevelFunction(JsIrBackendContext.JS_PACKAGE_FQNAME, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
+    override val suspendCoroutineUninterceptedOrReturn = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
 
-    override val coroutineGetContext = irBuiltIns.topLevelFunction(JsIrBackendContext.JS_PACKAGE_FQNAME, GET_COROUTINE_CONTEXT_NAME)
+    override val coroutineGetContext = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
 
-    override val returnIfSuspended = irBuiltIns.topLevelFunction(JsIrBackendContext.JS_PACKAGE_FQNAME, "returnIfSuspended")
+    override val returnIfSuspended = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
 
-    override val functionAdapter = irBuiltIns.topLevelClass(JsIrBackendContext.JS_PACKAGE_FQNAME, "FunctionAdapter")
+    override val functionAdapter = irBuiltIns.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
 
     override fun functionN(n: Int): IrClassSymbol {
         return context.irFactory.stageController.withInitialIr { super.functionN(n) }

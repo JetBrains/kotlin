@@ -1165,4 +1165,8 @@ private object TestIrBuiltins : IrBuiltIns() {
     }
 
     private fun missingBuiltIn(): Nothing = fail("Missing built-in")
+
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? {
+        TODO("Not yet implemented")
+    }
 }

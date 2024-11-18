@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
     private val context: WasmBackendContext,
-    symbolTable: SymbolTable
 ) : JsCommonSymbols(context.irBuiltIns) {
 
     private val enumsInternalPackageFqName = FqName("kotlin.enums")
@@ -90,7 +86,7 @@ class WasmSymbols(
     override val continuationClass =
         coroutineSymbols.continuationClass
     override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
+        coroutineSymbols.coroutineContextGetter
     override val suspendCoroutineUninterceptedOrReturn =
         getInternalFunction("suspendCoroutineUninterceptedOrReturn")
     override val coroutineGetContext =

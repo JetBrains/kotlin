@@ -668,6 +668,9 @@ class IrBuiltInsOverDescriptors(
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)
     override fun kSuspendFunctionN(arity: Int): IrClass = functionFactory.kSuspendFunctionN(arity)
+
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
+        symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
 }
 
 private inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =

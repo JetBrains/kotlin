@@ -660,4 +660,8 @@ class IrBuiltInsOverFir(
             )
         }
     }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
+        property.owner.getter?.symbol
 }

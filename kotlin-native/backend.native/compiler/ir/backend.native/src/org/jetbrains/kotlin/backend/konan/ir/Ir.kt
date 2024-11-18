@@ -40,7 +40,6 @@ internal interface SymbolLookupUtils {
     fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
     fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
     fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol?
-    fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
 
     fun getName(clazz: IrClassSymbol): Name
     fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean
@@ -448,7 +447,7 @@ internal class KonanSymbols(
     private fun findTopLevelPropertyGetter(packageName: FqName, name: String, extensionReceiverClass: IrClassSymbol?) =
             findTopLevelPropertyGetter(packageName, name) { lookup.isExtensionReceiverClass(it, extensionReceiverClass) }
     private fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean) =
-            lookup.findGetter(irBuiltIns.topLevelProperty(packageName, name, predicate))!!
+            irBuiltIns.findGetter(irBuiltIns.topLevelProperty(packageName, name, predicate))!!
 
     private fun internalFunctions(name: String) = irBuiltIns.topLevelFunctions(RuntimeNames.kotlinNativeInternalPackageName, name)
     private inline fun nativeFunction(
@@ -538,8 +537,6 @@ internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : 
         return function.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
     }
 
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
-
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
         return function.descriptor.extensionReceiverParameter?.type?.isMarkedNullable
     }
@@ -620,8 +617,6 @@ internal class SymbolOverIrLookupUtils() : SymbolLookupUtils {
     override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
         return function.owner.extensionReceiverParameter?.type?.classOrNull == expected
     }
-
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? = property.owner.getter?.symbol
 
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
         return function.owner.extensionReceiverParameter?.type?.isMarkedNullable()
