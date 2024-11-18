@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -738,3 +739,9 @@ fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String?
 
     return null
 }
+
+/**
+ * A best-effort way to get the class id of expression's type without resolve.
+ */
+fun KtConstantExpression.inferClassIdByPsi(): ClassId? =
+    ClassIdCalculator.inferConstantExpressionClassIdByPsi(this)
