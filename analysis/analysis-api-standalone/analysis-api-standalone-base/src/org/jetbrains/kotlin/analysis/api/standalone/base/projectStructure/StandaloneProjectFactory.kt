@@ -73,7 +73,6 @@ object StandaloneProjectFactory {
         projectDisposable: Disposable,
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
-        classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
@@ -93,12 +92,6 @@ object StandaloneProjectFactory {
 
             override fun createProject(parent: PicoContainer, parentDisposable: Disposable): MockProject {
                 return object : MockProject(parent, parentDisposable) {
-                    @Throws(ClassNotFoundException::class)
-                    override fun <T> loadClass(className: String, pluginDescriptor: PluginDescriptor): Class<T> {
-                        @Suppress("UNCHECKED_CAST")
-                        return Class.forName(className, true, classLoader) as Class<T>
-                    }
-
                     @Suppress("UnstableApiUsage")
                     override fun createListener(descriptor: ListenerDescriptor): Any {
                         val listenerClass = loadClass<Any>(descriptor.listenerClassName, descriptor.pluginDescriptor)

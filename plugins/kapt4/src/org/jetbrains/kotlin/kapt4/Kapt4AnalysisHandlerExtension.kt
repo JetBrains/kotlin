@@ -73,10 +73,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
         try {
             val standaloneAnalysisAPISession =
-                buildStandaloneAnalysisAPISession(
-                    projectDisposable = projectDisposable,
-                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader,
-                ) {
+                buildStandaloneAnalysisAPISession(projectDisposable = projectDisposable) {
                     @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
                     buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 

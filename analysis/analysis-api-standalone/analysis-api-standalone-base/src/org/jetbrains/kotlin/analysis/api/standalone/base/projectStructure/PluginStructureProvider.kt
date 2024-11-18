@@ -89,49 +89,24 @@ object PluginStructureProvider {
     }
 
     fun registerApplicationServices(application: MockApplication, pluginRelativePath: String) {
-        registerApplicationServices(application, pluginRelativePath, application.classLoader)
-    }
-
-    /**
-     * TODO (KT-68186): This is a workaround for [KT-68186](https://youtrack.jetbrains.com/issue/KT-68186). We cannot rely on the
-     * application's class loader for now, so we have to use the configured class loader manually.
-     */
-    fun registerApplicationServices(application: MockApplication, pluginRelativePath: String, classLoader: ClassLoader) {
-        registerServices(
-            application,
-            pluginRelativePath,
-            classLoader,
-            RawPluginDescriptor::appContainerDescriptor,
-        ) { className, pluginDescriptor ->
-            @Suppress("UNCHECKED_CAST")
-            Class.forName(className, true, classLoader) as Class<Any>
-        }
+        registerServices(application, pluginRelativePath, RawPluginDescriptor::appContainerDescriptor)
     }
 
     fun registerProjectServices(project: MockProject, pluginRelativePath: String) {
-        registerServices(
-            project,
-            pluginRelativePath,
-            project.classLoader,
-            RawPluginDescriptor::projectContainerDescriptor,
-        ) { className, pluginDescriptor ->
-            project.loadClass<Any>(className, pluginDescriptor)
-        }
+        registerServices(project, pluginRelativePath, RawPluginDescriptor::projectContainerDescriptor)
     }
 
     private inline fun registerServices(
         componentManager: MockComponentManager,
         pluginRelativePath: String,
-        classLoader: ClassLoader,
         containerDescriptor: RawPluginDescriptor.() -> ContainerDescriptor,
-        loadClass: (String, PluginDescriptor) -> Class<Any>,
     ) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, classLoader))
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
         for (serviceDescriptor in pluginDescriptor.containerDescriptor().services) {
-            val serviceImplementationClass = loadClass(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
+            val serviceImplementationClass = componentManager.loadClass<Any>(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
             val serviceInterface = serviceDescriptor.serviceInterface
             if (serviceInterface != null) {
-                val serviceInterfaceClass = loadClass(serviceInterface, fakePluginDescriptor)
+                val serviceInterfaceClass = componentManager.loadClass<Any>(serviceInterface, fakePluginDescriptor)
 
                 @Suppress("UNCHECKED_CAST")
                 componentManager.registerServiceWithInterface(serviceInterfaceClass, serviceImplementationClass)
