@@ -191,9 +191,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
             mangleTypeParameter(this, it.value, it.index, session)
         }
 
-        getReturnType(this)?.let {
-            if (!isConstructor && !isUnit(it) && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
-                mangleType(builder, it, session)
+        if (!isConstructor && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
+            getReturnType(this)?.let {
+                if (!isUnit(it)) {
+                    mangleType(builder, it, session)
+                }
             }
         }
 
