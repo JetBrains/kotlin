@@ -9,9 +9,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.cio.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -39,10 +38,10 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     companion object {
         fun runWithKtorService(action: (Int) -> Unit) {
-            var server: ApplicationEngine? = null
+            var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
             try {
                 val port = getEmptyPort().localPort
-                server = embeddedServer(Netty, host = "localhost", port = port)
+                server = embeddedServer(CIO, host = "localhost", port = port)
                 {
                     val requests = ArrayBlockingQueue<String>(10)
 
