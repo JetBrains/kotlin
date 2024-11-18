@@ -165,6 +165,10 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
 
+        firHandlersStep {
+            useHandlers(::NoFirCompilationErrorsHandler)
+        }
+
         facadeStep(::Fir2IrResultsConverter)
         useAdditionalService(::LibraryProvider)
 
