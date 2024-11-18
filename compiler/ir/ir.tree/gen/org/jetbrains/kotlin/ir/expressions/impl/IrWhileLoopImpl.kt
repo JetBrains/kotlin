@@ -26,8 +26,6 @@ class IrWhileLoopImpl internal constructor(
 ) : IrWhileLoop() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var body: IrExpression? = null
 
     override lateinit var condition: IrExpression

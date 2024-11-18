@@ -22,6 +22,4 @@ class IrSpreadElementImpl internal constructor(
     override var expression: IrExpression,
 ) : IrSpreadElement() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

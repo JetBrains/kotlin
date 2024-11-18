@@ -28,8 +28,6 @@ class IrEnumConstructorCallImpl internal constructor(
 ) : IrEnumConstructorCall() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var symbol: IrConstructorSymbol = symbol
         set(value) {
             if (field !== value) {

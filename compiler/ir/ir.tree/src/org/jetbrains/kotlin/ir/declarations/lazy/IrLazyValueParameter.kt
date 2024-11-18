@@ -50,7 +50,6 @@ class IrLazyValueParameter(
     }
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     init {
         symbol.bind(this)

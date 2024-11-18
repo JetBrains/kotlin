@@ -24,6 +24,4 @@ class IrRawFunctionReferenceImpl internal constructor(
     override var symbol: IrFunctionSymbol,
 ) : IrRawFunctionReference() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

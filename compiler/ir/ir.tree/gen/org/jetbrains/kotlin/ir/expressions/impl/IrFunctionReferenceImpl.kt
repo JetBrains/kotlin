@@ -29,8 +29,6 @@ class IrFunctionReferenceImpl internal constructor(
 ) : IrFunctionReference() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var symbol: IrFunctionSymbol = symbol
         set(value) {
             if (field !== value) {

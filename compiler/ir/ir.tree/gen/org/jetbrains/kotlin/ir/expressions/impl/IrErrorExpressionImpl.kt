@@ -23,6 +23,4 @@ class IrErrorExpressionImpl internal constructor(
     override var description: String,
 ) : IrErrorExpression() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

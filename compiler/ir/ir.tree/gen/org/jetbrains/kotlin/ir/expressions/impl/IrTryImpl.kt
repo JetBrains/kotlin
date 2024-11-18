@@ -26,8 +26,6 @@ class IrTryImpl internal constructor(
 ) : IrTry() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override lateinit var tryResult: IrExpression
 
     override val catches: MutableList<IrCatch> = SmartList()

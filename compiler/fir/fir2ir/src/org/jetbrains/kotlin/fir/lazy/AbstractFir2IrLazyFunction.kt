@@ -98,7 +98,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     @Suppress("LeakingThis")
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

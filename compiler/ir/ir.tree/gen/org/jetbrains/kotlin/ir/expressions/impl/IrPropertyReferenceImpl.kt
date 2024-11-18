@@ -33,8 +33,6 @@ class IrPropertyReferenceImpl internal constructor(
 ) : IrPropertyReference() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var symbol: IrPropertySymbol = symbol
         set(value) {
             if (field !== value) {

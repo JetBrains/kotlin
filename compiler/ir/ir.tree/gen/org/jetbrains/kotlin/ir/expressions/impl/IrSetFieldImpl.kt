@@ -30,8 +30,6 @@ class IrSetFieldImpl internal constructor(
 ) : IrSetField() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var receiver: IrExpression? = null
 
     override lateinit var value: IrExpression
