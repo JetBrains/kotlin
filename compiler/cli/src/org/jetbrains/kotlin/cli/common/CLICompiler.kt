@@ -69,7 +69,18 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args)
     }
 
+    protected open fun shouldRunK2(messageCollector: MessageCollector, arguments: A): Boolean {
+        val languageVersion = arguments.languageVersion?.let { LanguageVersion.fromVersionString(arguments.languageVersion) }
+            ?: LanguageVersion.LATEST_STABLE
+        return languageVersion.usesK2
+    }
+
     private fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+        if (shouldRunK2(messageCollector, arguments)) {
+            val code = doExecutePhased(arguments, services, messageCollector)
+            if (code != null) return code
+        }
+
         val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableCollectingPerformanceStatistics()
@@ -138,17 +149,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         }
     }
 
-    private fun Throwable.hasOOMCause(): Boolean = when (cause) {
-        is OutOfMemoryError -> true
-        else -> cause?.hasOOMCause() ?: false
-    }
-
-    private fun MessageCollector.reportCompilationCancelled(e: CompilationCanceledException) {
-        if (e !is IncrementalNextRoundException) {
-            report(INFO, "Compilation was canceled", null)
-        }
-    }
-
     private fun setupCommonArguments(configuration: CompilerConfiguration, arguments: A) {
         configuration.setupCommonArguments(arguments, this::createMetadataVersion)
     }
@@ -159,6 +159,27 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         configuration: CompilerConfiguration, arguments: A, services: Services
     )
 
+    /**
+     * Main method for execution the new phased CLI compiler pipeline
+     * Since the new pipeline is supposed to be implemented only for K2 compiler, it runs only if [shouldRunK2] returns true.
+     *
+     * If this method returns `null` it's an indicator that the phased pipeline for specific [CLICompiler] is not implemented yet,
+     *   so the old pipeline ([doExecute]) will be executed
+     */
+    protected open fun doExecutePhased(
+        arguments: A,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+    ): ExitCode? {
+        return null
+    }
+
+    /**
+     * Main method for execution the old CLI compiler pipeline
+     * It runs for K1 compilation and for cases when the new pipeline is not implemented yet
+     *
+     * This method and its implementations should be dropped together with K1 compiler support
+     */
     protected abstract fun doExecute(
         arguments: A,
         configuration: CompilerConfiguration,
@@ -446,3 +467,13 @@ fun checkPluginsArguments(
     return !hasErrors
 }
 
+fun Throwable.hasOOMCause(): Boolean = when (cause) {
+    is OutOfMemoryError -> true
+    else -> cause?.hasOOMCause() ?: false
+}
+
+fun MessageCollector.reportCompilationCancelled(e: CompilationCanceledException) {
+    if (e !is IncrementalNextRoundException) {
+        report(INFO, "Compilation was canceled", null)
+    }
+}

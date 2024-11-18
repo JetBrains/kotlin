@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {
     // Roots, including dependencies and own sources
@@ -62,6 +63,15 @@ object CLIConfigurationKeys {
     @JvmField
     val PATH_TO_KOTLIN_COMPILER_JAR = CompilerConfigurationKey.create<File>("jar of Kotlin compiler in Kotlin plugin")
 
+    @JvmField
+    val PRINT_VERSION = CompilerConfigurationKey.create<Boolean>("Print compiler version")
+
+    @JvmField
+    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate kotlin script")
+
+    @JvmField
+    val KOTLIN_PATHS = CompilerConfigurationKey.create<KotlinPaths>("Kotlin paths")
+
 }
 
 var CompilerConfiguration.contentRoots: List<ContentRoot>
@@ -99,4 +109,16 @@ var CompilerConfiguration.flexiblePhaseConfig: PhaseConfigurationService?
 var CompilerConfiguration.pathToKotlinCompilerJar: File?
     get() = get(CLIConfigurationKeys.PATH_TO_KOTLIN_COMPILER_JAR)
     set(value) { put(CLIConfigurationKeys.PATH_TO_KOTLIN_COMPILER_JAR, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.printVersion: Boolean
+    get() = getBoolean(CLIConfigurationKeys.PRINT_VERSION)
+    set(value) { put(CLIConfigurationKeys.PRINT_VERSION, value) }
+
+var CompilerConfiguration.scriptMode: Boolean
+    get() = getBoolean(CLIConfigurationKeys.SCRIPT_MODE)
+    set(value) { put(CLIConfigurationKeys.SCRIPT_MODE, value) }
+
+var CompilerConfiguration.kotlinPaths: KotlinPaths?
+    get() = get(CLIConfigurationKeys.KOTLIN_PATHS)
+    set(value) { put(CLIConfigurationKeys.KOTLIN_PATHS, requireNotNull(value) { "nullable values are not allowed" }) }
 
