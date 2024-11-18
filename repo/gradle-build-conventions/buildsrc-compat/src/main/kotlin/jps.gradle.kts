@@ -142,18 +142,32 @@ fun setupGenerateAllTestsRunConfiguration() {
     )
 }
 
+fun setupTestRunConfigurations() {
+    createTestRunConfigurationWithPattern(
+        name = "[JPS] Fast FIR PSI tests",
+        fileName = "JPS__Fast_FIR_PSI_tests.xml",
+        pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
+    )
+
+    createTestRunConfigurationWithPattern(
+        name = "[JPS] Tiered (diagnostic) tests",
+        fileName = "JPS__Tiered_LT_JVM_tests.xml",
+        pattern = """^.*\.Tiered\w*JvmLightTreeTestGenerated$"""
+    )
+}
+
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
-fun setupFirRunConfiguration() {
+fun createTestRunConfigurationWithPattern(name: String, fileName: String, pattern: String) {
     val junit = JUnit("_stub").apply { configureForKotlin("4096m") }
     junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
-    junit.pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
+    junit.pattern = pattern
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
-    rootDir.resolve(".idea/runConfigurations/JPS__Fast_FIR_PSI_tests.xml").writeText(
+    rootDir.resolve(".idea/runConfigurations/$fileName").writeText(
         """
             |<component name="ProjectRunConfigurationManager">
-            |  <configuration default="false" name="[JPS] Fast FIR PSI tests" type="JUnit" factoryName="JUnit">
+            |  <configuration default="false" name="$name" type="JUnit" factoryName="JUnit">
             |    <module name="${junit.moduleName}" />
             |    <option name="MAIN_CLASS_NAME" value="" />
             |    <option name="METHOD_NAME" value="" />
@@ -221,7 +235,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     rootProject.afterEvaluate {
         writeIdeaBuildNumberForTests()
 
-        setupFirRunConfiguration()
+        setupTestRunConfigurations()
         setupGenerateAllTestsRunConfiguration()
         updateCompilerXml()
 
