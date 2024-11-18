@@ -1,0 +1,1 @@
+val some<caret>thing = 6

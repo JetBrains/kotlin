@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import java.lang.ref.WeakReference
 
 @KaImplementationDetail
 class KaBaseReceiverParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaCallableSymbol>,
-) : KaSymbolPointer<KaReceiverParameterSymbol>() {
+    override var cachedSymbol: WeakReference<KaReceiverParameterSymbol>?,
+) : KaBaseSymbolPointer<KaReceiverParameterSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaReceiverParameterSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaReceiverParameterSymbol? {
         val callableSymbol = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }

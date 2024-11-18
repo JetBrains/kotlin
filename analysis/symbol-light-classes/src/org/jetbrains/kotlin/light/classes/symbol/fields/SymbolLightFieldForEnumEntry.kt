@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
+import org.jetbrains.kotlin.analysis.api.symbols.KaPsiBasedSymbolPointerCreator
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
@@ -41,7 +41,8 @@ internal class SymbolLightFieldForEnumEntry(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
-                    annotatedSymbolPointer = enumEntry.symbolPointerOfType<KaEnumEntrySymbol>(),
+                    annotatedSymbolPointer = KaPsiBasedSymbolPointerCreator.getInstance(ktModule.project)
+                        .symbolPointerOfType<KaEnumEntrySymbol>(enumEntry),
                 )
             ),
         )

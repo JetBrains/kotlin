@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaPsiBasedSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -31,7 +31,8 @@ internal class SymbolLightClassForScript private constructor(
         ktModule: KaModule,
     ) : this(
         script,
-        script.symbolPointerOfType(),
+        KaPsiBasedSymbolPointerCreator.getInstance(ktModule.project)
+            .symbolPointerOfType(script),
         ktModule,
     )
 

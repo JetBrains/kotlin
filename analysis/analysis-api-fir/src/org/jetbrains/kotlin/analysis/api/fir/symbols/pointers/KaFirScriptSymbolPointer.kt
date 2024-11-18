@@ -9,16 +9,21 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import java.lang.ref.WeakReference
 
-internal class KaFirScriptSymbolPointer(private val filePointer: KaSymbolPointer<KaFileSymbol>) : KaSymbolPointer<KaScriptSymbol>() {
+internal class KaFirScriptSymbolPointer(
+    private val filePointer: KaSymbolPointer<KaFileSymbol>,
+    override var cachedSymbol: WeakReference<KaScriptSymbol>?
+) : KaBaseSymbolPointer<KaScriptSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaScriptSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaScriptSymbol? {
         require(analysisSession is KaFirSession)
         val file = with(analysisSession) {
             filePointer.restoreSymbol()?.firSymbol?.fir as? FirFile

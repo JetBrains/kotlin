@@ -29,7 +29,7 @@ internal class KaFirClassInitializerSymbol private constructor(
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
 
     override fun createPointer(): KaSymbolPointer<KaClassInitializerSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaClassInitializerSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaClassInitializerSymbol>(analysisSession.project)?.let { return it }
 
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")
     }

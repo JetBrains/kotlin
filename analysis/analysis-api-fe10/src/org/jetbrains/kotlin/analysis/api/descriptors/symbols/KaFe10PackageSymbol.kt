@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
+import java.lang.ref.WeakReference
 
 internal class KaFe10PackageSymbol(
     private val packageName: FqName,
@@ -31,7 +32,7 @@ internal class KaFe10PackageSymbol(
     }
 
     override fun createPointer(): KaSymbolPointer<KaPackageSymbol> = withValidityAssertion {
-        KaFe10PackageSymbolPointer(fqName)
+        KaFe10PackageSymbolPointer(fqName, WeakReference(this))
     }
 
     override val origin: KaSymbolOrigin

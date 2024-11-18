@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSign
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import java.lang.ref.WeakReference
 
 internal class KaFirConstructorSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isPrimary: Boolean,
     private val signature: FirCallableSignature,
+    override var cachedSymbol: WeakReference<KaConstructorSymbol>?,
 ) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,

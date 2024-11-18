@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.symbols.pointers
+package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Segment
@@ -13,25 +13,26 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import java.lang.ref.SoftReference
+import java.lang.ref.WeakReference
 import kotlin.reflect.KClass
 
 @KaImplementationDetail
-public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
+class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
-    private val expectedClass: KClass<S>,
-) : KaSymbolPointer<S>() {
+    private val expectedClass: KClass<S>, override var cachedSymbol: WeakReference<S>?,
+) : KaBaseSymbolPointer<S>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): S? {
+    override fun restoreIfNotCached(analysisSession: KaSession): S? {
         val psi = psiPointer.element ?: return null
 
         val symbol: KaSymbol = with(analysisSession) {
@@ -56,16 +57,16 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
             other.expectedClass == expectedClass &&
             other.psiPointer == psiPointer
 
-    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(createCompatibleSmartPointer(psi), expectedClass)
+    constructor(psi: KtElement, expectedClass: KClass<S>) : this(createCompatibleSmartPointer(psi), expectedClass, null)
 
     @KaImplementationDetail
-    public companion object {
+    companion object {
         @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-        public inline fun <reified S : KaSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KaPsiBasedSymbolPointer<S>? {
+        inline fun <reified S : KaSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KaPsiBasedSymbolPointer<S>? {
             return createForSymbolFromSource(symbol, S::class)
         }
 
-        public fun <S : KaSymbol> createForSymbolFromSource(symbol: S, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
+        fun <S : KaSymbol> createForSymbolFromSource(symbol: S, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
             if (symbol.origin != KaSymbolOrigin.SOURCE) return null
@@ -81,18 +82,18 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
         }
 
 
-        public fun <S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
+        fun <S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
             return KaPsiBasedSymbolPointer(ktElement, expectedClass)
         }
 
-        public inline fun <reified S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement): KaPsiBasedSymbolPointer<S>? {
+        inline fun <reified S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement): KaPsiBasedSymbolPointer<S>? {
             return createForSymbolFromPsi(ktElement, S::class)
         }
 
         @TestOnly
-        public fun <T> withDisabledPsiBasedPointers(disable: Boolean, action: () -> T): T = try {
+        fun <T> withDisabledPsiBasedPointers(disable: Boolean, action: () -> T): T = try {
             disablePsiPointer = true
             disablePsiPointerFlag.set(disable)
             action()
@@ -115,7 +116,7 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
 }
 
 @KaImplementationDetail
-public interface SmartPointerIncompatiblePsiFile
+interface SmartPointerIncompatiblePsiFile
 
 @OptIn(KaImplementationDetail::class)
 private fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
@@ -146,11 +147,3 @@ private class SoftSmartPsiElementPointer<T : PsiElement>(
     override fun getPsiRange(): Segment? = throw UnsupportedOperationException("Not supported")
     override fun getRange(): Segment? = throw UnsupportedOperationException("Not supported")
 }
-
-@OptIn(KaImplementationDetail::class)
-@KaExperimentalApi
-public fun KtElement.symbolPointer(): KaSymbolPointer<KaSymbol> = KaPsiBasedSymbolPointer(this, KaSymbol::class)
-
-@OptIn(KaImplementationDetail::class)
-@KaExperimentalApi
-public inline fun <reified S : KaSymbol> KtElement.symbolPointerOfType(): KaSymbolPointer<S> = KaPsiBasedSymbolPointer(this, S::class)

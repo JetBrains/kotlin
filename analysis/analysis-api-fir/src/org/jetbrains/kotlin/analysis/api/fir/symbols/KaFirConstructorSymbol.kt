@@ -108,7 +108,7 @@ internal class KaFirConstructorSymbol private constructor(
         }
 
     override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaConstructorSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaConstructorSymbol>(analysisSession.project)?.let { return it }
 
         if (firSymbol.isTypeAliasedConstructor) {
             KaFirTypeAliasedConstructorMemberPointer(
@@ -120,6 +120,7 @@ internal class KaFirConstructorSymbol private constructor(
                 analysisSession.createOwnerPointer(this),
                 isPrimary,
                 FirCallableSignature.createSignature(firSymbol),
+                this
             )
         }
     }

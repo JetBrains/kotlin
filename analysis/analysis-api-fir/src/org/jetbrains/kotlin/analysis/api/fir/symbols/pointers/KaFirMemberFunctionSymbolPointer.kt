@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
+import java.lang.ref.WeakReference
 
 internal class KaFirMemberFunctionSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val name: Name,
     private val signature: FirCallableSignature,
     isStatic: Boolean,
+    override var cachedSymbol: WeakReference<KaNamedFunctionSymbol>?,
 ) : KaFirMemberSymbolPointer<KaNamedFunctionSymbol>(ownerPointer, isStatic) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,

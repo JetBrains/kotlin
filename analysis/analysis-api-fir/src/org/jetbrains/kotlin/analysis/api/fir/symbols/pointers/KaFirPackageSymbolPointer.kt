@@ -8,14 +8,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
+import java.lang.ref.WeakReference
 
-internal class KaFirPackageSymbolPointer(private val fqName: FqName) : KaSymbolPointer<KaPackageSymbol>() {
+internal class KaFirPackageSymbolPointer(
+    private val fqName: FqName,
+    override var cachedSymbol: WeakReference<KaPackageSymbol>?
+) : KaBaseSymbolPointer<KaPackageSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaPackageSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaPackageSymbol? {
         check(analysisSession is KaFirSession)
         return analysisSession.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }

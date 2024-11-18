@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import java.lang.ref.WeakReference
 
 internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     final override val backingPsi: P?,
@@ -123,29 +124,31 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
-            return KaFirPsiBasedPropertySymbolPointer(it)
+        psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>(analysisSession.project)?.let {
+            return KaFirPsiBasedPropertySymbolPointer(it, WeakReference(this))
         }
 
         when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
+                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this), WeakReference(this))
                 } else {
                     KaFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,
                         FirCallableSignature.createSignature(firSymbol),
+                        WeakReference(this)
                     )
                 }
             }
 
             KaSymbolLocation.CLASS -> when (origin) {
-                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name)
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name, WeakReference(this))
                 else -> KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
                     name = name,
                     signature = FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
+                    cachedSymbol = WeakReference(this)
                 )
             }
 

@@ -7,16 +7,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
+import java.lang.ref.WeakReference
 
 internal class KaFirSamConstructorSymbolPointer(
     private val ownerClassId: ClassId,
-) : KaSymbolPointer<KaSamConstructorSymbol>() {
+    override var cachedSymbol: WeakReference<KaSamConstructorSymbol>?,
+) : KaBaseSymbolPointer<KaSamConstructorSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaSamConstructorSymbol? = with(analysisSession) {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? = with(analysisSession) {
         analysisSession.findClassLike(ownerClassId)?.samConstructor
     }
 

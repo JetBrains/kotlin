@@ -11,19 +11,17 @@ import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10Annotatio
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10PsiDefaultBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import java.lang.ref.WeakReference
 
 internal class KaFe10DescDefaultBackingFieldSymbol(
     private val fieldDescriptor: FieldDescriptor?,
@@ -32,7 +30,7 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
 ) : KaBackingFieldSymbol(), KaFe10Symbol {
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaPropertySymbol>(owningProperty)
-            ?.let { KaFe10PsiDefaultBackingFieldSymbolPointer(it) }
+            ?.let { KaFe10PsiDefaultBackingFieldSymbolPointer(it, WeakReference(this)) }
             ?: KaFe10NeverRestoringSymbolPointer()
     }
 

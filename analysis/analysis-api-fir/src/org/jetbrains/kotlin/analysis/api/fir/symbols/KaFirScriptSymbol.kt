@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.lang.ref.WeakReference
 
 internal class KaFirScriptSymbol private constructor(
     override val backingPsi: KtScript?,
@@ -48,14 +49,14 @@ internal class KaFirScriptSymbol private constructor(
         }
 
     override fun createPointer(): KaSymbolPointer<KaScriptSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaScriptSymbol>()?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaScriptSymbol>(analysisSession.project)?.let { return it }
 
         with(analysisSession) {
             val file = containingFile ?: errorWithAttachment("Containing file is not found") {
                 withFirSymbolEntry("firScript", firSymbol)
             }
 
-            file.createPointer().let(::KaFirScriptSymbolPointer)
+            KaFirScriptSymbolPointer(file.createPointer(), WeakReference(this@KaFirScriptSymbol))
         }
     }
 

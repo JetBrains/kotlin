@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import java.lang.ref.WeakReference
 
 internal class KaFirReceiverParameterSymbol private constructor(
     val owningBackingPsi: KtCallableDeclaration?,
@@ -83,7 +84,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
-        KaBaseReceiverParameterSymbolPointer(owningKaSymbol.createPointer())
+        KaBaseReceiverParameterSymbolPointer(owningKaSymbol.createPointer(), WeakReference(this))
     }
 
     override val annotations: KaAnnotationList

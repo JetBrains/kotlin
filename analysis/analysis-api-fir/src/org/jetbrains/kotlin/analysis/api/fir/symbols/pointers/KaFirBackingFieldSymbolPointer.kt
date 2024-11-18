@@ -8,16 +8,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import java.lang.ref.WeakReference
 
 internal class KaFirBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaSymbolPointer<KaKotlinPropertySymbol>,
-) : KaSymbolPointer<KaBackingFieldSymbol>() {
+    override var cachedSymbol: WeakReference<KaBackingFieldSymbol>?,
+) : KaBaseSymbolPointer<KaBackingFieldSymbol>() {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaBackingFieldSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? {
         require(analysisSession is KaFirSession)
         val propertySymbol = with(analysisSession) {
             propertySymbolPointer.restoreSymbol()
