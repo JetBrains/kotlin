@@ -1,10 +1,10 @@
 private val value: kotlin.CharArray!
 
-private open var hash: kotlin.Int
+private var hash: kotlin.Int
 
 open fun hash32(): kotlin.Int
 
-private open var hash32: kotlin.Int
+private var hash32: kotlin.Int
 
 open val length: kotlin.Int
   get()

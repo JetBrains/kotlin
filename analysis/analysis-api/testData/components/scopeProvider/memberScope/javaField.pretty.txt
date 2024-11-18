@@ -1,6 +1,6 @@
-open var field: kotlin.Int
+var field: kotlin.Int
 
-open var field2: kotlin.String!
+var field2: kotlin.String!
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

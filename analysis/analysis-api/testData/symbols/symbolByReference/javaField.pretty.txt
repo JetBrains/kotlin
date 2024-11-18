@@ -1,1 +1,1 @@
-open var field: kotlin.Int
+var field: kotlin.Int

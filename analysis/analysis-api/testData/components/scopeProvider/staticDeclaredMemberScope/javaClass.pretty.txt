@@ -1,6 +1,6 @@
 open fun bar(): kotlin.String!
 
-open var foo: kotlin.Int
+var foo: kotlin.Int
 
 open inner class InnerClass
 

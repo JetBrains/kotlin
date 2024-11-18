@@ -1,3 +1,3 @@
 KtNameReferenceExpression(57,60): 'bar'
   KtSimpleNameReference:
-    (in BaseClass) open var bar: kotlin.Int
+    (in BaseClass) var bar: kotlin.Int

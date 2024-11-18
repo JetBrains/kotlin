@@ -1,1 +1,1 @@
-open var bar: kotlin.Int
+var bar: kotlin.Int

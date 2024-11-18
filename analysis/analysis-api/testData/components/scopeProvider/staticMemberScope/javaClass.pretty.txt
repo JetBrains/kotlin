@@ -1,10 +1,10 @@
 open fun bar(): kotlin.String!
 
-open var superFoo: kotlin.Int
+var superFoo: kotlin.Int
 
 open fun superBar(): kotlin.String!
 
-open var foo: kotlin.Int
+var foo: kotlin.Int
 
 open inner class InnerClass
 

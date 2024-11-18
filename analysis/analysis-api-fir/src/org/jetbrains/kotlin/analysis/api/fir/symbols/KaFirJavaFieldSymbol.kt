@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -47,7 +46,6 @@ internal class KaFirJavaFieldSymbol(
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
     override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }

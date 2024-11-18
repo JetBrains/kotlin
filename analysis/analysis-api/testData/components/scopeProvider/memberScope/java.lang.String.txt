@@ -37,7 +37,7 @@ KaJavaFieldSymbol:
   isStatic: false
   isVal: false
   location: CLASS
-  modality: OPEN
+  modality: FINAL
   name: hash
   origin: JAVA_LIBRARY
   receiverParameter: null
@@ -106,7 +106,7 @@ KaJavaFieldSymbol:
   isStatic: false
   isVal: false
   location: CLASS
-  modality: OPEN
+  modality: FINAL
   name: hash32
   origin: JAVA_LIBRARY
   receiverParameter: null

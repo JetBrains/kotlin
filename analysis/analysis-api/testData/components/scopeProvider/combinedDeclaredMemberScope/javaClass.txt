@@ -84,7 +84,7 @@ KaJavaFieldSymbol:
   isStatic: true
   isVal: false
   location: CLASS
-  modality: OPEN
+  modality: FINAL
   name: foo
   origin: JAVA_SOURCE
   receiverParameter: null

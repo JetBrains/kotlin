@@ -1,6 +1,6 @@
-open var field2: kotlin.String!
+var field2: kotlin.String!
 
-open var field: kotlin.Int
+var field: kotlin.Int
 
 open fun foo(): kotlin.String!
 
