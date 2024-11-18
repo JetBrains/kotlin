@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-72725
 // WITH_STDLIB
@@ -29,7 +29,7 @@ expect open class B : A
 public class MyB extends MyA {}
 
 // FILE: jvm.kt
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>B<!> = MyB
+actual typealias B = MyB
 
 fun box(): String {
     val b = B()

@@ -499,9 +499,10 @@ object AbstractExpectActualChecker {
     ): Boolean {
         // In the case of actualization by a Java declaration such as a field or a method normalize the Java visibility
         // to the closest Kotlin visibility.Example: "protected_and_package" -> "protected".
+        val normalizedExpectVisibility = expectVisibility.normalize()
         val normalizedActualVisibility = actualVisibility.normalize()
 
-        val compare = Visibilities.compare(expectVisibility, normalizedActualVisibility)
+        val compare = Visibilities.compare(normalizedExpectVisibility, normalizedActualVisibility)
 
         val effectiveModality =
             when (languageVersionSettings.supportsFeature(LanguageFeature.SupportEffectivelyFinalInExpectActualVisibilityCheck)) {
