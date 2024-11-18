@@ -33361,6 +33361,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiModule extends AbstractLightAnalysisModeTest {
+      @TestMetadata("mutlimoduleActualizationByJavaClasses.kt")
+      public void ignoreMutlimoduleActualizationByJavaClasses() {
+        runTest("compiler/testData/codegen/box/multiplatform/multiModule/mutlimoduleActualizationByJavaClasses.kt");
+      }
+
       private void runTest(String testDataFilePath) {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
       }

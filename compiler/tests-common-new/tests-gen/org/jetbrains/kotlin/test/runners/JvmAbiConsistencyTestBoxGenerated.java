@@ -39105,6 +39105,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("mutlimoduleActualizationByJavaClasses.kt")
+      public void testMutlimoduleActualizationByJavaClasses() {
+        runTest("compiler/testData/codegen/box/multiplatform/multiModule/mutlimoduleActualizationByJavaClasses.kt");
+      }
+
+      @Test
       @TestMetadata("stdlibClassRedefine.kt")
       public void testStdlibClassRedefine() {
         runTest("compiler/testData/codegen/box/multiplatform/multiModule/stdlibClassRedefine.kt");
