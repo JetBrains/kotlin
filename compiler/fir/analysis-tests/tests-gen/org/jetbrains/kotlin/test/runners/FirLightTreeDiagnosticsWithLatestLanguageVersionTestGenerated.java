@@ -3993,12 +3993,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases")
     @TestDataPath("$PROJECT_ROOT")
-    public class NestedTypeAliases {
+    public class NestedInnerTypeAliases {
       @Test
-      public void testAllFilesPresentInNestedTypeAliases() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      public void testAllFilesPresentInNestedInnerTypeAliases() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4008,15 +4008,21 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
-      @TestMetadata("simple.kt")
-      public void testSimple() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
+      @TestMetadata("innerTypeAlias.kt")
+      public void testInnerTypeAlias() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAlias.kt");
       }
 
       @Test
       @TestMetadata("innerTypeAliasConstructors.kt")
       public void testInnerTypeAliasConstructors() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("innerTypeAliasVariance.kt")
+      public void testInnerTypeAliasVariance() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasVariance.kt");
       }
 
       @Test
@@ -4035,6 +4041,22 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       @TestMetadata("unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt")
       public void testUnresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedTypeAliases {
+      @Test
+      public void testAllFilesPresentInNestedTypeAliases() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
       }
     }
 

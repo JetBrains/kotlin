@@ -29157,6 +29157,23 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedInnerTypeAliases {
+      @Test
+      @TestMetadata("innerTypeAliasConstructors.kt")
+      public void testInnerTypeAliasConstructors() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("innerTypeAliasVariance.kt")
+      public void testInnerTypeAliasVariance() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasVariance.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     public class Overrides {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +NestedTypeAliases
 
 class Pair<X, Y>(val x: X, val y: Y)
@@ -16,6 +17,38 @@ class C<T> {
 
     inner typealias TA = D<T>
     inner typealias TA2 = C<T>
+
+    fun test() {
+        P<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>(0, 0) // WRONG_NUMBER_OF_TYPE_ARGUMENTS
+        P(0, 0) // OK
+
+        P1<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int><!>("str1", 1) // WRONG_NUMBER_OF_TYPE_ARGUMENTS
+        P1<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int, Char><!>("str1", 1) // WRONG_NUMBER_OF_TYPE_ARGUMENTS
+        P1<String>("str1", 1) // OK
+        P1<String>(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>"str1"<!>) // ARGUMENT_TYPE_MISMATCH
+        P1("str1", 1) // OK
+
+        P2<String>(<!ARGUMENT_TYPE_MISMATCH!>"str2"<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>) // ARGUMENT_TYPE_MISMATCH
+        P2<String>(2, "str2") // OK
+        P2(2, "str2") // OK
+
+        TripleTA<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>(3, "str3", <!ARGUMENT_TYPE_MISMATCH!>'c'<!>) // WRONG_NUMBER_OF_TYPE_ARGUMENTS
+        TripleTA<String, Char>(3, "str3", 'c') // OK
+        TripleTA(3, "str3", 'c') // OK
+
+        P3("str4", 4) // OK
+        P3<String>("str4", 4) // OK
+        P3<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>("str4", 4) // WRONG_NUMBER_OF_TYPE_ARGUMENTS
+
+        TA() // OK
+        TA2() // OK
+
+        InnerTA() // OK
+        InnerTA2<String>() // OK
+
+        Inner()
+        InnerWithTypeParam<String>()
+    }
 }
 
 fun test() {

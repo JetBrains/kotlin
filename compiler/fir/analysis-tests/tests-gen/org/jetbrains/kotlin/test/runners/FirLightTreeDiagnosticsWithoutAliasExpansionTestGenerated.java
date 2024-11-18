@@ -263,9 +263,9 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     }
 
     @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases")
     @TestDataPath("$PROJECT_ROOT")
-    public class NestedTypeAliases {
+    public class NestedInnerTypeAliases {
       @Test
       @TestMetadata("innerOnTopLevelTypeAlias.kt")
       public void testInnerOnTopLevelTypeAlias() {
@@ -273,15 +273,21 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       }
 
       @Test
-      @TestMetadata("simple.kt")
-      public void testSimple() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
+      @TestMetadata("innerTypeAlias.kt")
+      public void testInnerTypeAlias() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAlias.kt");
       }
 
       @Test
       @TestMetadata("innerTypeAliasConstructors.kt")
       public void testInnerTypeAliasConstructors() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("innerTypeAliasVariance.kt")
+      public void testInnerTypeAliasVariance() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/innerTypeAliasVariance.kt");
       }
 
       @Test
@@ -300,6 +306,17 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @TestMetadata("unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt")
       public void testUnresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedInnerTypeAliases/unresolvedIfNestedTypeAliasCapturesAnOuterTypeParameter.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedTypeAliases {
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
       }
     }
 
