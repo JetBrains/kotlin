@@ -1,5 +1,5 @@
 @R|spr/NonNullApi|() public open class A : R|kotlin/Any| {
-    public open field field: R|kotlin/String!|
+    public field field: R|kotlin/String!|
 
     public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|spr/Nullable|() y: R|Enhanced for warning(kotlin/CharSequence?) kotlin/CharSequence!|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 

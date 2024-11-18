@@ -1,5 +1,5 @@
 public open class Simple : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|@EnhancedNullability kotlin/String?|
+    @R|javax/annotation/Nullable|() public field field: R|@EnhancedNullability kotlin/String?|
 
     @R|javax/annotation/Nullable|() public open fun foo(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|@EnhancedNullability kotlin/CharSequence?|): R|@EnhancedNullability kotlin/String?|
 

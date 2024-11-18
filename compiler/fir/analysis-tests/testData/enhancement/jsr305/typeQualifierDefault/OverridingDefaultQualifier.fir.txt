@@ -1,5 +1,5 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
-    public open field field: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
+    public field field: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
     public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|javax/annotation/CheckForNull|() y: R|@EnhancedNullability kotlin/CharSequence?|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 
@@ -12,7 +12,7 @@
     public constructor(): R|A|
 
     @R|NullableApi|() public open inner class B : R|kotlin/Any| {
-        public open field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
+        public field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
         public open fun foo(x: R|Enhanced for warning(kotlin/String?) kotlin/String!|, @R|javax/annotation/Nonnull|() y: R|@EnhancedNullability kotlin/CharSequence|): R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
@@ -26,7 +26,7 @@
 
     }
     @R|FieldsAreNullable|() public open inner class C : R|kotlin/Any| {
-        public open field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
+        public field field: R|Enhanced for warning(kotlin/String?) kotlin/String!|
 
         public open fun foo(x: R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|, @R|javax/annotation/Nullable|() y: R|@EnhancedNullability kotlin/CharSequence?|): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!|
 

@@ -47,7 +47,8 @@ abstract class FirModifierRenderer {
         }
     }
 
-    protected open fun renderModifier(modifier: String) {
+    protected open fun renderModifier(modifier: String?) {
+        if (modifier == null) return
         printer.print("$modifier ")
     }
 
@@ -64,7 +65,11 @@ abstract class FirModifierRenderer {
         return itself + "[${effectiveVisibility.name}]"
     }
 
-    protected open fun FirMemberDeclaration.modalityAsString(): String {
+    protected open fun FirMemberDeclaration.modalityAsString(): String? {
+        if (this is FirField) {
+            return if (isVal) "final" else null
+        }
+
         return modality?.name?.toLowerCaseAsciiOnly() ?: run {
             if (this is FirCallableDeclaration && this.isOverride) {
                 "open?"

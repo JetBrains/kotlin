@@ -2,7 +2,7 @@ public open class PrivateMembersInHierarchy : R|kotlin/Any| {
     public constructor(): R|test/PrivateMembersInHierarchy|
 
     public open class Sub : R|test/PrivateMembersInHierarchy.Super| {
-        private open field field: R|kotlin/Int|
+        private field field: R|kotlin/Int|
 
         private open fun method(): R|kotlin/Unit|
 
@@ -12,9 +12,9 @@ public open class PrivateMembersInHierarchy : R|kotlin/Any| {
 
     }
     public open class Super : R|kotlin/Any| {
-        private open field field: R|kotlin/Int|
+        private field field: R|kotlin/Int|
 
-        private open field field2: R|kotlin/Int|
+        private field field2: R|kotlin/Int|
 
         private open fun method(): R|kotlin/Unit|
 

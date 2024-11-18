@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
@@ -218,7 +217,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
 
             symbol is FirPropertySymbol -> symbol.fir.isConst
 
-            symbol is FirFieldSymbol -> symbol.fir.isFinal
+            symbol is FirFieldSymbol -> symbol.fir.isVal
 
             symbol is FirConstructorSymbol -> {
                 symbol.containingClassLookupTag()?.toRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
