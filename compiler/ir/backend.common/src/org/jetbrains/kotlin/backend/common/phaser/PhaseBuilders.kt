@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 // Phase composition.
-private class CompositePhase<Context : CommonBackendContext, Input, Output>(
+private class CompositePhase<Context : LoggingContext, Input, Output>(
     val phases: List<CompilerPhase<Context, Any?, Any?>>
 ) : CompilerPhase<Context, Input, Output> {
 
@@ -37,7 +37,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
 }
 
 @Suppress("UNCHECKED_CAST")
-infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
+infix fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
     other: CompilerPhase<Context, Mid, Output>
 ): CompilerPhase<Context, Input, Output> {
     val unsafeThis = this as CompilerPhase<Context, Any?, Any?>
