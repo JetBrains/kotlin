@@ -114,6 +114,8 @@ class FirOverloadByLambdaReturnTypeResolver(
         }.groupBy { (_, atom) -> atom.anonymousFunction }
             .values.singleOrNull()?.toMap() ?: return null
 
+        if (!isForAnnotation && lambdas.size < candidates.size) return null
+
         if (!lambdas.values.same { it.parameterTypes.size }) return null
         if (!lambdas.values.all { it.expectedType?.isSomeFunctionType(session) == true }) return null
 
