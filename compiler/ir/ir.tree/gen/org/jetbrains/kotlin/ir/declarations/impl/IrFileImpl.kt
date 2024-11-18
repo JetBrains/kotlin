@@ -34,8 +34,6 @@ class IrFileImpl(
 
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 

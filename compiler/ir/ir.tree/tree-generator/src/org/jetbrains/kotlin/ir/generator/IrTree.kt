@@ -115,16 +115,6 @@ object IrTree : AbstractTreeBuilder() {
                 invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
             """.trimIndent()
         }
-        +field("originalBeforeInline", rootElement, nullable = true, isChild = false) {
-            deepCopyExcludeFromApply = true
-            kDoc = """
-                original element before inlining. Useful only with IR
-                inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
-                idempotence invariant and can contain a chain of declarations.
-                
-                `null` <=> `this` element wasn't inlined.
-            """.trimIndent()
-        }
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
     }

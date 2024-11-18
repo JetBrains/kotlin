@@ -27,8 +27,6 @@ class IrReturnImpl internal constructor(
 ) : IrReturn() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     // A temporary API for compatibility with Flysto user project, see KQA-1254
     constructor(
         startOffset: Int,

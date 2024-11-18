@@ -27,8 +27,6 @@ class IrDelegatingConstructorCallImpl internal constructor(
 ) : IrDelegatingConstructorCall() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 
     override var symbol: IrConstructorSymbol = symbol

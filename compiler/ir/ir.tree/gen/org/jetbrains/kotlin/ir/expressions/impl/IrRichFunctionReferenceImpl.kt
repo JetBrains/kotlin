@@ -36,7 +36,5 @@ class IrRichFunctionReferenceImpl internal constructor(
 ) : IrRichFunctionReference() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }

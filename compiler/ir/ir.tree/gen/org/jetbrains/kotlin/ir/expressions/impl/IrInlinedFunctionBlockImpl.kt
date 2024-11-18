@@ -32,7 +32,5 @@ class IrInlinedFunctionBlockImpl internal constructor(
 ) : IrInlinedFunctionBlock() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

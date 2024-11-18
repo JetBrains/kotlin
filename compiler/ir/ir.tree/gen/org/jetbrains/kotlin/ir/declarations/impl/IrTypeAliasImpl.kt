@@ -34,8 +34,6 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
 ) : IrTypeAlias() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()

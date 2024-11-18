@@ -27,7 +27,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
         allImplOf(rootElement) {
             default("attributeOwnerId", "this")
-            defaultNull("originalBeforeInline")
         }
 
         allImplOf(metadataSourceOwner) {

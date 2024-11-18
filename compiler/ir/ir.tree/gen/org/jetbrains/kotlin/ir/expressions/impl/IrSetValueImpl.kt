@@ -28,6 +28,4 @@ class IrSetValueImpl internal constructor(
     override var value: IrExpression,
 ) : IrSetValue() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

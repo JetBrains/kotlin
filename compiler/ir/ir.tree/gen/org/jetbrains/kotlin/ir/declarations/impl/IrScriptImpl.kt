@@ -31,8 +31,6 @@ class IrScriptImpl(
 ) : IrScript() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN

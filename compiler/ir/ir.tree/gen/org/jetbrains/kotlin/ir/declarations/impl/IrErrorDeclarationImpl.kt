@@ -28,8 +28,6 @@ class IrErrorDeclarationImpl @IrImplementationDetail constructor(
 ) : IrErrorDeclaration() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

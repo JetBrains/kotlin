@@ -92,7 +92,6 @@ class Fir2IrLazyField(
         set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

@@ -44,5 +44,4 @@ class IrLazyTypeParameter(
     }
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 }

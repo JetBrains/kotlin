@@ -26,8 +26,6 @@ class IrCompositeImpl internal constructor(
 ) : IrComposite() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254

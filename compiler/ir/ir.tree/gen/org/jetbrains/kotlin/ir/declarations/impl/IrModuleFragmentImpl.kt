@@ -28,8 +28,6 @@ class IrModuleFragmentImpl(
 
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val name: Name
         get() = descriptor.name
 

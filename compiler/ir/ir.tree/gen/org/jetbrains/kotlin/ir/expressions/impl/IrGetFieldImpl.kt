@@ -30,7 +30,5 @@ class IrGetFieldImpl internal constructor(
 ) : IrGetField() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var receiver: IrExpression? = null
 }

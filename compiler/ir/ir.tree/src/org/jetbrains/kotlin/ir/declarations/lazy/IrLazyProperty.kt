@@ -91,5 +91,4 @@ class IrLazyProperty(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 }

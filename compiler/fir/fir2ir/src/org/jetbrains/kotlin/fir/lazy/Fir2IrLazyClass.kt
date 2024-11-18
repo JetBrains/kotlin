@@ -81,7 +81,6 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override var kind: ClassKind
         get() = fir.classKind

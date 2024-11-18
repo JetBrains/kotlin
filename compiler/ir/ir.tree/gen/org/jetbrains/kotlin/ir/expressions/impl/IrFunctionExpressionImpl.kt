@@ -26,6 +26,4 @@ class IrFunctionExpressionImpl internal constructor(
     override var function: IrSimpleFunction,
 ) : IrFunctionExpression() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

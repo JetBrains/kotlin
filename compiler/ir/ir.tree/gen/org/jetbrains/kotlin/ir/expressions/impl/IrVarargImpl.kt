@@ -26,7 +26,5 @@ class IrVarargImpl internal constructor(
 ) : IrVararg() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val elements: MutableList<IrVarargElement> = SmartList()
 }

@@ -26,8 +26,6 @@ class IrErrorCallExpressionImpl internal constructor(
 ) : IrErrorCallExpression() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var explicitReceiver: IrExpression? = null
 
     override val arguments: MutableList<IrExpression> = SmartList()

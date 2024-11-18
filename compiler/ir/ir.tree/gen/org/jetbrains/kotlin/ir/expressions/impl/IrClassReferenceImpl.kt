@@ -25,6 +25,4 @@ class IrClassReferenceImpl internal constructor(
     override var classType: IrType,
 ) : IrClassReference() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

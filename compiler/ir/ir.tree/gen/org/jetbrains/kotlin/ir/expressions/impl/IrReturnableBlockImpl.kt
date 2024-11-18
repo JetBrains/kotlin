@@ -30,8 +30,6 @@ class IrReturnableBlockImpl internal constructor(
 ) : IrReturnableBlock() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     @ObsoleteDescriptorBasedAPI

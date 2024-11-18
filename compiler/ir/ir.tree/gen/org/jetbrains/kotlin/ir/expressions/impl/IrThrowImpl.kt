@@ -24,6 +24,4 @@ class IrThrowImpl internal constructor(
     override var value: IrExpression,
 ) : IrThrow() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

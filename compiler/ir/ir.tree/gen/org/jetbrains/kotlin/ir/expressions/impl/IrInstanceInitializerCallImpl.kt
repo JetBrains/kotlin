@@ -24,6 +24,4 @@ class IrInstanceInitializerCallImpl internal constructor(
     override var classSymbol: IrClassSymbol,
 ) : IrInstanceInitializerCall() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

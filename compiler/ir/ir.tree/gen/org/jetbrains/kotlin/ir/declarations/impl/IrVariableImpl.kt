@@ -37,8 +37,6 @@ class IrVariableImpl internal constructor(
 ) : IrVariable() {
     override var attributeOwnerId: IrElement = this
 
-    override var originalBeforeInline: IrElement? = null
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override val factory: IrFactory

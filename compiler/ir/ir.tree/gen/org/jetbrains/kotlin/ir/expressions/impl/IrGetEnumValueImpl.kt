@@ -24,6 +24,4 @@ class IrGetEnumValueImpl internal constructor(
     override var symbol: IrEnumEntrySymbol,
 ) : IrGetEnumValue() {
     override var attributeOwnerId: IrElement = this
-
-    override var originalBeforeInline: IrElement? = null
 }

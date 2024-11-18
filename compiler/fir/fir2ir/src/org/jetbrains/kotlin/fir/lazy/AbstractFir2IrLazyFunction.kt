@@ -97,7 +97,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override var attributeOwnerId: IrElement = this
-    override var originalBeforeInline: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null
