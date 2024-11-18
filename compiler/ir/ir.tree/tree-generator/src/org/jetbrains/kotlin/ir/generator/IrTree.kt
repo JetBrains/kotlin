@@ -328,7 +328,7 @@ object IrTree : AbstractTreeBuilder() {
               idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer, isChild = false) {
+        +field("attributeOwnerId", rootElement, isChild = false) {
             deepCopyExcludeFromApply = true
         }
         // null <=> this element wasn't inlined

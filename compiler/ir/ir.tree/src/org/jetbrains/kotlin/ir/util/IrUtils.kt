@@ -1426,7 +1426,7 @@ val Int.previousOffset
             else -> if (this > 0) minus(1) else error("Invalid offset appear")
         }
 
-fun IrAttributeContainer.extractRelatedDeclaration(): IrDeclaration? {
+fun IrElement.extractRelatedDeclaration(): IrDeclaration? {
     return when (this) {
         is IrClass -> this
         is IrFunctionExpression -> function

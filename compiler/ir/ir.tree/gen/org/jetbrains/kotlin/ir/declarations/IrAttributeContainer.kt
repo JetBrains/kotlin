@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer]
  */
 interface IrAttributeContainer : IrElement {
-    var attributeOwnerId: IrAttributeContainer
+    var attributeOwnerId: IrElement
 
     var originalBeforeInline: IrElement?
 }

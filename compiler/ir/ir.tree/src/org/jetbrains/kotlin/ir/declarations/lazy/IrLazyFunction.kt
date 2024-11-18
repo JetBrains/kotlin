@@ -94,7 +94,7 @@ class IrLazyFunction(
         }
     }
 
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerId: IrElement = this
     override var originalBeforeInline: IrElement? = null
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
