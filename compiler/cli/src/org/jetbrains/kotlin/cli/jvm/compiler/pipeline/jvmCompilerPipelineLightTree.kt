@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.Backend
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBackend
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
+import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -175,7 +175,10 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
     val fir2IrAndIrActualizerResult =
         firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, compilerConfiguration, diagnosticsReporter, irGenerationExtensions)
     val factory = JvmIrCodegenFactory(compilerConfiguration)
-    val input = fir2IrAndIrActualizerResult.toBackendInput(compilerConfiguration)
+    val input = fir2IrAndIrActualizerResult.toBackendInput(
+        compilerConfiguration,
+        jvmBackendExtension = null
+    )
 
     val backendInputForMultiModuleChunk = BackendInputForMultiModuleChunk(
         factory,
@@ -211,7 +214,7 @@ private fun compileSingleModuleUsingFrontendIrAndLightTree(
     module: Module,
     groupedSources: GroupedKtSources,
 ): Boolean {
-    val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+    val moduleConfiguration = compilerConfiguration.createConfigurationForModule(module, buildFile)
 
     val context = FrontendContextForSingleModuleLightTree(
         module,

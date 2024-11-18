@@ -158,6 +158,8 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
     }
 
     val commonSources = args.commonSources?.toSet().orEmpty()
+    // With `-script` flag, the first free arg is considered as a path to the script file and others are as script arguments
+    if (args.script) return
     for (arg in args.freeArgs) {
         if (arg.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
             addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))

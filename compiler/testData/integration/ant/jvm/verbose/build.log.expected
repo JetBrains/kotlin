@@ -4,9 +4,9 @@ Buildfile: [TestData]/build.xml
 build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
   [kotlinc] logging: using Kotlin home directory [KotlinProjectHome]/dist/kotlinc
-  [kotlinc] logging: using JDK home inferred from java.home: [JavaHome]
   [kotlinc] logging: exception on loading scripting plugin: java.lang.ClassNotFoundException: org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
   [kotlinc] logging: configuring the compilation environment
+  [kotlinc] logging: using JDK home inferred from java.home: [JavaHome]
 
 BUILD SUCCESSFUL
 Total time: [time]

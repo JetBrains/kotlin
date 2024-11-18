@@ -297,7 +297,7 @@ open class JvmIrCodegenFactory(
     override fun getModuleChunkBackendInput(
         wholeBackendInput: CodegenFactory.BackendInput,
         sourceFiles: Collection<KtFile>,
-    ): CodegenFactory.BackendInput {
+    ): JvmIrBackendInput {
         wholeBackendInput as JvmIrBackendInput
 
         val moduleChunk = sourceFiles.toSet()

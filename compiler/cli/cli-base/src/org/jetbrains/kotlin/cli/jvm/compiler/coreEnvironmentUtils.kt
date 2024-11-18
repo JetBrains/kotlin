@@ -118,18 +118,22 @@ fun createSourceFilesFromSourceRoots(
 val KotlinCoreEnvironment.messageCollector: MessageCollector
     get() = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?): CompilerConfiguration {
+fun CompilerConfiguration.createConfigurationForModule(module: Module, buildFile: File?): CompilerConfiguration {
     return copy().apply {
-        if (buildFile != null) {
-            fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
-                assert(get(key) == null) { "$name should be null, when buildFile is used" }
-            }
-
-            checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
-            checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
-            put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
-        }
+        applyModuleProperties(module, buildFile)
     }
+}
+
+fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?) {
+    if (buildFile == null) return
+
+    fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
+        assert(get(key) == null) { "$name should be null, when buildFile is used" }
+    }
+
+    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
+    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
+    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
 }
 
 fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector?): List<KotlinSourceRoot> {

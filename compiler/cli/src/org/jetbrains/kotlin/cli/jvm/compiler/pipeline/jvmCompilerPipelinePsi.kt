@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -56,7 +58,7 @@ fun compileSingleModuleUsingFrontendIrAndPsi(
 ): Boolean {
     FirAnalysisHandlerExtension.analyze(project, compilerConfiguration)?.let { return it }
 
-    val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+    val moduleConfiguration = compilerConfiguration.createConfigurationForModule(module, buildFile)
     val context = FrontendContextForSingleModulePsi(
         module,
         allSources,
@@ -96,8 +98,10 @@ internal fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
     with(frontendContext) {
         // K2/PSI: frontend
         val firResult = compileSourceFilesToAnalyzedFirViaPsi(
-            sourceFiles, diagnosticsReporter, chunk.joinToString(separator = "+") { it.getModuleName() },
-            chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
+            ktFiles = sourceFiles,
+            diagnosticsReporter = diagnosticsReporter,
+            rootModuleName = chunk.joinToString(separator = "+") { it.getModuleName() },
+            friendPaths = chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
         ) ?: run {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
                 diagnosticsReporter, messageCollector,
@@ -111,7 +115,10 @@ internal fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
         val fir2IrAndIrActualizerResult =
             firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
         val factory = JvmIrCodegenFactory(configuration)
-        val input = fir2IrAndIrActualizerResult.toBackendInput(configuration)
+        val input = fir2IrAndIrActualizerResult.toBackendInput(
+            configuration,
+            jvmBackendExtension = null
+        )
         return BackendInputForMultiModuleChunk(
             factory,
             input,
@@ -157,9 +164,9 @@ internal fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
 
-    val scriptsInCommonSourcesErrors = reportCommonScriptsError(ktFiles)
+    val scriptsInCommonSourcesErrors = checkIfScriptsInCommonSources(configuration, ktFiles)
 
-    val sourceScope = (projectEnvironment as VfsBasedProjectEnvironment).getSearchScopeByPsiFiles(ktFiles) +
+    val sourceScope: AbstractProjectFileSearchScope = (projectEnvironment as VfsBasedProjectEnvironment).getSearchScopeByPsiFiles(ktFiles) +
             projectEnvironment.getSearchScopeForProjectJavaSources()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -189,13 +196,13 @@ internal fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
 }
 
-private fun FrontendContext.reportCommonScriptsError(ktFiles: List<KtFile>): Boolean {
+fun checkIfScriptsInCommonSources(configuration: CompilerConfiguration, ktFiles: List<KtFile>): Boolean {
     val lastHmppModule = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)?.modules?.lastOrNull()
     val commonScripts = ktFiles.filter { it.isScript() && (it.isCommonSource == true || it.hmppModuleName != lastHmppModule?.name) }
     if (commonScripts.isNotEmpty()) {
         val cwd = File(".").absoluteFile
         fun renderFile(ktFile: KtFile) = File(ktFile.virtualFilePath).descendantRelativeTo(cwd).path
-        messageCollector.report(
+        configuration.messageCollector.report(
             CompilerMessageSeverity.ERROR,
             "Script files in common source roots are not supported. Misplaced files:\n    " +
                     commonScripts.joinToString("\n    ", transform = ::renderFile)

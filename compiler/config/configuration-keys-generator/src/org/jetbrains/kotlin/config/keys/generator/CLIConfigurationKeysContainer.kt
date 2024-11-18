@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config.keys.generator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -53,4 +54,10 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val PRINT_VERSION by key<Boolean>("Print compiler version")
     val SCRIPT_MODE by key<Boolean>("Compile and evaluate kotlin script")
     val KOTLIN_PATHS by key<KotlinPaths>("Kotlin paths")
+
+    val ALLOW_NO_SOURCE_FILES by key<Boolean>("allow no source files compilation")
+    val MODULE_CHUNK by key<ModuleChunk>("Module chunk")
+    val BUILD_FILE by key<File>("Build file")
+    val FREE_ARGS_FOR_SCRIPT by key<List<String>>("Free args from arguments. Used only for scripts execution")
+    val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>("Default extension for scripts", throwOnNull = false)
 }
