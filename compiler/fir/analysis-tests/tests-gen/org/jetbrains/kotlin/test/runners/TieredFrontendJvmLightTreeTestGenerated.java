@@ -15295,6 +15295,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("expectActualExtensionOverride.kt")
+      public void testExpectActualExtensionOverride() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualExtensionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
       public void testExpectActualMainInTheSameModuleDifferentFiles() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");

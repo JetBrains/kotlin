@@ -1707,6 +1707,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("DanglingInScript.kts")
+      public void testDanglingInScript() {
+        runTest("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kts");
+      }
+
+      @Test
       @TestMetadata("DanglingMixed.kt")
       public void testDanglingMixed() {
         runTest("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
@@ -15295,6 +15301,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("expectActualExtensionOverride.kt")
+      public void testExpectActualExtensionOverride() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualExtensionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("expectActualMainInTheSameModuleDifferentFiles.kt")
       public void testExpectActualMainInTheSameModuleDifferentFiles() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualMainInTheSameModuleDifferentFiles.kt");
@@ -18215,6 +18227,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("ScriptAndClassConflict.kts")
+      public void testScriptAndClassConflict() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/ScriptAndClassConflict.kts");
+      }
+
+      @Test
       @TestMetadata("SingletonAndFunctionSameName.kt")
       public void testSingletonAndFunctionSameName() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/SingletonAndFunctionSameName.kt");
@@ -20093,6 +20111,71 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         public void testIrrelevantUnsafeVariance() {
           runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/irrelevantUnsafeVariance.kt");
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/script")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Script {
+      @Test
+      @TestMetadata("AccessForwardDeclarationInScript.kts")
+      public void testAccessForwardDeclarationInScript() {
+        runTest("compiler/testData/diagnostics/tests/script/AccessForwardDeclarationInScript.kts");
+      }
+
+      @Test
+      @TestMetadata("destructuringDeclarationsScript.kts")
+      public void testDestructuringDeclarationsScript() {
+        runTest("compiler/testData/diagnostics/tests/script/destructuringDeclarationsScript.kts");
+      }
+
+      @Test
+      @TestMetadata("functionContractScript.kts")
+      public void testFunctionContractScript() {
+        runTest("compiler/testData/diagnostics/tests/script/functionContractScript.kts");
+      }
+
+      @Test
+      @TestMetadata("innerClassError.kts")
+      public void testInnerClassError() {
+        runTest("compiler/testData/diagnostics/tests/script/innerClassError.kts");
+      }
+
+      @Test
+      @TestMetadata("NestedInnerClass.kts")
+      public void testNestedInnerClass() {
+        runTest("compiler/testData/diagnostics/tests/script/NestedInnerClass.kts");
+      }
+
+      @Test
+      @TestMetadata("resolveInitializerOfDestructuringDeclarationOnce.kts")
+      public void testResolveInitializerOfDestructuringDeclarationOnce() {
+        runTest("compiler/testData/diagnostics/tests/script/resolveInitializerOfDestructuringDeclarationOnce.kts");
+      }
+
+      @Test
+      @TestMetadata("scriptScopes.kts")
+      public void testScriptScopes() {
+        runTest("compiler/testData/diagnostics/tests/script/scriptScopes.kts");
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertiesWithGetSet.kts")
+      public void testTopLevelPropertiesWithGetSet() {
+        runTest("compiler/testData/diagnostics/tests/script/topLevelPropertiesWithGetSet.kts");
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertyInitialization.kts")
+      public void testTopLevelPropertyInitialization() {
+        runTest("compiler/testData/diagnostics/tests/script/topLevelPropertyInitialization.kts");
+      }
+
+      @Test
+      @TestMetadata("typealiasInScript.kts")
+      public void testTypealiasInScript() {
+        runTest("compiler/testData/diagnostics/tests/script/typealiasInScript.kts");
       }
     }
 
@@ -29445,6 +29528,17 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("specialFunctionInJava_2.kt")
       public void testSpecialFunctionInJava_2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_2.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+      @Test
+      @TestMetadata("scriptsDeclsMayConflict.kts")
+      public void testScriptsDeclsMayConflict() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/scripts/scriptsDeclsMayConflict.kts");
       }
     }
 

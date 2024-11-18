@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val testVal: Int get() = 42
 
 val testValNoType get() = 42

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: Caused by: java.lang.IndexOutOfBoundsException: Cannot pop operand off an empty stack.
 
 // FILE: script.kts
 

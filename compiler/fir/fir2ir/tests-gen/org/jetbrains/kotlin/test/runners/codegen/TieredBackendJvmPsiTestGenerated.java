@@ -16250,6 +16250,77 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/script")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Script {
+      @Test
+      @TestMetadata("ComplexScript.kts")
+      public void testComplexScript() {
+        runTest("compiler/testData/diagnostics/tests/script/ComplexScript.kts");
+      }
+
+      @Test
+      @TestMetadata("imports.kts")
+      public void testImports() {
+        runTest("compiler/testData/diagnostics/tests/script/imports.kts");
+      }
+
+      @Test
+      @TestMetadata("innerClassWarning.kts")
+      public void testInnerClassWarning() {
+        runTest("compiler/testData/diagnostics/tests/script/innerClassWarning.kts");
+      }
+
+      @Test
+      @TestMetadata("LateInit.kts")
+      public void testLateInit() {
+        runTest("compiler/testData/diagnostics/tests/script/LateInit.kts");
+      }
+
+      @Test
+      @TestMetadata("PrivateVal.kts")
+      public void testPrivateVal() {
+        runTest("compiler/testData/diagnostics/tests/script/PrivateVal.kts");
+      }
+
+      @Test
+      @TestMetadata("scriptDeclsShouldVisibleLocally.kts")
+      public void testScriptDeclsShouldVisibleLocally() {
+        runTest("compiler/testData/diagnostics/tests/script/scriptDeclsShouldVisibleLocally.kts");
+      }
+
+      @Test
+      @TestMetadata("SimpleScript.kts")
+      public void testSimpleScript() {
+        runTest("compiler/testData/diagnostics/tests/script/SimpleScript.kts");
+      }
+
+      @Test
+      @TestMetadata("SuppressAnnoInLastExpression.kts")
+      public void testSuppressAnnoInLastExpression() {
+        runTest("compiler/testData/diagnostics/tests/script/SuppressAnnoInLastExpression.kts");
+      }
+
+      @Test
+      @TestMetadata("topLevelInlineFun.kts")
+      public void testTopLevelInlineFun() {
+        runTest("compiler/testData/diagnostics/tests/script/topLevelInlineFun.kts");
+      }
+
+      @Test
+      @TestMetadata("topLevelVariable.kts")
+      public void testTopLevelVariable() {
+        runTest("compiler/testData/diagnostics/tests/script/topLevelVariable.kts");
+      }
+
+      @Test
+      @TestMetadata("varInScript.kts")
+      public void testVarInScript() {
+        runTest("compiler/testData/diagnostics/tests/script/varInScript.kts");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/sealed")
     @TestDataPath("$PROJECT_ROOT")
     public class Sealed {
@@ -21045,6 +21116,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       @TestMetadata("overrideInPrimaryConstructor.kt")
       public void testOverrideInPrimaryConstructor() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideInPrimaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("scripts.kts")
+      public void testScripts() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/scripts.kts");
       }
 
       @Test

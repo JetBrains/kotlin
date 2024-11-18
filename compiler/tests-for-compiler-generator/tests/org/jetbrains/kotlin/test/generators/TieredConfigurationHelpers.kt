@@ -59,7 +59,10 @@ fun configureTierModelsForDeclaredAs(
 /**
  * [...][configureTierModelsForDeclaredAs] for the common locations of diagnostic tests
  */
-fun configureTierModelsForK1AlongsideDiagnosticTestsStating(vararg tiers: TestTierLabel): TestGroup.TestClass.() -> Unit =
+fun configureTierModelsForK1AlongsideDiagnosticTestsStating(
+    vararg tiers: TestTierLabel,
+    allowKts: Boolean,
+): TestGroup.TestClass.() -> Unit =
     configureTierModelsForDeclaredAs(
         *tiers,
         relativeRootPaths = listOf(
@@ -72,6 +75,9 @@ fun configureTierModelsForK1AlongsideDiagnosticTestsStating(vararg tiers: TestTi
             "fir/analysis-tests/testData/resolveFreezesIDE",
         ),
         excludeDirs = listOf("declarations/multiplatform/k1"),
-        pattern = "^(.*)\\.(kts?|nkt)$",
+        pattern = when {
+            allowKts -> "^(.*)\\.(kts?|nkt)$"
+            else -> "^(.*)\\.(kt|nkt)$"
+        },
         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
     )

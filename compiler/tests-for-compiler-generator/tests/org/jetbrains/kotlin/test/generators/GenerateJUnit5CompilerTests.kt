@@ -486,29 +486,29 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
             testClass<AbstractTieredFrontendJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = false),
             )
 
             testClass<AbstractTieredFrontendJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = true),
             )
         }
 
         testGroup("compiler/fir/fir2ir/tests-gen", "compiler/") {
             testClass<AbstractTieredFir2IrJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = false),
             )
 
             testClass<AbstractTieredFir2IrJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = true),
             )
 
             testClass<AbstractTieredBackendJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = false),
             )
 
             testClass<AbstractTieredBackendJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = true),
             )
         }
     }

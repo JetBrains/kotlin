@@ -865,6 +865,12 @@ public class TieredFir2IrJvmPsiTestGenerated extends AbstractTieredFir2IrJvmPsiT
         }
 
         @Test
+        @TestMetadata("expectActualExtension.kt")
+        public void testExpectActualExtension() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/expectActualExtension.kt");
+        }
+
+        @Test
         @TestMetadata("headerAndImplInDIfferentPackages.kt")
         public void testHeaderAndImplInDIfferentPackages() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerAndImplInDIfferentPackages.kt");
@@ -903,6 +909,12 @@ public class TieredFir2IrJvmPsiTestGenerated extends AbstractTieredFir2IrJvmPsiT
         @TestMetadata("differentKindsOfProperties.kt")
         public void testDifferentKindsOfProperties() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualExtensionProperty.kt")
+        public void testExpectActualExtensionProperty() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/expectActualExtensionProperty.kt");
         }
 
         @Test
@@ -1034,6 +1046,17 @@ public class TieredFir2IrJvmPsiTestGenerated extends AbstractTieredFir2IrJvmPsiT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/script")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Script {
+      @Test
+      @TestMetadata("implicitResolveWithJump.kts")
+      public void testImplicitResolveWithJump() {
+        runTest("compiler/testData/diagnostics/tests/script/implicitResolveWithJump.kts");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
     public class SmartCasts {
@@ -1111,6 +1134,17 @@ public class TieredFir2IrJvmPsiTestGenerated extends AbstractTieredFir2IrJvmPsiT
       @TestMetadata("kotlinAccessorsLikeFunctionsThrowJavaClass.kt")
       public void testKotlinAccessorsLikeFunctionsThrowJavaClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/kotlinAccessorsLikeFunctionsThrowJavaClass.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+      @Test
+      @TestMetadata("scriptDeclsShouldBeVisibleFromOtherSources.kts")
+      public void testScriptDeclsShouldBeVisibleFromOtherSources() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/scripts/scriptDeclsShouldBeVisibleFromOtherSources.kts");
       }
     }
   }

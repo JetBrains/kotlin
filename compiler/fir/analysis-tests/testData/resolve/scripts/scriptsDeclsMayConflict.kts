@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: script1.kts
 

@@ -865,6 +865,12 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
         }
 
         @Test
+        @TestMetadata("expectActualExtension.kt")
+        public void testExpectActualExtension() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/expectActualExtension.kt");
+        }
+
+        @Test
         @TestMetadata("headerAndImplInDIfferentPackages.kt")
         public void testHeaderAndImplInDIfferentPackages() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerAndImplInDIfferentPackages.kt");
@@ -903,6 +909,12 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
         @TestMetadata("differentKindsOfProperties.kt")
         public void testDifferentKindsOfProperties() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualExtensionProperty.kt")
+        public void testExpectActualExtensionProperty() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/expectActualExtensionProperty.kt");
         }
 
         @Test

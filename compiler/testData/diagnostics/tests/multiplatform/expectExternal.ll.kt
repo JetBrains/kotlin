@@ -1,8 +1,8 @@
-// IGNORE_FIR_DIAGNOSTICS
 // LL_FIR_DIVERGENCE
 // WRONG_MODIFIER_TARGET not reported in LL and reported in CLI tests in common module,
 // because it is JVM-only checker, and in CLI common module analyzed additionally against JVM target.
 // LL_FIR_DIVERGENCE
+// IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1-common
 // FILE: common.kt
