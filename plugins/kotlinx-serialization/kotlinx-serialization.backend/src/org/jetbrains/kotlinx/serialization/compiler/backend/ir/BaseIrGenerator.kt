@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -532,12 +533,13 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         if (serializerClassOriginal.owner.kind == ClassKind.OBJECT) {
             val serializerClass = serializerClassOriginal.owner
 
-            val samePackage = serializerClass.packageFqName == rootSerializableClass?.packageFqName
 
-            // rootSerializableClass is only if the serializer is obtained for serializer getter
+            // rootSerializableClass is null only if we are compiling serializer getter
             //   In this case, the private serializer will always be located in the same package, otherwise a syntax error will occur.
-            return if (rootSerializableClass == null || serializerClass.visibility != DescriptorVisibilities.PRIVATE || samePackage) {
-                // we can access the serializer object directly only if it is not private, or is located in the same package as the class using it
+            //   If it is not null, rootSerializableClass.getPackageFragment() will return IrFile we are currently compiling
+            val sameFileAccess = serializerClass.getPackageFragment() == rootSerializableClass?.getPackageFragment()
+            return if (rootSerializableClass == null || serializerClass.visibility != DescriptorVisibilities.PRIVATE || sameFileAccess) {
+                // we can access the serializer object directly only if it is not private, or is located in the same file as the class using it
                 irGetObject(serializerClassOriginal)
             } else {
                 val simpleType = (kType as? IrSimpleType) ?: error("Don't know how to work with type ${kType.classFqName}")
