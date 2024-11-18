@@ -97,6 +97,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
             ownerPointer = analysisSession.createOwnerPointer(this),
             propertyName = name,
             isSynthetic = firSymbol is SyntheticSymbol,
+            originalSymbol = this
         )
     }
 

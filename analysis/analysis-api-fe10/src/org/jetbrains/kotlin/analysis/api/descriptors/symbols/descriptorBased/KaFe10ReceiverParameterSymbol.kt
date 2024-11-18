@@ -39,7 +39,7 @@ internal class KaFe10ReceiverParameterSymbol(
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
-        KaBaseReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
+        KaBaseReceiverParameterSymbolPointer(owningCallableSymbol.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

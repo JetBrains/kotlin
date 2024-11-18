@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 internal class KaFe10PsiDefaultSetterParameterSymbolPointer(
-    private val propertySymbolPointer: KaPsiBasedSymbolPointer<KaPropertySetterSymbol>,
-) : KaSymbolPointer<KaValueParameterSymbol>() {
+    private val propertySymbolPointer: KaBasePsiSymbolPointer<KaPropertySetterSymbol>,
+    originalSymbol: KaValueParameterSymbol?,
+) : KaBaseCachedSymbolPointer<KaValueParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaValueParameterSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaValueParameterSymbol? {
         val property = with(analysisSession) { propertySymbolPointer.restoreSymbol() }
         return property?.parameter
     }

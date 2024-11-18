@@ -31,7 +31,7 @@ internal class KaFe10PackageSymbol(
     }
 
     override fun createPointer(): KaSymbolPointer<KaPackageSymbol> = withValidityAssertion {
-        KaFe10PackageSymbolPointer(fqName)
+        KaFe10PackageSymbolPointer(fqName, this)
     }
 
     override val origin: KaSymbolOrigin

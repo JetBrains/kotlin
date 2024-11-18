@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -15,9 +16,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 internal class KaFirPsiBasedPropertySymbolPointer(
     private val variableSymbolPointer: KaSymbolPointer<KaVariableSymbol>,
-) : KaSymbolPointer<KaKotlinPropertySymbol>() {
+    originalSymbol: KaKotlinPropertySymbol?,
+) : KaBaseCachedSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaKotlinPropertySymbol? =
+    override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? =
         when (val variable = with(analysisSession) { variableSymbolPointer.restoreSymbol() }) {
             is KaKotlinPropertySymbol -> variable
             is KaValueParameterSymbol -> variable.generatedPrimaryConstructorProperty

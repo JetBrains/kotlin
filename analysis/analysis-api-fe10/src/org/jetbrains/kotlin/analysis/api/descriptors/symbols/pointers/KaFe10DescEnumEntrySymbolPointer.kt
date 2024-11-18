@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -22,9 +23,10 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFe10DescEnumEntrySymbolPointer(
     private val classId: ClassId,
     private val entryName: Name,
-) : KaSymbolPointer<KaEnumEntrySymbol>() {
+    originalSymbol: KaEnumEntrySymbol?,
+) : KaBaseCachedSymbolPointer<KaEnumEntrySymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaEnumEntrySymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaEnumEntrySymbol? {
         check(analysisSession is KaFe10Session)
         val analysisContext = analysisSession.analysisContext
 

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -55,13 +55,13 @@ internal class KaFe10DescEnumEntrySymbol(
         get() = this
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaEnumEntrySymbol>(this)?.let {
+        KaBasePsiSymbolPointer.createForSymbolFromSource<KaEnumEntrySymbol>(this)?.let {
             return it
         }
 
         val enumClassId = enumDescriptor.classId
         if (enumClassId != null) {
-            return KaFe10DescEnumEntrySymbolPointer(enumClassId, descriptor.name)
+            return KaFe10DescEnumEntrySymbolPointer(enumClassId, descriptor.name, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

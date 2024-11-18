@@ -116,6 +116,7 @@ internal class KaFirValueParameterSymbol private constructor(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+            originalSymbol = this
         )
     }
 

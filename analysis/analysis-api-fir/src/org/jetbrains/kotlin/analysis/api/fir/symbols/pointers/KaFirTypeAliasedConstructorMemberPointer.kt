@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 internal class KaFirTypeAliasedConstructorMemberPointer(
     private val ownerPointer: KaSymbolPointer<KaTypeAliasSymbol>,
     private val signature: FirCallableSignature,
-) : KaSymbolPointer<KaConstructorSymbol>() {
-    @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaConstructorSymbol? {
+    originalSymbol: KaConstructorSymbol?,
+) : KaBaseCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
         require(analysisSession is KaFirSession)
         val scope = with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
