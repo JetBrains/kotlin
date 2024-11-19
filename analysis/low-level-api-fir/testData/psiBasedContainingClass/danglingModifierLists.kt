@@ -1,5 +1,9 @@
 class Foo {
-    fun foo() {}
+    fun foo() {
+        class Local {
+            private
+        }
+    }
 
     private
 }

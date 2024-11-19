@@ -44,6 +44,7 @@ internal object LLContainingClassCalculator {
         val containingClassLookupTag = when (symbol) {
             is FirCallableSymbol<*> -> symbol.containingClassLookupTag()
             is FirClassLikeSymbol<*> -> symbol.getContainingClassLookupTag()
+            is FirDanglingModifierSymbol -> symbol.containingClassLookupTag()
             else -> null
         }
 
@@ -99,6 +100,12 @@ internal object LLContainingClassCalculator {
                         else -> null
                     }
                     return computeContainingClass(symbol, containingClass)
+                }
+
+                if (symbol is FirDanglingModifierSymbol && kind == DanglingModifierList) {
+                    val modifierList = source.psi as? KtModifierList
+                    val body = modifierList?.parent as? KtClassBody
+                    return computeContainingClass(symbol, body?.parent)
                 }
             }
             else -> {
