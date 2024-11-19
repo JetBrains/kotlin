@@ -44069,6 +44069,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("privateTypeInProjection.kt")
+      public void testPrivateTypeInProjection() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateTypeInProjection.kt");
+      }
+
+      @Test
       @TestMetadata("protectedInternal.kt")
       public void testProtectedInternal() {
         runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
