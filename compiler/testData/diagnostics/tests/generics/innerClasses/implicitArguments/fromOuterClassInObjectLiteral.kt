@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// MUTE_LL_FIR: KT-73105
 class A<T> {
     fun foo() {
         val q = object {

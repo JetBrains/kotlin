@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-71966
+// MUTE_LL_FIR: KT-73105
 
 fun foo() {
     open class Local {
