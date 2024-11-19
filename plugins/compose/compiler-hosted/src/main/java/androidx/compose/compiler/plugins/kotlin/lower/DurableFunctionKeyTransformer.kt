@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -147,6 +149,19 @@ class DurableFunctionKeyTransformer(
                     }
                     return declaration
                 }
+            }
+        })
+    }
+
+    fun realizeFunctionKeyMetaAnnotations(moduleFragment: IrModuleFragment) {
+        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                val functionKey = context.irTrace[DURABLE_FUNCTION_KEY, declaration] ?: return declaration
+                if (!declaration.hasComposableAnnotation()) return declaration
+                if (declaration.hasAnnotation(ComposeClassIds.FunctionKeyMeta)) return declaration
+
+                declaration.annotations += irKeyMetaAnnotation(functionKey)
+                return declaration
             }
         })
     }

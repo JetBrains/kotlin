@@ -45,6 +45,8 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>(
             "Generate function key meta classes"
         )
+    val GENERATE_FUNCTION_KEY_META_ANNOTATIONS_KEY =
+        CompilerConfigurationKey<Boolean>("Generate function key meta annotations (Not intended for user configuration)")
     val SOURCE_INFORMATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Include source information in generated code")
     val METRICS_DESTINATION_KEY =
@@ -107,6 +109,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
                     "functions and their group keys. Generally used for tooling.",
             required = false,
             allowMultipleOccurrences = false
+        )
+        val GENERATE_FUNCTION_KEY_META_ANNOTATIONS_OPTION = CliOption(
+            "generateFunctionKeyMetaAnnotations",
+            "<true|false>",
+            "Generate function key meta annotations (on functions) with annotations indicating the " +
+                    "functions and their group keys. Generally used for tooling.",
+            required = false,
+            allowMultipleOccurrences = true
         )
         val SOURCE_INFORMATION_ENABLED_OPTION = CliOption(
             "sourceInformation",
@@ -214,6 +224,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         LIVE_LITERALS_ENABLED_OPTION,
         LIVE_LITERALS_V2_ENABLED_OPTION,
         GENERATE_FUNCTION_KEY_META_CLASSES_OPTION,
+        GENERATE_FUNCTION_KEY_META_ANNOTATIONS_OPTION,
         SOURCE_INFORMATION_ENABLED_OPTION,
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
@@ -245,6 +256,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         GENERATE_FUNCTION_KEY_META_CLASSES_OPTION -> configuration.put(
             ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
             value == "true"
+        )
+        GENERATE_FUNCTION_KEY_META_ANNOTATIONS_OPTION -> configuration.put(
+            ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATIONS_KEY,
+            value == "true",
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
@@ -627,6 +642,11 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val generateFunctionKeyMetaClasses = configuration.getBoolean(
                 ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
             )
+
+            val generateFunctionKeyMetaAnnotations = configuration.getBoolean(
+                ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATIONS_KEY,
+            )
+
             val sourceInformationEnabled = configuration.getBoolean(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
             )
@@ -712,6 +732,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 liveLiteralsEnabled = liveLiteralsEnabled,
                 liveLiteralsV2Enabled = liveLiteralsV2Enabled,
                 generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
+                generateFunctionKeyMetaAnnotations = generateFunctionKeyMetaAnnotations,
                 sourceInformationEnabled = sourceInformationEnabled,
                 traceMarkersEnabled = traceMarkersEnabled,
                 metricsDestination = metricsDestination,

@@ -89,6 +89,7 @@ kotlin {
                 // external
                 implementationArtifactOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
+                implementation(libs.intellij.asm)
             }
         }
     }

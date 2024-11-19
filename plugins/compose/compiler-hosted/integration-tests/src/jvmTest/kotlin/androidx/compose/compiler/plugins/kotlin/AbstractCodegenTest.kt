@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import java.io.File
 
@@ -43,6 +44,16 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
         validate: (String) -> Unit,
     ) {
         validate(compileBytecode(src, dumpClasses, className))
+    }
+
+    protected fun compileToClassFiles(
+        @Language("kotlin")
+        src: String,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
+    ): List<OutputFile> {
+        return classLoader(src, className)
+            .allGeneratedFiles
+            .filter { it.relativePath.endsWith(".class") }
     }
 
     protected fun compileBytecode(
