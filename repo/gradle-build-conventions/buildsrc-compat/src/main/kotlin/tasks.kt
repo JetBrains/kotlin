@@ -130,6 +130,11 @@ fun Project.projectTest(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
+    if (jUnitMode == JUnitMode.JUnit5) {
+        project.dependencies {
+            "testImplementation"(project(":compiler:tests-mutes:mutes-junit5"))
+        }
+    }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
     if (shouldInstrument) {
@@ -141,6 +146,7 @@ fun Project.projectTest(
         if (jUnitMode == JUnitMode.JUnit5) {
             systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
         }
+        inputs.file(File(rootDir, "tests/mute-common.csv")).withPathSensitivity(PathSensitivity.NONE).withPropertyName("muteDatabase")
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
