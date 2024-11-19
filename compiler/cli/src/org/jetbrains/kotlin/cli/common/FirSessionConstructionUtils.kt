@@ -289,6 +289,58 @@ fun <F> prepareCommonSessions(
     }
 }
 
+/**
+ * Creates library session and sources session for klib compilation
+ * Number of created session depends on mode of MPP:
+ *   - disabled
+ *   - legacy (one platform and one common module)
+ *   - HMPP (multiple number of modules)
+ */
+fun <F> prepareJKlibSessions(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinResolvedLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    metadataCompilationMode: Boolean,
+    librariesScope: AbstractProjectFileSearchScope,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+): List<SessionWithSources<F>> {
+    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
+    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
+
+    return SessionConstructionUtils.prepareSessions(
+        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
+        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
+        fileBelongsToModule,
+        createLibrarySession = { sessionProvider ->
+            FirJKlibSessionFactory.createLibrarySession(
+                rootModuleName,
+                resolvedLibraries,
+                sessionProvider,
+                libraryList.moduleDataProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents,
+            )
+        }
+    ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+        FirJKlibSessionFactory.createModuleBasedSession(
+            moduleData = moduleData,
+            sessionProvider = sessionProvider,
+            projectEnvironment = projectEnvironment,
+            extensionRegistrars = extensionRegistrars,
+            languageVersionSettings = configuration.languageVersionSettings,
+            init = sessionConfigurator,
+            predefinedJavaComponents = predefinedJavaComponents,
+        )
+    }
+}
+
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
 typealias FirSessionProducer<F> = (List<F>, FirModuleData, FirProjectSessionProvider, FirSessionConfigurator.() -> Unit) -> FirSession

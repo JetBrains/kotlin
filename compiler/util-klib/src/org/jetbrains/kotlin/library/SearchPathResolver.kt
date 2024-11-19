@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-@Deprecated("Use KOTLIN_NATIVE_STDLIB_NAME, KOTLIN_JS_STDLIB_NAME or KOTLIN_WASM_STDLIB_NAME instead", level = DeprecationLevel.HIDDEN)
-const val KOTLIN_STDLIB_NAME: String = "stdlib"
+//@Deprecated("Use KOTLIN_NATIVE_STDLIB_NAME, KOTLIN_JS_STDLIB_NAME or KOTLIN_WASM_STDLIB_NAME instead", level = DeprecationLevel.HIDDEN)
+//const val KOTLIN_STDLIB_NAME: String = "stdlib"
 
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
 const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
 const val KOTLIN_WASM_STDLIB_NAME: String = "kotlin"
+const val KOTLIN_STDLIB_NAME: String = "kotlin-stdlib"
 const val KOTLINTEST_MODULE_NAME: String = "kotlin-test"
 
 interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
