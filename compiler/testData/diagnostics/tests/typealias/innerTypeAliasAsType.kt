@@ -9,8 +9,8 @@ class Outer<T> {
 
     typealias NestedAlias = Nested
     typealias GenericNestedAlias<TT> = GenericNested<TT>
-    typealias InnerAlias = Inner
-    typealias GenericInnerAlias<TT> = GenericInner<TT>
+    inner typealias InnerAlias = Inner
+    inner typealias GenericInnerAlias<TT> = GenericInner<TT>
 
     fun test1(x: NestedAlias) = x
     fun test2(x: GenericNestedAlias<Int>) = x

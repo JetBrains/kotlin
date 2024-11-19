@@ -3,7 +3,7 @@
 
 class A {
     public inner class B { }
-    public typealias BAlias = B
+    public inner typealias BAlias = B
 }
 
 fun f() {

@@ -4,9 +4,9 @@
 class Pair<X, Y>(val x: X, val y: Y)
 
 class C<T> {
-    typealias P = Pair<T, T>
-    typealias P1<X> = Pair<X, T>
-    typealias P2<Y> = Pair<T, Y>
+    inner typealias P = Pair<T, T>
+    inner typealias P1<X> = Pair<X, T>
+    inner typealias P2<Y> = Pair<T, Y>
 }
 
 // C<...>.P[<...>]() syntax doesn't work due to the way qualified expressions are resolved now.

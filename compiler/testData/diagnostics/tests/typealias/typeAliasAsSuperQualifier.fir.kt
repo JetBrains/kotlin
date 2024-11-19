@@ -29,7 +29,7 @@ class TestSuperForBase : B() {
 }
 
 class TestSuperForGenericBase<T> : GB<T>() {
-    typealias MyBase = GB<<!UNRESOLVED_REFERENCE!>T<!>>
+    inner typealias MyBase = GB<<!UNRESOLVED_REFERENCE!>T<!>>
     typealias MyBaseInt = GB<Int>
 
     override fun foo() {

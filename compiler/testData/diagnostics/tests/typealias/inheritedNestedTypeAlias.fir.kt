@@ -8,7 +8,7 @@ interface ICell<T> {
 class Cell<T>(override val x: T): ICell<T>
 
 open class Base<T> {
-    typealias CT = Cell<<!UNRESOLVED_REFERENCE!>T<!>>
+    inner typealias CT = Cell<<!UNRESOLVED_REFERENCE!>T<!>>
     inner class InnerCell(override val x: T): ICell<T>
 }
 
