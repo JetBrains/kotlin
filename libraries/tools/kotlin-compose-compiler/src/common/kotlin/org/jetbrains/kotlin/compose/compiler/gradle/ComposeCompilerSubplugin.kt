@@ -66,8 +66,10 @@ class ComposeCompilerGradleSubplugin
         val allPluginProperties = project.objects
             .listProperty(SubpluginOption::class.java)
             .apply {
-                add(composeExtension.generateFunctionKeyMetaClasses.map {
-                    SubpluginOption("generateFunctionKeyMetaClasses", it.toString())
+                @Suppress("DEPRECATION")
+                add(composeExtension.generateFunctionKeyMetaClasses.map { value ->
+                    if (value) SubpluginOption("generateFunctionKeyMetaClasses", value.toString())
+                    else EMPTY_OPTION
                 })
                 if (!project.isAgpComposeEnabled) {
                     add(composeExtension.includeSourceInformation.map {

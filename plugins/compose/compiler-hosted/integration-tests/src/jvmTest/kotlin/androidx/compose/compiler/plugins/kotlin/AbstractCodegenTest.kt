@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import java.io.File
 
@@ -39,9 +40,28 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
         @Language("kotlin")
         src: String,
         dumpClasses: Boolean = false,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
         validate: (String) -> Unit,
     ) {
-        val className = "Test_REPLACEME_${uniqueNumber++}"
+        validate(compileBytecode(src, dumpClasses, className))
+    }
+
+    protected fun compileToClassFiles(
+        @Language("kotlin")
+        src: String,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
+    ): List<OutputFile> {
+        return classLoader(src, className)
+            .allGeneratedFiles
+            .filter { it.relativePath.endsWith(".class") }
+    }
+
+    protected fun compileBytecode(
+        @Language("kotlin")
+        src: String,
+        dumpClasses: Boolean = false,
+        className: String = "Test_REPLACEME_${uniqueNumber++}",
+    ): String {
         val fileName = "$className.kt"
 
         val loader = classLoader(
@@ -60,13 +80,11 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
             fileName, dumpClasses
         )
 
-        val apiString = loader
+        return loader
             .allGeneratedFiles
             .filter { it.relativePath.endsWith(".class") }.joinToString("\n") {
                 it.asText().replace('$', '%').replace(className, "Test")
             }
-
-        validate(apiString)
     }
 
     protected fun classLoader(

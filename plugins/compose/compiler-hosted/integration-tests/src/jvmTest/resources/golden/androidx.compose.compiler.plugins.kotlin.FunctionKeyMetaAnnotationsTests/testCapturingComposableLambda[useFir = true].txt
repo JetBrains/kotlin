@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Wrapper(child: @Composable () -> Unit) {
+    child()
+}
+
+@Composable
+fun Foo() {
+    var state by remember { mutableStateOf(0) }
+    Wrapper {
+        println("$state")
+    }
+}
+
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    Wrapper [key=-283819720, startOffset=35, endOffset=105]
+    Foo [key=-607362160, startOffset=107, endOffset=226]
+    Wrapper$lambda$0 null
+    Foo$lambda$2 null
+    Foo$lambda$3 null
+    Foo$lambda$4 null
+    access$Foo$lambda$2 null
+}
+
+TestKt$Foo$1 {
+    <init> null
+    invoke [key=-1912932616, startOffset=191, endOffset=224]
+    invoke null
+}

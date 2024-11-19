@@ -1,0 +1,21 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable  
+@Composable 
+fun Example() {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    Example [key=1292064820, startOffset=58, endOffset=74]
+}
+
+TestKt$Example$1 {
+    <init> null
+    invoke null
+    invoke null
+}

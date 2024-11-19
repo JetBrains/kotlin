@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.platform.konan.isNative
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
-    private val generateFunctionKeyMetaClasses: Boolean = false,
+    private val generateFunctionKeyMetaAnnotations: Boolean = false,
     private val sourceInformationEnabled: Boolean = true,
     private val traceMarkersEnabled: Boolean = true,
     private val metricsDestination: String? = null,
@@ -210,10 +210,8 @@ class ComposeIrGenerationExtension(
             ).lower(moduleFragment)
         }
 
-        if (generateFunctionKeyMetaClasses) {
+        if (generateFunctionKeyMetaAnnotations) {
             functionKeyTransformer.realizeKeyMetaAnnotations(moduleFragment)
-        } else {
-            functionKeyTransformer.removeKeyMetaClasses(moduleFragment)
         }
 
         if (metricsDestination != null) {

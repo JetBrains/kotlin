@@ -22,8 +22,6 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val DURABLE_FUNCTION_KEY: WritableSlice<IrAttributeContainer, KeyInfo> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val DURABLE_FUNCTION_KEYS: WritableSlice<IrAttributeContainer, List<KeyInfo>> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val HAS_TRANSFORMED_LAMBDA: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_TRANSFORMED_LAMBDA: WritableSlice<IrAttributeContainer, Boolean> =
