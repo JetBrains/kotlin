@@ -17,22 +17,23 @@ import org.gradle.api.provider.Provider
  * which does not require platform klibs, but klib generation tasks were instantiated at execution time (KT-71328) leading to races.
  */
 private fun ConfigurablePublishArtifact.configureMandatoryProperties(
-    name: String,
-    type: String,
-    extension: String,
+    name: String?,
+    type: String?,
+    extension: String?,
     classifier: String?,
 ) {
-    setName(name)
-    setType(type)
-    setExtension(extension)
+    if (name != null) setName(name)
+    if (type != null) setType(type)
+    if (extension != null) setExtension(extension)
+    // Classifier must be always set even if null
     setClassifier(classifier)
 }
 
 internal fun ConfigurationVariant.registerArtifact(
     artifactProvider: Provider<*>,
-    name: String,
-    type: String,
-    extension: String,
+    name: String? = null,
+    type: String? = null,
+    extension: String? = null,
     classifier: String? = null,
 ) {
     artifact(artifactProvider) { artifact ->

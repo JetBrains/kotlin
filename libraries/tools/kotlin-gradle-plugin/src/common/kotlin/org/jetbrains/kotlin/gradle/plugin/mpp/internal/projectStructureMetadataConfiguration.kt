@@ -40,10 +40,11 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
 
         apiElements.outgoing.variants.maybeCreate("kotlinProjectStructureMetadata").apply {
             setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-            artifact(generateProjectStructureMetadata.map { task -> task.resultFile }) {
-                it.classifier = "psm-metadata"
-                it.type = KotlinUsages.KOTLIN_PSM_METADATA
-            }
+            registerArtifact(
+                artifactProvider = generateProjectStructureMetadata.map { task -> task.resultFile },
+                classifier = "psm-metadata",
+                type = KotlinUsages.KOTLIN_PSM_METADATA,
+            )
         }
     }
 }
