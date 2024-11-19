@@ -106,6 +106,13 @@ class PostponedArgumentsAnalyzer(
             }
         }
 
+        // TODO: Consider moving this part to FirCallResolver::resolveCallableReference (KT-74021)
+        // Currently it doesn't work easily because the code inside
+        // FirSyntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall for error processing assumes
+        // that the reference is not replaced
+        // (see `check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved)`).
+        // But generally, it should help to get rid of `analyzed` var and replace it with
+        // getter to `ConeResolvedCallableReferenceAtom::state`.
         val callableReferenceAccess = atom.expression
         atom.analyzed = true
 
