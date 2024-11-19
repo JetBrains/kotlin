@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-47135
-// MUTE_LL_FIR: KT-73105
 
 fun test2() {
     class LocalA {

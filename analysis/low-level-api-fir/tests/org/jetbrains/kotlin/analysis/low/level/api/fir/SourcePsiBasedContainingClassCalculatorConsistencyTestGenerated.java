@@ -114,6 +114,12 @@ public class SourcePsiBasedContainingClassCalculatorConsistencyTestGenerated ext
   }
 
   @Test
+  @TestMetadata("localInnerClassWithCycle.kt")
+  public void testLocalInnerClassWithCycle() {
+    runTest("analysis/low-level-api-fir/testData/psiBasedContainingClass/localInnerClassWithCycle.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/low-level-api-fir/testData/psiBasedContainingClass/nestedClass.kt");

@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.isLazyResolvable
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal object LLContainingClassCalculator {
@@ -42,6 +39,18 @@ internal object LLContainingClassCalculator {
 
         if (!canHaveContainingClassSymbol(symbol)) {
             return null
+        }
+
+        val containingClassLookupTag = when (symbol) {
+            is FirCallableSymbol<*> -> symbol.containingClassLookupTag()
+            is FirClassLikeSymbol<*> -> symbol.getContainingClassLookupTag()
+            else -> null
+        }
+
+        // For members of local classes lookup tag should be used to avoid a phase
+        // contract violation
+        if (containingClassLookupTag is ConeClassLikeLookupTagWithFixedSymbol) {
+            return containingClassLookupTag.symbol
         }
 
         val source = symbol.source as? KtPsiSourceElement ?: return null
@@ -117,14 +126,12 @@ internal object LLContainingClassCalculator {
         return null
     }
 
-    private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean {
-        return when (symbol) {
-            is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
-            is FirPropertySymbol -> !symbol.isLocal
-            is FirCallableSymbol, is FirClassLikeSymbol -> true
-            is FirDanglingModifierSymbol -> true
-            else -> false
-        }
+    private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
+        is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
+        is FirPropertySymbol -> !symbol.isLocal
+        is FirNamedFunctionSymbol -> !symbol.isLocal
+        is FirCallableSymbol, is FirClassLikeSymbol, is FirDanglingModifierSymbol -> true
+        else -> false
     }
 
     private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassLikeSymbol<*>? {

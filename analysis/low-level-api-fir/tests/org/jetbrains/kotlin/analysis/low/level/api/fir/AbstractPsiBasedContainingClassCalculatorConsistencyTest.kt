@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -41,16 +43,26 @@ abstract class AbstractPsiBasedContainingClassCalculatorConsistencyTest : Abstra
         val firFile = mainFile.getOrBuildFirFile(resolveSession)
 
         val allowedPsiPresence = mainModule.testModule.directives[ALLOW_PSI_PRESENCE].toSet()
+        fun runChecker() {
+            firFile.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    if (element is FirDeclaration) {
+                        checkDeclaration(element, allowedPsiPresence)
+                    }
 
-        firFile.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                if (element is FirDeclaration) {
-                    checkDeclaration(element, allowedPsiPresence)
+                    element.acceptChildren(this)
                 }
+            })
+        }
 
-                element.acceptChildren(this)
-            }
-        })
+        // First pass to iterate through raw declarations
+        runChecker()
+
+        // The file should be fully resolved to cover local declarations
+        firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
+
+        // Second pass to iterate through local declarations as well
+        runChecker()
     }
 
     private fun checkDeclaration(fir: FirDeclaration, allowedPsiPresence: Set<String>) {

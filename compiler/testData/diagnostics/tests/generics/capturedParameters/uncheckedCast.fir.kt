@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// MUTE_LL_FIR: KT-73105
 fun <E> foo(x: Any, y: Any) : Any {
     class C
     // without E?
