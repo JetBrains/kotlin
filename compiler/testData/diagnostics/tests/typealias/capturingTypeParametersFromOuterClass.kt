@@ -5,26 +5,26 @@ class Outer<TO> {
     typealias LTO = List<TO>
 
     class Nested<TN> {
-        typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
-        typealias LTN = List<TN>
+        inner typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
+        inner typealias LTN = List<TN>
 
         inner class Inner<TI> {
-            typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
-            typealias LTN = List<TN>
-            typealias LTI = List<TI>
+            inner typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
+            inner typealias LTN = List<TN>
+            inner typealias LTI = List<TI>
         }
     }
 }
 
 fun <TF> foo() {
     class Local<TL> {
-        typealias LTF = List<TF>
-        typealias LTL = List<TL>
+        inner typealias LTF = List<TF>
+        inner typealias LTL = List<TL>
     }
 
     fun <TLF> localfun() =
             object {
-                typealias LTF = List<TF>
-                typealias LTLF = List<TLF>
+                inner typealias LTF = List<TF>
+                inner typealias LTLF = List<TLF>
             }
 }

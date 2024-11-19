@@ -23,7 +23,7 @@ val test4a = <!SEALED_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>SealedClass<!>
 
 class Outer {
     inner class Inner
-    typealias TestInner = Inner
+    inner typealias TestInner = Inner
 }
 typealias Test5 = Outer.Inner
 

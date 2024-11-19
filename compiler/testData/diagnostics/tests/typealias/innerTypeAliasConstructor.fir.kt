@@ -4,9 +4,9 @@
 class Pair<X, Y>(val x: X, val y: Y)
 
 class C<T> {
-    typealias P = Pair<<!UNRESOLVED_REFERENCE!>T<!>, <!UNRESOLVED_REFERENCE!>T<!>>
-    typealias P1<X> = Pair<X, <!UNRESOLVED_REFERENCE!>T<!>>
-    typealias P2<Y> = Pair<<!UNRESOLVED_REFERENCE!>T<!>, Y>
+    inner typealias P = Pair<<!UNRESOLVED_REFERENCE!>T<!>, <!UNRESOLVED_REFERENCE!>T<!>>
+    inner typealias P1<X> = Pair<X, <!UNRESOLVED_REFERENCE!>T<!>>
+    inner typealias P2<Y> = Pair<<!UNRESOLVED_REFERENCE!>T<!>, Y>
 }
 
 // C<...>.P[<...>]() syntax doesn't work due to the way qualified expressions are resolved now.

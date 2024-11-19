@@ -9,7 +9,7 @@ import kotlin.annotation.AnnotationTarget
 class Outer<E, F> {
     inner class Inner<G> {
         @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
-        typealias TA<H> = Map<Map<E, F>, Map<G, H>>
+        inner typealias TA<H> = Map<Map<E, F>, Map<G, H>>
     }
 }
 

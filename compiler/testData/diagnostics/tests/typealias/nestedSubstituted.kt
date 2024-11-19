@@ -4,7 +4,7 @@
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 
 class C<T> {
-    typealias P2 = Pair<T, Int>
+    inner typealias P2 = Pair<T, Int>
 }
 
 val p1: C<String>.P2 = Pair("", 1)

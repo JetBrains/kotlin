@@ -3,7 +3,7 @@
 // CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
-    typealias Alias<W> = Map<W, <!UNRESOLVED_REFERENCE!>X<!>>
+    inner typealias Alias<W> = Map<W, <!UNRESOLVED_REFERENCE!>X<!>>
 }
 
 open class BaseDerived1<E, F> : Outer<F, E>()
