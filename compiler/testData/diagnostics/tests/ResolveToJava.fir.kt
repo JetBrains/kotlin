@@ -31,7 +31,7 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)
 
-  <!NO_COMPANION_OBJECT!>List<Int><!>
+  <!NO_COMPANION_OBJECT, UNUSED_EXPRESSION!>List<Int><!>
 
 
   val <!UNUSED_VARIABLE!>o<!> = "sdf" as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>

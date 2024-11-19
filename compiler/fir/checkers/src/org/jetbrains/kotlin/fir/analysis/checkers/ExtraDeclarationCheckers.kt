@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBlockChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
+import kotlin.collections.Set
 
 object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val fileCheckers: Set<FirFileChecker>
@@ -24,6 +26,7 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             RedundantVisibilityModifierSyntaxChecker,
             RedundantModalityModifierSyntaxChecker,
+            FirUnusedExpressionChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

@@ -881,6 +881,8 @@ object FirErrors {
     val VARIABLE_NEVER_READ: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIABLE_NEVER_READ", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val USELESS_CALL_ON_NOT_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CALL_ON_NOT_NULL", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class)
     val UNUSED_ANONYMOUS_PARAMETER: KtDiagnosticFactory1<FirValueParameterSymbol> = KtDiagnosticFactory1("UNUSED_ANONYMOUS_PARAMETER", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtElement::class)
+    val UNUSED_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNUSED_EXPRESSION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val UNUSED_LAMBDA_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNUSED_LAMBDA_EXPRESSION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Returns
     val RETURN_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("RETURN_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.RETURN_WITH_LABEL, KtReturnExpression::class)

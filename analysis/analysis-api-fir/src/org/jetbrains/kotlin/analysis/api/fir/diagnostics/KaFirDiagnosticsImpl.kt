@@ -4256,6 +4256,16 @@ internal class UnusedAnonymousParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UnusedAnonymousParameter
 
+internal class UnusedExpressionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnusedExpression
+
+internal class UnusedLambdaExpressionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnusedLambdaExpression
+
 internal class ReturnNotAllowedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

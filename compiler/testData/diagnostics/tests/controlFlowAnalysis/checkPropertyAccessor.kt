@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
+// WITH_EXTRA_CHECKERS
 package d
 
 val a: Int

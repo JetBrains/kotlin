@@ -712,6 +712,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SUSPEND_TEST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_ANONYMOUS_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_LAMBDA_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
@@ -2940,6 +2942,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant.")
         map.put(VARIABLE_NEVER_READ, "Variable is never read.")
         map.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, could be renamed to ''_''.", SYMBOL)
+        map.put(UNUSED_EXPRESSION, "Expression is unused.")
+        map.put(UNUSED_LAMBDA_EXPRESSION, "Lambda expression is never invoked. To create a scoped block, use 'run { ... }'.")
 
         // Compatibility issues group
         map.put(

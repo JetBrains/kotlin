@@ -7959,6 +7959,17 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Expressions {
+      @Test
+      @TestMetadata("UnusedExpressionByType.kt")
+      public void testUnusedExpressionByType() {
+        runTest("compiler/testData/diagnostics/tests/expressions/UnusedExpressionByType.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/extensions")
     @TestDataPath("$PROJECT_ROOT")
     public class Extensions {

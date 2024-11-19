@@ -13564,6 +13564,28 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Expressions {
+      @Test
+      public void testAllFilesPresentInExpressions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/expressions"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("UnusedExpressionByLocation.kt")
+      public void testUnusedExpressionByLocation() {
+        runTest("compiler/testData/diagnostics/tests/expressions/UnusedExpressionByLocation.kt");
+      }
+
+      @Test
+      @TestMetadata("UnusedExpressionByType.kt")
+      public void testUnusedExpressionByType() {
+        runTest("compiler/testData/diagnostics/tests/expressions/UnusedExpressionByType.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/extensions")
     @TestDataPath("$PROJECT_ROOT")
     public class Extensions {

@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// WITH_EXTRA_CHECKERS
 package kt1977
 
 //KT-1977 Wrong 'unused expression' in catch

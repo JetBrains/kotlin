@@ -1761,6 +1761,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNUSED_ANONYMOUS_PARAMETER by warning<KtElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirValueParameterSymbol>("parameter")
         }
+        val UNUSED_EXPRESSION by warning<PsiElement>()
+        val UNUSED_LAMBDA_EXPRESSION by warning<PsiElement>()
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {

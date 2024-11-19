@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: +UNUSED_EXPRESSION
+// WITH_EXTRA_CHECKERS
 
 fun unusedExpression(s: String) {
     <!UNUSED_EXPRESSION!>s::hashCode<!>

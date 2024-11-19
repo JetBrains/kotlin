@@ -1,5 +1,7 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: +UNUSED_EXPRESSION
+// WITH_EXTRA_CHECKERS
 
 fun unusedExpressions() {
     if (1 == 1)

@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// WITH_EXTRA_CHECKERS
 fun main() {
     "".run {
         <!UNUSED_EXPRESSION!>""<!>
