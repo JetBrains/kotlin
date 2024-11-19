@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
@@ -24,11 +26,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
-    private val context: WasmBackendContext,
-) : JsCommonSymbols(context.irBuiltIns) {
+    irBuiltIns: IrBuiltIns,
+    configuration: CompilerConfiguration,
+) : JsCommonSymbols(irBuiltIns) {
 
     private val enumsInternalPackageFqName = FqName("kotlin.enums")
     private val wasmInternalFqName = FqName("kotlin.wasm.internal")
@@ -124,14 +128,14 @@ class WasmSymbols(
     private val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
 
     private val consumePrimitiveIntoVoid = mapOf(
-        context.irBuiltIns.booleanType to getInternalFunction("consumeBooleanIntoVoid"),
-        context.irBuiltIns.byteType to getInternalFunction("consumeByteIntoVoid"),
-        context.irBuiltIns.shortType to getInternalFunction("consumeShortIntoVoid"),
-        context.irBuiltIns.charType to getInternalFunction("consumeCharIntoVoid"),
-        context.irBuiltIns.intType to getInternalFunction("consumeIntIntoVoid"),
-        context.irBuiltIns.longType to getInternalFunction("consumeLongIntoVoid"),
-        context.irBuiltIns.floatType to getInternalFunction("consumeFloatIntoVoid"),
-        context.irBuiltIns.doubleType to getInternalFunction("consumeDoubleIntoVoid")
+        irBuiltIns.booleanType to getInternalFunction("consumeBooleanIntoVoid"),
+        irBuiltIns.byteType to getInternalFunction("consumeByteIntoVoid"),
+        irBuiltIns.shortType to getInternalFunction("consumeShortIntoVoid"),
+        irBuiltIns.charType to getInternalFunction("consumeCharIntoVoid"),
+        irBuiltIns.intType to getInternalFunction("consumeIntIntoVoid"),
+        irBuiltIns.longType to getInternalFunction("consumeLongIntoVoid"),
+        irBuiltIns.floatType to getInternalFunction("consumeFloatIntoVoid"),
+        irBuiltIns.doubleType to getInternalFunction("consumeDoubleIntoVoid")
     )
 
     fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
@@ -140,14 +144,14 @@ class WasmSymbols(
     private val closureBoxAnyClass = getInternalClass("ClosureBoxAny")
 
     private val closureBoxClasses = mapOf(
-        context.irBuiltIns.booleanType to getInternalClass("ClosureBoxBoolean"),
-        context.irBuiltIns.byteType to getInternalClass("ClosureBoxByte"),
-        context.irBuiltIns.shortType to getInternalClass("ClosureBoxShort"),
-        context.irBuiltIns.charType to getInternalClass("ClosureBoxChar"),
-        context.irBuiltIns.intType to getInternalClass("ClosureBoxInt"),
-        context.irBuiltIns.longType to getInternalClass("ClosureBoxLong"),
-        context.irBuiltIns.floatType to getInternalClass("ClosureBoxFloat"),
-        context.irBuiltIns.doubleType to getInternalClass("ClosureBoxDouble")
+        irBuiltIns.booleanType to getInternalClass("ClosureBoxBoolean"),
+        irBuiltIns.byteType to getInternalClass("ClosureBoxByte"),
+        irBuiltIns.shortType to getInternalClass("ClosureBoxShort"),
+        irBuiltIns.charType to getInternalClass("ClosureBoxChar"),
+        irBuiltIns.intType to getInternalClass("ClosureBoxInt"),
+        irBuiltIns.longType to getInternalClass("ClosureBoxLong"),
+        irBuiltIns.floatType to getInternalClass("ClosureBoxFloat"),
+        irBuiltIns.doubleType to getInternalClass("ClosureBoxDouble")
     )
 
     fun findClosureBoxClass(type: IrType): IrClassSymbol =
@@ -155,24 +159,24 @@ class WasmSymbols(
 
     val equalityFunctions =
         mapOf(
-            context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
-            context.irBuiltIns.byteType to getInternalFunction("wasm_i32_eq"),
-            context.irBuiltIns.shortType to getInternalFunction("wasm_i32_eq"),
+            irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
+            irBuiltIns.byteType to getInternalFunction("wasm_i32_eq"),
+            irBuiltIns.shortType to getInternalFunction("wasm_i32_eq"),
             uByteType to getInternalFunction("wasm_i32_eq"),
             uShortType to getInternalFunction("wasm_i32_eq"),
-            context.irBuiltIns.charType to getInternalFunction("wasm_i32_eq"),
-            context.irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
+            irBuiltIns.charType to getInternalFunction("wasm_i32_eq"),
+            irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
             uIntType to getInternalFunction("wasm_i32_eq"),
-            context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
+            irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
             uLongType to getInternalFunction("wasm_i64_eq")
         )
 
     val floatEqualityFunctions = mapOf(
-        context.irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),
-        context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq")
+        irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),
+        irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq")
     )
 
-    private fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = with(context.irBuiltIns) {
+    private fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = with(irBuiltIns) {
         when (classifier) {
             booleanClass, byteClass, shortClass, charClass, intClass -> "i32"
             floatClass -> "f32"
@@ -182,7 +186,7 @@ class WasmSymbols(
         }
     }
 
-    val comparisonBuiltInsToWasmIntrinsics = context.irBuiltIns.run {
+    val comparisonBuiltInsToWasmIntrinsics = irBuiltIns.run {
         listOf(
             lessFunByOperandType to "lt",
             lessOrEqualFunByOperandType to "le",
@@ -383,13 +387,13 @@ class WasmSymbols(
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))
     val wasmExportConstructor by lazy { wasmExportClass.constructors.single() }
 
-    private val jsRelatedSymbolsIfNonWasi = if (context.isWasmJsTarget) JsRelatedSymbols() else null
+    private val jsRelatedSymbolsIfNonWasi = if (configuration.wasmTarget == WasmTarget.JS) JsRelatedSymbols() else null
 
     val jsRelatedSymbols get() = jsRelatedSymbolsIfNonWasi ?: error("Cannot access to js related std in wasi mode")
 
 
     private val invokeOnExportedFunctionExitIfWasi =
-        when (context.configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+        when (configuration.wasmTarget == WasmTarget.WASI) {
             true -> getInternalFunction("invokeOnExportedFunctionExit")
             else -> null
         }
