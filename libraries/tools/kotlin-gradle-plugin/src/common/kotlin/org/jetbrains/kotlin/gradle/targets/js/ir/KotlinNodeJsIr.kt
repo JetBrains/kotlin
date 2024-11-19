@@ -6,23 +6,27 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
 abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "node"),
+    KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
     private val nodeJs = project.kotlinNodeJsEnvSpec
@@ -31,7 +35,11 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
     override fun runTask(body: Action<NodeJsExec>) {
-        project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
+        subTargetConfigurators
+            .withType<NodeJsEnvironmentConfigurator>()
+            .configureEach {
+                it.configureRun(body)
+            }
     }
 
     @ExperimentalMainFunctionArgumentsDsl
@@ -39,33 +47,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         target.passAsArgumentToMainFunction("process.argv")
     }
 
-    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
-        if (project.locateTask<NodeJsExec>(name) != null) return
-
-        val compilation = binary.compilation
-        val runTaskHolder = NodeJsExec.create(compilation, name) {
-            group = taskGroupName
-            val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
-                sourceMapStackTraces = false
-                if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                    dependsOn(binary.optimizeTask)
-                    binary.mainOptimizedFile
-                } else {
-                    dependsOn(binary.linkTask)
-                    binary.mainFile
-                }
-            } else {
-                dependsOn(binary.linkSyncTask)
-                binary.mainFileSyncPath
-            }
-            inputFileProperty.set(
-                inputFile
-            )
-        }
-        target.runTask.dependsOn(runTaskHolder)
-    }
-
-    override fun configureTestDependencies(test: KotlinJsTest) {
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
         with(nodeJs) {
             test.dependsOn(project.nodeJsSetupTaskProvider)
         }
@@ -75,6 +57,42 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 nodeJsRoot.npmInstallTaskProvider,
             )
             test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+            test.dependsOn(binary.linkSyncTask)
+        }
+        test.dependsOn(binary.linkTask)
+    }
+
+    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            super.binaryInputFile(binary)
+        } else {
+            project.objects.fileProperty().fileProvider(
+                project.tasks.named<IncrementalSyncTask>(binarySyncTaskName(binary)).map {
+                    it.destinationDirectory.get().resolve(binary.mainFileName.get())
+                }
+            )
+        }
+    }
+
+    override fun binarySyncTaskName(binary: JsIrBinary): String {
+        return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            super.binarySyncTaskName(binary)
+        } else {
+            disambiguateCamelCased(
+                binary.compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                binary.name,
+                COMPILE_SYNC
+            )
+        }
+    }
+
+    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
+        return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            super.binarySyncOutput(binary)
+        } else {
+            project.objects.directoryProperty().fileProvider(
+                binary.linkTask.map { it.destinationDirectory.getFile().parentFile.resolve(disambiguationClassifier) }
+            )
         }
     }
 

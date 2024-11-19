@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -31,8 +32,13 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
     private val versions = project.rootProject.kotlinNodeJsRootExtension.versions
     private val npmProjectDir by project.provider { npmProject.dir }
 
+    @Transient
+    private val nodeJs = project.kotlinNodeJsEnvSpec
+
     override val workingDir: Provider<Directory>
         get() = npmProjectDir
+
+    override val executable: Provider<String> = nodeJs.produceEnv(project.providers).map { it.executable }
 
     override val settingsState: String
         get() = "mocha"

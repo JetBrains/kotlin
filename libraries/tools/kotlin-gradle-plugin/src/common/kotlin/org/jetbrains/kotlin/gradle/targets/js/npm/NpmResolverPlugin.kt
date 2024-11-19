@@ -29,12 +29,15 @@ class NpmResolverPlugin : Plugin<Project> {
                         // which can be defined after this configure action
                         if (task !is KotlinJsTest) {
                             nodeJsRoot.taskRequirements.addTaskRequirements(task)
-                        }
-                        task.dependsOn(
-                            kotlinNodeJsTaskProvidersExtension.npmInstallTaskProvider,
-                        )
 
-                        task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+                            if (task.requiredNpmDependencies.isNotEmpty()) {
+                                task.dependsOn(
+                                    kotlinNodeJsTaskProvidersExtension.npmInstallTaskProvider,
+                                )
+
+                                task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+                            }
+                        }
                     }
                 }
         }

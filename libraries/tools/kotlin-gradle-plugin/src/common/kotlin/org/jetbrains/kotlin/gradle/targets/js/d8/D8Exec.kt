@@ -52,7 +52,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
     }
 
     companion object {
-        fun create(
+        fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
             configuration: D8Exec.() -> Unit = {},
@@ -71,5 +71,12 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
                 it.configuration()
             }
         }
+
+        @Deprecated("Use register instead", ReplaceWith("register(compilation, name, configuration)"))
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: D8Exec.() -> Unit = {},
+        ): TaskProvider<D8Exec> = register(compilation, name, configuration)
     }
 }

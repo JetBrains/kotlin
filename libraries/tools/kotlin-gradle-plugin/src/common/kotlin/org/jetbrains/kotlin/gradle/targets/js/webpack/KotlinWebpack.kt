@@ -94,7 +94,6 @@ constructor(
     val inputFiles: FileTree
         get() = objects.fileTree()
             .let { fileTree ->
-                val inputFilesDirectory = inputFilesDirectory.get().asFile
                 // in webpack.config.js there is path relative to npmProjectDir (kotlin/<module>.js).
                 // And we need have relative path in build cache
                 // That's why we use npmProjectDir with filter instead of just inputFilesDirectory,
@@ -103,7 +102,7 @@ constructor(
                 fileTree.from(npmProjectDir)
                     .matching {
                         it.include { element: FileTreeElement ->
-                            inputFilesDirectory.isParentOf(element.file)
+                            this.inputFilesDirectory.get().asFile.isParentOf(element.file)
                         }
                     }
             }

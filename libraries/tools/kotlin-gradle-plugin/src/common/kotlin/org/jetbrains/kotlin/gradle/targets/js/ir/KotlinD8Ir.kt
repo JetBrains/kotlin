@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Action
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "d8"),
+    KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
@@ -26,30 +29,35 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"
 
-    override fun runTask(body: D8Exec.() -> Unit) {
-        project.tasks.withType<D8Exec>().named(runTaskName).configure(body)
-    }
-
-    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
-        if (project.locateTask<D8Exec>(name) != null) return
-
-        val runTaskHolder = D8Exec.create(binary.compilation, name) {
-            group = taskGroupName
-            dependsOn(binary.linkSyncTask)
-            inputFileProperty.set(
-                binary.mainFileSyncPath
-            )
-        }
-        target.runTask.dependsOn(runTaskHolder)
+    override fun runTask(body: Action<D8Exec>) {
+        subTargetConfigurators
+            .withType<D8EnvironmentConfigurator>()
+            .configureEach {
+                it.configureRun(body)
+            }
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
         test.testFramework = KotlinWasmD8(test)
     }
 
-    override fun configureTestDependencies(test: KotlinJsTest) {
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
         with(d8) {
             test.dependsOn(project.d8SetupTaskProvider)
         }
+    }
+
+    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return binary.mainFileSyncPath
+    }
+
+    override fun binarySyncTaskName(binary: JsIrBinary): String {
+        return binary.linkSyncTaskName
+    }
+
+    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
+        return project.objects.directoryProperty().fileProvider(
+            binary.linkTask.map { it.destinationDirectory.getFile().parentFile.resolve(disambiguationClassifier) }
+        )
     }
 }

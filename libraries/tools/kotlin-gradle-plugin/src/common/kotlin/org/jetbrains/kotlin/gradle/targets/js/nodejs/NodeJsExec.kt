@@ -89,7 +89,7 @@ constructor(
     }
 
     companion object {
-        fun create(
+        fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
             configuration: NodeJsExec.() -> Unit = {},
@@ -132,10 +132,20 @@ constructor(
             name: String,
             configuration: NodeJsExec.() -> Unit = {},
         ): TaskProvider<NodeJsExec> =
-            create(
+            register(
                 compilation as KotlinJsIrCompilation,
                 name,
                 configuration
             )
+
+        @Deprecated(
+            "Use register instead",
+            ReplaceWith("register(compilation, name, configuration)")
+        )
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> = register(compilation, name, configuration)
     }
 }

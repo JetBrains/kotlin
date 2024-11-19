@@ -117,7 +117,14 @@ constructor(
     }
 
     fun useMocha() = useMocha {}
-    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation, path), body)
+    fun useMocha(body: KotlinMocha.() -> Unit) =
+        if (compilation.wasmTarget == null) {
+            use(KotlinMocha(compilation, path), body)
+        } else {
+            logger.warn("Mocha test framework for Wasm target is not supported. For KotlinWasmNode used")
+            testFramework
+        }
+
     fun useMocha(fn: Action<KotlinMocha>) {
         useMocha {
             fn.execute(this)
@@ -141,10 +148,6 @@ constructor(
     }
 
     private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
-        check(testFramework == null) {
-            "testFramework already configured for task ${this.path}"
-        }
-
         val testFramework = runner.also(body)
         this.testFramework = testFramework
 
@@ -154,7 +157,7 @@ constructor(
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = testFramework!!.workingDir.getFile()
-        forkOptions.executable = nodeExecutable.get()
+        forkOptions.executable = testFramework!!.executable.get()
 
         environment.forEach { (key, value) ->
             forkOptions.environment(key, value)

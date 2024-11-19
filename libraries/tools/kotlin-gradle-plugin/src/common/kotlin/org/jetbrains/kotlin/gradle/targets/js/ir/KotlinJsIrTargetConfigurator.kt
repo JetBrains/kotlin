@@ -3,14 +3,42 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.language.base.plugins.LifecycleBasePlugin.ASSEMBLE_TASK_NAME
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true) {
+
+    override fun configureTarget(target: KotlinJsIrTarget) {
+        super.configureTarget(target)
+
+        val assemble = target.project.tasks.named(ASSEMBLE_TASK_NAME)
+
+        target.compilations.all { compilation ->
+            if (compilation.isMain()) {
+                compilation.binaries
+                    .matching { it.mode == KotlinJsBinaryMode.PRODUCTION }
+                    .all {
+                        if (target.wasmTargetType != null) {
+                            assemble.dependsOn((it as WasmBinary).optimizeTask)
+                        } else {
+                            assemble.dependsOn(it.linkTask)
+                        }
+                    }
+            }
+        }
+    }
 
     internal companion object {
         internal fun KotlinJsCompilerOptions.configureJsDefaultOptions() {

@@ -122,19 +122,19 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             // -Xir-property-lazy-initialization default is true
-            build("nodeRun") {
+            build("nodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(false)
-            build("nodeRun") {
+            build("nodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(true)
-            build("nodeRun") {
+            build("nodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }

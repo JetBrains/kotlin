@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
@@ -58,6 +59,9 @@ class KotlinKarma(
     private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
     private val versions = nodeJs.versions
 
+    @Transient
+    private val nodeJsEnvSpec = project.kotlinNodeJsEnvSpec
+
     private val config: KarmaConfig = KarmaConfig()
     private val requiredDependencies = mutableSetOf<RequiredKotlinJsDependency>()
 
@@ -76,6 +80,8 @@ class KotlinKarma(
 
     override val workingDir: Provider<Directory>
         get() = npmProjectDir
+
+    override val executable: Provider<String> = nodeJsEnvSpec.produceEnv(project.providers).map { it.executable }
 
     override fun getPath() = "$basePath:kotlinKarma"
 

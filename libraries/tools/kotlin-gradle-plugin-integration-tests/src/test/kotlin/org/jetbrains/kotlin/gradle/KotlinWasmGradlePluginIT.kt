@@ -93,7 +93,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiRun(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            build(":wasmWasiNodeRun") {
+            build(":wasmWasiNodeDevelopmentRun") {
                 assertOutputContains("Hello from Wasi")
             }
         }

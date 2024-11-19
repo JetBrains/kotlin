@@ -9,6 +9,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
+@OptIn(ExperimentalWasmDsl::class)
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
@@ -47,16 +49,9 @@ constructor(
         compilation: KotlinJsCompilation = defaultCompilation,
     ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
-            target.whenBrowserConfigured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
-            }
 
-            target.whenNodejsConfigured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
-            }
-
-            target.whenD8Configured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
+            target.subTargets.all { subTarget ->
+                subTarget.processBinary()
             }
 
             return compilation.binaries.executableIrInternal(compilation as KotlinJsIrCompilation)
@@ -83,22 +78,20 @@ constructor(
         compilation: KotlinJsIrCompilation = defaultCompilation,
     ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
-            target.whenBrowserConfigured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
+            target.subTargets.all { subTarget ->
+                subTarget.processBinary()
             }
 
-            target.whenNodejsConfigured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
-            }
-
-            target.whenD8Configured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
+            val factory = if (target.platformType == KotlinPlatformType.wasm) {
+                ::LibraryWasm
+            } else {
+                ::Library
             }
 
             return createBinaries(
                 compilation = compilation,
                 jsBinaryType = KotlinJsBinaryType.LIBRARY,
-                create = ::Library
+                create = factory
             )
         }
 

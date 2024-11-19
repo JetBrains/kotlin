@@ -22,4 +22,6 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     ): TCServiceMessagesTestExecutionSpec
 
     val workingDir: Provider<Directory>
+
+    val executable: Provider<String>
 }

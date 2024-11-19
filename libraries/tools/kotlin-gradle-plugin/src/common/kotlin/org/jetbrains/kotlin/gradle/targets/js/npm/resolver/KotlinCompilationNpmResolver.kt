@@ -201,7 +201,7 @@ class KotlinCompilationNpmResolver(
                     InternalDependency(
                         projectResolver.projectPath,
                         main.disambiguatedName,
-                        projectResolver[main].npmProject.name
+                        projectResolver[main].compilation.outputModuleName.get()
                     )
                 )
             }
@@ -288,7 +288,7 @@ class KotlinCompilationNpmResolver(
                         InternalDependency(
                             dependentResolver.projectPath,
                             dependentResolver.compilationDisambiguatedName,
-                            dependentResolver.npmProject.name
+                            dependentResolver.compilation.outputModuleName.get()
                         )
                     )
                 }
@@ -308,7 +308,7 @@ class KotlinCompilationNpmResolver(
             fileCollectionDependencies,
             projectPath,
             compilationDisambiguatedName,
-            npmProject.name,
+            compilation.outputModuleName.get(),
             npmVersion,
             rootResolver.tasksRequirements
         )

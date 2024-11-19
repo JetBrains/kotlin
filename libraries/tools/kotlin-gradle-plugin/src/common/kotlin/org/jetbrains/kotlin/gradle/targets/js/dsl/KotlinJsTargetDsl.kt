@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
@@ -15,25 +16,38 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.utils.withType
 
 interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     val nodejs: KotlinJsNodeDsl
 
     val browser: KotlinJsBrowserDsl
 
+    @InternalKotlinGradlePluginApi
+    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary>
+
     val isNodejsConfigured: Boolean
+        get() = subTargets.withType<KotlinNodeJsIr>().isNotEmpty()
 
     val isBrowserConfigured: Boolean
+        get() = subTargets.withType<KotlinBrowserJsIr>().isNotEmpty()
 
-    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
+        subTargets
+            .withType<KotlinNodeJsIr>()
+            .configureEach(body)
+    }
 
-    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
+        subTargets
+            .withType<KotlinBrowserJsIr>()
+            .configureEach(body)
+    }
 }
 
 interface KotlinJsTargetDsl :

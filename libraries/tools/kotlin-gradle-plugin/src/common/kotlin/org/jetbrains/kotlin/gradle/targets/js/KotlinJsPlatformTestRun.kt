@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
@@ -54,7 +53,7 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
 
 abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     testRunName: String,
-    override val target: KotlinJsSubTargetContainerDsl
+    override val target: KotlinJsSubTargetContainerDsl,
 ) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),
     KotlinTargetTestRun<JsAggregatingExecutionSource>,
     CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
@@ -69,12 +68,10 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     private fun KotlinJsSubTargetDsl.getChildTestExecution() = testRuns.maybeCreate(testRunName)
 
     override fun getConfiguredExecutions(): Iterable<KotlinJsPlatformTestRun> = mutableListOf<KotlinJsPlatformTestRun>().apply {
-        if (target.isNodejsConfigured) {
-            add(target.nodejs.getChildTestExecution())
-        }
-        if (target.isBrowserConfigured) {
-            add(target.browser.getChildTestExecution())
-        }
+        target.subTargets
+            .configureEach { subTarget ->
+                add(subTarget.getChildTestExecution())
+            }
     }
 
     override fun configureAllExecutions(configure: KotlinJsPlatformTestRun.() -> Unit) {
@@ -82,9 +79,9 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
             configure(getChildTestExecution())
         }
 
-        target.whenBrowserConfigured { doConfigureInChildren(this) }
-        target.whenNodejsConfigured { doConfigureInChildren(this) }
-        (target as? KotlinWasmSubTargetContainerDsl)?.whenD8Configured { doConfigureInChildren(this) }
+        target.subTargets.configureEach { subTarget ->
+            doConfigureInChildren(subTarget)
+        }
     }
 
     override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }

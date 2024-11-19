@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Task
+import org.gradle.api.*
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.Copy
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -22,19 +22,27 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+
+interface KotlinJsIrSubTargetWithBinary : KotlinJsSubTargetDsl, Named {
+    fun processBinary()
+}
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
-    private val disambiguationClassifier: String,
-) : KotlinJsSubTargetDsl {
+    val disambiguationClassifier: String,
+) : KotlinJsIrSubTargetWithBinary, KotlinJsSubTargetDsl {
+    init {
+        target.configureTestSideEffect
+    }
+
+    override fun getName(): String = disambiguationClassifier
+
     val project get() = target.project
 
     abstract val testTaskDescription: String
@@ -42,7 +50,10 @@ abstract class KotlinJsIrSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
-    protected val taskGroupName = "Kotlin $disambiguationClassifier"
+    internal val taskGroupName = "Kotlin $disambiguationClassifier"
+
+    internal val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
+        project.objects.domainObjectSet<SubTargetConfigurator<*, *>>()
 
     @ExperimentalDistributionDsl
     override fun distribution(body: Action<Distribution>) {
@@ -53,35 +64,30 @@ abstract class KotlinJsIrSubTarget(
     }
 
     internal fun configure() {
-        configureTests()
-        target.compilations.all {
-            val npmProject = it.npmProject
-            @Suppress("DEPRECATION")
-            it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
+        target.compilations.configureEach { compilation ->
+            compilation.compileTaskProvider.configure { task ->
+                task.compilerOptions {
+                    freeCompilerArgs.add(compilation.outputModuleName.map { "$PER_MODULE_OUTPUT_NAME=$it" })
+                }
+            }
         }
+
+        configureTests()
     }
 
-    private val produceExecutable: Unit by lazy {
-        configureMain()
+    private val produceBinary: Unit by lazy {
+        configureMainCompilation()
     }
 
-    internal fun produceExecutable() {
-        produceExecutable
-    }
-
-    private val produceLibrary: Unit by lazy {
-        configureLibrary()
-    }
-
-    internal fun produceLibrary() {
-        produceLibrary
+    override fun processBinary() {
+        produceBinary
     }
 
     override fun testTask(body: Action<KotlinJsTest>) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
-    protected fun disambiguateCamelCased(vararg names: String): String =
+    internal fun disambiguateCamelCased(vararg names: String?): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
     private fun configureTests() {
@@ -93,7 +99,7 @@ abstract class KotlinJsIrSubTarget(
         testRuns.create(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
     }
 
-    protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
+    private fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
         target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
             .all { compilation ->
                 configureTestsRun(testRun, compilation)
@@ -131,7 +137,7 @@ abstract class KotlinJsIrSubTarget(
                 inputFileProperty
             )
 
-            configureTestDependencies(testJs)
+            configureTestDependencies(testJs, binary)
 
             testJs.onlyIf { task ->
                 (task as KotlinJsTest).inputFileProperty
@@ -145,6 +151,8 @@ abstract class KotlinJsIrSubTarget(
                 ?.joinToString()
 
             testJs.configureConventions()
+
+            configureDefaultTestFramework(testJs)
         }
 
         testRun.executionTask = testJs
@@ -155,88 +163,38 @@ abstract class KotlinJsIrSubTarget(
                 parentTestRun.executionTask
             )
         }
-
-        project.whenEvaluated {
-            testJs.configure {
-                configureDefaultTestFramework(it)
-            }
-        }
     }
 
-    protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
-    protected abstract fun configureTestDependencies(test: KotlinJsTest)
+    abstract fun configureDefaultTestFramework(test: KotlinJsTest)
+    abstract fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary)
+    abstract fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile>
+    abstract fun binarySyncTaskName(binary: JsIrBinary): String
+    abstract fun binarySyncOutput(binary: JsIrBinary): Provider<Directory>
 
-    private fun configureMain() {
+    private fun configureMainCompilation() {
         target.compilations.all { compilation ->
             if (compilation.isMain()) {
-                configureMain(compilation)
+                configureCompilation(compilation)
             }
         }
     }
 
-    private fun configureMain(compilation: KotlinJsIrCompilation) {
-        configureRun(compilation)
-        configureBuild(compilation)
+    private fun configureCompilation(compilation: KotlinJsIrCompilation) {
+        setupRun(compilation)
+        setupBuild(compilation)
     }
 
-    abstract fun configureRun(compilation: KotlinJsIrCompilation)
-
-    abstract fun configureBuild(compilation: KotlinJsIrCompilation)
-
-    private fun configureLibrary() {
-        target.compilations.all { compilation ->
-            if (compilation.isMain()) {
-                configureLibrary(compilation)
-            }
+    private fun setupRun(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupRun(compilation)
         }
     }
 
-    protected open fun configureLibrary(compilation: KotlinJsIrCompilation) {
-        val project = compilation.target.project
-
-        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-
-        val npmProject = compilation.npmProject
-
-        compilation.binaries
-            .matching { it is Library }
-            .all { binary ->
-                binary as Library
-
-                val mode = binary.mode
-
-                val distributionTask = registerSubTargetTask<Copy>(
-                    disambiguateCamelCased(
-                        binary.name,
-                        DISTRIBUTION_TASK_NAME
-                    )
-                ) {
-                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                        it.from(binary.linkSyncTask)
-                    } else {
-                        it.from(binary.linkTask)
-                        it.from(project.tasks.named(compilation.processResourcesTaskName))
-                    }
-
-                    it.into(binary.distribution.outputDirectory)
-                }
-
-                if (mode == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTaskProvider.dependsOn(distributionTask)
-                }
-            }
-    }
-
-    internal inline fun <reified T : Task> registerSubTargetTask(
-        name: String,
-        args: List<Any> = emptyList(),
-        noinline body: (T) -> (Unit),
-    ): TaskProvider<T> =
-        project.registerTask(name, args) {
-            it.group = taskGroupName
-            body(it)
+    private fun setupBuild(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupBuild(compilation)
         }
+    }
 
     companion object {
         const val RUN_TASK_NAME = "run"
@@ -244,3 +202,13 @@ abstract class KotlinJsIrSubTarget(
         const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }
+
+internal inline fun <reified T : Task> KotlinJsIrSubTarget.registerSubTargetTask(
+    name: String,
+    args: List<Any> = emptyList(),
+    noinline body: (T) -> (Unit),
+): TaskProvider<T> =
+    project.registerTask(name, args) {
+        it.group = taskGroupName
+        body(it)
+    }
