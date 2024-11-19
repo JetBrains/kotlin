@@ -25,31 +25,31 @@ FILE: propertiesOrder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Read_16I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.topics: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Read_16I>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.stargazers_count: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Read_16I>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.html_url: R|java/net/URL|
                     public get(): R|java/net/URL|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Read_16I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
                 public constructor(): R|<local>/Scope0|

@@ -20,7 +20,7 @@ FILE: selectDuringTyping.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ExplodeSchema_94I>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
                     public get(): R|kotlin/collections/List<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/ExplodeSchema_94I>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/ExplodeSchema_94I>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
 
                 public constructor(): R|<local>/Scope0|
