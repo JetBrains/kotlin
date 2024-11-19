@@ -54,6 +54,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("inlineFuncWithExposedComposableSingleton.kt")
+  public void testInlineFuncWithExposedComposableSingleton() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFuncWithExposedComposableSingleton.kt");
+  }
+
+  @Test
   @TestMetadata("interface.kt")
   public void testInterface() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");
