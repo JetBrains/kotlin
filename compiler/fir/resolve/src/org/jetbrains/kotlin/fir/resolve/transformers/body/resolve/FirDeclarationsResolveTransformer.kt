@@ -1268,13 +1268,20 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun FirAnonymousFunction.computeReturnTypeRef(expected: FirResolvedTypeRef?): FirResolvedTypeRef {
+        val returnType = computeReturnType(
+            session,
+            expected?.coneType,
+            isPassedAsFunctionArgument = false,
+            dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this),
+        )
         return returnTypeRef.resolvedTypeFromPrototype(
-            computeReturnType(
-                session,
-                expected?.coneType,
-                isPassedAsFunctionArgument = false,
-                dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this),
-            )
+            returnType,
+            fallbackSource = source.takeIf {
+                // This is a specific case when we deliberately lose the source to prevent double-reporting the diagnostic
+                // It will be anyway reported on a value parameter
+                returnType !is ConeErrorType ||
+                        (returnType.diagnostic as? ConeSimpleDiagnostic)?.kind != DiagnosticKind.ValueParameterWithNoTypeAnnotation
+            }
         )
     }
 

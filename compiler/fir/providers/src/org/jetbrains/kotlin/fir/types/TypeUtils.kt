@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -309,15 +310,13 @@ fun FirTypeRef.hasEnhancedNullability(): Boolean =
 fun FirTypeRef.withoutEnhancedNullability(): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
     if (!hasEnhancedNullability()) return this
-    return buildResolvedTypeRef {
-        source = this@withoutEnhancedNullability.source
-        coneType = this@withoutEnhancedNullability.coneType.withAttributes(
+    return withReplacedSourceAndType(
+        source, coneType.withAttributes(
             ConeAttributes.create(
                 this@withoutEnhancedNullability.coneType.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
             ),
         )
-        annotations += this@withoutEnhancedNullability.annotations
-    }
+    )
 }
 
 // Unlike other cases, return types may be implicit, i.e. unresolved
@@ -342,19 +341,35 @@ fun FirTypeRef.withReplacedConeType(
         else
             this.source
 
-    return if (newType is ConeErrorType) {
-        buildErrorTypeRef {
-            source = newSource
-            coneType = newType
-            annotations += this@withReplacedConeType.annotations
-            diagnostic = newType.diagnostic
+    return withReplacedSourceAndType(newSource, newType)
+}
+
+internal fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, newType: ConeKotlinType): FirResolvedTypeRef {
+    return when {
+        newType is ConeErrorType -> {
+            buildErrorTypeRef {
+                source = newSource
+                coneType = newType
+                annotations += this@withReplacedSourceAndType.annotations
+                diagnostic = newType.diagnostic
+            }
         }
-    } else {
-        buildResolvedTypeRef {
-            source = newSource
-            coneType = newType
-            annotations += this@withReplacedConeType.annotations
-            delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
+        this is FirErrorTypeRef -> {
+            buildErrorTypeRef {
+                source = newSource
+                coneType = newType
+                annotations += this@withReplacedSourceAndType.annotations
+                diagnostic = this@withReplacedSourceAndType.diagnostic
+                delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef
+            }
+        }
+        else -> {
+            buildResolvedTypeRef {
+                source = newSource
+                coneType = newType
+                annotations += this@withReplacedSourceAndType.annotations
+                delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef
+            }
         }
     }
 }
