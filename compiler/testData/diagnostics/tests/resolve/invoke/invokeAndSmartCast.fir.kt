@@ -13,7 +13,7 @@ fun test(a: A) {
 
     with("") {
         a.<!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!><!NO_VALUE_FOR_PARAMETER!>()<!>
-        <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!><!NO_VALUE_FOR_PARAMETER!>()<!>
         if (a.x != null) {
             a.x<!NO_VALUE_FOR_PARAMETER!>()<!> // todo
             (a.x)()

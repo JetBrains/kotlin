@@ -8,6 +8,6 @@ fun c(block: (x: Int) -> String): String = ""
 fun c(block: (x: Int) -> Unit): Int = 0
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>e<!> {}
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>c<!> {}
+    e {}
+    c {}
 }

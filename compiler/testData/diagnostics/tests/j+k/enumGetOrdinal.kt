@@ -22,9 +22,12 @@ fun submit1(x: () -> Unit) {}
 @OverloadResolutionByLambdaReturnType
 fun submit1(x: () -> String): String = ""
 
+fun submit2(x: () -> Unit) {}
+fun <VS> submit2(x: () -> VS): VS = TODO()
 
 fun main() {
     //submit { "" }
 
-    submit1 { "" }.length
+   // submit1 { "" }.length
+    submit2 { "" }.length
 }

@@ -1,33 +1,40 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// FILE: test/GenericSam.java
-
-package test;
-
-public interface GenericSam<T> {
-    void invoke(T t);
+// FILE: MyRunnable.java
+public interface MyRunnable {
+    void run();
 }
 
-// FILE: test.kt
+// FILE: Computable.java
+public interface Computable<T> {
+    T compute();
+}
 
-import test.GenericSam
+// FILE: ThrowableComputable.java
+public interface ThrowableComputable<T, E extends Throwable> {
+    T compute() throws E;
+}
 
-fun f1() = Runnable::class
-fun f2() = Runnable::run
-fun f3() = java.lang.Runnable::class
-fun f4() = java.lang.Runnable::run
+// FILE: Application.java
 
-fun f5() = GenericSam::class
-fun f6() = GenericSam<*>::invoke
-fun f7() = test.GenericSam::class
-fun f8() = test.GenericSam<String>::invoke
+public interface Application {
+    void runWriteAction(MyRunnable action);
 
-fun g1() = Runnable {}::class
-fun g2() = Runnable {}::run
-fun g3() = java.lang.Runnable {}::class
-fun g4() = java.lang.Runnable {}::run
+    <T> T runWriteAction(Computable<T> computation);
 
-fun g5() = GenericSam<String> {}::class
-fun g6() = GenericSam<String> {}::invoke
-fun g7() = test.GenericSam<String> {}::class
-fun g8() = test.GenericSam<String> {}::invoke
+    /**
+     * Runs the specified computation in a write-action. Must be called from the Swing dispatch thread.
+     * The action is executed immediately if no read actions or write actions are currently running,
+     * or blocked until all read actions and write actions complete.
+     * <p>
+     * See also {@link WriteAction#compute} for a more lambda-friendly version.
+     *
+     * @param computation the computation to run
+     * @return the result returned by the computation.
+     * @throws E re-frown from ThrowableComputable
+     * @see CoroutinesKt#writeAction
+     */
+    @SuppressWarnings("LambdaUnfriendlyMethodOverload")
+    @RequiresBlockingContext
+    <T, E extends Throwable> T runWriteAction(ThrowableComputable<T, E> computation) throws E;
+}
