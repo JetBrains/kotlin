@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 // DO
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
@@ -96,7 +98,9 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
             // The check is required in the Analysis API mode as in this case property accessor
             // has the containing property as a source
             if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
-                error("Don't request modifiers on fake PSI of delegated property accessors, it's not the right PSI")
+                errorWithAttachment("Don't request modifiers on fake PSI of delegated property accessors, it's not the right PSI") {
+                    withPsiEntry("property", modifierListOwner)
+                }
             }
 
             modifierListOwner?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
