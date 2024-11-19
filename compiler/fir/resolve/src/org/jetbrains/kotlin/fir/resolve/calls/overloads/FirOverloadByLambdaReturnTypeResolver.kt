@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
@@ -16,9 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.same
@@ -98,7 +99,18 @@ class FirOverloadByLambdaReturnTypeResolver(
             successfulLambdaCandidates,
             discriminateAbstracts = false,
             discriminateGenerics = true,
-        )
+        ).let { res ->
+            if (res.size == 2 && res.first().callInfo.name.asString() == "runWriteAction") {
+                res.firstOrNull { candidate ->
+                    ((candidate.symbol.fir as? FirSimpleFunction)?.valueParameters
+                        ?.getOrNull(0)?.returnTypeRef?.coneTypeSafe<ConeKotlinType>()
+                        ?.lowerBoundIfFlexible() as? ConeClassLikeType)
+                        ?.classId == ClassId.topLevel(FqName("com.intellij.openapi.util.Computable"))
+                }?.let(::setOf) ?: res
+            } else {
+                res
+            }
+        }
     }
 
     private fun <T> analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(
