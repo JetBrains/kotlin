@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -194,8 +194,8 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }
 
-    override fun getPlatformIntrinsicExtension(backendContext: BackendContext): IrIntrinsicExtension? {
-        val ctx = backendContext as? JvmBackendContext ?: return null
+    override fun getPlatformIntrinsicExtension(loweringContext: LoweringContext): IrIntrinsicExtension? {
+        val ctx = loweringContext as? JvmBackendContext ?: return null
         if (!canEnableIntrinsics(ctx)) return null
         return SerializationJvmIrIntrinsicSupport(
             ctx,

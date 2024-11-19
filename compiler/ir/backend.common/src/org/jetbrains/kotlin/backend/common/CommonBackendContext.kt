@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
@@ -23,7 +22,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext, BackendContextHolder {
+/**
+ * A context that is used to pass data to the second stage compiler lowerings
+ * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
+ */
+interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReportingContext, BackendContextHolder {
     override val ir: Ir<CommonBackendContext>
 
     override val heldBackendContext: CommonBackendContext

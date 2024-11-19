@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
  * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
  * expression that uses a `super` qualifier in its body.
  */
-abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
+abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected val context: Context,
 ) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)

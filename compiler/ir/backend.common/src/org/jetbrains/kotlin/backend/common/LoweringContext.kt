@@ -25,8 +25,12 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.name.FqName
 
-interface BackendContext {
-    val ir: Ir<CommonBackendContext>
+/**
+ * A context that is used to pass data to both first (before IR serialization) and second (after IR deserialization) stage compiler
+ * lowerings.
+ */
+interface LoweringContext {
+    val ir: Ir<LoweringContext>
     val builtIns: KotlinBuiltIns
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext

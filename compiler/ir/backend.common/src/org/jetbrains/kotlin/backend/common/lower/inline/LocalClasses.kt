@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.*
  *    are copied. But the compiler could optimize the usage of some local classes and not copy them.
  *    So in this case all local classes MIGHT BE COPIED.
  */
-class LocalClassesInInlineLambdasLowering(val context: BackendContext) : BodyLoweringPass {
+class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }
@@ -173,7 +172,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
  * Rewrites local classes so that they don't capture any locals. Locals are passed to the class explicitly, and usages of those locals
  * inside the class are replaced with accesses to the class fields.
  */
-class LocalClassesInInlineFunctionsLowering(val context: BackendContext) : BodyLoweringPass {
+class LocalClassesInInlineFunctionsLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }
@@ -192,7 +191,7 @@ class LocalClassesInInlineFunctionsLowering(val context: BackendContext) : BodyL
 /**
  * Moves local classes from inline functions into the nearest declaration container.
  */
-class LocalClassesExtractionFromInlineFunctionsLowering(context: BackendContext) : LocalClassPopupLowering(context) {
+class LocalClassesExtractionFromInlineFunctionsLowering(context: LoweringContext) : LocalClassPopupLowering(context) {
     private val classesToExtract = mutableSetOf<IrClass>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

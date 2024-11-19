@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -18,7 +18,7 @@ interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 
-    fun getPlatformIntrinsicExtension(backendContext: BackendContext): IrIntrinsicExtension? = null
+    fun getPlatformIntrinsicExtension(loweringContext: LoweringContext): IrIntrinsicExtension? = null
 
     // In K1 mode, returns true if this extension should also be applied in the KAPT stub generation mode in Kotlin/JVM. This mode uses
     // light analysis in the compiler frontend to produce an "API-only" class file which is then converted to a .java stub. Because of the

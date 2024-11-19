@@ -82,7 +82,7 @@ import java.io.File
  * The outlined functions are inlined again later by [FunctionWithJsFuncAnnotationInliner] during the codegen phase.
  */
 class JsCodeOutliningLowering(
-    val backendContext: BackendContext,
+    val loweringContext: LoweringContext,
     val intrinsics: JsIntrinsics,
     val dynamicType: IrDynamicType,
 ) : BodyLoweringPass {
@@ -91,7 +91,7 @@ class JsCodeOutliningLowering(
         if (!irBody.containsCallsTo(intrinsics.jsCode))
             return
 
-        val replacer = JsCodeOutlineTransformer(backendContext, intrinsics, dynamicType, container)
+        val replacer = JsCodeOutlineTransformer(loweringContext, intrinsics, dynamicType, container)
         irBody.transformChildrenVoid(replacer)
 
         val outlinedFunctions = replacer.outlinedFunctions
@@ -111,7 +111,7 @@ class JsCodeOutliningLowering(
         when (irBody) {
             is IrBlockBody -> irBody.statements.addAll(0, outlinedFunctions)
             is IrExpressionBody -> {
-                val builder = backendContext.createIrBuilder(container.symbol)
+                val builder = loweringContext.createIrBuilder(container.symbol)
                 irBody.expression = builder.irBlock(irBody.startOffset, irBody.endOffset) {
                     +outlinedFunctions
                     +irBody.expression
@@ -147,7 +147,7 @@ private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
 }
 
 private class JsCodeOutlineTransformer(
-    val backendContext: BackendContext,
+    val loweringContext: LoweringContext,
     val intrinsics: JsIntrinsics,
     val dynamicType: IrDynamicType,
     val container: IrDeclaration,
@@ -236,10 +236,10 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val (jsFunCode, sourceMap) = printJsCodeWithDebugInfo(newFun)
-        annotation.putValueArgument(0, jsFunCode.toIrConst(backendContext.irBuiltIns.stringType))
-        annotation.putValueArgument(1, sourceMap.toIrConst(backendContext.irBuiltIns.stringType))
+        annotation.putValueArgument(0, jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType))
+        annotation.putValueArgument(1, sourceMap.toIrConst(loweringContext.irBuiltIns.stringType))
 
-        return with(backendContext.createIrBuilder(container.symbol)) {
+        return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {
                 kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
                     putValueArgument(index, irGet(local))
@@ -249,7 +249,7 @@ private class JsCodeOutlineTransformer(
     }
 
     private fun addSpecialAnnotation(outlinedFunction: IrSimpleFunction): IrConstructorCall {
-        val builder = backendContext.createIrBuilder(outlinedFunction.symbol)
+        val builder = loweringContext.createIrBuilder(outlinedFunction.symbol)
         val annotation = builder.irCallConstructor(
             intrinsics.jsOutlinedFunctionAnnotationSymbol.constructors.first(),
             typeArguments = emptyList(),
@@ -296,7 +296,7 @@ private class JsCodeOutlineTransformer(
     }
 
     private fun createOutlinedFunction(kotlinLocalsUsedInJs: Map<JsName, IrValueDeclaration>): IrSimpleFunction {
-        val outlinedFunction = backendContext.irFactory.buildFun {
+        val outlinedFunction = loweringContext.irFactory.buildFun {
             val containerName = (container as? IrDeclarationWithName)?.name?.asString()
             name = Name.identifier(containerName?.let { "$it\$outlinedJsCode\$" } ?: "outlinedJsCode\$")
             returnType = dynamicType
@@ -305,7 +305,7 @@ private class JsCodeOutlineTransformer(
             origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
         }
         // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
-        outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        outlinedFunction.body = loweringContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
         kotlinLocalsUsedInJs.values.forEach { local ->
             outlinedFunction.addValueParameter {

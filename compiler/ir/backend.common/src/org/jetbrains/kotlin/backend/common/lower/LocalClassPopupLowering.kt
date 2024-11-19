@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.setDeclarationsParent
  * Moves local classes into nearest declaration container.
  */
 open class LocalClassPopupLowering(
-    val context: BackendContext,
+    val context: LoweringContext,
 ) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)

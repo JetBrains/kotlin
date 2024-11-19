@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -63,7 +63,7 @@ fun IrBuiltIns.createIrBuilder(
 ) =
     DeclarationIrBuilder(IrGeneratorContextBase(this), symbol, startOffset, endOffset)
 
-fun BackendContext.createIrBuilder(
+fun LoweringContext.createIrBuilder(
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
@@ -114,7 +114,7 @@ fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
         arg
     )
 
-open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
+open class IrBuildingTransformer(private val context: LoweringContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
 
     protected val builder: IrBuilderWithScope

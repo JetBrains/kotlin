@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  *
  * Note: it currently can't handle local functions and classes declared in default arguments.
  */
-open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
+open class TailrecLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrFunction) {
             // Lower local declarations

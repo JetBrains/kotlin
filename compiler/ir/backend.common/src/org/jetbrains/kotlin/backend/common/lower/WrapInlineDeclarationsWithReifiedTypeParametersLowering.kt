@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * Replaces callable reference to an inline function with reified parameter with a callable reference to a new non-inline function
  * with substituted types.
  */
-class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: BackendContext) : BodyLoweringPass {
+class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: LoweringContext) : BodyLoweringPass {
     private val irFactory
         get() = context.irFactory
 

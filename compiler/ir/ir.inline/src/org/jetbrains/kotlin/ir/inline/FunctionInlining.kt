@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -111,7 +111,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
 }
 
 open class FunctionInlining(
-    val context: BackendContext,
+    val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
@@ -209,7 +209,7 @@ open class FunctionInlining(
         val callee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
-        val context: BackendContext,
+        val context: LoweringContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val insertAdditionalImplicitCasts: Boolean,
         private val produceOuterThisFields: Boolean

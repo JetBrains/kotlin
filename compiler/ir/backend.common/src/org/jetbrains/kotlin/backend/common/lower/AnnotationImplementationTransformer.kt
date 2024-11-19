@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -66,7 +66,7 @@ open class AnnotationImplementationLowering(
     }
 }
 
-abstract class AnnotationImplementationTransformer(val context: BackendContext, val symbolTable: ReferenceSymbolTable, val irFile: IrFile?) :
+abstract class AnnotationImplementationTransformer(val context: LoweringContext, val symbolTable: ReferenceSymbolTable, val irFile: IrFile?) :
     IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
@@ -273,13 +273,13 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 }
 
 class AnnotationImplementationMemberGenerator(
-    backendContext: BackendContext,
+    loweringContext: LoweringContext,
     symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
     val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
-) : LoweringDataClassMemberGenerator(backendContext, symbolTable, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
+) : LoweringDataClassMemberGenerator(loweringContext, symbolTable, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
 
     override fun IrClass.classNameForToString(): String = nameForToString
 
@@ -291,7 +291,7 @@ class AnnotationImplementationMemberGenerator(
 
     override fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression = with(builder) {
         val propertyValueHashCode = getHashCodeOf(property.type, irValue)
-        val propertyNameHashCode = getHashCodeOf(backendContext.irBuiltIns.stringType, irString(property.name.toString()))
+        val propertyNameHashCode = getHashCodeOf(loweringContext.irBuiltIns.stringType, irString(property.name.toString()))
         val multiplied = irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, propertyNameHashCode, irInt(127))
         return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
     }
@@ -306,7 +306,7 @@ class AnnotationImplementationMemberGenerator(
     //    (DataClassMembersGenerator typically tries to access fields)
     // 3. Custom equals function should be used on properties
     fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
-        body = backendContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+        body = loweringContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             val irType = typeForEquals
             fun irOther() = irGet(valueParameters[0])
             fun irThis() = irGet(dispatchReceiverParameter!!)
