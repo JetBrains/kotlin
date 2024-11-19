@@ -278,6 +278,75 @@ fun <F> prepareMetadataSessions(
     }
 }
 
+/**
+ * Creates library session and sources session for klib compilation
+ * Number of created session depends on mode of MPP:
+ *   - disabled
+ *   - legacy (one platform and one common module)
+ *   - HMPP (multiple number of modules)
+ */
+fun <F> prepareJKlibSessions(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinResolvedLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    metadataCompilationMode: Boolean,
+    librariesScope: AbstractProjectFileSearchScope,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+): List<SessionWithSources<F>> {
+    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
+    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
+
+    return SessionConstructionUtils.prepareSessions(
+        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
+        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
+        fileBelongsToModule,
+        createSharedLibrarySession = { sessionProvider ->
+            FirJKlibSessionFactory.createSharedLibrarySession(
+                rootModuleName,
+                sessionProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                librariesScope,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        },
+        createLibrarySession = { sessionProvider, sharedLibrarySession ->
+            FirJKlibSessionFactory.createLibrarySession(
+                resolvedLibraries.map { it.library },
+                sessionProvider,
+                sharedLibrarySession,
+                libraryList.moduleDataProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                librariesScope,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        }
+    ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+        FirJKlibSessionFactory.createSourceSession(
+            moduleData = moduleData,
+            sessionProvider = sessionProvider,
+            javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
+            projectEnvironment = projectEnvironment,
+            createIncrementalCompilationSymbolProviders = { session -> null},
+            extensionRegistrars = extensionRegistrars,
+            configuration = configuration,
+            predefinedJavaComponents = predefinedJavaComponents,
+            needRegisterJavaElementFinder = true,
+            init = sessionConfigurator
+        )
+    }
+}
+
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
 typealias FirSessionProducer<F> = (List<F>, FirModuleData, FirProjectSessionProvider, FirSessionConfigurator.() -> Unit) -> FirSession
