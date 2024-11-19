@@ -50,52 +50,52 @@ open class NodeJsRootExtension(
     }
 
     @Deprecated(
-        "Use installationDir from NodeJsExtension (not NodeJsRootExtension) instead." +
+        "Use installationDir from NodeJsEnvSpec (not NodeJsRootExtension) instead." +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var installationDir: File = gradleHome.resolve("nodejs")
 
     @Deprecated(
-        "Use download from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use download from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var download = true
 
     @Suppress("DEPRECATION")
     @Deprecated(
-        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var nodeDownloadBaseUrl by ::downloadBaseUrl
 
     @Deprecated(
-        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var downloadBaseUrl: String? = "https://nodejs.org/dist"
 
     @Suppress("DEPRECATION")
     @Deprecated(
-        "Use version from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use version from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var nodeVersion by ::version
 
     @Deprecated(
-        "Use downloadBaseUrl from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var version = "22.0.0"
 
     @Deprecated(
-        "Use command from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use command from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var command = "node"
 
     @Suppress("DEPRECATION")
     @Deprecated(
-        "Use command from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use command from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
     var nodeCommand by ::command
@@ -133,7 +133,7 @@ open class NodeJsRootExtension(
         get() = project.tasks.withType(KotlinNpmCachesSetup::class.java).named(KotlinNpmCachesSetup.NAME)
 
     @Deprecated(
-        "Use nodeJsSetupTaskProvider from NodeJsExtension (not NodeJsRootExtension) instead" +
+        "Use nodeJsSetupTaskProvider from NodeJsEnvSpec (not NodeJsRootExtension) instead" +
                 "You can find this extension after applying NodeJsPlugin"
     )
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
@@ -141,7 +141,7 @@ open class NodeJsRootExtension(
             project.nodeJsSetupTaskProvider
         }
 
-    @Deprecated("Use NodeJsExtension instead. This will be removed in 2.2")
+    @Deprecated("Use NodeJsEnvSpec instead. This will be removed in 2.2")
     fun requireConfigured(): NodeJsEnv {
         return nodeJs().produceEnv(project.providers).get()
     }
