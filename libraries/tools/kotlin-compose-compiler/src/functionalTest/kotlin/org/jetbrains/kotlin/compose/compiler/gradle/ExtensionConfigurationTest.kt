@@ -22,7 +22,6 @@ class ExtensionConfigurationTest {
         testComposeOptions { options, _ ->
             assertEquals(
                 listOf(
-                    "generateFunctionKeyMetaClasses" to "false",
                     "sourceInformation" to "false",
                     "traceMarkersEnabled" to "true",
                 ),

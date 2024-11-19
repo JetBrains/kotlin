@@ -60,8 +60,7 @@ class ComposeIT : KGPBaseTest() {
                 assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
                 assertCompilerArgument(
                     ":compileDebugKotlin",
-                    "-P plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionKeyMetaClasses=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
+                    "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true",
                     LogLevel.INFO
                 )
