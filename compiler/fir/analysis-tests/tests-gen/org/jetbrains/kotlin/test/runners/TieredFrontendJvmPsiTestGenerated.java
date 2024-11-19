@@ -24394,6 +24394,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("privateTypeInProjection.kt")
+      public void testPrivateTypeInProjection() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateTypeInProjection.kt");
+      }
+
+      @Test
       @TestMetadata("protectedVisibilityAndSmartcast_overrideChangesType.kt")
       public void testProtectedVisibilityAndSmartcast_overrideChangesType() {
         runTest("compiler/testData/diagnostics/tests/visibility/protectedVisibilityAndSmartcast_overrideChangesType.kt");
