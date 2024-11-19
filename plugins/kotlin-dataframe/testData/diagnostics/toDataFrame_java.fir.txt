@@ -22,7 +22,7 @@ FILE: test.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
 
                 public constructor(): R|<local>/Scope0|
@@ -47,19 +47,19 @@ FILE: test.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope1|

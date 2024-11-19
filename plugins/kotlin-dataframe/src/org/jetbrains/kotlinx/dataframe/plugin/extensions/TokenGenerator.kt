@@ -73,7 +73,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     val columnContainerExtension = generateExtensionProperty(
                         callableId = callableId,
                         receiverType = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID),
+                            ConeClassLikeLookupTagImpl(Names.COLUMNS_SCOPE_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
                             isNullable = false
                         ),
