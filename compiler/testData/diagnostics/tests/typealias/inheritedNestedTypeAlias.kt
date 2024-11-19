@@ -8,7 +8,7 @@ interface ICell<T> {
 class Cell<T>(override val x: T): ICell<T>
 
 open class Base<T> {
-    inner typealias CT = Cell<T>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias CT = Cell<T>
     inner class InnerCell(override val x: T): ICell<T>
 }
 

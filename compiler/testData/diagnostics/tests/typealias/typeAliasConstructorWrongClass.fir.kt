@@ -23,7 +23,7 @@ val test4a = <!INVISIBLE_REFERENCE!>SealedClass<!>()
 
 class Outer {
     inner class Inner
-    inner typealias TestInner = Inner
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias TestInner = Inner
 }
 typealias Test5 = Outer.Inner
 

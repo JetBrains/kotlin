@@ -4,10 +4,10 @@
 class C<T> {
     inner class D
 
-    inner typealias DA = D
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias DA = D
     typealias SDA = C<Int>.D
-    inner typealias TSDA = C<T>.D
-    inner typealias TC = C<T>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias TSDA = C<T>.D
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias TC = C<T>
     typealias SSDA = C<*>.D
     typealias SSC = C<*>
 }
