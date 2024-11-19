@@ -142,10 +142,10 @@ fun TestProject.assertSymlinkInProjectPointsToProjectPath(
     pathToSymlink: String,
     pathToPointee: String,
 ) {
-    val pointeePath = projectPath.resolve(pathToPointee).toFile().absoluteFile
-    val symlinkPath = projectPath.resolve(pathToSymlink).toFile()
-    val symlinkPointeePath = symlinkPath.absoluteFile
-    assertSymlinkExists(symlinkPath.toPath())
+    val pointeePath = projectPath.resolve(pathToPointee).toRealPath().toFile().absoluteFile
+    val symlinkPath = projectPath.resolve(pathToSymlink)
+    val symlinkPointeePath = symlinkPath.toRealPath().toFile().absoluteFile
+    assertSymlinkExists(symlinkPath)
     assertEquals(
         pointeePath,
         symlinkPointeePath,
