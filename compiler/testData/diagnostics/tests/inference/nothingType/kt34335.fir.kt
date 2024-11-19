@@ -9,9 +9,9 @@ fun foo(action: (Int) -> Unit) {
 }
 
 fun test1() {
-    call({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) }) // x inside the lambda is inferred to `Nothing`, the lambda is `(Nothing) -> Unit`.
+    call(<!CANNOT_INFER_PARAMETER_TYPE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) }<!>) // x inside the lambda is inferred to `Nothing`, the lambda is `(Nothing) -> Unit`.
 }
 
 fun test2() {
-    ::foo.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) })
+    ::foo.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>(<!CANNOT_INFER_PARAMETER_TYPE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) }<!>)
 }
