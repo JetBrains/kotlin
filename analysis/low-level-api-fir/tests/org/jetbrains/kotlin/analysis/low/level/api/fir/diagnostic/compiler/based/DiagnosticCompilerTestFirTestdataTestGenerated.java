@@ -1748,6 +1748,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("callableReference.kt")
+      public void testCallableReference() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/callableReference.kt");
+      }
+
+      @Test
       @TestMetadata("contextLambda.kt")
       public void testContextLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextLambda.kt");

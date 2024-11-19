@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -50,15 +51,20 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
         referredSymbol: FirBasedSymbol<*>,
         source: KtSourceElement,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         if (referredSymbol is FirConstructorSymbol && referredSymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS) {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
-        if ((referredSymbol as? FirCallableSymbol<*>)?.isExtensionMember == true &&
-            !referredSymbol.isLocalMember
-        ) {
-            reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
+
+        if (referredSymbol is FirCallableSymbol) {
+            if (referredSymbol.isExtensionMember && !referredSymbol.isLocalMember) {
+                reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
+            }
+
+            if (referredSymbol.resolvedContextReceivers.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol, context)
+            }
         }
     }
 
