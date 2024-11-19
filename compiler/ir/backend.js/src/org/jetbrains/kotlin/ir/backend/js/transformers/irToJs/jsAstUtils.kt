@@ -488,55 +488,12 @@ object JsAstUtils {
         return JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2)
     }
 
-    fun inequality(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2)
-    }
-
-    fun lessThanEq(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.LTE, arg1, arg2)
-    }
-
-    fun lessThan(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.LT, arg1, arg2)
-    }
-
-    fun greaterThan(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.GT, arg1, arg2)
-    }
-
-    fun greaterThanEq(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.GTE, arg1, arg2)
-    }
-
     fun assignment(left: JsExpression, right: JsExpression): JsBinaryOperation {
         return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
     }
 
-    fun assignmentToThisField(fieldName: String, right: JsExpression): JsStatement {
-        return assignment(JsNameRef(fieldName, JsThisRef()), right).source(right.source).makeStmt()
-    }
-
-    fun decomposeAssignment(expr: JsExpression): Pair<JsExpression, JsExpression>? {
-        if (expr !is JsBinaryOperation) return null
-
-        return if (expr.operator != JsBinaryOperator.ASG) null else Pair(expr.arg1, expr.arg2)
-
-    }
-
     fun sum(left: JsExpression, right: JsExpression): JsBinaryOperation {
         return JsBinaryOperation(JsBinaryOperator.ADD, left, right)
-    }
-
-    fun addAssign(left: JsExpression, right: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.ASG_ADD, left, right)
-    }
-
-    fun subtract(left: JsExpression, right: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.SUB, left, right)
-    }
-
-    fun mul(left: JsExpression, right: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.MUL, left, right)
     }
 
     fun div(left: JsExpression, right: JsExpression): JsBinaryOperation {
@@ -622,7 +579,7 @@ private fun JsLocation.withEmbeddedSource(
     return JsLocationWithEmbeddedSource(this, fileIdentity = null /*context.currentFile.fileEntry*/) {
         try {
             InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             // TODO: If the source file is not available at path (e. g. it's an stdlib file), use heuristics to find it.
             // If all heuristics fail, use dumpKotlinLike() on freshly deserialized IrFile.
             null
