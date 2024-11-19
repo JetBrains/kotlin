@@ -112,9 +112,14 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
-fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
+fun FirElement.getModifierList(): FirModifierList? = when {
+    source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor -> null
+    else -> source.getModifierList()
+}
 
-fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = getModifierList()?.get(token)
+
+fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in getModifierList()
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.hasModifier(token: KtModifierKeywordToken): Boolean = fir.hasModifier(token)
