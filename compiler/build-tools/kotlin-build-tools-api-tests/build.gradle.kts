@@ -94,6 +94,7 @@ testing {
                 targets.all {
                     projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
                         ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                     }
                 }
             }
@@ -116,8 +117,10 @@ testing {
             }
 
             targets.all {
-                projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
-                    systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                if (!testTask.name.startsWith("testCompatibility")) {
+                    projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                    }
                 }
             }
         }
