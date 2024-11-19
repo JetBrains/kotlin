@@ -40,6 +40,6 @@ fun testSmartcast(x: Any) {
 }
 
 fun testInference(a: A, b: B) {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>select(a, b)<!>
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!><!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>select<!>(a, b)<!>
     x.<!INVISIBLE_REFERENCE!>foo<!>()
 }

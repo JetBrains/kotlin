@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.chooseFactory
@@ -138,7 +137,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         context: CheckerContext,
         fullyExpandedType: ConeKotlinType,
     ): Boolean {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg)) return false
         val visibilityChecker = context.session.visibilityChecker
         val classSymbol = fullyExpandedType.toClassSymbol(context.session)
         val containingFile = context.containingFile
