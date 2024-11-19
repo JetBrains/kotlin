@@ -42,6 +42,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * Generally used for tooling.
      */
+    @Deprecated("The user facing property is deprecated. Intended for tooling use only. Will be removed in future releases.")
     val generateFunctionKeyMetaClasses: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**

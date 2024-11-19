@@ -1,0 +1,60 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable  
+@Composable 
+fun Foo(child: @Composable () -> Unit) { child() }
+
+@Composable 
+fun Bar() {
+    Foo { 
+        print("A")
+    }
+
+    Foo {
+        print("B")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+ComposableSingletons$TestKt {
+    <init> null
+    getLambda$-420233864$test_module null
+    getLambda$511230191$test_module null
+    <clinit> null
+}
+
+ComposableSingletons$TestKt$lambda$-420233864$1 {
+    <init> null
+    invoke [key=-420233864, startOffset=143, endOffset=170]
+    invoke null
+    <clinit> null
+}
+
+ComposableSingletons$TestKt$lambda$511230191$1 {
+    <init> null
+    invoke [key=511230191, startOffset=180, endOffset=206]
+    invoke null
+    <clinit> null
+}
+
+TestKt {
+    Foo [key=-345321224, startOffset=58, endOffset=108]
+    Bar [key=-1333506531, startOffset=123, endOffset=208]
+}
+
+TestKt$Foo$1 {
+    <init> null
+    invoke null
+    invoke null
+}
+
+TestKt$Bar$1 {
+    <init> null
+    invoke null
+    invoke null
+}

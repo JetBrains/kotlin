@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+ 
+fun higherOrderFunction(child: Any.() -> Unit) {
+
+}
+
+
+@Composable 
+fun Foo() {
+    higherOrderFunction {
+        print("Foo")
+    }
+} 
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    higherOrderFunction null
+    Foo [key=-607362160, startOffset=112, endOffset=178]
+}
+
+TestKt$Foo$1 {
+    <init> null
+    invoke null
+    invoke null
+    <clinit> null
+}
+
+TestKt$Foo$2 {
+    <init> null
+    invoke null
+    invoke null
+}
