@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.PsiElement
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentHashMapOf
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
@@ -76,10 +73,8 @@ internal class PartialBodyDeclarationFirElementProvider(
     /**
      * Contains mappings for non-body elements.
      */
-    private val signatureMappings: Map<KtElement, FirElement> = persistentHashMapOf<KtElement, FirElement>()
-        .builder()
+    private val signatureMappings: Map<KtElement, FirElement> = HashMap<KtElement, FirElement>()
         .also { declaration.accept(DeclarationStructureElement.SignatureRecorder(declaration), it) }
-        .build()
 
     /**
      * Contains collected mappings.
@@ -87,7 +82,7 @@ internal class PartialBodyDeclarationFirElementProvider(
      * After consequent partial body analysis, elements from analyzed statements are appended.
      */
     @Volatile
-    private var bodyMappings: PersistentMap<KtElement, FirElement> = persistentMapOf()
+    private var bodyMappings: Map<KtElement, FirElement> = emptyMap()
 
     // The body block cannot be cached on the element provider construction, as the body might be lazy at that point
     private val bodyBlock: FirBlock
@@ -103,11 +98,11 @@ internal class PartialBodyDeclarationFirElementProvider(
             ElementContainer.Unknown -> return null
             ElementContainer.Signature -> return signatureMappings[psiElement]
             ElementContainer.SignatureBody -> {
-                synchronized(this) {
-                    if (lastState.performedAnalysesCount > 0) {
-                        // We performed at least one partial analysis, so we definitely analyzed the parameters
-                        return bodyMappings[psiElement]
-                    }
+                // Fast track: the signature body is already analyzed.
+                // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
+                if (lastState.performedAnalysesCount > 0) {
+                    // We performed at least one partial analysis, so we definitely analyzed the parameters
+                    return bodyMappings[psiElement]
                 }
 
                 // We do not need to analyze any statements.
@@ -117,76 +112,81 @@ internal class PartialBodyDeclarationFirElementProvider(
             is ElementContainer.Body -> {
                 val psiStatementLimit = container.psiStatementIndex + 1
 
-                synchronized(this) {
-                    if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
-                        // The statement is already analyzed and its children are registered
-                        return bodyMappings[psiElement]
-                    }
+                // Fast track: required statements are already analyzed.
+                // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
+                val lastState = this.lastState
+                if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
+                    // The statement is already analyzed and its children are registered
+                    return bodyMappings[psiElement]
                 }
 
                 performBodyAnalysis(psiStatementLimit = psiStatementLimit)
             }
         }
 
+        // Process newly analyzed statements serially
         synchronized(this) {
             // It won't help us if some state keepers replace the declaration body with a lazy one in another thread.
             // As long as the declaration hasn't reached the 'BODY_RESOLVE' phase, its body can only be accessed under a lock.
             withDeclarationLock(hasBodyFullyResolved) {
-                val newState = declaration.partialBodyResolveState
-                if (newState != null) {
-                    val lastFirStatementCount = lastState.analyzedFirStatementCount
-                    val newFirStatementCount = newState.analyzedFirStatementCount
-
-                    val shouldRegisterBodyStatements = newFirStatementCount > lastFirStatementCount
-                    val shouldRegisterSignatureParts = lastState.performedAnalysesCount == 0 && declaration is FirFunction
-
-                    if (shouldRegisterBodyStatements || shouldRegisterSignatureParts) {
-                        val builder = bodyMappings.builder()
-
-                        if (shouldRegisterSignatureParts) {
-                            registerDefaultParameterValues(builder)
-                            registerDelegatedConstructorCall(builder)
-                        }
-
-                        if (shouldRegisterBodyStatements) {
-                            val firBody = bodyBlock
-
-                            requireWithAttachment(firBody !is FirLazyBlock, { "Lazy body is unexpected" }) {
-                                withFirEntry("fir", declaration)
-                                withPsiEntry("declaration", psiDeclaration)
-                                withPsiEntry("element", psiElement)
-                                withEntry("container", container) { container.toString() }
-                            }
-
-                            for (index in lastFirStatementCount until newFirStatementCount) {
-                                val firStatement = firBody.statements[index]
-                                firStatement.accept(DeclarationStructureElement.Recorder, builder)
-                            }
-
-                            // We can register the block element itself if all its content is analyzed
-                            if (newState.analyzedPsiStatementCount == newState.totalPsiStatementCount) {
-                                firBody.accept(DeclarationStructureElement.BodyBlockRecorder(firBody), builder)
-                            }
-                        }
-
-                        bodyMappings = builder.build()
-                        lastState = newState
-                    }
-                } else {
-                    // The body has never been analyzed (otherwise the partial body resolve state should have been present)
-                    bodyMappings = bodyMappings
-                        .builder()
-                        .also { builder ->
-                            bodyBlock.accept(DeclarationStructureElement.Recorder, builder)
-                            registerDefaultParameterValues(builder)
-                            registerDelegatedConstructorCall(builder)
-                        }
-                        .build()
-                }
+                processResolveStateChanges(psiElement, container)
             }
         }
 
         return bodyMappings[psiElement]
+    }
+
+    private fun processResolveStateChanges(psiElement: PsiElement, container: ElementContainer) {
+        val newState = declaration.partialBodyResolveState
+        if (newState != null) {
+            val lastFirStatementCount = lastState.analyzedFirStatementCount
+            val newFirStatementCount = newState.analyzedFirStatementCount
+
+            val shouldRegisterBodyStatements = newFirStatementCount > lastFirStatementCount
+            val shouldRegisterSignatureParts = lastState.performedAnalysesCount == 0 && declaration is FirFunction
+
+            if (shouldRegisterBodyStatements || shouldRegisterSignatureParts) {
+                val consumer = HashMap(bodyMappings)
+
+                if (shouldRegisterSignatureParts) {
+                    registerDefaultParameterValues(consumer)
+                    registerDelegatedConstructorCall(consumer)
+                }
+
+                if (shouldRegisterBodyStatements) {
+                    val firBody = bodyBlock
+
+                    requireWithAttachment(firBody !is FirLazyBlock, { "Lazy body is unexpected" }) {
+                        withFirEntry("fir", declaration)
+                        withPsiEntry("declaration", psiDeclaration)
+                        withPsiEntry("element", psiElement)
+                        withEntry("container", container) { container.toString() }
+                    }
+
+                    for (index in lastFirStatementCount until newFirStatementCount) {
+                        val firStatement = firBody.statements[index]
+                        firStatement.accept(DeclarationStructureElement.Recorder, consumer)
+                    }
+
+                    // We can register the block element itself if all its content is analyzed
+                    if (newState.analyzedPsiStatementCount == newState.totalPsiStatementCount) {
+                        firBody.accept(DeclarationStructureElement.BodyBlockRecorder(firBody), consumer)
+                    }
+                }
+
+                // Publish new state
+                bodyMappings = consumer
+                lastState = newState
+            }
+        } else {
+            // The body has never been analyzed (otherwise the partial body resolve state should have been present)
+            bodyMappings = HashMap<KtElement, FirElement>()
+                .also { consumer ->
+                    bodyBlock.accept(DeclarationStructureElement.Recorder, consumer)
+                    registerDefaultParameterValues(consumer)
+                    registerDelegatedConstructorCall(consumer)
+                }
+        }
     }
 
     private fun withDeclarationLock(hasBodyFullyResolved: Boolean, action: () -> Unit) {
