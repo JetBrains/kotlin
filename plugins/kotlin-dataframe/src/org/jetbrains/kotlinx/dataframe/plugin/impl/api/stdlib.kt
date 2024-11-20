@@ -22,8 +22,8 @@ class PairConstructor : AbstractInterpreter<Pair<*, *>>() {
 }
 
 class TrimMargin : AbstractInterpreter<String>() {
-    val Arguments.receiver: String by arg(lens = Interpreter.Value)
-    val Arguments.marginPrefix: String by arg(lens = Interpreter.Value, defaultValue = Present("|"))
+    val Arguments.receiver: String by arg()
+    val Arguments.marginPrefix: String by arg(defaultValue = Present("|"))
 
     override fun Arguments.interpret(): String {
         return receiver.trimMargin(marginPrefix)
@@ -31,7 +31,7 @@ class TrimMargin : AbstractInterpreter<String>() {
 }
 
 class TrimIndent : AbstractInterpreter<String>() {
-    val Arguments.receiver: String by arg(lens = Interpreter.Value)
+    val Arguments.receiver: String by arg()
 
     override fun Arguments.interpret(): String {
         return receiver.trimIndent()

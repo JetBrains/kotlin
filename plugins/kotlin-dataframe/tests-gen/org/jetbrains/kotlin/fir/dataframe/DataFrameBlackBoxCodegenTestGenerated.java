@@ -533,6 +533,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("valueCounts.kt")
+  public void testValueCounts() {
+    runTest("testData/box/valueCounts.kt");
+  }
+
+  @Test
   @TestMetadata("wrongReceiver.kt")
   public void testWrongReceiver() {
     runTest("testData/box/wrongReceiver.kt");
