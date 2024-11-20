@@ -76,7 +76,7 @@ internal class KaFirTypeAliasSymbol private constructor(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
-            createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters(builder)
         }
 
     override val expandedType: KaType
