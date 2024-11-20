@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
 ) : Symbols(irBuiltIns) {
-    val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns)
+    val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.irBuiltInsLookup)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -32,29 +32,29 @@ class JsSymbols(
     private val context: JsIrBackendContext,
 ) : JsCommonSymbols(context.irBuiltIns) {
     override val throwNullPointerException =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
     init {
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "noWhenBranchMatchedException")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "noWhenBranchMatchedException")
     }
 
     override val throwTypeCastException =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_CCE")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "THROW_CCE")
 
     override val throwUninitializedPropertyAccessException =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
 
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
 
     override val defaultConstructorMarker =
-        irBuiltIns.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
+        irBuiltInsLookup.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
     override val throwISE: IrSimpleFunctionSymbol =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_ISE")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "THROW_ISE")
 
     override val throwIAE: IrSimpleFunctionSymbol =
-        irBuiltIns.topLevelFunction(kotlinPackageFqn, "THROW_IAE")
+        irBuiltInsLookup.topLevelFunction(kotlinPackageFqn, "THROW_IAE")
 
     override val stringBuilder
         get() = TODO("not implemented")
@@ -63,7 +63,7 @@ class JsSymbols(
     override val coroutineSuspendedGetter =
         coroutineSymbols.coroutineSuspendedGetter
 
-    private val _arraysContentEquals = irBuiltIns.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
+    private val _arraysContentEquals = irBuiltInsLookup.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
         it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
     }
 
@@ -71,19 +71,19 @@ class JsSymbols(
     override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
         get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
-    override val getContinuation = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
+    override val getContinuation = irBuiltInsLookup.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
 
     override val continuationClass = coroutineSymbols.continuationClass
 
     override val coroutineContextGetter = coroutineSymbols.coroutineContextGetter
 
-    override val suspendCoroutineUninterceptedOrReturn = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
+    override val suspendCoroutineUninterceptedOrReturn = irBuiltInsLookup.topLevelFunction(BASE_JS_PACKAGE, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
 
-    override val coroutineGetContext = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
+    override val coroutineGetContext = irBuiltInsLookup.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
 
-    override val returnIfSuspended = irBuiltIns.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
+    override val returnIfSuspended = irBuiltInsLookup.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
 
-    override val functionAdapter = irBuiltIns.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
+    override val functionAdapter = irBuiltInsLookup.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
 
     override fun functionN(n: Int): IrClassSymbol {
         return context.irFactory.stageController.withInitialIr { super.functionN(n) }
@@ -95,13 +95,13 @@ class JsSymbols(
 
 
     private val getProgressionLastElementSymbols =
-        irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+        irBuiltInsLookup.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
 
     override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
     }
 
-    private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
+    private val toUIntSymbols = irBuiltInsLookup.findFunctions(Name.identifier("toUInt"), "kotlin")
 
     override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         toUIntSymbols.associateBy {
@@ -112,7 +112,7 @@ class JsSymbols(
         }
     }
 
-    private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
+    private val toULongSymbols = irBuiltInsLookup.findFunctions(Name.identifier("toULong"), "kotlin")
 
     override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         toULongSymbols.associateBy {

@@ -213,7 +213,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
-    private val _rangeUntilFunctions = irBuiltIns.findFunctions(Name.identifier("until"), "kotlin", "ranges")
+    private val _rangeUntilFunctions = irBuiltIns.irBuiltInsLookup.findFunctions(Name.identifier("until"), "kotlin", "ranges")
     val rangeUntilFunctions by lazy(LazyThreadSafetyMode.NONE) {
         _rangeUntilFunctions
             .filter { it.owner.extensionReceiverParameter != null && it.owner.valueParameters.size == 1 }

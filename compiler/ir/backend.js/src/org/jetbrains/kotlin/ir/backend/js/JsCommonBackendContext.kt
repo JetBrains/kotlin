@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltInsLookup
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -77,9 +77,9 @@ internal fun <T> LoweringContext.lazy2(fn: () -> T) = lazy(LazyThreadSafetyMode.
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsCommonCoroutineSymbols(
-    irBuiltIns: IrBuiltIns,
+    lookup: IrBuiltInsLookup,
 ) {
-    val coroutineImpl: IrClassSymbol = irBuiltIns.topLevelClass(COROUTINE_PACKAGE_FQNAME, COROUTINE_IMPL_NAME.asString())
+    val coroutineImpl: IrClassSymbol = lookup.topLevelClass(COROUTINE_PACKAGE_FQNAME, COROUTINE_IMPL_NAME.asString())
 
     val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
     val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
@@ -90,12 +90,10 @@ class JsCommonCoroutineSymbols(
     val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
     val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val continuationClass = irBuiltIns.topLevelClass(COROUTINE_PACKAGE_FQNAME, CONTINUATION_NAME.asString())
+    val continuationClass = lookup.topLevelClass(COROUTINE_PACKAGE_FQNAME, CONTINUATION_NAME.asString())
 
-    // KT-73194 TODO Move findTopLevelPropertyGetter() from KonanSymbols to irBuiltins and use it here
     val coroutineSuspendedGetter =
-        irBuiltIns.findGetter(irBuiltIns.topLevelProperty(COROUTINE_INTRINSICS_PACKAGE_FQNAME, COROUTINE_SUSPENDED_NAME.asString()))
-            ?: irError("Cannot find getter for ${COROUTINE_INTRINSICS_PACKAGE_FQNAME.child(COROUTINE_SUSPENDED_NAME)}")
+        lookup.findTopLevelPropertyGetter(COROUTINE_INTRINSICS_PACKAGE_FQNAME, COROUTINE_SUSPENDED_NAME.asString())
 
     val coroutineGetContext: IrSimpleFunctionSymbol
         get() {
@@ -107,10 +105,8 @@ class JsCommonCoroutineSymbols(
             return contextGetter.symbol
         }
 
-    // KT-73194 TODO Move findTopLevelPropertyGetter() from KonanSymbols to irBuiltins and use it here
     val coroutineContextGetter =
-        irBuiltIns.findGetter(irBuiltIns.topLevelProperty(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString()))
-            ?: irError("Cannot find getter of ${COROUTINE_PACKAGE_FQNAME.child(COROUTINE_CONTEXT_NAME)}")
+        lookup.findTopLevelPropertyGetter(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString())
 
     companion object {
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
