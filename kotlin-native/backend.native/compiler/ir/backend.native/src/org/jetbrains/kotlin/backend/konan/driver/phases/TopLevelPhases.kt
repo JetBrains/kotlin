@@ -111,8 +111,10 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
             try {
                 fragment.performanceManager?.notifyIRGenerationStarted()
-                val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
+                newEngine(generationState) { generationStateEngine ->
                     generationStateEngine.runGlobalOptimizations(fragment.irModule)
+                }
+                val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
