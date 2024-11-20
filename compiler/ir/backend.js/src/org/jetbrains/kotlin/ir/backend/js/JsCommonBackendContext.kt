@@ -72,9 +72,6 @@ interface JsCommonBackendContext : CommonBackendContext {
     val bodilessBuiltInsPackageFragment: IrPackageFragment
 }
 
-// TODO: investigate if it could be removed
-internal fun <T> LoweringContext.lazy2(fn: () -> T) = lazy(LazyThreadSafetyMode.NONE) { irFactory.stageController.withInitialIr(fn) }
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsCommonCoroutineSymbols(
     irBuiltIns: IrBuiltIns,
