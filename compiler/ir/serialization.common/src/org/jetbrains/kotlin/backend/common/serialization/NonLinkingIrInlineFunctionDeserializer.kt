@@ -45,7 +45,7 @@ class NonLinkingIrInlineFunctionDeserializer(
     private val moduleDeserializers = libraries.map(::ModuleDeserializer)
 
     // TODO: consider the case of `external inline` functions that exist in Kotlin/Native stdlib
-    fun deserializeInlineFunction(function: IrSimpleFunction) {
+    fun deserializeInlineFunction(function: IrFunction) {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
         check(!function.isFakeOverride) { "Deserialization of fake overrides is not supported: ${function.render()}" }
 
@@ -60,14 +60,14 @@ class NonLinkingIrInlineFunctionDeserializer(
             it.getTopLevelDeclarationOrNull(topLevelSignature)
         }
 
-        val deserializedFunction: IrSimpleFunction? = when {
+        val deserializedFunction: IrFunction? = when {
             topLevelDeclaration == null -> null
 
-            functionSignature == topLevelSignature -> topLevelDeclaration as? IrSimpleFunction
+            functionSignature == topLevelSignature -> topLevelDeclaration as? IrFunction
 
             else -> {
                 val symbol = referencePublicSymbol(functionSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
-                runIf(symbol.isBound) { symbol.owner as IrSimpleFunction }
+                runIf(symbol.isBound) { symbol.owner as IrFunction }
             }
         }
 
@@ -194,8 +194,8 @@ class NonLinkingIrInlineFunctionDeserializer(
 }
 
 private fun collectExternalValueParameterSymbolsToRemap(
-    originalBodilessFunction: IrSimpleFunction,
-    deserializedFunction: IrSimpleFunction,
+    originalBodilessFunction: IrFunction,
+    deserializedFunction: IrFunction,
 ): Map<IrValueParameterSymbol, IrValueParameterSymbol> {
     class ValueParameterSymbolsToRemapForSingleDeclaration(val declaration: IrDeclaration) {
         val symbols = when (declaration) {
@@ -210,7 +210,7 @@ private fun collectExternalValueParameterSymbolsToRemap(
         }
     }
 
-    fun collectSymbolsFrom(function: IrSimpleFunction): List<ValueParameterSymbolsToRemapForSingleDeclaration> {
+    fun collectSymbolsFrom(function: IrFunction): List<ValueParameterSymbolsToRemapForSingleDeclaration> {
         val result = ArrayList<ValueParameterSymbolsToRemapForSingleDeclaration>()
 
         for (declaration in function.parentDeclarationsWithSelf) {

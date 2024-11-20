@@ -19,7 +19,18 @@ abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendCon
     protected open val jsCodeOutliningLowering: ((Context) -> FileLoweringPass)?
         get() = null
 
-    protected abstract fun inlineFunctionResolver(context: Context, inlineMode: InlineMode): InlineFunctionResolver
+    protected open val allowExternalInlineFunctions: Boolean
+        get() = false
+
+    @Suppress("unused") // TODO: Will be used when KT-71415 is fixed
+    private fun inlineFunctionResolver(context: Context, inlineMode: InlineMode): InlineFunctionResolver {
+        return PreSerializationInlineFunctionResolver(
+            context,
+            TODO("supply NonLinkingIrInlineFunctionDeserializer"),
+            inlineMode,
+            allowExternalInlineFunctions
+        )
+    }
 
     // TODO: The commented out lowerings must be copied here from the second compilation stage in scope of KT-71415
     fun lowerings(configuration: CompilerConfiguration): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =

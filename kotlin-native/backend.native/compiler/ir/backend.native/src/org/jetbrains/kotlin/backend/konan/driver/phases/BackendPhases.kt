@@ -86,9 +86,6 @@ private object NativePreSerializationLoweringPhasesProvider : PreSerializationLo
 
     override val klibAssertionWrapperLowering: ((PreSerializationLoweringContext) -> FileLoweringPass)?
         get() = null // TODO(KT-71415): Return the actual lowering here
-
-    override fun inlineFunctionResolver(context: PreSerializationLoweringContext, inlineMode: InlineMode): InlineFunctionResolver =
-            TODO("Refactor NativeInlineFunctionResolver to support PreSerializationLoweringContext")
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput =

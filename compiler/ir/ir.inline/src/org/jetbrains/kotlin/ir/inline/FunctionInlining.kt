@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.IrElement
@@ -86,7 +87,7 @@ abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
     }
 }
 
-abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBackendContext>(
+abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
     inlineMode: InlineMode,
 ) : InlineFunctionResolver(inlineMode) {
@@ -108,6 +109,19 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
         return super.shouldExcludeFunctionFromInlining(symbol) ||
                 (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !symbol.owner.isConsideredAsPrivateForInlining())
     }
+}
+
+/**
+ * This resolver is supposed to be run at the first compilation stage for all non-JVM targets.
+ */
+internal class PreSerializationInlineFunctionResolver(
+    context: LoweringContext,
+    private val deserializer: NonLinkingIrInlineFunctionDeserializer,
+    inlineMode: InlineMode,
+    override val allowExternalInlining: Boolean,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? =
+        super.getFunctionDeclaration(symbol)?.also(deserializer::deserializeInlineFunction)
 }
 
 open class FunctionInlining(
