@@ -440,10 +440,10 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
-    runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(GHAPhase, module, disable = !optimize)
-    runPhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    runPhase(CreateLLVMDeclarationsPhase, module)
+    runPhase(RTTIPhase, RTTIInput(module, dceResult))
     runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 
