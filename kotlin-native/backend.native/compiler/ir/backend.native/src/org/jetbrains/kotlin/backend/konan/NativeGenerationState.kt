@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
@@ -103,6 +104,9 @@ internal class NativeGenerationState(
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
 
     lateinit var objCExport: ObjCExport
+
+    var dceResult: Set<IrSimpleFunction>? = null
+    lateinit var lifetimes: Map<IrElement, Lifetime>
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 

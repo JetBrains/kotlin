@@ -112,6 +112,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             try {
                 fragment.performanceManager?.notifyIRGenerationStarted()
                 backendEngine.useContext(generationState) { generationStateEngine ->
+                    generationStateEngine.runGlobalOptimizations(fragment.irModule)
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
@@ -270,11 +271,9 @@ internal data class ModuleCompilationOutput(
 )
 
 /**
- * 1. Runs IR lowerings
- * 2. Runs LTO.
- * 3. Translates IR to LLVM IR.
- * 4. Optimizes it.
- * 5. Serializes it to a bitcode file.
+ * 1. Translates IR to LLVM IR.
+ * 2. Optimizes it.
+ * 3. Serializes it to a bitcode file.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment,
@@ -409,11 +408,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     runPhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
 }
 
-/**
- * Compile lowered [module] to object file.
- * @return absolute path to object file.
- */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: IrModuleFragment) {
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
@@ -436,15 +431,22 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runPhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runPhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
+    context.dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
     runPhase(GHAPhase, module, disable = !optimize)
-    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+}
+
+/**
+ * Compile lowered [module] to object file.
+ * @return absolute path to object file.
+ */
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     runPhase(CreateLLVMDeclarationsPhase, module)
-    runPhase(RTTIPhase, RTTIInput(module, dceResult))
-    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
+    runPhase(RTTIPhase, RTTIInput(module, context.dceResult))
+    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, context.lifetimes))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
