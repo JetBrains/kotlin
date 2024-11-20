@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -181,6 +182,26 @@ abstract class IrBuiltIns {
     abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
     abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
     abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+
+    fun topLevelClass(fqName: FqName): IrClassSymbol = findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
+    fun topLevelClass(packageName: FqName, name: String): IrClassSymbol = findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
+    fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> = findProperties(Name.identifier(name), packageName)
+    inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
+        val elements = topLevelProperties(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition"}
+        require(elements.size == 1) { "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
+        return elements.single()
+    }
+    fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> = findFunctions(Name.identifier(name), packageName)
+    inline fun topLevelFunction(packageName: FqName, name: String, condition: (IrFunctionSymbol) -> Boolean = { true }): IrSimpleFunctionSymbol {
+        val elements = topLevelFunctions(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition"}
+        require(elements.size == 1) { "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
+        return elements.single()
+    }
+
+    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+    // KT-73194: Consider moving here also functions from SymbolLookupUtils
 
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 

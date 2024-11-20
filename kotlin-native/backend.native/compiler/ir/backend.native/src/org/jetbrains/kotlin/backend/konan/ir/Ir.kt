@@ -23,13 +23,10 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import kotlin.IllegalArgumentException
-import kotlin.NoSuchElementException
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -43,7 +40,6 @@ internal interface SymbolLookupUtils {
     fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
     fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
     fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol?
-    fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
 
     fun getName(clazz: IrClassSymbol): Name
     fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean
@@ -142,10 +138,10 @@ internal class KonanSymbols(
         }
     }.toMap()
 
-    val symbolName = topLevelClass(RuntimeNames.symbolNameAnnotation)
-    val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
-    val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
-    val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
+    val symbolName = irBuiltIns.topLevelClass(RuntimeNames.symbolNameAnnotation)
+    val filterExceptions = irBuiltIns.topLevelClass(RuntimeNames.filterExceptions)
+    val exportForCppRuntime = irBuiltIns.topLevelClass(RuntimeNames.exportForCppRuntime)
+    val typedIntrinsic = irBuiltIns.topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
 
     val objCMethodImp = interopClass(InteropFqNames.objCMethodImpName)
 
@@ -269,8 +265,8 @@ internal class KonanSymbols(
 
     val immutableBlob = nativeClass("ImmutableBlob")
 
-    val executeImpl = topLevelFunction(KonanFqNames.packageName.child(Name.identifier("concurrent")), "executeImpl")
-    val createCleaner = topLevelFunction(KonanFqNames.packageName.child(Name.identifier("ref")), "createCleaner")
+    val executeImpl = irBuiltIns.topLevelFunction(KonanFqNames.packageName.child(Name.identifier("concurrent")), "executeImpl")
+    val createCleaner = irBuiltIns.topLevelFunction(KonanFqNames.packageName.child(Name.identifier("ref")), "createCleaner")
 
     // TODO: this is strange. It should be a map from IrClassSymbol
     val areEqualByValue = internalFunctions("areEqualByValue").associateBy {
@@ -309,13 +305,13 @@ internal class KonanSymbols(
 
     override val throwUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
 
-    override val stringBuilder = topLevelClass(StandardNames.TEXT_PACKAGE_FQ_NAME, "StringBuilder")
+    override val stringBuilder = irBuiltIns.topLevelClass(StandardNames.TEXT_PACKAGE_FQ_NAME, "StringBuilder")
 
     override val defaultConstructorMarker = internalClass("DefaultConstructorMarker")
 
     private fun arrayToExtensionSymbolMap(name: String, filter: (IrFunctionSymbol) -> Boolean = { true }) =
             arrays.associateWith { classSymbol ->
-                topLevelFunction(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, name) { function ->
+                irBuiltIns.topLevelFunction(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, name) { function ->
                     lookup.isExtensionReceiverClass(function, classSymbol) && !lookup.isExpect(function) && filter(function)
                 }
             }
@@ -345,11 +341,11 @@ internal class KonanSymbols(
 
     val valueOfForEnum = internalFunction("valueOfForEnum")
 
-    val createEnumEntries = topLevelFunction(FqName("kotlin.enums"), "enumEntries") {
+    val createEnumEntries = irBuiltIns.topLevelFunction(FqName("kotlin.enums"), "enumEntries") {
         lookup.getValueParametersCount(it) == 1 && lookup.isValueParameterClass(it, 0, array)
     }
 
-    val enumEntriesInterface = topLevelClass(FqName("kotlin.enums"), "EnumEntries")
+    val enumEntriesInterface = irBuiltIns.topLevelClass(FqName("kotlin.enums"), "EnumEntries")
 
     val createUninitializedInstance = internalFunction("createUninitializedInstance")
 
@@ -359,13 +355,13 @@ internal class KonanSymbols(
 
     val isSubtype = internalFunction("isSubtype")
 
-    val println = topLevelFunction(FqName("kotlin.io"), "println") {
+    val println = irBuiltIns.topLevelFunction(FqName("kotlin.io"), "println") {
         lookup.getValueParametersCount(it) == 1 && lookup.isValueParameterClass(it, 0, string)
     }
 
     override val getContinuation = internalFunction("getContinuation")
 
-    override val continuationClass = topLevelClass(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "Continuation")
+    override val continuationClass = irBuiltIns.topLevelClass(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "Continuation")
 
     override val returnIfSuspended = internalFunction("returnIfSuspended")
 
@@ -392,11 +388,11 @@ internal class KonanSymbols(
     val saveCoroutineState = internalFunction("saveCoroutineState")
     val restoreCoroutineState = internalFunction("restoreCoroutineState")
 
-    val cancellationException = topLevelClass(KonanFqNames.cancellationException)
+    val cancellationException = irBuiltIns.topLevelClass(KonanFqNames.cancellationException)
 
-    val kotlinResult = topLevelClass(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
+    val kotlinResult = irBuiltIns.topLevelClass(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
 
-    val kotlinResultGetOrThrow = topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "getOrThrow") {
+    val kotlinResultGetOrThrow = irBuiltIns.topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "getOrThrow") {
         lookup.isExtensionReceiverClass(it, kotlinResult)
     }
 
@@ -426,7 +422,7 @@ internal class KonanSymbols(
     val kClassImpl = internalClass("KClassImpl")
     val kClassImplConstructor = lookup.findPrimaryConstructor(kClassImpl)!!
     val kClassImplIntrinsicConstructor = lookup.findNoParametersConstructor(kClassImpl)!!
-    val kObjCClassImpl = topLevelClass(RuntimeNames.kotlinxCInteropInternalPackageName, "ObjectiveCKClassImpl")
+    val kObjCClassImpl = irBuiltIns.topLevelClass(RuntimeNames.kotlinxCInteropInternalPackageName, "ObjectiveCKClassImpl")
     val kObjCClassImplConstructor = lookup.findPrimaryConstructor(kObjCClassImpl)!!
     val kObjCClassImplIntrinsicConstructor = lookup.findNoParametersConstructor(kObjCClassImpl)!!
     val kClassUnsupportedImpl = internalClass("KClassUnsupportedImpl")
@@ -436,71 +432,52 @@ internal class KonanSymbols(
     val kTypeProjectionList = internalClass("KTypeProjectionList")
     val typeOf = reflectionFunction("typeOf")
 
-    val threadLocal = topLevelClass(KonanFqNames.threadLocal)
+    val threadLocal = irBuiltIns.topLevelClass(KonanFqNames.threadLocal)
 
-    val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
+    val eagerInitialization = irBuiltIns.topLevelClass(KonanFqNames.eagerInitialization)
 
-    val noInline = topLevelClass(KonanFqNames.noInline)
+    val noInline = irBuiltIns.topLevelClass(KonanFqNames.noInline)
 
     val enumVarConstructorSymbol = lookup.findPrimaryConstructor(interopClass(InteropFqNames.cEnumVarName))!!
     val primitiveVarPrimaryConstructor = lookup.findPrimaryConstructor(lookup.findNestedClass(interopClass(InteropFqNames.cPrimitiveVarName), Name.identifier(InteropFqNames.TypeName))!!)!!
 
-    val isAssertionThrowingErrorEnabled = topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionThrowingErrorEnabled")
-    val isAssertionArgumentEvaluationEnabled = topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionArgumentEvaluationEnabled")
-
-    private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
-    private fun topLevelClass(packageName: FqName, name: String): IrClassSymbol = irBuiltIns.findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
-
-    private fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> = irBuiltIns.findFunctions(Name.identifier(name), packageName)
-    private inline fun topLevelFunction(packageName: FqName, name: String, condition: (IrFunctionSymbol) -> Boolean = { true }): IrSimpleFunctionSymbol {
-        val elements = topLevelFunctions(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition"}
-        require(elements.size == 1) { "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-
-    private fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> = irBuiltIns.findProperties(Name.identifier(name), packageName)
-    private inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
-        val elements = topLevelProperties(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition"}
-        require(elements.size == 1) { "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
+    val isAssertionThrowingErrorEnabled = irBuiltIns.topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionThrowingErrorEnabled")
+    val isAssertionArgumentEvaluationEnabled = irBuiltIns.topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionArgumentEvaluationEnabled")
 
     private fun findTopLevelPropertyGetter(packageName: FqName, name: String, extensionReceiverClass: IrClassSymbol?) =
             findTopLevelPropertyGetter(packageName, name) { lookup.isExtensionReceiverClass(it, extensionReceiverClass) }
     private fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean) =
-            lookup.findGetter(topLevelProperty(packageName, name, predicate))!!
+            irBuiltIns.findGetter(irBuiltIns.topLevelProperty(packageName, name, predicate))!!
 
-    private fun internalFunctions(name: String) = topLevelFunctions(RuntimeNames.kotlinNativeInternalPackageName, name)
+    private fun internalFunctions(name: String) = irBuiltIns.topLevelFunctions(RuntimeNames.kotlinNativeInternalPackageName, name)
     private inline fun nativeFunction(
             name: String,
             condition: (IrFunctionSymbol) -> Boolean = { true }
-    ) = topLevelFunction(KonanFqNames.packageName, name, condition)
+    ) = irBuiltIns.topLevelFunction(KonanFqNames.packageName, name, condition)
 
     private inline fun internalFunction(
             name: String,
             condition: (IrFunctionSymbol) -> Boolean = { true }
-    ) = topLevelFunction(RuntimeNames.kotlinNativeInternalPackageName, name, condition)
+    ) = irBuiltIns.topLevelFunction(RuntimeNames.kotlinNativeInternalPackageName, name, condition)
 
     private inline fun interopFunction(
             name: String,
             condition: (IrFunctionSymbol) -> Boolean = { true }
-    ) = topLevelFunction(InteropFqNames.packageName, name, condition)
+    ) = irBuiltIns.topLevelFunction(InteropFqNames.packageName, name, condition)
 
     private inline fun reflectionFunction(
             name: String,
             condition: (IrFunctionSymbol) -> Boolean = { true }
-    ) = topLevelFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, name, condition)
+    ) = irBuiltIns.topLevelFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, name, condition)
 
 
-    private fun nativeClass(name: String) = topLevelClass(KonanFqNames.packageName, name)
-    private fun internalClass(name: String) = topLevelClass(RuntimeNames.kotlinNativeInternalPackageName, name)
-    private fun interopClass(name: String) = topLevelClass(InteropFqNames.packageName, name)
-    private fun reflectionClass(name: String) = topLevelClass(StandardNames.KOTLIN_REFLECT_FQ_NAME, name)
+    private fun nativeClass(name: String) = irBuiltIns.topLevelClass(KonanFqNames.packageName, name)
+    private fun internalClass(name: String) = irBuiltIns.topLevelClass(RuntimeNames.kotlinNativeInternalPackageName, name)
+    private fun interopClass(name: String) = irBuiltIns.topLevelClass(InteropFqNames.packageName, name)
+    private fun reflectionClass(name: String) = irBuiltIns.topLevelClass(StandardNames.KOTLIN_REFLECT_FQ_NAME, name)
 
-    private fun internalCoroutinesClass(name: String) = topLevelClass(RuntimeNames.kotlinNativeCoroutinesInternalPackageName, name)
-    private fun konanTestClass(name: String) = topLevelClass(RuntimeNames.kotlinNativeInternalTestPackageName, name)
+    private fun internalCoroutinesClass(name: String) = irBuiltIns.topLevelClass(RuntimeNames.kotlinNativeCoroutinesInternalPackageName, name)
+    private fun konanTestClass(name: String) = irBuiltIns.topLevelClass(RuntimeNames.kotlinNativeInternalTestPackageName, name)
 
     fun kFunctionN(n: Int) = irBuiltIns.kFunctionN(n).symbol
 
@@ -559,8 +536,6 @@ internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : 
     override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
         return function.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
     }
-
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
 
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
         return function.descriptor.extensionReceiverParameter?.type?.isMarkedNullable
@@ -642,8 +617,6 @@ internal class SymbolOverIrLookupUtils() : SymbolLookupUtils {
     override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
         return function.owner.extensionReceiverParameter?.type?.classOrNull == expected
     }
-
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? = property.owner.getter?.symbol
 
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
         return function.owner.extensionReceiverParameter?.type?.isMarkedNullable()

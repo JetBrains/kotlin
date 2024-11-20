@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
@@ -31,24 +28,12 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
     private val context: WasmBackendContext,
-    private val symbolTable: SymbolTable
-) : JsCommonSymbols(context.module, context.irBuiltIns, symbolTable) {
+) : JsCommonSymbols(context.irBuiltIns) {
 
-    private val kotlinTopLevelPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin"))
-    private val enumsInternalPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.enums"))
+    private val enumsInternalPackageFqName = FqName("kotlin.enums")
     private val wasmInternalFqName = FqName("kotlin.wasm.internal")
-    private val wasmInternalPackage: PackageViewDescriptor =
-        context.module.getPackage(wasmInternalFqName)
-    private val kotlinJsPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.js"))
-    private val collectionsPackage: PackageViewDescriptor =
-        context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
-    private val builtInsPackage: PackageViewDescriptor =
-        context.module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
-    private val kotlinTestPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.test"))
+    private val kotlinJsPackageFqName = FqName("kotlin.js")
+    private val kotlinTestPackageFqName = FqName("kotlin.test")
 
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = getInternalFunction("createKType")
@@ -71,8 +56,9 @@ class WasmSymbols(
 
     internal val eagerInitialization: IrClassSymbol = getIrClass(FqName("kotlin.EagerInitialization"))
 
-    internal val isNotFirstWasmExportCall: IrPropertySymbol = symbolTable.descriptorExtension.referenceProperty(
-        getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
+    internal val isNotFirstWasmExportCall: IrPropertySymbol = irBuiltIns.topLevelProperty(
+        FqName.fromSegments(listOf("kotlin", "wasm", "internal")),
+        "isNotFirstWasmExportCall"
     )
 
     internal val tryGetAssociatedObject = getInternalFunction("tryGetAssociatedObject")
@@ -100,7 +86,7 @@ class WasmSymbols(
     override val continuationClass =
         coroutineSymbols.continuationClass
     override val coroutineContextGetter =
-        symbolTable.descriptorExtension.referenceSimpleFunction(coroutineSymbols.coroutineContextProperty.getter!!)
+        coroutineSymbols.coroutineContextGetter
     override val suspendCoroutineUninterceptedOrReturn =
         getInternalFunction("suspendCoroutineUninterceptedOrReturn")
     override val coroutineGetContext =
@@ -111,16 +97,16 @@ class WasmSymbols(
     val throwLinkageError = getInternalFunction("throwLinkageError")
 
     val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
-    val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
-        .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
+    val createEnumEntries = irBuiltIns.topLevelFunctions(enumsInternalPackageFqName, "enumEntries")
+        .find { it.descriptor.valueParameters.firstOrNull()?.type?.isFunctionType == false }!!
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
     val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
     val enumEntriesIntrinsic = getEnumsFunction("enumEntriesIntrinsic")
 
-    val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.descriptorExtension.referenceProperty(
-        getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
+    val coroutineEmptyContinuation: IrPropertySymbol = irBuiltIns.topLevelProperty(
+        FqName.fromSegments(listOf("kotlin", "wasm", "internal")),
+        "EmptyContinuation"
     )
 
     override val functionAdapter = getInternalClass("FunctionAdapter")
@@ -228,11 +214,11 @@ class WasmSymbols(
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
-    val stringGetLiteral = getFunction("stringLiteral", builtInsPackage)
+    val stringGetLiteral = getFunction("stringLiteral", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
 
-    val testFun = maybeGetFunction("test", kotlinTestPackage)
-    val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
+    val testFun = maybeGetFunction("test", kotlinTestPackageFqName)
+    val suiteFun = maybeGetFunction("suite", kotlinTestPackageFqName)
 
     val wasmTypeId = getInternalFunction("wasmTypeId")
 
@@ -264,16 +250,13 @@ class WasmSymbols(
     val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
     val kMutableProperty2: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty2"))
 
-    val arraysCopyInto = findFunctions(collectionsPackage.memberScope, Name.identifier("copyInto"))
-        .map { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+    val arraysCopyInto = irBuiltIns.topLevelFunctions(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "copyInto")
 
     private val contentToString: List<IrSimpleFunctionSymbol> =
-        findFunctions(collectionsPackage.memberScope, Name.identifier("contentToString"))
-            .map { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+        irBuiltIns.topLevelFunctions(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "contentToString").toList()
 
     private val contentHashCode: List<IrSimpleFunctionSymbol> =
-        findFunctions(collectionsPackage.memberScope, Name.identifier("contentHashCode"))
-            .map { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+        irBuiltIns.topLevelFunctions(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "contentHashCode").toList()
 
     private fun findNullableOverloadForReceiver(arrayType: IrType, overloadsList: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol =
         overloadsList.first {
@@ -367,7 +350,7 @@ class WasmSymbols(
         private val jsFunClass = getIrClass(FqName("kotlin.JsFun"))
         val jsFunConstructor by lazy { jsFunClass.constructors.single() }
 
-        val jsCode = getFunction("js", kotlinJsPackage)
+        val jsCode = getFunction("js", kotlinJsPackageFqName)
 
         val jsReferenceClass by lazy { getIrClass(FqName("kotlin.js.JsReference")) }
 
@@ -413,38 +396,22 @@ class WasmSymbols(
 
     val invokeOnExportedFunctionExit get() = invokeOnExportedFunctionExitIfWasi ?: error("Cannot access to wasi related std in js mode")
 
-    private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor? =
-        memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
-
-    private fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
-        memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
-
     private fun findProperty(memberScope: MemberScope, name: Name): List<PropertyDescriptor> =
         memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).toList()
 
-    internal fun getClass(fqName: FqName): ClassDescriptor? =
-        findClass(context.module.getPackage(fqName.parent()).memberScope, fqName.shortName())
-
-    internal fun getProperty(fqName: FqName): PropertyDescriptor =
-        findProperty(context.module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
-
-    private fun getFunction(name: String, ownerPackage: PackageViewDescriptor): IrSimpleFunctionSymbol {
+    private fun getFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol {
         return maybeGetFunction(name, ownerPackage) ?: throw IllegalArgumentException("Function $name not found")
     }
 
-    private fun maybeGetFunction(name: String, ownerPackage: PackageViewDescriptor): IrSimpleFunctionSymbol? {
-        val tmp = findFunctions(ownerPackage.memberScope, Name.identifier(name))
-        if (tmp.isEmpty())
-            return null
-        return symbolTable.descriptorExtension.referenceSimpleFunction(tmp.single())
+    private fun maybeGetFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol? {
+        return irBuiltIns.topLevelFunctions(ownerPackage, name).singleOrNull()
     }
 
-    private fun getInternalFunction(name: String): IrSimpleFunctionSymbol = getFunction(name, wasmInternalPackage)
+    private fun getInternalFunction(name: String): IrSimpleFunctionSymbol = getFunction(name, wasmInternalFqName)
 
-    private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackage)
+    private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackageFqName)
 
-    private fun getIrClassOrNull(fqName: FqName): IrClassSymbol? =
-        getClass(fqName)?.let { symbolTable.descriptorExtension.referenceClass(it) }
+    private fun getIrClassOrNull(fqName: FqName): IrClassSymbol? = irBuiltIns.findClass(fqName.shortName(), fqName.parent())
 
     private fun getIrClass(fqName: FqName): IrClassSymbol =
         getIrClassOrNull(fqName)
