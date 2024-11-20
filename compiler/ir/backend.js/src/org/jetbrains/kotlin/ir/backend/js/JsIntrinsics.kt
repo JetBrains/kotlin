@@ -178,12 +178,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // Coroutines
 
-    val jsCoroutineContext
-        get() = context.ir.symbols.coroutineContextGetter
-
     val jsYieldFunctionSymbol = getInternalFunction("jsYield")
 
-    val jsGetContinuation = getInternalFunction("getContinuation")
     val jsInvokeSuspendSuperType =
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperType")
     val jsInvokeSuspendSuperTypeWithReceiver =
@@ -261,18 +257,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsArguments = getInternalFunction("jsArguments")
 
-    val returnIfSuspended = getInternalFunction("returnIfSuspended")
-    val getContinuation = getInternalFunction("getContinuation")
-
     val jsEnsureNonNull = getFunctionInKotlinPackage("ensureNotNull")
 
     // Arrays:
     val array get() = irBuiltIns.arrayClass
 
     val primitiveArrays get() = irBuiltIns.primitiveArraysToPrimitiveTypes
-
-    val jsArray = getInternalFunction("arrayWithFun")
-    val jsFillArray = getInternalFunction("fillArrayFun")
 
     val jsArrayLength = getInternalFunction("jsArrayLength")
     val jsArrayGet = getInternalFunction("jsArrayGet")
