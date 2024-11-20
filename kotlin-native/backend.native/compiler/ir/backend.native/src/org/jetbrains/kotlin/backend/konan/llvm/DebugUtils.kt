@@ -72,7 +72,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
                 // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
                 // clashing, which happens on linking with libraries produced from intercepting sources.
                 File = path.path(),
-                dir = "",
+                dir = config.configuration.get(BinaryOptions.debugCompilationDir) ?: "",
                 producer = DWARF.producer,
                 isOptimized = 0,
                 flags = "",
