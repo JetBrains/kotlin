@@ -453,6 +453,7 @@
 /kotlin-native/tools/degrade/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/tools/performance-server/**/*.gradle "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/tools/performance-server/**/*.gradle.kts "Kotlin Native" "Kotlin Performance QA"
+/native/swift/swift-export-embeddable/**/*.gradle.kts "Kotlin Build Tools"
 .gitignore "Kotlin Build Infrastructure"
 gradlew "Kotlin Build Infrastructure"
 gradlew.bat "Kotlin Build Infrastructure"
