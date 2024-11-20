@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
@@ -45,7 +45,7 @@ fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == Lowere
  * `foo(::smth)` is transformed to `foo { a -> smth(a) }`.
  */
 abstract class InlineCallableReferenceToLambdaPhase(
-    val context: CommonBackendContext,
+    val context: LoweringContext,
     protected val inlineFunctionResolver: InlineFunctionResolver,
 ) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {
     override fun lower(irFile: IrFile) {

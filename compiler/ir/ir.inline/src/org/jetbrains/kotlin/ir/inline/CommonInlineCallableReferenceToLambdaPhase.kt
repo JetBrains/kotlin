@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.util.isInlineParameter
 /**
  * Transforms all callable references (including defaults) to inline lambdas, marks inline lambdas for later passes.
  */
-abstract class CommonInlineCallableReferenceToLambdaPhase(
-    context: CommonBackendContext,
+open class CommonInlineCallableReferenceToLambdaPhase(
+    context: LoweringContext,
     inlineFunctionResolver: InlineFunctionResolver
 ) : InlineCallableReferenceToLambdaPhase(context, inlineFunctionResolver) {
     fun lower(function: IrFunction) = function.accept(this, function.parent)
