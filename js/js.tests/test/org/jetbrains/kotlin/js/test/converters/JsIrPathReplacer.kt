@@ -40,10 +40,10 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
     private fun IrAnnotationContainer.replaceJsModulePath() {
         val jsModuleAnnotation = getAnnotation(JsAnnotations.jsModuleFqn) ?: return
 
-        val stringLiteral = jsModuleAnnotation.getValueArgument(0) as IrConst
+        val stringLiteral = jsModuleAnnotation.arguments[0] as IrConst
         val pathReplacement = stringLiteral.getReplacement() ?: return
 
-        jsModuleAnnotation.putValueArgument(0, pathReplacement)
+        jsModuleAnnotation.arguments[0] = pathReplacement
     }
 
     private fun IrConst.getReplacement(): IrConst? {
