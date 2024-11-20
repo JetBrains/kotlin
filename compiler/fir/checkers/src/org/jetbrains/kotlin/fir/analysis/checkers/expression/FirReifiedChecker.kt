@@ -57,10 +57,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
                     context,
-                    reporter
+                    reporter,
+                    fullyExpandedType = typeArgument,
                 )
             } else if (
-                varargTypeParameter == typeParameter && isTypeArgumentVisibilityBroken(context, typeArgument) && (!isExplicit || isPlaceHolder)) {
+                varargTypeParameter == typeParameter && isTypeArgumentVisibilityBroken(context, typeArgument) && (!isExplicit || isPlaceHolder)
+            ) {
                 reporter.reportOn(
                     source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter, context
                 )
@@ -89,8 +91,8 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isPlaceHolder: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter,
+        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(context.session),
     ) {
-        val fullyExpandedType = typeArgument.fullyExpandedType(context.session)
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
             // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
