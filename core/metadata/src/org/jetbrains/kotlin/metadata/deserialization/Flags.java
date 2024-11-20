@@ -23,10 +23,15 @@ public class Flags {
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
     public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
 
-    // Class
-
+    // Class-like declarations
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
+    // The `IS_INNER` starts working with type aliases, and it becomes relevant for class-like declarations.
+    // However, we have to use dependency on `CLASS_KIND` to preserve back-compatibility for classes.
+    // This flag should work fine for type aliases since there are no other flags for them.
+    // For type aliases, we can treat `MODALITY` as always `FINAL` and `CLASS_KIND` as always `TYPEALIAS` (nonexistent)
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
+
+    // Class
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
     public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
     public static final BooleanFlagField IS_EXPECT_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
@@ -226,9 +231,10 @@ public class Flags {
                 ;
     }
 
-    public static int getTypeAliasFlags(boolean hasAnnotations, ProtoBuf.Visibility visibility) {
+    public static int getTypeAliasFlags(boolean hasAnnotations, ProtoBuf.Visibility visibility, boolean isInner) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
+               | IS_INNER.toFlags(isInner)
                 ;
     }
 

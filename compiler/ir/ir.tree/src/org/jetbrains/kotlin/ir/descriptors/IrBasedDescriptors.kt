@@ -960,7 +960,7 @@ open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDe
 
     override fun getOriginal(): TypeAliasDescriptor = this
 
-    override fun isInner(): Boolean = false
+    override fun isInner(): Boolean = owner.isInner
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = owner.typeParameters.memoryOptimizedMap { it.toIrBasedDescriptor() }
 

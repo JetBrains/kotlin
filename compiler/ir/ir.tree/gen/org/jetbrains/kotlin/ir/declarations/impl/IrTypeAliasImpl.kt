@@ -29,6 +29,7 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override var visibility: DescriptorVisibility,
     override val symbol: IrTypeAliasSymbol,
     override var isActual: Boolean,
+    override var isInner: Boolean,
     override var expandedType: IrType,
 ) : IrTypeAlias() {
     override var annotations: List<IrConstructorCall> = emptyList()

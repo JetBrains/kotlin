@@ -283,6 +283,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             visibility = c.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
             symbol = symbol,
             isActual = typeAlias.isActual,
+            isInner = typeAlias.isInner,
             expandedType = typeAlias.expandedTypeRef.toIrType(c),
         ).apply {
             this.parent = parent

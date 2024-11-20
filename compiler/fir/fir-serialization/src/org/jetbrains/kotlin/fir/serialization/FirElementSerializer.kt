@@ -740,7 +740,8 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getTypeAliasFlags(
             typeAlias.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(typeAlias),
-            ProtoEnumFlags.visibility(normalizeVisibility(typeAlias))
+            ProtoEnumFlags.visibility(normalizeVisibility(typeAlias)),
+            typeAlias.isInner,
         )
         if (flags != builder.flags) {
             builder.flags = flags

@@ -475,7 +475,7 @@ object IrTree : AbstractTreeBuilder() {
     val moduleFragment: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         +descriptor("ModuleDescriptor").apply {
             optInAnnotation = null
         }
@@ -559,6 +559,7 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("TypeAliasDescriptor")
         +declaredSymbol(typeAliasSymbol)
         +field("isActual", boolean)
+        +field("isInner", boolean)
         +field("expandedType", irTypeType)
     }
     val variable: Element by element(Declaration) {
@@ -583,7 +584,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 

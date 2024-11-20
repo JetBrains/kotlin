@@ -206,4 +206,6 @@ class DeserializedTypeAliasDescriptor(
     }
 
     override fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor> = typeConstructorParameters
+
+    override fun isInner() = Flags.IS_INNER.get(proto.flags)
 }

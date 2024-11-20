@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -55,6 +56,10 @@ class Fir2IrLazyTypeAlias(
 
     override var isActual: Boolean
         get() = fir.isActual
+        set(_) = mutationNotSupported()
+
+    override var isInner: Boolean
+        get() = fir.isInner
         set(_) = mutationNotSupported()
 
     override var expandedType: IrType by lazyVar(lock) {

@@ -178,12 +178,13 @@ value class TypeAliasFlags(val flags: Long) {
 
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
+    val isInner: Boolean get() = IrFlags.IS_INNER.get(flags.toInt())
 
     companion object {
         fun encode(typeAlias: IrTypeAlias): Long {
             return typeAlias.run {
                 val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual).toLong()
+                IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual, isInner).toLong()
             }
         }
 

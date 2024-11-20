@@ -413,6 +413,7 @@ class IrDeclarationDeserializer(
                         visibility = flags.visibility,
                         symbol = it,
                         isActual = flags.isActual,
+                        isInner = flags.isInner,
                         expandedType = deserializeIrType(nameType.typeIndex),
                     )
                 }

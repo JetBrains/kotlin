@@ -217,6 +217,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             ).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
                 isActual = false
+                isInner = Flags.IS_INNER.get(flags)
             }
 
             annotations += c.annotationDeserializer.loadTypeAliasAnnotations(proto, local.nameResolver)

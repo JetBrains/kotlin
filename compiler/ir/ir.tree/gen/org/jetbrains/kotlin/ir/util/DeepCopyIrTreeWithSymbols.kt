@@ -321,6 +321,7 @@ open class DeepCopyIrTreeWithSymbols(
             visibility = declaration.visibility,
             symbol = symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
             isActual = declaration.isActual,
+            isInner = declaration.isInner,
             expandedType = declaration.expandedType.remapType(),
         ).apply {
             with(factory) { declarationCreated() }

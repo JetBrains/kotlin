@@ -121,6 +121,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             visibility = visibility,
             symbol = symbol,
             isActual = isActual,
+            isInner = isInner,
             expandedType = expandedType.toIrType()
         ).also {
             generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)

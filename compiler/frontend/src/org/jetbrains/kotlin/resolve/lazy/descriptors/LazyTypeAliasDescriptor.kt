@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasInnerModifier
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.NotNullLazyValue
@@ -50,6 +51,7 @@ class LazyTypeAliasDescriptor(
     private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var classDescriptorImpl: NullableLazyValue<ClassDescriptor>
     private val isActual = (source.getPsi() as? KtTypeAlias)?.hasActualModifier() == true
+    private val isInner = (source.getPsi() as? KtTypeAlias)?.hasInnerModifier() == true
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()
@@ -57,6 +59,8 @@ class LazyTypeAliasDescriptor(
     override fun getDefaultType(): SimpleType = defaultTypeImpl()
 
     override fun isActual(): Boolean = isActual
+
+    override fun isInner(): Boolean = isInner
 
     fun initialize(
         declaredTypeParameters: List<TypeParameterDescriptor>,

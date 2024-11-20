@@ -356,6 +356,7 @@ open class IrFactory(
         visibility: DescriptorVisibility,
         symbol: IrTypeAliasSymbol,
         isActual: Boolean,
+        isInner: Boolean,
         expandedType: IrType,
     ): IrTypeAlias =
         IrTypeAliasImpl(
@@ -366,6 +367,7 @@ open class IrFactory(
             visibility = visibility,
             expandedType = expandedType,
             isActual = isActual,
+            isInner = isInner,
             origin = origin,
             factory = this
         ).declarationCreated()

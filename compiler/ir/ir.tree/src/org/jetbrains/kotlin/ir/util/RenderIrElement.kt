@@ -756,7 +756,8 @@ private fun IrValueParameter.renderValueParameterFlags(): String =
 
 private fun IrTypeAlias.renderTypeAliasFlags(): String =
     renderFlagsList(
-        "actual".takeIf { isActual }
+        "actual".takeIf { isActual },
+        "inner".takeIf { isInner },
     )
 
 private fun IrFunction.renderTypeParameters(): String =

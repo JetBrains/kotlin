@@ -110,6 +110,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     visibility = visibility,
                     symbol = symbol,
                     isActual = isActual,
+                    isInner = isInner,
                     expandedType = expandedType.toIrType()
                 )
             }.also {

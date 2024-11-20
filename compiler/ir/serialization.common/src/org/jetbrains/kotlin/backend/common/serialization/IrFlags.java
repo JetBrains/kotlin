@@ -55,10 +55,11 @@ public class IrFlags extends Flags {
                 ;
     }
 
-    public static int getTypeAliasFlags(boolean hasAnnotations, ProtoBuf.Visibility visibility, boolean isActual) {
+    public static int getTypeAliasFlags(boolean hasAnnotations, ProtoBuf.Visibility visibility, boolean isActual, boolean isInner) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
                | IS_ACTUAL.toFlags(isActual)
+               | IS_INNER.toFlags(isInner)
                 ;
     }
 

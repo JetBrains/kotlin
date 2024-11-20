@@ -576,6 +576,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         printVisibility(declaration.visibility)
         p(declaration.isActual, "actual")
+        p(declaration.isInner, "inner")
 
         p.printWithNoIndent("typealias ")
         p.printWithNoIndent(declaration.name.asString())

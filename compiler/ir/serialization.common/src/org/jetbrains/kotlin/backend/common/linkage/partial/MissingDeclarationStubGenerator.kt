@@ -154,6 +154,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
             symbol = symbol,
             isActual = true,
+            isInner = false,
             expandedType = builtIns.nothingType,
         ).setCommonParent()
     }

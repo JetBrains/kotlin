@@ -27,6 +27,8 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
 
     abstract var isActual: Boolean
 
+    abstract var isInner: Boolean
+
     abstract var expandedType: IrType
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

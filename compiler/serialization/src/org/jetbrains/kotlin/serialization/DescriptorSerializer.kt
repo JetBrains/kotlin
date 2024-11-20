@@ -428,7 +428,11 @@ class DescriptorSerializer private constructor(
         val local = createChildSerializer(descriptor)
 
         val flags =
-            Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)))
+            Flags.getTypeAliasFlags(
+                hasAnnotations(descriptor),
+                ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
+                descriptor.isInner,
+            )
         if (flags != builder.flags) {
             builder.flags = flags
         }

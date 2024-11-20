@@ -50,19 +50,6 @@ abstract class AbstractTypeAliasDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitTypeAliasDescriptor(this, data)
 
-    override fun isInner(): Boolean =
-        // NB: it's ok to use underlyingType here, since referenced inner type aliases also capture type parameters.
-        // Using expandedType looks "proper", but in fact will cause a recursion in expandedType resolution,
-        // which will silently produce wrong result.
-        TypeUtils.contains(underlyingType) { type ->
-            !type.isError && run {
-                val constructorDescriptor = type.constructor.declarationDescriptor
-                constructorDescriptor is TypeParameterDescriptor &&
-                        constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
-            }
-        }
-
-
     fun getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
         val classDescriptor = this.classDescriptor ?: return emptyList()
 

@@ -386,7 +386,7 @@ abstract class DeclarationStubGenerator(
             IrLazyTypeAlias(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.visibility, descriptor.isActual,
+                descriptor.name, descriptor.visibility, descriptor.isActual, descriptor.isInner,
                 this, typeTranslator
             ).generateParentDeclaration()
         }
