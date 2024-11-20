@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
-import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
+import org.jetbrains.kotlin.fir.builder.buildPositionalDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
@@ -142,9 +142,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 withPsiEntry("element", element)
             }
 
-            return buildDestructuringVariable(
+            return buildPositionalDestructuringVariable(
                 moduleData = baseModuleData,
-                this,
+                VisitorPositionalDestructuringContext(),
                 container = container,
                 element,
                 isVar = element.isVar,

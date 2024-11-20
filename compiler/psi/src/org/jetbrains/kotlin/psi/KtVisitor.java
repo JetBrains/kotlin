@@ -65,6 +65,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(multiDeclarationEntry, data);
     }
 
+    public R visitNameBasedDestructuringDeclaration(@NotNull KtNameBasedDestructuringDeclaration multiDeclaration, D data) {
+        return visitDeclaration(multiDeclaration, data);
+    }
+
+    public R visitNameBasedDestructuringDeclarationEntry(@NotNull KtNameBasedDestructuringDeclarationEntry multiDeclarationEntry, D data) {
+        return visitNamedDeclaration(multiDeclarationEntry, data);
+    }
+
     public R visitTypeAlias(@NotNull KtTypeAlias typeAlias, D data) {
         return visitNamedDeclaration(typeAlias, data);
     }

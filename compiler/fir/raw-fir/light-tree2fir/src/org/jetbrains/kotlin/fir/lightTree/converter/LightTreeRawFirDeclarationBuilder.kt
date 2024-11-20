@@ -102,6 +102,7 @@ class LightTreeRawFirDeclarationBuilder(
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
                 DESTRUCTURING_DECLARATION -> firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement())
+                NAME_BASED_DESTRUCTURING_DECLARATION -> firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement())
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
@@ -142,7 +143,8 @@ class LightTreeRawFirDeclarationBuilder(
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> container += convertFunctionDeclaration(node)
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
-                DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
+                DESTRUCTURING_DECLARATION -> container += convertPositionalDestructingDeclaration(node).toFirDeclaration(this, baseModuleData)
+                NAME_BASED_DESTRUCTURING_DECLARATION -> container += convertNameBasedDestructingDeclaration(node).toFirDeclaration(this, baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
@@ -922,6 +924,7 @@ class LightTreeRawFirDeclarationBuilder(
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
                 MODIFIER_LIST -> modifierLists += node
                 DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
+                NAME_BASED_DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
             }
         }
 
@@ -1513,17 +1516,17 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDestructuringDeclaration
      */
-    internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
+    internal fun convertPositionalDestructingDeclaration(destructingDeclaration: LighterASTNode): PositionalDestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
-        val entries = mutableListOf<DestructuringEntry>()
+        val entries = mutableListOf<PositionalDestructuringEntry>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> annotations += convertAnnotationList(it)
                 VAR_KEYWORD -> isVar = true
-                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertPositionalDestructingDeclarationEntry(it)
                 // Property delegates should be ignored as they aren't a valid initializers
                 PROPERTY_DELEGATE -> {}
                 else -> if (it.isExpression()) firExpression =
@@ -1531,7 +1534,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
 
-        return DestructuringDeclaration(
+        return PositionalDestructuringDeclaration(
             isVar,
             entries,
             firExpression ?: buildErrorExpression(
@@ -1543,10 +1546,60 @@ class LightTreeRawFirDeclarationBuilder(
         )
     }
 
+    internal fun convertNameBasedDestructingDeclaration(destructingDeclaration: LighterASTNode): NameBasedDestructuringDeclaration {
+        val entries = mutableListOf<NameBasedDestructuringEntry>()
+        val source = destructingDeclaration.toFirSourceElement()
+        var firExpression: FirExpression? = null
+        destructingDeclaration.forEachChildren {
+            when (it.tokenType) {
+                NAME_BASED_DESTRUCTURING_DECLARATION_ENTRY -> entries += convertNameBasedDestructingDeclarationEntry(it)
+                // Property delegates should be ignored as they aren't a valid initializers
+                PROPERTY_DELEGATE -> {}
+                else -> if (it.isExpression()) firExpression =
+                    expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
+            }
+        }
+
+        return NameBasedDestructuringDeclaration(
+            entries,
+            firExpression ?: buildErrorExpression(
+                null,
+                ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+            ),
+            source,
+        )
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): DestructuringEntry {
+    private fun convertNameBasedDestructingDeclarationEntry(entry: LighterASTNode): NameBasedDestructuringEntry {
+        var identifier: String? = null
+        var propertyAccessor: String? = null
+        var firType: FirTypeRef? = null
+        var isVar = false
+        entry.forEachChildren {
+            when (it.tokenType) {
+                VAR_KEYWORD -> isVar = true
+                PROPERTY_ACCESSOR -> propertyAccessor = it.asText
+                IDENTIFIER -> identifier = it.asText
+                TYPE_REFERENCE -> firType = convertType(it)
+            }
+        }
+
+        return NameBasedDestructuringEntry(
+            isVar = isVar,
+            source = entry.toFirSourceElement(),
+            returnTypeRef = firType ?: implicitType,
+            name = identifier.nameAsSafeName(),
+            propertyAccessor = propertyAccessor?.nameAsSafeName() ?: identifier.nameAsSafeName()
+        )
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
+     */
+    private fun convertPositionalDestructingDeclarationEntry(entry: LighterASTNode): PositionalDestructuringEntry {
         val annotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null
         var firType: FirTypeRef? = null
@@ -1564,7 +1617,7 @@ class LightTreeRawFirDeclarationBuilder(
             identifier.nameAsSafeName()
         }
 
-        return DestructuringEntry(
+        return PositionalDestructuringEntry(
             source = entry.toFirSourceElement(),
             returnTypeRef = firType ?: implicitType,
             name = name,
@@ -2568,7 +2621,8 @@ class LightTreeRawFirDeclarationBuilder(
         var identifier: String? = null
         var firType: FirTypeRef? = null
         var firExpression: FirExpression? = null
-        var destructuringDeclaration: DestructuringDeclaration? = null
+        var destructuringDeclaration: PositionalDestructuringDeclaration? = null
+        var nameBasedDestructuringDeclaration: NameBasedDestructuringDeclaration? = null
         valueParameter.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
@@ -2576,7 +2630,8 @@ class LightTreeRawFirDeclarationBuilder(
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.asText
                 TYPE_REFERENCE -> {}
-                DESTRUCTURING_DECLARATION -> destructuringDeclaration = convertDestructingDeclaration(it)
+                NAME_BASED_DESTRUCTURING_DECLARATION -> nameBasedDestructuringDeclaration = convertNameBasedDestructingDeclaration(it)
+                DESTRUCTURING_DECLARATION -> destructuringDeclaration = convertPositionalDestructingDeclaration(it)
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it, "Should have default value")
             }
         }
@@ -2611,7 +2666,8 @@ class LightTreeRawFirDeclarationBuilder(
             name = name,
             defaultValue = firExpression,
             containingDeclarationSymbol = containingDeclarationSymbol,
-            destructuringDeclaration = destructuringDeclaration
+            destructuringDeclaration = destructuringDeclaration,
+            nameBasedDestructuringDeclaration = nameBasedDestructuringDeclaration
         )
     }
 

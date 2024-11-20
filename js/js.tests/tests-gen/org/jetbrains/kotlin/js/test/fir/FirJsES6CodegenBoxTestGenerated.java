@@ -29589,6 +29589,17 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class NameBasedDestructuring {
+    @Test
+    public void testAllFilesPresentInNameBasedDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("es6")

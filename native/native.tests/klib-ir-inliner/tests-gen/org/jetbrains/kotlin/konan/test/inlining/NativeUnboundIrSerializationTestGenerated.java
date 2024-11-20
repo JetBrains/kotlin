@@ -30571,6 +30571,15 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @Tag("klib")
+    public class NameBasedDestructuring {
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("frontend-fir")

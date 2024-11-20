@@ -546,6 +546,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
         }
 
+        IElementType next = lookahead(1);
+        if (at(LPAR) && (next == VAL_KEYWORD || next == VAR_KEYWORD) && declarationParsingMode.destructuringAllowed) {
+            return parseProperty(declarationParsingMode);
+        }
+
         return null;
     }
 
@@ -1479,6 +1484,57 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     public IElementType parseProperty(DeclarationParsingMode mode) {
+        assert (at(VAL_KEYWORD) || at(VAR_KEYWORD) || at(LPAR) && mode.destructuringAllowed);
+        IElementType type = null;
+        if (at(VAL_KEYWORD) || at(VAR_KEYWORD)){
+            type = parseSingleKeywordPropertyPrefix(mode);
+        } else if (at(LPAR)) {
+            type = parseNamedBasedDeclaration();
+        }
+
+        if (mode.accessorsAllowed) {
+            // It's only needed for non-local properties, because in local ones:
+            // "val a = 1; b" must not be an infix call of b on "val ...;"
+
+            myBuilder.enableNewlines();
+            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
+            myBuilder.restoreNewlinesState();
+
+            if (!hasNewLineWithSemicolon) {
+                PropertyComponentKind.Collector alreadyRead = new PropertyComponentKind.Collector();
+                PropertyComponentKind propertyComponentKind = parsePropertyComponent(alreadyRead);
+
+                while (propertyComponentKind != null) {
+                    alreadyRead.collect(propertyComponentKind);
+                    propertyComponentKind = parsePropertyComponent(alreadyRead);
+                }
+
+                if (!atSet(EOL_OR_SEMICOLON_RBRACE_SET)) {
+                    if (getLastToken() != SEMICOLON) {
+                        errorUntil(
+                                "Property getter or setter expected",
+                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+                    }
+                }
+                else {
+                    consumeIf(SEMICOLON);
+                }
+            }
+        }
+
+        return type;
+    }
+
+    /*
+     * singleKeywordPropertyPrefix
+     *   : modifiers ("val" | "var")
+     *       typeParameters?
+     *       (type ".")?
+     *       ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
+     *       typeConstraints
+     *   ;
+     */
+    public IElementType parseSingleKeywordPropertyPrefix(DeclarationParsingMode mode) {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();
 
@@ -1525,40 +1581,61 @@ public class KotlinParsing extends AbstractKotlinParsing {
             error("Expecting property name or receiver type");
             return PROPERTY;
         }
-
         beforeName.drop();
 
-        if (mode.accessorsAllowed) {
-            // It's only needed for non-local properties, because in local ones:
-            // "val a = 1; b" must not be an infix call of b on "val ...;"
+        return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
+    }
 
-            myBuilder.enableNewlines();
-            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
-            myBuilder.restoreNewlinesState();
+    /*
+     * namedBasedDeclaration
+     *   : '('
+     *       namedBasedComponent
+     *       {"," namedBasedComponent}
+     *      ')'
+     *   ;
+     */
+    public IElementType parseNamedBasedDeclaration() {
+        assert (at(LPAR));
 
-            if (!hasNewLineWithSemicolon) {
-                PropertyComponentKind.Collector alreadyRead = new PropertyComponentKind.Collector();
-                PropertyComponentKind propertyComponentKind = parsePropertyComponent(alreadyRead);
+        advance();
 
-                while (propertyComponentKind != null) {
-                    alreadyRead.collect(propertyComponentKind);
-                    propertyComponentKind = parsePropertyComponent(alreadyRead);
-                }
+        while (true){
+            if (!at(VAL_KEYWORD) && !at(VAR_KEYWORD)) break;
+            parseNamedBasedComponent();
+            if(!at(COMMA)) break;
+            advance();
+            if (at(RPAR)) break;
+        }
+        advance();
+        parsePropertyDelegateOrAssignment();
+        return NAME_BASED_DESTRUCTURING_DECLARATION;
+    }
 
-                if (!atSet(EOL_OR_SEMICOLON_RBRACE_SET)) {
-                    if (getLastToken() != SEMICOLON) {
-                        errorUntil(
-                                "Property getter or setter expected",
-                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
-                    }
-                }
-                else {
-                    consumeIf(SEMICOLON);
-                }
-            }
+    /*
+     * namedBasedComponent
+     *   : modifiers ("val" | "var")
+     *       variableDeclaration
+     *       typeConstraints
+     *       "=" simpleIdentifier
+     *   ;
+     */
+    public void parseNamedBasedComponent() {
+        assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
+        PsiBuilder.Marker property = mark();
+        advance();
+        expect(IDENTIFIER, "Expecting a name");
+        if (at(COLON)) {
+            advance(); // COLON
+            parseTypeRef(PROPERTY_NAME_FOLLOW_SET);
         }
 
-        return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
+        if (at(EQ)){
+            advance(); // '='
+            PsiBuilder.Marker propertyAccessor = mark();
+            expect(IDENTIFIER, "Expecting a property accessor");
+            propertyAccessor.done(PROPERTY_ACCESSOR);
+        }
+        property.done(NAME_BASED_DESTRUCTURING_DECLARATION_ENTRY);
     }
 
     private boolean parsePropertyDelegateOrAssignment() {

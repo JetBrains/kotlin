@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -122,8 +124,8 @@ internal fun generateTemporaryVariable(
         extractAnnotationsTo,
     )
 
-internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
+internal fun AbstractRawFirBuilder<*>.generatePositionalDestructuringBlock(
+    c: PositionalDestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
@@ -131,7 +133,7 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
 ): FirBlock {
     return buildBlock {
         source = multiDeclaration.toKtPsiSourceElement()
-        addDestructuringVariables(
+        addPositionalDestructuringVariables(
             statements,
             c,
             moduleData,
@@ -143,23 +145,66 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
     }
 }
 
-internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
+internal fun AbstractRawFirBuilder<*>.addPositionalDestructuringVariables(
     destination: MutableList<in FirVariable>,
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
+    c: PositionalDestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
     forceLocal: Boolean,
-    configure: (FirVariable) -> Unit = {}
+    configure: (FirVariable) -> Unit = {},
 ) {
-    addDestructuringVariables(
+    this@addPositionalDestructuringVariables.addPositionalDestructuringVariables(
         destination,
         c,
         moduleData,
         container,
         multiDeclaration.entries,
         multiDeclaration.isVar,
+        tmpVariable,
+        forceLocal,
+        configure
+    )
+}
+
+internal fun AbstractRawFirBuilder<*>.generateNameBasedDestructuringBlock(
+    c: NameBasedDestructuringContext<KtNameBasedDestructuringDeclarationEntry>,
+    moduleData: FirModuleData,
+    multiDeclaration: KtNameBasedDestructuringDeclaration,
+    container: FirVariable,
+    tmpVariable: Boolean,
+): FirBlock {
+    return buildBlock {
+        source = multiDeclaration.toKtPsiSourceElement()
+        addNameBasedDestructuringVariables(
+            statements,
+            c,
+            moduleData,
+            multiDeclaration,
+            container,
+            tmpVariable,
+            forceLocal = false,
+        )
+    }
+}
+
+internal fun AbstractRawFirBuilder<*>.addNameBasedDestructuringVariables(
+    destination: MutableList<in FirVariable>,
+    c: NameBasedDestructuringContext<KtNameBasedDestructuringDeclarationEntry>,
+    moduleData: FirModuleData,
+    multiDeclaration: KtNameBasedDestructuringDeclaration,
+    container: FirVariable,
+    tmpVariable: Boolean,
+    forceLocal: Boolean,
+    configure: (FirVariable) -> Unit = {},
+) {
+    this@addNameBasedDestructuringVariables.addNameBasedDestructuringVariables(
+        destination,
+        c,
+        moduleData,
+        container,
+        multiDeclaration.entries,
         tmpVariable,
         forceLocal,
         configure

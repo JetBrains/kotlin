@@ -28977,6 +28977,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class NameBasedDestructuring {
+    @Test
+    public void testAllFilesPresentInNameBasedDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")

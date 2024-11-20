@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
+import org.jetbrains.kotlin.fir.lightTree.fir.addNameBasedDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -142,8 +143,10 @@ class LightTreeRawFirExpressionBuilder(
 
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
             FUN -> declarationBuilder.convertFunctionDeclaration(expression)
-            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
-                .toFirDestructingDeclaration(this, baseModuleData)
+            DESTRUCTURING_DECLARATION -> declarationBuilder.convertPositionalDestructingDeclaration(expression)
+                .toFirDeclaration(this, baseModuleData)
+            NAME_BASED_DESTRUCTURING_DECLARATION -> declarationBuilder.convertNameBasedDestructingDeclaration(expression)
+                .toFirDeclaration(this, baseModuleData)
             else -> buildErrorExpression(
                 expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
                 ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
@@ -195,7 +198,8 @@ class LightTreeRawFirExpressionBuilder(
             val destructuringStatements = mutableListOf<FirStatement>()
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
-                valueParameters += if (multiDeclaration != null) {
+                val nameBasedDestructuring = valueParameter.nameBasedDestructuringDeclaration
+                valueParameters += if (multiDeclaration != null || nameBasedDestructuring != null) {
                     val name = SpecialNames.DESTRUCT
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
@@ -210,19 +214,31 @@ class LightTreeRawFirExpressionBuilder(
                         isNoinline = false
                         isVararg = false
                     }
-                    addDestructuringStatements(
-                        destructuringStatements,
-                        baseModuleData,
-                        multiDeclaration,
-                        multiParameter,
-                        tmpVariable = false,
-                        forceLocal = true,
-                    )
+                    if (multiDeclaration != null) {
+                        addDestructuringStatements(
+                            destructuringStatements,
+                            baseModuleData,
+                            multiDeclaration,
+                            multiParameter,
+                            tmpVariable = false,
+                            forceLocal = true,
+                        )
+                    } else if (nameBasedDestructuring != null) {
+                        addNameBasedDestructuringStatements(
+                            destructuringStatements,
+                            baseModuleData,
+                            nameBasedDestructuring,
+                            multiParameter,
+                            tmpVariable = false,
+                            forceLocal = true,
+                        )
+                    }
                     multiParameter
                 } else {
                     valueParameter.firValueParameter
                 }
             }
+
 
             body = withForcedLocalContext {
                 if (block != null) {
@@ -788,6 +804,8 @@ class LightTreeRawFirExpressionBuilder(
                 }
                 DESTRUCTURING_DECLARATION -> subjectExpression =
                     getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
+                NAME_BASED_DESTRUCTURING_DECLARATION -> subjectExpression =
+                    getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
                 WHEN_ENTRY -> whenEntryNodes += it
                 else -> if (it.isExpression()) subjectExpression =
                     getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
@@ -1204,10 +1222,11 @@ class LightTreeRawFirExpressionBuilder(
                     source = blockNode?.toFirSourceElement()
                     val valueParameter = parameter ?: return@block
                     val multiDeclaration = valueParameter.destructuringDeclaration
+                    val nameBasedMultiDeclaration = valueParameter.nameBasedDestructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
                         valueParameter.source,
-                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
+                        if (multiDeclaration != null || nameBasedMultiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
                         buildFunctionCall {
                             source = rangeSource
                             calleeReference = buildSimpleNamedReference {
@@ -1225,6 +1244,15 @@ class LightTreeRawFirExpressionBuilder(
                             statements,
                             baseModuleData,
                             multiDeclaration,
+                            firLoopParameter,
+                            tmpVariable = true,
+                            forceLocal = true,
+                        )
+                    } else if (nameBasedMultiDeclaration != null) {
+                        addNameBasedDestructuringStatements(
+                            statements,
+                            baseModuleData,
+                            nameBasedMultiDeclaration,
                             firLoopParameter,
                             tmpVariable = true,
                             forceLocal = true,

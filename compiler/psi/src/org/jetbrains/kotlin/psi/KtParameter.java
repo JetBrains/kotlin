@@ -128,6 +128,14 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtNodeTypes.DESTRUCTURING_DECLARATION);
     }
 
+    @Nullable
+    public KtNameBasedDestructuringDeclaration getNameBasedDestructuringDeclaration() {
+        // No destructuring declaration in stubs
+        if (getStub() != null) return null;
+
+        return findChildByType(KtNodeTypes.NAME_BASED_DESTRUCTURING_DECLARATION);
+    }
+
     public static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD);
 
     @Override

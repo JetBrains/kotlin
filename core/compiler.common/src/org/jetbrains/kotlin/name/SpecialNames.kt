@@ -56,6 +56,9 @@ object SpecialNames {
     val DESTRUCT = Name.special("<destruct>")
 
     @JvmField
+    val NAME_BASED_DESTRUCT = Name.special("<name based destruct>")
+
+    @JvmField
     val LOCAL = Name.special("<local>")
 
     @JvmField

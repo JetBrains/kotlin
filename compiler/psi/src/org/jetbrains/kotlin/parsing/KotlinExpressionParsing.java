@@ -135,7 +135,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             TokenSet.create(
                     // declaration
                     FUN_KEYWORD,
-                    VAL_KEYWORD, VAR_KEYWORD,
+                    VAL_KEYWORD, VAR_KEYWORD, LBRACE,
                     INTERFACE_KEYWORD,
                     CLASS_KEYWORD,
                     TYPE_ALIAS_KEYWORD
@@ -1287,6 +1287,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker parameterList = mark();
 
         while (!eof()) {
+            IElementType next = lookahead(1);
             if (at(ARROW)) {
                 break;
             }
@@ -1294,6 +1295,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             if (at(COLON)) {
                 error("Expecting parameter name");
+            }
+            else if (at(LPAR) && (next == VAL_KEYWORD || next == VAR_KEYWORD)) {
+                PsiBuilder.Marker destructuringDeclaration = mark();
+                myKotlinParsing.parseNamedBasedDeclaration();
+                destructuringDeclaration.done(NAME_BASED_DESTRUCTURING_DECLARATION);
             }
             else if (at(LPAR)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
@@ -1515,6 +1521,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             myBuilder.disableNewlines();
 
             if (!at(RPAR)) {
+                IElementType next = lookahead(1);
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
@@ -1523,7 +1530,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
 
-                if (at(LPAR)) {
+                if (at(LPAR) && (next == VAL_KEYWORD || next == VAR_KEYWORD)) {
+                    PsiBuilder.Marker destructuringDeclaration = mark();
+                    myKotlinParsing.parseNamedBasedDeclaration();
+                    destructuringDeclaration.done(NAME_BASED_DESTRUCTURING_DECLARATION);
+                } else if (at(LPAR)) {
                     PsiBuilder.Marker destructuringDeclaration = mark();
                     myKotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET);
                     destructuringDeclaration.done(DESTRUCTURING_DECLARATION);

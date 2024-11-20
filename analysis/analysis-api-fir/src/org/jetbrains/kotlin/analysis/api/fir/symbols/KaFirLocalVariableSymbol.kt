@@ -115,7 +115,9 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
                 is KtProperty -> backingPsi.nameAsSafeName
                 is KtParameter -> backingPsi.parameterName
                 is KtDestructuringDeclaration -> SpecialNames.DESTRUCT
+                is KtNameBasedDestructuringDeclaration -> SpecialNames.DESTRUCT
                 is KtDestructuringDeclarationEntry -> backingPsi.entryName
+                is KtNameBasedDestructuringDeclarationEntry -> backingPsi.nameAsSafeName
                 else -> errorWithFirSpecificEntries("Unexpected PSI ${backingPsi::class.simpleName}", fir = firSymbol.fir)
             }
         }

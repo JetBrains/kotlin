@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
-import org.jetbrains.kotlin.fir.builder.DestructuringContext
-import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
-import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
+import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -24,14 +21,14 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-data class DestructuringDeclaration(
+data class PositionalDestructuringDeclaration(
     val isVar: Boolean,
-    val entries: List<DestructuringEntry>,
+    val entries: List<PositionalDestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
     val annotations: List<FirAnnotation>,
 ) {
-    fun toFirDestructingDeclaration(
+    fun toFirDeclaration(
         builder: AbstractRawFirBuilder<*>,
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
@@ -44,12 +41,12 @@ data class DestructuringDeclaration(
             extractedAnnotations = annotations
         )
         return buildBlock {
-            source = this@DestructuringDeclaration.source
+            source = this@PositionalDestructuringDeclaration.source
             with(builder) {
                 addDestructuringStatements(
                     statements,
                     moduleData,
-                    this@DestructuringDeclaration,
+                    this@PositionalDestructuringDeclaration,
                     baseVariable,
                     tmpVariable,
                     forceLocal = false
@@ -59,18 +56,21 @@ data class DestructuringDeclaration(
     }
 }
 
-class DestructuringEntry(
+class PositionalDestructuringEntry(
     val source: KtSourceElement,
     val returnTypeRef: FirTypeRef,
     val name: Name,
     val annotations: List<FirAnnotationCall>,
 ) {
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-    companion object : DestructuringContext<DestructuringEntry> {
-        override val DestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
-        override val DestructuringEntry.name: Name get() = name
-        override val DestructuringEntry.source: KtSourceElement get() = source
-        override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>) {
+    companion object : PositionalDestructuringContext<PositionalDestructuringEntry> {
+        override val PositionalDestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
+        override val PositionalDestructuringEntry.name: Name get() = name
+        override val PositionalDestructuringEntry.source: KtSourceElement get() = source
+        override fun PositionalDestructuringEntry.extractAnnotationsTo(
+            target: FirAnnotationContainerBuilder,
+            containerSymbol: FirBasedSymbol<*>,
+        ) {
             target.annotations += annotations.map {
                 buildAnnotationCallCopy(it) {
                     containingDeclarationSymbol = containerSymbol
@@ -83,15 +83,15 @@ class DestructuringEntry(
 fun AbstractRawFirBuilder<*>.addDestructuringStatements(
     destination: MutableList<FirStatement>,
     moduleData: FirModuleData,
-    multiDeclaration: DestructuringDeclaration,
+    multiDeclaration: PositionalDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
     forceLocal: Boolean
 
 ) {
-    addDestructuringVariables(
+    addPositionalDestructuringVariables(
         destination,
-        DestructuringEntry,
+        PositionalDestructuringEntry,
         moduleData,
         container,
         multiDeclaration.entries,
