@@ -115,12 +115,15 @@ idea {
                 ".idea",
                 ".husky",
                 ".kotlin",
+                "dokka-integration-tests/.kotlin",
                 "dokka-runners/dokka-gradle-plugin/.kotlin",
                 "dokka-runners/runner-cli/.kotlin",
                 "dokka-runners/runner-maven-plugin/.kotlin",
                 "dokka-runners/dokka-gradle-plugin/src/testFunctional/resources/KotlinDslAccessorsTest/",
 
                 "dokka-integration-tests/gradle/src/testExampleProjects/expectedData",
+                "dokka-integration-tests/gradle/projects/it-android/expectedData",
+                "dokka-integration-tests/gradle/projects/it-android-compose/expectedData",
             )
         )
     }
