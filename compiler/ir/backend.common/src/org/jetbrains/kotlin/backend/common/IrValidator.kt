@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.checkers.EXCLUDED_MODULE_NAMES
+import org.jetbrains.kotlin.backend.common.checkers.context.*
+import org.jetbrains.kotlin.backend.common.checkers.declaration.*
+import org.jetbrains.kotlin.backend.common.checkers.expression.*
+import org.jetbrains.kotlin.backend.common.checkers.type.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -12,13 +17,23 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
+import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -54,49 +69,133 @@ fun interface InlineFunctionUseSiteChecker {
     fun isPermitted(inlineFunctionUseSite: IrMemberAccessExpression<IrFunctionSymbol>): Boolean
 }
 
+// TODO: merge `FileIrValidator` and `CheckIrElementVisitor` (KT-73248)
 private class IrValidator(
-    irBuiltIns: IrBuiltIns,
+    val irBuiltIns: IrBuiltIns,
     val config: IrValidatorConfig,
-    val reportError: ReportIrValidationError
+    val reportError: ReportIrValidationError,
 ) : IrElementVisitorVoid {
 
     var currentFile: IrFile? = null
     private val parentChain = mutableListOf<IrElement>()
 
+    private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)
+
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
-        super.visitFile(declaration)
-        if (config.checkValueScopes) {
-            IrValueScopeValidator(this::error, parentChain).check(declaration)
-        }
-        if (config.checkTypeParameterScopes) {
-            IrTypeParameterScopeValidator(this::error, parentChain).check(declaration)
-        }
-        if (config.checkCrossFileFieldUsage || config.checkAllKotlinFieldsArePrivate) {
-            declaration.acceptVoid(IrFieldValidator(declaration, config, reportError))
-        }
-        if (config.checkVisibilities) {
-            declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
-        }
-        if (config.checkVarargTypes) {
-            declaration.acceptVoid(IrVarargTypesValidator(elementChecker.irBuiltIns, declaration, config, reportError))
-        }
-        config.checkInlineFunctionUseSites?.let {
-            declaration.acceptVoid(NoInlineFunctionUseSitesValidator(declaration, reportError, it))
-        }
+        declaration.acceptVoid(FileIrValidator(irBuiltIns, declaration, config, reportError))
     }
 
     private fun error(element: IrElement, message: String) {
         reportError(currentFile, element, message, parentChain)
     }
 
-    private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)
-
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)
         parentChain.push(element)
         element.acceptChildrenVoid(this)
         parentChain.pop()
+    }
+}
+
+class FileIrValidator(
+    val irBuiltIns: IrBuiltIns,
+    val file: IrFile,
+    val config: IrValidatorConfig,
+    val reportError: ReportIrValidationError,
+) : IrTypeVisitorVoid() {
+    private val context = CheckerContext(irBuiltIns, file, reportError, config)
+    private val contextUpdaters: MutableList<ContextUpdater> = mutableListOf(ParentChainUpdater)
+
+    private val fieldCheckers: MutableList<IrFieldChecker> = mutableListOf()
+    private val fieldAccessExpressionCheckers: MutableList<IrFieldAccessChecker> = mutableListOf()
+    private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
+    private val declarationReferenceCheckers: MutableList<IrDeclarationReferenceChecker> = mutableListOf()
+    private val varargCheckers: MutableList<IrVarargChecker> = mutableListOf()
+    private val valueParameterCheckers: MutableList<IrValueParameterChecker> = mutableListOf()
+    private val valueAccessCheckers: MutableList<IrValueAccessChecker> = mutableListOf()
+    private val functionAccessCheckers: MutableList<IrFunctionAccessChecker> = mutableListOf(IrNoInlineUseSitesChecker)
+    private val functionReferenceCheckers: MutableList<IrFunctionReferenceChecker> = mutableListOf(IrNoInlineUseSitesChecker)
+
+    init {
+        if (config.checkValueScopes) {
+            contextUpdaters.add(ValueScopeUpdater)
+            valueAccessCheckers.add(IrValueAccessScopeChecker)
+        }
+        if (config.checkTypeParameterScopes) {
+            contextUpdaters.add(TypeParameterScopeUpdater)
+            typeCheckers.add(IrTypeParameterScopeChecker)
+        }
+        if (config.checkAllKotlinFieldsArePrivate) {
+            fieldCheckers.add(IrFieldVisibilityChecker)
+        }
+        if (config.checkCrossFileFieldUsage) {
+            fieldAccessExpressionCheckers.add(IrCrossFileFieldUsageChecker)
+        }
+        if (config.checkVisibilities && file.module.name !in EXCLUDED_MODULE_NAMES) {
+            typeCheckers.add(IrSimpleTypeVisibilityChecker)
+            declarationReferenceCheckers.add(IrDeclarationReferenceVisibilityChecker)
+        }
+        if (config.checkVarargTypes) {
+            varargCheckers.add(IrVarargTypesChecker)
+            valueParameterCheckers.add(IrValueParameterVarargTypesChecker)
+        }
+    }
+
+    private val elementChecker = CheckIrElementVisitor(irBuiltIns, { element, message -> context.error(element, message) }, config)
+
+    override fun visitElement(element: IrElement) {
+        element.acceptVoid(elementChecker)
+        var block = { element.acceptChildrenVoid(this) }
+        for (contextUpdater in contextUpdaters) {
+            val currentBlock = block
+            block = { contextUpdater.runInNewContext(context, element, currentBlock) }
+        }
+        block()
+    }
+
+    override fun visitValueAccess(expression: IrValueAccessExpression) {
+        super.visitValueAccess(expression)
+        valueAccessCheckers.check(expression, context)
+    }
+
+    override fun visitField(declaration: IrField) {
+        super.visitField(declaration)
+        fieldCheckers.check(declaration, context)
+    }
+
+    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+        super.visitFieldAccess(expression)
+        fieldAccessExpressionCheckers.check(expression, context)
+    }
+
+    override fun visitType(container: IrElement, type: IrType) {
+        typeCheckers.check(type, container, context)
+    }
+
+    override fun visitDeclarationReference(expression: IrDeclarationReference) {
+        super.visitDeclarationReference(expression)
+        declarationReferenceCheckers.check(expression, context)
+    }
+
+    override fun visitVararg(expression: IrVararg) {
+        super.visitVararg(expression)
+        varargCheckers.check(expression, context)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter) {
+        super.visitValueParameter(declaration)
+        valueParameterCheckers.check(declaration, context)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        super.visitFunctionReference(expression)
+        functionReferenceCheckers.check(expression, context)
+    }
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+        super.visitFunctionAccess(expression)
+        functionAccessCheckers.check(expression, context)
     }
 }
 
@@ -223,7 +322,7 @@ sealed interface IrValidationContext {
 
 private class IrValidationContextImpl(
     private val messageCollector: MessageCollector,
-    private val mode: IrVerificationMode
+    private val mode: IrVerificationMode,
 ) : IrValidationContext {
 
     override var customMessagePrefix: String? = null

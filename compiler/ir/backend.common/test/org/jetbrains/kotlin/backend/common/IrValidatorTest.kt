@@ -888,7 +888,18 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     """
-                    [IR VALIDATION] IrValidatorTest: The following expression references a value that is not available in the current scope.
+                    [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
+                    FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer>
+                      inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
+                        inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
                     GET_VAR '<this>: org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer' type=org.sample.Outer<T of org.sample.Outer> origin=null
                       inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
@@ -902,18 +913,7 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     """
-                    [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
-                    FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer>
-                      inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
-                        inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
-                          inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
+                    [IR VALIDATION] IrValidatorTest: The following expression references a value that is not available in the current scope.
                     GET_VAR '<this>: org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer' type=org.sample.Outer<T of org.sample.Outer> origin=null
                       inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
