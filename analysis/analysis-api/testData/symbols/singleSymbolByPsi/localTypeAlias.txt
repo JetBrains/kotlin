@@ -1,0 +1,45 @@
+KaTypeAliasSymbol:
+  annotations: []
+  classId: null
+  compilerVisibility: Local
+  expandedType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: A
+          KaTypeParameterType:
+            annotations: []
+            type: B
+        ]
+        type: kotlin/collections/Map<A, B>
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: C
+          KaTypeParameterType:
+            annotations: []
+            type: D
+        ]
+        type: kotlin/collections/Map<C, D>
+    ]
+    type: kotlin/collections/Map<kotlin/collections/Map<A, B>, kotlin/collections/Map<C, D>>
+  isActual: false
+  isExpect: false
+  location: LOCAL
+  modality: FINAL
+  name: MyAlias
+  origin: SOURCE
+  typeParameters: [
+    KaTypeParameterSymbol(C)
+    KaTypeParameterSymbol(D)
+  ]
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(localTypeAlias.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
