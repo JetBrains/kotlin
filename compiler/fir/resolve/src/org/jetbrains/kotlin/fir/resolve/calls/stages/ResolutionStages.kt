@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -300,22 +301,22 @@ object CheckDslScopeViolation : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         fun check(atom: ConeResolutionAtom) {
             val expression = atom.expression
-            val thisReference = expression.toReference(context.session) as? FirThisReference ?: return
-            if (thisReference.isImplicit) {
-                checkImpl(
-                    candidate,
-                    sink,
-                    context,
-                    { getDslMarkersOfImplicitReceiver(thisReference.boundSymbol, expression.resolvedType, context) }
-                ) {
-                    // Here we rely on the fact that receiver expression of implicit receiver value can not be changed
-                    //   during resolution of one single call
-                    it.receiverExpression == expression
-                }
+            val symbol = expression.implicitlyReferencedSymbolOrNull() ?: return
+            checkImpl(
+                candidate,
+                sink,
+                context,
+                { getDslMarkersOfImplicitValue(symbol.containingDeclaration(), expression.resolvedType, context) }
+            ) {
+                // Here we rely on the fact that receiver expression of implicit receiver value cannot be changed
+                //   during resolution of one single call
+                it.computeExpression() == expression
             }
         }
+
         candidate.dispatchReceiver?.let(::check)
         candidate.chosenExtensionReceiver?.let(::check)
+        candidate.contextArguments?.forEach(::check)
 
         // For value of builtin functional type with implicit extension receiver, the receiver is passed as the first argument rather than
         // an extension receiver of the `invoke` call. Hence, we need to specially handle this case.
@@ -350,51 +351,78 @@ object CheckDslScopeViolation : ResolutionStage() {
                 ?.isSomeFunctionType(context.session) == true
             && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
-            val firstArg = candidate.argumentMapping.keys.firstOrNull()?.expression as? FirThisReceiverExpression ?: return
-            if (!firstArg.isImplicit) return
-            checkImpl(
-                candidate,
-                sink,
-                context,
-                { firstArg.getDslMarkersOfExpression(context) }
-            ) { it.boundSymbol == firstArg.calleeReference.boundSymbol }
+            for (atom in candidate.argumentMapping.keys) {
+                val expression = atom.expression
+                val symbol = expression.implicitlyReferencedSymbolOrNull() ?: continue
+                checkImpl(
+                    candidate,
+                    sink,
+                    context,
+                    { expression.getDslMarkersOfExpression(context) }
+                ) { it.boundSymbol == symbol }
+            }
+        }
+    }
+
+    private fun FirExpression.implicitlyReferencedSymbolOrNull(): FirBasedSymbol<*>? {
+        return when (this) {
+            is FirThisReceiverExpression if (isImplicit) -> calleeReference.symbol
+            is FirPropertyAccessExpression if (source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument) -> calleeReference.symbol
+            else -> null
         }
     }
 
     /**
      * Checks whether the implicit receiver (represented as an object of type `T`) violates DSL scope rules.
      */
+    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun checkImpl(
         candidate: Candidate,
         sink: CheckerSink,
         context: ResolutionContext,
         dslMarkersProvider: () -> Set<ClassId>,
-        isImplicitReceiverMatching: (ImplicitReceiverValue<*>) -> Boolean,
+        isImplicitMatching: (ImplicitValue) -> Boolean,
     ) {
-        val implicitReceivers = context.bodyResolveContext.implicitValueStorage.implicitReceivers
-        val resolvedReceiverIndex = implicitReceivers.indexOfFirst { isImplicitReceiverMatching(it) }
-        if (resolvedReceiverIndex == -1) return
-        val closerReceivers = implicitReceivers.drop(resolvedReceiverIndex + 1)
-        if (closerReceivers.isEmpty()) return
-        val dslMarkers = dslMarkersProvider()
-        if (dslMarkers.isEmpty()) return
-        if (closerReceivers.any { receiver -> receiver.getDslMarkersOfImplicitReceiver(context).any { it in dslMarkers } }) {
+        val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
+
+        val (matchingIndex, referenced) = implicitValues.withIndex().firstOrNull { isImplicitMatching(it.value) } ?: return
+        val containingDeclaration = referenced.boundSymbol.containingDeclaration()
+
+        val closerImplicits = implicitValues.drop(matchingIndex + 1).ifEmpty { return }
+        val dslMarkers = dslMarkersProvider().ifEmpty { return }
+
+        if (closerImplicits.any { it.leadsToDslError(containingDeclaration, dslMarkers, context) }) {
             sink.reportDiagnostic(DslScopeViolation(candidate.symbol))
         }
     }
 
-    private fun ImplicitReceiverValue<*>.getDslMarkersOfImplicitReceiver(context: ResolutionContext): Set<ClassId> {
-        return getDslMarkersOfImplicitReceiver(boundSymbol, type, context)
+    private fun ImplicitValue.leadsToDslError(
+        initialContainingDeclaration: FirBasedSymbol<*>,
+        dslMarkers: Set<ClassId>,
+        context: ResolutionContext,
+    ): Boolean {
+        val containingDeclaration = boundSymbol.containingDeclaration()
+        // If a function has a receiver and context parameter, they shouldn't cause DSL errors.
+        // That's why we need to check that the implicit values come from different containing declarations.
+        return containingDeclaration != initialContainingDeclaration &&
+                getDslMarkersOfImplicitValue(containingDeclaration, type, context).any { it in dslMarkers }
     }
 
-    private fun getDslMarkersOfImplicitReceiver(
-        boundSymbol: FirThisOwnerSymbol<*>?,
+    private fun FirBasedSymbol<*>.containingDeclaration(): FirBasedSymbol<*> {
+        return when (this) {
+            is FirReceiverParameterSymbol -> containingDeclarationSymbol
+            is FirValueParameterSymbol -> containingDeclarationSymbol
+            else -> this
+        }
+    }
+
+    private fun getDslMarkersOfImplicitValue(
+        containingDeclarationSymbol: FirBasedSymbol<*>,
         type: ConeKotlinType,
         context: ResolutionContext,
     ): Set<ClassId> {
-        val callableSymbol = (boundSymbol as? FirReceiverParameterSymbol)?.containingDeclarationSymbol
         return buildSet {
-            (callableSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
+            (containingDeclarationSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
                 // collect annotations in the function type at declaration site. For example, the `@A` and `@B` in the following code.
                 // ```
                 // fun <T> body(block: @A ((@B T).() -> Unit)) { ... }
@@ -404,10 +432,12 @@ object CheckDslScopeViolation : ResolutionStage() {
                 collectDslMarkerAnnotations(context, it.customAnnotations)
 
                 // Collect the annotation on the extension receiver, or `@B` in the example above.
-                if (CompilerConeAttributes.ExtensionFunctionType in it.attributes) {
-                    it.typeArguments.firstOrNull()?.type?.let { receiverType ->
-                        collectDslMarkerAnnotations(context, receiverType)
-                    }
+                it.receiverType(context.session)?.let { receiverType ->
+                    collectDslMarkerAnnotations(context, receiverType)
+                }
+
+                it.contextParameterTypes(context.session).forEach { contextType ->
+                    collectDslMarkerAnnotations(context, contextType)
                 }
             }
 

@@ -7519,6 +7519,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("dslMarker.kt")
+      public void testDslMarker() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/dslMarker.kt");
+      }
+
+      @Test
       @TestMetadata("overloadAmbiguity.kt")
       public void testOverloadAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/overloadAmbiguity.kt");
