@@ -6859,6 +6859,24 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("Delegation_DifferentGenerics_Intersection_After.kt")
+      public void testDelegation_DifferentGenerics_Intersection_After() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_Intersection_After.kt");
+      }
+
+      @Test
+      @TestMetadata("Delegation_DifferentGenerics_MultipleDelegation_After.kt")
+      public void testDelegation_DifferentGenerics_MultipleDelegation_After() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_MultipleDelegation_After.kt");
+      }
+
+      @Test
+      @TestMetadata("Delegation_DifferentGenerics_RawType_After.kt")
+      public void testDelegation_DifferentGenerics_RawType_After() {
+        runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_RawType_After.kt");
+      }
+
+      @Test
       @TestMetadata("Delegation_DifferentGenerics_Substitution.kt")
       public void testDelegation_DifferentGenerics_Substitution() {
         runTest("compiler/testData/diagnostics/tests/delegation/Delegation_DifferentGenerics_Substitution.kt");

@@ -91,3 +91,29 @@ class C2(client: KC) : KI by client
 class C3(client: KJC) : JI by client
 
 class C4(client: JKC) : <!IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_ERROR, IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_ERROR, IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_ERROR!>KI<!> by client
+
+class C5(client: JC) : JI by client {
+    override fun <C> foo(): List<C> {
+        return emptyList()
+    }
+
+    override fun <E, F> bar(): List<F> {
+        return emptyList()
+    }
+
+    override fun <D> baz(): D {
+        return null!!
+    }
+}
+
+class C6(client: JKC) : KI by client{
+    override fun <C> foo(): List<C> {
+        return null!!
+    }
+    override fun <E, F> bar(): List<F> {
+        return null!!
+    }
+    override fun <D> baz(): D {
+        return null!!
+    }
+}
