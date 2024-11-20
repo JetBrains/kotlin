@@ -251,31 +251,12 @@ class SwiftExportUnitTests {
 
     @Test
     fun `test swift export exported modules`() {
-        val projects = multiModuleSwiftExportProject(
-            multiplatform = {
-                iosSimulatorArm64()
-
-                compilerOptions {
-                    freeCompilerArgs.add("-opt-in=some.value")
-                }
-            },
-            code = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-            }
-        )
+        val projects = multiModuleSwiftExportProject {
+            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+        }
 
         projects.forEach { it.evaluate() }
         val project = projects.first()
-
-        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
-        val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
-        val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib(
-            SwiftExportConstants.SWIFT_EXPORT_BINARY,
-            buildType
-        )
-
-        assertNotNull(arm64SimLib)
-        assertEquals(arm64SimLib.freeCompilerArgs.single(), "-opt-in=some.value")
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
@@ -484,13 +465,56 @@ class SwiftExportUnitTests {
 
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning)
     }
+
+    @Test
+    fun `test swift export custom settings`() {
+        val customSettings = mapOf("SWIFT_EXPORT_CUSTOM_SETTING" to "CUSTOM_VALUE")
+        val project = swiftExportProject {
+            configure {
+                settings.set(customSettings)
+            }
+        }
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val taskSettings = swiftExportTask.parameters.swiftExportSettings.get()
+
+        assertEquals(taskSettings, customSettings)
+    }
+
+    @Test
+    fun `test swift export custom compiler options`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+
+                compilerOptions {
+                    freeCompilerArgs.add("-opt-in=some.value")
+                }
+            }
+        )
+        project.evaluate()
+
+        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
+        val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
+        val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib(
+            SwiftExportConstants.SWIFT_EXPORT_BINARY,
+            buildType
+        )
+
+        assertNotNull(arm64SimLib)
+        assertEquals(arm64SimLib.freeCompilerArgs.single(), "-opt-in=some.value")
+
+        val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
+        assertEquals(arm64SimLib, linkTask.binary)
+    }
 }
 
 private fun multiModuleSwiftExportProject(
     mainProjectName: String = "shared",
     subprojects: List<String> = listOf("subproject"),
     multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
-    code: SwiftExportExtension.() -> Unit = {},
+    swiftExport: SwiftExportExtension.() -> Unit = {},
 ): List<ProjectInternal> {
     val project = buildProject(
         projectBuilder = {
@@ -503,7 +527,7 @@ private fun multiModuleSwiftExportProject(
     val projectDependencies = subprojects.map { project.subProject(it, multiplatform) }
     project.setupForSwiftExport(multiplatform = multiplatform) {
         projectDependencies.forEach { export(it) }
-        code()
+        swiftExport()
     }
 
     return listOf(project) + projectDependencies
