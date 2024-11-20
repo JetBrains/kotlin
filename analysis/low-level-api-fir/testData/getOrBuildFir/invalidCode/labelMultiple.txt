@@ -1,0 +1,12 @@
+KT element: KtProperty
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] labelMultiple.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        ERROR_EXPR(Multiple labels per statement are forbidden)
+    }

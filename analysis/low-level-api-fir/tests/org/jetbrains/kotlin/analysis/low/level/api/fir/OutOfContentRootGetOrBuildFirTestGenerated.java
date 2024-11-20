@@ -1192,6 +1192,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("labelMultiple.kt")
+    public void testLabelMultiple() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/labelMultiple.kt");
+    }
+
+    @Test
+    @TestMetadata("labelUnderscore.kt")
+    public void testLabelUnderscore() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/labelUnderscore.kt");
+    }
+
+    @Test
     @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
     public void testLongStringTemplateEntryWithTwoExpressions() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
