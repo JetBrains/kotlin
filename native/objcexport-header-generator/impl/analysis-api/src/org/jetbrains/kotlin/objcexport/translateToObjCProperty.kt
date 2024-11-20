@@ -32,7 +32,10 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
     if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
-    if (symbol.setter == null) attributes += "readonly"
+
+    if (symbol.setter == null || !analysisSession.isVisibleInObjC(symbol.setter)) {
+        attributes += "readonly"
+    }
 
     declarationAttributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
 

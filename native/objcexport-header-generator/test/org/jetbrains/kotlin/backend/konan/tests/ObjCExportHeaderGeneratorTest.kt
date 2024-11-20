@@ -594,6 +594,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("extensionsMangling"))
     }
 
+    @Test
+    fun `test - var with private setter translated as immutable property`() {
+        doTest(headersTestDataDir.resolve("varWithPrivateSetterTranslatedAsImmutableProperty"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
