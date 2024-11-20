@@ -14,6 +14,8 @@ fun box(): String {
     flattened.compareSchemas(strict = true)
     flattened.ungroup { f }.compareSchemas(strict = true)
 
+    grouped.flatten(keepParentNameForColumns = true) { f.e }.compareSchemas(strict = true)
+
     grouped.flatten { f.e and f }.compareSchemas(strict = true)
     return "OK"
 }
