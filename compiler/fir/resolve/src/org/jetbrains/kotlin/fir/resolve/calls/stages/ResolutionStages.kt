@@ -298,23 +298,24 @@ object CheckDslScopeViolation : ResolutionStage() {
     private val dslMarkerClassId = ClassId.fromString("kotlin/DslMarker")
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        fun checkReceiver(receiver: FirExpression?) {
-            val thisReference = receiver?.toReference(context.session) as? FirThisReference ?: return
+        fun check(atom: ConeResolutionAtom) {
+            val expression = atom.expression
+            val thisReference = expression.toReference(context.session) as? FirThisReference ?: return
             if (thisReference.isImplicit) {
                 checkImpl(
                     candidate,
                     sink,
                     context,
-                    { getDslMarkersOfImplicitReceiver(thisReference.boundSymbol, receiver.resolvedType, context) }
+                    { getDslMarkersOfImplicitReceiver(thisReference.boundSymbol, expression.resolvedType, context) }
                 ) {
                     // Here we rely on the fact that receiver expression of implicit receiver value can not be changed
                     //   during resolution of one single call
-                    it.receiverExpression == receiver
+                    it.receiverExpression == expression
                 }
             }
         }
-        checkReceiver(candidate.dispatchReceiver?.expression)
-        checkReceiver(candidate.chosenExtensionReceiver?.expression)
+        candidate.dispatchReceiver?.let(::check)
+        candidate.chosenExtensionReceiver?.let(::check)
 
         // For value of builtin functional type with implicit extension receiver, the receiver is passed as the first argument rather than
         // an extension receiver of the `invoke` call. Hence, we need to specially handle this case.
@@ -355,7 +356,7 @@ object CheckDslScopeViolation : ResolutionStage() {
                 candidate,
                 sink,
                 context,
-                { firstArg.getDslMarkersOfThisReceiverExpression(context) }
+                { firstArg.getDslMarkersOfExpression(context) }
             ) { it.boundSymbol == firstArg.calleeReference.boundSymbol }
         }
     }
@@ -415,7 +416,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    private fun FirThisReceiverExpression.getDslMarkersOfThisReceiverExpression(context: ResolutionContext): Set<ClassId> {
+    private fun FirExpression.getDslMarkersOfExpression(context: ResolutionContext): Set<ClassId> {
         return buildSet {
             collectDslMarkerAnnotations(context, resolvedType)
         }
