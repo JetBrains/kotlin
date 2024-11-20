@@ -1,6 +1,6 @@
 // FIR_IGNORE
-// KNM_K2_IGNORE
-// Ignore reason: FIR does not support nested typealiases (especially inside inner classes)
+// Ignore reason: test runner performs run on different values of flag `useStringTable` (`true/false`), but checks dumps on the same file.
+// This value affects type alias expanding that affects dump.
 package test
 
 import dependency.*
