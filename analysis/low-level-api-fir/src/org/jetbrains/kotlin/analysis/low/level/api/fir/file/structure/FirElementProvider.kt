@@ -98,11 +98,20 @@ internal class PartialBodyDeclarationFirElementProvider(
             ElementContainer.Unknown -> return null
             ElementContainer.Signature -> return signatureMappings[psiElement]
             ElementContainer.SignatureBody -> {
-                // Fast track: the signature body is already analyzed.
-                // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
-                if (lastState.performedAnalysesCount > 0) {
-                    // We performed at least one partial analysis, so we definitely analyzed the parameters
-                    return bodyMappings[psiElement]
+                run {
+                    // Fast track: the signature body is already analyzed.
+                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
+                    if (lastState.performedAnalysesCount > 0) {
+                        // We performed at least one partial analysis, so we definitely analyzed the parameters
+                        return bodyMappings[psiElement]
+                    }
+                }
+
+                synchronized(this) {
+                    // Double-check to avoid more expensive 'performBodyAnalysis()' logic
+                    if (lastState.performedAnalysesCount > 0) {
+                        return bodyMappings[psiElement]
+                    }
                 }
 
                 // We do not need to analyze any statements.
@@ -112,12 +121,22 @@ internal class PartialBodyDeclarationFirElementProvider(
             is ElementContainer.Body -> {
                 val psiStatementLimit = container.psiStatementIndex + 1
 
-                // Fast track: required statements are already analyzed.
-                // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
-                val lastState = this.lastState
-                if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
-                    // The statement is already analyzed and its children are registered
-                    return bodyMappings[psiElement]
+                run {
+                    // Fast track: required statements are already analyzed.
+                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
+                    val lastState = this.lastState
+                    if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
+                        // The statement is already analyzed and its children are registered
+                        return bodyMappings[psiElement]
+                    }
+                }
+
+                synchronized(this) {
+                    // Double-check to avoid more expensive 'performBodyAnalysis()' logic
+                    val lastState = this.lastState
+                    if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
+                        return bodyMappings[psiElement]
+                    }
                 }
 
                 performBodyAnalysis(psiStatementLimit = psiStatementLimit)
