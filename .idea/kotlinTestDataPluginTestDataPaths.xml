@@ -106,6 +106,7 @@
         <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData"/>
         <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData"/>
         <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData"/>
+        <option value="$PROJECT_DIR$/plugins/scripting/scripting-tests/testData"/>
       </array>
     </option>
     <option name="testTags">
@@ -285,6 +286,36 @@
             <array>
               <option value="FIR" />
               <option value="JVM" />
+            </array>
+          </value>
+        </entry>
+        <entry key="Script.*DiagnosticsTestGenerated">
+          <value>
+            <array>
+              <option value="FIR"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Repl.*DiagnosticsTestGenerated">
+          <value>
+            <array>
+              <option value="FIR"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Script.*BlackBoxCodegenTestGenerated">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JVM"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Repl.*BlackBoxCodegenTestGenerated">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JVM"/>
             </array>
           </value>
         </entry>
