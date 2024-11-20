@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -36,7 +37,13 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 @PhaseDescription(
     name = "LateinitLowering",
 )
-open class LateinitLowering(private val backendContext: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+open class LateinitLowering(
+    private val loweringContext: LoweringContext,
+    private val uninitializedPropertyAccessExceptionThrower: UninitializedPropertyAccessExceptionThrower,
+) : FileLoweringPass, IrElementTransformerVoid() {
+    constructor(backendContext: CommonBackendContext) :
+            this(backendContext, UninitializedPropertyAccessExceptionThrower(backendContext.ir.symbols))
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -66,7 +73,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
             declaration.type = declaration.type.makeNullable()
             declaration.isVar = true
             declaration.initializer =
-                IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, backendContext.irBuiltIns.nothingNType)
+                IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, loweringContext.irBuiltIns.nothingNType)
         }
 
         return declaration
@@ -80,7 +87,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
             return expression
         }
 
-        return backendContext.createIrBuilder(
+        return loweringContext.createIrBuilder(
             (irValue.parent as IrSymbolOwner).symbol,
             expression.startOffset,
             expression.endOffset
@@ -88,7 +95,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
             irIfThenElse(
                 expression.type,
                 irEqualsNull(irGet(irValue)),
-                backendContext.throwUninitializedPropertyAccessException(this, irValue.name.asString()),
+                uninitializedPropertyAccessExceptionThrower.build(this, irValue.name.asString()),
                 irGet(irValue)
             )
         }
@@ -128,7 +135,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
             val backingField = property.backingField
                 ?: throw AssertionError("Lateinit property is supposed to have a backing field")
             transformLateinitBackingField(backingField, property)
-            backendContext.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).run {
+            loweringContext.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).run {
                 irNotEquals(
                     irGetField(it.dispatchReceiver, backingField),
                     irNull()
@@ -151,8 +158,8 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
         }
         val startOffset = getter.startOffset
         val endOffset = getter.endOffset
-        getter.body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
-            val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
+        getter.body = loweringContext.irFactory.createBlockBody(startOffset, endOffset) {
+            val irBuilder = loweringContext.createIrBuilder(getter.symbol, startOffset, endOffset)
             irBuilder.run {
                 val resultVar = scope.createTmpVariable(
                     irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField, type)
@@ -171,7 +178,7 @@ open class LateinitLowering(private val backendContext: CommonBackendContext) : 
     }
 
     private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
-        backendContext.throwUninitializedPropertyAccessException(this, name)
+        uninitializedPropertyAccessExceptionThrower.build(this, name)
 }
 
 private inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {
@@ -187,4 +194,13 @@ private inline fun IrExpression.replaceTailExpression(crossinline transform: (Ir
     }
     block.statements[block.statements.size - 1] = current
     return this
+}
+
+open class UninitializedPropertyAccessExceptionThrower(private val symbols: Symbols) {
+    open fun build(builder: IrBuilderWithScope, name: String): IrExpression {
+        val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException.owner
+        return builder.irCall(throwExceptionFunction).apply {
+            putValueArgument(0, builder.irString(name))
+        }
+    }
 }

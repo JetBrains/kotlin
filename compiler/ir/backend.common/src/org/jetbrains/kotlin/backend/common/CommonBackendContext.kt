@@ -37,13 +37,6 @@ interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReporting
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
 
-    fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
-        return builder.irCall(throwErrorFunction).apply {
-            putValueArgument(0, builder.irString(name))
-        }
-    }
-
     val preferJavaLikeCounterLoop: Boolean
         get() = false
 

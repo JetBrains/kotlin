@@ -139,11 +139,6 @@ class JvmBackendContext(
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
         symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
-    override fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
-        builder.irBlock {
-            +super.throwUninitializedPropertyAccessException(builder, name)
-        }
-
     override val preferJavaLikeCounterLoop: Boolean
         get() = true
 
