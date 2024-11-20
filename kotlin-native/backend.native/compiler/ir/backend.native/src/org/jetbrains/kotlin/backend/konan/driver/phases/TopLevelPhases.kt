@@ -114,6 +114,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
                     generationStateEngine.runGlobalOptimizations(fragment.irModule)
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+                    val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
@@ -123,16 +124,14 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
-                    // Split here
-                    val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
-                    val depsFilePath = config.writeSerializedDependencies
-                    if (!depsFilePath.isNullOrEmpty()) {
-                        depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
-                    }
-                    ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                    ModuleCompilationOutput(listOf(objectFile), generationState.dependenciesTracker.collectResult())
                 }
-                compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
+                val depsFilePath = config.writeSerializedDependencies
+                if (!depsFilePath.isNullOrEmpty()) {
+                    depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
+                }
+                linkBinary(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
             } finally {
                 tempFiles.dispose()
                 fragment.performanceManager?.notifyIRGenerationFinished()
@@ -187,8 +186,10 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: Bitcod
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
         runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
-        val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
-        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
+        val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+        runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, objectFile))
+        val moduleCompilationOutput = ModuleCompilationOutput(listOf(objectFile), dependencies)
+        linkBinary(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
 }
 
@@ -266,7 +267,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
 }
 
 internal data class ModuleCompilationOutput(
-        val bitcodeFile: java.io.File,
+        val objectFiles: List<java.io.File>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -279,6 +280,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
+        objectFile: java.io.File,
         cExportFiles: CExportFiles?
 ) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
@@ -294,39 +296,37 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         runPhase(SaveAdditionalCacheInfoPhase)
     }
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, objectFile))
 }
 
-
-internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
+internal fun <C : PhaseContext> PhaseEngine<C>.linkBinary(
         moduleCompilationOutput: ModuleCompilationOutput,
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
-    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val (linkerInput, cacheBinaries) = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
-                compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
+                moduleCompilationOutput.objectFiles to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
-                runPhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                runPhase(PreLinkCachesPhase, PreLinkCachesInput(moduleCompilationOutput.objectFiles, resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                listOf(prelinkResult) to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
             }
             else -> {
-                compilationResult to resolvedCacheBinaries
+                moduleCompilationOutput.objectFiles to resolvedCacheBinaries
             }
         }
     }
     val linkerPhaseInput = LinkerPhaseInput(
             linkerOutputFile,
             linkerOutputKind,
-            listOf(linkerInput.canonicalPath),
+            linkerInput.map { it.canonicalPath },
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
