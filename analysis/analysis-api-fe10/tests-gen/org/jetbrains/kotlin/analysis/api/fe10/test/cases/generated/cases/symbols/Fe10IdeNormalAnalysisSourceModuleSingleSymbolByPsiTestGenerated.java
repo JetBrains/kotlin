@@ -125,6 +125,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("innerTypeAlias.kt")
+  public void testInnerTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/innerTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaParameterWithName.kt")
   public void testLambdaParameterWithName() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/lambdaParameterWithName.kt");
@@ -134,6 +140,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   @TestMetadata("lambdaParameterWithoutName.kt")
   public void testLambdaParameterWithoutName() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/lambdaParameterWithoutName.kt");
+  }
+
+  @Test
+  @TestMetadata("localTypeAlias.kt")
+  public void testLocalTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/localTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAlias.kt")
+  public void testNestedTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAlias.kt");
   }
 
   @Test
