@@ -2,7 +2,9 @@
 // FULL_JDK
 // DUMP_IR
 // ISSUE: KT-68401
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
 // FILE: other/AClass.java
+
 package other;
 public class AClass extends PrivateSuper {}
 
