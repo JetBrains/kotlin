@@ -3352,7 +3352,7 @@ open class PsiRawFirBuilder(
                 expression.baseExpression?.accept(this, data)
             }
 
-            return buildExpressionHandlingErrors(result, expression.toFirSourceElement(), forbiddenLabelKind, labelSource)
+            return buildExpressionHandlingLabelErrors(result, expression.toFirSourceElement(), forbiddenLabelKind, labelSource)
         }
 
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: FirElement?): FirElement {

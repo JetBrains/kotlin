@@ -422,7 +422,7 @@ class LightTreeRawFirExpressionBuilder(
 
         context.dropLastLabel()
 
-        return buildExpressionHandlingErrors(firExpression, labeledExpression.toFirSourceElement(), forbiddenLabelKind, labelSource)
+        return buildExpressionHandlingLabelErrors(firExpression, labeledExpression.toFirSourceElement(), forbiddenLabelKind, labelSource)
     }
 
     /**

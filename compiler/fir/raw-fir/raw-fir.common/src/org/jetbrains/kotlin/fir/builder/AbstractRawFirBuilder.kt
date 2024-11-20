@@ -1158,28 +1158,23 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         UNDERSCORE_IS_RESERVED, MULTIPLE_LABEL
     }
 
-    protected fun buildExpressionHandlingErrors(
+    protected fun buildExpressionHandlingLabelErrors(
         element: FirElement?,
         elementSource: KtSourceElement,
         forbiddenLabelKind: ForbiddenLabelKind?,
         forbiddenLabelSource: KtSourceElement?,
     ): FirElement {
-        return if (element != null) {
-            if (forbiddenLabelKind != null) {
-                require(forbiddenLabelSource != null)
-                buildErrorExpression {
-                    this.source = element.source
-                    this.expression = element as? FirExpression
-                    diagnostic = when (forbiddenLabelKind) {
-                        ForbiddenLabelKind.UNDERSCORE_IS_RESERVED -> ConeUnderscoreIsReserved(forbiddenLabelSource)
-                        ForbiddenLabelKind.MULTIPLE_LABEL -> ConeMultipleLabelsAreForbidden(forbiddenLabelSource)
-                    }
-                }
-            } else {
-                element
+        if (element == null) return buildErrorExpression(elementSource, ConeSyntaxDiagnostic("Empty label"))
+        if (forbiddenLabelKind == null) return element
+
+        require(forbiddenLabelSource != null)
+        return buildErrorExpression {
+            this.source = element.source
+            this.expression = element as? FirExpression
+            diagnostic = when (forbiddenLabelKind) {
+                ForbiddenLabelKind.UNDERSCORE_IS_RESERVED -> ConeUnderscoreIsReserved(forbiddenLabelSource)
+                ForbiddenLabelKind.MULTIPLE_LABEL -> ConeMultipleLabelsAreForbidden(forbiddenLabelSource)
             }
-        } else {
-            buildErrorExpression(elementSource, ConeSyntaxDiagnostic("Empty label"))
         }
     }
 
