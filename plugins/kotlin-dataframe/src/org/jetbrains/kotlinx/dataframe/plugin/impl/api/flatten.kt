@@ -14,7 +14,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
 class FlattenDefault : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
     val Arguments.keepParentNameForColumns: Boolean by arg(defaultValue = Present(false))
-    val Arguments.separator: String by arg(defaultValue = Present("."))
+    val Arguments.separator: String by arg(defaultValue = Present("_"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.asDataFrame().flatten(keepParentNameForColumns, separator).toPluginDataFrameSchema()
@@ -24,7 +24,7 @@ class FlattenDefault : AbstractSchemaModificationInterpreter() {
 class Flatten0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
     val Arguments.keepParentNameForColumns: Boolean by arg(defaultValue = Present(false))
-    val Arguments.separator: String by arg(defaultValue = Present("."))
+    val Arguments.separator: String by arg(defaultValue = Present("_"))
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {

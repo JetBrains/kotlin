@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.DataRow
@@ -31,7 +30,11 @@ internal class Read0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.header: List<String> by arg(defaultValue = Present(listOf()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataFrame.read(path).schema().toPluginDataFrameSchema()
+        val df = when (val source = tryResolveFile(resolutionPath, path)) {
+            is ResolutionDirFile -> DataFrame.read(source.file)
+            is UrlOrAbsolutePath -> DataFrame.read(source.path)
+        }
+        return df.schema().toPluginDataFrameSchema()
     }
 }
 
@@ -43,11 +46,13 @@ internal class ReadCSV0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.duplicate: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val file = resolveFile(resolutionPath, fileOrUrl)
-        val df = if (file != null && file.exists()) {
-            DataFrame.readCSV(file, delimiter, skipLines = skipLines, readLines = readLines, duplicate = duplicate)
-        } else {
-            DataFrame.readCSV(fileOrUrl, delimiter, skipLines = skipLines, readLines = readLines, duplicate = duplicate)
+        val df = when (val source = tryResolveFile(resolutionPath, fileOrUrl)) {
+            is ResolutionDirFile -> {
+                DataFrame.readCSV(source.file, delimiter, skipLines = skipLines, readLines = readLines, duplicate = duplicate)
+            }
+            is UrlOrAbsolutePath -> {
+                DataFrame.readCSV(source.path, delimiter, skipLines = skipLines, readLines = readLines, duplicate = duplicate)
+            }
         }
         return df.schema().toPluginDataFrameSchema()
     }
@@ -75,17 +80,14 @@ internal class ReadJson0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 fun readJson(resolutionPath: String?, path: String): DataFrame<Any?> {
-    val file = resolveFile(resolutionPath, path)
-    val df = if (file != null && file.exists()) {
-        DataFrame.readJson(file)
-    } else {
-        DataFrame.readJson(path)
+    return when (val source = tryResolveFile(resolutionPath, path)) {
+        is ResolutionDirFile -> DataFrame.readJson(source.file)
+        is UrlOrAbsolutePath -> DataFrame.readJson(source.path)
     }
-    return df
 }
 
-private fun resolveFile(resolutionPath: String?, path: String): File? {
-    return  resolutionPath?.let {
+private fun tryResolveFile(resolutionPath: String?, path: String): DataSource {
+    val file = resolutionPath?.let {
         try {
             val file = File(it)
             if (file.exists() && file.isDirectory) {
@@ -97,7 +99,16 @@ private fun resolveFile(resolutionPath: String?, path: String): File? {
             null
         }
     }
+    return if (file != null && file.exists()) {
+        ResolutionDirFile(file)
+    } else {
+        UrlOrAbsolutePath(path)
+    }
 }
+
+private sealed interface DataSource
+private class UrlOrAbsolutePath(val path: String) : DataSource
+private class ResolutionDirFile(val file: File) : DataSource
 
 internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.text: String by arg()
@@ -138,7 +149,12 @@ internal class ReadExcel : AbstractSchemaModificationInterpreter() {
     val Arguments.nameRepairStrategy: NameRepairStrategy by arg(defaultValue = Present(NameRepairStrategy.CHECK_UNIQUE))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val df = DataFrame.readExcel(fileOrUrl, sheetName, skipRows, columns, stringColumns, rowsCount, nameRepairStrategy)
+        val df = when (val source = tryResolveFile(resolutionPath, fileOrUrl)) {
+            is ResolutionDirFile ->
+                DataFrame.readExcel(source.file, sheetName, skipRows, columns, stringColumns, rowsCount, nameRepairStrategy)
+            is UrlOrAbsolutePath ->
+                DataFrame.readExcel(source.path, sheetName, skipRows, columns, stringColumns, rowsCount, nameRepairStrategy)
+        }
         return df.schema().toPluginDataFrameSchema()
     }
 }
