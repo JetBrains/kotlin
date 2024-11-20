@@ -480,14 +480,18 @@ class Fir2IrDeclarationStorage(
         constructorCache[constructor] = irConstructorSymbol
     }
 
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, potentiallyExternal: Boolean = true): IrConstructorSymbol {
+    fun getIrConstructorSymbol(
+        firConstructorSymbol: FirConstructorSymbol,
+        irClassAsParent: IrClass? = null,
+        potentiallyExternal: Boolean = true,
+    ): IrConstructorSymbol {
         val constructor = firConstructorSymbol.fir
         getCachedIrConstructorSymbol(constructor)?.let { return it }
 
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
         val symbol = IrConstructorSymbolImpl()
         if (potentiallyExternal) {
-            val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
+            val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null) ?: irClassAsParent
             if (irParent.isExternalParent()) {
                 callablesGenerator.createIrConstructor(
                     constructor,

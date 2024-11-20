@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -904,7 +906,6 @@ class CallAndReferenceGenerator(
                 )
             }
         }
-        val annotationIsAccessible = coneType.toRegularClassSymbol(session) != null
         val symbol = type.classifierOrNull
         val firConstructorSymbol = (annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol)
             ?: run {
@@ -920,11 +921,7 @@ class CallAndReferenceGenerator(
             }
         val irConstructorCall = annotation.convertWithOffsets { startOffset, endOffset ->
             when {
-                // In compiler facility (debugger) scenario it's possible that annotation call is resolved in the session
-                //  where this annotation was applied, but invisible in the current session.
-                // In that case we shouldn't generate `IrConstructorCall`, as it will point to non-existing constructor
-                //  of stub IR for not found class
-                symbol !is IrClassSymbol || !annotationIsAccessible -> IrErrorCallExpressionImpl(
+                symbol !is IrClassSymbol -> IrErrorCallExpressionImpl(
                     startOffset, endOffset, type, "Unresolved reference: ${annotation.render()}"
                 )
 
@@ -941,7 +938,12 @@ class CallAndReferenceGenerator(
                     val fullyExpandedConstructorSymbol = firConstructorSymbol.let {
                         it.fir.originalConstructorIfTypeAlias?.unwrapUseSiteSubstitutionOverrides()?.symbol ?: it
                     }
-                    val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
+                    val irClassFromAnnotationCallSite = firConstructorSymbol.containingClassLookupTag()?.classId?.let { classId ->
+                        getIrClassFromModuleContainingAnnotationCall(classId, annotation)
+                    }
+                    val irConstructor = declarationStorage.getIrConstructorSymbol(
+                        fullyExpandedConstructorSymbol, irClassAsParent = irClassFromAnnotationCallSite
+                    )
 
                     IrConstructorCallImplWithShape(
                         startOffset, endOffset, type, irConstructor,
@@ -967,6 +969,20 @@ class CallAndReferenceGenerator(
                 .applyCallArguments(annotationCall)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
         }
+    }
+
+    /**
+     * Returns [IrClass] whose [ClassId] is [classId] by searching the [FirClassLikeSymbol] from the module containing the
+     * [FirAnnotationCall] [annotation] (the module containing KT file containing the [FirAnnotationCall] [annotation]).
+     * If it cannot search such [FirClassLikeSymbol], it returns `null`.
+     */
+    private fun getIrClassFromModuleContainingAnnotationCall(classId: ClassId, annotation: FirAnnotation): IrClass? {
+        if (annotation !is FirAnnotationCall) return null
+
+        val containingModule = annotation.containingDeclarationSymbol.moduleData
+        val firClassSymbol = containingModule.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol ?: return null
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        return classifierStorage.getIrClassSymbol(firClassSymbol).owner
     }
 
     private fun FirAnnotation.toAnnotationCall(): FirAnnotationCall? {
