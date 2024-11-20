@@ -1,9 +1,9 @@
 KT element: KtProperty
-FIR element: null
-FIR source kind: null
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+[ResolvedTo(BODY_RESOLVE)] lvar j: R|kotlin/Int| = Int(1)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] labelMultiple.kt

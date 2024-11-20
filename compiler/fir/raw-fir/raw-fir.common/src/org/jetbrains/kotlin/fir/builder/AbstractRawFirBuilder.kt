@@ -1171,6 +1171,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         return buildErrorExpression {
             this.source = element.source
             this.expression = element as? FirExpression
+            this.nonExpressionElement = element.takeUnless { it is FirExpression }
             diagnostic = when (forbiddenLabelKind) {
                 ForbiddenLabelKind.UNDERSCORE_IS_RESERVED -> ConeUnderscoreIsReserved(forbiddenLabelSource)
                 ForbiddenLabelKind.MULTIPLE_LABEL -> ConeMultipleLabelsAreForbidden(forbiddenLabelSource)

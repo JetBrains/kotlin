@@ -29,7 +29,7 @@ fun foo5() {
 
 fun foo6() {
     <!MULTIPLE_LABELS_ARE_FORBIDDEN!>l2@<!> l1@ do {
-        l4@ l3@{ true }
+        <!MULTIPLE_LABELS_ARE_FORBIDDEN!>l4@<!> l3@{ true }
     } while (true)
 }
 
