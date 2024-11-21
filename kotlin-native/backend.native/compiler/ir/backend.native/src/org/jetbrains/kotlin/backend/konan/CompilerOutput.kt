@@ -94,7 +94,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             }
 
     val nativeLibraries = config.nativeLibraries + config.launcherNativeLibraries
-            .takeIf { config.produce == CompilerOutputKind.PROGRAM && generationState.producedLlvmModuleContainsStdlib }.orEmpty()
+            .takeIf { config.produce == CompilerOutputKind.PROGRAM && (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib) }.orEmpty()
     val additionalBitcodeFilesToLink = generationState.llvm.additionalProducedBitcodeFiles
     val exceptionsSupportNativeLibrary = listOf(config.exceptionsSupportNativeLibrary)
             .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
