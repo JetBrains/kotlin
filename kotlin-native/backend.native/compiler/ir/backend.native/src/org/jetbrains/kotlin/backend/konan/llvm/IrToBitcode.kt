@@ -2745,7 +2745,7 @@ internal class CodeGeneratorVisitor(
                         if (!context.shouldOptimize()) {
                             error("Library ${library.libraryFile} is expected to be cached")
                         }
-                        listOf(ctorProto(ctorName))
+                        emptyList()
                     }
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
