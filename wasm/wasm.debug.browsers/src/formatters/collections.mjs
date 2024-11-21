@@ -61,7 +61,7 @@ export const array = Formatter.create(
 
 const arrayListShape = {
     lengthFieldName: "size",
-    count: kotlinClass => kotlinClass.value.length.value,
+    count: kotlinClass => kotlinClass.value.$length.value,
     elementAt: (kotlinClass, i) => arrayShape.elementAt(kotlinClass.value.$backing, i)
 }
 export const arrayList = Formatter.create(
