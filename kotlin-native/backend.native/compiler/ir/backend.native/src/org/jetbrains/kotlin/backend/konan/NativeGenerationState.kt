@@ -110,6 +110,43 @@ internal class NativeGenerationState(
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 
+    fun createChild(llvmModuleName: String, llvmModuleSpecification: LlvmModuleSpecification): NativeGenerationState {
+        val original = this
+        return NativeGenerationState(
+                config,
+                context,
+                cacheDeserializationStrategy,
+                dependenciesTracker,
+                llvmModuleSpecification,
+                outputFiles,
+                llvmModuleName
+        ).also { new ->
+            new.klibHash = original.klibHash
+            new.inlineFunctionBodies.addAll(original.inlineFunctionBodies)
+            new.classFields.addAll(original.classFields)
+            new.eagerInitializedFiles.addAll(original.eagerInitializedFiles)
+            new.calledFromExportedInlineFunctions.addAll(original.calledFromExportedInlineFunctions)
+            new.constructedFromExportedInlineFunctions.addAll(original.constructedFromExportedInlineFunctions)
+            new.liveVariablesAtSuspensionPoints.putAll(original.liveVariablesAtSuspensionPoints)
+            new.visibleVariablesAtSuspensionPoints.putAll(original.visibleVariablesAtSuspensionPoints)
+            new.localClassNames.putAll(original.localClassNames)
+            if (original::fileLowerState.isInitialized) {
+                new.fileLowerState = original.fileLowerState
+            }
+            if (original::llvmDeclarations.isInitialized) {
+                new.llvmDeclarations = original.llvmDeclarations
+            }
+            new.virtualFunctionTrampolines.putAll(original.virtualFunctionTrampolines)
+            if (original::objCExport.isInitialized) {
+                new.objCExport = original.objCExport
+            }
+            new.dceResult = original.dceResult
+            if (original::lifetimes.isInitialized) {
+                new.lifetimes = original.lifetimes
+            }
+        }
+    }
+
     private var isDisposed = false
 
     // Both NativeGenerationState and Context could be used for logging purposes.

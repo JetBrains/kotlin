@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.uniqueName
 import java.util.concurrent.Callable
@@ -99,6 +100,37 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
         }
 
+        data class SubFragment(
+                val name: String,
+                val files: List<IrFile>,
+                val module: IrModuleFragment?,
+        )
+
+        fun SubFragment.generationState(topLevel: NativeGenerationState): NativeGenerationState {
+            val llvmModuleSpecification = if (topLevel.llvmModuleSpecification is DefaultLlvmModuleSpecification) {
+                object : LlvmModuleSpecificationBase(config.cachedLibraries) {
+                    override val isFinal: Boolean
+                        get() = module != null
+
+                    override fun containsLibrary(library: KotlinLibrary): Boolean {
+                        if (cachedLibraries.isLibraryCached(library))
+                            return false
+                        if (name == "")
+                            return true
+                        return name == library.uniqueName
+                    }
+                }
+            } else topLevel.llvmModuleSpecification
+            return topLevel.createChild(topLevel.llvmModuleName + name, llvmModuleSpecification)
+        }
+
+        fun splitFragment(fragment: BackendJobFragment): List<SubFragment> {
+            fragment.irModule.files.forEach {
+                println("File: ${it.name}; ${it.konanLibrary!!.uniqueName}")
+            }
+            return listOf(SubFragment("", fragment.irModule.files, fragment.irModule))
+        }
+
         fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState) {
             val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
             val outputFiles = generationState.outputFiles
@@ -115,25 +147,28 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 newEngine(generationState) { generationStateEngine ->
                     generationStateEngine.runGlobalOptimizations(fragment.irModule)
                 }
-                fragment.irModule.files.forEach {
-                    println("File: ${it.name}; ${it.konanLibrary!!.uniqueName}")
+                val subfragments = splitFragment(fragment)
+
+                val objectFiles = subfragments.map {
+                    backendEngine.useContext(it.generationState(generationState)) { generationStateEngine ->
+                        val bitcodeFile = tempFiles.create(generationStateEngine.context.llvmModuleName, "${it.name}.bc").javaFile()
+                        val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "${it.name}.o").javaFile()
+                        val cExportFiles = if (config.produceCInterface) {
+                            CExportFiles(
+                                    cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
+                                    bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
+                                    header = outputFiles.cAdapterHeader.javaFile(),
+                                    def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
+                            )
+                        } else null
+                        // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                        generationStateEngine.compileModule(it.module, it.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                        objectFile
+                    }
                 }
-                val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
-                    val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
-                    val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
-                    val cExportFiles = if (config.produceCInterface) {
-                        CExportFiles(
-                                cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
-                                bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
-                                header = outputFiles.cAdapterHeader.javaFile(),
-                                def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
-                        )
-                    } else null
-                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    val files = fragment.irModule.files
-                    generationStateEngine.compileModule(fragment.irModule, files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
-                    ModuleCompilationOutput(listOf(objectFile), generationState.dependenciesTracker.collectResult())
-                }
+
+                val moduleCompilationOutput = ModuleCompilationOutput(objectFiles, generationState.dependenciesTracker.collectResult())
+
                 val depsFilePath = config.writeSerializedDependencies
                 if (!depsFilePath.isNullOrEmpty()) {
                     depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
