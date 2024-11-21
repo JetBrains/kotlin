@@ -57,6 +57,10 @@ abstract class AbstractKotlinTarget(
     override val resourcesElementsConfigurationName: String
         get() = disambiguateName("resourcesElements")
 
+    override val uklibElementsConfigurationName: String
+        // FIXME: Move this do metadata target
+        get() = disambiguateName("uklibElements")
+
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
 

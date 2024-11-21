@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.artifacts.configureUklibConfigurationAttributes
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -128,6 +129,25 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             isVisible = false
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        }
+    }
+
+    if (target is KotlinMetadataTarget) {
+        if (target.project.kotlinPropertiesProvider.publishUklibVariant) {
+            configurations.maybeCreateConsumable(target.internal.uklibElementsConfigurationName).apply {
+                description = "Resource files of main compilation of ${target.name}."
+                isVisible = false
+
+                // FIXME: Replicate the scoping in js/wasm?
+                extendsFrom(apiElementScope)
+                extendsFrom(implementationConfiguration)
+
+                // FIXME: Inherit from whatever: commonMain maybe?
+                configureUklibConfigurationAttributes(project)
+
+                // FIXME: Do we even want "setUsesPlatformOf" and should we really create this configuration here?
+                // setUsesPlatformOf(target)
+            }
         }
     }
 }

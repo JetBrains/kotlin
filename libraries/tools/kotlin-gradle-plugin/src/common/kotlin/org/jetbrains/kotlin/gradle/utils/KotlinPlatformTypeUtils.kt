@@ -14,6 +14,6 @@ internal val KotlinPlatformType.prettyName: String
         KotlinPlatformType.jvm -> "Kotlin/JVM"
         KotlinPlatformType.js -> "Kotlin/JS"
         KotlinPlatformType.androidJvm -> "Kotlin/Android"
-        KotlinPlatformType.native -> "Kotlin/Native"
+        KotlinPlatformType.native, KotlinPlatformType.unknown -> "Kotlin/Native"
         KotlinPlatformType.wasm -> "Kotlin/Wasm"
     }

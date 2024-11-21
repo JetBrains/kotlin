@@ -23,6 +23,8 @@ object KotlinUsages {
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
 
+    const val KOTLIN_UKLIB = "kotlin-uklib"
+
     // This type is required to distinguish metadata jar configuration from a psm secondary variant.
     // At the same time, disambiguation and compatibility rules should count them as equivalent
     // to be possible to apply a transform actions chain to `kotlin-metadata` artifact to get psm.
