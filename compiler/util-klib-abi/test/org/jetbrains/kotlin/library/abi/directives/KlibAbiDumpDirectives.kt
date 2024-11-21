@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 @OptIn(ExperimentalLibraryAbiReader::class)
-object LibraryAbiDumpDirectives : SimpleDirectivesContainer() {
+object KlibAbiDumpDirectives : SimpleDirectivesContainer() {
     val KLIB_ABI_DUMP_EXCLUDED_PACKAGES by valueDirective<AbiCompoundName>(
         description = "Packages that should be filtered out from ABI dump",
         parser = ::parseCompoundName

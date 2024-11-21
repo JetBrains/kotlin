@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
-import org.jetbrains.kotlin.library.abi.handlers.LibraryAbiDumpHandler
+import org.jetbrains.kotlin.library.abi.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -81,7 +81,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
         facadeStep(backendFacade)
         klibArtifactsHandlersStep {
             useHandlers(
-                ::LibraryAbiDumpHandler
+                ::KlibAbiDumpHandler
             )
         }
     }

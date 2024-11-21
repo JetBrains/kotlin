@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.library.abi.handlers
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiReadingFilter.*
-import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives
+import org.jetbrains.kotlin.library.abi.directives.KlibAbiDumpDirectives
 import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 
 @OptIn(ExperimentalLibraryAbiReader::class)
-class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
+class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
     ArtifactKinds.KLib,
     failureDisablesNextSteps = true,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
-    override val directiveContainers get() = listOf(LibraryAbiDumpDirectives)
+    override val directiveContainers get() = listOf(KlibAbiDumpDirectives)
 
     private val dumpers = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.map { irSignatureVersion ->
         AbiSignatureVersions.resolveByVersionNumber(irSignatureVersion.number) to MultiModuleInfoDumper()
@@ -35,9 +35,9 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val libraryAbi = LibraryAbiReader.readAbiInfo(
             info.outputFile,
-            ExcludedPackages(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES]),
-            ExcludedClasses(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES]),
-            NonPublicMarkerAnnotations(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS])
+            ExcludedPackages(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES]),
+            ExcludedClasses(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES]),
+            NonPublicMarkerAnnotations(module.directives[KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS])
         )
 
         for ((abiSignatureVersion, dumper) in dumpers) {
