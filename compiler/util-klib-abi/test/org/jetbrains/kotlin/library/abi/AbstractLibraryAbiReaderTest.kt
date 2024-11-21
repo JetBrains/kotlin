@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
-import org.jetbrains.kotlin.library.abi.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.library.abi.impl.AbiFunctionImpl.Companion.BITS_ENOU
 import org.jetbrains.kotlin.metadata.deserialization.Flags.FlagField
 
 @ExperimentalLibraryAbiReader
-internal object AbiSignatureVersions {
+object AbiSignatureVersions {
     enum class Supported(override val versionNumber: Int, override val description: String) : AbiSignatureVersion {
         V1(1, "The signatures with hashes"),
         V2(2, "The self-descriptive signatures (with mangled names)");

@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.parseModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.abi.*
-import org.jetbrains.kotlin.library.abi.directives.KlibAbiDumpDirectives
-import org.jetbrains.kotlin.library.abi.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
-import org.jetbrains.kotlin.library.abi.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
-import org.jetbrains.kotlin.library.abi.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
-import org.jetbrains.kotlin.library.abi.handlers.KlibAbiDumpHandler.Companion.abiDumpFileExtension
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.abiDumpFileExtension
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
