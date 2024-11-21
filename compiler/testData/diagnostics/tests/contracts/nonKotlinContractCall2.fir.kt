@@ -7,7 +7,7 @@ class Test
 fun testBuilder(id: String = "", lambda: Test.() -> Unit) = Test()
 
 fun test() {
-    contract(testBuilder {})
+    contract(<!INFERENCE_ERROR!>testBuilder {}<!>)
 }
 
 fun contract(test: Test) {}

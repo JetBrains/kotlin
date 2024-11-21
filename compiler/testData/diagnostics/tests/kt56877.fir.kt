@@ -19,7 +19,7 @@ open class Result {
         contract {
             // implicit type ref
             // ERROR CLASS: Cannot calculate return type during full-body resolution (local class/object?)
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@Result.someProperty == 10)<!>
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (<!INFERENCE_ERROR!>this@Result.someProperty<!> == 10)<!>
         }
         return this@Result.someProperty == 10
     }
@@ -36,7 +36,7 @@ fun Result.isSuccess4(): Boolean {
     contract {
         // implicit type ref
         // ERROR CLASS: Cannot calculate return type during full-body resolution (local class/object?)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@isSuccess4.someProperty == 10)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (<!INFERENCE_ERROR!>this@isSuccess4.someProperty<!> == 10)<!>
     }
     return this@isSuccess4.someProperty == 10
 }

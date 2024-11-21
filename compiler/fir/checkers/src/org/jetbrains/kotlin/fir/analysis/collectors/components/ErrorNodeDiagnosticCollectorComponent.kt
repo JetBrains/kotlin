@@ -189,30 +189,43 @@ class ErrorNodeDiagnosticCollectorComponent(
         context: CheckerContext,
         callOrAssignmentSource: KtSourceElement? = null,
     ) {
-        // Will be handled by [FirDestructuringDeclarationChecker]
-        if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-            return
-        }
+        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource)
+    }
 
-        // Will be handled by [FirDelegatedPropertyChecker]
-        if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
-            (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
+    companion object {
+        internal fun reportFirDiagnostic(
+            diagnostic: ConeDiagnostic,
+            source: KtSourceElement?,
+            context: CheckerContext,
+            session: FirSession = context.session,
+            reporter: DiagnosticReporter,
+            callOrAssignmentSource: KtSourceElement? = null,
         ) {
-            return
-        }
+            // Will be handled by [FirDestructuringDeclarationChecker]
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+                return
+            }
 
-        if (source?.kind == KtFakeSourceElementKind.ImplicitConstructor || source?.kind == KtFakeSourceElementKind.DesugaredForLoop) {
-            // See FirForLoopChecker
-            return
-        }
+            // Will be handled by [FirDelegatedPropertyChecker]
+            if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
+                (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
+            ) {
+                return
+            }
 
-        // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
-        if (source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
-            return
-        }
+            if (source?.kind == KtFakeSourceElementKind.ImplicitConstructor || source?.kind == KtFakeSourceElementKind.DesugaredForLoop) {
+                // See FirForLoopChecker
+                return
+            }
 
-        for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
-            reporter.report(coneDiagnostic, context)
+            // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
+            if (source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
+                return
+            }
+
+            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
+                reporter.report(coneDiagnostic, context)
+            }
         }
     }
 }

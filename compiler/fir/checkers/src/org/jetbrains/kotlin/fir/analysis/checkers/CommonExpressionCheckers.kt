@@ -23,6 +23,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirRecursiveProblemChecker,
             FirOptInUsageAccessChecker,
             FirPrefixAndSuffixSyntaxChecker,
+            FirExpressionWithErrorTypeChecker,
         )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
