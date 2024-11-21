@@ -237,6 +237,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("getOrBuildFir", pattern = TestGeneratorUtil.KTS)
         }
 
+        testClass<AbstractInterruptingSourceGetOrBuildFirTest> {
+            model("getOrBuildFirWithInterruption", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractInterruptingScriptGetOrBuildFirTest> {
+            model("getOrBuildFir", pattern = TestGeneratorUtil.KTS)
+        }
+
         testClass<AbstractLibraryGetOrBuildFirTest> {
             model("getOrBuildFirBinary")
         }

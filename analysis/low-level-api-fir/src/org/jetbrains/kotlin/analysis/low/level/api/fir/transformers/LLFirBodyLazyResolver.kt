@@ -611,9 +611,9 @@ internal object BodyStateKeepers {
     val PARTIAL_BODY_RESOLVABLE: StateKeeper<FirDeclaration, FirDesignation> = stateKeeper { builder, declaration, context ->
         builder.add(
             provider = FirDeclaration::partialBodyResolveState,
-            mutator = { _, _ ->
+            mutator = { owner, _ ->
                 // On exceptions, remove the partial body resolve state so the function will be analyzed from the beginning
-                null
+                owner.partialBodyResolveState = null
             }
         )
     }

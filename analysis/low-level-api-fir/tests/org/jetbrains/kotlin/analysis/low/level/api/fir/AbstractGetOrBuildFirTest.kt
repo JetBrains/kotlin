@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.util.descendants
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.AnalysisInterruptedException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.ErrorResistanceServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.FirRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
@@ -20,8 +25,12 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -50,11 +59,19 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
             val renderingOptions = testServices.firRenderingOptions
                 .copy(renderKtText = elementsToAnalyze.size > 1)
 
+            val firFile by lazy { session.getOrBuildFirFile(mainFile) }
+
             val results = mutableListOf<String>()
 
-            for (element in elementsToAnalyze) {
+            for ((index, element) in elementsToAnalyze.withIndex()) {
+                val firElement = intercept(index, mainModule.testModule) { element.getOrBuildFir(session) }
+
+                if (firElement != null) {
+                    check(isInside(firElement, firFile))
+                }
+
                 results += renderActualFir(
-                    fir = element.getOrBuildFir(session),
+                    fir = firElement,
                     ktElement = element,
                     renderingOptions = renderingOptions,
                     firFile = mainFile.getOrBuildFirFile(session),
@@ -66,6 +83,26 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
         val actual = results.joinToString(separator = "\n\n=====\n\n")
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    private fun isInside(element: FirElement, file: FirFile): Boolean {
+        var result = false
+
+        file.accept(object : FirVisitorVoid() {
+            override fun visitElement(e: FirElement) {
+                if (e == element) {
+                    result = true
+                } else if (!result) {
+                    e.acceptChildren(this)
+                }
+            }
+        })
+
+        return result
+    }
+
+    protected open fun <T : Any> intercept(index: Int, testModule: TestModule, block: () -> T?): T? {
+        return block()
     }
 }
 
@@ -111,10 +148,51 @@ abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 }
 
+abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
+    override fun <T : Any> intercept(index: Int, testModule: TestModule, block: () -> T?): T? {
+        if (index in testModule.directives[Directives.INTERRUPT_AT]) {
+            ErrorResistanceServiceRegistrar.handleInterruption {
+                try {
+                    block()
+                    throw IllegalStateException("Analysis should be interrupted")
+                } catch (_: AnalysisInterruptedException) {
+                    null
+                }
+            }
+            return null
+        } else {
+            return block()
+        }
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val INTERRUPT_AT by valueDirective("DECLARATION_TYPE", parser = Integer::valueOf)
+    }
+}
+
+abstract class AbstractInterruptingSourceGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
+    override val configurator = object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
+        override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+            get() = super.serviceRegistrars + listOf(ErrorResistanceServiceRegistrar)
+    }
+}
+
 abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
     override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
 }
 
 abstract class AbstractScriptGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
     override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractInterruptingScriptGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
+    override val configurator = object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+        override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+            get() = super.serviceRegistrars + listOf(ErrorResistanceServiceRegistrar)
+    }
 }
