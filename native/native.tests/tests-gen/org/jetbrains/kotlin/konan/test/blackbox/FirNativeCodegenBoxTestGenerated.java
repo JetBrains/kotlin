@@ -32304,6 +32304,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       public void testReturnInsideTwoLambdas() {
         runTest("compiler/testData/codegen/box/nonLocalReturns/returnInsideTwoLambdas.kt");
       }
+
+      @Test
+      @TestMetadata("suspendConversion.kt")
+      public void testSuspendConversion() {
+        runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversion.kt");
+      }
     }
 
     @Nested

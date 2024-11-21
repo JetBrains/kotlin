@@ -40726,6 +40726,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("suspendConversion.kt")
+    public void testSuspendConversion() {
+      runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversion.kt");
+    }
+
+    @Test
     @TestMetadata("use.kt")
     public void testUse() {
       runTest("compiler/testData/codegen/box/nonLocalReturns/use.kt");

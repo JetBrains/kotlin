@@ -39620,6 +39620,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("suspendConversion.kt")
+    public void testSuspendConversion() {
+      runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversion.kt");
+    }
+
+    @Test
     @TestMetadata("use.kt")
     public void testUse() {
       runTest("compiler/testData/codegen/box/nonLocalReturns/use.kt");

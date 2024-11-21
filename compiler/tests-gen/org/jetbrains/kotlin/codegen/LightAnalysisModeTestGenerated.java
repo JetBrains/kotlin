@@ -34053,6 +34053,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/nonLocalReturns/returnInsideTwoLambdas.kt");
     }
 
+    @TestMetadata("suspendConversion.kt")
+    public void testSuspendConversion() {
+      runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversion.kt");
+    }
+
     @TestMetadata("use.kt")
     public void testUse() {
       runTest("compiler/testData/codegen/box/nonLocalReturns/use.kt");
