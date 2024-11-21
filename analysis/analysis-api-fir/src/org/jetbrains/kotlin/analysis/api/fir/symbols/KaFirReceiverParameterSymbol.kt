@@ -25,21 +25,19 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirReceiverParameterSymbol private constructor(
     val owningBackingPsi: KtCallableDeclaration?,
-    val analysisSession: KaFirSession,
+    override val analysisSession: KaFirSession,
     val owningKaSymbol: KaCallableSymbol,
-) : KaReceiverParameterSymbol() {
-    val owningFirSymbol: FirCallableSymbol<*>
-        get() = owningKaSymbol.firSymbol
-
+) : KaReceiverParameterSymbol(), KaFirKtBasedSymbol<KtTypeReference, FirReceiverParameterSymbol> {
     init {
         requireWithAttachment(
             owningBackingPsi == null || owningBackingPsi.receiverTypeReference != null,
@@ -49,21 +47,29 @@ internal class KaFirReceiverParameterSymbol private constructor(
         }
     }
 
+    override val firSymbol: FirReceiverParameterSymbol
+        get() = owningKaSymbol.firSymbol.let { owningFirSymbol ->
+            owningFirSymbol.receiverParameter?.symbol ?: errorWithAttachment("Receiver parameter is not found") {
+                withFirSymbolEntry("callableSymbol", owningFirSymbol)
+            }
+        }
+
     override val token: KaLifetimeToken
         get() = analysisSession.token
 
     override val psi: PsiElement?
         get() = withValidityAssertion {
-            owningBackingPsi?.receiverTypeReference ?: owningFirSymbol.fir.receiverParameter?.typeRef?.psi
+            backingPsi ?: firSymbol.fir.typeRef.psi
         }
+
+    override val backingPsi: KtTypeReference? = owningBackingPsi?.receiverTypeReference
+
+    override val lazyFirSymbol: Lazy<FirReceiverParameterSymbol>
+        get() = throw UnsupportedOperationException()
 
     override val returnType: KaType
         get() = withValidityAssertion {
-            owningFirSymbol.resolvedReceiverTypeRef?.let {
-                analysisSession.firSymbolBuilder.typeBuilder.buildKtType(it)
-            } ?: errorWithAttachment("${owningFirSymbol::class.simpleName} doesn't have an extension receiver") {
-                withFirEntry("callable", owningFirSymbol.fir)
-            }
+            analysisSession.firSymbolBuilder.typeBuilder.buildKtType(firSymbol.resolvedType)
         }
 
     override val owningCallableSymbol: KaCallableSymbol
@@ -82,17 +88,15 @@ internal class KaFirReceiverParameterSymbol private constructor(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            if (owningBackingPsi?.receiverTypeReference?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
+            if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
                 KaBaseEmptyAnnotationList(token)
             else
-                KaFirAnnotationListForReceiverParameter.create(owningFirSymbol, builder = analysisSession.firSymbolBuilder)
+                KaFirAnnotationListForReceiverParameter.create(owningKaSymbol.firSymbol, builder = analysisSession.firSymbolBuilder)
         }
 
-    override fun equals(other: Any?): Boolean = this === other ||
-            other is KaFirReceiverParameterSymbol &&
-            other.owningKaSymbol == this.owningKaSymbol
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
 
-    override fun hashCode(): Int = 31 * owningKaSymbol.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_RECEIVER
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
         fun create(

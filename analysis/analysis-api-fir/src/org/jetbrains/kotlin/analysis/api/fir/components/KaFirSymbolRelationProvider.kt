@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -204,18 +203,7 @@ internal class KaFirSymbolRelationProvider(
                 return null
             }
 
-            val firSymbol = when (this) {
-                is KaFirReceiverParameterSymbol -> {
-                    // symbol from receiver parameter
-                    owningFirSymbol
-                }
-                else -> {
-                    // general FIR-based symbol
-                    firSymbol
-                }
-            }
-
-            val firFileSymbol = firSymbol.fir.getContainingFile()?.symbol ?: return null
+            val firFileSymbol = this.firSymbol.fir.getContainingFile()?.symbol ?: return null
             return firSymbolBuilder.buildFileSymbol(firFileSymbol)
         }
 

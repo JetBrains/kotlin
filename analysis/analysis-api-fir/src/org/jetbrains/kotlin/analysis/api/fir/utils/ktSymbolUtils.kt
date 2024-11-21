@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 
 internal val KaSymbol.firSymbol: FirBasedSymbol<*>
     get() {
-        // Currently, KaFirReceiverParameterSymbol is not KaFirSymbol
         requireIsInstance<KaFirSymbol<*>>(this)
         return this.firSymbol
     }
