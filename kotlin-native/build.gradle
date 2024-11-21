@@ -269,13 +269,17 @@ tasks.register("distCompilerJars", Sync) {
     from(configurations.trove4j_jar) {
         include "trove4j*.jar"
         rename "trove4j(.*).jar", "trove4j.jar"
-        fileMode(0644)
+        filePermissions {
+            unix("0644")
+        }
     }
     from(configurations.embeddableJar) {
         rename {
             "kotlin-native-compiler-embeddable.jar"
         }
-        fileMode(0644)
+        filePermissions {
+            unix("0644")
+        }
     }
 
     into(nativeDistribution.map { it.compilerJars })
@@ -290,7 +294,9 @@ tasks.register("distTools", Sync) {
 
 tasks.register("distBin", Sync) {
     from(file('cmd')) {
-        fileMode(0755)
+        filePermissions {
+            unix("0755")
+        }
         if (!PlatformInfo.isWindows()) {
             exclude('**/*.bat')
         }
@@ -302,7 +308,9 @@ tasks.register("distBin", Sync) {
 tasks.register("distSwiftExport", Sync) {
     from(configurations.objcExportApi) {
         into('kotlin_runtime')
-        fileMode(0644)
+        filePermissions {
+            unix("0644")
+        }
     }
     into(nativeDistribution.map { it.swiftExport })
 }
