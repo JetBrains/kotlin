@@ -13,17 +13,20 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
+class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
@@ -180,22 +183,22 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsYieldFunctionSymbol = getInternalFunction("jsYield")
 
-    val jsInvokeSuspendSuperType =
-        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperType")
-    val jsInvokeSuspendSuperTypeWithReceiver =
-        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiver")
-    val jsInvokeSuspendSuperTypeWithReceiverAndParam =
-        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam")
+    val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol =
+        getCoroutineIntrinsic("invokeSuspendSuperType").single()
+    val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol =
+        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiver").single()
+    val jsInvokeSuspendSuperTypeWithReceiverAndParam: IrSimpleFunctionSymbol =
+        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiverAndParam").single()
 
-    val createCoroutineUnintercepted =
-        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUnintercepted")
-    val startCoroutineUninterceptedOrReturnNonGeneratorVersion =
-        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion")
+    val createCoroutineUnintercepted: Set<IrSimpleFunctionSymbol> =
+        getCoroutineIntrinsic("createCoroutineUnintercepted").toHashSet()
+    val startCoroutineUninterceptedOrReturnNonGeneratorVersion: Set<IrSimpleFunctionSymbol> =
+        getCoroutineIntrinsic("startCoroutineUninterceptedOrReturnNonGeneratorVersion").toHashSet()
 
-    val createCoroutineUninterceptedGeneratorVersion =
-        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUninterceptedGeneratorVersion")
-    val startCoroutineUninterceptedOrReturnGeneratorVersion =
-        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion")
+    val createCoroutineUninterceptedGeneratorVersion: Set<IrSimpleFunctionSymbol> =
+        getCoroutineIntrinsic("createCoroutineUninterceptedGeneratorVersion").toHashSet()
+    val startCoroutineUninterceptedOrReturnGeneratorVersion: Set<IrSimpleFunctionSymbol> =
+        getCoroutineIntrinsic("startCoroutineUninterceptedOrReturnGeneratorVersion").toHashSet()
 
     val startCoroutineUninterceptedOrReturnGeneratorVersion1 by lazy(LazyThreadSafetyMode.NONE) {
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 1 }
@@ -204,7 +207,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
     }
 
-    val suspendOrReturnFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.intrinsics.suspendOrReturn")
+    val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn").single()
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -216,42 +219,37 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             .associateBy { it.owner.extensionReceiverParameter!!.type to it.owner.valueParameters[0].type }
     }
 
-    val longClassSymbol = getInternalClassWithoutPackage("kotlin.Long")
+    val longClassSymbol = irBuiltIns.longClass
 
     val promiseClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        getInternalClassWithoutPackage("kotlin.js.Promise")
+        irBuiltIns.topLevelClass(JsStandardClassIds.Promise)
     }
 
-    val longToDouble = context.symbolTable.descriptorExtension.referenceSimpleFunction(
-        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
-            Name.identifier("toDouble")
-        )
-    )
-    val longToFloat = context.symbolTable.descriptorExtension.referenceSimpleFunction(
-        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
-            Name.identifier("toFloat")
-        )
-    )
+    val longToDouble: IrSimpleFunctionSymbol =
+        irBuiltIns.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_DOUBLE).single()
+
+    val longToFloat: IrSimpleFunctionSymbol =
+        irBuiltIns.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
         it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()
     }!!
 
-    val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
+    val charClassSymbol = irBuiltIns.charClass
 
-    val stringClassSymbol = getInternalClassWithoutPackage("kotlin.String")
+    val stringClassSymbol = irBuiltIns.stringClass
     val stringConstructorSymbol = stringClassSymbol.constructors.single()
 
-    val anyClassSymbol = getInternalClassWithoutPackage("kotlin.Any")
+    val anyClassSymbol = irBuiltIns.anyClass
     val anyConstructorSymbol = anyClassSymbol.constructors.single()
 
-    val jsObjectClassSymbol = getInternalClassWithoutPackage("kotlin.js.JsObject")
+    val jsObjectClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.JsObject)
     val jsObjectConstructorSymbol by lazy(LazyThreadSafetyMode.NONE) { jsObjectClassSymbol.constructors.single() }
 
-    val uByteClassSymbol by lazy(LazyThreadSafetyMode.NONE) { getInternalClassWithoutPackage("kotlin.UByte") }
-    val uShortClassSymbol by lazy(LazyThreadSafetyMode.NONE) { getInternalClassWithoutPackage("kotlin.UShort") }
-    val uIntClassSymbol by lazy(LazyThreadSafetyMode.NONE) { getInternalClassWithoutPackage("kotlin.UInt") }
-    val uLongClassSymbol by lazy(LazyThreadSafetyMode.NONE) { getInternalClassWithoutPackage("kotlin.ULong") }
+    val uByteClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UByte) }
+    val uShortClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UShort) }
+    val uIntClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UInt) }
+    val uLongClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.ULong) }
 
     val unreachable = getInternalFunction("unreachable")
 
@@ -284,19 +282,21 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsSliceArrayLikeFromIndexToIndex = getInternalFunction("jsSliceArrayLikeFromIndexToIndex")
 
     internal inner class JsReflectionSymbols : ReflectionSymbols {
-        override val createKType = getInternalWithoutPackageOrNull("createKType")
-        override val createDynamicKType = getInternalWithoutPackageOrNull("createDynamicKType")
-        override val createKTypeParameter = getInternalWithoutPackageOrNull("createKTypeParameter")
-        override val getStarKTypeProjection = getInternalWithoutPackageOrNull("getStarKTypeProjection")
-        override val createCovariantKTypeProjection = getInternalWithoutPackageOrNull("createCovariantKTypeProjection")
-        override val createInvariantKTypeProjection = getInternalWithoutPackageOrNull("createInvariantKTypeProjection")
-        override val createContravariantKTypeProjection = getInternalWithoutPackageOrNull("createContravariantKTypeProjection")
-        override val getKClass = getInternalWithoutPackage("getKClass")
-        override val getKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
-        override val kTypeClass: IrClassSymbol = context.getIrClass(FqName("kotlin.reflect.KType"))
+        override val createKType: IrSimpleFunctionSymbol? = getInternalInRootPackage("createKType")
+        override val createDynamicKType: IrSimpleFunctionSymbol? = getInternalInRootPackage("createDynamicKType")
+        override val createKTypeParameter: IrSimpleFunctionSymbol? = getInternalInRootPackage("createKTypeParameter")
+        override val getStarKTypeProjection: IrSimpleFunctionSymbol? = getInternalInRootPackage("getStarKTypeProjection")
+        override val createCovariantKTypeProjection: IrSimpleFunctionSymbol? = getInternalInRootPackage("createCovariantKTypeProjection")
+        override val createInvariantKTypeProjection: IrSimpleFunctionSymbol? = getInternalInRootPackage("createInvariantKTypeProjection")
+        override val createContravariantKTypeProjection: IrSimpleFunctionSymbol? =
+            getInternalInRootPackage("createContravariantKTypeProjection")
+        override val getKClass: IrSimpleFunctionSymbol = getInternalInRootPackage("getKClass")!!
+        override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalInRootPackage("getKClassFromExpression")!!
+        override val kTypeClass: IrClassSymbol =
+            irBuiltIns.findClass(StandardClassIds.KType.shortClassName, StandardClassIds.KType.packageFqName)!!
     }
 
-    val primitiveClassesObject = context.getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
+    val primitiveClassesObject: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, "PrimitiveClasses")
 
     internal val reflectionSymbols: JsReflectionSymbols = JsReflectionSymbols()
 
@@ -324,24 +324,20 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
         }
 
-    val arrayConcat = getInternalWithoutPackage("arrayConcat")
+    val arrayConcat: IrSimpleFunctionSymbol = getInternalInRootPackage("arrayConcat")!!
 
-    val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
-    val taggedArrayCopy = getInternalWithoutPackage("taggedArrayCopy")
+    val primitiveArrayConcat: IrSimpleFunctionSymbol = getInternalInRootPackage("primitiveArrayConcat")!!
+    val taggedArrayCopy: IrSimpleFunctionSymbol = getInternalInRootPackage("taggedArrayCopy")!!
 
     val jsArraySlice = getInternalFunction("slice")
 
     val jsCall = getInternalFunction("jsCall")
     val jsBind = getInternalFunction("jsBind")
 
-    // TODO move to IntrinsifyCallsLowering
-    val doNotIntrinsifyAnnotationSymbol =
-        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
-    val jsOutlinedFunctionAnnotationSymbol =
-        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsOutlinedFunction"))
-    val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
-    val jsExportAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
-    val jsGeneratorAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsGenerator"))
+    val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsOutlinedFunction)
+    val jsNameAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsName)
+    val jsExportAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsExport)
+    val jsGeneratorAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsGenerator)
 
     val jsExportIgnoreAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
         jsExportAnnotationSymbol.owner
@@ -351,11 +347,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         }
     }
 
-    val jsImplicitExportAnnotationSymbol =
-        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsImplicitExport"))
+    val jsImplicitExportAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsImplicitExport)
 
-    // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
-    val charSequenceClassSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
+    val charSequenceClassSymbol = irBuiltIns.topLevelClass(StandardClassIds.CharSequence)
     val charSequenceLengthPropertyGetterSymbol by lazy(LazyThreadSafetyMode.NONE) {
         with(charSequenceClassSymbol.owner.declarations) {
             filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter
@@ -402,36 +396,24 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
     // Helpers:
-    private fun getInternalFunction(name: String) =
-        context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalFunction(name))
+    private fun getInternalFunction(name: String): IrSimpleFunctionSymbol =
+        irBuiltIns.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
 
-    private fun getInternalCollectionFunction(name: String) =
-        context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalCollectionFunction(name))
+    private fun getInternalCollectionFunction(name: String): IrSimpleFunctionSymbol =
+        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_COLLECTIONS_PACKAGE).single()
 
-    private fun getInternalProperty(name: String) =
-        context.symbolTable.descriptorExtension.referenceProperty(context.getJsInternalProperty(name))
+    private fun getInternalProperty(name: String): IrPropertySymbol =
+        irBuiltIns.findProperties(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
 
-    private fun getInternalWithoutPackage(name: String) =
-        context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
+    private fun getInternalInRootPackage(name: String): IrSimpleFunctionSymbol? =
+        irBuiltIns.findFunctions(Name.identifier(name), FqName.ROOT).singleOrNull()
 
-    private fun getManyInternalWithoutPackage(name: String) =
-        context.getFunctions(FqName(name)).mapTo(mutableSetOf()) { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+    private fun getCoroutineIntrinsic(name: String): Iterable<IrSimpleFunctionSymbol> =
+        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_COROUTINES_INTRINSICS_PACKAGE)
 
-    private fun getInternalWithoutPackageOrNull(name: String): IrSimpleFunctionSymbol? {
-        val descriptor = context.getFunctions(FqName(name)).singleOrNull() ?: return null
-        return context.symbolTable.descriptorExtension.referenceSimpleFunction(descriptor)
-    }
+    private fun getFunctionInEnumPackage(name: String): IrSimpleFunctionSymbol =
+        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE).single()
 
-    private fun getFunctionInEnumPackage(name: String) =
-        context.symbolTable.descriptorExtension.referenceSimpleFunction(
-            context.getFunctions(kotlinEnumsPackageFqn.child(Name.identifier(name))).single()
-        )
-
-    private fun getFunctionInKotlinPackage(name: String) =
-        context.symbolTable.descriptorExtension.referenceSimpleFunction(
-            context.getFunctions(kotlinPackageFqn.child(Name.identifier(name))).single()
-        )
-
-    private fun getInternalClassWithoutPackage(fqName: String) =
-        context.symbolTable.descriptorExtension.referenceClass(context.getClass(FqName(fqName)))
+    private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
+        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
 }

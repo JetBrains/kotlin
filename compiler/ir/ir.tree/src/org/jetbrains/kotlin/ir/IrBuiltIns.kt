@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -184,6 +185,7 @@ abstract class IrBuiltIns {
     abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
 
     fun topLevelClass(fqName: FqName): IrClassSymbol = findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
+    fun topLevelClass(classId: ClassId): IrClassSymbol = findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
     fun topLevelClass(packageName: FqName, name: String): IrClassSymbol = findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
     fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> = findProperties(Name.identifier(name), packageName)
     inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {

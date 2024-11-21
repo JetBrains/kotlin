@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -113,24 +114,10 @@ class JsIrBackendContext(
 
     override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
-    companion object {
-        val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
-
-
-        // TODO: what is more clear way reference this getter?
-        private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
-        private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
-        private val ENUMS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("enums"))
-        private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
-        private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
-        private val COLLECTION_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("collections"))
-    }
-
-    private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
-    private val internalCollectionPackage = module.getPackage(COLLECTION_PACKAGE_FQNAME)
+    private val internalPackage = module.getPackage(JsStandardClassIds.BASE_JS_PACKAGE)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
+    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns)
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
@@ -142,7 +129,7 @@ class JsIrBackendContext(
     override val catchAllThrowableType: IrType
         get() = dynamicType
 
-    override val internalPackageFqn = JS_PACKAGE_FQNAME
+    override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
 
     private val operatorMap = referenceOperators()
 
@@ -165,8 +152,8 @@ class JsIrBackendContext(
     override val jsPromiseSymbol: IrClassSymbol?
         get() = intrinsics.promiseClassSymbol
 
-    override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
-    override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
+    override val enumEntries = getIrClass(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("EnumEntries")))
+    override val createEnumEntries = getFunctions(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("enumEntries")))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
@@ -178,10 +165,10 @@ class JsIrBackendContext(
 
     // classes forced to be loaded
 
-    val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
+    val throwableClass = getIrClass(StandardClassIds.Throwable.asSingleFqName())
 
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
-        getIrClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
+        getIrClass(JsStandardClassIds.BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("${it.identifier}CompanionObject")))
     }
 
     // Top-level functions forced to be loaded
@@ -255,13 +242,6 @@ class JsIrBackendContext(
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
-
-    internal fun getJsInternalCollectionFunction(name: String): SimpleFunctionDescriptor =
-        findFunctions(internalCollectionPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
-
-    internal fun getJsInternalProperty(name: String): PropertyDescriptor =
-        findProperty(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
-
 
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())

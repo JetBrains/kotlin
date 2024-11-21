@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.name.JsStandardClassIds
 
 class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val transformers = listOf(
@@ -40,7 +41,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrElement {
                 val call = super.visitFunctionAccess(expression, data)
-                val doNotIntrinsify = data.hasAnnotation(context.intrinsics.doNotIntrinsifyAnnotationSymbol)
+                val doNotIntrinsify = data.hasAnnotation(JsStandardClassIds.Annotations.DoNotIntrinsify)
                 if (call is IrFunctionAccessExpression) {
                     for (transformer in transformers) {
                         val newCall = transformer.transformFunctionAccess(call, doNotIntrinsify)
