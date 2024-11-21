@@ -21,13 +21,12 @@ abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagn
             .run { File(parent, "$nameWithoutExtension.fragment.$extension") }
             .readText()
 
-        val isBlockFragment = fragmentText.any { it == '\n' }
-
         val project = mainFile.project
         val factory = KtPsiFactory(project, markGenerated = false)
 
         val codeFragment = when {
-            isBlockFragment -> factory.createBlockCodeFragment(fragmentText, contextElement)
+            fragmentText.startsWith("// CODE_FRAGMENT_KIND: TYPE") -> factory.createTypeCodeFragment(fragmentText, contextElement)
+            fragmentText.any { it == '\n' } -> factory.createBlockCodeFragment(fragmentText, contextElement)
             else -> factory.createExpressionCodeFragment(fragmentText, contextElement)
         }
 

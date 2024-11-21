@@ -58,6 +58,18 @@ public class FirIdeNormalAnalysisSourceModuleCodeFragmentCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("kmpTypeCodeFragment.kt")
+  public void testKmpTypeCodeFragment() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/kmpTypeCodeFragment.kt");
+  }
+
+  @Test
+  @TestMetadata("kmpUnresolvedTypeCodeFragment.kt")
+  public void testKmpUnresolvedTypeCodeFragment() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/kmpUnresolvedTypeCodeFragment.kt");
+  }
+
+  @Test
   @TestMetadata("libraryOverloads.kt")
   public void testLibraryOverloads() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/libraryOverloads.kt");
