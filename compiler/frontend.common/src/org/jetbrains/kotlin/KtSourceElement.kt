@@ -450,6 +450,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object AssignmentLValueError : KtFakeSourceElementKind()
 
     /**
+     * For when the LHS of a desugared assignment has a null source.
+     * In this case, the psi of [KtFakePsiSourceElement] should be set to the psi of the assignment
+     */
+    object DesugaredAssignmentLValueSourceIsNull : KtFakeSourceElementKind()
+
+    /**
      * for return type of value parameters in lambdas
      */
     object ImplicitReturnTypeOfLambdaValueParameter : KtFakeSourceElementKind()

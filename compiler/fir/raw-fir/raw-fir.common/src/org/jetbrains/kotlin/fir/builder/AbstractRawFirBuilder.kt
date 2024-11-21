@@ -966,7 +966,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             lValue = if (baseSource?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
                 buildDesugaredAssignmentValueReferenceExpression {
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(assignmentLValue) }
-                    source = assignmentLValue.source?.fakeElement(baseSource.kind as KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                    source =
+                        assignmentLValue.source?.fakeElement(baseSource.kind as KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                            ?: baseSource.fakeElement(KtFakeSourceElementKind.DesugaredAssignmentLValueSourceIsNull)
                 }
             } else {
                 assignmentLValue

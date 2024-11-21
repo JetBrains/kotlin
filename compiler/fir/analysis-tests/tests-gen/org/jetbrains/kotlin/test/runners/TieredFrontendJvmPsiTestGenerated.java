@@ -29095,6 +29095,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("kt72537.kt")
+      public void testKt72537() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/kt72537.kt");
+      }
+
+      @Test
       @TestMetadata("RedundantModalityModifierChecker.kt")
       public void testRedundantModalityModifierChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantModalityModifierChecker.kt");

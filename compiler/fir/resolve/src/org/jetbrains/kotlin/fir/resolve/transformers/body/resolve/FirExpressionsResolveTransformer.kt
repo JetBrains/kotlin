@@ -795,14 +795,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             val leftArgumentDesugaredSource = leftArgument.source?.fakeElement(fakeSourceKind)
             val unwrappedLeftArgument = leftArgument.unwrapSmartcastExpression()
+
+            val assignmentSource = augmentedAssignment.source?.fakeElement(fakeSourceKind)
+
             val assignmentLeftArgument = buildDesugaredAssignmentValueReferenceExpression {
                 expressionRef = FirExpressionRef<FirExpression>().apply { bind(unwrappedLeftArgument) }
                 source = leftArgumentDesugaredSource
+                    ?: assignmentSource?.fakeElement(KtFakeSourceElementKind.DesugaredAssignmentLValueSourceIsNull)
             }
 
             val assignment =
                 buildVariableAssignment {
-                    source = augmentedAssignment.source?.fakeElement(fakeSourceKind)
+                    source = assignmentSource
                     lValue = assignmentLeftArgument
                     rValue = resolvedOperatorCall
                     annotations += augmentedAssignment.annotations
@@ -812,7 +816,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 generateExplicitReceiverTemporaryVariable(session, unwrappedLeftArgument, leftArgumentDesugaredSource)
             return if (receiverTemporaryVariable != null) {
                 buildBlock {
-                    source = augmentedAssignment.source?.fakeElement(fakeSourceKind)
+                    source = assignmentSource
                     annotations += augmentedAssignment.annotations
 
                     statements += receiverTemporaryVariable
@@ -895,6 +899,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             lValue = buildDesugaredAssignmentValueReferenceExpression {
                 source = ((expression as? FirErrorExpression)?.expression ?: expression).source
                     ?.fakeElement(fakeSourceKind)
+                    ?: desugaredSource?.fakeElement(KtFakeSourceElementKind.DesugaredAssignmentLValueSourceIsNull)
                 expressionRef = FirExpressionRef<FirExpression>().apply { bind(expression.unwrapSmartcastExpression()) }
             }
             this.rValue = rValue
@@ -913,7 +918,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 // ^a
                 statements += buildDesugaredAssignmentValueReferenceExpression {
                     source = ((expression as? FirErrorExpression)?.expression ?: expression).source
-                        ?.fakeElement(fakeSourceKind)
+                        ?.fakeElement(fakeSourceKind) ?: desugaredSource?.fakeElement(KtFakeSourceElementKind.DesugaredAssignmentLValueSourceIsNull)
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(expression.unwrapSmartcastExpression()) }
                 }.let {
                     it.transform<FirStatement, ResolutionMode>(transformer, ResolutionMode.ContextIndependent)

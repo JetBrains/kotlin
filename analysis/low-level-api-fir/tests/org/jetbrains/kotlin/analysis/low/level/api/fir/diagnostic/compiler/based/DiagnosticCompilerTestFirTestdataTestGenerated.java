@@ -2990,6 +2990,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("kt72537.kt")
+      public void testKt72537() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/kt72537.kt");
+      }
+
+      @Test
       @TestMetadata("RedundantExplicitTypeChecker.kt")
       public void testRedundantExplicitTypeChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
