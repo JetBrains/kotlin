@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -499,20 +500,46 @@ fun generateExports(exports: List<WasmExport<*>>): String {
     // TODO: necessary to move export check onto common place
     val exportNames = exports
         .filterNot { it.name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) }
+
+    val (validIdentifiers, notValidIdentifiers) = exportNames.partition { it.name.isValidES5Identifier() }
+    val regularlyExportedVariables = validIdentifiers
         .ifNotEmpty {
-            joinToString(",\n") {
-                "    ${it.name}"
-            }
-        }?.let {
+            """
+            |export const {
+                |${joinToString(",\n") { it.name }}
+            |} = exports
+            """.trimMargin()
+        }
+        .orEmpty()
+
+    val escapedExportedVariables = notValidIdentifiers
+        .mapIndexed { index, it ->
+            generateShortNameByIndex(index) to it.name.replace("'", "\\'")
+        }
+        .ifNotEmpty {
+            /*language=js */
             """
             |const {
-                |$it
+                |${joinToString(",\n") { "'${it.second}': ${it.first}" }}
+            |} = exports
+            |
+            |export {
+                |${joinToString(",\n") { "${it.first} as '${it.second}'" }}
             |}
-        """.trimMargin()
+            """.trimMargin()
         }
+        .orEmpty()
 
     /*language=js */
     return """
-${exportNames?.let { "export $it = exports;" }}
+$regularlyExportedVariables
+$escapedExportedVariables
 """
+}
+
+private fun generateShortNameByIndex(index: Int): String {
+    val lettersNumber = 26
+    val letterName = ('a'.code + index % lettersNumber).toChar()
+    val number = index / lettersNumber
+    return if (number == 0) letterName.toString() else "$letterName$number"
 }

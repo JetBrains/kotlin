@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -286,5 +287,57 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   @TestMetadata("wasmImport.kt")
   public void testWasmImport() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class EscapedIdentifiers {
+    @Test
+    public void testAllFilesPresentInEscapedIdentifiers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    }
+
+    @Test
+    @TestMetadata("externalEscapedClassFields.kt")
+    public void testExternalEscapedClassFields() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/externalEscapedClassFields.kt");
+    }
+
+    @Test
+    @TestMetadata("externalEscapedTopLevel.kt")
+    public void testExternalEscapedTopLevel() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/externalEscapedTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelExportedFunction.kt")
+    public void testTopLevelExportedFunction() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelExportedFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelLocalClassMangling.kt")
+    public void testTopLevelLocalClassMangling() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelLocalClassMangling.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelLocalCompanionMangling.kt")
+    public void testTopLevelLocalCompanionMangling() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelLocalCompanionMangling.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelLocalFunctionMangling.kt")
+    public void testTopLevelLocalFunctionMangling() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelLocalFunctionMangling.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelLocalVariableMangling.kt")
+    public void testTopLevelLocalVariableMangling() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelLocalVariableMangling.kt");
+    }
   }
 }
