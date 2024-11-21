@@ -19,6 +19,14 @@ internal data class LLPartialBodyResolveState(
     val performedAnalysesCount: Int,
     val analysisStateSnapshot: LLPartialBodyResolveSnapshot?
 ) {
+    @Volatile
+    var isValid: Boolean = true
+        private set
+
+    fun invalidate() {
+        isValid = false
+    }
+
     val isFullyAnalyzed: Boolean
         get() = totalPsiStatementCount == analyzedPsiStatementCount
 
