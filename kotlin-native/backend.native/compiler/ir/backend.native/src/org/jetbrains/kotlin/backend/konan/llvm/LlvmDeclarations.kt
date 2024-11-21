@@ -31,7 +31,7 @@ internal fun createLlvmDeclarations(generationState: NativeGenerationState, irFi
     irFiles.forEach {
         it.acceptVoid(generator)
     }
-    return LlvmDeclarations(generator.uniques)
+    return LlvmDeclarations(generator.uniques, generationState.llvmModuleName)
 }
 
 // Please note, that llvmName is part of the ABI, and cannot be liberally changed.
@@ -40,23 +40,23 @@ enum class UniqueKind(val llvmName: String) {
     EMPTY_ARRAY("theEmptyArray")
 }
 
-internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
+internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>, val llvmModuleName: String) {
     fun forFunction(function: IrSimpleFunction): LlvmCallable =
             forFunctionOrNull(function) ?: with(function) {
                 error("$name in $file/${parent.fqNameForIrSerialization}")
             }
 
     fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
-            (function.metadata as? KonanMetadata.Function)?.llvm
+            (function.metadata as? KonanMetadata.Function)?.llvm(llvmModuleName)
 
     fun forClass(irClass: IrClass) =
-            (irClass.metadata as? KonanMetadata.Class)?.llvm ?: error(irClass.render())
+            (irClass.metadata as? KonanMetadata.Class)?.llvm(llvmModuleName) ?: error(irClass.render())
 
     fun forField(field: IrField) =
-            (field.metadata as? KonanMetadata.InstanceField)?.llvm ?: error(field.render())
+            (field.metadata as? KonanMetadata.InstanceField)?.llvm(llvmModuleName) ?: error(field.render())
 
     fun forStaticField(field: IrField) =
-            (field.metadata as? KonanMetadata.StaticField)?.llvm ?: error(field.render())
+            (field.metadata as? KonanMetadata.StaticField)?.llvm(llvmModuleName) ?: error(field.render())
 
     fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
 
@@ -193,7 +193,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     override fun visitClass(declaration: IrClass) {
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
-            declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
+            declaration.metadata = KonanMetadata.Class(declaration, generationState.llvmModuleName, classLlvmDeclarations, context.getLayoutBuilder(declaration))
         }
         super.visitClass(declaration)
     }
@@ -403,12 +403,13 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
             if (!containingClass.requiresRtti()) return
-            val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
+            val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm(generationState.llvmModuleName)
                     ?: error(containingClass.render())
             val index = classDeclarations.fieldIndices[declaration.symbol]!!
             val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,
+                    generationState.llvmModuleName,
                     FieldLlvmDeclarations(
                             index,
                             bodyType,
@@ -425,7 +426,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
             }
 
-            declaration.metadata = KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet))
+            declaration.metadata = KonanMetadata.StaticField(declaration, generationState.llvmModuleName, StaticFieldLlvmDeclarations(storage, alignmnet))
         }
     }
 
@@ -473,7 +474,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             proto.createLlvmFunction(context, llvm.module)
         }
 
-        declaration.metadata = KonanMetadata.Function(declaration, llvmFunction)
+        declaration.metadata = KonanMetadata.Function(declaration, generationState.llvmModuleName, llvmFunction)
     }
 }
 
@@ -481,12 +482,32 @@ internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: 
     sealed class Declaration<T>(declaration: T)
         : KonanMetadata(declaration.metadata?.name, declaration.konanLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
 
-    class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
+    class Class(irClass: IrClass, private val sourceModule: String, private val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass) {
+        fun llvm(currentModule: String): ClassLlvmDeclarations {
+            require(currentModule == sourceModule) { "currentModule = ${currentModule}; sourceModule = ${sourceModule}" }
+            return llvm
+        }
+    }
 
-    class Function(irFunction: IrSimpleFunction, val llvm: LlvmCallable) : Declaration<IrSimpleFunction>(irFunction)
+    class Function(irFunction: IrSimpleFunction, private val sourceModule: String, private val llvm: LlvmCallable) : Declaration<IrSimpleFunction>(irFunction) {
+        fun llvm(currentModule: String): LlvmCallable {
+            require(currentModule == sourceModule) { "currentModule = ${currentModule}; sourceModule = ${sourceModule}" }
+            return llvm
+        }
+    }
 
-    class InstanceField(irField: IrField, val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField)
+    class InstanceField(irField: IrField, private val sourceModule: String, private val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField) {
+        fun llvm(currentModule: String): FieldLlvmDeclarations {
+            require(currentModule == sourceModule) { "currentModule = ${currentModule}; sourceModule = ${sourceModule}" }
+            return llvm
+        }
+    }
 
-    class StaticField(irField: IrField, val llvm: StaticFieldLlvmDeclarations) : Declaration<IrField>(irField)
+    class StaticField(irField: IrField, private val sourceModule: String, private val llvm: StaticFieldLlvmDeclarations) : Declaration<IrField>(irField) {
+        fun llvm(currentModule: String): StaticFieldLlvmDeclarations {
+            require(currentModule == sourceModule) { "currentModule = ${currentModule}; sourceModule = ${sourceModule}" }
+            return llvm
+        }
+    }
 }
 
