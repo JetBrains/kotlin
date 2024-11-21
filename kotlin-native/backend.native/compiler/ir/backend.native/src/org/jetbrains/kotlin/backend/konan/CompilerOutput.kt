@@ -158,7 +158,7 @@ internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRe
         return
     val entryPointName = config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
-            ?: error("Module doesn't contain `$entryPointName`")
+            ?: if (context.shouldOptimize()) return else error("Module doesn't contain `$entryPointName`")
     val programAddressSpace = LLVMGetProgramAddressSpace(module)
     LLVMAddAlias2(module, getGlobalFunctionType(entryPoint), programAddressSpace, entryPoint, "main")
 }
