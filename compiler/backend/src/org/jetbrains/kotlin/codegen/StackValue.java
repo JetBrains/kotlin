@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase;
 import org.jetbrains.kotlin.codegen.state.StaticTypeMapperForOldBackend;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -251,44 +250,7 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
-        return field(type, null, owner, name, isStatic, receiver);
-    }
-
-    @NotNull
-    public static Field field(
-            @NotNull Type type,
-            @Nullable KotlinType kotlinType,
-            @NotNull Type owner,
-            @NotNull String name,
-            boolean isStatic,
-            @NotNull StackValue receiver
-    ) {
-        return field(type, kotlinType, owner, name, isStatic, receiver, null);
-    }
-
-    @NotNull
-    public static Field field(
-            @NotNull Type type,
-            @Nullable KotlinType kotlinType,
-            @NotNull Type owner,
-            @NotNull String name,
-            boolean isStatic,
-            @NotNull StackValue receiver,
-            @Nullable DeclarationDescriptor descriptor
-    ) {
-        return new Field(type, kotlinType, owner, name, isStatic, receiver, descriptor);
-    }
-
-    @NotNull
-    public static Field field(@NotNull FieldInfo info, @NotNull StackValue receiver) {
-        return field(
-                info.getFieldType(),
-                info.getFieldKotlinType(),
-                Type.getObjectType(info.getOwnerInternalName()),
-                info.getFieldName(),
-                info.isStatic(),
-                receiver
-        );
+        return new Field(type, null, owner, name, isStatic, receiver, null);
     }
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
@@ -616,11 +578,6 @@ public abstract class StackValue {
             return value;
         }
         return new CoercionValue(value, castType, castKotlinType, underlyingKotlinType);
-    }
-
-    @NotNull
-    public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 enum class OwnerKind {
-    PACKAGE,
     IMPLEMENTATION,
-    DEFAULT_IMPLS,
-    ERASED_INLINE_CLASS,
     ;
 }

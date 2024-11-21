@@ -33,14 +33,6 @@ class CallableMethod(
     private val isDefaultMethodInInterface: Boolean,
     private val boxInlineClassBeforeInvoke: Boolean
 ) : Callable {
-    private val defaultImplMethod: Method by lazy(LazyThreadSafetyMode.PUBLICATION, computeDefaultMethod)
-
-    private val defaultImplMethodName: String get() = defaultImplMethod.name
-    private val defaultMethodDesc: String get() = defaultImplMethod.descriptor
-
-    fun getValueParameters(): List<JvmMethodParameterSignature> =
-        signature.valueParameters
-
     override val valueParameterTypes: List<Type>
         get() = signature.valueParameters.filter { it.kind == JvmMethodParameterKind.VALUE }.map { it.asmType }
 
@@ -61,29 +53,6 @@ class CallableMethod(
             getAsmMethod().descriptor,
             isInterfaceMethod
         )
-    }
-
-    fun genInvokeDefaultInstruction(v: InstructionAdapter) {
-        if (defaultImplOwner == null) {
-            throw IllegalStateException()
-        }
-
-        val method = getAsmMethod()
-
-        if ("<init>" == method.name) {
-            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.internalName, "<init>", defaultMethodDesc, false)
-        } else {
-            v.visitMethodInsn(
-                INVOKESTATIC, defaultImplOwner.internalName,
-                defaultImplMethodName, defaultMethodDesc, isDefaultMethodInInterface
-            )
-
-            StackValue.coerce(
-                Type.getReturnType(defaultMethodDesc),
-                Type.getReturnType(signature.asmMethod.descriptor),
-                v
-            )
-        }
     }
 
     override val returnType: Type

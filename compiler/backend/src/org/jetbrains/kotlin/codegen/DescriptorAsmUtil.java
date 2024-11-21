@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -93,39 +91,19 @@ public class DescriptorAsmUtil {
         return getLabeledThisName(callableName.asString(), prefix, defaultName);
     }
 
-    @NotNull
-    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull KotlinTypeMapper typeMapper) {
-        if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            return typeMapper.mapTypeAsDeclaration(kotlinType);
-        }
-
-        Type boxedPrimitiveType = boxPrimitiveType(type);
-        return boxedPrimitiveType != null ? boxedPrimitiveType : type;
-    }
-
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
+    private static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
                 (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
-                        .isCompiledToJvmDefault(functionDescriptor, jvmDefaultMode)))
-               && !isStaticMethod(kind, functionDescriptor);
-    }
-
-    public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
-        return isStaticKind(kind) ||
-               CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
-    }
-
-    public static boolean isStaticKind(OwnerKind kind) {
-        return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS || kind == OwnerKind.ERASED_INLINE_CLASS;
+                        .isCompiledToJvmDefault(functionDescriptor, jvmDefaultMode))) &&
+               !CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
     }
 
     public static int getMethodAsmFlags(
             FunctionDescriptor functionDescriptor,
-            OwnerKind kind,
             DeprecationResolver deprecationResolver,
             JvmDefaultMode jvmDefaultMode
     ) {
-        int flags = getCommonCallableFlags(functionDescriptor, kind, deprecationResolver);
+        int flags = getCommonCallableFlags(functionDescriptor, deprecationResolver);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
@@ -147,16 +125,16 @@ public class DescriptorAsmUtil {
             }
         }
 
-        if (isStaticMethod(kind, functionDescriptor)) {
+        if (CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor)) {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind, jvmDefaultMode)) {
+        if (isAbstractMethod(functionDescriptor, jvmDefaultMode)) {
             flags |= ACC_ABSTRACT;
         }
 
         if (hasJvmSyntheticAnnotation(functionDescriptor) ||
-            isInlineClassWrapperConstructor(functionDescriptor, kind) ||
+            isInlineClassWrapperConstructor(functionDescriptor) ||
             InlineClassDescriptorResolver.isSynthesizedBoxMethod(functionDescriptor) ||
             InlineClassDescriptorResolver.isSynthesizedUnboxMethod(functionDescriptor)
         ) {
@@ -166,18 +144,17 @@ public class DescriptorAsmUtil {
         return flags;
     }
 
-    private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @Nullable OwnerKind kind) {
+    private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor) {
         if (!(functionDescriptor instanceof ConstructorDescriptor)) return false;
         ClassDescriptor classDescriptor = ((ConstructorDescriptor) functionDescriptor).getConstructedClass();
-        return InlineClassesUtilsKt.isInlineClass(classDescriptor) && kind == OwnerKind.IMPLEMENTATION;
+        return InlineClassesUtilsKt.isInlineClass(classDescriptor);
     }
 
     private static int getCommonCallableFlags(
             FunctionDescriptor functionDescriptor,
-            @Nullable OwnerKind kind,
             @NotNull DeprecationResolver deprecationResolver
     ) {
-        int flags = getVisibilityAccessFlag(functionDescriptor, kind);
+        int flags = getVisibilityAccessFlag(functionDescriptor, OwnerKind.IMPLEMENTATION);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
         if (deprecationResolver.isDeprecatedHidden(functionDescriptor) || isInlineWithReified(functionDescriptor)) {
@@ -243,7 +220,7 @@ public class DescriptorAsmUtil {
         }
 
         if (memberDescriptor instanceof FunctionDescriptor &&
-            isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor, kind)) {
+            kind != null && isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor)) {
             return ACC_PRIVATE;
         }
 

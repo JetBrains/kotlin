@@ -10,14 +10,11 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalClassDescriptor
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,12 +22,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.isNullableUnderlyingType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -226,32 +219,6 @@ private fun InstructionAdapter.invokeGetContext() {
 @Suppress("UNCHECKED_CAST")
 fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
     (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
-
-// For each suspend function, we have a corresponding JVM view function that has an extra continuation parameter,
-// and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
-// This also causes boxing of primitives and inline class values.
-// If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
-// However, we have to do that consistently both on declaration site and on call site.
-fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper: KotlinTypeMapper): KotlinType? {
-    if (!isSuspend) return null
-    // Suspend lambdas cannot return unboxed inline class
-    if (this is AnonymousFunctionDescriptor) return null
-    val originalDescriptor = unwrapInitialDescriptorForSuspendFunction().original
-    val originalReturnType = originalDescriptor.returnType ?: return null
-    if (!originalReturnType.isInlineClassType()) return null
-    // Force boxing for primitives
-    if (AsmUtil.isPrimitive(typeMapper.mapType(originalReturnType.makeNotNullable()))) return null
-    // Force boxing for nullable inline class types with nullable underlying type
-    if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) return null
-    // Force boxing if the function overrides function with different type modulo nullability
-    if (originalDescriptor.overriddenDescriptors.any {
-            (it.original.returnType?.isMarkedNullable == true && it.original.returnType?.isNullableUnderlyingType() == true) ||
-                    // We do not care about type parameters, just main class type
-                    it.original.returnType?.constructor?.declarationDescriptor != originalReturnType.constructor.declarationDescriptor
-        }) return null
-    // Don't box other inline classes
-    return originalReturnType
-}
 
 fun InstructionAdapter.loadCoroutineSuspendedMarker() {
     invokestatic(

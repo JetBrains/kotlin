@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -291,11 +290,10 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
 private fun KtUltraLightClass.lightMethod(
     descriptor: FunctionDescriptor,
 ): LightMethodBuilder {
-    val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
+    val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor)
 
     val asmFlags = DescriptorAsmUtil.getMethodAsmFlags(
         descriptor,
-        OwnerKind.IMPLEMENTATION,
         support.deprecationResolver,
         support.jvmDefaultMode,
     )
