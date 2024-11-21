@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
@@ -292,7 +291,7 @@ private fun KtUltraLightClass.lightMethod(
 ): LightMethodBuilder {
     val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor)
 
-    val asmFlags = DescriptorAsmUtil.getMethodAsmFlags(
+    val asmFlags = VisibilityUtil.getMethodAsmFlags(
         descriptor,
         support.deprecationResolver,
         support.jvmDefaultMode,

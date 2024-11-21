@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.types.KotlinType;
 import static org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt.SUSPEND_FUNCTION_CREATE_METHOD_NAME;
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public class JvmCodegenUtil {
 
@@ -74,17 +72,6 @@ public class JvmCodegenUtil {
     @NotNull
     public static String getMappingFileName(@NotNull String moduleName) {
         return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
-    }
-
-    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
-        return isCompanionObject(companionObject) &&
-               isJvmInterface(companionObject.getContainingDeclaration()) &&
-               !DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
-    }
-
-    public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {
-        return isCompanionObjectInInterfaceNotIntrinsic(companionObject) &&
-               DescriptorVisibilities.isPrivate(companionObject.getVisibility());
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {

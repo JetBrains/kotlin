@@ -632,7 +632,7 @@ private val Modality.flags: Int
     }
 
 private val DescriptorVisibility.flags: Int
-    get() = DescriptorAsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
+    get() = AsmUtil.getVisibilityAccessFlag(delegate) ?: throw AssertionError("Unsupported visibility $this")
 
 // From `isAnonymousClass` in inlineCodegenUtils.kt
 private val Type.isAnonymousClass: Boolean
