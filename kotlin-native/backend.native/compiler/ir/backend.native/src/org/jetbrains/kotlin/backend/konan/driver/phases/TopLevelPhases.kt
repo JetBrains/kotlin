@@ -168,7 +168,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                             )
                         } else null
                         // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                        generationStateEngine.compileModule(it.module, it.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                        generationStateEngine.compileModule(it.module, it.files, fragment.irModule.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
                         objectFile
                     }
                 }
@@ -327,12 +327,13 @@ internal data class ModuleCompilationOutput(
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment?,
         files: List<IrFile>,
+        allFiles: List<IrFile>,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         objectFile: java.io.File,
         cExportFiles: CExportFiles?
 ) {
-    runBackendCodegen(module, files, irBuiltIns, cExportFiles)
+    runBackendCodegen(module, files, allFiles, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
@@ -427,8 +428,8 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     mergeDependencies(module, dependenciesToCompile)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
-    runCodegen(module, files, irBuiltIns)
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment?, files: List<IrFile>, allFiles: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
+    runCodegen(module, files, allFiles, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
@@ -492,8 +493,8 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns) {
-    runPhase(CreateLLVMDeclarationsPhase, files)
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment?, files: List<IrFile>, allFiles: List<IrFile>, irBuiltIns: IrBuiltIns) {
+    runPhase(CreateLLVMDeclarationsPhase, allFiles)
     runPhase(RTTIPhase, RTTIInput(files, context.dceResult))
     runPhase(CodegenPhase, CodegenInput(module, files, irBuiltIns, context.lifetimes))
 }
