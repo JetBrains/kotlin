@@ -34,4 +34,11 @@ tasks {
 
 publish()
 
-standardPublicJars()
+runtimeJar {
+    // JPMS can't handle the jar file name. Fix that by specifying a valid module name in the manifest:
+    manifest.attributes["Automatic-Module-Name"] = "kotlin.native_utils"
+    // See https://youtrack.jetbrains.com/issue/KT-72063.
+}
+
+sourcesJar()
+javadocJar()
