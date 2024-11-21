@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.uniqueName
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -114,6 +115,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 newEngine(generationState) { generationStateEngine ->
                     generationStateEngine.runGlobalOptimizations(fragment.irModule)
                 }
+                fragment.irModule.files.forEach {
+                    println("File: ${it.name}; ${it.konanLibrary!!.uniqueName}")
+                }
                 val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
@@ -126,7 +130,8 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                    val files = fragment.irModule.files
+                    generationStateEngine.compileModule(fragment.irModule, files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
                     ModuleCompilationOutput(listOf(objectFile), generationState.dependenciesTracker.collectResult())
                 }
                 val depsFilePath = config.writeSerializedDependencies
@@ -279,13 +284,14 @@ internal data class ModuleCompilationOutput(
  * 3. Serializes it to a bitcode file.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
-        module: IrModuleFragment,
+        module: IrModuleFragment?,
+        files: List<IrFile>,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         objectFile: java.io.File,
         cExportFiles: CExportFiles?
 ) {
-    runBackendCodegen(module, irBuiltIns, cExportFiles)
+    runBackendCodegen(module, files, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
@@ -380,8 +386,8 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     mergeDependencies(module, dependenciesToCompile)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
-    runCodegen(module, irBuiltIns)
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
+    runCodegen(module, files, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
@@ -445,10 +451,10 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
-    runPhase(CreateLLVMDeclarationsPhase, module)
-    runPhase(RTTIPhase, RTTIInput(module, context.dceResult))
-    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, context.lifetimes))
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns) {
+    runPhase(CreateLLVMDeclarationsPhase, files)
+    runPhase(RTTIPhase, RTTIInput(files, context.dceResult))
+    runPhase(CodegenPhase, CodegenInput(module, files, irBuiltIns, context.lifetimes))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {

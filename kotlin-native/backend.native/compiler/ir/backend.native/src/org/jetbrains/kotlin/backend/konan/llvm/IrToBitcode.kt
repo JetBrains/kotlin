@@ -406,13 +406,7 @@ internal class CodeGeneratorVisitor(
         TODO(ir2string(element))
     }
 
-    //-------------------------------------------------------------------------//
-    override fun visitModuleFragment(declaration: IrModuleFragment) {
-        context.log{"visitModule                    : ${ir2string(declaration)}"}
-
-        initializeCachedBoxes(generationState)
-        declaration.acceptChildrenVoid(this)
-
+    fun processAllInitializers() {
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
             generationState.objCExport.generate(codegen)

@@ -19,15 +19,18 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 import kotlin.math.min
 
-internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
+internal fun createLlvmDeclarations(generationState: NativeGenerationState, irFiles: List<IrFile>): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
-    irModule.acceptChildrenVoid(generator)
+    irFiles.forEach {
+        it.acceptVoid(generator)
+    }
     return LlvmDeclarations(generator.uniques)
 }
 
