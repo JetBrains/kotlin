@@ -411,7 +411,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
 }
 
 private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: IrModuleFragment) {
-    val optimize = context.shouldOptimize()
+    val optimize = false // context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
