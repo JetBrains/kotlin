@@ -41,8 +41,6 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
-    public static final Type FUNCTION = Type.getObjectType("kotlin/Function");
-    public static final Type FUNCTION0 = Type.getObjectType("kotlin/jvm/functions/Function0");
     public static final Type FUNCTION1 = Type.getObjectType("kotlin/jvm/functions/Function1");
 
     public static final Type[] PROPERTY_REFERENCE_IMPL = {
@@ -59,12 +57,6 @@ public class AsmTypes {
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_CLASSIFIER_TYPE = reflect("KClassifier");
-    public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");
-
-    public static final Type K_FUNCTION = reflect("KFunction");
-
-    public static final Type K_PROPERTY_TYPE = reflect("KProperty");
-    public static final Type K_PROPERTY0_TYPE = reflect("KProperty0");
 
     public static final Type K_TYPE = reflect("KType");
     public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
@@ -76,7 +68,7 @@ public class AsmTypes {
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 
-    public static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
+    private static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
     public static final Type OBJECT_REF_TYPE = Type.getObjectType(REF_TYPE_PREFIX + "ObjectRef");
 
     public static final Type DEFAULT_CONSTRUCTOR_MARKER = Type.getObjectType("kotlin/jvm/internal/DefaultConstructorMarker");

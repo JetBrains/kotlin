@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -48,11 +47,8 @@ public class KotlinCodegenFacade {
     // TODO: remove after cleanin up IDE counterpart
     public static void compileCorrectFiles(@NotNull GenerationState state) {
         CodegenFactory codegenFactory = state.getCodegenFactory();
-        compileCorrectFiles(state.getFiles(), state, codegenFactory != null ? codegenFactory : DefaultCodegenFactory.INSTANCE);
-    }
-
-    public static void generatePackage(@NotNull GenerationState state, @NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
-        DefaultCodegenFactory.INSTANCE.generatePackage(state, packageFqName, files);
+        assert codegenFactory != null : "CodegenFactory should be initialized";
+        compileCorrectFiles(state.getFiles(), state, codegenFactory);
     }
 
     private KotlinCodegenFacade() {}

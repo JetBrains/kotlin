@@ -20,20 +20,14 @@ import org.jetbrains.annotations.TestOnly;
 
 public class ClassBuilderMode {
     public final boolean generateBodies;
-    public final boolean generateMetadata;
     public final boolean generateSourceRetentionAnnotations;
-    public final boolean mightBeIncorrectCode;
 
     private ClassBuilderMode(
             boolean generateBodies,
-            boolean generateMetadata,
-            boolean generateSourceRetentionAnnotations,
-            boolean mightBeIncorrectCode
+            boolean generateSourceRetentionAnnotations
     ) {
         this.generateBodies = generateBodies;
-        this.generateMetadata = generateMetadata;
         this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
-        this.mightBeIncorrectCode = mightBeIncorrectCode;
     }
 
     /**
@@ -41,33 +35,29 @@ public class ClassBuilderMode {
      */
     public final static ClassBuilderMode FULL = new ClassBuilderMode(
             /* bodies = */ true,
-            /* metadata = */ true,
-            /* sourceRetention = */ false,
-            /* mightBeIncorrectCode = */ false);
+            /* sourceRetention = */ false
+    );
 
     /**
      * Generating light classes: Only function signatures
      */
     public final static ClassBuilderMode LIGHT_CLASSES = new ClassBuilderMode(
             /* bodies = */ false,
-            /* metadata = */ false,
-            /* sourceRetention = */ true,
-            /* mightBeIncorrectCode = */ true);
+            /* sourceRetention = */ true
+    );
 
     /**
-     * Function signatures + metadata (to support incremental compilation with kapt)
+     * Same as light classes: Only function signatures
      */
     public final static ClassBuilderMode KAPT3 = new ClassBuilderMode(
             /* bodies = */ false,
-            /* metadata = */ true,
-            /* sourceRetention = */ true,
-            /* mightBeIncorrectCode = */ true);
+            /* sourceRetention = */ true
+    );
 
     private final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
             /* bodies = */ false,
-            /* metadata = */ true,
-            /* sourceRetention = */ false,
-            /* mightBeIncorrectCode = */ true);
+            /* sourceRetention = */ false
+    );
 
     @TestOnly
     public static ClassBuilderMode getLightAnalysisForTests() {

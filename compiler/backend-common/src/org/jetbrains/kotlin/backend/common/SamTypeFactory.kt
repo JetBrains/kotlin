@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -79,16 +78,5 @@ class SamTypeApproximator(builtIns: KotlinBuiltIns, languageVersionSettings: Lan
             } else TypeProjectionImpl(Variance.INVARIANT, argument.type)
         }
         return replace(newArguments)
-    }
-}
-
-open class SamTypeFactory {
-    open fun isSamType(type: KotlinType): Boolean {
-        val descriptor = type.constructor.declarationDescriptor
-        return descriptor is ClassDescriptor && descriptor.isFun
-    }
-
-    fun create(originalType: KotlinType): SamType? {
-        return if (isSamType(originalType)) SamType(originalType) else null
     }
 }

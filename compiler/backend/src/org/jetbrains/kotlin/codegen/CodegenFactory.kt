@@ -17,18 +17,13 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.project.Project
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.serialization.StringTableImpl
 
 interface CodegenFactory {
     fun convertToIr(input: IrConversionInput): BackendInput
@@ -82,79 +77,5 @@ interface CodegenFactory {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             }
         }
-    }
-}
-
-object DefaultCodegenFactory : CodegenFactory {
-    private class OldBackendInput(val ktFiles: Collection<KtFile>) : CodegenFactory.BackendInput
-
-    private class DummyOldCodegenInput(override val state: GenerationState) : CodegenFactory.CodegenInput
-
-    override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = OldBackendInput(input.files)
-
-    override fun getModuleChunkBackendInput(
-        wholeBackendInput: CodegenFactory.BackendInput,
-        sourceFiles: Collection<KtFile>,
-    ): CodegenFactory.BackendInput = OldBackendInput(sourceFiles)
-
-    override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        input as OldBackendInput
-        val filesInPackages = MultiMap<FqName, KtFile>()
-        val filesInMultifileClasses = MultiMap<FqName, KtFile>()
-
-        for (file in input.ktFiles) {
-            val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
-
-            if (fileClassInfo.withJvmMultifileClass) {
-                filesInMultifileClasses.putValue(fileClassInfo.facadeClassFqName, file)
-            } else {
-                filesInPackages.putValue(file.packageFqName, file)
-            }
-        }
-
-        val obsoleteMultifileClasses = HashSet(state.obsoleteMultifileClasses)
-        for (multifileClassFqName in filesInMultifileClasses.keySet() + obsoleteMultifileClasses) {
-            CodegenFactory.doCheckCancelled(state)
-            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName))
-        }
-
-        val packagesWithObsoleteParts = HashSet(state.packagesWithObsoleteParts)
-        for (packageFqName in packagesWithObsoleteParts + filesInPackages.keySet()) {
-            CodegenFactory.doCheckCancelled(state)
-            generatePackage(state, packageFqName, filesInPackages.get(packageFqName))
-        }
-
-        return DummyOldCodegenInput(state)
-    }
-
-    override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        generateModuleMetadata(input)
-    }
-
-    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
-        val builder = JvmModuleProtoBuf.Module.newBuilder()
-
-        val stringTable = StringTableImpl()
-        builder.addDataFromCompiledModule(stringTable, result.state)
-
-        val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
-        builder.setStringTable(stringTableProto)
-        builder.setQualifiedNameTable(qualifiedNameTableProto)
-
-        result.state.factory.setModuleMapping(builder.build())
-    }
-
-    private fun generateMultifileClass(state: GenerationState, multifileClassFqName: FqName, files: Collection<KtFile>) {
-        error("")
-    }
-
-    fun generatePackage(
-        state: GenerationState,
-        packageFqName: FqName,
-        ktFiles: Collection<KtFile>
-    ) {
-        // We do not really generate package class, but use old package fqName to identify package in module-info.
-        //FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
-        state.factory.forPackage(packageFqName, ktFiles)
     }
 }

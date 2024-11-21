@@ -382,11 +382,7 @@ class ExpressionCodegen(
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
-            getNameForReceiverParameter(
-                irFunction.toIrBasedDescriptor(),
-                state.bindingContext,
-                context.config.languageVersionSettings
-            )
+            getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
         } else {
             param.name.asString()
         }

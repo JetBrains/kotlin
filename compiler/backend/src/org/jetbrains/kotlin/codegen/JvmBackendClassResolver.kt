@@ -26,12 +26,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendClassResolver {
     fun resolveToClassDescriptors(type: Type): List<ClassDescriptor>
-
-    object Dummy : JvmBackendClassResolver {
-        override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> = emptyList()
-    }
 }
-
 
 class JvmBackendClassResolverForModuleWithDependencies(
     private val moduleDescriptor: ModuleDescriptor

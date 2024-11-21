@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.*
-import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
-import org.jetbrains.kotlin.codegen.coroutines.isSuspendFunctionNotSuspensionView
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
@@ -129,10 +127,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (descriptor is ConstructorDescriptor) {
             return Type.VOID_TYPE
-        }
-
-        if (descriptor.isSuspendFunctionNotSuspensionView()) {
-            return mapReturnType(getOrCreateJvmSuspendFunctionView(descriptor as SimpleFunctionDescriptor), sw)
         }
 
         if (hasVoidReturnType(descriptor)) {
@@ -393,10 +387,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (f is FunctionImportedFromObject) {
             return mapSignature(f.callableFromObject, skipGenericSignature)
-        }
-
-        if (f.isSuspendFunctionNotSuspensionView()) {
-            return mapSignature(getOrCreateJvmSuspendFunctionView(f), skipGenericSignature)
         }
 
         val valueParameterTypes =

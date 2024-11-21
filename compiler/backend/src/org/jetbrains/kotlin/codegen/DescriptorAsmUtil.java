@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
@@ -52,23 +51,10 @@ public class DescriptorAsmUtil {
     @NotNull
     public static String getNameForReceiverParameter(
             @NotNull CallableDescriptor descriptor,
-            @NotNull BindingContext bindingContext,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        return getLabeledThisNameForReceiver(
-                descriptor, bindingContext, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME);
-    }
-
-    @NotNull
-    private static String getLabeledThisNameForReceiver(
-            @NotNull CallableDescriptor descriptor,
-            @NotNull BindingContext bindingContext,
-            @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull String prefix,
-            @NotNull String defaultName
-    ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            return defaultName;
+            return RECEIVER_PARAMETER_NAME;
         }
 
         Name callableName = null;
@@ -85,10 +71,10 @@ public class DescriptorAsmUtil {
         }
 
         if (callableName.isSpecial()) {
-            return defaultName;
+            return RECEIVER_PARAMETER_NAME;
         }
 
-        return getLabeledThisName(callableName.asString(), prefix, defaultName);
+        return getLabeledThisName(callableName.asString(), LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME);
     }
 
     private static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, JvmDefaultMode jvmDefaultMode) {
@@ -163,10 +149,6 @@ public class DescriptorAsmUtil {
         return flags;
     }
 
-    public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
-        return getVisibilityAccessFlag(descriptor, null);
-    }
-
     private static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor, @Nullable OwnerKind kind) {
         Integer specialCase = specialCaseVisibility(descriptor, kind);
         if (specialCase != null) {
@@ -189,7 +171,7 @@ public class DescriptorAsmUtil {
         return InlineUtil.isInlineOrContainingInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
-    public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
+    private static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
             return KotlinBuiltIns.isDeprecated(descriptor)
                    ? ACC_DEPRECATED
@@ -245,7 +227,7 @@ public class DescriptorAsmUtil {
         }
 
         if (memberDescriptor instanceof SyntheticJavaPropertyDescriptor) {
-            return getVisibilityAccessFlag(((SyntheticJavaPropertyDescriptor) memberDescriptor).getGetMethod());
+            return getVisibilityAccessFlag(((SyntheticJavaPropertyDescriptor) memberDescriptor).getGetMethod(), null);
         }
         if (memberDescriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) memberDescriptor).getCorrespondingProperty();
@@ -254,7 +236,7 @@ public class DescriptorAsmUtil {
                                             ? ((SyntheticJavaPropertyDescriptor) property).getGetMethod()
                                             : ((SyntheticJavaPropertyDescriptor) property).getSetMethod();
                 assert method != null : "No get/set method in SyntheticJavaPropertyDescriptor: " + property;
-                return getVisibilityAccessFlag(method);
+                return getVisibilityAccessFlag(method, null);
             }
         }
 

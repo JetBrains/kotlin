@@ -236,19 +236,6 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue not(@NotNull StackValue stackValue) {
-        return BranchedValue.Companion.createInvertValue(stackValue);
-    }
-
-    public static StackValue or(@NotNull StackValue left, @NotNull StackValue right) {
-        return new Or(left, right);
-    }
-
-    public static StackValue and(@NotNull StackValue left, @NotNull StackValue right) {
-        return new And(left, right);
-    }
-
-    @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
         return new Field(type, null, owner, name, isStatic, receiver, null);
     }
@@ -562,34 +549,14 @@ public abstract class StackValue {
         return None.INSTANCE;
     }
 
-    public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType, @Nullable KotlinType castKotlinType) {
-        return coercionValueForArgumentOfInlineClassConstructor(value, castType, castKotlinType, null);
-    }
-
-    public static StackValue coercionValueForArgumentOfInlineClassConstructor(
-            @NotNull StackValue value,
-            @NotNull Type castType,
-            @Nullable KotlinType castKotlinType,
-            @Nullable KotlinType underlyingKotlinType
-    ) {
-        boolean kotlinTypesAreEqual = value.kotlinType == null && castKotlinType == null ||
-                                      value.kotlinType != null && castKotlinType != null && castKotlinType.equals(value.kotlinType);
-        if (value.type.equals(castType) && kotlinTypesAreEqual) {
-            return value;
-        }
-        return new CoercionValue(value, castType, castKotlinType, underlyingKotlinType);
-    }
-
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
-        return operation(type, null, lambda);
-    }
-
-    public static StackValue operation(Type type, KotlinType kotlinType, Function1<InstructionAdapter, Unit> lambda) {
-        return new OperationStackValue(type, kotlinType, lambda);
-    }
-
-    public static StackValue functionCall(Type type, KotlinType kotlinType, Function1<InstructionAdapter, Unit> lambda) {
-        return new FunctionCallStackValue(type, kotlinType, lambda);
+        return new StackValue(type, null) {
+            @Override
+            public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+                lambda.invoke(v);
+                coerceTo(type, null, v);
+            }
+        };
     }
 
     private static class None extends StackValue {

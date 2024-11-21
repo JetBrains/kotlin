@@ -56,10 +56,8 @@ abstract class IntrinsicFunction(
                     val arrayType = codegen.typeMapper.mapType(
                         valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments)
                     )
-                    StackValue.operation(arrayType) {
-                        it.aconst(0)
-                        it.newarray(AsmUtil.correctElementType(arrayType))
-                    }.put(arrayType, codegen.mv)
+                    codegen.mv.aconst(0)
+                    codegen.mv.newarray(AsmUtil.correctElementType(arrayType))
                 }
                 else -> error("Unknown parameter ${valueParameter.name} in: ${expression.dump()}")
             }

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -72,28 +69,6 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public PackagePartRegistry getPackagePartRegistry() {
         return packagePartRegistry;
-    }
-
-    @NotNull
-    public ClassBuilder newVisitor(
-            @NotNull JvmDeclarationOrigin origin,
-            @NotNull Type asmType,
-            @NotNull PsiFile sourceFile) {
-        return newVisitor(origin, asmType, Collections.singletonList(sourceFile));
-    }
-
-    @NotNull
-    public ClassBuilder newVisitor(
-            @NotNull JvmDeclarationOrigin origin,
-            @NotNull Type asmType,
-            @NotNull Collection<? extends PsiFile> sourceFiles
-    ) {
-        ClassBuilder answer = builderFactory.newClassBuilder(origin);
-        generators.put(
-                asmType.getInternalName() + ".class",
-                new ClassBuilderAndSourceFileList(answer, toIoFilesIgnoringNonPhysical(sourceFiles))
-        );
-        return answer;
     }
 
     @NotNull
@@ -250,11 +225,6 @@ public class ClassFileFactory implements OutputFileCollection {
         return answer;
     }
 
-    @NotNull
-    public Throwable forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
-        throw new IllegalStateException("Old JVM backend is not supported anymore");
-    }
-
     public void registerSourceFiles(@NotNull Collection<File> files) {
         for (File file : files) {
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
@@ -262,21 +232,6 @@ public class ClassFileFactory implements OutputFileCollection {
             if (file == null) continue;
             sourceFiles.add(file);
         }
-    }
-
-    @NotNull
-    private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
-        List<File> result = new ArrayList<>(psiFiles.size());
-        for (PsiFile psiFile : psiFiles) {
-            if (psiFile == null) continue;
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
-            // a non-physical file cannot be processed by make
-            if (virtualFile != null) {
-                result.add(new File(virtualFile.getPath()));
-            }
-        }
-        return result;
     }
 
     private class OutputClassFile implements OutputFile {
@@ -370,11 +325,5 @@ public class ClassFileFactory implements OutputFileCollection {
         for (String classInternalName : classNamesToRemove) {
             generators.remove(classInternalName + ".class");
         }
-    }
-
-    // TODO: remove after cleanin up IDE counterpart
-    @TestOnly
-    public List<KtFile> getInputFiles() {
-        return state.getFiles();
     }
 }

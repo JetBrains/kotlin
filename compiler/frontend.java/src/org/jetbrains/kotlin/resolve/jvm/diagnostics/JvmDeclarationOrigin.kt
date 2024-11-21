@@ -8,9 +8,8 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.OTHER
 
 enum class MemberKind { FIELD, METHOD }
 
@@ -20,7 +19,6 @@ open class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,
     val descriptor: DeclarationDescriptor?,
-    val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
     // This property is used to get the original element in the sources, from which this declaration was generated.
     // In the old JVM backend, it is just the PSI element. In JVM IR, it is the original IR element (before any deep copy).

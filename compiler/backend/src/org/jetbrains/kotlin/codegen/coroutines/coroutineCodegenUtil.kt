@@ -9,19 +9,13 @@ import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalClassDescriptor
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -55,9 +49,6 @@ private fun FqName.identifiedChild(name: String) = child(Name.identifier(name)).
 private val coroutinesIntrinsicsFileFacadeInternalName: Type =
     COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 
-@JvmField
-val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
-
 val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
 
 const val CONTINUATION_VARIABLE_NAME = "\$continuation"
@@ -69,72 +60,6 @@ private val SPILLING_INTERNAL_NAME =
     COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("SpillingKt")).topLevelClassInternalName()
 
 enum class SuspensionPointKind { NEVER, NOT_INLINE, ALWAYS }
-
-fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
-    if (this !is FunctionDescriptor) return false
-    return this.isSuspend && this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null
-}
-
-// Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
-// and return type Any?
-// This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
-@JvmOverloads
-fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
-    function: D,
-    bindingContext: BindingContext? = null
-): D {
-    assert(function.isSuspend) {
-        "Suspended function is expected, but $function was found"
-    }
-
-    val continuationParameter = ValueParameterDescriptorImpl(
-        containingDeclaration = function,
-        original = null,
-        index = function.valueParameters.size,
-        annotations = Annotations.EMPTY,
-        name = CONTINUATION_PARAMETER_NAME,
-        // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
-        outType = if ((function.containingDeclaration as? ClassDescriptor)?.isBuiltinFunctionalClassDescriptor == true)
-            function.builtIns.nullableAnyType
-        else
-            function.getContinuationParameterTypeOfSuspendFunction(),
-        declaresDefaultValue = false, isCrossinline = false,
-        isNoinline = false, varargElementType = null,
-        source = SourceElement.NO_SOURCE
-    )
-
-    return function.createCustomCopy {
-        setDropOriginalInContainingParts()
-        setPreserveSourceElement()
-        setReturnType(function.builtIns.nullableAnyType)
-        setValueParameters(it.valueParameters + continuationParameter)
-        putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
-    }
-}
-
-typealias FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder =
-        FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor)
-        -> FunctionDescriptor.CopyBuilder<out FunctionDescriptor>
-
-fun <D : FunctionDescriptor> D.createCustomCopy(
-    copySettings: FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder
-): D {
-
-    val newOriginal =
-        if (original !== this)
-            original.createCustomCopy(copySettings)
-        else
-            null
-
-    val result = newCopyBuilder().copySettings(this).setOriginal(newOriginal).build()!!
-
-    result.overriddenDescriptors = this.overriddenDescriptors.map { it.createCustomCopy(copySettings) }
-
-    @Suppress("UNCHECKED_CAST")
-    return result as D
-}
-
-private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() = module.getContinuationOfTypeOrAny(returnType!!)
 
 fun createMethodNodeForCoroutineContext(functionDescriptor: FunctionDescriptor): MethodNode {
     assert(functionDescriptor.isBuiltInCoroutineContext()) {
@@ -215,10 +140,6 @@ private fun InstructionAdapter.invokeGetContext() {
     )
     areturn(coroutineContextAsmType())
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
-    (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
 
 fun InstructionAdapter.loadCoroutineSuspendedMarker() {
     invokestatic(
