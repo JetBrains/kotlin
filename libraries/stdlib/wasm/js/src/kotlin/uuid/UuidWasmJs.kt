@@ -5,13 +5,15 @@
 
 package kotlin.uuid
 
-@Suppress("ClassName")
-private external object crypto {
-    fun randomUUID(): String
-}
+private fun cryptoGetRandomValues(size: Int): JsAny =
+    js("crypto.getRandomValues(new Int8Array(size))")
+
+private fun get(array: JsAny, index: Int): Byte =
+    js("array[index]")
 
 @ExperimentalUuidApi
 internal actual fun secureRandomUuid(): Uuid {
-    val uuidString = crypto.randomUUID()
-    return Uuid.parse(uuidString)
+    val int8Array = cryptoGetRandomValues(Uuid.SIZE_BYTES)
+    val randomBytes = ByteArray(Uuid.SIZE_BYTES) { get(int8Array, it) }
+    return uuidFromRandomBytes(randomBytes)
 }
