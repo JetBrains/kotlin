@@ -189,6 +189,7 @@ dependencies {
     embedded(libs.intellij.asm) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
     embedded(libs.guava) { isTransitive = false }
+    embedded(libs.guava.failureaccess) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
     embedded(project(":kotlin-tooling-metadata")) { isTransitive = false }
     embedded("com.github.gundy:semver4j:0.16.4:nodeps") {

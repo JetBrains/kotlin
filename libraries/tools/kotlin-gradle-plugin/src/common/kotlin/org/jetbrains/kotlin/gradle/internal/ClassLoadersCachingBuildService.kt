@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
 import java.net.URLClassLoader
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 
 internal interface UsesClassLoadersCachingBuildService : Task {
     @get:Internal
@@ -27,25 +31,29 @@ internal interface UsesClassLoadersCachingBuildService : Task {
 /**
  * A [BuildService] for caching [ClassLoader] instances
  */
-internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServiceParameters.None> {
+internal abstract class ClassLoadersCachingBuildService : BuildService<ClassLoadersCachingBuildService.Parameters> {
+    internal interface Parameters : BuildServiceParameters {
+        val classLoaderCacheTimeoutInSeconds: Property<Long>
+    }
+
     private val logger = Logging.getLogger(javaClass)
 
     fun getClassLoader(
         classpath: List<File>,
-        parentClassLoaderProvider: ParentClassLoaderProvider = DefaultParentClassLoaderProvider()
+        parentClassLoaderProvider: ParentClassLoaderProvider = DefaultParentClassLoaderProvider(),
     ): ClassLoader {
-        return classLoaders.computeIfAbsent(ClassLoaderCacheKey(classpath, parentClassLoaderProvider)) {
+        val cache = ClassLoadersCacheHolder.getCache(parameters.classLoaderCacheTimeoutInSeconds.get())
+        return cache.get(ClassLoaderCacheKey(classpath, parentClassLoaderProvider)) {
             logger.debug("Creating a new classloader for classpath $classpath")
             URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoaderProvider.getClassLoader())
         }
     }
 
     companion object {
-        // The service could be used by multiple tasks in parallel, so the map have to be synchronized
-        private val classLoaders = ConcurrentHashMap<ClassLoaderCacheKey, ClassLoader>()
-
-        fun registerIfAbsent(project: Project) =
-            project.gradle.registerClassLoaderScopedBuildService(ClassLoadersCachingBuildService::class).also { serviceProvider ->
+        fun registerIfAbsent(project: Project): Provider<ClassLoadersCachingBuildService> =
+            project.gradle.registerClassLoaderScopedBuildService(ClassLoadersCachingBuildService::class) {
+                it.parameters.classLoaderCacheTimeoutInSeconds.set(project.kotlinPropertiesProvider.classLoaderCacheTimeoutInSeconds)
+            }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesClassLoadersCachingBuildService::class.java.name) {
                     project.tasks.withType<UsesClassLoadersCachingBuildService>().configureEach { task ->
                         task.usesService(serviceProvider)
@@ -53,6 +61,46 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
                     }
                 }
             }
+    }
+}
+
+/**
+ * Object holder for a thread-safe cache of class loaders.
+ * Persists the cache between builds using the same daemon unless Gradle has changed the class loader used to load KGP.
+ * In such cases, the remaining cache is garbage collected with the related class loader.
+ *
+ * The cache utilizes a combination of time-based eviction and soft references for efficient resource usage.
+ *
+ * Implementation as a separate object is chosen over a [ClassLoadersCachingBuildService] companion object because:
+ * 1. Cache instantiation requires a [Project] instance, which may not be available before [ClassLoadersCachingBuildService.registerIfAbsent] is called.
+ * 2. This design ensures the implementation is configuration cache-safe, considering the case of cold daemon run with deserialized state.
+ */
+private object ClassLoadersCacheHolder {
+    /**
+     * The service can be accessed by multiple tasks concurrently, hence the cache must be thread-safe.
+     * As per `com.google.common.cache.Cache` documentation, implementations are expected to be thread-safe.
+     * Utilizes the double-check locking singleton pattern, so @Volatile is crucial for correctness.
+     */
+    @Volatile
+    private lateinit var classLoaders: Cache<ClassLoaderCacheKey, ClassLoader>
+
+    /**
+     * [classLoaderCacheTimeoutInSeconds] is used only for the cache initialization and may not be changed after initialization.
+     *
+     * @param classLoaderCacheTimeoutInSeconds the duration in seconds after which a cache entry will expire if not accessed
+     */
+    fun getCache(classLoaderCacheTimeoutInSeconds: Long): Cache<ClassLoaderCacheKey, ClassLoader> {
+        if (!::classLoaders.isInitialized) {
+            synchronized(this) {
+                if (!::classLoaders.isInitialized) {
+                    classLoaders = CacheBuilder.newBuilder()
+                        .expireAfterAccess(classLoaderCacheTimeoutInSeconds, TimeUnit.SECONDS)
+                        .softValues()
+                        .build<ClassLoaderCacheKey, ClassLoader>()
+                }
+            }
+        }
+        return classLoaders
     }
 }
 

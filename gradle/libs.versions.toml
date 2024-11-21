@@ -6,7 +6,9 @@ develocity = "3.17.5"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
+# guava and failureaccess should be aligned relatively
 guava = "33.3.1-jre"
+failureaccess = "1.0.2"
 javaDiffUtils = "4.12"
 jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.7.3"
@@ -94,6 +96,7 @@ jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-da
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref = "failureaccess" }
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
