@@ -52,23 +52,27 @@ internal class PartialBodyDeclarationFirElementProvider(
 ) : DeclarationFirElementProvider {
     private companion object {
         private val LOG = logger<PartialBodyDeclarationFirElementProvider>()
+
+        private fun createEmptyState(psiStatementCount: Int): LLPartialBodyResolveState {
+            return LLPartialBodyResolveState(
+                totalPsiStatementCount = psiStatementCount,
+                analyzedPsiStatementCount = 0,
+                analyzedFirStatementCount = 0,
+                performedAnalysesCount = 0,
+                analysisStateSnapshot = null
+            )
+        }
     }
 
     /**
      * Contains the latest known partial body resolution state.
      *
-     * Initially, the [lastState] is empty, even though the declaration itself may already be partially resolved.
-     * On querying the mapping (by calling [invoke]), the actual resolved state is synchronized with the [lastState],
+     * Initially, the [cachedState] is empty, even though the declaration itself may already be partially resolved.
+     * On querying the mapping (by calling [invoke]), the actual resolved state is synchronized with the [cachedState],
      * and all missing elements are added to [bodyMappings].
      */
     @Volatile
-    private var lastState = LLPartialBodyResolveState(
-        totalPsiStatementCount = psiStatements.size,
-        analyzedPsiStatementCount = 0,
-        analyzedFirStatementCount = 0,
-        performedAnalysesCount = 0,
-        analysisStateSnapshot = null
-    )
+    private var cachedState: LLPartialBodyResolveState = createEmptyState(psiStatements.size)
 
     /**
      * Contains mappings for non-body elements.
@@ -100,8 +104,9 @@ internal class PartialBodyDeclarationFirElementProvider(
             ElementContainer.SignatureBody -> {
                 run {
                     // Fast track: the signature body is already analyzed.
-                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
-                    if (lastState.performedAnalysesCount > 0) {
+                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only
+                    val state = cachedState
+                    if (state.isValid && state.performedAnalysesCount > 0) {
                         // We performed at least one partial analysis, so we definitely analyzed the parameters
                         return bodyMappings[psiElement]
                     }
@@ -109,7 +114,8 @@ internal class PartialBodyDeclarationFirElementProvider(
 
                 synchronized(this) {
                     // Double-check to avoid more expensive 'performBodyAnalysis()' logic
-                    if (lastState.performedAnalysesCount > 0) {
+                    val state = cachedState
+                    if (state.isValid && state.performedAnalysesCount > 0) {
                         return bodyMappings[psiElement]
                     }
                 }
@@ -123,9 +129,9 @@ internal class PartialBodyDeclarationFirElementProvider(
 
                 run {
                     // Fast track: required statements are already analyzed.
-                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only (performed analysis cannot disappear)
-                    val lastState = this.lastState
-                    if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
+                    // Synchronization is not needed here as 'lastState'/'bodyMappings' are addition-only
+                    val state = cachedState
+                    if (state.isValid && state.performedAnalysesCount > 0 && state.analyzedPsiStatementCount >= psiStatementLimit) {
                         // The statement is already analyzed and its children are registered
                         return bodyMappings[psiElement]
                     }
@@ -133,13 +139,13 @@ internal class PartialBodyDeclarationFirElementProvider(
 
                 synchronized(this) {
                     // Double-check to avoid more expensive 'performBodyAnalysis()' logic
-                    val lastState = this.lastState
-                    if (lastState.performedAnalysesCount > 0 && lastState.analyzedPsiStatementCount >= psiStatementLimit) {
+                    val state = cachedState
+                    if (state.isValid && state.performedAnalysesCount > 0 && state.analyzedPsiStatementCount >= psiStatementLimit) {
                         return bodyMappings[psiElement]
                     }
                 }
 
-                performBodyAnalysis(psiStatementLimit = psiStatementLimit)
+                performBodyAnalysis(psiStatementLimit)
             }
         }
 
@@ -158,6 +164,10 @@ internal class PartialBodyDeclarationFirElementProvider(
     private fun processResolveStateChanges(psiElement: PsiElement, container: ElementContainer) {
         val newState = declaration.partialBodyResolveState
         if (newState != null) {
+            // Pretend we never analyzed the function if the last state is invalid.
+            // In this case, all statements starting from the first one will be re-added to the map.
+            val lastState = cachedState.takeIf { it.isValid } ?: createEmptyState(psiStatements.size)
+
             val lastFirStatementCount = lastState.analyzedFirStatementCount
             val newFirStatementCount = newState.analyzedFirStatementCount
 
@@ -165,7 +175,7 @@ internal class PartialBodyDeclarationFirElementProvider(
             val shouldRegisterSignatureParts = lastState.performedAnalysesCount == 0 && declaration is FirFunction
 
             if (shouldRegisterBodyStatements || shouldRegisterSignatureParts) {
-                val consumer = HashMap(bodyMappings)
+                val consumer = if (lastState.performedAnalysesCount > 0) HashMap(bodyMappings) else HashMap()
 
                 if (shouldRegisterSignatureParts) {
                     registerDefaultParameterValues(consumer)
@@ -195,7 +205,7 @@ internal class PartialBodyDeclarationFirElementProvider(
 
                 // Publish new state
                 bodyMappings = consumer
-                lastState = newState
+                cachedState = newState
             }
         } else {
             // The body has never been analyzed (otherwise the partial body resolve state should have been present)
