@@ -228,7 +228,6 @@ private class FirPartialBodyExpressionResolveTransformer(
                     )
                     shouldStop = true
                     throw PartialBodyAnalysisSuspendedException()
-                    return false
                 }
 
                 val newStatement = statement.transform<FirStatement, ResolutionMode>(transformer, data)

@@ -1244,12 +1244,6 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
-    @TestMetadata("contractNotImported.kt")
-    public void testContractNotImported() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/contractNotImported.kt");
-    }
-
-    @Test
     @TestMetadata("delegatedConstructorCallPrimary.kt")
     public void testDelegatedConstructorCallPrimary() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallPrimary.kt");
@@ -1259,6 +1253,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     @TestMetadata("delegatedConstructorCallSecondary.kt")
     public void testDelegatedConstructorCallSecondary() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallSecondary.kt");
+    }
+
+    @Test
+    @TestMetadata("fullThenPartial.kt")
+    public void testFullThenPartial() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/fullThenPartial.kt");
+    }
+
+    @Test
+    @TestMetadata("partialThenFull.kt")
+    public void testPartialThenFull() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/partialThenFull.kt");
     }
 
     @Test
