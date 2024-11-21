@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives
 import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
 import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
 import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
+import org.jetbrains.kotlin.library.abi.handlers.LibraryAbiDumpHandler.Companion.abiDumpFileExtension
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
@@ -74,7 +75,8 @@ abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
             assertTrue(sourceFile.isFile) { "Source file does not exist: $sourceFile" }
 
             return sourceFile to AbiSignatureVersion.allSupportedByAbiReader.associateWith { signatureVersion ->
-                val dumpFile = sourceFile.withReplacedExtensionOrNull("kt", "v${signatureVersion.versionNumber}.txt")!!
+                val dumpFileExtension = abiDumpFileExtension(signatureVersion.versionNumber)
+                val dumpFile = sourceFile.withReplacedExtensionOrNull("kt", dumpFileExtension)!!
                 assertTrue(dumpFile.isFile) { "Dump file does not exist: $dumpFile" }
                 dumpFile
             }

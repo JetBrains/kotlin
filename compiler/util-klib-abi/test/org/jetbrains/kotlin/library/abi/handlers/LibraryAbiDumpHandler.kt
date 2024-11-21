@@ -48,16 +48,26 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         assertions.assertAll(
             dumpers.map { (abiSignatureVersion, dumper) ->
+                val dumpFileExtension = abiDumpFileExtension(abiSignatureVersion.versionNumber)
                 val lambda = {
                     val expectedFile = testServices
                         .moduleStructure
                         .originalTestDataFiles
                         .first()
-                        .withExtension("v${abiSignatureVersion.versionNumber}.txt")
+                        .withExtension(dumpFileExtension)
                     assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
                 }
                 lambda
             }
         )
+    }
+
+    companion object {
+        const val DEFAULT_ABI_SIGNATURE_VERSION = 2
+
+        fun abiDumpFileExtension(abiSignatureVersion: Int): String {
+            val suffix = if (abiSignatureVersion == DEFAULT_ABI_SIGNATURE_VERSION) "" else "sig_v$abiSignatureVersion."
+            return "${suffix}klib_abi.txt"
+        }
     }
 }
