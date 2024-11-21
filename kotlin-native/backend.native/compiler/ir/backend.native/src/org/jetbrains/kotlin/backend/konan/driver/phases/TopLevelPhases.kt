@@ -103,7 +103,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         data class SubFragment(
                 val name: String,
                 val files: List<IrFile>,
-                var module: IrModuleFragment?,
+                val module: IrModuleFragment?,
         )
 
         fun SubFragment.generationState(topLevel: NativeGenerationState): NativeGenerationState {
@@ -129,10 +129,11 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return listOf(SubFragment("", fragment.irModule.files, fragment.irModule))
             }
             return buildList {
-                fragment.irModule.files.groupBy { it.konanLibrary!!.uniqueName }.mapTo(this) { (name, files) ->
-                    SubFragment(name, files, null)
+                val perLibraryFiles = fragment.irModule.files.groupBy { it.konanLibrary!!.uniqueName }
+                perLibraryFiles.mapNotNullTo(this) { (name, files) ->
+                    if (name == "stdlib") null else SubFragment(name, files, null)
                 }
-                last().module = fragment.irModule
+                add(SubFragment("stdlib", perLibraryFiles["stdlib"]!!, fragment.irModule))
             }
         }
 
