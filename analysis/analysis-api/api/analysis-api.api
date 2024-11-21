@@ -1107,6 +1107,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 	public static final field SOURCE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field SOURCE_MEMBER_GENERATED Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field SUBSTITUTION_OVERRIDE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
+	public static final field TYPEALIASED_CONSTRUCTOR Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;

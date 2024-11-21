@@ -116,6 +116,23 @@ public enum class KaSymbolOrigin {
     SAM_CONSTRUCTOR,
 
     /**
+     * A constructor (or constructor's parameter) which is viewed through a typealias.
+     *
+     * For example:
+     * ```
+     * class MyClass(param: String)
+     *
+     * typealias MyTypeAlias = MyClass
+     *
+     * fun usage() {
+     *   MyClass()     // <-- this reference points to a regular constructor symbol
+     *   MyTypeAlias() // <-- this reference points to a typealiased constructor symbol
+     * }
+     * ```
+     */
+    TYPEALIASED_CONSTRUCTOR,
+
+    /**
      * Consider the following code:
      * ```
      * interface A { fun x() }
