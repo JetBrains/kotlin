@@ -2739,9 +2739,14 @@ internal class CodeGeneratorVisitor(
                 }
 
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library ${library.libraryFile} is expected to be cached")
 
                 when (cache) {
+                    null -> {
+                        if (!context.shouldOptimize()) {
+                            error("Library ${library.libraryFile} is expected to be cached")
+                        }
+                        listOf(ctorProto(ctorName))
+                    }
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
                         val files = when (dependency.kind) {

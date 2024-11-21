@@ -104,6 +104,7 @@ internal class NativeGenerationState(
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
 
     lateinit var objCExport: ObjCExport
+    var hasObjCExport: Boolean = false
 
     var dceResult: Set<IrSimpleFunction>? = null
     lateinit var lifetimes: Map<IrElement, Lifetime>
@@ -140,6 +141,7 @@ internal class NativeGenerationState(
             if (original::objCExport.isInitialized) {
                 new.objCExport = original.objCExport
             }
+            new.hasObjCExport = original.hasObjCExport
             new.dceResult = original.dceResult
             if (original::lifetimes.isInitialized) {
                 new.lifetimes = original.lifetimes

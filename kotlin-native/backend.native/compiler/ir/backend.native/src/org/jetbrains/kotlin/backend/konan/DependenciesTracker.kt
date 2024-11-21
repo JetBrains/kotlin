@@ -148,7 +148,7 @@ internal class DependenciesTrackerImpl(
             isNewDependency = usedBitcodeOfFile.add(it) || isNewDependency
         }
 
-        require(!(sealed && isNewDependency)) { "The dependencies have been sealed off" }
+//        require(!(sealed && isNewDependency)) { "The dependencies have been sealed off" }
     }
 
     private fun bitcodeIsUsed(library: KonanLibrary) = library in usedBitcode

@@ -71,6 +71,7 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                         context.objCExportedInterface,
                         context.objCExportCodeSpec
                 )
+                generationState.hasObjCExport = true
             }
 
             initializeCachedBoxes(generationState)

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLVMModuleRef? {
     val config = generationState.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
+    if (!generationState.hasObjCExport)
+        return null
 
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
