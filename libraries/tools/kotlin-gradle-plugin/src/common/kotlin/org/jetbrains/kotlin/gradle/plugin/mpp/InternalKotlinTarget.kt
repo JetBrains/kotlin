@@ -45,6 +45,8 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     @Suppress("DEPRECATION_ERROR")
     val _preset: KotlinTargetPreset<out KotlinTarget>?
         get() = preset
+        
+    val uklibElementsConfigurationName: String
 }
 
 private const val TOOLCHAIN_DSL_WRONG_USAGE_ERROR =

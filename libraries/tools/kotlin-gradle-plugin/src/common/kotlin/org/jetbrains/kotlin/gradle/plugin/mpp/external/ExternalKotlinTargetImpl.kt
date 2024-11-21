@@ -92,6 +92,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val resourcesElementsConfigurationName: String
         get() = resourcesElementsPublishedConfiguration.name
 
+    override val uklibElementsConfigurationName: String
+        get() = TODO("Not yet implemented")
+
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)
 

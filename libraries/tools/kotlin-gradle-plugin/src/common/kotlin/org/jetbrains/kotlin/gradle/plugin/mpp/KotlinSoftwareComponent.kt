@@ -60,7 +60,9 @@ abstract class KotlinSoftwareComponent(
             }.toSet()
     }
 
-    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+    // FIXME: 19.11.2024 - These variants are output in the header component
+    override fun getVariants(): Set<SoftwareComponent> = if (project.kotlinPropertiesProvider.disablePlatformSpecificComponentsReferences)
+        emptySet() else _variants.getOrThrow()
 
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
@@ -71,17 +73,26 @@ abstract class KotlinSoftwareComponent(
         }
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
-            val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
-            }
+//            val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
+//            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
+//                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+//            }
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
+                // FIXME: Why do we override this here if we output it in metadataApiElements anyway???
+                // overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
+
+            if (project.kotlinPropertiesProvider.publishUklibVariant) {
+                this += DefaultKotlinUsageContext(
+                    compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
+                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
+                    dependencyConfigurationName = metadataTarget.uklibElementsConfigurationName,
+                )
+            }
 
             if (project.isCompatibilityMetadataVariantEnabled) {
                 // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
