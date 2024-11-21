@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.contracts.*
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
@@ -17,10 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -33,8 +35,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -65,22 +65,12 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     private var insideContractDescription = false
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
+        // Annotations within contracts will be resolved explicitly during BODY_RESOLVE.
         return annotation
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        // Annotation calls inside contracts are not allowed and at this point we are also
-        // unable to resolve them. We indicate this by returning a resolved error type.
-        if (insideContractDescription) {
-            val typeDiagnostic = ConeSimpleDiagnostic(
-                "Cannot infer annotation call type during CONTRACTS phase.",
-                DiagnosticKind.AnnotationInContract
-            )
-            val errorType = ConeErrorType(typeDiagnostic)
-
-            annotationCall.replaceAnnotationTypeRef(errorType.toFirResolvedTypeRef(annotationCall.annotationTypeRef.source))
-        }
-
+        // Annotations within contracts will be resolved explicitly during BODY_RESOLVE.
         return annotationCall
     }
 

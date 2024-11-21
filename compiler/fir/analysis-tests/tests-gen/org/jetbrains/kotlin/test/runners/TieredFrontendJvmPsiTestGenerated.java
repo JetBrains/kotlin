@@ -4481,6 +4481,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     @TestMetadata("compiler/testData/diagnostics/tests/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
+      @Test
+      @TestMetadata("suppressContractWarning.kt")
+      public void testSuppressContractWarning() {
+        runTest("compiler/testData/diagnostics/tests/contracts/suppressContractWarning.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/contracts/neg")
       @TestDataPath("$PROJECT_ROOT")

@@ -7528,6 +7528,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall2.kt");
       }
 
+      @Test
+      @TestMetadata("suppressContractWarning.kt")
+      public void testSuppressContractWarning() {
+        runTest("compiler/testData/diagnostics/tests/contracts/suppressContractWarning.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/contracts/neg")
       @TestDataPath("$PROJECT_ROOT")

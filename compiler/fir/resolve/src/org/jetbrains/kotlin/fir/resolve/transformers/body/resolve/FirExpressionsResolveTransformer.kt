@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
@@ -25,13 +29,18 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ContextIndependent
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument.VarargArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.findTypesForSuperCandidates
 import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -44,9 +53,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.TransformData
+import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -687,6 +695,26 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
+
+        if (block is FirContractCallBlock) {
+            // Annotations which appear on and within contracts need to be resolved explicitly.
+            // The contract function call is resolved by the CONTRACTS phase but leaves all
+            // annotations unresolved.
+            block.call.acceptChildren(object : FirDefaultVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitAnnotation(annotation: FirAnnotation) {
+                    annotation.transformSingle(transformer, ContextIndependent)
+                }
+
+                override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+                    visitAnnotation(annotationCall)
+                }
+            })
+        }
+
         if (data is ResolutionMode.WithExpectedType && data.expectedType.isUnitOrFlexibleUnit) {
             // Unit-coercion
             block.resultType = data.expectedType

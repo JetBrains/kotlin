@@ -129,7 +129,6 @@ enum class DiagnosticKind {
     NotASupertype,
     SuperNotAvailable,
     AnnotationInWhereClause,
-    AnnotationInContract,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,

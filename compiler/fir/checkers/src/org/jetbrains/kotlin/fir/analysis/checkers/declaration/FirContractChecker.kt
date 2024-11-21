@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
@@ -26,9 +27,12 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -44,6 +48,12 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         // TODO: (KT-72772) Decide whether some errors should be emitted even for not allowed contracts.
         val reportedNotAllowed = checkContractNotAllowed(declaration, contractDescription, context, reporter)
         if (reportedNotAllowed) return
+
+        val contractCall = (declaration.body?.statements?.firstOrNull() as? FirContractCallBlock)?.call
+        if (contractCall != null) {
+            checkAnnotationsNotAllowed(contractCall, context, reporter)
+        }
+
         when (contractDescription) {
             is FirResolvedContractDescription -> {
                 checkUnresolvedEffects(contractDescription, declaration, context, reporter)
@@ -58,6 +68,30 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
         }
+    }
+
+    private fun checkAnnotationsNotAllowed(
+        contractCall: FirFunctionCall,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val argument = contractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression ?: return
+        if (!argument.anonymousFunction.isLambda) return
+        val lambdaBody = argument.anonymousFunction.body ?: return
+
+        lambdaBody.acceptChildren(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitAnnotation(annotation: FirAnnotation) {
+                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_IN_CONTRACT_ERROR, context)
+            }
+
+            override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+                reporter.reportOn(annotationCall.source, FirErrors.ANNOTATION_IN_CONTRACT_ERROR, context)
+            }
+        })
     }
 
     private fun checkUnresolvedEffects(

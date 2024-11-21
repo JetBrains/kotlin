@@ -26,6 +26,10 @@ inline fun <T> isCallTheFirstStatement(
             KtNodeTypes.DOT_QUALIFIED_EXPRESSION -> {
                 stack += getChildren(child).asReversed()
             }
+            KtNodeTypes.ANNOTATION_ENTRY -> {}
+            KtNodeTypes.ANNOTATED_EXPRESSION -> {
+                stack += getChildren(child).asReversed()
+            }
             else -> return false
         }
     }
