@@ -399,3 +399,12 @@ inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
     this.get() ?: compute().also {
         this.set(it)
     }
+
+inline fun <T, S> MutableList<T>.assignFrom(other: Iterable<S>, transform: (S) -> T) {
+    clear()
+    other.mapTo(this, transform)
+}
+
+fun <T> MutableList<T>.assignFrom(other: Iterable<T>) {
+    assignFrom(other) { it }
+}
