@@ -35,9 +35,9 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val libraryAbi = LibraryAbiReader.readAbiInfo(
             info.outputFile,
-            ExcludedPackages(module.directives[LibraryAbiDumpDirectives.EXCLUDED_PACKAGES]),
-            ExcludedClasses(module.directives[LibraryAbiDumpDirectives.EXCLUDED_CLASSES]),
-            NonPublicMarkerAnnotations(module.directives[LibraryAbiDumpDirectives.NON_PUBLIC_MARKERS])
+            ExcludedPackages(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES]),
+            ExcludedClasses(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES]),
+            NonPublicMarkerAnnotations(module.directives[LibraryAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS])
         )
 
         for ((abiSignatureVersion, dumper) in dumpers) {

@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 @OptIn(ExperimentalLibraryAbiReader::class)
 object LibraryAbiDumpDirectives : SimpleDirectivesContainer() {
-    val EXCLUDED_PACKAGES by valueDirective<AbiCompoundName>(
+    val KLIB_ABI_DUMP_EXCLUDED_PACKAGES by valueDirective<AbiCompoundName>(
         description = "Packages that should be filtered out from ABI dump",
         parser = ::parseCompoundName
     )
 
-    val EXCLUDED_CLASSES by valueDirective<AbiQualifiedName>(
+    val KLIB_ABI_DUMP_EXCLUDED_CLASSES by valueDirective<AbiQualifiedName>(
         description = "Classes that should be filtered out from ABI dump",
         parser = ::parseQualifiedName
     )
 
-    val NON_PUBLIC_MARKERS by valueDirective<AbiQualifiedName>(
+    val KLIB_ABI_DUMP_NON_PUBLIC_MARKERS by valueDirective<AbiQualifiedName>(
         description = "Non-public API markers (annotation classes)",
         parser = ::parseQualifiedName
     )

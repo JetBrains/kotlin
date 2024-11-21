@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives
-import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.EXCLUDED_CLASSES
-import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.EXCLUDED_PACKAGES
-import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.NON_PUBLIC_MARKERS
+import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
+import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
+import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
@@ -96,9 +96,9 @@ abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
                 Location(sourceFile)
             ).name
 
-            val excludedPackages = registeredDirectives[EXCLUDED_PACKAGES]
-            val excludedClasses = registeredDirectives[EXCLUDED_CLASSES]
-            val nonPublicMarkers = registeredDirectives[NON_PUBLIC_MARKERS]
+            val excludedPackages = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_PACKAGES]
+            val excludedClasses = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_CLASSES]
+            val nonPublicMarkers = registeredDirectives[KLIB_ABI_DUMP_NON_PUBLIC_MARKERS]
 
             return FromDirectives(
                 moduleName = moduleName,

@@ -1,4 +1,4 @@
-// EXCLUDED_CLASSES: /dynamic
+// KLIB_ABI_DUMP_EXCLUDED_CLASSES: /dynamic
 // TARGET_BACKEND: JS_IR
 // MODULE: specific_types_library
 

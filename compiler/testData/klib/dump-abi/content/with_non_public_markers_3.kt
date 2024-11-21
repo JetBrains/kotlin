@@ -1,4 +1,4 @@
-// NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight /Foo /Another.Bar nine.ten/Eleven.Twelve
+// KLIB_ABI_DUMP_NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight /Foo /Another.Bar nine.ten/Eleven.Twelve
 // MODULE: with_non_public_markers_library
 
 annotation class Foo
