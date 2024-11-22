@@ -2013,6 +2013,11 @@ internal class ContextReceiversDeprecatedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextReceiversDeprecated
 
+internal class ContextClassOrConstructorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextClassOrConstructor
+
 internal class ContextParameterWithoutNameImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

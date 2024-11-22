@@ -2,9 +2,9 @@
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 
-context(T) class A<T>
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(T) class A<T>
 
-context(Collection<P>) class B<P>
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(Collection<P>) class B<P>
 
 fun Int.foo() {
     A<Int>()

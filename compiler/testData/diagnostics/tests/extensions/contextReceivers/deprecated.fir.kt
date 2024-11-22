@@ -19,7 +19,7 @@ var varProp: Int
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 val valProp: Int get() = 42
 
-<!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 class Clazz {
     <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
     fun memberFun() {}
@@ -36,9 +36,9 @@ class Clazz {
     val valProp: Int get() = 42
 }
 
-<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 class Clazz2 {
-    <!CONTEXT_RECEIVERS_DEPRECATED!>constructor()<!>
+    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor()<!>
 }
 
 fun typeRef(body: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit): <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit {
@@ -62,14 +62,14 @@ var Clazz.extVar: Int
     get() = 904
     set(newVal) {}
 
-<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
 interface I {}
 
-<!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A, B)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A, B)
 class ClazzTwoReceivers {}
 
-<!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 enum class E
 
-<!CONTEXT_RECEIVERS_DEPRECATED, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+<!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 object O

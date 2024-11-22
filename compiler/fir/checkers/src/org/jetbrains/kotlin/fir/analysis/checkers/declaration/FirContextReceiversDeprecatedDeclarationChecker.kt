@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
 
 object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
@@ -28,10 +30,15 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             declaration !is FirAnonymousFunction &&
             declaration.contextReceivers.onlyLegacyContextReceivers()
         ) {
-            reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
+            val factory = if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
+                FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
+            } else {
+                FirErrors.CONTEXT_RECEIVERS_DEPRECATED
+            }
+            reporter.reportOn(declaration.source, factory, context)
         }
         if (declaration is FirRegularClass && declaration.contextReceivers.onlyLegacyContextReceivers()) {
-            reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
+            reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
         }
     }
 

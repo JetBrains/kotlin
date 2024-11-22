@@ -2359,6 +2359,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR) { firDiagnostic ->
+        ContextClassOrConstructorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME) { firDiagnostic ->
         ContextParameterWithoutNameImpl(
             firDiagnostic as KtPsiDiagnostic,
