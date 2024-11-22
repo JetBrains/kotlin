@@ -94,6 +94,7 @@ private val SirType.isSupported: Boolean
             is SirTypealias -> declaration.type.isSupported
             else -> true
         }
+        is SirFunctionalType -> true
         else -> false
     }
 
