@@ -29,7 +29,7 @@ fun testDelegatedValInWhenSubject() {
 }
 
 fun testExtensionPropertyInWhenSubject() {
-    when (val Int.a: String = "") {
-        "" -> a
+    when (val <!LOCAL_EXTENSION_PROPERTY!>Int<!>.a: String = "") {
+        "" -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 }

@@ -2801,6 +2801,9 @@ open class PsiRawFirBuilder(
                         symbol = FirPropertySymbol(name)
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
+                            createReceiverParameter({ it.toFirType() }, moduleData, symbol)
+                        }
                         ktSubjectExpression.extractAnnotationsTo(this)
                     }
                 }
