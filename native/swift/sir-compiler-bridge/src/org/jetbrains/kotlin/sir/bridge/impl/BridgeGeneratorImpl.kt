@@ -303,17 +303,9 @@ private fun SirCallable.bridgeParameters() = allParameters.mapIndexed { index, v
 
 private fun bridgeType(type: SirType): Bridge = when (type) {
     is SirNominalType -> bridgeNominalType(type)
-    is SirFunctionalType -> bridgeFunctionalType(type)
+    is SirFunctionalType -> Bridge.AsBlock(type)
     else -> error("Attempt to bridge unbridgeable type: $type.")
 }
-
-private fun bridgeFunctionalType(type: SirFunctionalType): Bridge = Bridge.AsBlock(
-    swiftType = type,
-    cType = CType.BlockPointer(
-        parameters = type.parameterTypes.map { bridgeType(it) },
-        returnType = bridgeType(type.returnType)
-    ),
-)
 
 private fun bridgeNominalType(type: SirNominalType): Bridge {
     fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
@@ -448,19 +440,13 @@ private sealed class CType {
     class NSSet(elem: CType) : Generic("NSSet", elem)
     class NSDictionary(key: CType, value: CType) : Generic("NSDictionary", key, value)
 
-    class BlockPointer(val parameters: List<Bridge>, val returnType: Bridge) : CType() {
+    class BlockPointer(val arity: Int) : CType() {
         override val repr: String
-            get() = returnType.cType.repr.format("(^%s)(${parameters.printCParametersForBlock()})")
-
-        private fun List<Bridge>.printCParametersForBlock(): String = if (isEmpty()) {
-            "void" // A block declaration without a prototype is deprecated
-        } else {
-            joinToString { it.cType.repr }
-        }
+            get() = NSNumber.repr.format("(^%s)(${List(arity) { NSNumber }.joinToString { it.repr }})")
     }
 }
 
-private enum class KotlinType(val repr: kotlin.String) {
+private enum class KotlinType(val repr: String) {
     Unit("Unit"),
 
     Boolean("Boolean"),
@@ -691,8 +677,6 @@ private sealed class Bridge(
         }
     }
 
-    class AsBlock(swiftType: SirType, cType: CType) : AsObjCBridged(swiftType, cType)
-
     data object AsOptionalNothing : Bridge(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),
         KotlinType.Unit,
@@ -748,6 +732,7 @@ private sealed class Bridge(
                     is AsIs,
                     is AsOpaqueObject,
                     is AsOutError,
+                    is AsBlock,
                         -> TODO("not yet supported")
 
                     is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
@@ -755,6 +740,49 @@ private sealed class Bridge(
             }
 
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
+        }
+    }
+
+    class AsBlock(
+        swiftType: SirFunctionalType,
+    ) : Bridge(
+        swiftType = swiftType,
+        kotlinType = KotlinType.KotlinObject,
+        cType = CType.BlockPointer(
+            arity = swiftType.parameterTypes.count(),
+        )
+    ) {
+
+        override val inKotlinSources: ValueConversion
+            get() = object : ValueConversion {
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return "TODO(\"not yet implemented - KT-72993\")"
+                }
+
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return """{
+       val newClosure: () -> Long = {
+           val res = _result()
+           kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
+       }
+       newClosure.objcPtr()
+    }()"""
+                }
+            }
+
+        override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return "fatalError(\"not yet implemented - KT-72993\")"
+            }
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return """{
+        let nativeBlock = ${valueExpression}
+        return { nativeBlock!() }
+    }()"""
+            }
+
+            override fun renderNil(): String = error("we do not support wrapping closures into optionals yet - PUT TICKET HERE")
         }
     }
 
@@ -797,28 +825,29 @@ private sealed class Bridge(
 private val SirType.isChar: Boolean
     get() = this is SirNominalType && typeDeclaration == SirSwiftModule.utf16CodeUnit
 
-private val KotlinType.defaultValue: String get() = when(this) {
-    KotlinType.Unit -> "Unit"
-    KotlinType.Boolean -> "false"
-    KotlinType.Char -> "'\\u0000'"
-    KotlinType.Byte,
-    KotlinType.Short,
-    KotlinType.Int,
-    KotlinType.Long,
-    KotlinType.UByte,
-    KotlinType.UShort,
-    KotlinType.UInt,
-    KotlinType.ULong,
-        -> "0"
-    KotlinType.Float,
-    KotlinType.Double
-        -> "0.0"
-    KotlinType.PointerToKotlinObject -> error("PointerToKotlinObject shouldn't appear in return type position")
-    KotlinType.KotlinObject,
-    KotlinType.ObjCObjectUnretained, // This is semantically +0, so we're allowed to simply dismiss the pointer.
-        -> "kotlin.native.internal.NativePtr.NULL"
-    KotlinType.String -> ""
-}
+private val KotlinType.defaultValue: String
+    get() = when(this) {
+        KotlinType.Unit -> "Unit"
+        KotlinType.Boolean -> "false"
+        KotlinType.Char -> "'\\u0000'"
+        KotlinType.Byte,
+        KotlinType.Short,
+        KotlinType.Int,
+        KotlinType.Long,
+        KotlinType.UByte,
+        KotlinType.UShort,
+        KotlinType.UInt,
+        KotlinType.ULong,
+            -> "0"
+        KotlinType.Float,
+        KotlinType.Double
+            -> "0.0"
+        KotlinType.PointerToKotlinObject -> error("PointerToKotlinObject shouldn't appear in return type position")
+        KotlinType.KotlinObject,
+        KotlinType.ObjCObjectUnretained, // This is semantically +0, so we're allowed to simply dismiss the pointer.
+            -> "kotlin.native.internal.NativePtr.NULL"
+        KotlinType.String -> ""
+    }
 
 private val String.cIdentifier: String get() = let {
         this.takeIf(cIdentifierRegex::matches) ?: this.replace(cIdentifierNonCompliantRegex) { match ->
