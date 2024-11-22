@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.declarations
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeArguments
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeParameters
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Other
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Declaration
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Reference
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Contracts
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Diagnostics
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
 import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
 
 // Note the style of the DSL to describe FIR elements, which is these things in the following order:
 // 1) config (see properties of Element)
@@ -1250,7 +1245,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("effect", coneEffectDeclarationType)
     }
 
-    val contractDescription: Element by element(Contracts)
+    val contractDescription: Element by sealedElement(Contracts)
 
     val rawContractDescription: Element by element(Contracts) {
         parent(contractDescription)

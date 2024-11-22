@@ -37,6 +37,7 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
                 printer.println()
                 render(contractDescription)
             }
+            is FirErrorContractDescription -> {}
         }
         printer.popIndent()
     }
