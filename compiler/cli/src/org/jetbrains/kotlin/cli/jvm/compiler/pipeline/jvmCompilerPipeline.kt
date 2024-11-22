@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -59,30 +58,8 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
-
-internal fun FrontendContextForSingleModule.runBackend(
-    firResult: FirResult,
-    diagnosticsReporter: BaseDiagnosticsCollector,
-): GenerationState? {
-    val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
-    val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), firResult, compilerEnvironment)
-
-    if (diagnosticsReporter.hasErrors) {
-        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-        return null
-    }
-
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
-
-    diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-
-    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-    return codegenOutput.generationState
-}
 
 fun convertAnalyzedFirToIr(
     configuration: CompilerConfiguration,

@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSingleModuleUsingFrontendIrAndPsi
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.CodegenFactory
@@ -70,36 +68,9 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
-        val useFrontendIR = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)
+        check(compilerConfiguration.useFir == false)
         val messageCollector = environment.messageCollector
-        val backendInputForMultiModuleChunk = if (useFrontendIR) {
-            // K2/PSI: base checks
-            val projectEnvironment =
-                VfsBasedProjectEnvironment(
-                    project,
-                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-                ) { environment.createPackagePartProvider(it) }
-
-            if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(compilerConfiguration, messageCollector)) {
-                return false
-            }
-
-            if (chunk.size == 1) {
-                return compileSingleModuleUsingFrontendIrAndPsi(
-                    projectEnvironment.project,
-                    projectEnvironment,
-                    compilerConfiguration,
-                    messageCollector,
-                    buildFile,
-                    chunk.single(),
-                    environment.getSourceFiles(),
-                )
-            }
-
-            runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(environment, projectEnvironment, compilerConfiguration, chunk)
-        } else {
-            runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
-        } ?: return true
+        val backendInputForMultiModuleChunk = runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk) ?: return true
 
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         return backendInputForMultiModuleChunk.runBackend(

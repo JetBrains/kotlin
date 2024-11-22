@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIrAndLightTree
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
@@ -149,44 +147,22 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
-            val targetDescription = moduleChunk.targetDescription()
-            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
-                configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-            ) {
-                if (messageCollector.hasErrors()) return COMPILATION_ERROR
-                val projectEnvironment =
-                    createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
-                if (messageCollector.hasErrors()) return COMPILATION_ERROR
-
-                if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(configuration, messageCollector)) {
-                    return COMPILATION_ERROR
-                }
-
-                if (!compileModulesUsingFrontendIrAndLightTree(
-                        projectEnvironment, configuration, messageCollector,
-                        buildFile, chunk, targetDescription,
-                        checkSourceFiles = !arguments.allowNoSourceFiles,
-                        isPrintingVersion = arguments.version,
-                    )
-                ) return COMPILATION_ERROR
-            } else {
-                val environment = createCoreEnvironment(
-                    rootDisposable, configuration, messageCollector,
-                    targetDescription
-                ) ?: return COMPILATION_ERROR
-                environment.registerJavacIfNeeded(arguments).let {
-                    if (!it) return COMPILATION_ERROR
-                }
-
-                if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
-                    if (arguments.version) return OK
-
-                    messageCollector.report(ERROR, "No source files")
-                    return COMPILATION_ERROR
-                }
-
-                if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
+            val environment = createCoreEnvironment(
+                rootDisposable, configuration, messageCollector,
+                moduleChunk.targetDescription()
+            ) ?: return COMPILATION_ERROR
+            environment.registerJavacIfNeeded(arguments).let {
+                if (!it) return COMPILATION_ERROR
             }
+
+            if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
+                if (arguments.version) return OK
+
+                messageCollector.report(ERROR, "No source files")
+                return COMPILATION_ERROR
+            }
+
+            if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(

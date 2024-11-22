@@ -2,6 +2,7 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
@@ -13,17 +14,19 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.checkIfScriptsInCommonSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
@@ -35,6 +38,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import java.io.File
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -45,7 +50,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val (configuration, diagnosticsCollector, rootDisposable) = input
         val messageCollector = configuration.messageCollector
 
-        if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(configuration, messageCollector)) {
+        if (!checkNotSupportedPlugins(configuration, messageCollector)) {
             return null
         }
 
@@ -231,5 +236,55 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
         return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+    }
+
+    private fun checkNotSupportedPlugins(
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector
+    ): Boolean {
+        val notSupportedPlugins = mutableListOf<String?>().apply {
+            compilerConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)
+                .collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
+            compilerConfiguration.get(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)
+                .collectIncompatiblePluginNamesTo(this, CompilerPluginRegistrar::supportsK2)
+        }
+
+        if (notSupportedPlugins.isNotEmpty()) {
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                """
+                    |There are some plugins incompatible with language version 2.0:
+                    |${notSupportedPlugins.joinToString(separator = "\n|") { "  $it" }}
+                    |Please use language version 1.9 or below
+                """.trimMargin()
+            )
+            return false
+        }
+
+        return true
+    }
+
+    private fun <T : Any> List<T>?.collectIncompatiblePluginNamesTo(
+        destination: MutableList<String?>,
+        supportsK2: T.() -> Boolean
+    ) {
+        this?.filter { !it.supportsK2() && it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME }
+            ?.mapTo(destination) { it::class.qualifiedName }
+    }
+
+    fun checkIfScriptsInCommonSources(configuration: CompilerConfiguration, ktFiles: List<KtFile>): Boolean {
+        val lastHmppModule = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)?.modules?.lastOrNull()
+        val commonScripts = ktFiles.filter { it.isScript() && (it.isCommonSource == true || it.hmppModuleName != lastHmppModule?.name) }
+        if (commonScripts.isNotEmpty()) {
+            val cwd = File(".").absoluteFile
+            fun renderFile(ktFile: KtFile) = File(ktFile.virtualFilePath).descendantRelativeTo(cwd).path
+            configuration.messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "Script files in common source roots are not supported. Misplaced files:\n    " +
+                        commonScripts.joinToString("\n    ", transform = ::renderFile)
+            )
+            return true
+        }
+        return false
     }
 }
