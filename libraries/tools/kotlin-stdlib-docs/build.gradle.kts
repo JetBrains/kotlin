@@ -439,6 +439,18 @@ fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg lib
             outputDirectory.set(outputDirPrevious.resolve(moduleDirName).resolve(version))
             pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
         }
+
+        doLast {
+            // copy package-list files from partial tasks of single modules
+            libTasks.map { it.get() }.forEach { child ->
+                val originalOutput = child.outputDirectory
+                val mergedOutput = outputDirectory.dir(child.moduleName)
+                project.copy {
+                    from(originalOutput.file("package-list"))
+                    into(mergedOutput)
+                }
+            }
+        }
     }
 
 fun GradleDokkaSourceSetBuilder.perPackageOption(packageNamePrefix: String, action: Action<in GradlePackageOptionsBuilder>) =
