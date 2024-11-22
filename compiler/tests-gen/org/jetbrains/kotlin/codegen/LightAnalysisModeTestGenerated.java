@@ -2257,16 +2257,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     public void testKt53100_casts() {
       runTest("compiler/testData/codegen/box/boxing/kt53100_casts.kt");
     }
-
-    @TestMetadata("kt71550.kt")
-    public void testKt71550() {
-      runTest("compiler/testData/codegen/box/boxing/kt71550.kt");
-    }
-
-    @TestMetadata("kt71550_2.kt")
-    public void testKt71550_2() {
-      runTest("compiler/testData/codegen/box/boxing/kt71550_2.kt");
-    }
   }
 
   @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
@@ -36148,6 +36138,39 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testPrimitiveEqObjectShort() {
           runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectShort.kt");
         }
+      }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IdentityEqualsWithNullable extends AbstractLightAnalysisModeTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInIdentityEqualsWithNullable() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @TestMetadata("doubleZero.kt")
+      public void testDoubleZero() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/doubleZero.kt");
+      }
+
+      @TestMetadata("floatZero.kt")
+      public void testFloatZero() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/floatZero.kt");
+      }
+
+      @TestMetadata("primitivesWithAny.kt")
+      public void testPrimitivesWithAny() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/primitivesWithAny.kt");
+      }
+
+      @TestMetadata("primitivesWithNull.kt")
+      public void testPrimitivesWithNull() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/primitivesWithNull.kt");
       }
     }
 

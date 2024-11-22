@@ -32519,6 +32519,15 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @Tag("klib")
+      public class IdentityEqualsWithNullable {
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

@@ -34688,6 +34688,20 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @Tag("klibIrInliner")
+      @UseExtTestCaseGroupProvider()
+      public class IdentityEqualsWithNullable {
+        @Test
+        public void testAllFilesPresentInIdentityEqualsWithNullable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

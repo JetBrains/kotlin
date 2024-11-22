@@ -35065,6 +35065,21 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      @UsePartialLinkage(mode = Mode.DISABLED)
+      @Tag("no-partial-linkage-may-be-skipped")
+      public class IdentityEqualsWithNullable {
+        @Test
+        public void testAllFilesPresentInIdentityEqualsWithNullable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

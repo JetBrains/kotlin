@@ -2623,18 +2623,6 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
-    @TestMetadata("kt71550.kt")
-    public void testKt71550() {
-      runTest("compiler/testData/codegen/box/boxing/kt71550.kt");
-    }
-
-    @Test
-    @TestMetadata("kt71550_2.kt")
-    public void testKt71550_2() {
-      runTest("compiler/testData/codegen/box/boxing/kt71550_2.kt");
-    }
-
-    @Test
     @TestMetadata("missingValueClassUnboxing.kt")
     public void testMissingValueClassUnboxing() {
       runTest("compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");
@@ -43433,6 +43421,40 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         public void testPrimitiveEqObjectShort() {
           runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectShort.kt");
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IdentityEqualsWithNullable {
+      @Test
+      public void testAllFilesPresentInIdentityEqualsWithNullable() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("doubleZero.kt")
+      public void testDoubleZero() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/doubleZero.kt");
+      }
+
+      @Test
+      @TestMetadata("floatZero.kt")
+      public void testFloatZero() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/floatZero.kt");
+      }
+
+      @Test
+      @TestMetadata("primitivesWithAny.kt")
+      public void testPrimitivesWithAny() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/primitivesWithAny.kt");
+      }
+
+      @Test
+      @TestMetadata("primitivesWithNull.kt")
+      public void testPrimitivesWithNull() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable/primitivesWithNull.kt");
       }
     }
 

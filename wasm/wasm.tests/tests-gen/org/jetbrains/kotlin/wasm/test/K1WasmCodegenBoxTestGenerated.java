@@ -30472,6 +30472,16 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IdentityEqualsWithNullable {
+      @Test
+      public void testAllFilesPresentInIdentityEqualsWithNullable() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
     @TestDataPath("$PROJECT_ROOT")
     public class NumberToChar {
