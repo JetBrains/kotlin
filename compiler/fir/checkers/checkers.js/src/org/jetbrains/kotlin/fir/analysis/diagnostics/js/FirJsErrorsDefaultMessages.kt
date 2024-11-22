@@ -108,7 +108,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, "Runtime annotation cannot be put on external declaration.")
         map.put(
             RUNTIME_ANNOTATION_NOT_SUPPORTED,
-            "Reflection is not supported in JavaScript target; therefore, you won't be able to read this annotation at runtime."
+            "Reflection is not supported in JavaScript target; therefore, annotations cannot be read at runtime."
         )
         map.put(EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class cannot have a body.")
         map.put(EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type.")

@@ -94,4 +94,14 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
             RegexOption.IGNORE_CASE),
         "uses British spelling. Use American spelling instead"
     )
+
+    checkRule(
+        """\b(?:we|us|you(?!\s+have))\b""".toRegex(RegexOption.IGNORE_CASE),
+        "uses 'we', 'us' or 'you'.",
+        setOf(
+            FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
+            FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
+            "PARCELABLE_TYPE_NOT_SUPPORTED",
+        )
+    )
 }

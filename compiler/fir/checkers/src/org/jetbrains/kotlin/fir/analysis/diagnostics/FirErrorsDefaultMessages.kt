@@ -1246,7 +1246,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ANNOTATION_IN_WHERE_CLAUSE_ERROR,
-            "Type parameter annotations are prohibited inside 'where' clauses. You should probably move the annotations to the type parameter declaration.",
+            "Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.",
         )
         map.put(
             ANNOTATION_IN_CONTRACT_ERROR,
@@ -2387,7 +2387,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
             "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
-                    "You can use -Xexpect-actual-classes flag to suppress this warning. " +
+                    "Consider using the '-Xexpect-actual-classes' flag to suppress this warning. " +
                     "Also see: https://youtrack.jetbrains.com/issue/KT-61573"
         )
         map.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup")

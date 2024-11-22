@@ -148,7 +148,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE,
             "This function accidentally overrides both {0} and {1} {2} from JVM point of view because of mixed Java/Kotlin hierarchy.\n" +
-                    "This situation provokes a JVM clash and thus is forbidden. To fix it, you have to delete either this function or one of overridden functions.",
+                    "This situation provokes a JVM clash and is forbidden. To fix it, delete either this or one of the overridden functions.",
             SYMBOL_WITH_CONTAINING_DECLARATION,
             STRING,
             SYMBOL_WITH_CONTAINING_DECLARATION,
