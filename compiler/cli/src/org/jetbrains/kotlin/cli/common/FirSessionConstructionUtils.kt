@@ -50,6 +50,7 @@ val GroupedKtSources.isCommonSourceForLt: (KtSourceFile) -> Boolean
 val GroupedKtSources.fileBelongsToModuleForLt: (KtSourceFile, String) -> Boolean
     get() = { file, moduleName -> sourcesByModuleName[moduleName].orEmpty().contains(file) }
 
+@LegacyK2CliPipeline
 fun prepareJvmSessionsForScripting(
     projectEnvironment: VfsBasedProjectEnvironment,
     configuration: CompilerConfiguration,
@@ -74,6 +75,7 @@ fun prepareJvmSessionsForScripting(
  *   - legacy (one platform and one common module)
  *   - HMPP (multiple number of modules)
  */
+@LegacyK2CliPipeline
 fun <F> FrontendContext.prepareJvmSessions(
     files: List<F>,
     rootModuleNameAsString: String,
@@ -92,6 +94,7 @@ fun <F> FrontendContext.prepareJvmSessions(
     )
 }
 
+@LegacyK2CliPipeline
 fun prepareJvmSessionsWithoutFiles(
     configuration: CompilerConfiguration,
     environment: VfsBasedProjectEnvironment,
@@ -110,6 +113,7 @@ fun prepareJvmSessionsWithoutFiles(
     )
 }
 
+@LegacyK2CliPipeline
 internal fun <F> FrontendContext.prepareJvmSessions(
     files: List<F>,
     rootModuleName: Name,

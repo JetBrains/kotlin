@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
+@LegacyK2CliPipeline
 internal class MinimizedFrontendContext(
     override val projectEnvironment: VfsBasedProjectEnvironment,
     override val messageCollector: MessageCollector,
@@ -17,6 +19,7 @@ internal class MinimizedFrontendContext(
     override val configuration: CompilerConfiguration
 ) : FrontendContext
 
+@LegacyK2CliPipeline
 interface FrontendContext {
     val projectEnvironment: VfsBasedProjectEnvironment
     val messageCollector: MessageCollector

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 
+@LegacyK2CliPipeline
 fun convertAnalyzedFirToIr(
     configuration: CompilerConfiguration,
     targetId: TargetId,
@@ -128,6 +130,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
+@LegacyK2CliPipeline
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
     environment: ModuleCompilerEnvironment

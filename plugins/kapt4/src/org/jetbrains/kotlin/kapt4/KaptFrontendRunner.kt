@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt4
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
+@OptIn(LegacyK2CliPipeline::class)
 fun runFrontendForKapt(
     environment: VfsBasedProjectEnvironment,
     configuration: CompilerConfiguration,
@@ -45,6 +47,7 @@ fun runFrontendForKapt(
     )!!
 }
 
+@OptIn(LegacyK2CliPipeline::class)
 private class FrontendContextForSingleModulePsi(
     override val projectEnvironment: VfsBasedProjectEnvironment,
     override val messageCollector: MessageCollector,
@@ -53,6 +56,7 @@ private class FrontendContextForSingleModulePsi(
     override val extensionRegistrars: List<FirExtensionRegistrar> = FirExtensionRegistrar.getInstances(projectEnvironment.project)
 }
 
+@LegacyK2CliPipeline
 private fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     ktFiles: List<KtFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 
+@OptIn(LegacyK2CliPipeline::class)
 open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
