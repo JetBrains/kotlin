@@ -459,7 +459,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
 }
 
 private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: IrModuleFragment) {
-    val optimize = false // context.shouldOptimize()
+    val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
@@ -486,7 +486,7 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
         runPhase(CoroutinesVarSpillingPhase, it)
     }
     runPhase(GHAPhase, module, disable = !optimize)
-    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = true || !optimize)
 }
 
 /**
