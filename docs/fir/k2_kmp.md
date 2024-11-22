@@ -369,7 +369,7 @@ There are several restrictions, because of which this order of actions is requir
 
 - Fake overrides can't be built before classes are actualized
   - Because we need to know what is real supertype. 
-- Callables can't be actulaized before fake overrides are built
+- Callables can't be actualized before fake overrides are built
   - Some of them can match with fake override
 - Constants can't be evaluated before callables are actualized
   - As some expect function can become possible to evaluate 
