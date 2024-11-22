@@ -363,4 +363,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitContractDescription(errorContractDescription)
     }
 
+    override fun visitIgnoredContractDescription(ignoredContractDescription: FirIgnoredContractDescription) {
+        visitContractDescription(ignoredContractDescription)
+    }
+
 }

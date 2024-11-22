@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.builder.buildErrorContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildIgnoredContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
@@ -180,7 +181,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 if (hasBodyContract) {
                     owner.body.replaceFirstStatement<FirContractCallBlock> { resolvedContractCall }
                 }
-                owner.replaceContractDescription(newContractDescription = null)
+                owner.replaceContractDescription(newContractDescription = buildIgnoredContractDescription())
                 dataFlowAnalyzer.exitContractDescription()
                 return owner
             }

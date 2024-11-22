@@ -1258,4 +1258,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
     open fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription) {
         visitElement(errorContractDescription)
     }
+
+    final override fun visitIgnoredContractDescription(ignoredContractDescription: FirIgnoredContractDescription, data: Nothing?) {
+        visitIgnoredContractDescription(ignoredContractDescription)
+    }
+
+    open fun visitIgnoredContractDescription(ignoredContractDescription: FirIgnoredContractDescription) {
+        visitElement(ignoredContractDescription)
+    }
 }

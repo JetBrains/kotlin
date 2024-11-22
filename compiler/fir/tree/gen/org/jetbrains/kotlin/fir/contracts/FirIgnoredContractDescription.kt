@@ -10,20 +10,21 @@ package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.contractDescription]
+ * Represents a case where we mistakenly took a call to a normal function called 'contract' as a contract call.
+ *
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.ignoredContractDescription]
  */
-sealed class FirContractDescription : FirPureAbstractElement(), FirElement {
+abstract class FirIgnoredContractDescription : FirContractDescription() {
     abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitContractDescription(this, data)
+        visitor.visitIgnoredContractDescription(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformContractDescription(this, data) as E
+        transformer.transformIgnoredContractDescription(this, data) as E
 }

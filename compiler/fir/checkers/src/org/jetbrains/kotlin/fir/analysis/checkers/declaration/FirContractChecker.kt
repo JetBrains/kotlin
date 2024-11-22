@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirIgnoredContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -57,6 +58,8 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, INVALID_CONTRACT_BLOCK, context)
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
+            is FirIgnoredContractDescription -> {}
+            else -> error("Unexpected contract description kind: ${contractDescription::class.simpleName}")
         }
     }
 

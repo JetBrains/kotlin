@@ -1250,7 +1250,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("effect", coneEffectDeclarationType)
     }
 
-    val contractDescription: Element by element(Contracts)
+    val contractDescription: Element by sealedElement(Contracts)
 
     val rawContractDescription: Element by element(Contracts) {
         parent(contractDescription)
@@ -1283,6 +1283,11 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(contractDescription)
 
         +field("diagnostic", coneDiagnosticType, nullable = true)
+    }
+
+    val ignoredContractDescription: Element by element(Contracts) {
+        kDoc = "Represents a case where we mistakenly took a call to a normal function called 'contract' as a contract call."
+        parent(contractDescription)
     }
 
     private object FieldSets {

@@ -277,4 +277,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): R =
         visitContractDescription(errorContractDescription, data)
+
+    override fun visitIgnoredContractDescription(ignoredContractDescription: FirIgnoredContractDescription, data: D): R =
+        visitContractDescription(ignoredContractDescription, data)
 }
