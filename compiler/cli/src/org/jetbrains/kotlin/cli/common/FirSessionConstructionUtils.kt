@@ -74,7 +74,7 @@ fun prepareJvmSessionsForScripting(
  *   - legacy (one platform and one common module)
  *   - HMPP (multiple number of modules)
  */
-internal fun <F> FrontendContext.prepareJvmSessions(
+fun <F> FrontendContext.prepareJvmSessions(
     files: List<F>,
     rootModuleNameAsString: String,
     friendPaths: List<String>,

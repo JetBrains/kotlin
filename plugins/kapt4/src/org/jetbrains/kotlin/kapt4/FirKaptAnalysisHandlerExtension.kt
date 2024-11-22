@@ -13,35 +13,53 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
+import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontendForKapt
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
+import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
-import org.jetbrains.kotlin.kapt3.base.util.*
+import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
+import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -160,6 +178,25 @@ open class FirKaptAnalysisHandlerExtension(
         return true
     }
 
+    fun runFrontendForKapt(
+        environment: VfsBasedProjectEnvironment,
+        configuration: CompilerConfiguration,
+        messageCollector: MessageCollector,
+        sources: List<KtFile>,
+        module: Module,
+    ): FirResult {
+        val context = FrontendContextForSingleModulePsi(
+            module,
+            environment,
+            messageCollector,
+            configuration,
+        )
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+        return context.compileSourceFilesToAnalyzedFirViaPsi(
+            sources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true
+        )!!
+    }
+
     private fun runAnnotationProcessing(kaptContext: KaptContext, processors: LoadedProcessors) {
         if (!options.mode.runAnnotationProcessing) return
 
@@ -215,7 +252,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
             // Ignore all FE errors
-            val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+            val cleanDiagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
             val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), analysisResults, compilerEnvironment)
 
@@ -350,4 +387,59 @@ open class FirKaptAnalysisHandlerExtension(
 
         return null
     }
+}
+
+internal class FrontendContextForSingleModulePsi(
+    val module: Module,
+    override val projectEnvironment: VfsBasedProjectEnvironment,
+    override val messageCollector: MessageCollector,
+    override val configuration: CompilerConfiguration
+) : FrontendContext {
+    override val extensionRegistrars: List<FirExtensionRegistrar> = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+}
+
+internal fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
+    ktFiles: List<KtFile>,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    rootModuleName: String,
+    friendPaths: List<String>,
+    ignoreErrors: Boolean = false,
+): FirResult? {
+    val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+    performanceManager?.notifyAnalysisStarted()
+
+    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+    }
+
+    val scriptsInCommonSourcesErrors = JvmFrontendPipelinePhase.checkIfScriptsInCommonSources(configuration, ktFiles)
+
+    val sourceScope: AbstractProjectFileSearchScope = projectEnvironment.getSearchScopeByPsiFiles(ktFiles) +
+            projectEnvironment.getSearchScopeForProjectJavaSources()
+
+    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+
+    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(projectEnvironment, configuration, sourceScope)
+
+    providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
+        librariesScope -= it
+    }
+    val sessionsWithSources = prepareJvmSessions(
+        ktFiles,
+        rootModuleName,
+        friendPaths,
+        librariesScope,
+        isCommonSource = { it.isCommonSource == true },
+        isScript = { it.isScript() },
+        fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
+        createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+    )
+
+    val outputs = sessionsWithSources.map { (session, sources) ->
+        buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
+    }
+    outputs.runPlatformCheckers(diagnosticsReporter)
+
+    performanceManager?.notifyAnalysisFinished()
+    return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
 }
