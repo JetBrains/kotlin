@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_DESERIALIZED_IR_TEXT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -35,13 +34,11 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
 class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
-    private val isDeserializedInput: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -115,8 +112,6 @@ class IrTextDumpHandler(
         byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
 
         if (DUMP_IR !in module.directives) return
-        // IR dump after deserialization should not be verified in tests with SKIP_DESERIALIZED_IR_TEXT_DUMP directive
-        if (isDeserializedInput && SKIP_DESERIALIZED_IR_TEXT_DUMP in module.directives) return
 
         val dumpOptions = defaultDumpIrTreeOptions(module, info.irPluginContext.irBuiltIns)
         val builder = baseDumper.builderForModule(module.name)
@@ -155,8 +150,6 @@ class IrTextDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        if (isDeserializedInput && moduleStructure.modules.any { SKIP_DESERIALIZED_IR_TEXT_DUMP in it.directives })
-            return // don't check, don't remove testData
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(moduleStructure.modules.first().getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
@@ -165,12 +158,7 @@ class IrTextDumpHandler(
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
-            if (isDeserializedInput) {
-                // KT-54028: commit 3713d95bb1fc0cc434eeed42a0f0adac52af091b has "temporarily" disabled sealed subclasses deserialization
-                assertions.assertEqualsToFile(expectedFile, actualDump) { text -> filterOutSealedSubclasses(text) }
-            } else {
-                assertions.assertEqualsToFile(expectedFile, actualDump)
-            }
+            assertions.assertEqualsToFile(expectedFile, actualDump)
         } else {
             assertions.assertFileDoesntExist(expectedFile, DUMP_IR)
         }
@@ -179,25 +167,5 @@ class IrTextDumpHandler(
     private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
         return computeDumpExtension(this, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
     }
-
-    private fun filterOutSealedSubclasses(testData: String): String =
-        buildString {
-            val SEALED_SUBCLASSES_CLAUSE = "sealedSubclasses:"
-            var ongoingSealedSubclassesClauseIndent: String? = null
-            for (line in testData.lines()) {
-                if (ongoingSealedSubclassesClauseIndent == null) {
-                    if (line.trim() == SEALED_SUBCLASSES_CLAUSE) {
-                        ongoingSealedSubclassesClauseIndent = line.substringBefore(SEALED_SUBCLASSES_CLAUSE)
-                    } else {
-                        appendLine(line)
-                    }
-                } else {
-                    if (!line.startsWith("$ongoingSealedSubclassesClauseIndent  CLASS") ) {
-                        ongoingSealedSubclassesClauseIndent = null
-                        appendLine(line)
-                    }
-                }
-            }
-        }
 }
 

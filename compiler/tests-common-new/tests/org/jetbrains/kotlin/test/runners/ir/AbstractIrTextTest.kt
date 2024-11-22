@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest.KlibFacades
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     protected val targetPlatform: TargetPlatform,
@@ -109,11 +108,10 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
 fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers(
     testConfigurationBuilder: TestConfigurationBuilder,
-    isDeserializedInput: Boolean,
     includeAllDumpHandlers: Boolean = true,
 ) where InputArtifactKind : BackendKind<IrBackendInput> {
     useHandlers(
-        ::IrTextDumpHandler.bind(isDeserializedInput),
+        ::IrTextDumpHandler,
         ::IrTreeVerifierHandler,
         ::IrPrettyKotlinDumpHandler,
     )
@@ -169,7 +167,7 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
 
     facadeStep(converter)
 
-    irHandlersStep { useIrTextHandlers(this@configureAbstractIrTextSettings, isDeserializedInput = false, includeAllDumpHandlers) }
+    irHandlersStep { useIrTextHandlers(this@configureAbstractIrTextSettings, includeAllDumpHandlers) }
 
     if (klibFacades != null) {
         irHandlersStep {
@@ -184,7 +182,6 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
 
         deserializedIrHandlersStep {
             useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
-            useIrTextHandlers(this@configureAbstractIrTextSettings, isDeserializedInput = true, includeAllDumpHandlers)
         }
     }
 }
