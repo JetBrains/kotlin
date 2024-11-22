@@ -1213,6 +1213,13 @@ val IrDeclaration.isTopLevel: Boolean
         return parentClass?.isFileClass == true && parentClass.parent is IrPackageFragment
     }
 
+/**
+ * Detects, whether the declaration is top-level, excluding property accessors and backing fields.
+ * To return `true` for them as well, use `IrDeclaration.isTopLevel` instead.
+ */
+val IrDeclaration.isTopLevelDeclaration get() =
+        parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
+
 fun IrClass.createThisReceiverParameter() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
