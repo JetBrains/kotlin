@@ -9,6 +9,7 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.importGlobal
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -289,7 +290,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             }
         }
 
-        if (declaration.typeInfoHasVtableAttached) {
+        if (!generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
+            importGlobal(typeInfoSymbolName, runtime.typeInfoType, declaration)
+            typeInfoGlobal = staticData.getGlobal(typeInfoSymbolName)!!
+            typeInfoPtr = typeInfoGlobal.pointer
+        } else if (declaration.typeInfoHasVtableAttached) {
             // Create the special global consisting of TypeInfo and vtable.
 
             val typeInfoWithVtableType = llvm.structType(
