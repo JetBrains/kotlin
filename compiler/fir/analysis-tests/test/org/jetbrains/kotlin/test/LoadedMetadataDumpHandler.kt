@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
@@ -68,6 +69,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
+    @OptIn(LegacyK2CliPipeline::class)
     override fun prepareSessions(
         module: TestModule,
         configuration: CompilerConfiguration,

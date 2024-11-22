@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 @RequiresOptIn(message = "In compiler:cli, please use FrontendContext extensions instead")
 annotation class IncrementalCompilationApi
 
+@OptIn(LegacyK2CliPipeline::class)
 @IncrementalCompilationApi
 fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
     projectEnvironment: VfsBasedProjectEnvironment,
@@ -47,6 +49,7 @@ fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
     )
 }
 
+@LegacyK2CliPipeline
 private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     input: ModuleCompilerInput,
     diagnosticsReporter: BaseDiagnosticsCollector,
