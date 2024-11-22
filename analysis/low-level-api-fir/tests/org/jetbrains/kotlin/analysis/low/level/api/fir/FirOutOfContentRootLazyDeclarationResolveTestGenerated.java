@@ -295,6 +295,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("delegationPropertyGetter.kt")
+  public void testDelegationPropertyGetter() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegationPropertyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationPropertyGetterWithImplicitType.kt")
+  public void testDelegationPropertyGetterWithImplicitType() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegationPropertyGetterWithImplicitType.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationPropertySetter.kt")
+  public void testDelegationPropertySetter() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegationPropertySetter.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationPropertySetterWithImplicitType.kt")
+  public void testDelegationPropertySetterWithImplicitType() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegationPropertySetterWithImplicitType.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntries.kt");
