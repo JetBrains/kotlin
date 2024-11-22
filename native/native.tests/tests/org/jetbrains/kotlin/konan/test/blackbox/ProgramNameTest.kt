@@ -26,6 +26,9 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
 
     @Test
     fun programNameTest() {
+        // The С part of the test relies on execv which is not available on tvOS and watchOS.
+        Assumptions.assumeTrue(targets.testTarget.family != Family.TVOS)
+        Assumptions.assumeTrue(targets.testTarget.family != Family.WATCHOS)
         // 1. Compile kotlinPrintEntryPoint.kt to kotlinPrintEntryPoint.kexe
 
         val kotlinCompilation = compileToExecutableInOneStage(
