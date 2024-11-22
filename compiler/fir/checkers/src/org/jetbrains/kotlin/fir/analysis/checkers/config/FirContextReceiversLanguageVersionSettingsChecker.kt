@@ -6,13 +6,28 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
-    const val CONTEXT_RECEIVER_MESSAGE: String = "Experimental context receivers are superseded by context parameters. " +
-            "Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax. " +
-            "See the new context parameters proposal: https://kotl.in/context-parameters"
+    val CONTEXT_RECEIVER_MESSAGE: String = if (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_2) {
+        """
+            Experimental context receivers are superseded by context parameters.
+            Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+
+            See the context parameters proposal for more details: https://kotl.in/context-parameters
+            This warning will become an error in future releases.""".trimIndent()
+    } else {
+        """
+            Experimental context receivers are deprecated and will be superseded by context parameters.
+            Kotlin compiler version ${LanguageVersion.KOTLIN_2_2} will be the last version that supports context receivers.
+            Consider migrating to extension receivers or regular parameters now.
+            Alternatively, migrate directly to context parameters when Kotlin ${LanguageVersion.KOTLIN_2_2} is released.
+
+            See the context parameters proposal for more details: https://kotl.in/context-parameters
+            This warning will become an error in future releases.""".trimIndent()
+    }
 
     override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
