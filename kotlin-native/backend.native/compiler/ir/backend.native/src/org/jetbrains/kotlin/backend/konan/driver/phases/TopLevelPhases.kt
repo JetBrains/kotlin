@@ -486,7 +486,7 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
         runPhase(CoroutinesVarSpillingPhase, it)
     }
     runPhase(GHAPhase, module, disable = !optimize)
-    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = true || !optimize)
+    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
 }
 
 /**
