@@ -421,6 +421,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     )
             )
         } else {
+            if (!generationState.llvmModuleSpecification.containsDeclaration(declaration))
+                return
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
