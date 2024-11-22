@@ -25,6 +25,9 @@ import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental tests with isolating apt")
 open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,

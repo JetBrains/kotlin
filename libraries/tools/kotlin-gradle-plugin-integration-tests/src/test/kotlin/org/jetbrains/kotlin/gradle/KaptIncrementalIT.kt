@@ -27,6 +27,10 @@ open class KaptIncrementalIT : KGPBaseTest() {
     private val annotatedElements =
         arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB", "funGetsInputParams")
 
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
+
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
         kaptOptions = BuildOptions.KaptOptions(incrementalKapt = true)

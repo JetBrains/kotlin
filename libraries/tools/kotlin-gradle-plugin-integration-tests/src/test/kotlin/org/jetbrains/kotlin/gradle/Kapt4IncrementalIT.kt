@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 @OtherGradlePluginTests
 open class Kapt4IncrementalIT : KaptIncrementalIT() {
     override fun TestProject.customizeProject() {
-        forceKapt4()
+        forceK2Kapt()
     }
 
     @Disabled("KT-71786: K2KAPT task does not fail")

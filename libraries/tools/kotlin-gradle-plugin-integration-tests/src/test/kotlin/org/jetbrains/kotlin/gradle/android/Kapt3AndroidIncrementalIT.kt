@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
+import org.jetbrains.kotlin.gradle.forceK1Kapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +20,10 @@ import kotlin.io.path.writeText
 @DisplayName("android with kapt3 incremental build tests")
 @AndroidGradlePluginTests
 open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
+
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
     fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources(
@@ -208,5 +213,9 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 
 @DisplayName("android with kapt3 incremental build tests with disabled precise compilation outputs backup")
 open class Kapt3AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
+
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }

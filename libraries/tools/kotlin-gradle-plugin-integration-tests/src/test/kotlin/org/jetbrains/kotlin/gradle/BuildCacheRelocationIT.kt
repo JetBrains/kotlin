@@ -67,9 +67,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             secondProject,
             listOf(":classes", ":testClasses"),
             listOf(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileTestKotlin", ":compileJava")
-        ) {
-            assertNoBuildWarnings(expectedK2KaptWarnings)
-        }
+        )
     }
 
     @JsGradlePluginTests

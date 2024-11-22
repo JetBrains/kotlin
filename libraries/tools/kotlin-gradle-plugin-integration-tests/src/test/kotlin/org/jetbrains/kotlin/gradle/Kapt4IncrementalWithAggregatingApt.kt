@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("K2Kapt incremental tests with aggregating apt")
 open class Kapt4IncrementalWithAggregatingApt : Kapt4IncrementalIT() {
     override fun TestProject.customizeProject() {
-        forceKapt4()
+        forceK2Kapt()
     }
 }
 

@@ -9,7 +9,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build services usages in tasks are declared with `usesService`")
@@ -83,7 +82,6 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
-                assertNoBuildWarnings(expectedK2KaptWarnings)
             }
         }
     }

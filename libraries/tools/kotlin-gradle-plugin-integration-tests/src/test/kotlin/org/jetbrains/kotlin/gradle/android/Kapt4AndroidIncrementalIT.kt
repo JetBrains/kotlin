@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.forceKapt4
+import org.jetbrains.kotlin.gradle.forceK2Kapt
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
@@ -18,7 +18,7 @@ class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {
-        forceKapt4()
+        forceK2Kapt()
     }
 
     @Disabled("KT-70637 K2 kapt: testAndroidDaggerIC fails with the new implementation")
@@ -32,7 +32,7 @@ class Kapt4AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalWit
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {
-        forceKapt4()
+        forceK2Kapt()
     }
 
     @Disabled("KT-70637 K2 kapt: testAndroidDaggerIC fails with the new implementation")

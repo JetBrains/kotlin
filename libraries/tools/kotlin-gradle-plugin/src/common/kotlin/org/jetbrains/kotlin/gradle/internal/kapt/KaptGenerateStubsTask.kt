@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.classpathAsList
 import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
@@ -136,9 +136,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
 
-            if (useK2Kapt.get()) {
-                args.freeArgs += "-Xuse-k2-kapt"
-            }
+            args.freeArgs += "-Xuse-k2-kapt=${useK2Kapt.get()}"
         }
 
         pluginClasspath { args ->

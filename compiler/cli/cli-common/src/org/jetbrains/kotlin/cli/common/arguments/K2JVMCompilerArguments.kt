@@ -812,7 +812,7 @@ This option is deprecated and will be deleted in future versions."""
         value = "-Xuse-k2-kapt",
         description = "Enable the experimental support for K2 KAPT."
     )
-    var useK2Kapt = false
+    var useK2Kapt = true
         set(value) {
             checkFrozen()
             field = value

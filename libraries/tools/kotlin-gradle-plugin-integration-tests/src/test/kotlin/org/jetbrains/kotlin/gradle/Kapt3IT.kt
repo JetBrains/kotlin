@@ -130,6 +130,10 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
  */
 @DisplayName("Kapt 3 with classloaders cache")
 open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
+
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
         classLoadersCacheSize = 10,
         includeCompileClasspath = false
@@ -172,17 +176,7 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
     @GradleTest
-    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
     override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun useK2KaptProperty(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -209,6 +203,10 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 @DisplayName("Kapt 3 base checks")
 @OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
+
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -1254,64 +1252,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
-    @GradleTest
-    open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |      languageVersion = "2.0"
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputContains("Falling back to 1.9.")
-            }
-        }
-    }
-
-    @DisplayName("K2 Kapt can be enabled via Gradle property kapt.use.k2")
-    @GradleTest
-    open fun useK2KaptProperty(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |        languageVersion = "2.0"
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("-Pkapt.use.k2=true", "build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputDoesNotContain("Falling back to 1.9.")
-            }
-        }
-    }
-
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
     @GradleTest
     open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
@@ -1319,35 +1259,6 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-            }
-        }
-    }
-
-    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin with languageVersion = 2.0")
-    @GradleTest
-    open fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
-        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |      languageVersion = "2.0"
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputContains("Falling back to 1.9.")
             }
         }
     }

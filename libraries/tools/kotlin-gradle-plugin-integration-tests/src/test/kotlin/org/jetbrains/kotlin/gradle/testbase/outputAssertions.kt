@@ -158,11 +158,6 @@ fun BuildResult.assertNoBuildWarnings(
     }
 }
 
-val expectedK2KaptWarnings = setOf(
-    "w: Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9. " +
-            "See https://kotl.in/try-k2-kapt"
-)
-
 /**
  * Asserts compilation is running via Kotlin daemon with given jvm arguments.
  */

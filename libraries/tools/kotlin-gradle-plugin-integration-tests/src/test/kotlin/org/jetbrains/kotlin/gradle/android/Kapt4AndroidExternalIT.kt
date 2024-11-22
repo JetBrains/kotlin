@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.forceKapt4
+import org.jetbrains.kotlin.gradle.forceK2Kapt
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
@@ -26,6 +26,6 @@ class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
     ) {}
 
     override fun TestProject.customizeProject() {
-        forceKapt4()
+        forceK2Kapt()
     }
 }

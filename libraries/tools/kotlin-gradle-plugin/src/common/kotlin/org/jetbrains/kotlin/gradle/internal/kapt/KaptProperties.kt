@@ -21,7 +21,7 @@ internal object KaptProperties {
     private val KAPT_INFO_AS_WARNINGS = BooleanGradleProperty("kapt.info.as.warnings", false)
     private val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
     private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = BooleanGradleProperty("kapt.keep.kdoc.comments.in.stubs", true)
-    private val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", false)
+    private val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", true)
     private val KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES = BooleanGradleProperty(
         "kapt.dont.warn.annotationProcessor.dependencies",
         false

@@ -22,6 +22,9 @@ import kotlin.test.assertTrue
 
 @DisplayName("Kapt incremental tests with aggregating apt")
 open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,

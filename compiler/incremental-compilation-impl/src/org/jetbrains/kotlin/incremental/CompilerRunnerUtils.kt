@@ -35,7 +35,7 @@ var K2JVMCompilerArguments.classpathAsList: List<File>
 val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
     // coordinated with org.jetbrains.kotlin.cli.common.ArgumentsKt.switchToFallbackModeIfNecessary
     get() {
-        val isK2 = (languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+        val isK2 = languageVersion?.startsWith('2') != false
         val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
         return isK2 && isKaptUsed && !useK2Kapt
     }
