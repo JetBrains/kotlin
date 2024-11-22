@@ -348,7 +348,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INLINE_FROM_HIGHER_PLATFORM,
-            "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option.",
+            "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Specify proper ''-jvm-target'' option.",
             STRING,
             STRING
         )
@@ -368,7 +368,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REDUNDANT_REPEATABLE_ANNOTATION,
-            "Please remove the ''{0}'' annotation, as it is redundant in presence of ''{1}''.",
+            "Remove the ''{0}'' annotation, as it is redundant in presence of ''{1}''.",
             TO_STRING,
             TO_STRING,
         )

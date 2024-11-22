@@ -1,8 +1,8 @@
-/newListMethods.fir.kt:(407,415): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+/newListMethods.fir.kt:(407,415): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(429,437): warning: 'fun getFirst(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
 
-/newListMethods.fir.kt:(457,464): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+/newListMethods.fir.kt:(457,464): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(478,485): warning: 'fun getLast(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
 
@@ -10,15 +10,15 @@
 
 /newListMethods.fir.kt:(560,564): warning: 'val last: T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
 
-/newListMethods.fir.kt:(755,762): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+/newListMethods.fir.kt:(755,762): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(830,837): warning: 'fun <T : Any!> toArray(p0: IntFunction<Array<(out) T!>!>!): Array<(out) T!>!' is deprecated. This declaration is redundant in Kotlin and might be removed soon.
 
-/newListMethods.fir.kt:(906,914): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+/newListMethods.fir.kt:(906,914): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(943,951): warning: 'fun getFirst(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'first()' stdlib extension if the collection supports fast random access.
 
-/newListMethods.fir.kt:(978,985): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+/newListMethods.fir.kt:(978,985): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
 
 /newListMethods.fir.kt:(1013,1020): warning: 'fun getLast(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
 

@@ -6,7 +6,7 @@ See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context
 
 See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. During the transition period, neither context receivers nor context parameters will be supported. This warning will become an error in future releases.
 
-/contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for this parameter. Please specify it explicitly.
+/contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /contextReceiverAmbiguity.fir.kt:(262,265): error: Overload resolution ambiguity between candidates:
 context(String) fun foo(x: Comparable<*>): Unit

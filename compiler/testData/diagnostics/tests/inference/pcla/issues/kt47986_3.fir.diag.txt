@@ -1,10 +1,10 @@
-/kt47986_3.fir.kt:(211,219): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt47986_3.fir.kt:(211,219): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /kt47986_3.fir.kt:(211,219): error: Not enough information to infer type argument for 'K'.
 
-/kt47986_3.fir.kt:(230,233): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt47986_3.fir.kt:(230,233): error: Cannot infer type for this parameter. Specify it explicitly.
 
-/kt47986_3.fir.kt:(230,233): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt47986_3.fir.kt:(230,233): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /kt47986_3.fir.kt:(230,233): error: Not enough information to infer type argument for 'K'.
 

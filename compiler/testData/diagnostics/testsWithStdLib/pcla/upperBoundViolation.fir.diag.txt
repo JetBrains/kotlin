@@ -1,4 +1,4 @@
-/upperBoundViolation.fir.kt:(257,275): error: Cannot infer type for this parameter. Please specify it explicitly.
+/upperBoundViolation.fir.kt:(257,275): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /upperBoundViolation.fir.kt:(257,275): error: Not enough information to infer type argument for 'T'.
 

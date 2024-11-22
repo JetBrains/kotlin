@@ -1,28 +1,28 @@
-/labelClashes.fir.kt:(157,161): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(157,161): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /labelClashes.fir.kt:(180,185): warning: There is more than one label with such a name in this scope.
 
 /labelClashes.fir.kt:(186,189): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(221,225): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(221,225): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /labelClashes.fir.kt:(248,252): warning: There is more than one label with such a name in this scope.
 
 /labelClashes.fir.kt:(253,256): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(337,341): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(337,341): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /labelClashes.fir.kt:(364,369): warning: There is more than one label with such a name in this scope.
 
 /labelClashes.fir.kt:(370,373): error: Unresolved reference 'foo'.
 
-/labelClashes.fir.kt:(395,399): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(395,399): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /labelClashes.fir.kt:(427,432): warning: There is more than one label with such a name in this scope.
 
 /labelClashes.fir.kt:(433,436): error: Unresolved reference 'foo'.
 
-/labelClashes.fir.kt:(744,748): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(744,748): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /labelClashes.fir.kt:(771,776): warning: There is more than one label with such a name in this scope.
 

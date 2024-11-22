@@ -1,4 +1,4 @@
-/genericInvokeInCompanion.fir.kt:(224,230): error: Cannot infer type for this parameter. Please specify it explicitly.
+/genericInvokeInCompanion.fir.kt:(224,230): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /genericInvokeInCompanion.fir.kt:(224,230): error: Not enough information to infer type argument for 'T'.
 
@@ -10,7 +10,7 @@
 
 /genericInvokeInCompanion.fir.kt:(298,304): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(316,322): error: Cannot infer type for this parameter. Please specify it explicitly.
+/genericInvokeInCompanion.fir.kt:(316,322): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /genericInvokeInCompanion.fir.kt:(316,322): error: Not enough information to infer type argument for 'T'.
 
@@ -30,7 +30,7 @@
 
 /genericInvokeInCompanion.fir.kt:(569,575): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(590,591): error: Cannot infer type for this parameter. Please specify it explicitly.
+/genericInvokeInCompanion.fir.kt:(590,591): error: Cannot infer type for this parameter. Specify it explicitly.
 
 /genericInvokeInCompanion.fir.kt:(590,591): error: Not enough information to infer type argument for 'T'.
 

@@ -820,7 +820,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DELEGATION_NOT_TO_INTERFACE, "Delegation is supported only for interfaces.")
         map.put(
             DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE,
-            "Delegated member ''{0}'' hides supertype override ''{1}''. Please specify proper override explicitly.", SYMBOL, SYMBOL
+            "Delegated member ''{0}'' hides supertype override ''{1}''. Specify proper override explicitly.", SYMBOL, SYMBOL
         )
         map.put(NESTED_CLASS_NOT_ALLOWED, "''{0}'' is prohibited here.", TO_STRING)
         map.put(NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, "''{0}'' is prohibited here.", TO_STRING)
@@ -886,7 +886,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FLOAT_LITERAL_OUT_OF_RANGE, "Value out of range.")
         map.put(
             UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH,
-            "Type of constant expression cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath."
+            "Type of constant expression cannot be resolved. Make sure you have the required dependencies for unsigned types in the classpath."
         )
         map.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal.")
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal.")
@@ -969,7 +969,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property.")
         map.put(
             SUPER_CALL_WITH_DEFAULT_PARAMETERS,
-            "Super-calls with default arguments are prohibited. Please specify all arguments of ''super.{0}'' explicitly.",
+            "Super-calls with default arguments are prohibited. Specify all arguments of ''super.{0}'' explicitly.",
             TO_STRING
         )
 
@@ -1033,7 +1033,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_SUPER,
-            "Multiple supertypes available. Please specify the intended supertype in angle brackets, e.g. ''super<Foo>''.",
+            "Multiple supertypes available. Specify the intended supertype in angle brackets, e.g. ''super<Foo>''.",
             NOT_RENDERED
         )
 
@@ -1072,7 +1072,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DATA_CLASS_INVISIBLE_COPY_USAGE,
-            "This 'copy()' exposes the non-public primary constructor of a 'data class'. Please migrate the usage. " +
+            "This 'copy()' exposes the non-public primary constructor of a 'data class'. " +
                     "See the appropriate 'data class' documentation " +
                     "or contact the 'data class' author for migration guidance."
         )
@@ -1143,7 +1143,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OVERRIDE_DEPRECATION,
-            "This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the ''@Deprecated'' annotation or suppress the diagnostic.",
+            "This declaration overrides a deprecated member but is not marked as deprecated itself. Add the ''@Deprecated'' annotation or suppress the diagnostic.",
             EMPTY,
             EMPTY
         )
@@ -1212,12 +1212,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OPT_IN_MARKER_WITH_WRONG_TARGET,
-            "Opt-in requirement marker annotation cannot be used on the following code elements: {0}. Please remove these targets.",
+            "Opt-in requirement marker annotation cannot be used on the following code elements: {0}.",
             STRING
         )
         map.put(
             OPT_IN_MARKER_WITH_WRONG_RETENTION,
-            "Opt-in requirement marker annotation cannot be used with SOURCE retention. Please replace retention with BINARY."
+            "Opt-in requirement marker annotation cannot be used with SOURCE retention. Use BINARY retention instead."
         )
         map.put(OPT_IN_MARKER_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}.", STRING)
         map.put(
@@ -1254,13 +1254,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             COMPILER_REQUIRED_ANNOTATION_AMBIGUITY,
-            "Resolution of the annotation type is ambiguous between ''{1}'' and the compiler-required annotation ''{0}''. Please specify a fully qualified annotation name.",
+            "Resolution of the annotation type is ambiguous between ''{1}'' and the compiler-required annotation ''{0}''. Specify a fully qualified annotation name.",
             RENDER_TYPE,
             RENDER_TYPE
         )
         map.put(
             AMBIGUOUS_ANNOTATION_ARGUMENT,
-            "Resolution of the annotation argument is ambiguous between the following candidates:{0}\nPlease use a fully qualified name as argument.",
+            "Resolution of the annotation argument is ambiguous between the following candidates:{0}\nUse a fully qualified name as argument.",
             SYMBOLS_ON_NEXT_LINES,
         )
 
@@ -1504,7 +1504,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER,
-            "With implicit context receivers, the call is ambiguous. Please specify the receiver explicitly."
+            "With implicit context receivers, the call is ambiguous. Specify the receiver explicitly."
         )
         map.put(
             UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL,
@@ -1604,7 +1604,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
             "Declaration has an inconsistent return type. " +
-                    "Please add upper bound ''Any'' for type parameter ''{0}'' or specify return type explicitly.",
+                    "Add upper bound ''Any'' for type parameter ''{0}'' or specify return type explicitly.",
             SYMBOL
         )
 
@@ -1924,12 +1924,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CANNOT_INFER_VISIBILITY,
-            "Cannot infer visibility for ''{0}''. Please specify it explicitly.",
+            "Cannot infer visibility for ''{0}''. Specify it explicitly.",
             DECLARATION_NAME,
         )
         map.put(
             CANNOT_INFER_VISIBILITY_WARNING,
-            "Cannot infer visibility for ''{0}''. Please specify it explicitly. This will be prohibited in the future.",
+            "Cannot infer visibility for ''{0}''. Specify it explicitly. This will be prohibited in the future.",
             DECLARATION_NAME,
         )
 
@@ -1957,7 +1957,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DECLARATION_NAME,
             prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
-        map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Please specify the type explicitly.", NOT_RENDERED)
+        map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Specify the type explicitly.", NOT_RENDERED)
         map.put(
             MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
             "{0} must override ''{1}'' because it inherits multiple implementations for it.",
@@ -2152,7 +2152,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg parameters are prohibited.")
         map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Prohibited vararg parameter type ''{0}''.", RENDER_TYPE)
         map.put(VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, "An explicit type is required on a value parameter.")
-        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for this parameter. Please specify it explicitly.")
+        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for this parameter. Specify it explicitly.")
         map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
         map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is prohibited on open members.")
         map.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call.")
@@ -2368,7 +2368,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND,
-            "Expected function source is not found, so generating default argument values declared there is impossible. Please add the corresponding file to compilation sources."
+            "Expected function source is not found, so generating default argument values declared there is impossible. Corresponding file must be added to compilation sources."
         )
         map.put(
             ACTUAL_WITHOUT_EXPECT,
@@ -2900,27 +2900,27 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Enum entries deprecations
         map.put(
             DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY,
-            "Ambiguous access to the enum companion's property 'entries' is deprecated. Please, add the explicit 'Companion' qualifier to the class name."
+            "Ambiguous access to the enum companion's property 'entries' is deprecated. Add the explicit 'Companion' qualifier to the class name."
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM,
-            "Ambiguous access to the 'entries' property from within the enum is deprecated. Please add the explicit qualifier to the call."
+            "Ambiguous access to the 'entries' property from within the enum is deprecated. Add an explicit qualifier to the call."
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY,
-            "Ambiguous access to the 'entries' property is deprecated. In the future, it will be shadowed by enum 'entries' property. Please resolve the ambiguity (e.g. by adding explicit qualifier to the call)."
+            "Ambiguous access to the 'entries' property is deprecated. In the future, it will be shadowed by enum 'entries' property. Ambiguity can be resolved by adding explicit qualifier to the call."
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE,
-            "Ambiguous access to the 'entries' property is deprecated. Please specify the type of the referenced expression explicitly."
+            "Ambiguous access to the 'entries' property is deprecated. Specify the type of the referenced expression explicitly."
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER,
-            "Ambiguous access to the 'entries' qualifier is deprecated. In the future, it will be shadowed by enum 'entries' property. Please resolve the ambiguity (e.g. by renaming conflicting declaration)."
+            "Ambiguous access to the 'entries' qualifier is deprecated. In the future, it will be shadowed by enum 'entries' property. Ambiguity can be resolved by renaming conflicting declaration."
         )
         map.put(
             DEPRECATED_DECLARATION_OF_ENUM_ENTRY,
-            "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872). Please rename the enum entry declaration."
+            "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872)."
         )
 
         // Extra checkers group
@@ -2971,13 +2971,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             BUILDER_INFERENCE_STUB_RECEIVER,
-            "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter ''{0}'' of ''{1}'' explicitly.",
+            "The type of a receiver hasn''t been inferred yet. Specify type argument for generic parameter ''{0}'' of ''{1}'' explicitly.",
             TO_STRING,
             TO_STRING
         )
         map.put(
             BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION,
-            "Unstable inference behaviour with multiple lambdas. Please specify the type argument for generic parameter ''{0}'' of ''{1}'' explicitly.",
+            "Unstable inference behaviour with multiple lambdas. Specify the type argument for generic parameter ''{0}'' of ''{1}'' explicitly.",
             TO_STRING,
             TO_STRING
         )

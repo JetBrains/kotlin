@@ -27,7 +27,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessages(objectWithErrors: Any) {
     }
 
     if (errors.isNotEmpty()) {
-        Assert.fail(errors.joinToString("\n\n", prefix = "\n"))
+        Assert.fail(errors.joinToString("\n\n", postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"))
     }
 }
 
@@ -83,8 +83,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
         if (property.name !in exclusions && message.contains(regex)) {
             val updatedMessage = message.replace(regex) { matchResult -> "[[${matchResult.value}]]" }
             add(
-                "Message of ${property.name} $hasProblem: $updatedMessage\n"
-                        + "If this error is a false positive, add the name of the diagnostic to the list of exclusions."
+                "Message of ${property.name} $hasProblem:\n$updatedMessage\nIf this error is a false positive, add the name of the diagnostic to the list of exclusions."
             )
         }
     }
@@ -103,5 +102,10 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
             FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
             "PARCELABLE_TYPE_NOT_SUPPORTED",
         )
+    )
+    checkRule(
+        """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
+        "uses overly polite tone",
+        setOf(FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name, FirErrors.ERROR_SUPPRESSION.name)
     )
 }
