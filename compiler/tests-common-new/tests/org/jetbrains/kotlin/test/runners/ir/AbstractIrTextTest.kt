@@ -127,14 +127,6 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.u
     )
 }
 
-fun TestConfigurationBuilder.klibSteps(klibFacades: KlibFacades, includeAllDumpHandlers: Boolean) = klibFacades.run {
-    facadeStep(serializerFacade)
-    klibArtifactsHandlersStep {
-        useHandlers(::KlibAbiDumpHandler)
-    }
-    facadeStep(deserializerFacade)
-}
-
 fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConfigurationBuilder.configureAbstractIrTextSettings(
     targetBackend: TargetBackend,
     converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>,
@@ -179,10 +171,19 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
 
     irHandlersStep { useIrTextHandlers(this@configureAbstractIrTextSettings, isDeserializedInput = false, includeAllDumpHandlers) }
 
-    klibFacades?.let {
-        klibSteps(it, includeAllDumpHandlers)
+    if (klibFacades != null) {
+        irHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
+
+        facadeStep(klibFacades.serializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpHandler)
+        }
+        facadeStep(klibFacades.deserializerFacade)
 
         deserializedIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
             useIrTextHandlers(this@configureAbstractIrTextSettings, isDeserializedInput = true, includeAllDumpHandlers)
         }
     }
