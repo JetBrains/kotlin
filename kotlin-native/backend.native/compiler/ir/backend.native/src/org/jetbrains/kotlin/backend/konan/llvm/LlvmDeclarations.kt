@@ -435,15 +435,17 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (!generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
-                val global = importGlobal(name, declaration.type.toLLVMType(llvm), declaration)
-                GlobalAddressAccess(global)
+                if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL)
+                    null
+                else
+                    GlobalAddressAccess(importGlobal(name, declaration.type.toLLVMType(llvm), declaration))
             } else if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())
             } else {
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = true)
             }
 
-            declaration.metadata = KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet))
+            declaration.metadata = storage?.let {storage -> KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet)) }
         }
     }
 
