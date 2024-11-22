@@ -149,6 +149,7 @@ private fun processConstructors(
                         matchedSymbol,
                         basicScope,
                         outerType,
+                        substitutor,
                     )
                 } else {
                     null

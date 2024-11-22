@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -47,6 +49,7 @@ class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
+    private val substitutor: ConeSubstitutor,
     private val abbreviation: ConeClassLikeType = typeAliasSymbol.defaultType(),
 ) : FirScope() {
     private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
@@ -57,7 +60,7 @@ class TypeAliasConstructorsSubstitutingScope(
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
-            val typeParameters = typeAliasSymbol.fir.typeParameters
+            val typeParameters = typeAliasSymbol.fir.typeParameters.filter { it is FirTypeParameter }
 
             processor(
                 buildConstructorCopy(originalConstructorSymbol.fir) {
@@ -73,7 +76,19 @@ class TypeAliasConstructorsSubstitutingScope(
                         )
                     }
 
-                    if (outerType != null) {
+                    if (substitutor != ConeSubstitutor.Empty) {
+                        returnTypeRef = returnTypeRef.withReplacedConeType(
+                            substitutor.substituteOrSelf(returnTypeRef.coneType)
+                        )
+                        for (valueParameter in valueParameters) {
+                            val returnTypeRef = valueParameter.returnTypeRef
+                            valueParameter.replaceReturnTypeRef(
+                                returnTypeRef.withReplacedConeType(substitutor.substituteOrSelf(returnTypeRef.coneType))
+                            )
+                        }
+                    }
+
+                    if (outerType != null && !typeAliasSymbol.isInner) {
                         // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
                         //
                         //   class Outer {
@@ -116,7 +131,7 @@ class TypeAliasConstructorsSubstitutingScope(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): TypeAliasConstructorsSubstitutingScope? {
         return delegatingScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
-            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType, abbreviation)
+            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType, substitutor, abbreviation)
         }
     }
 }

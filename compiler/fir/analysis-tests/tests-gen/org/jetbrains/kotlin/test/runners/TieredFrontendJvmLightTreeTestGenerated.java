@@ -29187,6 +29187,17 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedTypeAliases {
+      @Test
+      @TestMetadata("innerTypeAliasConstructors.kt")
+      public void testInnerTypeAliasConstructors() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerTypeAliasConstructors.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     public class Overrides {

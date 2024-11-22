@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -48,7 +48,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
             ) ?: return null
 
             val outerType = outerType(expandedType, session) { it.getContainingDeclaration(session) }
-            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
+            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType, ConeSubstitutor.Empty)
         }
         else -> null
     }

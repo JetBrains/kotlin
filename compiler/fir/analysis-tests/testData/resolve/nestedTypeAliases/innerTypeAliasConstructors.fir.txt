@@ -1,0 +1,79 @@
+FILE: innerTypeAliasConstructors.kt
+    public final class Pair<X, Y> : R|kotlin/Any| {
+        public constructor<X, Y>(x: R|X|, y: R|Y|): R|Pair<X, Y>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|X| = R|<local>/x|
+            public get(): R|X|
+
+        public final val y: R|Y| = R|<local>/y|
+            public get(): R|Y|
+
+    }
+    public final class Triple<X, Y, Z> : R|kotlin/Any| {
+        public constructor<X, Y, Z>(x: R|X|, y: R|Y|, z: R|Z|): R|Triple<X, Y, Z>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|X| = R|<local>/x|
+            public get(): R|X|
+
+        public final val y: R|Y| = R|<local>/y|
+            public get(): R|Y|
+
+        public final val z: R|Z| = R|<local>/z|
+            public get(): R|Z|
+
+    }
+    public final class D<T> : R|kotlin/Any| {
+        public constructor<T>(): R|D<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C<T> : R|kotlin/Any| {
+        public constructor<T>(): R|C<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner typealias P<Outer(T)> = R|Pair<T, T>|
+
+        public final inner typealias P1<X, Outer(T)> = R|Pair<X, T>|
+
+        public final inner typealias P2<Y, Outer(T)> = R|Pair<T, Y>|
+
+        public final inner typealias TripleTA<X, Y, Outer(T)> = R|Triple<T, X, Y>|
+
+        public final inner typealias P3<Z, Outer(T)> = R|{C.P1<Z, T>=} Pair<Z, T>|
+
+        public final inner typealias TA<Outer(T)> = R|D<T>|
+
+        public final inner typealias TA2<Outer(T)> = R|C<T>|
+
+        public final inner class Inner<Outer(T)> : R|kotlin/Any| {
+            public C<T>.constructor(): R|C.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner typealias InnerTA<Outer(T)> = R|C.Inner<T>|
+
+        public final inner class InnerWithTypeParam<K, Outer(T)> : R|kotlin/Any| {
+            public C<T>.constructor<K>(): R|C.InnerWithTypeParam<K, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner typealias InnerTA2<K, Outer(T)> = R|C.InnerWithTypeParam<K, T>|
+
+        public final fun test(): R|kotlin/Unit| {
+            lval innerTA_0: R|{C.InnerTA<T>=} C.Inner<T>| = (this@R|/C|, this@R|/C|).R|/C.Inner.Inner|()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval c: R|C<kotlin/Int>| = R|/C.C|<R|kotlin/Int|>()
+    }
