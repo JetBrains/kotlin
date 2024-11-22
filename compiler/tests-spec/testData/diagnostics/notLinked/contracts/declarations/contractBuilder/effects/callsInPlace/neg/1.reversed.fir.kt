@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// See KT-73392
+// LL_FIR_DIVERGENCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

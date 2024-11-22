@@ -27,5 +27,5 @@ fun builder(): ContractBuilder.() -> Unit = {}
 
 // TESTCASE NUMBER: 9
 inline fun case_9(block: () -> Unit) {
-    (<!ERROR_IN_CONTRACT_DESCRIPTION!><!CONTRACT_NOT_ALLOWED!>contract<!>(builder())<!>)
+    (<!CONTRACT_NOT_ALLOWED!>contract<!>(builder()))
 }

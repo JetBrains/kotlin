@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/nonKotlinContractCall2.fir.kt
+FILE fqName:<root> fileName:/nonKotlinContractCall2.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test [primary]
@@ -24,10 +24,7 @@ FILE fqName:<root> fileName:/nonKotlinContractCall2.fir.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun contract (test: <root>.Test): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        test: CALL 'public final fun testBuilder (id: kotlin.String, lambda: @[ExtensionFunctionType] kotlin.Function1<<root>.Test, kotlin.Unit>): <root>.Test declared in <root>' type=IrErrorType([Error type: Unresolved type for Cannot calculate return type during full-body resolution (local class/object?): public final fun testBuilder(id: R|kotlin/String| = String(), lambda: R|Test.() -> kotlin/Unit|): <implicit> {
-    ^testBuilder Test#()
-}
-]) origin=null
+        test: CALL 'public final fun testBuilder (id: kotlin.String, lambda: @[ExtensionFunctionType] kotlin.Function1<<root>.Test, kotlin.Unit>): <root>.Test declared in <root>' type=<root>.Test origin=null
           lambda: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Test, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Test) returnType:kotlin.Unit
               $receiver: VALUE_PARAMETER name:$this$testBuilder type:<root>.Test

@@ -6,7 +6,7 @@
 import kotlin.contracts.*
 
 fun passLambdaValue(l: ContractBuilder.() -> Unit) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(l)<!>
+    <!CONTRACT_NOT_ALLOWED("Contract should be the first statement.")!>contract<!>(l)
 }
 
 fun passAnonymousFunction(x: Boolean) {

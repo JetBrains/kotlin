@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// See KT-73392
+// LL_FIR_DIVERGENCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -38,6 +41,6 @@ inline fun case_3(block: () -> Unit) {
 
 // TESTCASE NUMBER: 4
 inline fun case_4(block: () -> Unit) {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, <!INFERENCE_ERROR!>SampleObject.invocationKind<!>)<!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, SampleObject.invocationKind)<!> }
     return block()
 }

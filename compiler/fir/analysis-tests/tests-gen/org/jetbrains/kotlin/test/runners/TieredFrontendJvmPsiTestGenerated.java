@@ -30271,6 +30271,23 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
           }
 
           @Nested
+          @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace")
+          @TestDataPath("$PROJECT_ROOT")
+          public class CallsInPlace {
+            @Test
+            @TestMetadata("contractAndImplicitTypeInterdependency1.kt")
+            public void testContractAndImplicitTypeInterdependency1() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/contractAndImplicitTypeInterdependency1.kt");
+            }
+
+            @Test
+            @TestMetadata("contractAndImplicitTypeInterdependency2.kt")
+            public void testContractAndImplicitTypeInterdependency2() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/contractAndImplicitTypeInterdependency2.kt");
+            }
+          }
+
+          @Nested
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies")
           @TestDataPath("$PROJECT_ROOT")
           public class ReturnsImplies {

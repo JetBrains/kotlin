@@ -27,12 +27,12 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(contractBuilder(block))<!>
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(contractBuilder(block))
     return block()
 }
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(builder = contractBuilder(block))<!>
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(builder = contractBuilder(block))
     return block()
 }

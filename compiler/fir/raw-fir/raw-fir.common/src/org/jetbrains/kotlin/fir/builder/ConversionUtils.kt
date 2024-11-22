@@ -579,11 +579,13 @@ fun FirStatement.isContractBlockFirCheck(): Boolean {
 
     val contractCall = this as? FirFunctionCall ?: return false
     if (contractCall.calleeReference.name.asString() != "contract") return false
+    if (contractCall.arguments.singleOrNull()?.unwrapArgument() !is FirAnonymousFunctionExpression) return false
     val receiver = contractCall.explicitReceiver as? FirQualifiedAccessExpression ?: return true
     if (!contractCall.checkReceiver("contracts")) return false
     if (!receiver.checkReceiver("kotlin")) return false
     val receiverOfReceiver = receiver.explicitReceiver as? FirQualifiedAccessExpression ?: return false
     if (receiverOfReceiver.explicitReceiver != null) return false
+
     return true
 }
 

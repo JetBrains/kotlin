@@ -6335,6 +6335,18 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
             }
 
             @Test
+            @TestMetadata("contractAndImplicitTypeInterdependency1.kt")
+            public void testContractAndImplicitTypeInterdependency1() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/contractAndImplicitTypeInterdependency1.kt");
+            }
+
+            @Test
+            @TestMetadata("contractAndImplicitTypeInterdependency2.kt")
+            public void testContractAndImplicitTypeInterdependency2() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/contractAndImplicitTypeInterdependency2.kt");
+            }
+
+            @Test
             @TestMetadata("inAnonymousObject.kt")
             public void testInAnonymousObject() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inAnonymousObject.kt");

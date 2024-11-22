@@ -71,15 +71,8 @@ FILE: contractDescription.kt
             }
 
         }
-    public? final? fun test_4(): R|kotlin/Unit|
-        [Contract description] <
-            contract#()
-        >
-     {
-         {
-            contract#()
-        }
-
+    public? final? fun test_4(): R|kotlin/Unit| {
+        contract#()
         test_4#()
     }
     public? final? fun test_5(): R|kotlin/Unit| {
