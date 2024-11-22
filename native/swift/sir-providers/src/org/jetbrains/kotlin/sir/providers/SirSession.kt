@@ -52,8 +52,7 @@ public interface SirSession :
 
     override fun KaDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
 
-    override fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> =
-        with(declarationProvider) { this@sirDeclarations.sirDeclarations() }
+    override fun KaDeclarationSymbol.toSIR(): SirTranslationResult = with(declarationProvider) { this@toSIR.toSIR() }
 
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent =
         with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
@@ -101,12 +100,58 @@ public interface SirDeclarationNamer {
     public fun KaDeclarationSymbol.sirDeclarationName(): String
 }
 
+public sealed interface SirTranslationResult {
+    public val allDeclarations: List<SirDeclaration>
+
+    public sealed interface TypeDeclaration: SirTranslationResult {
+        public val declaration: SirNamedDeclaration
+    }
+
+    public data class Untranslatable(public val origin: SirOrigin) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> get() = emptyList()
+    }
+
+    public data class RegularClass(public override val declaration: SirClass) : TypeDeclaration {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
+    public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
+    public data class Constructor(public val declaration: SirInit) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
+    public data class RegularVariable(public val declaration: SirVariable) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
+    public data class ExtensionProperty(public val getter: SirFunction, public val setter: SirFunction?) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(getter, setter)
+    }
+
+    public data class RegularFunction(public val declaration: SirFunction) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
+    public data class RegularInterface(public val declaration: SirProtocol) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+}
 
 /**
  * A single entry point to create a lazy wrapper around the given [KaDeclarationSymbol].
  */
 public interface SirDeclarationProvider {
-    public fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration>
+    public fun KaDeclarationSymbol.toSIR(): SirTranslationResult
+
+    @Deprecated(
+        "This is provided for compatibility with external code. Prefer structured result version",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith("this.toSIR().allDeclarations")
+    )
+    public fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> = toSIR().allDeclarations
 }
 
 /**

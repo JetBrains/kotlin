@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class SirTypeProviderImpl(
     private val sirSession: SirSession,
@@ -110,9 +112,9 @@ public class SirTypeProviderImpl(
                             val classSymbol = kaType.symbol
                             if (classSymbol.sirVisibility(ctx.ktAnalysisSession) == SirVisibility.PUBLIC) {
                                 if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
-                                    SirExistentialType(classSymbol.sirDeclarations().firstIsInstance<SirProtocol>())
+                                    SirExistentialType(classSymbol.toSIR().allDeclarations.firstIsInstance<SirProtocol>())
                                 } else {
-                                    SirNominalType(classSymbol.sirDeclarations().first() as SirNamedDeclaration)
+                                    classSymbol.toSIR().allDeclarations.firstIsInstanceOrNull<SirNamedDeclaration>()?.let(::SirNominalType)
                                 }
                             } else {
                                 null
