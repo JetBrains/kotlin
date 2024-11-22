@@ -58,11 +58,13 @@ class IrTextDumpHandler(
             }
         }
 
-        fun List<IrFile>.groupWithTestFiles(module: TestModule): List<Pair<TestFile?, IrFile>> = mapNotNull { irFile ->
-            val name = File(irFile.fileEntry.name).name
-            val testFile = module.files.firstOrNull { it.name == name }
-            testFile to irFile
-        }
+        fun List<IrFile>.groupWithTestFiles(module: TestModule, ordered: Boolean = false): List<Pair<TestFile?, IrFile>> =
+            mapNotNull { irFile ->
+                val name = File(irFile.fileEntry.name).name
+                val testFile = module.files.firstOrNull { it.name == name }
+                testFile to irFile
+            }.applyIf(ordered) { sortedBy { it.second.fileEntry.name } }
+
 
         private val HIDDEN_ENUM_METHOD_NAMES = setOf(
             Name.identifier("finalize"), // JVM-specific fake override from java.lang.Enum. TODO: remove it after fixing KT-63744
@@ -119,11 +121,8 @@ class IrTextDumpHandler(
         )
 
         val builder = baseDumper.builderForModule(module.name)
-        val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(module)
-        val orderedTestFileToIrFile = testFileToIrFile.applyIf(dumpOptions.stableOrder) {
-            sortedBy { it.second.fileEntry.name }
-        }
-        for ((testFile, irFile) in orderedTestFileToIrFile) {
+        val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(module, ordered = dumpOptions.stableOrder)
+        for ((testFile, irFile) in testFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
             builder.append(actualDump)
