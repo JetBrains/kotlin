@@ -78,7 +78,7 @@ class WasmBackendContext(
     override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val jsPromiseSymbol: IrClassSymbol?
-        get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
+        get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
     override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
@@ -86,7 +86,7 @@ class WasmBackendContext(
 
     val kotlinWasmInternalPackageFqn = internalPackageFqn.child(Name.identifier("internal"))
 
-    val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext)
+    val wasmSymbols: WasmSymbols = WasmSymbols(irBuiltIns, configuration)
     override val symbols = wasmSymbols
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
