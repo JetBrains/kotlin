@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.FrontendContext
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.FrontendContext
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory

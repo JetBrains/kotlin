@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.FrontendContext
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.MinimizedFrontendContext
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.FrontendContext
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
+package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys

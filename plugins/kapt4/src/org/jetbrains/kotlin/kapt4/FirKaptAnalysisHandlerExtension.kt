@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.ModuleCompilerEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertAnalyzedFirToIr
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.generateCodeFromIr
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
