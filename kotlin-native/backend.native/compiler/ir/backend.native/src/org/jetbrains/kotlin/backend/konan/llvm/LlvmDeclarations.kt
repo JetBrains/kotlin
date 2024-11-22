@@ -359,6 +359,16 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
     private fun createUniqueDeclarations(
             irClass: IrClass, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
+        if (!generationState.llvmModuleSpecification.containsDeclaration(irClass)) {
+            val uniqueKind = when {
+                irClass.isUnit() -> UniqueKind.UNIT
+                irClass.isKotlinArray() -> UniqueKind.EMPTY_ARRAY
+                else -> TODO("Unsupported unique $irClass")
+            }
+            val importedGlobal = staticData.importGlobal(uniqueKind.llvmName, bodyType, irClass)
+            uniques[uniqueKind] = UniqueLlvmDeclarations(constPointer(importedGlobal))
+            return
+        }
         when {
                 irClass.isUnit() -> {
                     uniques[UniqueKind.UNIT] =
