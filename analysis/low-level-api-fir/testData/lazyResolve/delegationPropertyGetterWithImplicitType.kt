@@ -1,6 +1,5 @@
 // MEMBER_NAME_FILTER: result
 // RESOLVE_PROPERTY_PART: GETTER
-// IGNORE_FIR
 interface A<T> {
     var result
         get() = get()

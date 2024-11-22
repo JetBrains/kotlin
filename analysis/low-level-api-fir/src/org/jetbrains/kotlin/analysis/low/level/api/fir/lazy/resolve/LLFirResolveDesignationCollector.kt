@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector.shouldBeResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
 /**
@@ -49,15 +48,17 @@ internal object LLFirResolveDesignationCollector {
     }
 
     private fun getFirDesignationToResolve(target: FirElementWithResolveState): FirDesignation? {
-        if (!target.shouldBeResolved()) return null
+        if (!target.shouldBeResolved()) {
+            return null
+        }
 
-        return when {
-            target is FirFile || target is FirCallableDeclaration && target.isCopyCreatedInScope -> FirDesignation(target)
-            target is FirPropertyAccessor -> getFirDesignationToResolve(target.propertySymbol.fir)
-            target is FirBackingField -> getFirDesignationToResolve(target.propertySymbol.fir)
-            target is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
-            target is FirValueParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
-            target is FirReceiverParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+        return when (target) {
+            is FirPropertyAccessor -> getFirDesignationToResolve(target.propertySymbol.fir)
+            is FirBackingField -> getFirDesignationToResolve(target.propertySymbol.fir)
+            is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+            is FirValueParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+            is FirReceiverParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
+            is FirCallableDeclaration if target.isCopyCreatedInScope -> FirDesignation(target)
             else -> target.tryCollectDesignation()
         }
     }
@@ -80,17 +81,6 @@ internal object LLFirResolveDesignationCollector {
             return false
         }
 
-        return when (this) {
-            is FirFile -> true
-            is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> false
-            is FirSimpleFunction,
-            is FirProperty,
-            is FirPropertyAccessor,
-            is FirField,
-            is FirTypeAlias,
-            is FirConstructor,
-            -> true
-            else -> true
-        }
+        return true
     }
 }
