@@ -294,14 +294,12 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
                 if (!declaration.isInline) {
-                    if (declaration.isTopLevelDeclaration) {
-                        // Optimization: Remove unlinked top-level functions.
-                        declaration.scheduleForRemoval()
-                    } else {
-                        // Optimization: Remove unlinked top-level properties.
+                    if (declaration.isTopLevel) {
                         val property = declaration.correspondingPropertySymbol?.owner
-                        if (property?.isTopLevelDeclaration == true)
+                        if (property != null)
                             property.scheduleForRemoval()
+                        else
+                            declaration.scheduleForRemoval()
                     }
                 }
 
@@ -410,7 +408,7 @@ internal class PartiallyLinkedIrTreePatcher(
         override fun visitField(declaration: IrField): IrStatement {
             return declaration.type.toPartiallyLinkedMarkerTypeOrNull()?.let { newType ->
                 val property = declaration.correspondingPropertySymbol?.owner
-                if (property?.isTopLevelDeclaration == true) {
+                if (property?.isTopLevel == true) {
                     // Optimization: Remove unlinked top-level properties.
                     property.scheduleForRemoval()
                 }
