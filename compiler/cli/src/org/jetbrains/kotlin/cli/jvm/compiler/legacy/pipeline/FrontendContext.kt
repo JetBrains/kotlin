@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 @LegacyK2CliPipeline
-internal class MinimizedFrontendContext(
+class MinimizedFrontendContext(
     override val projectEnvironment: VfsBasedProjectEnvironment,
     override val messageCollector: MessageCollector,
     override val extensionRegistrars: List<FirExtensionRegistrar>,
