@@ -108,4 +108,9 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
         "uses overly polite tone",
         setOf(FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name, FirErrors.ERROR_SUPPRESSION.name)
     )
+
+    checkRule(
+        """\b(?:probably|likely|maybe|certainly|possibly|undoubtedly|presumably|apparently|hopefully)\b""".toRegex(RegexOption.IGNORE_CASE),
+        "uses adverb of probability (likely, maybe, ...)",
+    )
 }
