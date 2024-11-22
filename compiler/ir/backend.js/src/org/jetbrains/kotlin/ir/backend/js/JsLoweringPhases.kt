@@ -135,9 +135,7 @@ private val annotationInstantiationLowering = makeIrModulePhase(
 )
 
 private val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        ExpectDeclarationsRemoveLowering(context.symbolTable)
-    },
+    ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
 )
 

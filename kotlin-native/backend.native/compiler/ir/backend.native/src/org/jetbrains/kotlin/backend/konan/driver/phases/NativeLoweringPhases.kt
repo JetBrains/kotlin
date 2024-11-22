@@ -128,7 +128,7 @@ internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context
 )
 
 private val removeExpectDeclarationsPhase = createFileLoweringPhase(
-        ::ExpectDeclarationsRemoving,
+        ::ExpectDeclarationsRemoveLowering,
         name = "RemoveExpectDeclarations",
 )
 

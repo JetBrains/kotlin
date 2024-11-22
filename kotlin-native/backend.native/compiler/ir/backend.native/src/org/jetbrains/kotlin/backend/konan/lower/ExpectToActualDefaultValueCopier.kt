@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
@@ -27,24 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
-
-/**
- * This pass removes all declarations with `isExpect == true`.
- * Note: org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoving is copy of this lower.
- */
-internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
-        irFile.declarations.removeAll {
-            when (it) {
-                is IrClass -> it.isExpect
-                is IrFunction -> it.isExpect
-                is IrProperty -> it.isExpect
-                else -> false
-            }
-        }
-    }
-}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment, private val irBuiltIns: IrBuiltIns) {
