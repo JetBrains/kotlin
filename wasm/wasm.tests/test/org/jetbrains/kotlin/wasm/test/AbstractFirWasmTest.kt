@@ -151,6 +151,13 @@ open class AbstractFirWasmWasiTest(
 
     override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
         get() = ::WasmWasiBoxTestHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+        }
+    }
 }
 
 open class AbstractFirWasmWasiCodegenBoxTest : AbstractFirWasmWasiTest(

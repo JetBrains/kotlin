@@ -63,19 +63,24 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             withTag { tag ->
                 when (tag) {
                     FunctionTags.DEFINED -> {
+                        val startLocation = deserializeSourceLocation()
+                        val endLocation = deserializeSourceLocation()
                         val locals = deserializeList(::deserializeLocal)
                         val instructions = deserializeList(::deserializeInstr)
                         WasmFunction.Defined(
                             name,
                             type,
                             locals,
-                            instructions
+                            instructions,
+                            startLocation,
+                            endLocation
                         )
                     }
                     FunctionTags.IMPORTED -> WasmFunction.Imported(
                         name,
                         type,
-                        deserializeImportDescriptor()
+                        deserializeImportDescriptor(),
+                        deserializeSourceLocation()
                     )
                     else -> tagError(tag)
                 }

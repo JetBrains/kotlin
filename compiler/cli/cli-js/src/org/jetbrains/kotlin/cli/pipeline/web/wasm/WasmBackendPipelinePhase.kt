@@ -49,6 +49,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             preserveIcOrder = configuration.preserveIcOrder,
             wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
             wasmGenerateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
+            generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF)
         )
         return WasmBackendPipelineArtifact(result, outputDir, configuration)
     }
@@ -62,6 +63,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         preserveIcOrder: Boolean,
         wasmDebug: Boolean,
         wasmGenerateWat: Boolean,
+        generateDwarf: Boolean
     ): WasmCompilerResult {
         val wasmArtifacts = icCaches.artifacts
             .filterIsInstance<WasmModuleArtifact>()
@@ -77,6 +79,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             baseFileName = outputName,
             emitNameSection = wasmDebug,
             generateWat = wasmGenerateWat,
+            generateDwarf = generateDwarf,
             generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
         )
 
@@ -105,6 +108,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             propertyLazyInitialization = configuration.propertyLazyInitialization,
             dce = configuration.dce,
             configuration[WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE],
+            generateDwarf = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF),
             wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
         )
         return WasmBackendPipelineArtifact(result, outputDir, configuration)
@@ -118,7 +122,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         propertyLazyInitialization: Boolean,
         dce: Boolean,
         dceDumpDeclarationIrSizesToFile: String?,
-        wasmDebug: Boolean
+        wasmDebug: Boolean,
+        generateDwarf: Boolean
     ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
@@ -169,6 +174,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             baseFileName = outputName,
             emitNameSection = wasmDebug,
             generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+            generateDwarf = generateDwarf,
             generateSourceMaps = generateSourceMaps,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )

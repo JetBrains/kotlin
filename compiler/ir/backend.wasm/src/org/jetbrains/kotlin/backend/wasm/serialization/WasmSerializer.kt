@@ -160,11 +160,14 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeWasmSymbolReadOnly(func.type, ::serializeWasmFunctionType)
             when (func) {
                 is WasmFunction.Defined -> withTag(FunctionTags.DEFINED) {
+                    serializeSourceLocation(func.startLocation)
+                    serializeSourceLocation(func.endLocation)
                     serializeList(func.locals, ::serializeWasmLocal)
                     serializeList(func.instructions, ::serializeWasmInstr)
                 }
                 is WasmFunction.Imported -> withTag(FunctionTags.IMPORTED) {
                     serializeWasmImportDescriptor(func.importPair)
+                    serializeSourceLocation(func.startLocation)
                 }
             }
         }
