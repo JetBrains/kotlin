@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
@@ -59,7 +61,9 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
             is FirIgnoredContractDescription -> {}
-            else -> error("Unexpected contract description kind: ${contractDescription::class.simpleName}")
+            else -> errorWithAttachment("Unexpected contract description kind: ${contractDescription::class.simpleName}") {
+                withFirEntry("declaration", declaration)
+            }
         }
     }
 
