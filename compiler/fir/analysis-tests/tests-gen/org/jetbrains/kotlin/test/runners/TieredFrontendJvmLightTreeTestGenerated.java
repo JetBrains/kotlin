@@ -12142,6 +12142,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         }
 
         @Test
+        @TestMetadata("functionalSuperTypeOfIntersectionType.kt")
+        public void testFunctionalSuperTypeOfIntersectionType() {
+          runTest("compiler/testData/diagnostics/tests/inference/regressions/functionalSuperTypeOfIntersectionType.kt");
+        }
+
+        @Test
         @TestMetadata("kt1029.kt")
         public void testKt1029() {
           runTest("compiler/testData/diagnostics/tests/inference/regressions/kt1029.kt");

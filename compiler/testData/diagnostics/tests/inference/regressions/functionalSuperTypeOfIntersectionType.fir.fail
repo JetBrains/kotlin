@@ -1,0 +1,4 @@
+While analysing /functionalSuperTypeOfIntersectionType.fir.kt:10:9: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Failed to find functional supertype for class org.jetbrains.kotlin.fir.types.ConeIntersectionType.
+The contract of this function is that it returns a non-null value iff `isBuiltinFunctionTypeOrSubtype` returns `true`.
+org.jetbrains.kotlin.util.FileAnalysisException: While analysing /functionalSuperTypeOfIntersectionType.fir.kt:10:9: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Failed to find functional supertype for class org.jetbrains.kotlin.fir.types.ConeIntersectionType.
+The contract of this function is that it returns a non-null value iff `isBuiltinFunctionTypeOrSubtype` returns `true`.
