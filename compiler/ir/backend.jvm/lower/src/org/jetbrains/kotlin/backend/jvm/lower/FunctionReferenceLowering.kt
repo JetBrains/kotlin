@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -69,11 +70,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private val shouldGenerateIndySamConversions =
         context.config.samConversionsScheme == JvmClosureGenerationScheme.INDY
 
-    private val shouldGenerateIndyLambdas =
-        context.config.lambdasScheme == JvmClosureGenerationScheme.INDY
+    private val shouldGenerateIndyLambdas: Boolean
+        get() = context.config.lambdasScheme == JvmClosureGenerationScheme.INDY
+                // We prefer CLASS lambdas when evaluating expression in debugger, as such lambdas have pretty toString implementation
+                // However, it's safe to change compilation scheme only for lambdas defined in code fragment, not it's dependencies
+                && allScopes.none { (it.irElement as? IrMetadataSourceOwner)?.metadata is MetadataSource.CodeFragment }
 
-    private val shouldGenerateLightweightLambdas =
-        shouldGenerateIndyLambdas && context.config.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
+    private val shouldGenerateLightweightLambdas: Boolean
+        get() = shouldGenerateIndyLambdas && context.config.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
 
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)

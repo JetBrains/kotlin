@@ -1,7 +1,19 @@
+final class CodeFragment$run$1 {
+    // source: 'fragment.kt'
+    enclosing method CodeFragment.run(LOuter$Inner;LOuter$Inner;LOuter$Inner;LOuter$Inner;LOuter$Inner;)I
+    public final static field INSTANCE: CodeFragment$run$1
+    inner (anonymous) class CodeFragment$run$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method invoke(p0: int): java.lang.Integer
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final inner class Outer$Inner
+}
+
 public final class CodeFragment {
     // source: 'fragment.kt'
+    inner (anonymous) class CodeFragment$run$1
     public method <init>(): void
-    private final static method run$lambda$0(p0: int): int
     public final static method run(p0: Outer$Inner, p1: Outer$Inner, p2: Outer$Inner, p3: Outer$Inner, p4: Outer$Inner): int
     public final inner class Outer$Inner
 }
