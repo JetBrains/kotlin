@@ -10,12 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResoluti
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.*
@@ -124,18 +119,31 @@ fun FirDesignation.toSequence(includeTarget: Boolean): Sequence<FirElementWithRe
 }
 
 private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWithResolveState): FirDesignation? {
-    when (target) {
-        is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> return null
+    if (target !is FirDeclaration) {
+        unexpectedElementError<FirDeclaration>(target)
+    }
+
+    return when (target) {
+        is FirSyntheticProperty,
+        is FirSyntheticPropertyAccessor,
+        is FirReplSnippet,
+        is FirAnonymousFunction,
+        is FirErrorFunction,
+        is FirAnonymousObject,
+        is FirPropertyAccessor,
+        is FirBackingField,
+        is FirTypeParameter,
+        is FirValueParameter,
+        is FirReceiverParameter,
+            -> null
+
         is FirSimpleFunction,
         is FirProperty,
         is FirField,
         is FirConstructor,
         is FirEnumEntry,
-        is FirPropertyAccessor,
         is FirErrorProperty,
-        -> {
-            requireIsInstance<FirCallableDeclaration>(target)
-
+            -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
             if (target.isCopyCreatedInScope) return FirDesignation(target)
@@ -145,7 +153,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
             }
 
             val containingClassId = target.containingClassLookupTag()?.classId
-            return collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
+            collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
         }
 
         is FirClassLikeDeclaration -> {
@@ -154,27 +162,23 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
             }
 
             val containingClassId = target.symbol.classId.outerClassId
-            return collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
+            collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
         }
 
         is FirDanglingModifierList -> {
             val containingClassId = target.containingClass()?.classId
-            return collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
+            collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
         }
 
         is FirAnonymousInitializer -> {
             val containingClassId = target.containingClassIdOrNull()
-            return collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
+            collectDesignationPathWithContainingClass(providedFile, target, containingClassId)
         }
 
-        is FirFile -> return FirDesignation(target)
+        is FirFile -> FirDesignation(target)
         is FirScript, is FirCodeFragment -> {
-            requireIsInstance<FirDeclaration>(target)
-
-            return collectDesignationPathWithContainingClass(providedFile, target, containingClassId = null)
+            collectDesignationPathWithContainingClass(providedFile, target, containingClassId = null)
         }
-
-        else -> return null
     }
 }
 
@@ -365,13 +369,9 @@ fun FirElementWithResolveState.tryCollectDesignationWithOptionalFile(providedFil
  * @see tryCollectDesignationWithOptionalFile
  * @see collectDesignationWithOptionalFile
  */
-fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? = when (this) {
-    is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
-    is FirDeclaration -> {
-        val designation = tryCollectDesignation(providedFile = providedFile, target = this)
-        designation?.takeIf { it.fileOrNull != null }
-    }
-    else -> unexpectedElementError<FirElementWithResolveState>(this)
+fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? {
+    val designation = tryCollectDesignation(providedFile = providedFile, target = this)
+    return designation?.takeIf { it.fileOrNull != null }
 }
 
 internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration> {
