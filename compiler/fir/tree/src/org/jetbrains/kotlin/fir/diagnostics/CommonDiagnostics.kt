@@ -9,4 +9,5 @@ import org.jetbrains.kotlin.KtSourceElement
 
 class ConeUnexpectedTypeArgumentsError(override val reason: String, val source: KtSourceElement? = null) : ConeDiagnostic
 
-class ConeIntermediateDiagnostic(override val reason: String) : ConeDiagnostic
+@JvmInline
+value class ConeIntermediateDiagnostic(override val reason: String) : ConeDiagnostic

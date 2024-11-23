@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDeclarationOverloadabilityHelper {
+@JvmInline
+value class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDeclarationOverloadabilityHelper {
     override fun isOverloadable(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>): Boolean {
         val sigA = createSignature(a)
         val sigB = createSignature(b)

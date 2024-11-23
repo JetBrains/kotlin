@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 @NoMutableState
-class FirLanguageSettingsComponent(val languageVersionSettings: LanguageVersionSettings) : FirSessionComponent
+@JvmInline
+value class FirLanguageSettingsComponent(val languageVersionSettings: LanguageVersionSettings) : FirSessionComponent
 
 private val FirSession.languageSettingsComponent: FirLanguageSettingsComponent by FirSession.sessionComponentAccessor()
 

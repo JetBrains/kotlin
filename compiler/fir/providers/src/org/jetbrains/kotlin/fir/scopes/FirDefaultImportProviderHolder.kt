@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.resolve.DefaultImportProvider
 
-class FirDefaultImportProviderHolder(val provider: DefaultImportProvider) : FirSessionComponent
+@JvmInline
+value class FirDefaultImportProviderHolder(val provider: DefaultImportProvider) : FirSessionComponent
 
 private val FirSession.defaultImportProviderHolder: FirDefaultImportProviderHolder by FirSession.sessionComponentAccessor()
 val FirSession.defaultImportProvider get() = defaultImportProviderHolder.provider

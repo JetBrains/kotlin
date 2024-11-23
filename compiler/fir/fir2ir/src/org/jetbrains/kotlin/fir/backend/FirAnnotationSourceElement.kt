@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
-class FirAnnotationSourceElement(val fir: FirAnnotation) : SourceElement {
+@JvmInline
+value class FirAnnotationSourceElement(val fir: FirAnnotation) : SourceElement {
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

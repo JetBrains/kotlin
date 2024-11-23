@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 
-class VirtualFileBasedSourceElement(val virtualFile: VirtualFile) : SourceElement {
+@JvmInline
+value class VirtualFileBasedSourceElement(val virtualFile: VirtualFile) : SourceElement {
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

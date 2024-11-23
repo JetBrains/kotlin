@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.name.Name
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
 
-class ConeSyntaxDiagnostic(override val reason: String) : ConeDiagnostic
+@JvmInline
+value class ConeSyntaxDiagnostic(override val reason: String) : ConeDiagnostic
 
-class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
+@JvmInline
+value class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
     override val reason: String get() = "Strange annotated expression: $text"
 }
 
@@ -54,12 +56,14 @@ class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnos
     override val reason: String get() = "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
 }
 
-class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
+@JvmInline
+value class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
     override val reason: String
         get() = "Ambiguous supertype"
 }
 
-class ConeRecursiveTypeParameterDuringErasureError(val typeParameterName: Name) : ConeDiagnostic {
+@JvmInline
+value class ConeRecursiveTypeParameterDuringErasureError(val typeParameterName: Name) : ConeDiagnostic {
     override val reason: String
         get() = "self-recursive type parameter $typeParameterName"
 }
@@ -74,7 +78,8 @@ object ConeDanglingModifierOnTopLevel : ConeDiagnostic {
         get() = "Top level declaration expected"
 }
 
-class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDiagnostic {
+@JvmInline
+value class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDiagnostic {
     override val reason: String
         get() = "There are multiple function kinds for functional type ref"
 }

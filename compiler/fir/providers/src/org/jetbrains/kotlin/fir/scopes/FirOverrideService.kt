@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class FirOverrideService(val session: FirSession) : FirSessionComponent {
+@JvmInline
+value class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
     fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,

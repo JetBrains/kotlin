@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 @NoMutableState
-class FirJsModuleKind(val moduleKind: ModuleKind) : FirSessionComponent
+@JvmInline
+value class FirJsModuleKind(val moduleKind: ModuleKind) : FirSessionComponent
 
 private val FirSession.jsModuleKindComponent: FirJsModuleKind? by FirSession.nullableSessionComponentAccessor()
 

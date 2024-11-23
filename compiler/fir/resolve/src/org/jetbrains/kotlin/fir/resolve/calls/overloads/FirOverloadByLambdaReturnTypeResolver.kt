@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
@@ -24,10 +25,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
-class FirOverloadByLambdaReturnTypeResolver(
+@JvmInline
+value class FirOverloadByLambdaReturnTypeResolver(
     val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {
-    private val session = components.session
+    private val session: FirSession
+        get() = components.session
     private val callCompleter: FirCallCompleter
         get() = components.callCompleter
     private val inferenceSession: FirInferenceSession

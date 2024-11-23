@@ -8,4 +8,5 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.mpp.SourceElementMarker
 
-class FirSourceElement(val element: KtSourceElement?) : SourceElementMarker
+@JvmInline
+value class FirSourceElement(val element: KtSourceElement?) : SourceElementMarker

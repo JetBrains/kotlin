@@ -58,7 +58,8 @@ sealed interface ReceiverValue {
     )
 }
 
-class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue {
+@JvmInline
+value class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue {
     override val type: ConeKotlinType
         get() = receiverExpression.resolvedType
 

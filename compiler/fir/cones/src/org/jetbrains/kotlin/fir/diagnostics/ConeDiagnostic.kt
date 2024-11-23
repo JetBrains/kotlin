@@ -20,6 +20,7 @@ interface ConeDiagnosticWithNullability : ConeDiagnostic {
  *
  * Call sites should document which FIR element's diagnostic this is duplicating and why the usage won't lead to missed diagnostics.
  */
-class ConeUnreportedDuplicateDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic {
+@JvmInline
+value class ConeUnreportedDuplicateDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic {
     override val reason: String get() = original.reason
 }

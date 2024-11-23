@@ -28,7 +28,7 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
             check(originalTypeParameter is ConeTypeParameterLookupTag)
             return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
         }
-        return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
+        return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic)
     }
 
     override fun toString(): String {

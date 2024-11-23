@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
-class FirTypeSpecificityComparatorProvider(val typeSpecificityComparator: TypeSpecificityComparator) : FirSessionComponent
+@JvmInline
+value class FirTypeSpecificityComparatorProvider(val typeSpecificityComparator: TypeSpecificityComparator) : FirSessionComponent
 
 val FirSession.typeSpecificityComparatorProvider: FirTypeSpecificityComparatorProvider? by FirSession.nullableSessionComponentAccessor()

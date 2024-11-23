@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
-class FirJavaModuleResolverProvider(val javaModuleResolver: JavaModuleResolver) : FirSessionComponent
+@JvmInline
+value class FirJavaModuleResolverProvider(val javaModuleResolver: JavaModuleResolver) : FirSessionComponent
 
 val FirSession.javaModuleResolverProvider: FirJavaModuleResolverProvider by FirSession.sessionComponentAccessor()

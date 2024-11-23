@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 
-class FirJvmTargetProvider(val jvmTarget: JvmTarget) : FirSessionComponent
+@JvmInline
+value class FirJvmTargetProvider(val jvmTarget: JvmTarget) : FirSessionComponent
 
 val FirSession.jvmTargetProvider: FirJvmTargetProvider? by FirSession.nullableSessionComponentAccessor()
