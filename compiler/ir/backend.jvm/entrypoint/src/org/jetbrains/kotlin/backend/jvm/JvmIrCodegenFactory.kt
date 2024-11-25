@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.isBuiltinWithBytecode
 import org.jetbrains.kotlin.backend.common.ir.isBuiltinWithoutBytecode
+import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -361,7 +362,8 @@ open class JvmIrCodegenFactory(
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
         val noBytecodeBuiltins = irModuleFragment.files.filter { it.isBuiltinWithoutBytecode }
-        irModuleFragment.files.removeAll(noBytecodeBuiltins)
+        val suppressedBytecodeGeneration = irModuleFragment.files.filter { it.isBytecodeGenerationSuppressed }
+        irModuleFragment.files.removeAll(noBytecodeBuiltins + suppressedBytecodeGeneration)
 
         jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 

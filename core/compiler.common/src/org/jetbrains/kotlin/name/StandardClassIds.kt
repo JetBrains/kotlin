@@ -220,6 +220,7 @@ object StandardClassIds {
 
         val BuiltinWithoutBytecode = "BuiltinWithoutBytecode".internalId()
         val BuiltinWithBytecode = "BuiltinWithBytecode".internalId()
+        val SuppressBytecodeGeneration = "SuppressBytecodeGeneration".internalId()
 
         object ParameterNames {
             val value = Name.identifier("value")

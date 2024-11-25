@@ -129,4 +129,6 @@ fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
 
 val IrFile.isBuiltinWithoutBytecode: Boolean get() = hasAnnotation(StandardClassIds.Annotations.BuiltinWithoutBytecode)
 
+val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
+
 val IrFile.isBuiltinWithBytecode: Boolean get() = hasAnnotation(StandardClassIds.Annotations.BuiltinWithBytecode)
