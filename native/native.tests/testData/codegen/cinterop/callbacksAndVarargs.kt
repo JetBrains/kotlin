@@ -152,4 +152,7 @@ fun testCallableReferences() {
 
     val sumPtr = staticCFunction(::sum)
     assertEquals(7, sumPtr(3, 4))
+
+    val anonymousFunPtr = staticCFunction(fun (x: Int, y: Int): Int { return x + y })
+    assertEquals(11, anonymousFunPtr(5, 6))
 }
