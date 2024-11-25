@@ -69,19 +69,21 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
             override fun visitCall(expression: IrCall): IrExpression {
                 // try to calculate default args of inline function at call site
                 // used in `sourceLocation` test
-                expression.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
-                    if (expression.getValueArgument(index) != null || !expression.symbol.owner.isInline) return@forEachIndexed
-                    val default = parameter.defaultValue?.expression as? IrCall ?: return@forEachIndexed
-                    val callWithNewOffsets = IrCallImpl(
-                        expression.startOffset, expression.endOffset, default.type, default.symbol,
-                        default.typeArgumentsCount, default.origin, default.superQualifierSymbol
-                    )
-                    callWithNewOffsets.copyTypeAndValueArgumentsFrom(default)
-                    interpreter.interpret(callWithNewOffsets, irFile)
-                        .report(callWithNewOffsets)
-                        .takeIf { it != callWithNewOffsets }
-                        ?.apply { expression.putArgument(parameter, this) }
-                }
+                expression.symbol.owner.parameters
+                    .zip(expression.arguments)
+                    .forEach { (parameter, argument) ->
+                        if (argument != null || !expression.symbol.owner.isInline) return@forEach
+                        val default = parameter.defaultValue?.expression as? IrCall ?: return@forEach
+                        val callWithNewOffsets = IrCallImpl(
+                            expression.startOffset, expression.endOffset, default.type, default.symbol,
+                            default.typeArgumentsCount, default.origin, default.superQualifierSymbol
+                        )
+                        callWithNewOffsets.copyTypeAndValueArgumentsFrom(default)
+                        interpreter.interpret(callWithNewOffsets, irFile)
+                            .report(callWithNewOffsets)
+                            .takeIf { it != callWithNewOffsets }
+                            ?.apply { expression.arguments[parameter] = this }
+                    }
                 return super.visitCall(expression)
             }
 

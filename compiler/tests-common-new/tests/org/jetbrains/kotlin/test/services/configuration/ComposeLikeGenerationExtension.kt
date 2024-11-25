@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.collections.get
 
 class ComposeLikeConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -82,38 +84,30 @@ private class ComposeLikeDefaultMethodCallRewriter(private val context: IrPlugin
                 expression.origin,
                 expression.superQualifierSymbol
             ).also {
-                it.dispatchReceiver = expression.dispatchReceiver?.transform(this, null)
-                it.extensionReceiver = expression.extensionReceiver?.transform(this, null)
                 var bitmap = 0
-                for (i in function.valueParameters.indices) {
-                    if (i < expression.valueArgumentsCount) {
-                        if (expression.getValueArgument(i) != null) {
-                            it.putValueArgument(i, expression.getValueArgument(i))
-                        } else {
-                            bitmap = bitmap or (1.shl(i))
-                            it.putValueArgument(
-                                i,
-                                IrConstImpl.defaultValueForType(
-                                    UNDEFINED_OFFSET,
-                                    UNDEFINED_OFFSET,
-                                    function.valueParameters[i].type
-                                ).let { defaultValue ->
-                                    IrCompositeImpl(
-                                        defaultValue.startOffset,
-                                        defaultValue.endOffset,
-                                        defaultValue.type,
-                                        IrStatementOrigin.DEFAULT_VALUE,
-                                        listOf(defaultValue)
-                                    )
-                                }
-                            )
-                        }
+                function.parameters.zip(expression.arguments).forEachIndexed { i, (parameter, argument) ->
+                    if (argument != null) {
+                        it.arguments[i] = argument.transform(this@ComposeLikeDefaultMethodCallRewriter, null)
+                    } else {
+                        bitmap = bitmap or (1.shl(i))
+                        it.arguments[i] =
+                            IrConstImpl.defaultValueForType(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                parameter.type
+                            ).let { defaultValue ->
+                                IrCompositeImpl(
+                                    defaultValue.startOffset,
+                                    defaultValue.endOffset,
+                                    defaultValue.type,
+                                    IrStatementOrigin.DEFAULT_VALUE,
+                                    listOf(defaultValue)
+                                )
+                            }
                     }
                 }
-                it.putValueArgument(
-                    function.valueParameters.size - 1,
+                it.arguments[function.parameters.lastIndex] =
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, bitmap)
-                )
             }
         } else {
             super.visitCall(expression)
@@ -140,17 +134,18 @@ private class ComposeLikeDefaultArgumentRewriter(
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        val hasDefaultArguments = declaration.valueParameters.any { it.defaultValue != null }
+        val hasDefaultArguments = declaration.parameters.any { it.defaultValue != null }
         if (!hasDefaultArguments) return super.visitFunction(declaration)
         rewrittenFunctions.add(declaration)
         val newParameters = mutableListOf<IrValueParameter>()
-        declaration.valueParameters.forEach { param ->
+        declaration.parameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
                     val result = context.irFactory.createValueParameter(
                         startOffset = param.startOffset,
                         endOffset = param.endOffset,
                         origin = param.origin,
+                        kind = param.kind,
                         name = param.name,
                         type = defaultParameterType(param),
                         isAssignable = param.defaultValue != null,
@@ -168,7 +163,7 @@ private class ComposeLikeDefaultArgumentRewriter(
                 } else param
             )
         }
-        declaration.valueParameters = newParameters
+        declaration.parameters = newParameters
         val defaultParam = declaration.addValueParameter(
             "\$default",
             context.irBuiltIns.intType,
@@ -177,7 +172,7 @@ private class ComposeLikeDefaultArgumentRewriter(
         declaration.transformChildrenVoid()
         val body = declaration.body!!
         val defaultSelection = mutableListOf<IrStatement>()
-        declaration.valueParameters.forEach {
+        declaration.parameters.forEach {
             if (it.hasDefaultValue()) {
                 val index = defaultSelection.size
                 defaultSelection.add(
@@ -278,19 +273,17 @@ private class ComposeLikeDefaultArgumentRewriter(
         return irCall(
             lhs.type.binaryOperator(Name.identifier("and"), rhs.type),
             null,
-            lhs,
-            null,
-            rhs
+            lhs, // DispatchReceiver
+            rhs, // Regular
         )
     }
 
     private fun irCall(
         symbol: IrFunctionSymbol,
         origin: IrStatementOrigin? = null,
-        dispatchReceiver: IrExpression? = null,
-        extensionReceiver: IrExpression? = null,
         vararg args: IrExpression
     ): IrCallImpl {
+        require(symbol.owner.parameters.size == args.size)
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -299,10 +292,8 @@ private class ComposeLikeDefaultArgumentRewriter(
             symbol.owner.typeParameters.size,
             origin
         ).also {
-            if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
-            if (extensionReceiver != null) it.extensionReceiver = extensionReceiver
             args.forEachIndexed { index, arg ->
-                it.putValueArgument(index, arg)
+                it.arguments[index] = arg
             }
         }
     }
@@ -310,7 +301,8 @@ private class ComposeLikeDefaultArgumentRewriter(
     private fun irNot(value: IrExpression): IrExpression {
         return irCall(
             context.irBuiltIns.booleanNotSymbol,
-            dispatchReceiver = value
+            origin = null,
+            value, // DispatchReceiver
         )
     }
 
@@ -318,10 +310,8 @@ private class ComposeLikeDefaultArgumentRewriter(
         return irCall(
             context.irBuiltIns.eqeqeqSymbol,
             null,
-            null,
-            null,
-            lhs,
-            rhs
+            lhs, // Regular
+            rhs, // Regular
         )
     }
 }
