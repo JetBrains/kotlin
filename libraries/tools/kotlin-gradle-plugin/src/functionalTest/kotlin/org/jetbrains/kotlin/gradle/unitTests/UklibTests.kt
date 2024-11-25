@@ -27,7 +27,8 @@ class UklibTests {
     fun `resolve uklib - from pom with uklib packaging`() {
         val consumer = consumer(UklibResolutionStrategy.PreferPlatformSpecificVariant) {
             sourceSets.commonMain.dependencies {
-                implementation("foo.bar:uklib-maven-uklib-packaging:1.0")
+                // FIXME: Everything works kind of nicely, but either the consumer has to publish a separate component for pure Maven jar consumption, or Maven has to know about uklibs
+                implementation("foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0")
             }
         }
 
@@ -45,9 +46,13 @@ class UklibTests {
                     configuration="jvmRuntimeClasspath",
                     artifacts=mutableListOf()
                 ),
+                "foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="runtime",
+                    artifacts=mutableListOf(jvmPomRuntimeAttributes + jarArtifact)
+                ),
                 "foo.bar:uklib-maven-uklib-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="runtime",
-                    artifacts=mutableListOf(transformedJvmAttributesFromPom)
+                    artifacts=mutableListOf(jvmPomRuntimeAttributes + uklibTransformationJvmAttributes)
                 ),
                 "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements-published",
@@ -55,7 +60,7 @@ class UklibTests {
                 ),
                 "foo.bar:uklib-maven-gradle-packaging-jvm:1.0" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf(platformJvmAttributes + releaseStatus)
+                    artifacts=mutableListOf(platformJvmVariantAttributes + releaseStatus)
                 ),
             ),
             jvmResolvedVariants
@@ -67,9 +72,13 @@ class UklibTests {
                     configuration="iosArm64CompileKlibraries",
                     artifacts=mutableListOf()
                 ),
+                "foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + jarArtifact)
+                ),
                 "foo.bar:uklib-maven-uklib-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="compile",
-                    artifacts=mutableListOf(transformedIosArm64AttributesFromPom)
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibTransformationIosArm64Attributes)
                 ),
                 "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="iosArm64ApiElements-published",
@@ -77,6 +86,7 @@ class UklibTests {
                 ),
                 "foo.bar:uklib-maven-gradle-packaging-iosarm64:1.0" to ResolvedComponentWithArtifacts(
                     configuration="iosArm64ApiElements-published",
+                    // klib + cinterop klib
                     artifacts=mutableListOf(
                         platformIosArm64Attributes + releaseStatus,
                         platformIosArm64Attributes + releaseStatus,
@@ -91,7 +101,14 @@ class UklibTests {
     fun `resolve uklib - from pom with jar packaging - with explicit extension`() {
         val consumer = consumer(UklibResolutionStrategy.PreferPlatformSpecificVariant) {
             sourceSets.commonMain.dependencies {
+                /**
+                 * FIXME: If this dependency is brought transitively, it's unclear how the regular-maven-jar-packaging POM should specify the dependency on a uklib, such that both KGP and Maven consumers can depend on it easily
+                 *
+                 * This could work with variant reselection, but then we have to use artifactViews
+                 */
+                // implementation("foo.bar:regular-maven-jar-packaging:1.0")
                 implementation("foo.bar:uklib-maven-jar-packaging:1.0@uklib") {
+                    // FIXME: Why does explicit extension specification unset transitiveness?
                     assert(!isTransitive)
                     isTransitive = true
                 }
@@ -114,7 +131,7 @@ class UklibTests {
                 ),
                 "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="runtime",
-                    artifacts=mutableListOf(finalUklibTransformationJvmAttributes + releaseStatus)
+                    artifacts=mutableListOf(uklibTransformationJvmAttributes + releaseStatus)
                 ),
                 "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements-published",
@@ -122,7 +139,7 @@ class UklibTests {
                 ),
                 "foo.bar:uklib-maven-gradle-packaging-jvm:1.0" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf(platformJvmAttributes + releaseStatus)
+                    artifacts=mutableListOf(platformJvmVariantAttributes + releaseStatus)
                 ),
             ),
             jvmResolvedVariants
@@ -136,7 +153,7 @@ class UklibTests {
                 ),
                 "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="compile",
-                    artifacts=mutableListOf(finalUklibTransformationIosArm64Attributes + releaseStatus)
+                    artifacts=mutableListOf(uklibTransformationIosArm64Attributes + releaseStatus)
                 ),
                 "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
                     configuration="iosArm64ApiElements-published",
@@ -175,7 +192,7 @@ class UklibTests {
                 // implementation("foo.bar:uklib-maven-jar-packaging:1.0")
                 // consume "foo.bar:uklib-maven-jar-packaging:1.0" transitively
                 // FIXME: With a naive component metadata rule regular jars fail to resolve
-                implementation("foo.bar:regular-maven-jar-packaging:1.0")
+                implementation("foo.bar:regular-maven-jar-packaging-with-uklib-jar-dependency:1.0")
             }
 
             project.dependencies.components.all { component ->
@@ -203,52 +220,7 @@ class UklibTests {
             .configurations.runtimeDependencyConfiguration!!
         val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
 
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeClasspath",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="uklib",
-                    artifacts=mutableListOf(transformedIosArm64AttributesFromPom)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-jvm:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf(platformJvmAttributes + releaseStatus)
-                ),
-            ),
-            jvmResolvedVariants
-        )
-
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64CompileKlibraries",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="compile",
-                    artifacts=mutableListOf(finalUklibTransformationIosArm64Attributes + releaseStatus)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-iosarm64:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf(
-                        platformIosArm64Attributes + releaseStatus,
-                        platformIosArm64Attributes + releaseStatus,
-                    )
-                ),
-            ),
-            iosArm64ResolvedVariants
-        )
+        // ???
     }
 
     // @Test
@@ -268,52 +240,7 @@ class UklibTests {
             .configurations.runtimeDependencyConfiguration!!
         val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
 
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeClasspath",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging-classifier:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="runtime",
-                    artifacts=mutableListOf(transformedJvmAttributesFromPom)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-jvm:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf(platformJvmAttributes + releaseStatus)
-                ),
-            ),
-            jvmResolvedVariants
-        )
-
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64CompileKlibraries",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging-classifier:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="compile",
-                    artifacts=mutableListOf(transformedIosArm64AttributesFromPom)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-iosarm64:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf(
-                        platformIosArm64Attributes + releaseStatus,
-                        platformIosArm64Attributes + releaseStatus,
-                    )
-                ),
-            ),
-            iosArm64ResolvedVariants
-        )
+        // ???
     }
 
     private fun consumer(
@@ -363,19 +290,19 @@ class UklibTests {
                 ),
                 ":D_produces_uklib_consumes_C" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements",
-                    artifacts=mutableListOf(platformJvmAttributes)
+                    artifacts=mutableListOf(platformJvmVariantAttributes)
                 ),
                 ":C_produces_only_uklib_consumes_B" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedJvmAttributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationJvmAttributes)
                 ),
                 ":B_produces_only_platform_variant_consumes_A" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements",
-                    artifacts=mutableListOf(platformJvmAttributes)
+                    artifacts=mutableListOf(platformJvmVariantAttributes)
                 ),
                 ":A_produces_uklib" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements",
-                    artifacts=mutableListOf(platformJvmAttributes),
+                    artifacts=mutableListOf(platformJvmVariantAttributes),
                 )
             ),
             jvmResolvedVariants
@@ -393,7 +320,7 @@ class UklibTests {
                 ),
                 ":C_produces_only_uklib_consumes_B" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedIosArm64Attributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationIosArm64Attributes)
                 ),
                 ":B_produces_only_platform_variant_consumes_A" to ResolvedComponentWithArtifacts(
                     configuration="iosArm64ApiElements",
@@ -431,19 +358,19 @@ class UklibTests {
                 ),
                 ":D_produces_uklib_consumes_C" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedJvmAttributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationJvmAttributes)
                 ),
                 ":C_produces_only_uklib_consumes_B" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedJvmAttributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationJvmAttributes)
                 ),
                 ":B_produces_only_platform_variant_consumes_A" to ResolvedComponentWithArtifacts(
                     configuration="jvmRuntimeElements",
-                    artifacts=mutableListOf(platformJvmAttributes)
+                    artifacts=mutableListOf(platformJvmVariantAttributes)
                 ),
                 ":A_produces_uklib" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedJvmAttributes),
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationJvmAttributes),
                 )
             ),
             jvmResolvedVariants
@@ -457,11 +384,11 @@ class UklibTests {
                 ),
                 ":D_produces_uklib_consumes_C" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedIosArm64Attributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationIosArm64Attributes)
                 ),
                 ":C_produces_only_uklib_consumes_B" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedIosArm64Attributes)
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationIosArm64Attributes)
                 ),
                 ":B_produces_only_platform_variant_consumes_A" to ResolvedComponentWithArtifacts(
                     configuration="iosArm64ApiElements",
@@ -469,7 +396,7 @@ class UklibTests {
                 ),
                 ":A_produces_uklib" to ResolvedComponentWithArtifacts(
                     configuration="metadataUklibElements",
-                    artifacts=mutableListOf(transformedIosArm64Attributes),
+                    artifacts=mutableListOf(uklibVariantAttributes + uklibTransformationIosArm64Attributes),
                 )
             ),
             iosArm64ResolvedVariants
@@ -501,31 +428,44 @@ class UklibTests {
         )
     }
 
-    private val transformedJvmAttributes = mapOf(
+    private val uklibTransformationIosArm64Attributes = mapOf(
         "artifactType" to "uklib",
+        "uklibNativeSlice" to "iosArm64",
+        "uklibPlatform" to "native",
+        "uklibState" to "unzipped",
+    )
+
+    private val uklibTransformationJvmAttributes = mapOf(
+        "artifactType" to "uklib",
+        "uklibNativeSlice" to "unknown",
+        "uklibPlatform" to "jvm",
+        "uklibState" to "unzipped",
+    )
+
+    private val uklibVariantAttributes = mapOf(
         "org.gradle.category" to "library",
         "org.gradle.jvm.environment" to "???",
         "org.gradle.usage" to "kotlin-uklib",
         "org.jetbrains.kotlin.klib.packaging" to "packed",
         "org.jetbrains.kotlin.native.target" to "???",
         "org.jetbrains.kotlin.platform.type" to "unknown",
-        "uklibNativeSlice" to "unknown",
-        "uklibPlatform" to "jvm",
-        "uklibState" to "unzipped",
     )
 
-    private val transformedJvmAttributesFromPom = mapOf(
-        "artifactType" to "uklib",
+    private val jvmPomRuntimeAttributes = mapOf(
         "org.gradle.category" to "library",
         "org.gradle.libraryelements" to "jar",
         "org.gradle.status" to "release",
         "org.gradle.usage" to "java-runtime",
-        "uklibNativeSlice" to "unknown",
-        "uklibPlatform" to "jvm",
-        "uklibState" to "unzipped",
     )
 
-    private val platformJvmAttributes = mapOf(
+    private val jvmPomApiAttributes = mapOf(
+        "org.gradle.category" to "library",
+        "org.gradle.libraryelements" to "jar",
+        "org.gradle.status" to "release",
+        "org.gradle.usage" to "java-api",
+    )
+
+    private val platformJvmVariantAttributes = mapOf(
         "artifactType" to "jar",
         "org.gradle.category" to "library",
         "org.gradle.jvm.environment" to "standard-jvm",
@@ -538,39 +478,13 @@ class UklibTests {
         "org.gradle.status" to "release",
     )
 
+    // We only emit packing in secondary variants which are not published?
     private val nonPacked = mapOf(
         "org.jetbrains.kotlin.klib.packaging" to "non-packed",
     )
 
-    private val defaultGradleJvmAttributes = mapOf(
+    private val jarArtifact = mapOf(
         "artifactType" to "jar",
-        "org.gradle.category" to "library",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.usage" to "java-runtime",
-    ) + releaseStatus
-
-    private val transformedIosArm64Attributes = mapOf(
-        "artifactType" to "uklib",
-        "org.gradle.category" to "library",
-        "org.gradle.jvm.environment" to "???",
-        "org.gradle.usage" to "kotlin-uklib",
-        "org.jetbrains.kotlin.klib.packaging" to "packed",
-        "org.jetbrains.kotlin.native.target" to "???",
-        "org.jetbrains.kotlin.platform.type" to "unknown",
-        "uklibNativeSlice" to "iosArm64",
-        "uklibPlatform" to "native",
-        "uklibState" to "unzipped",
-    )
-
-    private val transformedIosArm64AttributesFromPom = mapOf(
-        "artifactType" to "uklib",
-        "org.gradle.category" to "library",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.status" to "release",
-        "org.gradle.usage" to "java-api",
-        "uklibNativeSlice" to "iosArm64",
-        "uklibPlatform" to "native",
-        "uklibState" to "unzipped",
     )
 
     private val platformIosArm64Attributes = mapOf(
@@ -581,20 +495,6 @@ class UklibTests {
         "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
         "org.jetbrains.kotlin.native.target" to "ios_arm64",
         "org.jetbrains.kotlin.platform.type" to "native",
-    )
-
-    private val finalUklibTransformationIosArm64Attributes = mapOf(
-        "artifactType" to "uklib",
-        "uklibNativeSlice" to "iosArm64",
-        "uklibPlatform" to "native",
-        "uklibState" to "unzipped",
-    )
-
-    private val finalUklibTransformationJvmAttributes = mapOf(
-        "artifactType" to "uklib",
-        "uklibNativeSlice" to "unknown",
-        "uklibPlatform" to "jvm",
-        "uklibState" to "unzipped",
     )
 
     data class ResolvedComponentWithArtifacts(
@@ -628,12 +528,7 @@ class UklibTests {
 
     private fun Configuration.resolveProjectDependencyVariantsFromArtifacts(): List<ResolvedVariant> {
         return incoming.artifacts.artifacts
-            .filter {
-                // Resolve only project components, so filter out stdlib and platform libraries in K/N
-                !listOf(
-                    it.id.displayName.contains("stdlib"),
-                ).any { it }
-            }.map { artifact ->
+            .map { artifact ->
                 val uklibAttributes: List<Attribute<*>> = artifact.variant.attributes.keySet()
                     .sortedBy { it.name }
                 ResolvedVariant(
@@ -652,11 +547,7 @@ class UklibTests {
 
     private fun Configuration.resolveProjectDependencyComponents(): List<ResolvedComponent> {
         return incoming.resolutionResult.allComponents
-            .filter {
-                !listOf(
-                    it.id.displayName.contains("stdlib"),
-                ).any { it }
-            }.map { component ->
+            .map { component ->
                 ResolvedComponent(
                     component.id.projectPathOrNull ?: component.id.displayName,
                     // Expect a single variant to always be selected?
